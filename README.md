@@ -11,7 +11,7 @@ FIRST LEGO League Challenge: Local Event Management System
 
 3. Run the container with an exposed port
 
-`docker run -d --name fll-events-local-db -p 27017:27017 mongo:5.0.18`
+`docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.0`
 
 4. To stop the container, use either the CLI or docker desktop.
    When you stop the container without removing it, you will be unable to start a new container with the same name.
@@ -22,7 +22,7 @@ FIRST LEGO League Challenge: Local Event Management System
 To start the development server run `npm run dev`.
 
 Frontend will be available at http://localhost:4200/.
-Backend will be available at http://localhost:3000/.
+Backend will be available at http://localhost:3333/.
 
 Happy coding!
 
