@@ -1,11 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
