@@ -11,6 +11,7 @@ const initDbClient = async () => {
   } catch (err) {
     console.error('❌ Unable to connect to mongodb: ', err);
   }
+  console.log('🚀 MongoDB Client connected.');
 
   return client;
 };
@@ -19,4 +20,6 @@ const client = await initDbClient();
 // Add client specific code here (listeners etc)
 
 const db = client.db('lems');
+// TODO: setup database first user if none exists
+
 export default db;
