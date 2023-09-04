@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@lems/database": ["libs/database/src/index.ts"],
       "@lems/types": ["libs/types/src/index.ts"]
     }
   },
