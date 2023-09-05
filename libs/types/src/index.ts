@@ -1,2 +1,1 @@
-export * from './lib/types';
-export * from './lib/adminUser';
+export * from './lib/schemas/adminUser';
