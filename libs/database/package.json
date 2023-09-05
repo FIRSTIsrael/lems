@@ -2,6 +2,7 @@
   "name": "@lems/database",
   "version": "0.0.1",
   "dependencies": {
+    "mongodb": "^6.0.0",
     "tslib": "^2.3.0"
   },
   "type": "module",
