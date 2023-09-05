@@ -1,4 +1,6 @@
 import { MongoClient } from 'mongodb';
+import { AdminUser } from '@lems/types';
+import { randomString } from '@lems/utils';
 
 const connectionString = process.env.MONGODB_URI || 'mongodb://127.0.0.1';
 const port = process.env.MONGODB_PORT || 27101;
@@ -20,6 +22,27 @@ const client = await initDbClient();
 // Add client specific code here (listeners etc)
 
 const db = client.db('lems');
-// TODO: setup database first user if none exists
+
+// TODO: do we want schema validation on our mongodb?
+// https://www.mongodb.com/docs/manual/core/schema-validation/
+
+const admins = db.collection<AdminUser>('admins');
+admins.findOne({}).then((user) => {
+  if (!user) {
+    const adminUsername = 'admin';
+    const adminPassword = randomString(8);
+    admins
+      .insertOne({
+        username: adminUsername,
+        password: adminPassword,
+        lastPasswordSetDate: new Date(),
+      })
+      .then(() => {
+        console.log(
+          `⚙️ Setup initial admin user with details - ${adminUsername}:${adminPassword}`
+        );
+      });
+  }
+});
 
 export default db;

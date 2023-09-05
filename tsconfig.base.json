@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@lems/database": ["libs/database/src/index.ts"],
-      "@lems/types": ["libs/types/src/index.ts"]
+      "@lems/types": ["libs/types/src/index.ts"],
+      "@lems/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

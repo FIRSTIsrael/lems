@@ -1,1 +1,1 @@
-export * from './lib/database';
+export { default as db } from './lib/database';
