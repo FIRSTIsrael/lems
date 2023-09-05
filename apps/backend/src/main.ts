@@ -1,6 +1,5 @@
 import express from 'express';
 import * as path from 'path';
-import { db } from '@lems/database';
 
 const app = express();
 
