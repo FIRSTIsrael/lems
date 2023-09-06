@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { AdminUser } from '@lems/types';
+import { User } from '@lems/types';
 import { randomString } from '@lems/utils';
 
 const connectionString = process.env.MONGODB_URI || 'mongodb://127.0.0.1';
@@ -26,7 +26,7 @@ const db = client.db('lems');
 // TODO: do we want schema validation on our mongodb?
 // https://www.mongodb.com/docs/manual/core/schema-validation/
 
-const admins = db.collection<AdminUser>('admins');
+const admins = db.collection<User>('users');
 admins.findOne({}).then((user) => {
   if (!user) {
     const adminUsername = 'admin';
@@ -34,6 +34,7 @@ admins.findOne({}).then((user) => {
     admins
       .insertOne({
         username: adminUsername,
+        isAdmin: true,
         password: adminPassword,
         lastPasswordSetDate: new Date(),
       })
