@@ -40,3 +40,6 @@ Thumbs.db
 
 # Next.js
 .next
+
+# Backend log
+http-log.log
