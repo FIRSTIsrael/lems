@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as WebSocket from 'ws';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api';
-import loginRouter from './routers/login';
+import authRouter from './routers/login';
 
 const app = express();
 const server = http.createServer(app);
@@ -14,7 +14,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 app.use('/', expressLogger);
 
-app.use('/login', loginRouter);
+app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
 app.use((req, res) => res.status(404).json({ error: 'ROUTE_NOT_DEFINED' }));
