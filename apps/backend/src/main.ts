@@ -2,6 +2,8 @@ import express from 'express';
 import * as http from 'http';
 import * as path from 'path';
 import * as WebSocket from 'ws';
+import { expressLogger } from './lib/logger';
+import apiRouter from './routers/api';
 
 const app = express();
 const server = http.createServer(app);
@@ -9,9 +11,9 @@ const wsServer = new WebSocket.Server({ server });
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to backend!' });
-});
+app.use('/', expressLogger);
+
+app.use('/api', apiRouter);
 
 wsServer.on('connection', (ws: WebSocket) => {
   //TODO: move boilerplate code into separate functions
@@ -32,9 +34,10 @@ wsServer.on('connection', (ws: WebSocket) => {
   ws.send('Hi there, I am a WebSocket server');
 });
 
-const port = process.env.PORT || 3333;
+console.log('💫 Starting server...');
+const port = process.env.BACKEND_PORT || 3333;
 server.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+  console.log(`✅ Server started on port ${port}.`);
 });
 
 server.on('error', console.error);

@@ -1,7 +1,8 @@
 {
   "name": "@lems/source",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
+  "author": "FIRST Israel",
   "scripts": {
     "dev": "npx nx run-many --target=serve --projects=backend,frontend"
   },
@@ -13,11 +14,13 @@
     "@nx/next": "16.7.2",
     "axios": "^1.0.0",
     "express": "^4.18.2",
+    "express-winston": "^4.2.0",
     "mongodb": "^6.0.0",
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tslib": "^2.3.0",
+    "winston": "^3.10.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
