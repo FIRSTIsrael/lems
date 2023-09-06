@@ -1,7 +1,7 @@
 import { RoleAssociationType } from '../constants';
 
 export interface LoginRequest {
-  event: string;
+  event?: string;
   username: string;
   isAdmin: boolean;
   role?: string;
