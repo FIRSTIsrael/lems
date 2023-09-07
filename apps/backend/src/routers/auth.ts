@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 import { LoginRequest } from '@lems/types';
 import { getUser } from '@lems/database';
 import { JwtTokenData } from '../types/auth';
@@ -11,6 +12,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   const loginDetails: LoginRequest = req.body;
+  loginDetails.event = new ObjectId(loginDetails.event);
 
   try {
     const user = await getUser({ ...loginDetails });

@@ -1,17 +1,37 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import './styles.css';
+import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import theme from '../lib/theme';
+import { RouteAuthorizer } from '../components/route-authorizer';
+import { createEmotionCache } from '../lib/emotion-cache';
+import { SnackbarProvider } from 'notistack';
 
-function CustomApp({ Component, pageProps }: AppProps) {
+const clientSideEmotionCache = createEmotionCache();
+
+function CustomApp({
+  Component,
+  pageProps,
+  emotionCache = clientSideEmotionCache
+}: AppProps & { emotionCache: EmotionCache }) {
   return (
-    <>
+    <CacheProvider value={emotionCache}>
       <Head>
-        <title>Welcome to frontend!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#fff" />
+        <title>מערכת אירועים - FIRST ישראל</title>
       </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
-    </>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SnackbarProvider maxSnack={3} TransitionComponent={Grow}>
+          <main className="app">
+            <RouteAuthorizer>
+              <Component {...pageProps} />
+            </RouteAuthorizer>
+          </main>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </CacheProvider>
   );
 }
 

@@ -1,15 +1,17 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { getAllEvents } from '@lems/database';
+import express, { Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
+import { getEvent } from '@lems/database';
+import eventValidator from '../../middlewares/event-validator';
 import usersRouter from './users';
 
 const router = express.Router({ mergeParams: true });
 
-// TODO: Validate id middleware
-router.get('/:id', (req: Request, res: Response) => {
-  return undefined;
-  //TODO: implement
+router.use('/:eventId', eventValidator);
+
+router.get('/:eventId', (req: Request, res: Response) => {
+  getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => res.json(event));
 });
 
-router.use('/:id/users', usersRouter);
+router.use('/:eventId/users', usersRouter);
 
 export default router;

@@ -9,4 +9,9 @@ router.get('/', (req, res) => {
   res.send({ message: 'Welcome to backend!' });
 });
 
+router.get('/me', (req, res) => {
+  const { password, lastPasswordSetDate, ...rest } = req.user;
+  return res.json(rest);
+});
+
 export default router;

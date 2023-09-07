@@ -1,11 +1,25 @@
 import express, { NextFunction, Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
+import { getUser, getEventUsers } from '@lems/database';
 
-const usersRouter = express.Router({ mergeParams: true });
+const router = express.Router({ mergeParams: true });
 
-usersRouter.get('/', (req: Request, res: Response) => {
-  return undefined;
-  //return all users for event
-  //make sure to not return passwords or password set dates
+router.get('/', (req: Request, res: Response) => {
+  getEventUsers(new ObjectId(req.params.eventId)).then(users => {
+    return Promise.all(
+      users.map(user => {
+        const { password, lastPasswordSetDate, ...rest } = user;
+        return res.json(rest);
+      })
+    );
+  });
 });
 
-export default usersRouter;
+router.get('/:userId', (req: Request, res: Response) => {
+  getUser({ _id: new ObjectId(req.params.userId) }).then(user => {
+    const { password, lastPasswordSetDate, ...rest } = user;
+    return res.json(rest);
+  });
+});
+
+export default router;

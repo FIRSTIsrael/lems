@@ -1,3 +1,5 @@
 export type DivisionColor = 'red' | 'blue';
 
-export type JudgingCategory = 'innovation-project' | 'robot-design' | 'core-values';
+export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
+
+export type JudgingCategory = (typeof JudgingCategoryTypes)[number];

@@ -1,18 +1,28 @@
 import express from 'express';
 import favicon from 'serve-favicon';
+import cookies from 'cookie-parser';
+import cors from 'cors';
 import * as http from 'http';
 import * as path from 'path';
 import * as WebSocket from 'ws';
+import { User } from '@lems/types';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api';
 import authRouter from './routers/auth';
 import { wsAuth } from './middlewares/auth';
-import { User } from '@lems/types';
-import publicRouter from './routers/public';
+import publicRouter from './routers/public/index';
 
 const app = express();
 const server = http.createServer(app);
 const wsServer = new WebSocket.Server({ noServer: true });
+
+app.use(cookies());
+
+const corsOptions = {
+  origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
+  credentials: true
+};
+app.use(cors(corsOptions));
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));

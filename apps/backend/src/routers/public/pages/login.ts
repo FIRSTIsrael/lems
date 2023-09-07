@@ -1,11 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { getAllEvents, getEventRooms, getEventTables } from '@lems/database';
-import { ObjectId } from 'mongodb';
-import { LoginPageEvent } from '@lems/types';
+import { LoginPageEvent, LoginPageResponse } from '@lems/types';
 
-const publicRouter = express.Router({ mergeParams: true });
-
-publicRouter.get('/pages/login', (req: Request, res: Response) => {
+const loginPageRoute = (req: Request, res: Response) => {
   getAllEvents()
     .then(events => {
       return Promise.all(
@@ -23,8 +20,8 @@ publicRouter.get('/pages/login', (req: Request, res: Response) => {
       );
     })
     .then(loginEvents => {
-      return res.json(loginEvents);
+      return res.json(<LoginPageResponse>loginEvents);
     });
-});
+};
 
-export default publicRouter;
+export default loginPageRoute;
