@@ -8,6 +8,7 @@ import apiRouter from './routers/api';
 import authRouter from './routers/auth';
 import { wsAuth } from './middlewares/auth';
 import { User } from '@lems/types';
+import publicRouter from './routers/public';
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +21,12 @@ app.use(express.json());
 app.use('/', expressLogger);
 
 app.use('/auth', authRouter);
+app.use('/public', publicRouter);
 app.use('/api', apiRouter);
+
+app.get('/status', (req, res) => {
+  return res.status(200).json({ ok: true });
+});
 
 app.use((req, res) => res.status(404).json({ error: 'ROUTE_NOT_DEFINED' }));
 

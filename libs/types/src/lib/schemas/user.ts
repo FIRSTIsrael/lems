@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb';
 
 export type Role =
   | 'judge-advisor'
@@ -15,7 +15,7 @@ export type Role =
 export type RoleAssociationType = 'room' | 'table' | 'category';
 
 export interface User {
-  username: string;
+  username?: string;
   isAdmin: boolean;
   event?: ObjectId;
   role?: Role;
