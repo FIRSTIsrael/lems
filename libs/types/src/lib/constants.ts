@@ -1,1 +1,3 @@
-export type RoleAssociationType = 'room' | 'table' | 'category';
+export type DivisionColor = 'red' | 'blue';
+
+export type JudgingCategory = 'innovation-project' | 'robot-design' | 'core-values';
