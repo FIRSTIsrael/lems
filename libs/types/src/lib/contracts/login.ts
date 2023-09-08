@@ -10,11 +10,11 @@ export interface LoginPageEvent extends WithId<Event> {
 }
 
 export interface LoginRequest {
-  event?: ObjectId;
-  username: string;
   isAdmin: boolean;
+  event?: ObjectId;
   role?: Role;
   association?: { type: RoleAssociationType; value: string | ObjectId };
+  username?: string;
   password: string;
 }
 

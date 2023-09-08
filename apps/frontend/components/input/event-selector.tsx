@@ -1,6 +1,13 @@
 import { Event } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
-import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
+import {
+  Avatar,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography
+} from '@mui/material';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
@@ -13,6 +20,9 @@ interface Props {
 const EventSelector: React.FC<Props> = ({ events, onChange }) => {
   return (
     <Stack direction="column" spacing={2}>
+      <Typography variant="h2" textAlign={'center'}>
+        בחירת אירוע
+      </Typography>
       {events.map(event => {
         return (
           <ListItemButton

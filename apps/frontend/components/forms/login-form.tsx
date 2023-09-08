@@ -61,6 +61,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        isAdmin: false,
         event: event?._id,
         role,
         ...(association
@@ -96,7 +97,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
         </Button>
       </Box>
       <Typography variant="h2" textAlign="center">
-        התחברות לאירוע: {event.name}
+        התחברות לאירוע:
+      </Typography>
+      <Typography variant="h2" textAlign="center">
+        {event.name}
       </Typography>
 
       <FormDropdown

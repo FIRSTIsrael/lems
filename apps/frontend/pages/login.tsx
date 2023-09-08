@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { ObjectId } from 'mongodb';
-import { Paper } from '@mui/material';
+import { Paper, Box, Link } from '@mui/material';
 import { LoginPageResponse, LoginPageEvent } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/input/event-selector';
 import LoginForm from '../components/forms/login-form';
 import { apiFetch } from '../lib/utils/fetch';
+import AdminLoginForm from '../components/forms/admin-login-form';
 
 interface PageProps {
   events: LoginPageResponse;
 }
 
 const Page: NextPage<PageProps> = ({ events }) => {
+  const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
   const [event, setEvent] = useState<LoginPageEvent | undefined>(undefined);
 
   const selectEvent = (eventId: string | ObjectId) => {
@@ -23,7 +25,9 @@ const Page: NextPage<PageProps> = ({ events }) => {
   return (
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
-        {event ? (
+        {isAdminLogin ? (
+          <AdminLoginForm />
+        ) : event ? (
           <LoginForm
             event={event}
             onCancel={() => {
@@ -34,6 +38,24 @@ const Page: NextPage<PageProps> = ({ events }) => {
           <EventSelector events={events} onChange={selectEvent} />
         )}
       </Paper>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          mt: 1.5
+        }}
+      >
+        <Link
+          underline="none"
+          component="button"
+          onClick={() => {
+            setIsAdminLogin(!isAdminLogin);
+            setEvent(undefined);
+          }}
+        >
+          {isAdminLogin ? 'כניסת מתנדבים' : 'התחברות כמנהל'}
+        </Link>
+      </Box>
     </Layout>
   );
 };
