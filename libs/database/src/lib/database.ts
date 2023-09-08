@@ -23,11 +23,8 @@ const client = await initDbClient();
 
 const db = client.db('lems');
 
-// TODO: do we want schema validation on our mongodb?
-// https://www.mongodb.com/docs/manual/core/schema-validation/
-
 const admins = db.collection<User>('users');
-admins.findOne({}).then((user) => {
+admins.findOne({}).then(user => {
   if (!user) {
     const adminUsername = 'admin';
     const adminPassword = randomString(8);
@@ -36,12 +33,10 @@ admins.findOne({}).then((user) => {
         username: adminUsername,
         isAdmin: true,
         password: adminPassword,
-        lastPasswordSetDate: new Date(),
+        lastPasswordSetDate: new Date()
       })
       .then(() => {
-        console.log(
-          `⚙️ Setup initial admin user with details - ${adminUsername}:${adminPassword}`
-        );
+        console.log(`⚙️ Setup initial admin user with details - ${adminUsername}:${adminPassword}`);
       });
   }
 });

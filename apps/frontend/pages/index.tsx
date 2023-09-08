@@ -1,11 +1,11 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 
-export function Index() {
+const Page: NextPage = () => {
   return <></>;
-}
+};
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { redirect: { destination: '/login', permanent: false } };
 };
 
-export default Index;
+export default Page;

@@ -10,6 +10,7 @@ import {
   JudgingCategoryTypes,
   RoleTypes,
   Role,
+  SafeUser,
   RoleAssociationType,
   getAssociationType
 } from '@lems/types';
@@ -20,6 +21,7 @@ import {
   localizeAssociationType,
   localizeJudgingCategory
 } from '../../lib/utils/localization';
+import useLocalStorage from '../../hooks/use-local-storage';
 
 interface LoginFormProps {
   event: LoginPageEvent;
@@ -27,6 +29,8 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
+  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
+
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -81,7 +85,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
     })
       .then(async res => {
         const data = await res.json();
-        if (data.token) {
+        if (data) {
+          setUser(data);
           const returnUrl = router.query.returnUrl || `/event/${event._id}`;
           router.push(returnUrl as string);
         } else if (data.error === 'INVALID_CREDENTIALS') {
