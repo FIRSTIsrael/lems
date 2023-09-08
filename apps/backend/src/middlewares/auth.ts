@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
-import { getUser } from '@lems/database';
+import * as db from '@lems/database';
 import { JwtTokenData } from '../types/auth';
-import { parseCookie } from '../lib/parser';
+import { parseCookie } from '../lib/cookie-parser';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -21,7 +21,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   try {
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
     if (tokenData?.userId) {
-      const user = await getUser({ _id: new ObjectId(tokenData.userId) });
+      const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
 
       if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
         req.user = user;
@@ -49,7 +49,7 @@ export const wsAuth = async (req, next) => {
   try {
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
     if (tokenData?.userId) {
-      const user = await getUser({ _id: new ObjectId(tokenData.userId) });
+      const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
 
       if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
         return next(null, user);

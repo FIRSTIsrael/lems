@@ -2,8 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import * as db from '@lems/database';
 import { LoginRequest } from '@lems/types';
-import { getUser } from '@lems/database';
 import { JwtTokenData } from '../types/auth';
 
 const router = express.Router({ mergeParams: true });
@@ -15,7 +15,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   if (loginDetails.event) loginDetails.event = new ObjectId(loginDetails.event);
 
   try {
-    const user = await getUser({ ...loginDetails });
+    const user = await db.getUser({ ...loginDetails });
 
     if (!user) {
       console.log(
