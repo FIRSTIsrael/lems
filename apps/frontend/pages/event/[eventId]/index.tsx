@@ -1,16 +1,24 @@
 import { GetServerSideProps } from 'next';
-import { Container, Paper, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { SafeUser } from '@lems/types';
+import useLocalStorage from '../../../hooks/use-local-storage';
 
 export function Index() {
-  return (
-    <Container>
-      <Paper sx={{ height: 200, mt: 10 }}>
-        <Typography variant="h2" textAlign={'center'}>
-          Hello event
-        </Typography>
-      </Paper>
-    </Container>
-  );
+  const router = useRouter();
+  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
+
+  if (user) {
+    router.push({
+      pathname: `/event/${user.event}/${user.role}`
+    });
+  } else {
+    router.push({
+      pathname: '/login',
+      query: { returnUrl: router.asPath }
+    });
+  }
+
+  return <></>;
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {

@@ -9,7 +9,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export const RouteAuthorizer: React.FC<Props> = ({ roles, children }) => {
+export const RoleAuthorizer: React.FC<Props> = ({ roles, children }) => {
   const roleArray: Array<Role> = ensureArray(roles);
 
   const router = useRouter();
@@ -32,11 +32,11 @@ export const RouteAuthorizer: React.FC<Props> = ({ roles, children }) => {
   }, []);
 
   const roleCheck = () => {
-    if (user.role && user.role in roleArray) {
+    if (user && user.role && user.role in roleArray) {
+      setAuthorized(true);
+    } else {
       setAuthorized(false);
       router.back();
-    } else {
-      setAuthorized(true);
     }
   };
 
