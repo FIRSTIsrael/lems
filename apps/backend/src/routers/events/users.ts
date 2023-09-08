@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { getUser, getEventUsers } from '@lems/database';
+import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  getEventUsers(new ObjectId(req.params.eventId)).then(users => {
+  db.getEventUsers(new ObjectId(req.params.eventId)).then(users => {
     return Promise.all(
       users.map(user => {
         const { password, lastPasswordSetDate, ...rest } = user;
@@ -16,7 +16,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/:userId', (req: Request, res: Response) => {
-  getUser({ _id: new ObjectId(req.params.userId) }).then(user => {
+  db.getUser({ _id: new ObjectId(req.params.userId) }).then(user => {
     const { password, lastPasswordSetDate, ...rest } = user;
     return res.json(rest);
   });

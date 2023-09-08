@@ -1,14 +1,7 @@
 import winston from 'winston';
 import expressWinston from 'express-winston';
 
-expressWinston.requestWhitelist = [
-  'url',
-  'method',
-  'httpVersion',
-  'originalUrl',
-  'query',
-  'body',
-];
+expressWinston.requestWhitelist = ['url', 'method', 'httpVersion', 'originalUrl', 'query', 'body'];
 
 const MEGABYTES = 1048576;
 
@@ -19,23 +12,18 @@ export const expressLogger = expressWinston.logger({
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
-        winston.format.printf((info) => {
+        winston.format.printf(info => {
           const { req, res } = info.meta;
-          const error = `${
-            info.error ? ` / ${JSON.stringify(info.error)}` : ''
-          }`;
+          const error = `${info.error ? ` / ${JSON.stringify(info.error)}` : ''}`;
           return `[${info.timestamp}] ${req.method} ${req.url} ${res.statusCode}${error}`;
         })
-      ),
+      )
     }),
     new winston.transports.File({
       filename: `./http-log.log`,
       maxsize: MEGABYTES * 10,
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
-    }),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+    })
   ],
   msg: 'HTTP {{req.method}} {{req.url}}',
   expressFormat: true,
@@ -44,12 +32,11 @@ export const expressLogger = expressWinston.logger({
   dynamicMeta: (req, res) => {
     const body = (res as any)?.body || {};
     return {
-      //TODO: add user support in req?
-      //   user: req.user?.id,
+      user: req.user?._id,
       userAgent: req.get('user-agent'),
       ip: req.ip,
       error: body.error && body.code ? body : null,
-      res: { statusCode: res.statusCode },
+      res: { statusCode: res.statusCode }
     };
-  },
+  }
 });
