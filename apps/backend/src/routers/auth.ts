@@ -31,7 +31,8 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       }`
     );
 
-    const expiresInSeconds = dayjs().endOf('day').diff(dayjs(), 'second');
+    const expires = dayjs().endOf('day');
+    const expiresInSeconds = expires.diff(dayjs(), 'second');
 
     const token = jwt.sign(
       {
@@ -44,7 +45,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       }
     );
 
-    res.cookie('auth-token', token, { maxAge: expiresInSeconds, httpOnly: true, secure: true });
+    res.cookie('auth-token', token, { expires: expires.toDate(), httpOnly: true, secure: true });
     return res.json({ token });
   } catch (err) {
     next(err);

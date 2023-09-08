@@ -32,7 +32,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
 
   const [association, setAssociation] = useState<string>('');
   const associationType = useMemo<RoleAssociationType>(() => {
-    return role ? getAssociationType(role) : ('' as RoleAssociationType);
+    let aType;
+    if (role) {
+      aType = getAssociationType(role);
+    }
+    return aType ? aType : ('' as RoleAssociationType);
   }, [role]);
 
   const router = useRouter();

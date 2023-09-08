@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { ObjectId } from 'mongodb';
 import { Paper, Box, Link } from '@mui/material';
-import { LoginPageResponse, LoginPageEvent, User } from '@lems/types';
+import { LoginPageResponse, LoginPageEvent, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/input/event-selector';
 import LoginForm from '../components/forms/login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import AdminLoginForm from '../components/forms/admin-login-form';
-import { response } from 'express';
 
 interface PageProps {
   events: LoginPageResponse;
@@ -61,17 +60,18 @@ const Page: NextPage<PageProps> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const user: any = await apiFetch('/api/me').then(response => {
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const user: SafeUser = await apiFetch('/api/me', undefined, ctx).then(response => {
     return response.ok ? response.json() : undefined;
   });
+  console.log(user);
 
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
       : { redirect: { destination: `/event/${user.event}`, permanent: false } };
   } else {
-    return apiFetch('/public/pages/login')
+    return apiFetch('/public/pages/login', undefined, ctx)
       .then(response => response.json())
       .then((events: LoginPageResponse) => {
         return { props: { events } };

@@ -17,7 +17,7 @@ export const RoleAssociationTypes = ['room', 'table', 'category'] as const;
 
 export type RoleAssociationType = (typeof RoleAssociationTypes)[number];
 
-export const getAssociationType = (role: Role): RoleAssociationType => {
+export const getAssociationType = (role: Role): RoleAssociationType | undefined => {
   switch (role) {
     case 'lead-judge':
       return 'category';
@@ -26,4 +26,5 @@ export const getAssociationType = (role: Role): RoleAssociationType => {
     case 'referee':
       return 'table';
   }
+  return undefined;
 };

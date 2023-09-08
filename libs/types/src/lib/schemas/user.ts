@@ -10,3 +10,5 @@ export interface User {
   password: string;
   lastPasswordSetDate: Date;
 }
+
+export type SafeUser = Omit<User, 'password' | 'lastPasswordSetDate'>;
