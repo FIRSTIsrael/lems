@@ -7,6 +7,5 @@ export const getEventUsers = (eventId: ObjectId) => {
 };
 
 export const getUser = (filter: Filter<User>) => {
-  console.log(filter);
   return db.collection<User>('users').findOne(filter);
 };

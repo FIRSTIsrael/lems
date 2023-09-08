@@ -12,16 +12,24 @@ const jwtSecret = process.env.JWT_SECRET;
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   const loginDetails: LoginRequest = req.body;
-  loginDetails.event = new ObjectId(loginDetails.event);
+  if (loginDetails.event) loginDetails.event = new ObjectId(loginDetails.event);
 
   try {
     const user = await getUser({ ...loginDetails });
 
     if (!user) {
-      console.log(`🔑 Login to event ${loginDetails.event} failed: ${loginDetails.role}`);
+      console.log(
+        `🔑 Login failed ${loginDetails.event ? `to event ${loginDetails.event}` : ''}: ${
+          loginDetails.role || 'admin'
+        }`
+      );
       return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
     }
-    console.log(`🔑 Login to event ${user.event} successful: ${user.role}`);
+    console.log(
+      `🔑 Login successful ${loginDetails.event ? `to event ${loginDetails.event}` : ''}: ${
+        loginDetails.role || 'admin'
+      }`
+    );
 
     const expiresInSeconds = dayjs().endOf('day').diff(dayjs(), 'second');
 
