@@ -64,7 +64,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const user: SafeUser = await apiFetch('/api/me', undefined, ctx).then(response => {
     return response.ok ? response.json() : undefined;
   });
-  console.log(user);
 
   if (user) {
     return user.isAdmin

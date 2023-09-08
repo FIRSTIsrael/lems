@@ -40,7 +40,7 @@ const AdminLoginForm: React.FC = () => {
   return (
     <Stack direction="column" spacing={2} component="form" onSubmit={handleSubmit}>
       <Typography variant="h2" textAlign="center">
-        התחברות כמנהל:
+        התחברות כמנהל
       </Typography>
 
       <TextField
