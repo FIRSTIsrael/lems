@@ -1,3 +1,9 @@
 # Add files here to ignore them from prettier formatting
-/dist
-/coverage
+dist/
+build/
+node_modules/
+.cache/
+.next
+.vercel
+package*.json
+yarn-lock.json
