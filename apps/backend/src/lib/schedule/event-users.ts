@@ -17,14 +17,6 @@ export const getEventUsers = (
 ): User[] => {
   const users = [];
   RoleTypes.forEach(role => {
-    const user: User = {
-      event: event._id,
-      isAdmin: false,
-      role: role,
-      password: randomString(4),
-      lastPasswordSetDate: new Date()
-    };
-
     if (getAssociationType(role)) {
       const aType = getAssociationType(role);
       let iterable;
@@ -41,14 +33,29 @@ export const getEventUsers = (
       }
 
       iterable.forEach(value => {
-        user.roleAssociation = {
-          type: aType,
-          value: value._id ? value._id : value
+        const user: User = {
+          event: event._id,
+          isAdmin: false,
+          role: role,
+          roleAssociation: {
+            type: aType,
+            value: value._id ? value._id : value
+          },
+          password: randomString(4),
+          lastPasswordSetDate: new Date()
         };
-        users.push(structuredClone(user));
+
+        users.push(user);
       });
     } else {
-      users.push(structuredClone(user));
+      const user: User = {
+        event: event._id,
+        isAdmin: false,
+        role: role,
+        password: randomString(4),
+        lastPasswordSetDate: new Date()
+      };
+      users.push(user);
     }
   });
 

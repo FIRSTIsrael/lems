@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { SafeUser } from '@lems/types';
 import { apiFetch } from '../lib/utils/fetch';
+import useLocalStorage from '../hooks/use-local-storage';
 
 const isLoggedIn = () => {
   return apiFetch('/api/me').then(response => response.ok);
@@ -13,6 +15,7 @@ interface Props {
 export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
+  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
 
   useEffect(() => {
     authCheck(router.asPath);
@@ -35,10 +38,13 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
 
     isLoggedIn().then(loggedIn => {
       if (!loggedIn && !publicPaths.includes(path)) {
-        setAuthorized(false);
-        router.push({
-          pathname: '/login',
-          query: { returnUrl: router.asPath }
+        apiFetch('/auth/logout').then(response => {
+          setUser(undefined);
+          setAuthorized(false);
+          router.push({
+            pathname: '/login',
+            query: { returnUrl: router.asPath }
+          });
         });
       } else {
         setAuthorized(true);
