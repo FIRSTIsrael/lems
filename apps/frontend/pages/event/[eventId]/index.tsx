@@ -11,11 +11,6 @@ export function Index() {
     router.push({
       pathname: `/event/${user.event}/${user.role}`
     });
-  } else {
-    router.push({
-      pathname: '/login',
-      query: { returnUrl: router.asPath }
-    });
   }
 
   return <></>;
