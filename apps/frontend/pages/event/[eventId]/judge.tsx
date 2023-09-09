@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -7,12 +7,14 @@ import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
 import { ensureArray } from '@lems/utils';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import { apiFetch } from '../../../lib/utils/fetch';
-import Layout from '../../../components/layout';
-import WelcomeHeader from '../../../components/display/welcome-header';
-import { localizeRole } from '../../../lib/utils/localization';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
+import ConnectionIndicator from '../../../components/connection-indicator';
+import Layout from '../../../components/layout';
+import WelcomeHeader from '../../../components/display/welcome-header';
+import { apiFetch } from '../../../lib/utils/fetch';
+import { localizeRole } from '../../../lib/utils/localization';
+import { judgingSocket } from '../../../lib/utils/websocket';
 
 interface Props {
   user: SafeUser;
@@ -24,16 +26,54 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, teams, room, sessions }) => {
   const router = useRouter();
-  const [isJudging, setIsJudging] = useState<boolean>(false);
+  const [isJudging, setIsJudging] = useState<boolean>(false); //TODO: Get judging initial state from db (does room have session in progress)
+  const [isConnected, setIsConnected] = useState<boolean>(judgingSocket.connected);
+
+  useEffect(() => {
+    judgingSocket.connect();
+
+    const onConnect = () => {
+      setIsConnected(true);
+    };
+
+    const onDisconnect = () => {
+      setIsConnected(false);
+    };
+
+    const onSessionStarted = (sessionId: string, time: Date) => {
+      //TODO implement
+      setIsJudging(true);
+    };
+
+    const onSessionAborted = (sessionId: string) => {
+      //TODO implement
+      setIsJudging(false);
+    };
+
+    judgingSocket.on('connect', onConnect);
+    judgingSocket.on('disconnect', onDisconnect);
+    judgingSocket.on('sessionStarted', onSessionStarted);
+    judgingSocket.on('sessionAborted', onSessionAborted);
+
+    return () => {
+      judgingSocket.off('connect', onConnect);
+      judgingSocket.off('disconnect', onDisconnect);
+      judgingSocket.off('sessionStarted', onSessionStarted);
+      judgingSocket.off('sessionAborted', onSessionAborted);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
       <Layout
         maxWidth={700}
         title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        error={!isConnected}
+        action={<ConnectionIndicator status={isConnected} />}
       >
         {isJudging ? (
-          <Typography>Hello im timer</Typography>
+          <Typography>Hello im timer</Typography> //TODO: make timer page, have time page set the state back to false when timer is done
         ) : (
           <>
             <WelcomeHeader event={event} user={user} />
@@ -67,9 +107,11 @@ const Page: NextPage<Props> = ({ user, event, teams, room, sessions }) => {
               </Box>
               <JudgingRoomSchedule
                 sessions={sessions}
+                event={event}
                 rooms={ensureArray(room)}
                 teams={teams}
                 user={user}
+                socket={judgingSocket}
               />
             </Paper>
           </>

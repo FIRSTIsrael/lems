@@ -15,7 +15,12 @@ import { wsAuth } from './middlewares/auth';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
+    credentials: true
+  }
+});
 
 app.use(cookies());
 

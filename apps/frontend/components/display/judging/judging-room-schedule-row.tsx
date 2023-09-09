@@ -2,20 +2,32 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import PageIcon from '@mui/icons-material/DescriptionOutlined';
-import { JudgingSession, JudgingRoom, Team, SafeUser, JudgingCategoryTypes } from '@lems/types';
+import { Socket } from 'socket.io-client';
+import {
+  Event,
+  JudgingSession,
+  JudgingRoom,
+  Team,
+  SafeUser,
+  JudgingCategoryTypes,
+  JudgingClientEmittedEvents,
+  JudgingServerEmittedEvents
+} from '@lems/types';
 import EditRubricButton from '../../input/edit-rubric-button';
 import StartJudgingSessionButton from '../../input/start-judging-session-button';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeJudgingCategory } from '../../../lib/utils/localization';
 
 interface Props {
-  room: JudgingRoom;
+  event: WithId<Event>;
+  room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: Team;
   user: SafeUser;
+  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
-const JudgingRoomScheduleRow = ({ room, session, team, user }: Props) => {
+const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Props) => {
   return (
     <TableRow
       key={room.name + session.time}
@@ -31,7 +43,7 @@ const JudgingRoomScheduleRow = ({ room, session, team, user }: Props) => {
       </TableCell>
       <RoleAuthorizer user={user} allowedRoles="judge">
         <TableCell align="center">
-          <StartJudgingSessionButton session={session} />
+          <StartJudgingSessionButton event={event} room={room} session={session} socket={socket} />
         </TableCell>
       </RoleAuthorizer>
       <TableCell align="center">

@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as db from '@lems/database';
 import { JwtTokenData } from '../types/auth';
+import { parseCookie } from '../lib/cookie-parser';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -37,6 +38,11 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 export const wsAuth = async (socket: Socket, next) => {
   let token = socket.handshake.auth.token;
+
+  // Fallback to cookie if auth has nothing
+  if (!token) {
+    token = parseCookie(socket.request.headers.cookie)['auth-token'];
+  }
 
   // Fallback to header if cookie has nothing
   if (!token) {

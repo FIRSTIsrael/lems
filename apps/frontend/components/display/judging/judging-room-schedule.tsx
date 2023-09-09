@@ -1,16 +1,27 @@
 import { WithId } from 'mongodb';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { JudgingSession, JudgingRoom, Team, SafeUser } from '@lems/types';
+import { Socket } from 'socket.io-client';
+import {
+  Event,
+  JudgingSession,
+  JudgingRoom,
+  Team,
+  SafeUser,
+  JudgingClientEmittedEvents,
+  JudgingServerEmittedEvents
+} from '@lems/types';
 import RoomScheduleRow from './judging-room-schedule-row';
 
 interface Props {
+  event: WithId<Event>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   user: SafeUser;
+  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
-const JudgingRoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
+const JudgingRoomSchedule = ({ event, sessions, rooms, teams, user, socket }: Props) => {
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -30,10 +41,12 @@ const JudgingRoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
             return (
               <RoomScheduleRow
                 key={String(session.team) + session.time}
+                event={event}
                 team={team ? team : ({} as Team)}
-                room={room ? room : ({} as JudgingRoom)}
+                room={room ? room : ({} as WithId<JudgingRoom>)}
                 session={session}
                 user={user}
+                socket={socket}
               />
             );
           })}
