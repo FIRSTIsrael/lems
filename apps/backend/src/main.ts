@@ -4,17 +4,18 @@ import cookies from 'cookie-parser';
 import cors from 'cors';
 import * as http from 'http';
 import * as path from 'path';
-import * as WebSocket from 'ws';
-import { User } from '@lems/types';
+import { Server } from 'socket.io';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
-import { wsAuth } from './middlewares/auth';
 import publicRouter from './routers/public/index';
+import judgingSocket from './websocket/judging';
+import fieldSocket from './websocket/field';
+import { wsAuth } from './middlewares/auth';
 
 const app = express();
 const server = http.createServer(app);
-const wsServer = new WebSocket.Server({ noServer: true });
+const io = new Server(server);
 
 app.use(cookies());
 
@@ -45,43 +46,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
-server.on('upgrade', async (req, socket, head) => {
-  socket.on('error', err => console.error(err));
+const judgingNamespace = io.of('/judging');
+judgingNamespace.use(wsAuth);
+judgingNamespace.on('connection', judgingSocket);
 
-  wsAuth(req, (err: string, user: User) => {
-    if (err || !user) {
-      socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
-      socket.destroy();
-      return;
-    }
-
-    socket.removeListener('error', err => console.error(err));
-
-    wsServer.handleUpgrade(req, socket, head, ws => {
-      wsServer.emit('connection', ws, req, user);
-    });
-  });
-});
-
-wsServer.on('connection', (ws: WebSocket) => {
-  ws.on('message', (message: string) => {
-    //TODO: delete this boilerplate, replace with routes later based on message contents
-    console.log('received: %s', message);
-
-    if (message.toString().startsWith('broadcast: ')) {
-      wsServer.clients.forEach(client => {
-        client.send(`Hello, broadcast message -> ${message}`);
-      });
-    } else {
-      ws.send(`Hello, you sent -> ${message}`);
-    }
-  });
-
-  //TODO: we can handle broken WS connections if needed
-
-  // Immediately sends upon connection
-  ws.send('Connected to WebSocket server');
-});
+io.of('/field').on('connection', fieldSocket);
 
 console.log('💫 Starting server...');
 const port = process.env.BACKEND_PORT || 3333;

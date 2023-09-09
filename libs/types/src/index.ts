@@ -7,3 +7,4 @@ export * from './lib/schemas/robot-game-table';
 export * from './lib/schemas/team';
 export * from './lib/roles';
 export * from './lib/constants';
+export * from './lib/websockets/judging';

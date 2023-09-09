@@ -1,4 +1,4 @@
-import { DivisionColor } from '@lems/types/constants';
+import { DivisionColor } from '@lems/types';
 
 export const getDivisionColor = (color: DivisionColor) => {
   return color == 'red' ? '#dc2626' : '#1d4ed8';

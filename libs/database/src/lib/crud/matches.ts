@@ -25,10 +25,10 @@ export const addMatches = (matches: RobotGameMatch[]) => {
     .then(response => response);
 };
 
-export const updateMatch = (filter: Filter<RobotGameMatch>, newTable: RobotGameMatch) => {
+export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: RobotGameMatch) => {
   return db
     .collection<RobotGameMatch>('matches')
-    .updateOne({ filter }, { $set: newTable }, { upsert: true });
+    .updateOne(filter, { $set: newMatch }, { upsert: true });
 };
 
 export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
@@ -38,14 +38,14 @@ export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
     .then(response => response);
 };
 
-export const deleteEventMatches = (eventId: ObjectId) => {
+export const deleteTableMatches = (tableId: ObjectId) => {
   return db
     .collection<RobotGameMatch>('matches')
-    .deleteMany({ event: eventId })
+    .deleteMany({ table: tableId })
     .then(response => response);
 };
 
-export const replaceEventMatches = async (eventId: ObjectId, newMatches: RobotGameMatch[]) => {
+export const replaceTableMatches = async (tableId: ObjectId, newMatches: RobotGameMatch[]) => {
   const response = {
     acknowledged: false,
     deletedCount: 0,
@@ -53,7 +53,7 @@ export const replaceEventMatches = async (eventId: ObjectId, newMatches: RobotGa
     insertedIds: []
   } as ReplaceResult;
 
-  const deleteResponse = await deleteEventMatches(eventId);
+  const deleteResponse = await deleteTableMatches(tableId);
   if (deleteResponse.acknowledged) {
     response.deletedCount = deleteResponse.deletedCount;
 

@@ -1,16 +1,16 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { WithId } from 'mongodb';
-import { JudgingSession, JudgingRoom, Team, User } from '@lems/types';
-import RoomScheduleRow from './judging-room-shcedule-row';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { JudgingSession, JudgingRoom, Team, SafeUser } from '@lems/types';
+import RoomScheduleRow from './judging-room-schedule-row';
 
 interface Props {
-  sessions: JudgingSession[];
-  rooms: WithId<JudgingRoom>[];
-  teams: WithId<Team>[];
-  user: User;
+  sessions: Array<WithId<JudgingSession>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  teams: Array<WithId<Team>>;
+  user: SafeUser;
 }
 
-const RoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
+const JudgingRoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -18,6 +18,7 @@ const RoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
           <TableRow>
             <TableCell align="center">שעת התחלה</TableCell>
             <TableCell align="right">קבוצה</TableCell>
+            <TableCell />
             <TableCell />
             <TableCell />
           </TableRow>
@@ -42,4 +43,4 @@ const RoomSchedule = ({ sessions, rooms, teams, user }: Props) => {
   );
 };
 
-export default RoomSchedule;
+export default JudgingRoomSchedule;

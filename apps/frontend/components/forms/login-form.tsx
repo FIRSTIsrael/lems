@@ -80,7 +80,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
                 value: association
               }
             }
-          : {}),
+          : undefined),
         password
       } as User)
     })

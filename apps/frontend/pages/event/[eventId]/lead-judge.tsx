@@ -4,15 +4,15 @@ import { RoleAuthorizer } from '../../../components/role-authorizer';
 
 const Page: NextPage = () => {
   return (
-    <RoleAuthorizer roles="lead-judge">
-      <Container>
-        <Paper sx={{ height: 200, mt: 10 }}>
-          <Typography variant="h2" textAlign={'center'}>
-            Hello Lead Judge
-          </Typography>
-        </Paper>
-      </Container>
-    </RoleAuthorizer>
+    // <RoleAuthorizer allowedRoles="lead-judge">
+    <Container>
+      <Paper sx={{ height: 200, mt: 10 }}>
+        <Typography variant="h2" textAlign={'center'}>
+          Hello Lead Judge
+        </Typography>
+      </Paper>
+    </Container>
+    // </RoleAuthorizer>
   );
 };
 

@@ -25,10 +25,13 @@ export const addSessions = (sessions: JudgingSession[]) => {
     .then(response => response);
 };
 
-export const updateSession = (filter: Filter<JudgingSession>, newTable: JudgingSession) => {
+export const updateSession = (
+  filter: Filter<JudgingSession>,
+  newSession: Partial<JudgingSession>
+) => {
   return db
     .collection<JudgingSession>('sessions')
-    .updateOne({ filter }, { $set: newTable }, { upsert: true });
+    .updateOne(filter, { $set: newSession }, { upsert: true });
 };
 
 export const deleteSession = (filter: Filter<JudgingSession>) => {
@@ -38,14 +41,14 @@ export const deleteSession = (filter: Filter<JudgingSession>) => {
     .then(response => response);
 };
 
-export const deleteEventSessions = (eventId: ObjectId) => {
+export const deleteRoomSessions = (roomId: ObjectId) => {
   return db
     .collection<JudgingSession>('sessions')
-    .deleteMany({ event: eventId })
+    .deleteMany({ room: roomId })
     .then(response => response);
 };
 
-export const replaceEventSessions = async (eventId: ObjectId, newTables: JudgingSession[]) => {
+export const replaceRoomSessions = async (roomId: ObjectId, newTables: JudgingSession[]) => {
   const response = {
     acknowledged: false,
     deletedCount: 0,
@@ -53,7 +56,7 @@ export const replaceEventSessions = async (eventId: ObjectId, newTables: Judging
     insertedIds: []
   } as ReplaceResult;
 
-  const deleteResponse = await deleteEventSessions(eventId);
+  const deleteResponse = await deleteRoomSessions(roomId);
   if (deleteResponse.acknowledged) {
     response.deletedCount = deleteResponse.deletedCount;
 

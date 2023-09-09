@@ -16,3 +16,6 @@ export const RubricStatusTypes = [
   'ready'
 ] as const;
 export type RubricStatus = (typeof RubricStatusTypes)[number];
+
+export const JUDGING_SESSION_LENGTH = 27 * 60;
+export const MATCH_LENGTH = 2.5 * 60;

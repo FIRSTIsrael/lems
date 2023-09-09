@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
+import { Socket } from 'socket.io';
 import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as db from '@lems/database';
 import { JwtTokenData } from '../types/auth';
-import { parseCookie } from '../lib/cookie-parser';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -35,12 +35,12 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   return res.status(401).json({ error: 'UNAUTHORIZED' });
 };
 
-export const wsAuth = async (req, next) => {
-  let token = req.headers.cookie ? parseCookie(req.headers.cookie)['auth-token'] : null;
+export const wsAuth = async (socket: Socket, next) => {
+  let token = socket.handshake.auth.token;
 
   // Fallback to header if cookie has nothing
   if (!token) {
-    const authHeader = req.headers.authorization as string;
+    const authHeader = socket.handshake.headers.authorization as string;
     if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
       token = authHeader.split('Bearer ')[1];
     }
@@ -52,11 +52,14 @@ export const wsAuth = async (req, next) => {
       const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
 
       if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
-        return next(null, user);
+        socket.join(user.event.toString());
+        next();
+        return;
       }
     }
   } catch (err) {
     //Invalid token
-    return next(err, null);
   }
+
+  next(new Error('UNAUTHORIZED'));
 };

@@ -25,10 +25,10 @@ export const addTables = (tables: RobotGameTable[]) => {
     .then(response => response);
 };
 
-export const updateTable = (filter: Filter<RobotGameTable>, newTable: RobotGameTable) => {
+export const updateTable = (filter: Filter<RobotGameTable>, newTable: Partial<RobotGameTable>) => {
   return db
     .collection<RobotGameTable>('tables')
-    .updateOne({ filter }, { $set: newTable }, { upsert: true });
+    .updateOne(filter, { $set: newTable }, { upsert: true });
 };
 
 export const deleteTable = (filter: Filter<RobotGameTable>) => {

@@ -1,14 +1,16 @@
+import dayjs from 'dayjs';
+import { WithId } from 'mongodb';
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import PageIcon from '@mui/icons-material/DescriptionOutlined';
-import dayjs from 'dayjs';
 import { JudgingSession, JudgingRoom, Team, SafeUser, JudgingCategoryTypes } from '@lems/types';
-import EditRubricButton from './edit-rubric-button';
+import EditRubricButton from '../../input/edit-rubric-button';
+import StartJudgingSessionButton from '../../input/start-judging-session-button';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeJudgingCategory } from '../../../lib/utils/localization';
 
 interface Props {
   room: JudgingRoom;
-  session: JudgingSession;
+  session: WithId<JudgingSession>;
   team: Team;
   user: SafeUser;
 }
@@ -27,6 +29,11 @@ const JudgingRoomScheduleRow = ({ room, session, team, user }: Props) => {
           <span>#{team.number}</span>
         </Tooltip>
       </TableCell>
+      <RoleAuthorizer user={user} allowedRoles="judge">
+        <TableCell align="center">
+          <StartJudgingSessionButton session={session} />
+        </TableCell>
+      </RoleAuthorizer>
       <TableCell align="center">
         <Tooltip
           title={team.profileDocument ? 'צפייה בדף המידע הקבוצתי' : 'לא הועלה דף מידע קבוצתי'}
@@ -56,7 +63,7 @@ const JudgingRoomScheduleRow = ({ room, session, team, user }: Props) => {
             >
               <EditRubricButton
                 href={`/event/${user.event}/team/${team.number}/rubrics/${judgingCategory}`}
-                status={'not-started'} //TODO: Crud from rubrics for status
+                status={'empty'} //TODO: Crud from rubrics for status
               >
                 {localizeJudgingCategory(judgingCategory).name}
               </EditRubricButton>

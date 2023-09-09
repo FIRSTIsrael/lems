@@ -27,6 +27,7 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
 
   const authCheck = (url: string) => {
     const publicPaths = ['/login'];
+    const adminPaths = ['/admin'];
     const path = url.split('?')[0];
 
     apiFetch('/api/me').then(response => {
@@ -39,7 +40,23 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
           });
         });
       } else {
-        setAuthorized(true);
+        if (adminPaths.includes(path)) {
+          response
+            .json()
+            .then(user => user.isAdmin)
+            .then(admin => {
+              if (!admin) {
+                setAuthorized(false);
+                router.push({
+                  pathname: '/login'
+                });
+              } else {
+                setAuthorized(true);
+              }
+            });
+        } else {
+          setAuthorized(true);
+        }
       }
     });
   };
