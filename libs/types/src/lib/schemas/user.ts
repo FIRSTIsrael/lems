@@ -1,12 +1,12 @@
 import { ObjectId } from 'mongodb';
-import { Role, RoleAssociationType } from '../roles';
+import { Role, RoleAssociation } from '../roles';
 
 export interface User {
   username?: string;
   isAdmin: boolean;
   event?: ObjectId;
   role?: Role;
-  roleAssociation?: { type: RoleAssociationType; value: string | ObjectId };
+  roleAssociation?: RoleAssociation;
   password: string;
   lastPasswordSetDate: Date;
 }

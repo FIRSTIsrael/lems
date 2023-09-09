@@ -5,6 +5,5 @@ export * from './lib/schemas/judging-session';
 export * from './lib/schemas/robot-game-match';
 export * from './lib/schemas/robot-game-table';
 export * from './lib/schemas/team';
-export * from './lib/contracts/login';
 export * from './lib/roles';
 export * from './lib/constants';

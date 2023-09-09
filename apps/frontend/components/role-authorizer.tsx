@@ -1,50 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Role, SafeUser } from '@lems/types';
-import { ensureArray } from '@lems/utils';
-import { apiFetch } from '../lib/utils/fetch';
-import useLocalStorage from '../hooks/use-local-storage';
+import { ensureArray, partialMatch } from '@lems/utils';
 
 interface Props {
-  roles: Role | Array<Role>;
+  user: SafeUser;
+  allowedRoles?: Role | Array<Role>;
+  conditionalRoles?: Role | Array<Role>;
+  conditions?: Partial<SafeUser>;
+  onFail?: () => void;
   children?: React.ReactNode;
 }
 
-export const RoleAuthorizer: React.FC<Props> = ({ roles, children }) => {
-  const roleArray: Array<Role> = ensureArray(roles);
+export const RoleAuthorizer: React.FC<Props> = ({
+  user,
+  allowedRoles,
+  conditionalRoles,
+  conditions,
+  onFail,
+  children
+}) => {
+  if (!allowedRoles && !conditionalRoles) {
+    throw new Error('You must specify either allowed or conditional rows');
+  }
+  if (conditionalRoles && !conditions) {
+    throw new Error("You speficied conditional roles, but you didn't specify conditions");
+  }
 
-  const router = useRouter();
+  const allowedRoleArray: Array<Role> = ensureArray(allowedRoles);
+  const conditionalRoleArray: Array<Role> = ensureArray(allowedRoles);
   const [roleMatch, setRoleMatch] = useState(false);
-  // TODO: user is undefined always (on refresh), but works on rebuild (ctrl+s)
-  // Local storage can get rid of a nasty extra api call, so lets fix this
-  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
 
   useEffect(() => {
-    roleCheck();
-
-    const hideContent = () => setRoleMatch(false);
-    router.events.on('routeChangeStart', hideContent);
-    router.events.on('routeChangeComplete', roleCheck);
-
-    return () => {
-      router.events.off('routeChangeStart', hideContent);
-      router.events.off('routeChangeComplete', roleCheck);
-    };
+    if (user.role && allowedRoleArray.includes(user.role)) {
+      setRoleMatch(true);
+    } else if (user.role && conditions && conditionalRoleArray.includes(user.role)) {
+      if (partialMatch(conditions, user)) {
+        setRoleMatch(true);
+      }
+    }
+    if (!roleMatch && onFail) onFail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const roleCheck = () => {
-    apiFetch('/api/me').then(response =>
-      response.json().then(user => {
-        if (roleArray.includes(user.role)) {
-          setRoleMatch(true);
-        } else {
-          setRoleMatch(false);
-          router.back();
-        }
-      })
-    );
-  };
 
   return roleMatch && children;
 };

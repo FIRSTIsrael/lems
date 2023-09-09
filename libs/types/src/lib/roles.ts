@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 export const RoleTypes = [
   'judge-advisor',
   'lead-judge',
@@ -10,11 +12,9 @@ export const RoleTypes = [
   'audience',
   'tournament-manager'
 ] as const;
-
 export type Role = (typeof RoleTypes)[number];
 
 export const RoleAssociationTypes = ['room', 'table', 'category'] as const;
-
 export type RoleAssociationType = (typeof RoleAssociationTypes)[number];
 
 export const getAssociationType = (role: Role): RoleAssociationType | undefined => {
@@ -28,3 +28,5 @@ export const getAssociationType = (role: Role): RoleAssociationType | undefined 
   }
   return undefined;
 };
+
+export type RoleAssociation = { type: RoleAssociationType; value: string | ObjectId };

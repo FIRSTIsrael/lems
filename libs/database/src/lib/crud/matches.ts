@@ -7,8 +7,8 @@ export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').findOne(filter);
 };
 
-export const getEventMatches = (eventId: ObjectId) => {
-  return db.collection<RobotGameMatch>('matches').find({ event: eventId }).toArray();
+export const getTableMatches = (tableId: ObjectId) => {
+  return db.collection<RobotGameMatch>('matches').find({ table: tableId }).toArray();
 };
 
 export const addMatch = (match: RobotGameMatch) => {

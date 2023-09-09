@@ -2,8 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
 import * as db from '@lems/database';
-import { getEventUsers } from '../../../lib/schedule/event-users';
-import { parseEventData, parseEventSchedule } from '../../../lib/schedule/parser';
+import { getEventUsers } from '../../../../lib/schedule/event-users';
+import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
 const router = express.Router({ mergeParams: true });
 
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {

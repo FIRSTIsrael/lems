@@ -1,4 +1,4 @@
-import { Role, RoleAssociationType, JudgingCategory } from '@lems/types';
+import { Role, RoleAssociationType, JudgingCategory, RubricStatus } from '@lems/types';
 
 export const localizeRole = (role: Role): { name: string } => {
   switch (role) {
@@ -47,5 +47,20 @@ export const localizeJudgingCategory = (category: JudgingCategory): { name: stri
       return { name: 'תכנון הרובוט' };
     case 'core-values':
       return { name: 'ערכי ליבה' };
+  }
+};
+
+export const localizeRubricStatus = (status: RubricStatus): { name: string } => {
+  switch (status) {
+    case 'empty':
+      return { name: 'לא מולא' };
+    case 'in-progress':
+      return { name: 'בתהליך' };
+    case 'completed':
+      return { name: 'ממתין להגשה סופית' };
+    case 'waiting-for-review':
+      return { name: 'ממתין לשופט ראשי' };
+    case 'ready':
+      return { name: 'אושר סופית' };
   }
 };

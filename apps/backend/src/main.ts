@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as WebSocket from 'ws';
 import { User } from '@lems/types';
 import { expressLogger } from './lib/logger';
-import apiRouter from './routers/api';
+import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import { wsAuth } from './middlewares/auth';
 import publicRouter from './routers/public/index';

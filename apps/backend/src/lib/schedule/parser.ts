@@ -138,9 +138,10 @@ const parseMatches = (
         matches.push({
           number,
           type,
-          start: startTime.toDate(),
+          time: startTime.toDate(),
           team: team._id,
-          table: table._id
+          table: table._id,
+          status: 'not-started'
         } as RobotGameMatch);
       }
     }
@@ -176,9 +177,10 @@ const parseSessions = (
 
         sessions.push({
           number,
-          start: startTime.toDate(),
+          time: startTime.toDate(),
           team: team._id,
-          room: room._id
+          room: room._id,
+          status: 'not-started'
         } as JudgingSession);
       }
     }

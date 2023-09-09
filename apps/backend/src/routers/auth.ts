@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-import { LoginRequest } from '@lems/types';
+import { User } from '@lems/types';
 import { JwtTokenData } from '../types/auth';
 
 const router = express.Router({ mergeParams: true });
@@ -11,8 +11,10 @@ const router = express.Router({ mergeParams: true });
 const jwtSecret = process.env.JWT_SECRET;
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-  const loginDetails: LoginRequest = req.body;
+  const loginDetails: User = req.body;
   if (loginDetails.event) loginDetails.event = new ObjectId(loginDetails.event);
+  if (loginDetails.roleAssociation && loginDetails.roleAssociation.type != 'category')
+    loginDetails.roleAssociation.value = new ObjectId(loginDetails.roleAssociation.value);
 
   try {
     const user = await db.getUser({ ...loginDetails });
