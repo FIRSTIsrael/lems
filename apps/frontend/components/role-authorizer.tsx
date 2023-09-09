@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { Role, SafeUser } from '@lems/types';
 import { ensureArray, partialMatch } from '@lems/utils';
 
@@ -37,9 +36,12 @@ export const RoleAuthorizer: React.FC<Props> = ({
     } else if (user.role && conditions && conditionalRoleArray.includes(user.role)) {
       if (partialMatch(conditions, user)) {
         setRoleMatch(true);
+      } else {
+        if (onFail != undefined) onFail();
       }
+    } else {
+      if (onFail != undefined) onFail();
     }
-    if (!roleMatch && onFail) onFail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

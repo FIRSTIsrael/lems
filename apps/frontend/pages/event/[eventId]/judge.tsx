@@ -19,11 +19,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
 
   return (
-    <RoleAuthorizer
-      user={user}
-      allowedRoles="judge"
-      onFail={() => router.push(`/event/${user.event}`)}
-    >
+    <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
       <Layout maxWidth="md" title={`ממשק שופט | ${event.name}`}>
         <WelcomeHeader event={event} user={user} />
       </Layout>
