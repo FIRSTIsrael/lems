@@ -58,6 +58,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
         event: event._id,
         number: parseInt(rawTeam[0]),
         name: rawTeam[1],
+        registered: false,
         affiliation: {
           institution: rawTeam[2],
           city: rawTeam[3]

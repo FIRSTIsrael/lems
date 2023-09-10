@@ -7,6 +7,7 @@ import {
   Event,
   JudgingRoom,
   JudgingSession,
+  Team,
   Status,
   JudgingServerEmittedEvents,
   JudgingClientEmittedEvents
@@ -27,10 +28,18 @@ interface Props extends IconButtonProps {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
+  team: WithId<Team>;
   socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
-const StartJudgingSessionButton: React.FC<Props> = ({ event, room, session, socket, ...props }) => {
+const StartJudgingSessionButton: React.FC<Props> = ({
+  event,
+  room,
+  session,
+  team,
+  socket,
+  ...props
+}) => {
   const startSession = (eventId: string, roomId: string, sessionId: string) => {
     socket.emit('startSession', eventId, roomId, sessionId, response => {
       // { ok: true }
@@ -45,10 +54,12 @@ const StartJudgingSessionButton: React.FC<Props> = ({ event, room, session, sock
           ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
           : undefined
       }
-      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes')}
+      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes') && !team.registered}
       sx={{
         color: getButtonColor(session.status),
-        ...(session.status !== 'not-started' && { '&:hover': { backgroundColor: '#fff' } })
+        ...(session.status !== 'not-started' && {
+          '&:hover': { backgroundColor: '#fff', cursor: 'default' }
+        })
       }}
       {...props}
     >

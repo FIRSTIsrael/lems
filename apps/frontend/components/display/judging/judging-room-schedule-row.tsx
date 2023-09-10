@@ -22,8 +22,8 @@ interface Props {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
-  team: Team;
-  user: SafeUser;
+  team: WithId<Team>;
+  user: WithId<SafeUser>;
   socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
@@ -38,15 +38,25 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
       </TableCell>
       <TableCell align="right">
         <Tooltip
-          title={`${team.name}, ${team.affiliation.institution}, ${team.affiliation.city}`}
+          title={
+            team.registered
+              ? `${team.name}, ${team.affiliation.institution}, ${team.affiliation.city}`
+              : 'הקבוצה טרם הגיעה לאירוע'
+          }
           arrow
         >
-          <span>#{team.number}</span>
+          <span style={{ color: !team.registered ? '#f57c00' : '' }}>#{team.number}</span>
         </Tooltip>
       </TableCell>
       <RoleAuthorizer user={user} allowedRoles="judge">
         <TableCell align="center">
-          <StartJudgingSessionButton event={event} room={room} session={session} socket={socket} />
+          <StartJudgingSessionButton
+            event={event}
+            room={room}
+            session={session}
+            team={team}
+            socket={socket}
+          />
         </TableCell>
       </RoleAuthorizer>
       <TableCell align="center">

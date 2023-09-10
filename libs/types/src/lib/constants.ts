@@ -17,5 +17,5 @@ export const RubricStatusTypes = [
 ] as const;
 export type RubricStatus = (typeof RubricStatusTypes)[number];
 
-export const JUDGING_SESSION_LENGTH = 1 * 60; //TODO: should be 27
+export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;

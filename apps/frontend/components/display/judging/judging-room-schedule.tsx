@@ -17,7 +17,7 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
-  user: SafeUser;
+  user: WithId<SafeUser>;
   socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
@@ -42,7 +42,7 @@ const JudgingRoomSchedule = ({ event, sessions, rooms, teams, user, socket }: Pr
               <RoomScheduleRow
                 key={String(session.team) + session.time}
                 event={event}
-                team={team ? team : ({} as Team)}
+                team={team ? team : ({} as WithId<Team>)}
                 room={room ? room : ({} as WithId<JudgingRoom>)}
                 session={session}
                 user={user}

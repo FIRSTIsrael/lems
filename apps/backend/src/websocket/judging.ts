@@ -20,7 +20,7 @@ const judgingSocket = (
   >
 ) => {
   const namespace = socket.nsp;
-  console.log('WS: Judging connection');
+  console.log('🔌WS: Judging connection');
 
   socket.on('startSession', async (eventId, roomId, sessionId, callback) => {
     const session = await db.getSession({
@@ -41,7 +41,7 @@ const judgingSocket = (
       return;
     }
 
-    console.log(`Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
+    console.log(`❗Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
     session.start = new Date();
     session.status = 'in-progress';
@@ -57,7 +57,7 @@ const judgingSocket = (
             dayjs(newSession.start).isSame(dayjs(session.start)) &&
             newSession.status === 'in-progress'
           ) {
-            console.log(`Session ${session._id} completed`);
+            console.log(`✅Session ${session._id} completed`);
             db.updateSession({ _id: session._id }, { status: 'completed' });
             namespace.to(eventId).emit('sessionCompleted', sessionId);
           }
@@ -83,7 +83,7 @@ const judgingSocket = (
       return;
     }
 
-    console.log(`Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
+    console.log(`❌Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
     await db.updateSession({ _id: session._id }, { start: undefined, status: 'not-started' });
 
@@ -92,7 +92,7 @@ const judgingSocket = (
   });
 
   socket.on('disconnect', () => {
-    console.log('WS: Judging disconnection');
+    console.log('❌WS: Judging disconnection');
   });
 };
 
