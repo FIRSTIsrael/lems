@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 interface Props {
   href?: string;
   status: string;
+  active: boolean;
   children: React.ReactNode;
 }
 
@@ -75,7 +76,7 @@ const Wrapper: React.FC<Props> = ({ href, ...props }) => {
 };
 
 const EditRubricButton: React.FC<Props> = ({ ...props }) => {
-  const { href, status, children } = props;
+  const { href, status, active, children } = props;
   const { title, sx } = mapStatus[status];
   return (
     <Wrapper href={href} {...props}>
@@ -91,7 +92,7 @@ const EditRubricButton: React.FC<Props> = ({ ...props }) => {
           }
         }}
       >
-        <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }}>
+        <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
           {children}
         </Button>
       </Tooltip>

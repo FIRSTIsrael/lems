@@ -23,10 +23,6 @@ const getButtonColor = (status: Status) => {
   }
 };
 
-const canStart = (session: JudgingSession) => {
-  return session.status === 'not-started' && dayjs() > dayjs(session.time).subtract(5, 'minutes');
-};
-
 interface Props extends IconButtonProps {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
@@ -44,11 +40,16 @@ const StartJudgingSessionButton: React.FC<Props> = ({ event, room, session, sock
   return (
     <IconButton
       aria-label="Start session"
-      onClick={() =>
-        startSession(event._id.toString(), room._id.toString(), session._id.toString())
+      onClick={
+        session.status === 'not-started'
+          ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
+          : undefined
       }
-      disabled={!canStart(session)}
-      sx={{ color: getButtonColor(session.status) }}
+      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes')}
+      sx={{
+        color: getButtonColor(session.status),
+        ...(session.status !== 'not-started' && { '&:hover': { backgroundColor: '#fff' } })
+      }}
       {...props}
     >
       <PlayCircleFilledWhiteOutlinedIcon />

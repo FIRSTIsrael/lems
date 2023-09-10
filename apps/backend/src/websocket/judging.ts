@@ -59,6 +59,7 @@ const judgingSocket = (
           ) {
             console.log(`Session ${session._id} completed`);
             db.updateSession({ _id: session._id }, { status: 'completed' });
+            namespace.to(eventId).emit('sessionCompleted', sessionId);
           }
         });
       }.bind(null, session)

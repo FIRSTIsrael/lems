@@ -37,7 +37,10 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
         {dayjs(session.time).format('HH:mm')}
       </TableCell>
       <TableCell align="right">
-        <Tooltip title={`${team.affiliation.institution}, ${team.affiliation.city}`} arrow>
+        <Tooltip
+          title={`${team.name}, ${team.affiliation.institution}, ${team.affiliation.city}`}
+          arrow
+        >
           <span>#{team.number}</span>
         </Tooltip>
       </TableCell>
@@ -74,6 +77,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
               conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
             >
               <EditRubricButton
+                active={session.status === 'completed'}
                 href={`/event/${user.event}/team/${team.number}/rubrics/${judgingCategory}`}
                 status={'empty'} //TODO: Crud from rubrics for status
               >

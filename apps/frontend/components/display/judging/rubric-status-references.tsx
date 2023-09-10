@@ -8,7 +8,7 @@ const RubricStatusReferences = () => {
     <Stack direction="row" justifyContent="center">
       {RubricStatusTypes.map(status => {
         return (
-          <EditRubricButton key={status} status={status}>
+          <EditRubricButton key={status} status={status} active={true}>
             {localizeRubricStatus(status).name}
           </EditRubricButton>
         );

@@ -15,22 +15,30 @@ import WelcomeHeader from '../../../components/display/welcome-header';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizeRole } from '../../../lib/utils/localization';
 import { judgingSocket } from '../../../lib/utils/websocket';
+import JudgingTimer from '../../../components/display/judging/judging-timer';
 
 interface Props {
   user: SafeUser;
   event: WithId<Event>;
   teams: Array<WithId<Team>>;
   room: WithId<JudgingRoom>;
-  sessions: Array<WithId<JudgingSession>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams, room, sessions }) => {
+const Page: NextPage<Props> = ({ user, event, teams, room }) => {
   const router = useRouter();
-  const [isJudging, setIsJudging] = useState<boolean>(false); //TODO: Get judging initial state from db (does room have session in progress)
+  const [isJudging, setIsJudging] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(judgingSocket.connected);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
 
   useEffect(() => {
     judgingSocket.connect();
+
+    apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
+      .then(res => res?.json())
+      .then(data => {
+        setIsJudging(!!data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
+        setSessions(data);
+      });
 
     const onConnect = () => {
       setIsConnected(true);
@@ -41,12 +49,16 @@ const Page: NextPage<Props> = ({ user, event, teams, room, sessions }) => {
     };
 
     const onSessionStarted = (sessionId: string, time: Date) => {
-      //TODO implement
+      apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
+        .then(res => res?.json())
+        .then(data => setSessions(data));
       setIsJudging(true);
     };
 
     const onSessionAborted = (sessionId: string) => {
-      //TODO implement
+      apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
+        .then(res => res?.json())
+        .then(data => setSessions(data));
       setIsJudging(false);
     };
 
@@ -73,7 +85,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room, sessions }) => {
         action={<ConnectionIndicator status={isConnected} />}
       >
         {isJudging ? (
-          <Typography>Hello im timer</Typography> //TODO: make timer page, have time page set the state back to false when timer is done
+          <JudgingTimer session={} team={undefined} /> //TODO: make timer page, have time page set the state back to false when timer is done
         ) : (
           <>
             <WelcomeHeader event={event} user={user} />
@@ -137,13 +149,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   ).then(res => res?.json());
   const [teams, room, event] = await Promise.all([teamsPromise, roomPromise, eventPromise]);
 
-  const sessions = await apiFetch(
-    `/api/events/${user.event}/rooms/${room._id}/sessions`,
-    undefined,
-    ctx
-  ).then(res => res?.json());
-
-  return { props: { user, event, teams, room, sessions } };
+  return { props: { user, event, teams, room } };
 };
 
 export default Page;
