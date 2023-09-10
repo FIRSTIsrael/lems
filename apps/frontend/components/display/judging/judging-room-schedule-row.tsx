@@ -82,8 +82,8 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
             <RoleAuthorizer
               key={judgingCategory}
               user={user}
-              allowedRoles={['judge', 'lead-judge']}
-              conditionalRoles={'judge-advisor'}
+              allowedRoles={['judge', 'judge-advisor']}
+              conditionalRoles={'lead-judge'}
               conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
             >
               <EditRubricButton

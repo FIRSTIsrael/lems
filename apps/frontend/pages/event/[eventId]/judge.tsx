@@ -5,7 +5,6 @@ import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
-import { ensureArray } from '@lems/utils';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
@@ -156,7 +155,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
               <JudgingRoomSchedule
                 sessions={sessions}
                 event={event}
-                rooms={ensureArray(room)}
+                room={room}
                 teams={teams}
                 user={user}
                 socket={judgingSocket}

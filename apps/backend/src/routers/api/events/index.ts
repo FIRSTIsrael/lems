@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import eventValidator from '../../../middlewares/event-validator';
+import sessionsRouter from './sessions';
 import roomsRouter from './rooms';
 import usersRouter from './users';
 
@@ -20,5 +21,7 @@ router.get('/:eventId/teams', (req: Request, res: Response) => {
 router.use('/:eventId/rooms', roomsRouter);
 
 router.use('/:eventId/users', usersRouter);
+
+router.use('/:eventId/sessions', sessionsRouter);
 
 export default router;

@@ -15,13 +15,13 @@ import RoomScheduleRow from './judging-room-schedule-row';
 interface Props {
   event: WithId<Event>;
   sessions: Array<WithId<JudgingSession>>;
-  rooms: Array<WithId<JudgingRoom>>;
+  room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   user: WithId<SafeUser>;
   socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
 }
 
-const JudgingRoomSchedule = ({ event, sessions, rooms, teams, user, socket }: Props) => {
+const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Props) => {
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -37,13 +37,12 @@ const JudgingRoomSchedule = ({ event, sessions, rooms, teams, user, socket }: Pr
         <TableBody>
           {sessions.map(session => {
             const team = teams.find(team => team._id === session.team);
-            const room = rooms.find(room => room._id === session.room);
             return (
               <RoomScheduleRow
                 key={String(session.team) + session.time}
                 event={event}
                 team={team ? team : ({} as WithId<Team>)}
-                room={room ? room : ({} as WithId<JudgingRoom>)}
+                room={room}
                 session={session}
                 user={user}
                 socket={socket}

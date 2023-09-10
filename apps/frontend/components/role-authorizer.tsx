@@ -27,7 +27,7 @@ export const RoleAuthorizer: React.FC<Props> = ({
   }
 
   const allowedRoleArray: Array<Role> = ensureArray(allowedRoles);
-  const conditionalRoleArray: Array<Role> = ensureArray(allowedRoles);
+  const conditionalRoleArray: Array<Role> = ensureArray(conditionalRoles);
   const [roleMatch, setRoleMatch] = useState(false);
 
   useEffect(() => {
