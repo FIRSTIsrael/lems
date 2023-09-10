@@ -58,6 +58,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
         event: event._id,
         number: parseInt(rawTeam[0]),
         name: rawTeam[1],
+        registered: false,
         affiliation: {
           institution: rawTeam[2],
           city: rawTeam[3]
@@ -138,9 +139,10 @@ const parseMatches = (
         matches.push({
           number,
           type,
-          start: startTime.toDate(),
+          time: startTime.toDate(),
           team: team._id,
-          table: table._id
+          table: table._id,
+          status: 'not-started'
         } as RobotGameMatch);
       }
     }
@@ -176,9 +178,10 @@ const parseSessions = (
 
         sessions.push({
           number,
-          start: startTime.toDate(),
+          time: startTime.toDate(),
           team: team._id,
-          room: room._id
+          room: room._id,
+          status: 'not-started'
         } as JudgingSession);
       }
     }

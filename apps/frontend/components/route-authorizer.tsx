@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { SafeUser } from '@lems/types';
 import { apiFetch } from '../lib/utils/fetch';
-import useLocalStorage from '../hooks/use-local-storage';
 
 interface Props {
   children?: React.ReactNode;
@@ -11,7 +9,6 @@ interface Props {
 export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
-  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
 
   useEffect(() => {
     authCheck(router.asPath);
@@ -30,12 +27,12 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
 
   const authCheck = (url: string) => {
     const publicPaths = ['/login'];
+    const adminPaths = ['/admin'];
     const path = url.split('?')[0];
 
     apiFetch('/api/me').then(response => {
       if (!response.ok && !publicPaths.includes(path)) {
         apiFetch('/auth/logout').then(response => {
-          setUser({} as SafeUser);
           setAuthorized(false);
           router.push({
             pathname: '/login',
@@ -43,10 +40,23 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
           });
         });
       } else {
-        response.json().then(loggedInUser => {
-          setUser(loggedInUser);
+        if (adminPaths.includes(path)) {
+          response
+            .json()
+            .then(user => user.isAdmin)
+            .then(admin => {
+              if (!admin) {
+                setAuthorized(false);
+                router.push({
+                  pathname: '/login'
+                });
+              } else {
+                setAuthorized(true);
+              }
+            });
+        } else {
           setAuthorized(true);
-        });
+        }
       }
     });
   };

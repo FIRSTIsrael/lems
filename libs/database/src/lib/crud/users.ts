@@ -25,8 +25,8 @@ export const addUsers = (users: User[]) => {
     .then(response => response);
 };
 
-export const updateUser = (filter: Filter<User>, newUser: User) => {
-  return db.collection<User>('users').updateOne({ filter }, { $set: newUser }, { upsert: true });
+export const updateUser = (filter: Filter<User>, newUser: Partial<User>) => {
+  return db.collection<User>('users').updateOne(filter, { $set: newUser }, { upsert: true });
 };
 
 export const deleteUser = (filter: Filter<User>) => {
@@ -54,7 +54,6 @@ export const replaceEventUsers = async (eventId: ObjectId, newUsers: User[]) => 
   const deleteResponse = await deleteEventUsers(eventId);
   if (deleteResponse.acknowledged) {
     response.deletedCount = deleteResponse.deletedCount;
-
     const insertResponse = await addUsers(newUsers);
     if (insertResponse.acknowledged) {
       response.acknowledged = true;

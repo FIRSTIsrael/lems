@@ -1,23 +1,13 @@
-import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import { SafeUser } from '@lems/types';
-import useLocalStorage from '../../../hooks/use-local-storage';
+import { NextPage, GetServerSideProps } from 'next';
+import { apiFetch } from '../../../lib/utils/fetch';
 
-export function Index() {
-  const router = useRouter();
-  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
-
-  if (user) {
-    router.push({
-      pathname: `/event/${user.event}/${user.role}`
-    });
-  }
-
+export const Page: NextPage = () => {
   return <></>;
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return { props: {} };
 };
 
-export default Index;
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+  return { redirect: { destination: `/event/${user.event}/${user.role}`, permanent: false } };
+};
+
+export default Page;

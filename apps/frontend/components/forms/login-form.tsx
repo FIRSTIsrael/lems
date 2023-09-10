@@ -1,16 +1,18 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
+import { WithId } from 'mongodb';
 import { Button, Box, Typography, Stack, MenuItem, TextField } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {
-  LoginPageEvent,
-  LoginRequest,
+  Event,
+  JudgingRoom,
+  RobotGameTable,
+  User,
   JudgingCategoryTypes,
   RoleTypes,
   Role,
-  SafeUser,
   RoleAssociationType,
   getAssociationType
 } from '@lems/types';
@@ -21,16 +23,15 @@ import {
   localizeAssociationType,
   localizeJudgingCategory
 } from '../../lib/utils/localization';
-import useLocalStorage from '../../hooks/use-local-storage';
 
 interface LoginFormProps {
-  event: LoginPageEvent;
+  event: WithId<Event>;
+  rooms: Array<WithId<JudgingRoom>>;
+  tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
-  const [user, setUser] = useLocalStorage<SafeUser>('user', {} as SafeUser);
-
+const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel }) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -49,11 +50,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
   const getEventAssociations = (type: RoleAssociationType) => {
     switch (type) {
       case 'table':
-        return event.tables.map(table => {
+        return tables.map(table => {
           return { id: table._id, name: table.name };
         });
       case 'room':
-        return event.rooms.map(room => {
+        return rooms.map(room => {
           return { id: room._id, name: room.name };
         });
       case 'category':
@@ -74,19 +75,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, onCancel }) => {
         role,
         ...(association
           ? {
-              association: {
+              roleAssociation: {
                 type: associationType,
-                id: association
+                value: association
               }
             }
-          : {}),
+          : undefined),
         password
-      } as LoginRequest)
+      } as User)
     })
       .then(async res => {
         const data = await res.json();
         if (data) {
-          setUser(data);
           const returnUrl = router.query.returnUrl || `/event/${event._id}`;
           router.push(returnUrl as string);
         } else if (data.error === 'INVALID_CREDENTIALS') {

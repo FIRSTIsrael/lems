@@ -16,9 +16,12 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/:userId', (req: Request, res: Response) => {
-  db.getUser({ _id: new ObjectId(req.params.userId) }).then(user => {
+  db.getUser({
+    _id: new ObjectId(req.params.userId),
+    event: new ObjectId(req.params.eventId)
+  }).then(user => {
     const { password, lastPasswordSetDate, ...rest } = user;
-    return res.json(rest);
+    res.json(rest);
   });
 });
 

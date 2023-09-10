@@ -25,10 +25,8 @@ export const addRooms = (rooms: JudgingRoom[]) => {
     .then(response => response);
 };
 
-export const updateRoom = (filter: Filter<JudgingRoom>, newTable: JudgingRoom) => {
-  return db
-    .collection<JudgingRoom>('rooms')
-    .updateOne({ filter }, { $set: newTable }, { upsert: true });
+export const updateRoom = (filter: Filter<JudgingRoom>, newRoom: Partial<JudgingRoom>) => {
+  return db.collection<JudgingRoom>('rooms').updateOne(filter, { $set: newRoom }, { upsert: true });
 };
 
 export const deleteRoom = (filter: Filter<JudgingRoom>) => {

@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
-import loginPageRoute from './pages/login';
+import eventsRouter from './events';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/pages/login', loginPageRoute);
+router.use('/events', eventsRouter);
 
 export default router;
