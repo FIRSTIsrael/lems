@@ -66,7 +66,7 @@ const judgingSocket = (
     );
 
     callback({ ok: true });
-    namespace.to(eventId).emit('sessionStarted', sessionId, session.start);
+    namespace.to(eventId).emit('sessionStarted', sessionId);
   });
 
   socket.on('abortSession', async (eventId, roomId, sessionId, callback) => {

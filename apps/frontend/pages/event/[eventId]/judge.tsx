@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -26,9 +26,24 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, teams, room }) => {
   const router = useRouter();
-  const [isJudging, setIsJudging] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(judgingSocket.connected);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
+  const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
+
+  const updateSessions = (): Promise<Array<WithId<JudgingSession>>> => {
+    return apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
+      .then(res => res?.json())
+      .then(data => {
+        setSessions(data);
+        return data;
+      });
+  };
+
+  const activeTeam = useMemo(() => {
+    return activeSession
+      ? teams.find((t: WithId<Team>) => t._id == activeSession.team) || ({} as WithId<Team>)
+      : ({} as WithId<Team>);
+  }, [teams, activeSession]);
 
   useEffect(() => {
     judgingSocket.connect();
@@ -36,7 +51,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
     apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
       .then(res => res?.json())
       .then(data => {
-        setIsJudging(!!data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
+        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
         setSessions(data);
       });
 
@@ -48,29 +63,38 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
       setIsConnected(false);
     };
 
-    const onSessionStarted = (sessionId: string, time: Date) => {
-      apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
-        .then(res => res?.json())
-        .then(data => setSessions(data));
-      setIsJudging(true);
+    const onSessionCompleted = (sessionId: string) => {
+      updateSessions().then(newSessions => {
+        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+        if (s?.status === 'completed') setActiveSession(undefined);
+      });
+    };
+
+    const onSessionStarted = (sessionId: string) => {
+      updateSessions().then(newSessions => {
+        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+        setActiveSession(s?.status === 'in-progress' ? s : undefined);
+      });
     };
 
     const onSessionAborted = (sessionId: string) => {
-      apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
-        .then(res => res?.json())
-        .then(data => setSessions(data));
-      setIsJudging(false);
+      updateSessions().then(newSessions => {
+        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+        if (s?.status === 'not-started') setActiveSession(undefined);
+      });
     };
 
     judgingSocket.on('connect', onConnect);
     judgingSocket.on('disconnect', onDisconnect);
     judgingSocket.on('sessionStarted', onSessionStarted);
+    judgingSocket.on('sessionCompleted', onSessionCompleted);
     judgingSocket.on('sessionAborted', onSessionAborted);
 
     return () => {
       judgingSocket.off('connect', onConnect);
       judgingSocket.off('disconnect', onDisconnect);
       judgingSocket.off('sessionStarted', onSessionStarted);
+      judgingSocket.off('sessionCompleted', onSessionCompleted);
       judgingSocket.off('sessionAborted', onSessionAborted);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,8 +108,8 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
         error={!isConnected}
         action={<ConnectionIndicator status={isConnected} />}
       >
-        {isJudging ? (
-          <JudgingTimer session={} team={undefined} /> //TODO: make timer page, have time page set the state back to false when timer is done
+        {activeSession && activeTeam ? (
+          <JudgingTimer session={activeSession} team={activeTeam} />
         ) : (
           <>
             <WelcomeHeader event={event} user={user} />

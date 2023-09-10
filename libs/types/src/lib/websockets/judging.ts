@@ -1,5 +1,5 @@
 export interface JudgingServerEmittedEvents {
-  sessionStarted: (sessionId: string, time: Date) => void;
+  sessionStarted: (sessionId: string) => void;
   sessionCompleted: (sessionId: string) => void;
   sessionAborted: (sessionId: string) => void;
 }

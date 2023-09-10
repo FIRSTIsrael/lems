@@ -33,7 +33,7 @@ interface Props extends IconButtonProps {
 const StartJudgingSessionButton: React.FC<Props> = ({ event, room, session, socket, ...props }) => {
   const startSession = (eventId: string, roomId: string, sessionId: string) => {
     socket.emit('startSession', eventId, roomId, sessionId, response => {
-      console.log(response);
+      // { ok: true }
     });
   };
 
