@@ -1,4 +1,33 @@
 import { Box, keyframes } from '@mui/material';
+import { ConnectionStatus } from '@lems/types';
+
+const config: {
+  [key in ConnectionStatus]: {
+    rippleColor: string;
+    textColor: string;
+    backgroundColor: string;
+    text: string;
+  };
+} = {
+  connected: {
+    rippleColor: '#3cd3b2',
+    textColor: '#111111',
+    backgroundColor: '#f4f4f5',
+    text: 'מחובר'
+  },
+  connecting: {
+    rippleColor: '#a21caf',
+    textColor: '#000000',
+    backgroundColor: '#f4f4f5',
+    text: 'מתחבר...'
+  },
+  disconnected: {
+    rippleColor: '#ffffff',
+    textColor: '#ffffff',
+    backgroundColor: '#dc2626',
+    text: 'שגיאה'
+  }
+} as const;
 
 const rippleAnimation = keyframes`
   0% {transform: scale(1);}
@@ -7,23 +36,11 @@ const rippleAnimation = keyframes`
 `;
 
 interface Props {
-  status: boolean;
+  status: ConnectionStatus;
 }
 
 const ConnectionIndicator: React.FC<Props> = ({ status }) => {
-  const { rippleColor, textColor, backgroundColor, text } = status
-    ? {
-        rippleColor: '#3cd3b2',
-        textColor: '#111111',
-        backgroundColor: '#f4f4f5',
-        text: 'מחובר'
-      }
-    : {
-        rippleColor: '#ffffff',
-        textColor: '#ffffff',
-        backgroundColor: '#dc2626',
-        text: 'שגיאה'
-      };
+  const { rippleColor, textColor, backgroundColor, text } = config[status];
   return (
     <Box
       sx={{
