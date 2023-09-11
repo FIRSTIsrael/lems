@@ -23,6 +23,8 @@ const judgingSocket = (
   console.log('🔌WS: Judging connection');
 
   socket.on('startSession', async (eventId, roomId, sessionId, callback) => {
+    const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+
     const session = await db.getSession({
       room: new ObjectId(roomId),
       _id: new ObjectId(sessionId)
@@ -64,6 +66,10 @@ const judgingSocket = (
         });
       }.bind(null, session)
     );
+
+    if (!eventState.activeSession || session.number > eventState.activeSession) {
+      await db.updateEventState({ _id: eventState._id }, { activeSession: session.number });
+    }
 
     callback({ ok: true });
     namespace.to(eventId).emit('sessionStarted', sessionId);
