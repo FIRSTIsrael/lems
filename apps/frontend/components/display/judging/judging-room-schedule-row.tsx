@@ -17,6 +17,7 @@ import EditRubricButton from '../../input/edit-rubric-button';
 import StartJudgingSessionButton from '../../input/start-judging-session-button';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeJudgingCategory } from '../../../lib/utils/localization';
+import StatusIcon from '../status-icon';
 
 interface Props {
   event: WithId<Event>;
@@ -57,6 +58,11 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
             team={team}
             socket={socket}
           />
+        </TableCell>
+      </RoleAuthorizer>
+      <RoleAuthorizer user={user} allowedRoles={['lead-judge', 'judge-advisor']}>
+        <TableCell align="center">
+          <StatusIcon status={session.status} />
         </TableCell>
       </RoleAuthorizer>
       <TableCell align="center">

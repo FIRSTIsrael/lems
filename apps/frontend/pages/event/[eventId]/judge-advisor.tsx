@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { JudgingRoom, JudgingSession, SafeUser, Event, Team } from '@lems/types';
+import { JudgingRoom, JudgingSession, SafeUser, Event, Team, ConnectionStatus } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
@@ -24,7 +24,9 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
   const router = useRouter();
-  const [isConnected, setIsConnected] = useState<boolean>(judgingSocket.connected);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    judgingSocket.connected ? 'connected' : 'disconnected'
+  );
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
 
   const updateSessions = (): Promise<Array<WithId<JudgingSession>>> => {
@@ -38,6 +40,7 @@ const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
 
   useEffect(() => {
     judgingSocket.connect();
+    setConnectionStatus('connecting');
 
     apiFetch(`/api/events/${user.event}/sessions`)
       .then(res => res?.json())
@@ -46,11 +49,11 @@ const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
       });
 
     const onConnect = () => {
-      setIsConnected(true);
+      setConnectionStatus('connected');
     };
 
     const onDisconnect = () => {
-      setIsConnected(false);
+      setConnectionStatus('disconnected');
     };
 
     judgingSocket.on('connect', onConnect);
@@ -74,8 +77,8 @@ const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
-        error={!isConnected}
-        action={<ConnectionIndicator status={isConnected} />}
+        error={connectionStatus === 'disconnected'}
+        action={<ConnectionIndicator status={connectionStatus} />}
       >
         <>
           <WelcomeHeader event={event} user={user} />
