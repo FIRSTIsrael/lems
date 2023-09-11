@@ -2,6 +2,8 @@ export type DivisionColor = 'red' | 'blue';
 
 export type Status = 'not-started' | 'in-progress' | 'completed';
 
+export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
+
 export const RobotGameMatchTypes = ['practice', 'ranking'] as const;
 export type RobotGameMatchType = (typeof RobotGameMatchTypes)[number];
 

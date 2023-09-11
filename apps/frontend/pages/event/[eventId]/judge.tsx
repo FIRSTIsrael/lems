@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
+import { Event, Team, JudgingRoom, JudgingSession, SafeUser, ConnectionStatus } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
@@ -26,7 +26,9 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, teams, room }) => {
   const router = useRouter();
-  const [isConnected, setIsConnected] = useState<boolean>(judgingSocket.connected);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    judgingSocket.connected ? 'connected' : 'disconnected'
+  );
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
   const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
 
@@ -47,6 +49,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
 
   useEffect(() => {
     judgingSocket.connect();
+    setConnectionStatus('connecting');
 
     apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
       .then(res => res?.json())
@@ -56,11 +59,11 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
       });
 
     const onConnect = () => {
-      setIsConnected(true);
+      setConnectionStatus('connected');
     };
 
     const onDisconnect = () => {
-      setIsConnected(false);
+      setConnectionStatus('disconnected');
     };
 
     const onSessionCompleted = (sessionId: string) => {
@@ -105,8 +108,8 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
-        error={!isConnected}
-        action={<ConnectionIndicator status={isConnected} />}
+        error={connectionStatus === 'disconnected'}
+        action={<ConnectionIndicator status={connectionStatus} />}
       >
         {activeSession && activeTeam ? (
           <>
