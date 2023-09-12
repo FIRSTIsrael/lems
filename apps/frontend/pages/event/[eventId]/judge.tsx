@@ -82,7 +82,8 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
     [
       { name: 'judgingSessionStarted', handler: onSessionStarted },
       { name: 'judgingSessionCompleted', handler: onSessionCompleted },
-      { name: 'judgingSessionAborted', handler: onSessionAborted }
+      { name: 'judgingSessionAborted', handler: onSessionAborted },
+      { name: 'teamRegistered', handler: updateTeams }
     ]
   );
 

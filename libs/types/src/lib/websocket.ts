@@ -12,6 +12,8 @@ export interface WSServerEmittedEvents {
   judgingSessionCompleted: (sessionId: string) => void;
 
   judgingSessionAborted: (sessionId: string) => void;
+
+  teamRegistered: (teamId: string) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -26,6 +28,12 @@ export interface WSClientEmittedEvents {
     eventId: string,
     roomId: string,
     sessionId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  registerTeam: (
+    eventId: string,
+    teamId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

@@ -50,7 +50,8 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateData, [
     { name: 'judgingSessionStarted', handler: updateSessions },
     { name: 'judgingSessionCompleted', handler: updateSessions },
-    { name: 'judgingSessionAborted', handler: updateSessions }
+    { name: 'judgingSessionAborted', handler: updateSessions },
+    { name: 'teamRegistered', handler: updateTeams }
   ]);
 
   return (

@@ -28,7 +28,7 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Pro
         <TableHead>
           <TableRow>
             <TableCell align="center">שעת התחלה</TableCell>
-            <TableCell align="right">קבוצה</TableCell>
+            <TableCell align="left">קבוצה</TableCell>
             <TableCell />
             <TableCell />
             <TableCell />

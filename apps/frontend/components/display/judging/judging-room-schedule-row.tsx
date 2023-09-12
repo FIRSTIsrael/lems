@@ -37,7 +37,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
       <TableCell component="th" scope="row" align="center">
         {dayjs(session.time).format('HH:mm')}
       </TableCell>
-      <TableCell align="right">
+      <TableCell align="left">
         <Tooltip
           title={
             team.registered

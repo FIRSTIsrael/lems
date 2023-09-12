@@ -37,8 +37,6 @@ export const useWebsocket = (
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
 
-    console.log(wsevents);
-
     // TODO: Fix typing so that we don't need to ignore typescript
     if (wsevents) {
       for (const event of wsevents) {

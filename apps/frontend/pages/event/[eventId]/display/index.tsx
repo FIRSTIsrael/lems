@@ -1,8 +1,7 @@
 import React from 'react';
 import { GetServerSideProps, NextPage } from 'next';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { Button, Container, IconButton, Paper, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { User, Event } from '@lems/types';
 import Layout from '../../../../components/layout';
@@ -53,8 +52,8 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <GridPaperLink path="judging-status">
             <Typography variant="h4">מצב השיפוט</Typography>
           </GridPaperLink>
-          <GridPaperLink path="judging-status">
-            <Typography variant="h4">א</Typography>
+          <GridPaperLink path="team-list">
+            <Typography variant="h4">רשימת קבוצות</Typography>
           </GridPaperLink>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">ב</Typography>

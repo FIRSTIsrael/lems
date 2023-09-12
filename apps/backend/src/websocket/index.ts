@@ -5,7 +5,8 @@ import {
   WSInterServerEvents,
   WSSocketData
 } from '@lems/types';
-import { handleStartSession, handleAbortSession } from './handlers/judging-session';
+import { handleStartSession, handleAbortSession } from './handlers/judging';
+import { handleRegisterTeam } from './handlers/pit-admin';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -24,6 +25,8 @@ const websocket = (
   socket.on('startJudgingSession', (...args) => handleStartSession(namespace, ...args));
 
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));
+
+  socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
 
   socket.on('disconnect', () => {
     console.log(`❌WS: Disconnection from event ${eventId}`);
