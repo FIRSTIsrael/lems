@@ -9,8 +9,8 @@ import {
   JudgingSession,
   Team,
   Status,
-  JudgingServerEmittedEvents,
-  JudgingClientEmittedEvents
+  WSServerEmittedEvents,
+  WSClientEmittedEvents
 } from '@lems/types';
 
 const getButtonColor = (status: Status) => {
@@ -29,7 +29,7 @@ interface Props extends IconButtonProps {
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: WithId<Team>;
-  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const StartJudgingSessionButton: React.FC<Props> = ({
@@ -41,7 +41,7 @@ const StartJudgingSessionButton: React.FC<Props> = ({
   ...props
 }) => {
   const startSession = (eventId: string, roomId: string, sessionId: string) => {
-    socket.emit('startSession', eventId, roomId, sessionId, response => {
+    socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
       // { ok: true }
     });
   };
@@ -54,7 +54,7 @@ const StartJudgingSessionButton: React.FC<Props> = ({
           ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
           : undefined
       }
-      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes') && !team.registered}
+      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes') || !team.registered}
       sx={{
         color: getButtonColor(session.status),
         ...(session.status !== 'not-started' && {

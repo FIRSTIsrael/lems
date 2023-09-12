@@ -10,8 +10,8 @@ import {
   Team,
   SafeUser,
   JudgingCategoryTypes,
-  JudgingClientEmittedEvents,
-  JudgingServerEmittedEvents
+  WSClientEmittedEvents,
+  WSServerEmittedEvents
 } from '@lems/types';
 import EditRubricButton from '../../input/edit-rubric-button';
 import StartJudgingSessionButton from '../../input/start-judging-session-button';
@@ -25,7 +25,7 @@ interface Props {
   session: WithId<JudgingSession>;
   team: WithId<Team>;
   user: WithId<SafeUser>;
-  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Props) => {

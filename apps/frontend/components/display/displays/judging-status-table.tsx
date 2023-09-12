@@ -10,7 +10,7 @@ import {
   TableBody,
   Box
 } from '@mui/material';
-import { JudgingRoom, JudgingSession, Team, EventState } from '@lems/types';
+import { JudgingRoom, JudgingSession, Team, EventState, JUDGING_SESSION_LENGTH } from '@lems/types';
 import dayjs from 'dayjs';
 import StatusIcon from '../status-icon';
 
@@ -39,7 +39,9 @@ const JudgingStatusTable: React.FC<Props> = ({ eventState, sessions, rooms, team
           <TableRow>
             <TableCell></TableCell>
             {rooms.map(room => (
-              <TableCell key={room._id.toString()}>{room.name}</TableCell>
+              <TableCell key={room._id.toString()} align="center">
+                {room.name}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -52,13 +54,16 @@ const JudgingStatusTable: React.FC<Props> = ({ eventState, sessions, rooms, team
                 {dayjs(activeSessions[0].time).format('HH:mm')}
               </TableCell>
               {activeSessions.map(session => (
-                <TableCell key={session._id.toString()}>
+                <TableCell key={session._id.toString()} align="center">
                   <Box alignItems="center">
                     {teams.find(t => t._id === session.team)?.name}
                     <br />
                     <StatusIcon status={session.status} />
                     <br />
-                    {session.start && `שעת סיום: ${session.start}`}
+                    {session.start &&
+                      `סיום: ${dayjs(session.start)
+                        .add(JUDGING_SESSION_LENGTH, 'seconds')
+                        .format('HH:mm')}`}
                   </Box>
                 </TableCell>
               ))}
@@ -72,7 +77,7 @@ const JudgingStatusTable: React.FC<Props> = ({ eventState, sessions, rooms, team
                 {dayjs(nextSessions[0].time).format('HH:mm')}
               </TableCell>
               {nextSessions.map(session => (
-                <TableCell key={session._id.toString()}>
+                <TableCell key={session._id.toString()} align="center">
                   {teams.find(t => t._id === session.team)?.name}
                 </TableCell>
               ))}

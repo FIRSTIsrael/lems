@@ -9,9 +9,9 @@ import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import publicRouter from './routers/public/index';
-import judgingSocket from './websocket/judging';
-import fieldSocket from './websocket/field';
-import { wsAuth } from './middlewares/auth';
+import websocket from './websocket/index';
+import wsAuth from './middlewares/websocket/auth';
+import wsValidateEvent from './middlewares/websocket/event-validator';
 
 const app = express();
 const server = http.createServer(app);
@@ -51,11 +51,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
-const judgingNamespace = io.of('/judging');
-judgingNamespace.use(wsAuth);
-judgingNamespace.on('connection', judgingSocket);
-
-io.of('/field').on('connection', fieldSocket);
+const namespace = io.of(/^\/event\/\w+$/);
+namespace.use(wsAuth);
+namespace.use(wsValidateEvent);
+namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');
 const port = process.env.BACKEND_PORT || 3333;

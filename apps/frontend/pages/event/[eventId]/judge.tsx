@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { Event, Team, JudgingRoom, JudgingSession, SafeUser, ConnectionStatus } from '@lems/types';
+import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
@@ -15,24 +15,21 @@ import JudgingTimer from '../../../components/display/judging/judging-timer';
 import AbortJudgingSessionButton from '../../../components/input/abort-judging-session-button';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizeRole } from '../../../lib/utils/localization';
-import { judgingSocket } from '../../../lib/utils/websocket';
+import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  teams: Array<WithId<Team>>;
   room: WithId<JudgingRoom>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams, room }) => {
+const Page: NextPage<Props> = ({ user, event, room }) => {
   const router = useRouter();
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
-    judgingSocket.connected ? 'connected' : 'disconnected'
-  );
+  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
   const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
 
-  const updateSessions = (): Promise<Array<WithId<JudgingSession>>> => {
+  const updateSessions = () => {
     return apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
       .then(res => res?.json())
       .then(data => {
@@ -41,67 +38,59 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
       });
   };
 
+  const updateTeams = () => {
+    return apiFetch(`/api/events/${user.event}/teams`)
+      .then(res => res?.json())
+      .then(data => {
+        setTeams(data);
+      });
+  };
+
+  const getInitialData = () => {
+    updateTeams().then(() => {
+      updateSessions().then(data =>
+        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'))
+      );
+    });
+  };
+
+  const onSessionStarted = (sessionId: string) => {
+    updateSessions().then(newSessions => {
+      const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+      setActiveSession(s?.status === 'in-progress' ? s : undefined);
+    });
+  };
+
+  const onSessionCompleted = (sessionId: string) => {
+    updateSessions().then(newSessions => {
+      const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+      if (s?.status === 'completed') setActiveSession(undefined);
+    });
+  };
+
+  const onSessionAborted = (sessionId: string) => {
+    updateSessions().then(newSessions => {
+      const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
+      if (s?.status === 'not-started') setActiveSession(undefined);
+    });
+  };
+
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['judging'],
+    getInitialData,
+    [
+      { name: 'judgingSessionStarted', handler: onSessionStarted },
+      { name: 'judgingSessionCompleted', handler: onSessionCompleted },
+      { name: 'judgingSessionAborted', handler: onSessionAborted }
+    ]
+  );
+
   const activeTeam = useMemo(() => {
     return activeSession
       ? teams.find((t: WithId<Team>) => t._id == activeSession.team) || ({} as WithId<Team>)
       : ({} as WithId<Team>);
   }, [teams, activeSession]);
-
-  useEffect(() => {
-    judgingSocket.connect();
-    setConnectionStatus('connecting');
-
-    apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
-      .then(res => res?.json())
-      .then(data => {
-        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
-        setSessions(data);
-      });
-
-    const onConnect = () => {
-      setConnectionStatus('connected');
-    };
-
-    const onDisconnect = () => {
-      setConnectionStatus('disconnected');
-    };
-
-    const onSessionCompleted = (sessionId: string) => {
-      updateSessions().then(newSessions => {
-        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-        if (s?.status === 'completed') setActiveSession(undefined);
-      });
-    };
-
-    const onSessionStarted = (sessionId: string) => {
-      updateSessions().then(newSessions => {
-        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-        setActiveSession(s?.status === 'in-progress' ? s : undefined);
-      });
-    };
-
-    const onSessionAborted = (sessionId: string) => {
-      updateSessions().then(newSessions => {
-        const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-        if (s?.status === 'not-started') setActiveSession(undefined);
-      });
-    };
-
-    judgingSocket.on('connect', onConnect);
-    judgingSocket.on('disconnect', onDisconnect);
-    judgingSocket.on('sessionStarted', onSessionStarted);
-    judgingSocket.on('sessionCompleted', onSessionCompleted);
-    judgingSocket.on('sessionAborted', onSessionAborted);
-
-    return () => {
-      judgingSocket.off('connect', onConnect);
-      judgingSocket.off('disconnect', onDisconnect);
-      judgingSocket.off('sessionStarted', onSessionStarted);
-      judgingSocket.off('sessionCompleted', onSessionCompleted);
-      judgingSocket.off('sessionAborted', onSessionAborted);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
@@ -119,7 +108,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
                 event={event}
                 room={room}
                 session={activeSession}
-                socket={judgingSocket}
+                socket={socket}
                 sx={{ mt: 2.5 }}
               />
             </Box>
@@ -161,7 +150,7 @@ const Page: NextPage<Props> = ({ user, event, teams, room }) => {
                 room={room}
                 teams={teams}
                 user={user}
-                socket={judgingSocket}
+                socket={socket}
               />
             </Paper>
           </>
