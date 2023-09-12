@@ -16,7 +16,7 @@ export const useWebsocket = (
 
   useEffect(() => {
     socket.connect();
-    setConnectionStatus('connecting');
+    if (!socket.connected) setConnectionStatus('connecting');
 
     if (init) init();
 

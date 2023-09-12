@@ -11,13 +11,36 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   console.log('👓 Parsing schedule...');
   const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
+
+  const oldTables = await db.getEventTables(event._id);
+  const oldRooms = await db.getEventRooms(event._id);
+
+  oldTables.forEach(async (table: WithId<RobotGameTable>) => {
+    if (!(await db.deleteTableMatches(table._id)).acknowledged)
+      return res.status(500).json({ error: 'Could not delete matches!' });
+  });
+
+  oldRooms.forEach(async (room: WithId<JudgingRoom>) => {
+    if (!(await db.deleteRoomSessions(room._id)).acknowledged)
+      return res.status(500).json({ error: 'Could not delete sessions!' });
+  });
+
+  if (!(await db.deleteEventTeams(event._id)).acknowledged)
+    return res.status(500).json({ error: 'Could not delete teams!' });
+  if (!(await db.deleteEventTables(event._id)).acknowledged)
+    return res.status(500).json({ error: 'Could not delete tables!' });
+  if (!(await db.deleteEventRooms(event._id)).acknowledged)
+    return res.status(500).json({ error: 'Could not delete rooms!' });
+  if (!(await db.deleteEventUsers(event._id)).acknowledged)
+    return res.status(500).json({ error: 'Could not delete users!' });
+
   const { teams, tables, rooms } = await parseEventData(event, csvData);
 
-  if (!(await db.replaceEventTeams(event._id, teams)).acknowledged)
+  if (!(await db.addTeams(teams)).acknowledged)
     return res.status(500).json({ error: 'Could not insert teams!' });
-  if (!(await db.replaceEventTables(event._id, tables)).acknowledged)
+  if (!(await db.addTables(tables)).acknowledged)
     return res.status(500).json({ error: 'Could not insert tables!' });
-  if (!(await db.replaceEventRooms(event._id, rooms)).acknowledged)
+  if (!(await db.addRooms(rooms)).acknowledged)
     return res.status(500).json({ error: 'Could not insert rooms!' });
 
   const dbTeams = await db.getEventTeams(event._id);
@@ -32,35 +55,17 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     csvData
   );
 
-  dbTables.forEach(async (table: WithId<RobotGameTable>) => {
-    if (
-      !(
-        await db.replaceTableMatches(
-          event._id,
-          matches.filter(match => match.table === table._id)
-        )
-      ).acknowledged
-    )
-      return res.status(500).json({ error: 'Could not insert matches!' });
-  });
+  if (!(await db.addSessions(sessions)).acknowledged)
+    return res.status(500).json({ error: 'Could not insert sessions!' });
 
-  dbRooms.forEach(async (room: WithId<JudgingRoom>) => {
-    if (
-      !(
-        await db.replaceRoomSessions(
-          event._id,
-          sessions.filter(session => session.room === room._id)
-        )
-      ).acknowledged
-    )
-      return res.status(500).json({ error: 'Could not insert sessions!' });
-  });
+  if (!(await db.addMatches(matches)).acknowledged)
+    return res.status(500).json({ error: 'Could not insert matches!' });
 
   console.log('✅ Finished parsing schedule!');
 
   console.log('👤 Generating event users');
   const users = getEventUsers(event, dbTables, dbRooms);
-  if (!(await db.replaceEventUsers(event._id, users)).acknowledged)
+  if (!(await db.addUsers(users)).acknowledged)
     return res.status(500).json({ error: 'Could not create users!' });
   console.log('✅ Generated event users');
 

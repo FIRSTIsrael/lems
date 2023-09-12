@@ -269,6 +269,8 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
         title={`ממשק ${user.role && localizeRole(user.role).name} - מצב השיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
+        back={`/event/${event._id}/display`}
+        backDisabled={connectionStatus !== 'connecting'}
       >
         <JudgingStatusTimer
           teams={teams}

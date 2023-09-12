@@ -1,13 +1,6 @@
 import { Button, SxProps, Theme, Tooltip } from '@mui/material';
 import NextLink from 'next/link';
 
-interface Props {
-  href?: string;
-  status: string;
-  active: boolean;
-  children: React.ReactNode;
-}
-
 const mapStatus: {
   [key: string]: {
     title: string;
@@ -67,11 +60,28 @@ const mapStatus: {
   }
 };
 
-const Wrapper: React.FC<Props> = ({ href, ...props }) => {
-  if (href) {
-    return <NextLink href={href} passHref {...props} />;
+interface Props {
+  href?: string;
+  status: string;
+  active: boolean;
+  children: React.ReactNode;
+}
+
+interface WrapperProps {
+  href?: string;
+  active: boolean;
+  children: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ active, href, children }) => {
+  if (active && href) {
+    return (
+      <NextLink href={href} passHref>
+        {children}
+      </NextLink>
+    );
   } else {
-    return props.children;
+    return children;
   }
 };
 
@@ -92,9 +102,11 @@ const EditRubricButton: React.FC<Props> = ({ ...props }) => {
           }
         }}
       >
-        <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
-          {children}
-        </Button>
+        <span>
+          <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
+            {children}
+          </Button>
+        </span>
       </Tooltip>
     </Wrapper>
   );

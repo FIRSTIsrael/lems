@@ -168,17 +168,14 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
     const roomPromise = apiFetch(
       `/api/events/${user.event}/rooms/${user.roleAssociation.value}`,
       undefined,
       ctx
     ).then(res => res?.json());
-    const [teams, room, event] = await Promise.all([teamsPromise, roomPromise, eventPromise]);
+    const [room, event] = await Promise.all([roomPromise, eventPromise]);
 
-    return { props: { user, event, teams, room } };
+    return { props: { user, event, room } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

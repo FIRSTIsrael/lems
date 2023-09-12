@@ -94,7 +94,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
             >
               <EditRubricButton
                 active={session.status === 'completed'}
-                href={`/event/${user.event}/team/${team.number}/rubrics/${judgingCategory}`}
+                href={`/event/${user.event}/team/${team._id}/rubrics/${judgingCategory}`}
                 status={'empty'} //TODO: Crud from rubrics for status
               >
                 {localizeJudgingCategory(judgingCategory).name}
