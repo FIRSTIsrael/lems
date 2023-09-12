@@ -7,8 +7,8 @@ import {
   JudgingRoom,
   Team,
   SafeUser,
-  JudgingClientEmittedEvents,
-  JudgingServerEmittedEvents
+  WSClientEmittedEvents,
+  WSServerEmittedEvents
 } from '@lems/types';
 import RoomScheduleRow from './judging-room-schedule-row';
 
@@ -18,7 +18,7 @@ interface Props {
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   user: WithId<SafeUser>;
-  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Props) => {
@@ -28,7 +28,7 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Pro
         <TableHead>
           <TableRow>
             <TableCell align="center">שעת התחלה</TableCell>
-            <TableCell align="right">קבוצה</TableCell>
+            <TableCell align="left">קבוצה</TableCell>
             <TableCell />
             <TableCell />
             <TableCell />

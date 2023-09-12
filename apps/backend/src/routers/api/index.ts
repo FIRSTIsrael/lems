@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { SafeUser } from '@lems/types';
-import { authMiddleware } from '../../middlewares/auth';
+import authMiddleware from '../../middlewares/auth';
 import eventsRouter from './events/index';
 import adminRouter from './admin/index';
 

@@ -14,8 +14,8 @@ import {
   Event,
   JudgingRoom,
   JudgingSession,
-  JudgingServerEmittedEvents,
-  JudgingClientEmittedEvents
+  WSServerEmittedEvents,
+  WSClientEmittedEvents
 } from '@lems/types';
 import { useState } from 'react';
 
@@ -23,14 +23,14 @@ interface Props extends ButtonProps {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
-  socket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const AbortJudgingSessionButton: React.FC<Props> = ({ event, room, session, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const abortSession = (eventId: string, roomId: string, sessionId: string) => {
-    socket.emit('abortSession', eventId, roomId, sessionId, response => {
+    socket.emit('abortJudgingSession', eventId, roomId, sessionId, response => {
       // { ok: true }
     });
   };

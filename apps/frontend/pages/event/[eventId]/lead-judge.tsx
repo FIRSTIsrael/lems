@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { Event, Team, JudgingRoom, JudgingSession, SafeUser, ConnectionStatus } from '@lems/types';
+import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
@@ -13,64 +13,46 @@ import Layout from '../../../components/layout';
 import WelcomeHeader from '../../../components/display/welcome-header';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizeRole } from '../../../lib/utils/localization';
-import { judgingSocket } from '../../../lib/utils/websocket';
+import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
+const Page: NextPage<Props> = ({ user, event, rooms }) => {
   const router = useRouter();
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
-    judgingSocket.connected ? 'connected' : 'disconnected'
-  );
+  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
 
-  const updateSessions = (): Promise<Array<WithId<JudgingSession>>> => {
-    return apiFetch(`/api/events/${user.event}/sessions`)
-      .then(res => res?.json())
-      .then(data => {
-        setSessions(data);
-        return data;
-      });
-  };
-
-  useEffect(() => {
-    judgingSocket.connect();
-    setConnectionStatus('connecting');
-
+  const updateSessions = () => {
     apiFetch(`/api/events/${user.event}/sessions`)
       .then(res => res?.json())
       .then(data => {
         setSessions(data);
       });
+  };
 
-    const onConnect = () => {
-      setConnectionStatus('connected');
-    };
+  const updateTeams = () => {
+    apiFetch(`/api/events/${user.event}/teams`)
+      .then(res => res?.json())
+      .then(data => {
+        setTeams(data);
+      });
+  };
 
-    const onDisconnect = () => {
-      setConnectionStatus('disconnected');
-    };
+  const updateData = () => {
+    updateSessions();
+    updateTeams();
+  };
 
-    judgingSocket.on('connect', onConnect);
-    judgingSocket.on('disconnect', onDisconnect);
-    judgingSocket.on('sessionStarted', updateSessions);
-    judgingSocket.on('sessionCompleted', updateSessions);
-    judgingSocket.on('sessionAborted', updateSessions);
-
-    return () => {
-      judgingSocket.off('connect', onConnect);
-      judgingSocket.off('disconnect', onDisconnect);
-      judgingSocket.off('sessionStarted', updateSessions);
-      judgingSocket.off('sessionCompleted', updateSessions);
-      judgingSocket.off('sessionAborted', updateSessions);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateData, [
+    { name: 'judgingSessionStarted', handler: updateSessions },
+    { name: 'judgingSessionCompleted', handler: updateSessions },
+    { name: 'judgingSessionAborted', handler: updateSessions },
+    { name: 'teamRegistered', handler: updateTeams }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="lead-judge" onFail={() => router.back()}>
@@ -117,7 +99,7 @@ const Page: NextPage<Props> = ({ user, event, teams, rooms }) => {
                 room={room}
                 teams={teams}
                 user={user}
-                socket={judgingSocket}
+                socket={socket}
               />
             </Paper>
           ))}
@@ -134,15 +116,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
     const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
       res?.json()
     );
-    const [teams, rooms, event] = await Promise.all([teamsPromise, roomsPromise, eventPromise]);
+    const [rooms, event] = await Promise.all([roomsPromise, eventPromise]);
 
-    return { props: { user, event, teams, rooms } };
+    return { props: { user, event, rooms } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

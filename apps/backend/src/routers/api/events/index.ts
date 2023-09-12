@@ -14,6 +14,12 @@ router.get('/:eventId', (req: Request, res: Response) => {
   db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => res.json(event));
 });
 
+router.get('/:eventId/state', (req: Request, res: Response) => {
+  db.getEventState({ event: new ObjectId(req.params.eventId) }).then(eventState =>
+    res.json(eventState)
+  );
+});
+
 router.get('/:eventId/teams', (req: Request, res: Response) => {
   db.getEventTeams(new ObjectId(req.params.eventId)).then(teams => res.json(teams));
 });

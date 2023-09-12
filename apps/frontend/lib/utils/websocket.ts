@@ -1,6 +1,5 @@
-import { io } from 'socket.io-client';
-import { Socket } from 'socket.io-client';
-import { JudgingClientEmittedEvents, JudgingServerEmittedEvents } from '@lems/types';
+import { Manager, Socket } from 'socket.io-client';
+import { WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 const getWsBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
@@ -8,10 +7,13 @@ const getWsBase = (forceClient = false) => {
 };
 
 const url = getWsBase();
-export const judgingSocket: Socket<JudgingServerEmittedEvents, JudgingClientEmittedEvents> = io(
-  url ? url + '/judging' : '',
-  {
-    autoConnect: false,
-    withCredentials: true
-  }
-);
+const manager = new Manager(url ? url : '', {
+  autoConnect: false,
+  withCredentials: true
+});
+
+export const getSocket = (
+  eventId: string
+): Socket<WSServerEmittedEvents, WSClientEmittedEvents> => {
+  return manager.socket(`/event/${eventId}`);
+};
