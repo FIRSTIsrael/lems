@@ -7,11 +7,11 @@ import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import { JudgingRoom, JudgingSession, SafeUser, Event, Team } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch } from '../../../lib/utils/fetch';
-import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
+import RubricStatusReferences from '../../../components/general/judging/rubric-status-references';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import WelcomeHeader from '../../../components/display/welcome-header';
-import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
+import WelcomeHeader from '../../../components/general/welcome-header';
+import JudgingRoomSchedule from '../../../components/general/judging/judging-room-schedule';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 

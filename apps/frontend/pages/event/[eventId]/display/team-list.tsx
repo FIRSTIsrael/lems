@@ -12,7 +12,7 @@ import {
   TableRow
 } from '@mui/material';
 import { Event, Team, JudgingRoom, SafeUser } from '@lems/types';
-import BooleanIcon from '../../../../components/display/boolean-icon';
+import BooleanIcon from '../../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';

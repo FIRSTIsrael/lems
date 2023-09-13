@@ -27,8 +27,8 @@ import {
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
-import StatusIcon from '../../../../components/display/status-icon';
-import Countdown from '../../../../components/display/countdown';
+import StatusIcon from '../../../../components/general/status-icon';
+import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';

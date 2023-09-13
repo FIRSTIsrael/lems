@@ -20,7 +20,7 @@ import ConnectionIndicator from '../../../../../../components/connection-indicat
 import { localizedJudgingCategory } from '../../../../../../localization/judging';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
-import RubricForm from '../../../../../../components/display/judging/rubrics/rubric-form';
+import RubricForm from '../../../../../../components/general/judging/rubrics/rubric-form';
 
 interface RubricSelectorProps {
   event: WithId<Event>;
