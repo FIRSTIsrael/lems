@@ -53,7 +53,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       });
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateTeams, [
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], updateTeams, [
     { name: 'teamRegistered', handler: updateTeams }
   ]);
 

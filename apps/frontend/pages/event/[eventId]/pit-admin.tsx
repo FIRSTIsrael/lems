@@ -1,28 +1,82 @@
-import { apiFetch } from '../../../lib/utils/fetch';
+import { GetServerSideProps, NextPage } from 'next';
+import router from 'next/router';
+import { WithId } from 'mongodb';
+import { useMemo, useState } from 'react';
+import { Socket } from 'socket.io-client';
+import { enqueueSnackbar } from 'notistack';
+import { Tabs, Tab, Paper, Button, Autocomplete, TextField } from '@mui/material';
+import { TabContext, TabPanel } from '@mui/lab';
+import Grid from '@mui/material/Unstable_Grid2/';
+import { Event, Team, User, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
+import { apiFetch } from '../../../lib/utils/fetch';
 import { localizeRole } from '../../../lib/utils/localization';
-import { GetServerSideProps, NextPage } from 'next';
-import router from 'next/router';
-import { Event, Team, User } from '@lems/types';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { ObjectId, WithId } from 'mongodb';
-import { useMemo, useState } from 'react';
-import {
-  Tabs,
-  Tab,
-  Paper,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Stack,
-  Typography,
-  Button
-} from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
-import Grid from '@mui/material/Unstable_Grid2/';
+
+interface TeamRegistrationPanelProps {
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  event: WithId<Event>;
+  teams: Array<WithId<Team>>;
+}
+
+const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, event, teams }) => {
+  const [team, setTeam] = useState<WithId<Team> | null>(null);
+  const [inputValue, setInputValue] = useState<string>('');
+
+  const unregisteredTeams = useMemo(
+    () => (teams ? teams.filter((team: WithId<Team>) => !team.registered) : undefined),
+    [teams]
+  );
+
+  const registerTeam = () => {
+    team &&
+      socket.emit('registerTeam', event._id.toString(), team?._id.toString(), response => {
+        if (response.ok) {
+          setTeam(null);
+          setInputValue('');
+          enqueueSnackbar('הקבוצה נרשמה בהצלחה!', { variant: 'success' });
+        }
+      });
+  };
+
+  return (
+    <Paper sx={{ p: 4 }}>
+      <Grid container direction="row" alignItems="center" spacing={4}>
+        <Grid xs={9}>
+          {unregisteredTeams && (
+            <Autocomplete
+              freeSolo
+              options={unregisteredTeams ? unregisteredTeams : []}
+              getOptionLabel={team =>
+                typeof team === 'string'
+                  ? team
+                  : `קבוצה #${team.number}, ${team.name} - ${team.affiliation.institution}, ${team.affiliation.city}`
+              }
+              inputMode="search"
+              inputValue={inputValue}
+              onInputChange={(_e, newInputValue) => setInputValue(newInputValue)}
+              onChange={(_e, value) => typeof value !== 'string' && setTeam(value)}
+              renderInput={params => <TextField {...params} label="קבוצה" />}
+            />
+          )}
+        </Grid>
+        <Grid xs={3}>
+          <Button
+            sx={{ borderRadius: 8 }}
+            variant="contained"
+            disabled={!team}
+            fullWidth
+            onClick={registerTeam}
+          >
+            רישום
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
 
 interface Props {
   user: User;
@@ -30,28 +84,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ user, event }) => {
-  const [chosenTeamId, setChosenTeamId] = useState<string>('');
   const [teams, setTeams] = useState<Array<WithId<Team>> | undefined>(undefined);
   const [activeTab, setActiveTab] = useState<string>('1');
-
-  const unregisteredTeams = useMemo(
-    () => (teams ? teams.filter((team: WithId<Team>) => !team.registered) : undefined),
-    [teams]
-  );
-
-  const chosenTeam = useMemo(
-    () =>
-      unregisteredTeams
-        ? unregisteredTeams.find(team => team._id.toString() === chosenTeamId)
-        : undefined,
-    [unregisteredTeams, chosenTeamId]
-  );
-
-  const registerTeam = () => {
-    socket.emit('registerTeam', event._id.toString(), chosenTeamId, response => {
-      if (response.ok) setChosenTeamId('');
-    });
-  };
 
   const updateTeams = () => {
     apiFetch(`/api/events/${user.event}/teams`)
@@ -65,7 +99,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
     event._id.toString(),
     ['pit-admin'],
     updateTeams,
-    [{ name: 'registerTeam', handler: updateTeams }]
+    [{ name: 'teamRegistered', handler: updateTeams }]
   );
 
   return (
@@ -87,43 +121,11 @@ const Page: NextPage<Props> = ({ user, event }) => {
               <Tab label="פתיחת בקשות" value="2" />
             </Tabs>
           </Paper>
-          <TabPanel value="1">
-            <Paper sx={{ mt: 4, p: 4 }}>
-              <Grid container direction="row" alignItems="center" spacing={4}>
-                <Grid xs={9}>
-                  <FormControl fullWidth>
-                    <InputLabel id="team-select-label">קבוצה</InputLabel>
-                    <Select
-                      labelId="team-select-label"
-                      id="team-select"
-                      value={chosenTeamId}
-                      label="קבוצה"
-                      onChange={e => setChosenTeamId(e.target.value)}
-                    >
-                      {unregisteredTeams &&
-                        unregisteredTeams.map(team => (
-                          <MenuItem key={team._id.toString()} value={team._id.toString()}>
-                            קבוצה #{team.number}, {team.name} - {team.affiliation.institution},{' '}
-                            {team.affiliation.city}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid xs={3}>
-                  <Button
-                    sx={{ borderRadius: 8 }}
-                    variant="contained"
-                    disabled={!chosenTeam}
-                    fullWidth
-                    onClick={registerTeam}
-                  >
-                    רישום
-                  </Button>
-                </Grid>
-              </Grid>
-            </Paper>
-          </TabPanel>
+          {teams && (
+            <TabPanel value="1">
+              <TeamRegistrationPanel socket={socket} event={event} teams={teams} />
+            </TabPanel>
+          )}
           <TabPanel value="2">שלום לכם</TabPanel>
         </TabContext>
       </Layout>
