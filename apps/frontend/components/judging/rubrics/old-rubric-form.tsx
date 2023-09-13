@@ -23,8 +23,8 @@ import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
-import { RoleAuthorizer } from '../../../role-authorizer';
-import { RubricsSchema } from '../../../../localization/rubric-schemas';
+import { RoleAuthorizer } from '../../role-authorizer';
+import { RubricsSchema } from '../../../localization/rubric-schemas';
 import {
   Event,
   SafeUser,

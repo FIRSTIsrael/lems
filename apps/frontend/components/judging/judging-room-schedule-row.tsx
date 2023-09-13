@@ -13,11 +13,11 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import EditRubricButton from '../../input/edit-rubric-button';
-import StartJudgingSessionButton from '../../input/start-judging-session-button';
-import { RoleAuthorizer } from '../../role-authorizer';
-import { localizedJudgingCategory } from '../../../localization/judging';
-import StatusIcon from '../status-icon';
+import EditRubricButton from './edit-rubric-button';
+import StartJudgingSessionButton from './start-judging-session-button';
+import { RoleAuthorizer } from '../role-authorizer';
+import { localizedJudgingCategory } from '../../localization/judging';
+import StatusIcon from '../general/status-icon';
 
 interface Props {
   event: WithId<Event>;

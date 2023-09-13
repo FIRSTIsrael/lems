@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { JudgingCategory } from '@lems/types';
-import { RubricSchemaColumn } from '../../../../localization/rubric-schemas/index';
+import { RubricSchemaColumn } from '../../../localization/rubric-schemas/index';
 
 interface Props {
   columns: RubricSchemaColumn[];
