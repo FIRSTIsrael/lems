@@ -12,7 +12,7 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import WelcomeHeader from '../../../components/display/welcome-header';
 import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
-import { localizeRole } from '../../../lib/utils/localization';
+import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
@@ -58,7 +58,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
     <RoleAuthorizer user={user} allowedRoles="judge-advisor" onFail={() => router.back()}>
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >

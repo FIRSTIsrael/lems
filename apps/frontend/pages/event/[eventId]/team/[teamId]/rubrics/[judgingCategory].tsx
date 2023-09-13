@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Button, Paper, Stack, Typography } from '@mui/material';
+import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
@@ -11,14 +11,53 @@ import {
   JudgingCategory,
   JudgingRoom,
   SafeUser,
+  Rubric,
   Team
 } from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
-import { localizeJudgingCategory } from '../../../../../../lib/utils/localization';
+import { localizedJudgingCategory } from '../../../../../../localization/judging';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
+import RubricForm from '../../../../../../components/display/judging/rubrics/rubric-form';
+
+interface RubricSelectorProps {
+  event: WithId<Event>;
+  team: WithId<Team>;
+  judgingCategory: JudgingCategory;
+}
+
+const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCategory }) => {
+  return (
+    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+      {JudgingCategoryTypes.map(category => (
+        <NextLink
+          key={category}
+          href={`/event/${event._id}/team/${team._id}/rubrics/${category}`}
+          passHref
+        >
+          <Button
+            variant="contained"
+            color="inherit"
+            sx={{
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              backgroundColor: judgingCategory === category ? purple[700] : 'transparent',
+              color: judgingCategory === category ? '#fff' : purple[700],
+              borderRadius: '2rem',
+              '&:hover': {
+                backgroundColor: judgingCategory === category ? purple[700] : purple[700] + '1f'
+              }
+            }}
+          >
+            {localizedJudgingCategory[category].name}
+          </Button>
+        </NextLink>
+      ))}
+    </Stack>
+  );
+};
 
 interface Props {
   user: WithId<SafeUser>;
@@ -31,6 +70,7 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
   const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
+  const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
 
   const updateTeam = () => {
     apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}`)
@@ -40,9 +80,26 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       });
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], updateTeam, [
-    { name: 'teamRegistered', handler: updateTeam }
-  ]);
+  const updateRubric = () => {
+    apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}/rubrics/${judgingCategory}`)
+      .then(res => res?.json())
+      .then(data => setRubric(data));
+  };
+
+  const updateData = () => {
+    updateTeam();
+    updateRubric();
+  };
+
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['pit-admin', 'judging'],
+    updateData,
+    [
+      { name: 'teamRegistered', handler: updateTeam },
+      { name: 'rubricUpdated', handler: updateRubric }
+    ]
+  );
 
   return (
     <RoleAuthorizer
@@ -52,11 +109,11 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
       onFail={() => router.back()}
     >
-      {team && (
+      {team && rubric && (
         <Layout
           maxWidth="md"
           title={`מחוון ${
-            localizeJudgingCategory(judgingCategory as JudgingCategory).name
+            localizedJudgingCategory[judgingCategory as JudgingCategory].name
           } של קבוצה #${team.number}, ${team.name} | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
@@ -70,34 +127,15 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
             </Typography>
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['judge', 'judge-advisor']}>
-            <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-              {JudgingCategoryTypes.map(category => (
-                <NextLink
-                  key={category}
-                  href={`/event/${event._id}/team/${team._id}/rubrics/${category}`}
-                  passHref
-                >
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      backgroundColor: judgingCategory === category ? purple[700] : 'transparent',
-                      color: judgingCategory === category ? '#fff' : purple[700],
-                      borderRadius: '2rem',
-                      '&:hover': {
-                        backgroundColor:
-                          judgingCategory === category ? purple[700] : purple[700] + '1f'
-                      }
-                    }}
-                  >
-                    {localizeJudgingCategory(category).name}
-                  </Button>
-                </NextLink>
-              ))}
-            </Stack>
+            <RubricSelector
+              event={event}
+              team={team}
+              judgingCategory={judgingCategory as JudgingCategory}
+            />
           </RoleAuthorizer>
+          <Box my={4}>
+            <RubricForm event={event} team={team} rubric={rubric} />
+          </Box>
         </Layout>
       )}
     </RoleAuthorizer>

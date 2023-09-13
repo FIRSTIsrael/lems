@@ -1,3 +1,6 @@
+import { JudgingCategory } from './constants';
+import { Rubric } from './schemas/rubric';
+
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
 interface EventsMap {
@@ -12,6 +15,10 @@ export interface WSServerEmittedEvents {
   judgingSessionCompleted: (sessionId: string) => void;
 
   judgingSessionAborted: (sessionId: string) => void;
+
+  rubricUpdated: (rubricId: string) => void;
+
+  rubricStatusChanged: (rubricId: string) => void;
 
   teamRegistered: (teamId: string) => void;
 }
@@ -34,6 +41,14 @@ export interface WSClientEmittedEvents {
   registerTeam: (
     eventId: string,
     teamId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateRubric: (
+    eventId: string,
+    teamId: string,
+    rubricId: string,
+    rubricData: Partial<Rubric<JudgingCategory>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

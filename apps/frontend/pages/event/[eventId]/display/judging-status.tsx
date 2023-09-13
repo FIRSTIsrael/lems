@@ -31,7 +31,7 @@ import StatusIcon from '../../../../components/display/status-icon';
 import Countdown from '../../../../components/display/countdown';
 import Layout from '../../../../components/layout';
 import { apiFetch } from '../../../../lib/utils/fetch';
-import { localizeRole } from '../../../../lib/utils/localization';
+import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface JudgingStatusTimerProps {
@@ -266,7 +266,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizeRole(user.role).name} - מצב השיפוט | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/display`}

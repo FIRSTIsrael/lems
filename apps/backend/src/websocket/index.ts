@@ -5,7 +5,7 @@ import {
   WSInterServerEvents,
   WSSocketData
 } from '@lems/types';
-import { handleStartSession, handleAbortSession } from './handlers/judging';
+import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
 import { handleRegisterTeam } from './handlers/pit-admin';
 
 const websocket = (
@@ -25,6 +25,8 @@ const websocket = (
   socket.on('startJudgingSession', (...args) => handleStartSession(namespace, ...args));
 
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));
+
+  socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
 
   socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
 

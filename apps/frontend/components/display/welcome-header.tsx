@@ -1,6 +1,6 @@
 import { Paper, Typography } from '@mui/material';
 import { Event, SafeUser } from '@lems/types';
-import { localizeRole } from '../../lib/utils/localization';
+import { localizedRoles } from '../../localization/roles';
 
 interface Props {
   event: Event;
@@ -27,7 +27,7 @@ const WelcomeHeader = ({ event, user }: Props) => {
         יחד, אנו בונים את הדור הבא של מנהיגי המדע והטכנולוגיה
       </Typography>
       <Typography color="#666" fontSize="0.875rem">
-        תודה שבאת להתנדב איתנו בתור {user.role ? localizeRole(user.role).name : ''}!
+        תודה שבאת להתנדב איתנו בתור {user.role ? localizedRoles[user.role].name : ''}!
       </Typography>
     </Paper>
   );

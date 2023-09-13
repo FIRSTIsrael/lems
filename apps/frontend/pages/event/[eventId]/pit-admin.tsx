@@ -12,7 +12,7 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch } from '../../../lib/utils/fetch';
-import { localizeRole } from '../../../lib/utils/localization';
+import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface TeamRegistrationPanelProps {
@@ -106,7 +106,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
     <RoleAuthorizer user={user} allowedRoles="pit-admin" onFail={() => router.back()}>
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >

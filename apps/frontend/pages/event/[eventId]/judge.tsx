@@ -14,7 +14,7 @@ import WelcomeHeader from '../../../components/display/welcome-header';
 import JudgingTimer from '../../../components/display/judging/judging-timer';
 import AbortJudgingSessionButton from '../../../components/input/abort-judging-session-button';
 import { apiFetch } from '../../../lib/utils/fetch';
-import { localizeRole } from '../../../lib/utils/localization';
+import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
@@ -97,7 +97,7 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
     <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >

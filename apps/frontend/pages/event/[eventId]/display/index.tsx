@@ -7,7 +7,7 @@ import { User, Event } from '@lems/types';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch } from '../../../../lib/utils/fetch';
-import { localizeRole } from '../../../../lib/utils/localization';
+import { localizedRoles } from '../../../../localization/roles';
 
 interface GridPaperLinkProps {
   path: string;
@@ -46,7 +46,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
       >
         <Grid container spacing={3} columns={6} direction="row" mt={4}>
           <GridPaperLink path="judging-status">

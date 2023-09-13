@@ -16,7 +16,7 @@ import {
 import EditRubricButton from '../../input/edit-rubric-button';
 import StartJudgingSessionButton from '../../input/start-judging-session-button';
 import { RoleAuthorizer } from '../../role-authorizer';
-import { localizeJudgingCategory } from '../../../lib/utils/localization';
+import { localizedJudgingCategory } from '../../../localization/judging';
 import StatusIcon from '../status-icon';
 
 interface Props {
@@ -97,7 +97,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
                 href={`/event/${user.event}/team/${team._id}/rubrics/${judgingCategory}`}
                 status={'empty'} //TODO: Crud from rubrics for status
               >
-                {localizeJudgingCategory(judgingCategory).name}
+                {localizedJudgingCategory[judgingCategory].name}
               </EditRubricButton>
             </RoleAuthorizer>
           );

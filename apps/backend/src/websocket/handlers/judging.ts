@@ -78,3 +78,35 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
   callback({ ok: true });
   namespace.to('judging').emit('judgingSessionAborted', sessionId);
 };
+
+export const handleUpdateRubric = async (
+  namespace,
+  eventId,
+  teamId,
+  rubricId,
+  rubricData,
+  callback
+) => {
+  const rubric = await db.getRubric({
+    team: new ObjectId(teamId),
+    _id: new ObjectId(rubricId)
+  });
+  if (!rubric) {
+    callback({
+      ok: false,
+      error: `Could not find session ${rubricId} for team ${teamId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️Updating rubric ${rubricId} for team ${teamId} in event ${eventId}`);
+
+  await db.updateRubric({ _id: rubric._id }, rubricData);
+
+  callback({ ok: true });
+
+  namespace.to('judging').emit('rubricUpdated', rubricId);
+
+  if (rubricData.status !== rubric.status)
+    namespace.to('judging').emit('rubricStatusUpdated', rubricId);
+};
