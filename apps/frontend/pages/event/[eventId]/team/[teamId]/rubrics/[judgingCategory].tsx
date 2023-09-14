@@ -15,12 +15,12 @@ import {
   Team
 } from '@lems/types';
 import Layout from '../../../../../../components/layout';
+import RubricForm from '../../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
 import { localizedJudgingCategory } from '../../../../../../localization/judging';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
-import RubricForm from '../../../../../../components/general/judging/rubrics/rubric-form';
 
 interface RubricSelectorProps {
   event: WithId<Event>;
