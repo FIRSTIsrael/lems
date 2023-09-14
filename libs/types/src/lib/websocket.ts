@@ -53,7 +53,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   joinRoom: (
-    room: WSRoomName,
+    room: WSRoomName | Array<WSRoomName>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }

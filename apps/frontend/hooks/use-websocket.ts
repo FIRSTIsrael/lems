@@ -23,11 +23,9 @@ export const useWebsocket = (
     const onConnect = () => {
       setConnectionStatus('connected');
 
-      for (const room of rooms) {
-        socket.emit('joinRoom', room, response => {
-          // { ok: true }
-        });
-      }
+      socket.emit('joinRoom', rooms, response => {
+        // { ok: true }
+      });
     };
 
     const onDisconnect = () => {
