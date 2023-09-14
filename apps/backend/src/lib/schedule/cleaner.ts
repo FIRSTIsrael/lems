@@ -3,6 +3,12 @@ import * as db from '@lems/database';
 import { Event, RobotGameTable, JudgingRoom, Team } from '@lems/types';
 
 export const cleanEventData = async (event: WithId<Event>) => {
+  const oldEventState = await db.getEventStateFromEvent(event._id);
+  if (oldEventState) {
+    if (!(await db.deleteEventState(oldEventState)).acknowledged)
+      throw new Error('Could not delete event state!');
+  }
+
   const oldTables = await db.getEventTables(event._id);
   const oldRooms = await db.getEventRooms(event._id);
   const oldTeams = await db.getEventTeams(event._id);

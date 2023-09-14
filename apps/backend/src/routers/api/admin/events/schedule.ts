@@ -64,6 +64,10 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Could not create users!' });
   console.log('✅ Generated event users');
 
+  console.log('🔐Creating event state');
+  await db.addEventState({ activeMatch: 0, activeSession: 0, event: event._id });
+  console.log('✅Created event state');
+
   return res.status(200).json({ ok: true });
 });
 
