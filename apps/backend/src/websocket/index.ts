@@ -18,7 +18,7 @@ const websocket = (
 
   socket.on('joinRoom', (rooms, callback) => {
     if (!Array.isArray(rooms)) rooms = [rooms];
-    console.log(`🏠 WS: Joining room ${rooms.toString()}`);
+    console.log(`🏠 WS: Joining rooms ${rooms.toString()}`);
     socket.join(rooms);
     callback({ ok: true });
   });
