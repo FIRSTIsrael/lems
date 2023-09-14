@@ -1,7 +1,7 @@
 import coreValuesSchema from './core-values';
 import innovationProjectSchema from './innovation-project';
 import robotDesignSchema from './robot-design';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory, OptionalAwards } from '@lems/types';
 
 export interface RubricSchemaRubric {
   id: string;
@@ -20,7 +20,7 @@ export interface RubricSchemaSection {
 export type RubricSchemaColumn = { title: string; description?: string };
 
 export interface RubricSchemaAwardCandidature {
-  id: string;
+  id: OptionalAwards;
   title: string;
   description: string;
 }

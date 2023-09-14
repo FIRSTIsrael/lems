@@ -1,9 +1,13 @@
 import { RubricsSchema } from '.';
+import { JudgingCategory, OptionalAwardsTypes, SEASON_NAME } from '@lems/types';
+import { localizedJudgingCategory, localizedOptionalAward } from '../judging';
+
+const category = 'core-values' as JudgingCategory;
 
 const coreValuesRubric: RubricsSchema = {
-  type: 'core-values',
-  season: 'SUPERPOWERED℠',
-  title: 'ערכי הליבה',
+  category: category,
+  season: SEASON_NAME,
+  title: localizedJudgingCategory[category].name,
   description:
     '**ערכי הליבה** צריכים לשמש כזכוכית מגדלת דרכה אתם מסתכלים על הופעת הקבוצה. כל חברי הקבוצה צריכים להדגים את ערכי הליבה בכל דבר שהם עושים. מחוון זה צריך לשמש לתיעוד **ערכי הליבה**, בהם הבחנתם בעת מפגש השיפוט. הערכת ערכי הליבה תתבצע גם במהלך כל **משחק הרובוט**, על ידי ניקוד של **מקצועיות אדיבה®**, אשר יתווסף להערכה כללית של ערכי הליבה.',
   columns: [
@@ -23,25 +27,11 @@ const coreValuesRubric: RubricsSchema = {
       title: 'מצטיינת'
     }
   ],
-  awards: [
-    {
-      id: 'breakthrough',
-      title: 'פורצי הדרך',
-      description:
-        'קבוצה שחבריה עשו התקדמות משמעותית ביכולותיהם ובביטחון העצמי שלהם והבינו שמה שהם מגלים חשוב יותר מהפרסים.'
-    },
-    {
-      id: 'risingStar',
-      title: 'הכוכב העולה',
-      description: 'קבוצה אשר תפסה את תשומת לב השופטים והם צופים לה הישגים גדולים בעתיד.'
-    },
-    {
-      id: 'motivate',
-      title: 'המניעים',
-      description:
-        'קבוצה שמטמיעה את התרבות של _FIRST®_ LEGO® League על ידי גיבוש  קבוצתי, רוח צוות והתלהבות.'
-    }
-  ],
+  awards: OptionalAwardsTypes.map(id => ({
+    id,
+    title: localizedOptionalAward[id].name,
+    description: localizedOptionalAward[id].name
+  })),
   sections: [
     {
       title: 'גילוי',

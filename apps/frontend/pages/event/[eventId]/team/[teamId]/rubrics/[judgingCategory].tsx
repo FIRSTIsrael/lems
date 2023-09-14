@@ -19,6 +19,7 @@ import RubricForm from '../../../../../../components/judging/rubrics/rubric-form
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
 import { localizedJudgingCategory } from '../../../../../../localization/judging';
+import rubricsSchemas from '../../../../../../localization/rubric-schemas';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 
@@ -71,6 +72,10 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
   const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
   const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
+
+  const schema = rubricsSchemas[judgingCategory as JudgingCategory];
+  const flatMap = schema.sections.flatMap(section => section.rubrics.map(rubric => rubric.id));
+  const awardCandidates = schema.awards?.map(award => award.id) || [];
 
   const updateTeam = () => {
     apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}`)
@@ -133,6 +138,8 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
               judgingCategory={judgingCategory as JudgingCategory}
             />
           </RoleAuthorizer>
+          {JSON.stringify(awardCandidates)}
+          {JSON.stringify(flatMap)}
           <Box my={4}>
             <RubricForm event={event} team={team} rubric={rubric} />
           </Box>

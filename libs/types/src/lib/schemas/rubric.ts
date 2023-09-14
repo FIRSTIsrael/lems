@@ -22,8 +22,8 @@ export interface Rubric<T extends JudgingCategory> {
       ? { [key in RubricFields<T>]: RubricValue }
       : {
           [key in RubricFields<T>]: {
-            //TODO: smart type that ensures 2 keys: one from [0] and one from [1]
-            [key in RubricInnerFields<T>[0] | RubricInnerFields<T>[1]]: RubricValue;
+            //TODO: smart type that ensures 2 keys: one from [0] and one from [1] (using the pairs type)
+            [key in RubricInnerFields<T>]: RubricValue;
           };
         };
     notes: { greatJob: string; thinkAbout: string };
