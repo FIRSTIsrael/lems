@@ -3,7 +3,7 @@ import innovationProjectSchema from './innovation-project';
 import robotDesignSchema from './robot-design';
 import { JudgingCategory, OptionalAwards } from '@lems/types';
 
-export interface RubricSchemaRubric {
+export interface RubricSchemaField {
   id: string;
   label_1?: string;
   label_2?: string;
@@ -14,10 +14,8 @@ export interface RubricSchemaRubric {
 export interface RubricSchemaSection {
   title: string;
   description: string;
-  rubrics: RubricSchemaRubric[];
+  fields: RubricSchemaField[];
 }
-
-export type RubricSchemaColumn = { title: string; description?: string };
 
 export interface RubricSchemaAwardCandidature {
   id: OptionalAwards;
@@ -25,14 +23,32 @@ export interface RubricSchemaAwardCandidature {
   description: string;
 }
 
-export type RubricSchemaFeedback = [
+export const rubricSchemaColumns = [
   {
-    id: 'greatJob';
-    title: 'עבודה מצוינת';
+    title: 'מתחילה',
+    description: 'ניכר באופן מינימלי בין חברי הקבוצה'
   },
   {
-    id: 'thinkAbout';
-    title: 'חשבו על';
+    title: 'מתפתחת',
+    description: 'ניכר באופן לא עקבי בין חברי הקבוצה'
+  },
+  {
+    title: 'מיומנת',
+    description: 'ניכר באופן עקבי בין חברי הקבוצה'
+  },
+  {
+    title: 'מצטיינת'
+  }
+];
+
+export const rubricSchemaFeedback = [
+  {
+    id: 'greatJob',
+    title: 'עבודה מצוינת'
+  },
+  {
+    id: 'thinkAbout',
+    title: 'חשבו על'
   }
 ];
 
@@ -41,10 +57,10 @@ export interface RubricsSchema {
   season: string;
   title: string;
   description: string;
-  columns: RubricSchemaColumn[];
+  columns: typeof rubricSchemaColumns;
   sections: RubricSchemaSection[];
   awards?: RubricSchemaAwardCandidature[];
-  feedback?: RubricSchemaFeedback;
+  feedback?: typeof rubricSchemaFeedback;
 }
 
 const rubricsSchemas: { [K in JudgingCategory]: RubricsSchema } = {
