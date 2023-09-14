@@ -16,9 +16,10 @@ const websocket = (
 
   console.log(`🔌WS: Connection to event ${eventId}`);
 
-  socket.on('joinRoom', (room, callback) => {
-    console.log(`🏠 WS: Joining room ${room}`);
-    socket.join(room);
+  socket.on('joinRoom', (rooms, callback) => {
+    if (!Array.isArray(rooms)) rooms = [rooms];
+    console.log(`🏠 WS: Joining room ${rooms.toString()}`);
+    socket.join(rooms);
     callback({ ok: true });
   });
 
