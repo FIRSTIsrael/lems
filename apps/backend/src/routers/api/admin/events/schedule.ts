@@ -1,38 +1,27 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
 import * as db from '@lems/database';
-import { RobotGameTable, JudgingRoom } from '@lems/types';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
+import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
+import { cleanEventData } from '../../../../lib/schedule/cleaner';
 import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
+
 const router = express.Router({ mergeParams: true });
 
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
-  console.log('👓 Parsing schedule...');
-  const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-  const oldTables = await db.getEventTables(event._id);
-  const oldRooms = await db.getEventRooms(event._id);
+  console.log('🚮Deleting event data');
+  try {
+    await cleanEventData(event);
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+  console.log('✅ Deleted event data!');
 
-  oldTables.forEach(async (table: WithId<RobotGameTable>) => {
-    if (!(await db.deleteTableMatches(table._id)).acknowledged)
-      return res.status(500).json({ error: 'Could not delete matches!' });
-  });
-
-  oldRooms.forEach(async (room: WithId<JudgingRoom>) => {
-    if (!(await db.deleteRoomSessions(room._id)).acknowledged)
-      return res.status(500).json({ error: 'Could not delete sessions!' });
-  });
-
-  if (!(await db.deleteEventTeams(event._id)).acknowledged)
-    return res.status(500).json({ error: 'Could not delete teams!' });
-  if (!(await db.deleteEventTables(event._id)).acknowledged)
-    return res.status(500).json({ error: 'Could not delete tables!' });
-  if (!(await db.deleteEventRooms(event._id)).acknowledged)
-    return res.status(500).json({ error: 'Could not delete rooms!' });
-  if (!(await db.deleteEventUsers(event._id)).acknowledged)
-    return res.status(500).json({ error: 'Could not delete users!' });
+  console.log('👓 Parsing schedule...');
+  const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
 
   const { teams, tables, rooms } = await parseEventData(event, csvData);
 
@@ -62,6 +51,12 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Could not insert matches!' });
 
   console.log('✅ Finished parsing schedule!');
+
+  console.log('📄Generating rubrics');
+  const rubrics = getEventRubrics(dbTeams);
+  if (!(await db.addRubrics(rubrics)).acknowledged)
+    return res.status(500).json({ error: 'Could not create rubrics!' });
+  console.log('✅Generated rubrics');
 
   console.log('👤 Generating event users');
   const users = getEventUsers(event, dbTables, dbRooms);
