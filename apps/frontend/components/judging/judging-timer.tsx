@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Typography, Paper } from '@mui/material';
 import { JUDGING_SESSION_LENGTH, JudgingSession, Team } from '@lems/types';
-import useCountdown from '../../../hooks/use-countdown';
-import Countdown from '../countdown';
+import useCountdown from '../../hooks/use-countdown';
+import Countdown from '../general/countdown';
 
 interface TimerProps {
   session: JudgingSession;

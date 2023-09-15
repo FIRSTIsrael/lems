@@ -1,7 +1,6 @@
 import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
 import { RobotGameTable } from '@lems/types';
-import { ReplaceResult } from '../types/responses';
 
 export const getTable = (filter: Filter<RobotGameTable>) => {
   return db.collection<RobotGameTable>('tables').findOne(filter);
@@ -43,27 +42,4 @@ export const deleteEventTables = (eventId: ObjectId) => {
     .collection<RobotGameTable>('tables')
     .deleteMany({ event: eventId })
     .then(response => response);
-};
-
-export const replaceEventTables = async (eventId: ObjectId, newTables: RobotGameTable[]) => {
-  const response = {
-    acknowledged: false,
-    deletedCount: 0,
-    insertedCount: 0,
-    insertedIds: []
-  } as ReplaceResult;
-
-  const deleteResponse = await deleteEventTables(eventId);
-  if (deleteResponse.acknowledged) {
-    response.deletedCount = deleteResponse.deletedCount;
-
-    const insertResponse = await addTables(newTables);
-    if (insertResponse.acknowledged) {
-      response.acknowledged = true;
-      response.insertedCount = insertResponse.insertedCount;
-      response.insertedIds = insertResponse.insertedIds;
-    }
-  }
-
-  return response;
 };

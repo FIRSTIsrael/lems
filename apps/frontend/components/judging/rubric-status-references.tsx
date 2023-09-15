@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
-import EditRubricButton from '../../input/edit-rubric-button';
 import { RubricStatusTypes } from '@lems/types';
-import { localizeRubricStatus } from '../../../lib/utils/localization';
+import EditRubricButton from './edit-rubric-button';
+import { localizedRubricStatus } from '../../localization/rubrics';
 
 const RubricStatusReferences = () => {
   return (
@@ -9,7 +9,7 @@ const RubricStatusReferences = () => {
       {RubricStatusTypes.map(status => {
         return (
           <EditRubricButton key={status} status={status} active={true}>
-            {localizeRubricStatus(status).name}
+            {localizedRubricStatus[status]}
           </EditRubricButton>
         );
       })}

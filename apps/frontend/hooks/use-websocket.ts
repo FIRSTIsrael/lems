@@ -16,18 +16,16 @@ export const useWebsocket = (
 
   useEffect(() => {
     socket.connect();
-    setConnectionStatus('connecting');
+    if (!socket.connected) setConnectionStatus('connecting');
 
     if (init) init();
 
     const onConnect = () => {
       setConnectionStatus('connected');
 
-      for (const room of rooms) {
-        socket.emit('joinRoom', room, response => {
-          // { ok: true }
-        });
-      }
+      socket.emit('joinRoom', rooms, response => {
+        // { ok: true }
+      });
     };
 
     const onDisconnect = () => {

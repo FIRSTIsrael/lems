@@ -4,10 +4,10 @@ import { WithId, ObjectId } from 'mongodb';
 import { Paper, Box, Link } from '@mui/material';
 import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
-import EventSelector from '../components/input/event-selector';
-import LoginForm from '../components/forms/login-form';
+import EventSelector from '../components/login/event-selector';
+import LoginForm from '../components/login/login-form';
 import { apiFetch } from '../lib/utils/fetch';
-import AdminLoginForm from '../components/forms/admin-login-form';
+import AdminLoginForm from '../components/login/admin-login-form';
 
 interface PageProps {
   events: Array<WithId<Event>>;

@@ -12,12 +12,12 @@ import {
   TableRow
 } from '@mui/material';
 import { Event, Team, JudgingRoom, SafeUser } from '@lems/types';
-import BooleanIcon from '../../../../components/display/boolean-icon';
+import BooleanIcon from '../../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
 import { apiFetch } from '../../../../lib/utils/fetch';
-import { localizeRole } from '../../../../lib/utils/localization';
+import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface Props {
@@ -29,6 +29,7 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event, rooms }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
+  const defaultSortKey = 'number';
 
   //TODO: have a way for user to select sort
   const sortFunctions: { [key: string]: (a: WithId<Team>, b: WithId<Team>) => number } = {
@@ -43,17 +44,16 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
     apiFetch(`/api/events/${user.event}/teams`)
       .then(res => res?.json())
       .then(data => {
-        if (typeof router.query.sort === 'string' && sortFunctions[router.query.sort]) {
-          data.sort(sortFunctions[router.query.sort]);
-        } else {
-          router.replace({ query: { eventId: event._id.toString(), sort: 'number' } });
-          data.sort(sortFunctions['number']);
-        }
+        const sortKey: string =
+          typeof router.query.sort === 'string' ? router.query.sort : defaultSortKey;
+
+        data.sort(sortFunctions[sortKey]);
+
         setTeams(data);
       });
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateTeams, [
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], updateTeams, [
     { name: 'teamRegistered', handler: updateTeams }
   ]);
 
@@ -65,9 +65,11 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizeRole(user.role).name} - רשימת קבוצות | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
+        back={`/event/${event._id}/display`}
+        backDisabled={connectionStatus !== 'connecting'}
       >
         <Paper
           sx={{

@@ -4,15 +4,23 @@ import { useRouter } from 'next/router';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { JudgingRoom, JudgingSession, SafeUser, Event, Team } from '@lems/types';
+import {
+  JudgingRoom,
+  JudgingSession,
+  SafeUser,
+  Event,
+  Team,
+  JudgingCategory,
+  Rubric
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch } from '../../../lib/utils/fetch';
-import RubricStatusReferences from '../../../components/display/judging/rubric-status-references';
+import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import WelcomeHeader from '../../../components/display/welcome-header';
-import JudgingRoomSchedule from '../../../components/display/judging/judging-room-schedule';
-import { localizeRole } from '../../../lib/utils/localization';
+import WelcomeHeader from '../../../components/general/welcome-header';
+import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
+import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
@@ -25,6 +33,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
+  const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
 
   const updateSessions = () => {
     apiFetch(`/api/events/${user.event}/sessions`)
@@ -42,23 +51,36 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       });
   };
 
+  const updateRubrics = () => {
+    apiFetch(`/api/events/${user.event}/rubrics`)
+      .then(res => res?.json())
+      .then(data => setRubrics(data));
+  };
+
   const updateData = () => {
     updateSessions();
     updateTeams();
+    updateRubrics();
   };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateData, [
-    { name: 'judgingSessionStarted', handler: updateSessions },
-    { name: 'judgingSessionCompleted', handler: updateSessions },
-    { name: 'judgingSessionAborted', handler: updateSessions },
-    { name: 'teamRegistered', handler: updateTeams }
-  ]);
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['judging', 'pit-admin'],
+    updateData,
+    [
+      { name: 'judgingSessionStarted', handler: updateSessions },
+      { name: 'judgingSessionCompleted', handler: updateSessions },
+      { name: 'judgingSessionAborted', handler: updateSessions },
+      { name: 'teamRegistered', handler: updateTeams },
+      { name: 'rubricStatusChanged', handler: updateRubrics }
+    ]
+  );
 
   return (
     <RoleAuthorizer user={user} allowedRoles="judge-advisor" onFail={() => router.back()}>
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizeRole(user.role).name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
@@ -100,6 +122,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
                 teams={teams}
                 user={user}
                 socket={socket}
+                rubrics={rubrics}
               />
             </Paper>
           ))}

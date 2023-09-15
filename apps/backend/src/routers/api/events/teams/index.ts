@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
+import rubricsRouter from './rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,5 +19,7 @@ router.get('/:teamId', (req: Request, res: Response) => {
     res.json(team);
   });
 });
+
+router.use('/:teamId/rubrics', rubricsRouter);
 
 export default router;

@@ -7,6 +7,8 @@ import {
   JudgingRoom,
   Team,
   SafeUser,
+  Rubric,
+  JudgingCategory,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -18,10 +20,11 @@ interface Props {
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   user: WithId<SafeUser>;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Props) => {
+const JudgingRoomSchedule = ({ event, sessions, room, teams, user, rubrics, socket }: Props) => {
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -45,6 +48,7 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, socket }: Pro
                 room={room}
                 session={session}
                 user={user}
+                rubrics={rubrics}
                 socket={socket}
               />
             );

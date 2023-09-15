@@ -5,7 +5,7 @@ import {
   WSInterServerEvents,
   WSSocketData
 } from '@lems/types';
-import { handleStartSession, handleAbortSession } from './handlers/judging';
+import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
 import { handleRegisterTeam } from './handlers/pit-admin';
 
 const websocket = (
@@ -16,15 +16,18 @@ const websocket = (
 
   console.log(`🔌WS: Connection to event ${eventId}`);
 
-  socket.on('joinRoom', (room, callback) => {
-    console.log(`🏠 WS: Joining room ${room}`);
-    socket.join(room);
+  socket.on('joinRoom', (rooms, callback) => {
+    if (!Array.isArray(rooms)) rooms = [rooms];
+    console.log(`🏠 WS: Joining rooms ${rooms.toString()}`);
+    socket.join(rooms);
     callback({ ok: true });
   });
 
   socket.on('startJudgingSession', (...args) => handleStartSession(namespace, ...args));
 
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));
+
+  socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
 
   socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
 

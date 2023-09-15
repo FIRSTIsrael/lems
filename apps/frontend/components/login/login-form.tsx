@@ -18,11 +18,8 @@ import {
 } from '@lems/types';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import {
-  localizeRole,
-  localizeAssociationType,
-  localizeJudgingCategory
-} from '../../lib/utils/localization';
+import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
+import { localizedJudgingCategory } from '../../localization/judging';
 
 interface LoginFormProps {
   event: WithId<Event>;
@@ -59,7 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
         });
       case 'category':
         return JudgingCategoryTypes.map(category => {
-          return { id: category, name: localizeJudgingCategory(category).name };
+          return { id: category, name: localizedJudgingCategory[category].name };
         });
     }
   };
@@ -124,7 +121,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
         {RoleTypes.map((r: Role) => {
           return (
             <MenuItem value={r} key={r}>
-              {localizeRole(r).name}
+              {localizedRoles[r].name}
             </MenuItem>
           );
         })}
@@ -134,7 +131,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
         <FormDropdown
           id="select-role-association"
           value={association}
-          label={localizeAssociationType(associationType).name}
+          label={localizedRoleAssociations[associationType].name}
           onChange={e => setAssociation(e.target.value)}
         >
           {getEventAssociations(associationType).map(a => {

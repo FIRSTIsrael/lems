@@ -5,6 +5,8 @@ import eventValidator from '../../../middlewares/event-validator';
 import sessionsRouter from './sessions';
 import roomsRouter from './rooms';
 import usersRouter from './users';
+import teamsRouter from './teams';
+import rubricsRouter from './rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -20,14 +22,14 @@ router.get('/:eventId/state', (req: Request, res: Response) => {
   );
 });
 
-router.get('/:eventId/teams', (req: Request, res: Response) => {
-  db.getEventTeams(new ObjectId(req.params.eventId)).then(teams => res.json(teams));
-});
-
 router.use('/:eventId/rooms', roomsRouter);
 
 router.use('/:eventId/users', usersRouter);
 
 router.use('/:eventId/sessions', sessionsRouter);
+
+router.use('/:eventId/teams', teamsRouter);
+
+router.use('/:eventId/rubrics', rubricsRouter);
 
 export default router;

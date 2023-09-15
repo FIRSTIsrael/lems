@@ -1,7 +1,6 @@
 import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
 import { JudgingSession } from '@lems/types';
-import { ReplaceResult } from '../types/responses';
 
 export const getSession = (filter: Filter<JudgingSession>) => {
   return db.collection<JudgingSession>('sessions').findOne(filter);
@@ -46,27 +45,4 @@ export const deleteRoomSessions = (roomId: ObjectId) => {
     .collection<JudgingSession>('sessions')
     .deleteMany({ room: roomId })
     .then(response => response);
-};
-
-export const replaceRoomSessions = async (roomId: ObjectId, newTables: JudgingSession[]) => {
-  const response = {
-    acknowledged: false,
-    deletedCount: 0,
-    insertedCount: 0,
-    insertedIds: []
-  } as ReplaceResult;
-
-  const deleteResponse = await deleteRoomSessions(roomId);
-  if (deleteResponse.acknowledged) {
-    response.deletedCount = deleteResponse.deletedCount;
-
-    const insertResponse = await addSessions(newTables);
-    if (insertResponse.acknowledged) {
-      response.acknowledged = true;
-      response.insertedCount = insertResponse.insertedCount;
-      response.insertedIds = insertResponse.insertedIds;
-    }
-  }
-
-  return response;
 };
