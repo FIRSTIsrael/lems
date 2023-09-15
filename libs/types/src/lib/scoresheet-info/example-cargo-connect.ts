@@ -27,7 +27,7 @@ const scoresheet: Scoresheet = {
       calculation: (clause1, clause2) => {
         let points = 0;
         if (clause1) points += 20;
-        if (clause2) points += 20;
+        if (clause2) points += 10;
         return points;
       }
     },
