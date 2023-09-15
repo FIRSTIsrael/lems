@@ -8,6 +8,9 @@ Scoresheet has 3 fields:
 `missions`: Mission array. Most of the logic is stored here.
 `validators`: Global functions that manage resources etc.
 
+Localization for scoresheets is written and stored separately.
+The scoresheet files contain only the pure logic and identifiers reusable across languages.
+
 ### Writing Missions
 
 Each mission is structured as follows:
