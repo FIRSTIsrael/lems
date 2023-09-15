@@ -8,10 +8,12 @@ import {
   JudgingSession,
   JudgingRoom,
   Team,
+  Rubric,
   SafeUser,
   JudgingCategoryTypes,
   WSClientEmittedEvents,
-  WSServerEmittedEvents
+  WSServerEmittedEvents,
+  JudgingCategory
 } from '@lems/types';
 import EditRubricButton from './edit-rubric-button';
 import StartJudgingSessionButton from './start-judging-session-button';
@@ -25,10 +27,11 @@ interface Props {
   session: WithId<JudgingSession>;
   team: WithId<Team>;
   user: WithId<SafeUser>;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Props) => {
+const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, socket }: Props) => {
   return (
     <TableRow
       key={room.name + session.time}
@@ -95,7 +98,11 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, socket }: Pr
               <EditRubricButton
                 active={session.status === 'completed'}
                 href={`/event/${user.event}/team/${team._id}/rubrics/${judgingCategory}`}
-                status={'empty'} //TODO: Crud from rubrics for status
+                status={
+                  rubrics.find(
+                    rubric => rubric.category === judgingCategory && rubric.team === team._id
+                  )?.status || 'empty'
+                }
               >
                 {localizedJudgingCategory[judgingCategory].name}
               </EditRubricButton>

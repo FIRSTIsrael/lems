@@ -8,8 +8,8 @@ import {
 } from '../constants';
 
 export interface RubricValue {
-  value: number;
-  exceededNotes: string;
+  value: string; //Radio buttons do not like numbers, so we use string :D
+  notes?: string;
 }
 
 export interface Rubric<T extends JudgingCategory> {
@@ -26,6 +26,6 @@ export interface Rubric<T extends JudgingCategory> {
             [key in RubricInnerFields<T>]: RubricValue;
           };
         };
-    notes: { greatJob: string; thinkAbout: string };
+    feedback: { greatJob: string; thinkAbout: string };
   };
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { JudgingCategory } from '@lems/types';
-import { RubricSchemaColumn } from '../../../localization/rubric-schemas/index';
+import { rubricSchemaColumns } from '../../../localization/rubric-schemas/common';
 
 interface Props {
-  columns: RubricSchemaColumn[];
+  columns: typeof rubricSchemaColumns;
   category: JudgingCategory;
+  hideDescriptions?: boolean;
 }
 
 const colors: { [K in JudgingCategory]: string[] } = {
@@ -14,7 +15,7 @@ const colors: { [K in JudgingCategory]: string[] } = {
   'robot-design': ['#EDF4EC', '#C6DDC5', '#99C69C', '#64AF75']
 };
 
-const HeaderRow: React.FC<Props> = ({ columns, category: type }) => {
+const HeaderRow: React.FC<Props> = ({ columns, category: type, hideDescriptions = false }) => {
   return (
     <TableRow>
       {columns.map((column, index) => (
@@ -38,7 +39,7 @@ const HeaderRow: React.FC<Props> = ({ columns, category: type }) => {
             {typeof column === 'object' ? column.title : column}
           </Typography>
 
-          {typeof column === 'object' && column.description && (
+          {typeof column === 'object' && column.description && !hideDescriptions && (
             <Typography fontSize="0.75em">{column.description}</Typography>
           )}
         </TableCell>

@@ -4,7 +4,15 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
+import {
+  Event,
+  Team,
+  JudgingRoom,
+  Rubric,
+  JudgingSession,
+  SafeUser,
+  JudgingCategory
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
@@ -26,6 +34,7 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event, room }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
+  const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
   const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
 
@@ -46,11 +55,20 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       });
   };
 
+  const updateRubrics = () => {
+    return apiFetch(`/api/events/${user.event}/rooms/${room._id}/rubrics`)
+      .then(res => res?.json())
+      .then(data => {
+        setRubrics(data);
+      });
+  };
+
   const getInitialData = () => {
     updateTeams().then(() => {
-      updateSessions().then(data =>
-        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'))
-      );
+      updateSessions().then(data => {
+        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
+        updateRubrics();
+      });
     });
   };
 
@@ -83,7 +101,8 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       { name: 'judgingSessionStarted', handler: onSessionStarted },
       { name: 'judgingSessionCompleted', handler: onSessionCompleted },
       { name: 'judgingSessionAborted', handler: onSessionAborted },
-      { name: 'teamRegistered', handler: updateTeams }
+      { name: 'teamRegistered', handler: updateTeams },
+      { name: 'rubricStatusChanged', handler: updateRubrics }
     ]
   );
 
@@ -151,6 +170,7 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
                 room={room}
                 teams={teams}
                 user={user}
+                rubrics={rubrics}
                 socket={socket}
               />
             </Paper>

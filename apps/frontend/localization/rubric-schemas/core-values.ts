@@ -29,12 +29,12 @@ const rubricSections: RubricSchemaSection<typeof category>[] = [
   },
   {
     title: 'עבודת צוות',
-    description: 'הקבוצה הדגימה בברור שעבדה כצוות לאורך כל המסע שלה.',
+    description: 'ניכר שהקבוצה עבדה כצוות לאורך כל המסע שלה.',
     fields: [{ id: 'teamwork' }]
   },
   {
     title: 'הנאה',
-    description: 'ניכר שהקבוצה נהנתה וחגגה את ההישגים שלה.',
+    description: 'ניכר שהקבוצה נהנתה וחגגה את ההישגים שלה, כולם ביחד וכל אחד לחוד.',
     fields: [{ id: 'fun' }]
   }
 ];
@@ -44,12 +44,12 @@ const coreValuesRubric: RubricsSchema<typeof category> = {
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,
   description:
-    '**ערכי הליבה** צריכים לשמש כזכוכית מגדלת דרכה אתם מסתכלים על הופעת הקבוצה. כל חברי הקבוצה צריכים להדגים את ערכי הליבה בכל דבר שהם עושים. מחוון זה צריך לשמש לתיעוד **ערכי הליבה**, בהם הבחנתם בעת מפגש השיפוט. הערכת ערכי הליבה תתבצע גם במהלך כל **משחק הרובוט**, על ידי ניקוד של **מקצועיות אדיבה®**, אשר יתווסף להערכה כללית של ערכי הליבה.',
+    'ערכי הליבה צריכים לשמש כזכוכית מגדלת דרכה אתם מסתכלים על הופעת הקבוצה. כל חברי הקבוצה צריכים להדגים את ערכי הליבה בכל דבר שהם עושים. מחוון זה צריך לשמש לתיעוד ערכי הליבה, בהם הבחנתם בעת מפגש השיפוט. הערכת ערכי הליבה תתבצע גם במהלך כל משחק הרובוט, על ידי ניקוד של **מקצועיות אדיבה®**, אשר יתווסף להערכה כללית של ערכי הליבה.',
   columns: rubricSchemaColumns,
   awards: OptionalAwardsTypes.map(id => ({
     id,
     title: localizedOptionalAward[id].name,
-    description: localizedOptionalAward[id].name
+    description: localizedOptionalAward[id].description
   })),
   sections: rubricSections,
   feedback: rubricSchemaFeedback

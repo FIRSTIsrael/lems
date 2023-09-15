@@ -108,5 +108,5 @@ export const handleUpdateRubric = async (
   namespace.to('judging').emit('rubricUpdated', rubricId);
 
   if (rubricData.status !== rubric.status)
-    namespace.to('judging').emit('rubricStatusUpdated', rubricId);
+    namespace.to('judging').emit('rubricStatusChanged', rubricId);
 };

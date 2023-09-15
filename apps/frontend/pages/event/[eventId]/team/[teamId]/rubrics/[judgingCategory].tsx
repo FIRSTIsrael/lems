@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ObjectId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -10,6 +11,7 @@ import {
   JudgingCategoryTypes,
   JudgingCategory,
   JudgingRoom,
+  JudgingSession,
   SafeUser,
   Rubric,
   Team
@@ -73,10 +75,6 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
   const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
   const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
 
-  const schema = rubricsSchemas[judgingCategory as JudgingCategory];
-  const flatMap = schema.sections.flatMap(section => section.fields.map(field => field.id));
-  const awardCandidates = schema.awards?.map(award => award.id) || [];
-
   const updateTeam = () => {
     apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}`)
       .then(res => res?.json())
@@ -138,10 +136,15 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
               judgingCategory={judgingCategory as JudgingCategory}
             />
           </RoleAuthorizer>
-          {JSON.stringify(awardCandidates)}
-          {JSON.stringify(flatMap)}
           <Box my={4}>
-            <RubricForm event={event} team={team} rubric={rubric} />
+            <RubricForm
+              event={event}
+              team={team}
+              user={user}
+              rubric={rubric}
+              schema={rubricsSchemas[judgingCategory as JudgingCategory]}
+              socket={socket}
+            />
           </Box>
         </Layout>
       )}
@@ -153,18 +156,32 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
+    let roomId;
+    if (user.roleAssociation && user.roleAssociation.type === 'room') {
+      roomId = user.roleAssociation.value;
+    } else {
+      const sessions = await apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
+        res => res?.json()
+      );
+      roomId = sessions.find(
+        (session: JudgingSession) => session.team == new ObjectId(String(ctx.params?.teamId))
+      ).room;
+    }
+
+    console.log(roomId);
+
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    const roomPromise = apiFetch(
-      `/api/events/${user.event}/rooms/${user.roleAssociation.value}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
+
+    const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
+      res => res?.json()
+    );
     const [room, event] = await Promise.all([roomPromise, eventPromise]);
 
     return { props: { user, event, room } };
   } catch (err) {
+    console.log(err);
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

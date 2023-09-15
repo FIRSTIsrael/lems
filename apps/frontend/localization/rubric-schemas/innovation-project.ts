@@ -8,7 +8,7 @@ const category = 'innovation-project' as JudgingCategory;
 const rubricSections: RubricSchemaSection<typeof category>[] = [
   {
     title: 'זיהוי',
-    description: 'הקבוצה הגדירה את בעיה באופן ברור וחקרה אותה היטב.',
+    description: 'הקבוצה הגדירה את הבעיה באופן ברור וחקרה אותה היטב.',
     fields: [
       {
         id: 'problem',
@@ -105,7 +105,7 @@ const innovationProjectRubric: RubricsSchema<typeof category> = {
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,
   description:
-    'על הקבוצה להציג בפני השופטים את הישגיה על פי כל אחת מאמות המידה הבאות. יש למלא את המחוון בזמן הצגת פרויקט החדשנות. על השופטים לסמן משבצת אחת בכל שורה, על מנת להעריך את רמת ההישגים של הקבוצה. אם הקבוצה מדגימה הישגים יוצאים מן הכלל, אנא כתבו הערה קצרה במשבצת מצטיינת.',
+    'על הקבוצה להציג בפני השופטים את הישגיה על פי כל אחת מאמות המידה הבאות. יש למלא את המחוון בזמן הצגת פרויקט החדשנות. על השופטים לסמן משבצת אחת בכל שורה, **על מנת להעריך את רמת ההישגים של הקבוצה. אם הקבוצה מדגימה הישגים יוצאים מן הכלל, אנא כתבו הערה קצרה במשבצת מצטיינת**.',
   columns: rubricSchemaColumns,
   sections: rubricSections,
   feedback: rubricSchemaFeedback

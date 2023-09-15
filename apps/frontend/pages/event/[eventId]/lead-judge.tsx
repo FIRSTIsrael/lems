@@ -4,7 +4,15 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import { Event, Team, JudgingRoom, JudgingSession, SafeUser } from '@lems/types';
+import {
+  Event,
+  Team,
+  JudgingRoom,
+  JudgingSession,
+  SafeUser,
+  Rubric,
+  JudgingCategory
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
@@ -25,6 +33,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
+  const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
 
   const updateSessions = () => {
     apiFetch(`/api/events/${user.event}/sessions`)
@@ -42,17 +51,30 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       });
   };
 
+  const updateRubrics = () => {
+    apiFetch(`/api/events/${user.event}/rubrics`)
+      .then(res => res?.json())
+      .then(data => setRubrics(data));
+  };
+
   const updateData = () => {
     updateSessions();
     updateTeams();
+    updateRubrics();
   };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], updateData, [
-    { name: 'judgingSessionStarted', handler: updateSessions },
-    { name: 'judgingSessionCompleted', handler: updateSessions },
-    { name: 'judgingSessionAborted', handler: updateSessions },
-    { name: 'teamRegistered', handler: updateTeams }
-  ]);
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['judging', 'pit-admin'],
+    updateData,
+    [
+      { name: 'judgingSessionStarted', handler: updateSessions },
+      { name: 'judgingSessionCompleted', handler: updateSessions },
+      { name: 'judgingSessionAborted', handler: updateSessions },
+      { name: 'teamRegistered', handler: updateTeams },
+      { name: 'rubricStatusChanged', handler: updateRubrics }
+    ]
+  );
 
   return (
     <RoleAuthorizer user={user} allowedRoles="lead-judge" onFail={() => router.back()}>
@@ -100,6 +122,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
                 teams={teams}
                 user={user}
                 socket={socket}
+                rubrics={rubrics}
               />
             </Paper>
           ))}

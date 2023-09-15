@@ -6,6 +6,7 @@ import sessionsRouter from './sessions';
 import roomsRouter from './rooms';
 import usersRouter from './users';
 import teamsRouter from './teams';
+import rubricsRouter from './rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -28,5 +29,7 @@ router.use('/:eventId/users', usersRouter);
 router.use('/:eventId/sessions', sessionsRouter);
 
 router.use('/:eventId/teams', teamsRouter);
+
+router.use('/:eventId/rubrics', rubricsRouter);
 
 export default router;

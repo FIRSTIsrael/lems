@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import sessionsRouter from './sessions';
+import rubricsRouter from './rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,5 +22,7 @@ router.get('/:roomId', (req: Request, res: Response) => {
 });
 
 router.use('/:roomId/sessions', sessionsRouter);
+
+router.use('/:roomId/rubrics', rubricsRouter);
 
 export default router;
