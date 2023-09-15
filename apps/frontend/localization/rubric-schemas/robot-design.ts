@@ -1,10 +1,11 @@
 import { SEASON_NAME, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '../judging';
-import { RubricsSchema, RubricSchemaSection, rubricSchemaColumns, rubricSchemaFeedback } from '.';
+import { RubricsSchema, RubricSchemaSection } from './typing';
+import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 const category = 'robot-design' as JudgingCategory;
 
-const rubricSections: RubricSchemaSection[] = [
+const rubricSections: RubricSchemaSection<typeof category>[] = [
   {
     title: 'זיהוי',
     description:
@@ -17,7 +18,7 @@ const rubricSections: RubricSchemaSection[] = [
         label_3: 'אסטרטגיית המשימה ברורה'
       },
       {
-        id: 'buildingAndCoding',
+        id: 'skills',
         label_1: 'עדות מוגבלת למיומנויות בנייה ותכנות אצל כל חברי הקבוצה',
         label_2: 'עדות לא עקבית למיומנויות בנייה ותכנות אצל כל חברי הקבוצה',
         label_3: 'עדות עקבית למיומנויות בנייה ותכנות אצל כל חברי הקבוצה'
@@ -30,13 +31,13 @@ const rubricSections: RubricSchemaSection[] = [
       'הקבוצה הפיקה תכנונים חדשניים ותוכנית עבודה ברורה, תוך השענות על הדרכה על פי הצורך.',
     fields: [
       {
-        id: 'effectivePlan',
+        id: 'plan',
         label_1: 'עדות מינימלית לתוכנית עבודה תכליתית',
         label_2: 'עדות חלקית לתוכנית עבודה תכליתית',
         label_3: 'עדות ברורה לתוכנית עבודה תכליתית'
       },
       {
-        id: 'innovativeFeatures',
+        id: 'features',
         label_1: 'הסבר מינימלי של מאפיינים חדשניים של הרובוט והתוכנה',
         label_2: 'הסבר חלקי של מאפיינים חדשניים של הרובוט והתוכנה',
         label_3: 'הסבר ברור של מאפיינים חדשניים של הרובוט והתוכנה'
@@ -73,7 +74,7 @@ const rubricSections: RubricSchemaSection[] = [
         label_3: 'עדות ברורה לבדיקות הרובוט והתוכנה'
       },
       {
-        id: 'improve',
+        id: 'improvements',
         label_1: 'עדות מינימלית שהרובוט והתוכנה עברו שיפורים',
         label_2: 'עדות חלקית שהרובוט והתוכנה עברו שיפורים',
         label_3: 'עדות ברורה שהרובוט והתוכנה עברו שיפורים'
@@ -86,7 +87,7 @@ const rubricSections: RubricSchemaSection[] = [
       'הסבר הקבוצה על תהליך תכנון הרובוט היה תכליתי והדגים כיצד כל חברי הקבוצה היו שותפים בו.',
     fields: [
       {
-        id: 'designProcess',
+        id: 'process',
         label_1: 'הסבר לא ברור של תהליך תכנון הרובוט',
         label_2: 'הסבר ברור חלקית של תהליך תכנון הרובוט',
         label_3: 'הסבר ברור של תהליך תכנון הרובוט'
@@ -101,7 +102,7 @@ const rubricSections: RubricSchemaSection[] = [
   }
 ];
 
-const robotDesignRubric: RubricsSchema = {
+const robotDesignRubric: RubricsSchema<typeof category> = {
   category: category,
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,

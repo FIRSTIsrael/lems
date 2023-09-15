@@ -1,16 +1,17 @@
 import { SEASON_NAME, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '../judging';
-import { RubricsSchema, RubricSchemaSection, rubricSchemaColumns, rubricSchemaFeedback } from '.';
+import { RubricsSchema, RubricSchemaSection } from './typing';
+import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 const category = 'innovation-project' as JudgingCategory;
 
-const rubricSections: RubricSchemaSection[] = [
+const rubricSections: RubricSchemaSection<typeof category>[] = [
   {
     title: 'זיהוי',
     description: 'הקבוצה הגדירה את בעיה באופן ברור וחקרה אותה היטב.',
     fields: [
       {
-        id: 'problemDefinition',
+        id: 'problem',
         label_1: 'הבעיה אינה מוגדרת באופן ברור',
         label_2: 'הגדרת הבעיה ברורה באופן חלקי',
         label_3: 'הגדרת הבעיה ברורה'
@@ -28,13 +29,13 @@ const rubricSections: RubricSchemaSection[] = [
     description: 'הקבוצה הפיקה באופן עצמאי מספר רעיונות חדשניים לפני שבחרה ותכננה איזה מהם לפתח.',
     fields: [
       {
-        id: 'selectionProcess',
+        id: 'selection',
         label_1: 'עדות מינימלית לתהליך בחירה משותף',
         label_2: 'עדות חלקית לתהליך בחירה משותף',
         label_3: 'עדות ניכרת לתהליך בחירה משותף'
       },
       {
-        id: 'effectivePlan',
+        id: 'plan',
         label_1: 'עדות מינימלית לתוכנית עבודה תכליתית',
         label_2: 'עדות חלקית לתוכנית עבודה תכליתית',
         label_3: 'עדות ניכרת לתוכנית עבודה תכליתית'
@@ -90,7 +91,7 @@ const rubricSections: RubricSchemaSection[] = [
         label_3: 'הצגת הפרויקט שובה'
       },
       {
-        id: 'solutionAndImpact',
+        id: 'impact',
         label_1: 'הפתרון והשפעתו האפשרית על אחרים אינם ברורים',
         label_2: 'הפתרון והשפעתו האפשרית על אחרים ברורים חלקית',
         label_3: 'הפתרון והשפעתו האפשרית על אחרים ברורים לחלוטין'
@@ -99,7 +100,7 @@ const rubricSections: RubricSchemaSection[] = [
   }
 ];
 
-const innovationProjectRubric: RubricsSchema = {
+const innovationProjectRubric: RubricsSchema<typeof category> = {
   category: category,
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,

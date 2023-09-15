@@ -1,11 +1,12 @@
-import { RubricsSchema, RubricSchemaSection, rubricSchemaColumns, rubricSchemaFeedback } from '.';
 import { JudgingCategory, OptionalAwardsTypes, SEASON_NAME } from '@lems/types';
+import { RubricsSchema, RubricSchemaSection } from './typing';
+import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 import { localizedJudgingCategory } from '../judging';
 import { localizedOptionalAward } from '../rubrics';
 
 const category = 'core-values' as JudgingCategory;
 
-const rubricSections: RubricSchemaSection[] = [
+const rubricSections: RubricSchemaSection<typeof category>[] = [
   {
     title: 'גילוי',
     description: 'הקבוצה חקרה רעיונות ומיומנויות חדשים.',
@@ -38,7 +39,7 @@ const rubricSections: RubricSchemaSection[] = [
   }
 ];
 
-const coreValuesRubric: RubricsSchema = {
+const coreValuesRubric: RubricsSchema<typeof category> = {
   category: category,
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,

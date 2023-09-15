@@ -38,7 +38,7 @@ export type RubricInnerFieldPairs<T extends JudgingCategory> = T extends 'innova
       | ['plan', 'features']
       | ['functionality', 'code']
       | ['testing', 'improvements']
-      | ['explanation', 'involvement'];
+      | ['process', 'involvement'];
 
 export type RubricInnerFields<T extends JudgingCategory> =
   | RubricInnerFieldPairs<T>[0]

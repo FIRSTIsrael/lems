@@ -74,7 +74,7 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
   const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
 
   const schema = rubricsSchemas[judgingCategory as JudgingCategory];
-  const flatMap = schema.sections.flatMap(section => section.rubrics.map(rubric => rubric.id));
+  const flatMap = schema.sections.flatMap(section => section.fields.map(field => field.id));
   const awardCandidates = schema.awards?.map(award => award.id) || [];
 
   const updateTeam = () => {
