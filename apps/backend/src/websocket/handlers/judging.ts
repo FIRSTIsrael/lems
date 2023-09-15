@@ -105,7 +105,7 @@ export const handleUpdateRubric = async (
 
   callback({ ok: true });
 
-  namespace.to('judging').emit('rubricUpdated', rubricId);
+  namespace.to('judging').emit('rubricUpdated', teamId, rubricId);
 
   if (rubricData.status !== rubric.status)
     namespace.to('judging').emit('rubricStatusChanged', rubricId);

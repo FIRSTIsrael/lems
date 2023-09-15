@@ -100,7 +100,12 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
     updateData,
     [
       { name: 'teamRegistered', handler: updateTeam },
-      { name: 'rubricUpdated', handler: updateRubric }
+      {
+        name: 'rubricUpdated',
+        handler: (teamId, rubricId) => {
+          if (teamId === router.query.teamId) updateRubric();
+        }
+      }
     ]
   );
 
