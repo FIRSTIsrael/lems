@@ -1,7 +1,3 @@
-// This file should be a generic implementation for a scoresheet with all the LOGIC inside
-// There should be absolutely no locale in this file, that will be handled separately in
-// the localization folder on the frontend only.
-
 type MissionClauseType = 'boolean' | 'enum' | 'number';
 
 export interface MissionClause {
