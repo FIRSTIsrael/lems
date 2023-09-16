@@ -25,7 +25,7 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
     return;
   }
 
-  console.log(`❗Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
+  console.log(`❗ Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
   session.start = new Date();
   session.status = 'in-progress';
@@ -41,7 +41,7 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
           dayjs(newSession.start).isSame(dayjs(session.start)) &&
           newSession.status === 'in-progress'
         ) {
-          console.log(`✅Session ${session._id} completed`);
+          console.log(`✅ Session ${session._id} completed`);
           db.updateSession({ _id: session._id }, { status: 'completed' });
           namespace.to('judging').emit('judgingSessionCompleted', sessionId);
         }
@@ -71,7 +71,7 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
     return;
   }
 
-  console.log(`❌Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
+  console.log(`❌ Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
   await db.updateSession({ _id: session._id }, { start: undefined, status: 'not-started' });
 
@@ -99,7 +99,7 @@ export const handleUpdateRubric = async (
     return;
   }
 
-  console.log(`🖊️Updating rubric ${rubricId} for team ${teamId} in event ${eventId}`);
+  console.log(`🖊️ Updating rubric ${rubricId} for team ${teamId} in event ${eventId}`);
 
   await db.updateRubric({ _id: rubric._id }, rubricData);
 

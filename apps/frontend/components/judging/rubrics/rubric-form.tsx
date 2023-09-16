@@ -62,7 +62,7 @@ const RubricForm: React.FC<Props> = ({
   const fields = schema.sections.flatMap(section => section.fields.map(field => field.id));
   const awardCandidates = schema.awards?.map(award => award.id) || [];
 
-  const userCanEdit =
+  const isEditable =
     (user.role === 'judge' && ['empty', 'in-progress', 'completed'].includes(rubric.status)) ||
     (user.role === 'lead-judge' &&
       ['empty', 'in-progress', 'completed', 'waiting-for-review'].includes(rubric.status)) ||
@@ -131,7 +131,7 @@ const RubricForm: React.FC<Props> = ({
       }
     });
 
-    if (userCanEdit) {
+    if (isEditable) {
       const isCompleted = Object.keys(errors).length === 0;
       const isEmpty = Object.values(formValues).filter(x => !!x).length === 0;
 
@@ -208,7 +208,7 @@ const RubricForm: React.FC<Props> = ({
                         name={`awards.${award.id}`}
                         title={award.title}
                         description={award.description}
-                        disabled={!userCanEdit}
+                        disabled={!isEditable}
                       />
                     ))}
                   </Grid>
@@ -224,7 +224,7 @@ const RubricForm: React.FC<Props> = ({
                 my: 4
               }}
             >
-              {!userCanEdit && (
+              {!isEditable && (
                 <Alert
                   severity="warning"
                   sx={{
@@ -304,7 +304,7 @@ const RubricForm: React.FC<Props> = ({
                       label_2={field.label_2}
                       label_3={field.label_3}
                       label_4={field.label_4}
-                      disabled={!userCanEdit}
+                      disabled={!isEditable}
                     />
                   ))}
                 </TableBody>
@@ -317,7 +317,7 @@ const RubricForm: React.FC<Props> = ({
                   key={feedback.id}
                   name={`feedback.${feedback.id}`}
                   label={feedback.title}
-                  disabled={!userCanEdit}
+                  disabled={!isEditable}
                 />
               ))}
             </Stack>
