@@ -16,12 +16,12 @@ import {
   Rubric,
   Team
 } from '@lems/types';
+import { localizedJudgingCategory } from '@lems/season';
+import { rubricsSchemas } from '@lems/season';
 import Layout from '../../../../../../components/layout';
 import RubricForm from '../../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
-import { localizedJudgingCategory } from '../../../../../../localization/judging';
-import rubricsSchemas from '../../../../../../localization/rubric-schemas';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 

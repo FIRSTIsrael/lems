@@ -1,5 +1,4 @@
-import { RubricStatus, OptionalAwards, RubricFields } from '@lems/types';
-import { RubricSchemaSection } from './rubric-schemas';
+import { RubricStatus, OptionalAwards } from '@lems/types';
 
 export const localizedRubricStatus: { [key in RubricStatus]: string } = {
   empty: 'לא מולא',

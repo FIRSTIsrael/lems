@@ -1,4 +1,4 @@
-import { Scoresheet, ScoresheetError } from '../scoresheet';
+import { Scoresheet, ScoresheetError } from '../../data/scoresheet-types';
 
 const scoresheet: Scoresheet = {
   season: 'CARGO CONNECT℠',

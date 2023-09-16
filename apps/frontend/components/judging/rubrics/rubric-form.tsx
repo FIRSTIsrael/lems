@@ -28,8 +28,8 @@ import {
   RubricValue
 } from '@lems/types';
 import { fullMatch } from '@lems/utils';
+import { RubricsSchema } from '@lems/season';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
-import { RubricsSchema } from '../../../localization/rubric-schemas/typing';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
