@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-  console.log('🚮Deleting event data');
+  console.log('🚮 Deleting event data');
   try {
     await cleanEventData(event);
   } catch (error) {
@@ -52,11 +52,11 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
   console.log('✅ Finished parsing schedule!');
 
-  console.log('📄Generating rubrics');
+  console.log('📄 Generating rubrics');
   const rubrics = getEventRubrics(dbTeams);
   if (!(await db.addRubrics(rubrics)).acknowledged)
     return res.status(500).json({ error: 'Could not create rubrics!' });
-  console.log('✅Generated rubrics');
+  console.log('✅ Generated rubrics');
 
   console.log('👤 Generating event users');
   const users = getEventUsers(event, dbTables, dbRooms);
@@ -64,9 +64,9 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Could not create users!' });
   console.log('✅ Generated event users');
 
-  console.log('🔐Creating event state');
+  console.log('🔐 Creating event state');
   await db.addEventState({ activeMatch: 0, activeSession: 0, event: event._id });
-  console.log('✅Created event state');
+  console.log('✅ Created event state');
 
   return res.status(200).json({ ok: true });
 });

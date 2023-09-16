@@ -66,22 +66,16 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
+  team: WithId<Team>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room }) => {
+const Page: NextPage<Props> = ({ user, event, room, team }) => {
   const router = useRouter();
+  if (!team.registered) router.back();
+
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
-  const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
   const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
-
-  const updateTeam = () => {
-    apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}`)
-      .then(res => res?.json())
-      .then(data => {
-        setTeam(data);
-      });
-  };
 
   const updateRubric = () => {
     apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}/rubrics/${judgingCategory}`)
@@ -89,17 +83,11 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       .then(data => setRubric(data));
   };
 
-  const updateData = () => {
-    updateTeam();
-    updateRubric();
-  };
-
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['pit-admin', 'judging'],
-    updateData,
+    ['judging'],
+    updateRubric,
     [
-      { name: 'teamRegistered', handler: updateTeam },
       {
         name: 'rubricUpdated',
         handler: (teamId, rubricId) => {
@@ -173,18 +161,22 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ).room;
     }
 
-    console.log(roomId);
-
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
 
+    const teamPromise = apiFetch(
+      `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
+
     const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
       res => res?.json()
     );
-    const [room, event] = await Promise.all([roomPromise, eventPromise]);
+    const [room, team, event] = await Promise.all([roomPromise, teamPromise, eventPromise]);
 
-    return { props: { user, event, room } };
+    return { props: { user, event, room, team } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

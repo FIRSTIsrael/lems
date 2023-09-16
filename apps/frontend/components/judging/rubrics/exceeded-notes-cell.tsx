@@ -1,4 +1,4 @@
-import { FastField, FieldProps } from 'formik';
+import { Field, FieldProps } from 'formik';
 import { TableCell, Typography, TableRow, Box, TextField } from '@mui/material';
 
 interface Props {
@@ -20,7 +20,7 @@ const ExceededNotesCell: React.FC<Props> = ({ name, disabled }) => {
           py: 1
         }}
       >
-        <FastField name={`${name}.notes`}>
+        <Field name={`${name}.notes`}>
           {({
             field: { onBlur: fieldOnBlur, ...field },
             form,
@@ -50,7 +50,7 @@ const ExceededNotesCell: React.FC<Props> = ({ name, disabled }) => {
               />
             </Box>
           )}
-        </FastField>
+        </Field>
       </TableCell>
     </TableRow>
   );

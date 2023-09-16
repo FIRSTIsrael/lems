@@ -1,6 +1,6 @@
 import React from 'react';
 import { TableCell, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
-import { FastField, FieldProps } from 'formik';
+import { Field, FieldProps } from 'formik';
 import ReactMarkdown from 'react-markdown';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
@@ -19,7 +19,7 @@ interface Props {
 const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props) => {
   const labels = [label_1, label_2, label_3, label_4];
   return (
-    <FastField name={`${name}.value`}>
+    <Field name={`${name}.value`}>
       {({ field: { onBlur, onChange, ...field }, form, meta }: FieldProps) => (
         <>
           <RadioGroup
@@ -83,8 +83,8 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
           {field.value === '4' && <ExceededNotesCell name={name} disabled={disabled} />}
         </>
       )}
-    </FastField>
+    </Field>
   );
 };
 
-export default React.memo(RatingRow);
+export default RatingRow;

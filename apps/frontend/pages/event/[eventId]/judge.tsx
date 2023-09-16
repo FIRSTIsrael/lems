@@ -95,7 +95,7 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
 
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['judging'],
+    ['judging', 'pit-admin'],
     getInitialData,
     [
       { name: 'judgingSessionStarted', handler: onSessionStarted },
