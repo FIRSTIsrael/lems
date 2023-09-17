@@ -34,6 +34,13 @@ export const cleanEventData = async (event: WithId<Event>) => {
     })
   );
 
+  await Promise.all(
+    oldTeams.map(async (team: WithId<Team>) => {
+      if (!(await db.deleteTeamScoresheets(team._id)).acknowledged)
+        throw new Error('Could not delete teams!');
+    })
+  );
+
   if (!(await db.deleteEventTeams(event._id)).acknowledged)
     throw new Error('Could not delete teams!');
   if (!(await db.deleteEventTables(event._id)).acknowledged)
