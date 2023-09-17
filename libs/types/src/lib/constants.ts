@@ -24,6 +24,9 @@ export const RubricStatusTypes = [
 ] as const;
 export type RubricStatus = (typeof RubricStatusTypes)[number];
 
+export const TicketTypes = ['general', 'schedule', 'utilities', 'incident'] as const;
+export type TicketType = (typeof TicketTypes)[number];
+
 export type RubricFields<T extends JudgingCategory> = T extends 'core-values'
   ? 'discovery' | 'innovation' | 'impact' | 'inclusion' | 'teamwork' | 'fun'
   : 'identify' | 'design' | 'create' | 'iterate' | 'communicate';

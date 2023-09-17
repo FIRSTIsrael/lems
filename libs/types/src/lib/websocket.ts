@@ -1,5 +1,6 @@
-import { JudgingCategory } from './constants';
+import { JudgingCategory, TicketType } from './constants';
 import { Rubric } from './schemas/rubric';
+import { Ticket } from './schemas/ticket';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -21,6 +22,10 @@ export interface WSServerEmittedEvents {
   rubricStatusChanged: (rubricId: string) => void;
 
   teamRegistered: (teamId: string) => void;
+
+  ticketCreated: (ticketId: string) => void;
+
+  ticketUpdated: (ticketId: string) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -54,6 +59,22 @@ export interface WSClientEmittedEvents {
 
   joinRoom: (
     room: WSRoomName | Array<WSRoomName>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  createTicket: (
+    eventId: string,
+    teamId: string,
+    content: string,
+    type: TicketType,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateTicket: (
+    eventId: string,
+    teamId: string,
+    ticketId: string,
+    ticketData: Partial<Ticket>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }

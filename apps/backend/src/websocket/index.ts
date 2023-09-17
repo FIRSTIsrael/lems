@@ -6,7 +6,7 @@ import {
   WSSocketData
 } from '@lems/types';
 import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
-import { handleRegisterTeam } from './handlers/pit-admin';
+import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -14,7 +14,7 @@ const websocket = (
   const namespace = socket.nsp;
   const eventId = socket.nsp.name.split('/')[2];
 
-  console.log(`🔌WS: Connection to event ${eventId}`);
+  console.log(`🔌 WS: Connection to event ${eventId}`);
 
   socket.on('joinRoom', (rooms, callback) => {
     if (!Array.isArray(rooms)) rooms = [rooms];
@@ -31,8 +31,12 @@ const websocket = (
 
   socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
 
+  socket.on('createTicket', (...args) => handleCreateTicket(namespace, ...args));
+
+  socket.on('updateTicket', (...args) => handleUpdateTicket(namespace, ...args));
+
   socket.on('disconnect', () => {
-    console.log(`❌WS: Disconnection from event ${eventId}`);
+    console.log(`❌ WS: Disconnection from event ${eventId}`);
   });
 };
 
