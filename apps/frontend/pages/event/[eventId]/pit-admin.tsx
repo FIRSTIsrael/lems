@@ -37,6 +37,7 @@ import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedTicketTypes } from '../../../localization/tickets';
+import { localizeTeam } from '../../../localization/teams';
 
 interface TeamSelectionProps {
   teams: WithId<Team>[] | undefined;
@@ -55,11 +56,7 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
     <Autocomplete
       freeSolo
       options={teams ? teams : []}
-      getOptionLabel={team =>
-        typeof team === 'string'
-          ? team
-          : `קבוצה #${team.number}, ${team.name} - ${team.affiliation.institution}, ${team.affiliation.city}`
-      }
+      getOptionLabel={team => (typeof team === 'string' ? team : localizeTeam(team))}
       inputMode="search"
       inputValue={inputValue}
       onInputChange={(_e, newInputValue) => setInputValue(newInputValue)}

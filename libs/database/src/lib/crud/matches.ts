@@ -1,9 +1,23 @@
-import { Filter, ObjectId } from 'mongodb';
+import { Filter, ObjectId, WithId } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
+import { getEventTables } from './tables';
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').findOne(filter);
+};
+
+export const getEventMatches = (eventId: ObjectId) => {
+  return getEventTables(eventId).then(async tables => {
+    let matches: Array<WithId<RobotGameMatch>> = [];
+    await Promise.all(
+      tables.map(async table => {
+        const tableMatches = await getTableMatches(table._id);
+        matches = matches.concat(tableMatches);
+      })
+    );
+    return matches;
+  });
 };
 
 export const getTableMatches = (tableId: ObjectId) => {
@@ -24,7 +38,7 @@ export const addMatches = (matches: RobotGameMatch[]) => {
     .then(response => response);
 };
 
-export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: RobotGameMatch) => {
+export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: Partial<RobotGameMatch>) => {
   return db
     .collection<RobotGameMatch>('matches')
     .updateOne(filter, { $set: newMatch }, { upsert: true });

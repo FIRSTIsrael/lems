@@ -12,6 +12,7 @@ import {
   DialogActions
 } from '@mui/material';
 import { Team } from '@lems/types';
+import { localizeTeam } from '../../../localization/teams';
 
 interface Props {
   team: WithId<Team>;
@@ -33,10 +34,9 @@ const RubricHeader: React.FC<Props> = ({ team }) => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={10}>
-          <Typography
-            variant="h2"
-            fontSize="1.25rem"
-          >{`קבוצה #${team.number} ${team.name}  מ${team.affiliation.institution}, ${team.affiliation.city}`}</Typography>
+          <Typography variant="h2" fontSize="1.25rem">
+            {localizeTeam(team)}
+          </Typography>
         </Grid>
         <Grid item xs={2}>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>

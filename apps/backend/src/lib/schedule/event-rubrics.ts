@@ -1,13 +1,16 @@
 import { WithId } from 'mongodb';
-import { Team, JudgingCategoryTypes, Rubric, JudgingCategory } from '@lems/types';
+import { JudgingCategoryTypes, Rubric, JudgingCategory, JudgingSession } from '@lems/types';
 
-export const getEventRubrics = (teams: Array<WithId<Team>>): Rubric<JudgingCategory>[] => {
+export const getEventRubrics = (
+  sessions: Array<WithId<JudgingSession>>
+): Rubric<JudgingCategory>[] => {
   const rubrics = [];
 
-  teams.forEach(team => {
+  sessions.forEach(session => {
     JudgingCategoryTypes.forEach(category => {
       const rubric: Rubric<JudgingCategory> = {
-        team: team._id,
+        team: session.team,
+        session: session._id,
         category: category,
         status: 'empty'
       };

@@ -24,6 +24,7 @@ import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
+import { localizeTeam } from '../../../../../../localization/teams';
 
 interface RubricSelectorProps {
   event: WithId<Event>;
@@ -118,8 +119,7 @@ const Page: NextPage<Props> = ({ user, event, room, team }) => {
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
-              קבוצה #{team.number}, {team.name} | {team.affiliation.institution},{' '}
-              {team.affiliation.city} | חדר שיפוט {room.name}
+              {localizeTeam(team)} | חדר שיפוט {room.name}
             </Typography>
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['judge', 'judge-advisor']}>

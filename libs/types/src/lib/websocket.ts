@@ -26,6 +26,18 @@ export interface WSServerEmittedEvents {
   ticketCreated: (ticketId: string) => void;
 
   ticketUpdated: (ticketId: string) => void;
+
+  matchStarted: (matchId: string) => void;
+
+  matchCompleted: (matchId: string) => void;
+
+  matchAborted: (matchId: string) => void;
+
+  scoresheetUpdated: (teamId: string, scoresheetId: string) => void;
+
+  scoresheetStatusChanged: (scoresheetId: string) => void;
+
+  matchStatusChanged: (matchId: string) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -75,6 +87,34 @@ export interface WSClientEmittedEvents {
     teamId: string,
     ticketId: string,
     ticketData: Partial<Ticket>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  startMatch: (
+    eventId: string,
+    tableId: string,
+    matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  abortMatch: (
+    eventId: string,
+    tableId: string,
+    matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateScoresheet: (
+    eventId: string,
+    teamId: string,
+    scoresheetId: string,
+    scoresheetData: Partial<Rubric<JudgingCategory>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  changeMatchStatus: (
+    matchId: string,
+    ready: boolean,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }

@@ -7,6 +7,7 @@ import roomsRouter from './rooms';
 import usersRouter from './users';
 import teamsRouter from './teams';
 import rubricsRouter from './rubrics';
+import tablesRouter from './tables';
 
 const router = express.Router({ mergeParams: true });
 
@@ -23,6 +24,8 @@ router.get('/:eventId/state', (req: Request, res: Response) => {
 });
 
 router.use('/:eventId/rooms', roomsRouter);
+
+router.use('/:eventId/tables', tablesRouter);
 
 router.use('/:eventId/users', usersRouter);
 
