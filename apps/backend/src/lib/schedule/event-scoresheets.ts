@@ -4,7 +4,7 @@ import { Team, Scoresheet } from '@lems/types';
 export const getEventScoresheets = (
   teams: Array<WithId<Team>>,
   rounds: { practice: number; ranking: number }
-): Scoresheet[] => {
+): Array<Scoresheet> => {
   const scoresheets = [];
 
   teams.forEach(team => {
