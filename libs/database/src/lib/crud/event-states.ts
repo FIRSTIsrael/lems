@@ -7,7 +7,7 @@ export const getEventState = (filter: Filter<EventState>) => {
 };
 
 export const getEventStateFromEvent = (eventId: ObjectId) => {
-  return db.collection<EventState>('event-states').findOne({ _id: eventId });
+  return db.collection<EventState>('event-states').findOne({ event: eventId });
 };
 
 export const addEventState = (state: EventState) => {
