@@ -18,7 +18,7 @@ import {
 import EditRubricButton from './edit-rubric-button';
 import StartJudgingSessionButton from './start-judging-session-button';
 import { RoleAuthorizer } from '../role-authorizer';
-import { localizedJudgingCategory } from '../../localization/judging';
+import { localizedJudgingCategory } from '@lems/season';
 import StatusIcon from '../general/status-icon';
 
 interface Props {

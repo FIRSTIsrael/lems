@@ -68,7 +68,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
 };
 
 const parseTables = (lines: Line[], event: WithId<Event>) => {
-  const LINES_TO_SKIP = 4;
+  const LINES_TO_SKIP = 5;
   lines = (lines || []).splice(LINES_TO_SKIP);
 
   const tables = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
@@ -121,6 +121,7 @@ const parseMatches = (
   lines = (lines || []).splice(LINES_TO_SKIP);
   const matches: RobotGameMatch[] = [];
 
+  const rounds = parseInt((lines.shift() || [])[1]);
   const tableNames = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
 
   lines.forEach(line => {
@@ -148,7 +149,7 @@ const parseMatches = (
     }
   });
 
-  return matches;
+  return { matches, rounds };
 };
 
 const parseSessions = (
@@ -202,14 +203,14 @@ export const parseEventSchedule = async (
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
   const blocks = parseBlocks(file);
-  const practiceMatches = parseMatches(
+  const { matches: practiceMatches, rounds: practiceRounds } = parseMatches(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',
     event,
     teams,
     tables
   );
-  const rankingMatches = parseMatches(
+  const { matches: rankingMatches, rounds: rankingRounds } = parseMatches(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
     event,
@@ -218,6 +219,7 @@ export const parseEventSchedule = async (
   );
   const matches = practiceMatches.concat(rankingMatches);
   const sessions = parseSessions(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event, teams, rooms);
+  const rounds = { practice: practiceRounds, ranking: rankingRounds };
 
-  return { matches, sessions };
+  return { matches, sessions, rounds };
 };

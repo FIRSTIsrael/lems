@@ -6,6 +6,7 @@ import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
 import { cleanEventData } from '../../../../lib/schedule/cleaner';
 import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
+import { getEventScoresheets } from '../../../../lib/schedule/event-scoresheets';
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,7 +37,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const dbTables = await db.getEventTables(event._id);
   const dbRooms = await db.getEventRooms(event._id);
 
-  const { matches, sessions } = await parseEventSchedule(
+  const { matches, sessions, rounds } = await parseEventSchedule(
     event,
     dbTeams,
     dbTables,
@@ -57,6 +58,12 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   if (!(await db.addRubrics(rubrics)).acknowledged)
     return res.status(500).json({ error: 'Could not create rubrics!' });
   console.log('✅ Generated rubrics');
+
+  console.log('📄 Generating scoresheets');
+  const scoresheets = getEventScoresheets(dbTeams, rounds);
+  if (!(await db.addScoresheets(scoresheets)).acknowledged)
+    return res.status(500).json({ error: 'Could not create scoresheets!' });
+  console.log('✅ Generated scoresheets!');
 
   console.log('👤 Generating event users');
   const users = getEventUsers(event, dbTables, dbRooms);

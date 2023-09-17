@@ -1,0 +1,26 @@
+{
+  "name": "season",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/season/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/season",
+        "main": "libs/season/src/index.ts",
+        "tsConfig": "libs/season/tsconfig.lib.json",
+        "assets": ["libs/season/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/season/**/*.ts", "libs/season/package.json"]
+      }
+    }
+  },
+  "tags": []
+}
