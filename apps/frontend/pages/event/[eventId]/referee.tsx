@@ -17,13 +17,8 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import RubricStatusReferences from '../../../components/judging/rubric-status-references';
-import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import WelcomeHeader from '../../../components/general/welcome-header';
-import JudgingTimer from '../../../components/judging/judging-timer';
-import AbortJudgingSessionButton from '../../../components/judging/abort-judging-session-button';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -65,7 +60,7 @@ const ReadyCheck: React.FC<ReadyCheckProps> = ({ team, match, socket }) => {
   );
 };
 
-type RefereePageStatus = 'timer' | 'readyCheck' | 'scoring' | undefined;
+type RefereePageStatus = 'timer' | 'readyCheck' | 'scoring' | 'done' | undefined;
 
 interface Props {
   user: WithId<SafeUser>;
@@ -80,63 +75,6 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
   const [match, setMatch] = useState<WithId<RobotGameMatch> | undefined>(undefined);
-
-  const pageState: RefereePageStatus = useMemo(() => {
-    const fetchTeam = (teamId: ObjectId | undefined) => {
-      teamId &&
-        apiFetch(`/api/events/${user.event}/teams/${teamId}`)
-          .then(res => res.json())
-          .then(team => setTeam(team));
-    };
-
-    const fetchScoresheet = (matchId: ObjectId | undefined) => {
-      matchId &&
-        apiFetch(`/api/events/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`)
-          .then(res => res.json())
-          .then(data => setScoresheet(data));
-    };
-
-    if (eventState && matches) {
-      const activeMatch = matches.find(match => match.number === eventState.activeMatch);
-      if (activeMatch) {
-        setMatch(activeMatch);
-        if (activeMatch.status === 'in-progress') return 'timer';
-        else {
-          apiFetch(
-            `/api/events/${user.event}/tables/${table._id}/matches/${activeMatch._id}/scoresheet`
-          )
-            .then(res => res.json())
-            .then((data: WithId<Scoresheet>) => {
-              if (data.status === 'completed') {
-                const nextMatch = matches.find(match => match.number > eventState.activeMatch);
-                setMatch(nextMatch);
-                fetchTeam(nextMatch?.team);
-                return 'readyCheck';
-              } else {
-                fetchTeam(activeMatch.team);
-                setScoresheet(data);
-                return 'scoring';
-              }
-            });
-        }
-      } else {
-        const previousMatchIndex =
-          matches.findIndex(match => match.number > eventState.activeMatch) - 1;
-        if (previousMatchIndex >= 0) {
-          const previousMatch = matches[previousMatchIndex];
-          setMatch(previousMatch);
-          fetchScoresheet(previousMatch._id);
-          fetchTeam(previousMatch.team);
-          return 'scoring';
-        } else {
-          setMatch(matches[0]);
-          fetchScoresheet(matches[0]._id);
-          fetchTeam(matches[0].team);
-          return 'readyCheck';
-        }
-      }
-    }
-  }, [user, table, matches, eventState]);
 
   const updateEventState = () => {
     apiFetch(`/api/events/${user.event}/state`)
@@ -154,40 +92,98 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
     updateEventState();
     updateMatches();
   };
-  // const onSessionStarted = (sessionId: string) => {
-  //   updateSessions().then(newSessions => {
-  //     const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-  //     setActiveSession(s?.status === 'in-progress' ? s : undefined);
-  //   });
-  // };
-
-  // const onSessionCompleted = (sessionId: string) => {
-  //   updateSessions().then(newSessions => {
-  //     const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-  //     if (s?.status === 'completed') setActiveSession(undefined);
-  //   });
-  // };
-
-  // const onSessionAborted = (sessionId: string) => {
-  //   updateSessions().then(newSessions => {
-  //     const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-  //     if (s?.status === 'not-started') setActiveSession(undefined);
-  //   });
-  // };
 
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['field', 'pit-admin'],
     getData,
     [
+      //Should be onMatchUpdate function that gets a matchID as a parameter.
+      //if match is in matches array, update event state and matches, if not only event state
       { name: 'matchStarted', handler: getData },
       { name: 'matchCompleted', handler: getData },
       { name: 'matchAborted', handler: getData },
+      // This should have a handler that gets a teamID. if the teamID is the current team,
+      // update it. if not then do nothing.
+      // The registration status should be passed on to the scoresheet as a prop.
       { name: 'teamRegistered', handler: getData },
+      // This should have a handler that gets scoresheetID. If this is our scoresheet, update it.
+      // If not, do nothing.
       { name: 'scoresheetUpdated', handler: getData },
+      // Why do we need this? If its for a ref ready thing then use a general matchUpdate and delete this event.
       { name: 'matchStatusChanged', handler: updateMatches }
     ]
   );
+
+  //TODO why dafuq does it think it can return a promise
+  const pageState: RefereePageStatus = useMemo(() => {
+    const updateTeam = (teamId: ObjectId | undefined) => {
+      teamId &&
+        apiFetch(`/api/events/${user.event}/teams/${teamId}`)
+          .then(res => res.json())
+          .then(team => setTeam(team));
+    };
+
+    const getScoresheet = (matchId: ObjectId | undefined) => {
+      return apiFetch(
+        `/api/events/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`
+      ).then(res => res.json());
+    };
+
+    const handleScoringState = (match: WithId<RobotGameMatch>): Promise<RefereePageStatus> => {
+      if (matches && eventState) {
+        return getScoresheet(match._id).then((data: WithId<Scoresheet>) => {
+          if (data.status !== 'completed') {
+            // Scoring in progress
+            updateTeam(match.team);
+            setScoresheet(data);
+            return 'scoring';
+          } else {
+            // Scoring has already been completed
+            const nextMatch = matches.find(m => m.number > eventState.activeMatch);
+            if (nextMatch) {
+              // Get ready for next match
+              setMatch(nextMatch);
+              updateTeam(nextMatch.team);
+              return 'readyCheck';
+            } else {
+              // All matches in the event have been completed on this table
+              setMatch(undefined);
+              return 'done';
+            }
+          }
+        });
+      }
+      return Promise.resolve(undefined);
+    };
+
+    if (eventState && matches) {
+      const activeMatch = matches.find(match => match.number === eventState.activeMatch);
+      if (activeMatch) {
+        // Our table is currently participating in the active match
+        setMatch(activeMatch);
+        if (activeMatch.status === 'in-progress')
+          return 'timer'; // Wait for completion before scoring
+        else {
+          // Active match is completed
+          return handleScoringState(activeMatch).then(status => status);
+        }
+      } else {
+        // Our table is not participating in the active match.
+        const previousMatch = matches.find(match => match.number < eventState.activeMatch);
+        if (previousMatch) {
+          setMatch(previousMatch);
+          return handleScoringState(previousMatch).then(status => status);
+        } else {
+          // Our table has not had a match yet. Display first match.
+          setMatch(matches[0]);
+          getScoresheet(matches[0]._id).then((data: WithId<Scoresheet>) => setScoresheet(data));
+          updateTeam(matches[0].team);
+          return 'readyCheck';
+        }
+      }
+    }
+  }, [eventState, matches, user.event, table._id]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
