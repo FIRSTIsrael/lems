@@ -1,20 +1,26 @@
+import { Avatar, Stack, Typography } from '@mui/material';
+import PriorityHighOutlinedIcon from '@mui/icons-material/PriorityHighOutlined';
+import Layout from './layout';
 import { GetServerSideProps } from 'next';
-import { Container, Paper, Typography } from '@mui/material';
+import { apiFetch } from '../../lib/utils/fetch';
 
-export function Index() {
+export default function Index() {
   return (
-    <Container>
-      <Paper sx={{ height: 200, mt: 10 }}>
-        <Typography variant="h2" textAlign={'center'}>
-          Hello admin
-        </Typography>
-      </Paper>
-    </Container>
+    <Stack
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+      minHeight={500}
+    >
+      <Avatar sx={{ bgcolor: '#ffb24d', width: '3.5rem', height: '3.5rem' }}>
+        <PriorityHighOutlinedIcon sx={{ fontSize: '2rem' }} />
+      </Avatar>
+      <Typography fontSize={'1.5rem'} align="center">
+        יש לבחור אירוע
+      </Typography>
+    </Stack>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  return { props: {} };
-};
-
-export default Index;
+Index.layout = 'admin';

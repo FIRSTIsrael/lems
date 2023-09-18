@@ -6,14 +6,27 @@ import theme from '../lib/theme';
 import { RouteAuthorizer } from '../components/route-authorizer';
 import { createEmotionCache } from '../lib/emotion-cache';
 import { SnackbarProvider } from 'notistack';
+import { Fragment } from "react";
+import { NextPage } from "next";
+import AdminLayout from "./admin/layout";
 
 const clientSideEmotionCache = createEmotionCache();
+
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  layout?: string
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
 
 function CustomApp({
   Component,
   pageProps,
   emotionCache = clientSideEmotionCache
-}: AppProps & { emotionCache: EmotionCache }) {
+}: AppPropsWithLayout & { emotionCache: EmotionCache }) {
+  const Layout = Component.layout === 'admin' ? AdminLayout : Fragment;
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -26,7 +39,9 @@ function CustomApp({
         <SnackbarProvider maxSnack={3} TransitionComponent={Grow}>
           <main className="app">
             <RouteAuthorizer>
-              <Component {...pageProps} />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
             </RouteAuthorizer>
           </main>
         </SnackbarProvider>
