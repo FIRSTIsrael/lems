@@ -68,11 +68,13 @@ interface Props {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
+  session: WithId<JudgingSession>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room, team }) => {
+const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
   const router = useRouter();
   if (!team.registered) router.back();
+  if (session.status !== 'completed') router.back();
 
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
@@ -174,9 +176,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
       res => res?.json()
     );
+
     const [room, team, event] = await Promise.all([roomPromise, teamPromise, eventPromise]);
 
-    return { props: { user, event, room, team } };
+    const session = await apiFetch(
+      `/api/events/${user.event}/rooms/${roomId}/sessions`,
+      undefined,
+      ctx
+    ).then(res =>
+      res?.json().then(sessions => sessions.find((s: JudgingSession) => s.team == team._id))
+    );
+
+    return { props: { user, event, room, team, session } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };
