@@ -2,12 +2,10 @@ import { useState, useMemo, useCallback } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
-import { Avatar, Box, Checkbox, FormControlLabel, Paper, Stack, Typography } from '@mui/material';
-import JudgingRoomIcon from '@mui/icons-material/Workspaces';
+import { Checkbox, FormControlLabel, Paper, Stack, Typography } from '@mui/material';
 import {
   Event,
   Team,
-  JudgingSession,
   SafeUser,
   Scoresheet,
   RobotGameMatch,
@@ -88,9 +86,20 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
       .then(data => setMatches(data));
   };
 
+  const updateMatch = (matchId: string) => {
+    return apiFetch(`/api/events/${user.event}/tables/${table._id}/matches/${matchId}`)
+      .then(res => res?.json())
+      .then(data => setMatch(data));
+  };
+
   const getData = () => {
     updateEventState();
     updateMatches();
+  };
+
+  const onMatchUpdate = (tableId: string) => {
+    updateEventState();
+    if (table._id.toString() === tableId) updateMatches();
   };
 
   const { socket, connectionStatus } = useWebsocket(
@@ -98,11 +107,9 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
     ['field', 'pit-admin'],
     getData,
     [
-      //Should be onMatchUpdate function that gets a matchID as a parameter.
-      //if match is in matches array, update event state and matches, if not only event state
-      { name: 'matchStarted', handler: getData },
-      { name: 'matchCompleted', handler: getData },
-      { name: 'matchAborted', handler: getData },
+      { name: 'matchStarted', handler: (tableId: string) => onMatchUpdate(tableId) },
+      { name: 'matchCompleted', handler: (tableId: string) => onMatchUpdate(tableId) },
+      { name: 'matchAborted', handler: (tableId: string) => onMatchUpdate(tableId) },
       // This should have a handler that gets a teamID. if the teamID is the current team,
       // update it. if not then do nothing.
       // The registration status should be passed on to the scoresheet as a prop.
