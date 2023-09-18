@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { MissionClauseType, RobotGameMatchType, Status } from '../constants';
 
+export type ScoresheetStatus = Status | 'waiting-for-head-ref';
+
 export interface MissionClause {
   type: MissionClauseType;
   value: boolean | string | number;
@@ -17,7 +19,7 @@ export interface Scoresheet {
   match: ObjectId;
   stage: RobotGameMatchType;
   round: number;
-  status: Status;
+  status: ScoresheetStatus;
   data?: {
     missionData: Mission[];
     signature: string;

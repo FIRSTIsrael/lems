@@ -24,7 +24,7 @@ const WelcomeHeader = ({ event, user }: Props) => {
         ברוכים הבאים ל{event.name}
       </Typography>
       <Typography color="#666" fontSize="0.875rem">
-        יחד, אנו בונים את הדור הבא של מנהיגי המדע והטכנולוגיה
+        יחד, אנו מעצימים את הדור הבא של מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.
       </Typography>
       <Typography color="#666" fontSize="0.875rem">
         תודה שבאת להתנדב איתנו בתור {user.role ? localizedRoles[user.role].name : ''}!
