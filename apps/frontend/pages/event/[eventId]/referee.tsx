@@ -115,7 +115,6 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
     ]
   );
 
-  //TODO why dafuq does it think it can return a promise
   const pageState: RefereePageStatus = useMemo(() => {
     const updateTeam = (teamId: ObjectId | undefined) => {
       teamId &&
@@ -130,9 +129,9 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
       ).then(res => res.json());
     };
 
-    const handleScoringState = (match: WithId<RobotGameMatch>): Promise<RefereePageStatus> => {
+    const handleScoringState = (match: WithId<RobotGameMatch>): RefereePageStatus => {
       if (matches && eventState) {
-        return getScoresheet(match._id).then((data: WithId<Scoresheet>) => {
+        getScoresheet(match._id).then((data: WithId<Scoresheet>) => {
           if (data.status !== 'completed') {
             // Scoring in progress
             updateTeam(match.team);
@@ -154,7 +153,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
           }
         });
       }
-      return Promise.resolve(undefined);
+      return undefined;
     };
 
     if (eventState && matches) {
@@ -166,14 +165,14 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
           return 'timer'; // Wait for completion before scoring
         else {
           // Active match is completed
-          return handleScoringState(activeMatch).then(status => status);
+          return handleScoringState(activeMatch);
         }
       } else {
         // Our table is not participating in the active match.
         const previousMatch = matches.find(match => match.number < eventState.activeMatch);
         if (previousMatch) {
           setMatch(previousMatch);
-          return handleScoringState(previousMatch).then(status => status);
+          return handleScoringState(previousMatch);
         } else {
           // Our table has not had a match yet. Display first match.
           setMatch(matches[0]);
