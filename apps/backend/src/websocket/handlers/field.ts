@@ -76,9 +76,15 @@ export const abortMatch = async (namespace, eventId, tableId, matchId, callback)
   namespace.to('field').emit('matchAborted', matchId);
 };
 
-export const updateMatch = async (namespace, eventId, tableId, matchId, matchData, callback) => {
+export const handleUpdateMatch = async (
+  namespace,
+  eventId,
+  tableId,
+  matchId,
+  matchData,
+  callback
+) => {
   const match = await db.getMatch({
-    event: new ObjectId(eventId),
     table: new ObjectId(tableId),
     _id: new ObjectId(matchId)
   });

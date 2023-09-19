@@ -38,7 +38,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCat
       {JudgingCategoryTypes.map(category => (
         <NextLink
           key={category}
-          href={`/event/${event._id}/team/${team._id}/rubrics/${category}`}
+          href={`/event/${event._id}/team/${team._id}/rubric/${category}`}
           passHref
         >
           <Button

@@ -6,22 +6,16 @@ import { WithId } from 'mongodb';
 import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
-import {
-  Event,
-  JudgingCategory,
-  JudgingRoom,
-  JudgingSession,
-  SafeUser,
-  Rubric,
-  Team
-} from '@lems/types';
-import { localizedJudgingCategory } from '@lems/season';
+import { Event, RobotGameMatch, RobotGameTable, SafeUser, Scoresheet, Team } from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
+import { localizedMatchType } from '../../../../../../localization/field';
+import ScoresheetMission from '../../../../../../components/field/scoresheet/scoresheet-mission';
+import { SEASON_SCORESHEET } from '@lems/season';
 
 interface ScoresheetSelectorProps {
   event: WithId<Event>;
@@ -29,13 +23,13 @@ interface ScoresheetSelectorProps {
 }
 
 const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({ event, team }) => {
-  // this will make a button for each round appear for head refs
+  // TODO: this will make a button for each round appear for head refs
   return (
     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
       {[1, 2, 3, 4].map(match => (
         <NextLink
           key={match}
-          href={`/event/${event._id}/team/${team._id}/rubrics/${match}`}
+          href={`/event/${event._id}/team/${team._id}/scoresheet/${match}`}
           passHref
         >
           <Button
@@ -63,49 +57,50 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({ event, team }) 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  room: WithId<JudgingRoom>;
+  table: WithId<RobotGameTable>;
   team: WithId<Team>;
-  session: WithId<JudgingSession>;
+  match: WithId<RobotGameMatch>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
+const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
   const router = useRouter();
-  if (!team.registered) router.back();
-  if (session.status !== 'completed') router.back();
+  const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
+  // if (!team.registered) router.back();
+  // if (session.status !== 'completed') router.back();
 
-  const judgingCategory: string =
-    typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
-  const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
-
-  const updateRubric = () => {
-    apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}/rubrics/${judgingCategory}`)
+  const updateScoresheet = () => {
+    apiFetch(`/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`)
       .then(res => res?.json())
-      .then(data => setRubric(data));
+      .then(data => setScoresheet(data));
   };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], updateRubric, [
-    {
-      name: 'rubricUpdated',
-      handler: (teamId, rubricId) => {
-        if (teamId === router.query.teamId) updateRubric();
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['field'],
+    updateScoresheet,
+    [
+      {
+        name: 'scoresheetUpdated',
+        handler: (teamId, scoresheeId) => {
+          if (scoresheeId === router.query.scoresheeId) updateScoresheet();
+        }
       }
-    }
-  ]);
+    ]
+  );
 
+  console.log(scoresheet);
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={['judge', 'judge-advisor']}
-      conditionalRoles={'lead-judge'}
-      conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
+      allowedRoles={['referee', 'head-referee']}
       onFail={() => router.back()}
     >
-      {team && rubric && (
+      {team && (
         <Layout
           maxWidth="md"
-          title={`מחוון ${
-            localizedJudgingCategory[judgingCategory as JudgingCategory].name
-          } של קבוצה #${team.number}, ${team.name} | ${event.name}`}
+          title={`${localizedMatchType[match.type]} #${match.round} של קבוצה #${team.number}, ${
+            team.name
+          } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
@@ -113,15 +108,21 @@ const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
-              {localizeTeam(team)} | חדר שיפוט {room.name}
+              {localizeTeam(team)} | שולחן {table.name}
             </Typography>
           </Paper>
-          <RoleAuthorizer user={user} allowedRoles={['judge', 'judge-advisor']}>
+          <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
             <ScoresheetSelector event={event} team={team} />
           </RoleAuthorizer>
-          <Box my={4}>
-            <Typography>Scoresheet form</Typography>
-          </Box>
+          <Stack spacing={4}>
+            {SEASON_SCORESHEET.missions.map(mission => (
+              <ScoresheetMission
+                key={mission.id}
+                src={`/assets/scoresheet/missions/${mission.id.toUpperCase()}.png`}
+                mission={mission}
+              />
+            ))}
+          </Stack>
         </Layout>
       )}
     </RoleAuthorizer>
@@ -132,16 +133,16 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    let roomId;
-    if (user.roleAssociation && user.roleAssociation.type === 'room') {
-      roomId = user.roleAssociation.value;
+    let tableId;
+    if (user.roleAssociation && user.roleAssociation.type === 'table') {
+      tableId = user.roleAssociation.value;
     } else {
-      const sessions = await apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
+      const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
         res => res?.json()
       );
-      roomId = sessions.find(
-        (session: JudgingSession) => session.team == new ObjectId(String(ctx.params?.teamId))
-      ).room;
+      tableId = matches.find(
+        (match: RobotGameMatch) => match.team == new ObjectId(String(ctx.params?.teamId))
+      ).table;
     }
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
@@ -154,21 +155,23 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     ).then(res => res?.json());
 
-    const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
-      res => res?.json()
-    );
+    const tablePromise = apiFetch(
+      `/api/events/${user.event}/tables/${tableId}`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
 
-    const [room, team, event] = await Promise.all([roomPromise, teamPromise, eventPromise]);
+    const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
 
-    const session = await apiFetch(
-      `/api/events/${user.event}/rooms/${roomId}/sessions`,
+    const match = await apiFetch(
+      `/api/events/${user.event}/tables/${tableId}/matches`,
       undefined,
       ctx
     ).then(res =>
-      res?.json().then(sessions => sessions.find((s: JudgingSession) => s.team == team._id))
+      res?.json().then(matches => matches.find((m: RobotGameMatch) => m.team == team._id))
     );
 
-    return { props: { user, event, room, team, session } };
+    return { props: { user, event, table, team, match } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

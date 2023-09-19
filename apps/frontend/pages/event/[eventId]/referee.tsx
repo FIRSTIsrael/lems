@@ -1,9 +1,13 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import dayjs, { Dayjs } from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
+import { Socket } from 'socket.io-client';
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   LinearProgress,
@@ -31,10 +35,6 @@ import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeTeam } from '../../../localization/teams';
-import dayjs, { Dayjs } from 'dayjs';
-import { Socket } from 'socket.io-client';
-import { redirect } from 'next/navigation';
-import Image from 'next/image';
 
 interface ReadyCheckProps {
   event: WithId<Event>;
@@ -45,22 +45,31 @@ interface ReadyCheckProps {
 }
 
 const ReadyCheck: React.FC<ReadyCheckProps> = ({ event, table, team, match, socket }) => {
-  const handleReadyChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      match &&
-        socket.emit(
-          'updateMatch',
-          event._id.toString(),
-          table._id.toString(),
-          match._id.toString(),
-          { ready: e.target.checked },
-          response => {
-            // { ok: true }
-          }
-        );
-    },
-    [event._id, match, socket, table._id]
-  );
+  const handleReadyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    match &&
+      socket.emit(
+        'updateMatch',
+        event._id.toString(),
+        table._id.toString(),
+        match._id.toString(),
+        { ready: e.target.checked },
+        response => {
+          // { ok: true }
+        }
+      );
+  };
+  const handleStart = () => {
+    match &&
+      socket.emit(
+        'startMatch',
+        event._id.toString(),
+        table._id.toString(),
+        match._id.toString(),
+        response => {
+          // { ok: true }
+        }
+      );
+  };
 
   return (
     <Paper sx={{ transform: 'translateY(100%)', mt: 4, p: 4 }}>
@@ -74,6 +83,7 @@ const ReadyCheck: React.FC<ReadyCheckProps> = ({ event, table, team, match, sock
           label={<Typography variant="h4">הקבוצה ואנחנו מוכנים למקצה!</Typography>}
           sx={{ '& .MuiSvgIcon-root': { fontSize: 35 } }}
         />
+        <Button onClick={handleStart}>Click me!</Button>
       </Stack>
     </Paper>
   );
@@ -166,32 +176,107 @@ const DonePaper = () => {
   );
 };
 
-type RefereePageStatus = 'timer' | 'readyCheck' | 'done' | undefined;
+type RefereePageStatus = 'timer' | 'ready-check' | 'done' | undefined;
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   table: WithId<RobotGameTable>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, table }) => {
+const Page: NextPage<Props> = ({ user, event, table, teams }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<EventState | undefined>(undefined);
-  const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
   const [match, setMatch] = useState<WithId<RobotGameMatch> | undefined>(undefined);
+  const [team, setTeam] = useState<WithId<Team> | undefined>(undefined);
+  const [pageState, setPageState] = useState<RefereePageStatus>(undefined);
 
-  const onMatchUpdate = (tableId: string) => {
-    // this should also get a team :D
-    return;
+  useEffect(() => {
+    const getScoresheet = (matchId: ObjectId) => {
+      return apiFetch(
+        `/api/event/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`
+      ).then(res => res.json());
+    };
+
+    if (eventState && matches) {
+      const handleScoringLogic = (_match: WithId<RobotGameMatch>) => {
+        getScoresheet(_match._id).then((scoresheet: WithId<Scoresheet>) => {
+          if (scoresheet.status === 'not-started' || scoresheet.status === 'in-progress') {
+            router.push(`/events/${user.event}/team/${_match.team}/scoresheet/${scoresheet._id}`);
+          } else {
+            const nextMatch = matches.find(m => m.number > eventState.activeMatch);
+            if (nextMatch) {
+              setMatch(nextMatch);
+              setTeam(teams.find(t => t._id === nextMatch.team));
+              setPageState('ready-check');
+              return;
+            }
+            setMatch(undefined);
+            setTeam(undefined);
+            setPageState('done');
+            return;
+          }
+        });
+      };
+
+      const activeMatch = matches.find(m => m.number === eventState.activeMatch);
+      if (activeMatch) {
+        if (activeMatch.status === 'in-progress') {
+          setMatch(activeMatch);
+          setTeam(teams.find(t => t._id === activeMatch.team));
+          setPageState('timer');
+          return;
+        }
+        handleScoringLogic(activeMatch);
+        return;
+      } else {
+        const previousMatch = matches.find(m => m.number < eventState.activeMatch);
+        if (previousMatch) {
+          handleScoringLogic(previousMatch);
+          return;
+        } else {
+          const firstMatch = matches.reduce((prev, curr) =>
+            prev.number < curr.number ? prev : curr
+          );
+          setMatch(firstMatch);
+          setTeam(teams.find(t => t._id === firstMatch.team));
+          setPageState('ready-check');
+          return;
+        }
+      }
+    }
+  }, [eventState, matches, teams, router, table._id, user.event]);
+
+  const getEventState = () => {
+    apiFetch(`/api/events/${user.event}/state/`)
+      .then(res => res.json())
+      .then(data => {
+        setEventState(data);
+      });
   };
 
-  const onScoresheetUpdate = (tableId: string, scoresheetId: string) => {
-    return;
+  const getMatches = () => {
+    apiFetch(`/api/events/${user.event}/tables/${table._id}/matches`)
+      .then(res => res.json())
+      .then(data => {
+        setMatches(data);
+      });
+  };
+
+  const onMatchStarted = (tableId: string, matchId: string) => {
+    getEventState();
+    if (tableId === table._id.toString()) getMatches();
+  };
+
+  const onMatchUpdate = (tableId: string, matchId: string) => {
+    if (tableId === table._id.toString()) getMatches();
   };
 
   const getData = () => {
-    return;
+    getEventState();
+    getMatches();
   };
 
   const { socket, connectionStatus } = useWebsocket(
@@ -199,22 +284,12 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
     ['field', 'pit-admin'],
     getData,
     [
-      { name: 'matchStarted', handler: (tableId: string) => onMatchUpdate(tableId) },
-      { name: 'matchCompleted', handler: (tableId: string) => onMatchUpdate(tableId) },
-      { name: 'matchAborted', handler: (tableId: string) => onMatchUpdate(tableId) },
-      { name: 'matchUpdated', handler: (tableId: string) => onMatchUpdate(tableId) },
-      {
-        name: 'scoresheetStatusChanged',
-        handler: (tableId: string, scoresheetId: string) =>
-          onScoresheetUpdate(tableId, scoresheetId)
-      }
+      { name: 'matchStarted', handler: onMatchStarted },
+      { name: 'matchCompleted', handler: onMatchUpdate },
+      { name: 'matchAborted', handler: onMatchUpdate },
+      { name: 'matchUpdated', handler: onMatchUpdate }
     ]
   );
-
-  //TODO
-  const pageState: RefereePageStatus = useMemo(() => {
-    return 'done' as RefereePageStatus;
-  }, []);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
@@ -224,7 +299,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {team && match && pageState === 'readyCheck' && (
+        {team && match && pageState === 'ready-check' && (
           <ReadyCheck event={event} table={table} team={team} match={match} socket={socket} />
         )}
         {team && match && pageState === 'timer' && <Timer team={team} match={match} />}
@@ -246,38 +321,14 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       undefined,
       ctx
     ).then(res => res?.json());
-    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
-      res => res?.json()
+
+    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
+      res?.json()
     );
-    const [table, event, eventState] = await Promise.all([
-      tablePromise,
-      eventPromise,
-      eventStatePromise
-    ]);
 
-    const matches: Array<WithId<RobotGameMatch>> = await apiFetch(
-      `/api/events/${user.event}/tables/${table._id}/matches`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
+    const [table, event, teams] = await Promise.all([tablePromise, eventPromise, teamsPromise]);
 
-    const activeMatch = matches.find(
-      match => match.number === eventState.activeMatch && match.status === 'completed'
-    );
-    if (activeMatch) {
-      const scoresheet: WithId<Scoresheet> = await apiFetch(
-        `/api/events/${user.event}/tables/${table._id}/matches/${activeMatch._id}/scoresheet`
-      ).then(res => res?.json());
-      if (scoresheet.status !== 'completed')
-        return {
-          redirect: {
-            destination: `/event/${user.event}/team/${activeMatch.team}/scoresheet/${scoresheet._id}/`,
-            permanent: false
-          }
-        };
-    }
-
-    return { props: { user, event, table } };
+    return { props: { user, event, table, teams } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
