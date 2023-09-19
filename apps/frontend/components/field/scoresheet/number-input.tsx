@@ -34,6 +34,8 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(
   );
 });
 
+export default CustomNumberInput;
+
 const blue = {
   100: '#daecff',
   200: '#b6daff',
@@ -129,5 +131,3 @@ const StyledButton = styled('button')(`
     order: 1;
   }
 `);
-
-export default CustomNumberInput;

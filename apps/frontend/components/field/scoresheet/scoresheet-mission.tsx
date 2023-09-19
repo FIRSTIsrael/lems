@@ -1,62 +1,93 @@
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Paper,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography
-} from '@mui/material';
+import { Box, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
-import { Field } from 'formik';
+import { Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import CustomNumberInput from './number-input';
 
 interface MissionClauseProps {
-  index: number;
+  missionIndex: number;
+  clauseIndex: number;
   clause: MissionClause;
   localizedMission: LocalizedMission;
 }
 
-const MissionClause: React.FC<MissionClauseProps> = ({ index, clause, localizedMission }) => {
+const MissionClause: React.FC<MissionClauseProps> = ({
+  missionIndex,
+  clauseIndex,
+  clause,
+  localizedMission
+}) => {
   return (
     <>
       <Grid xs={10} mt={2} ml={3}>
-        <ReactMarkdown>{localizedMission.clauses[index].description}</ReactMarkdown>
+        <ReactMarkdown>{localizedMission.clauses[clauseIndex].description}</ReactMarkdown>
       </Grid>
       <Grid xs={12} ml={3}>
-        {/* <Field> */}
         {clause.type === 'boolean' ? (
-          <ToggleButtonGroup color="success">
-            <ToggleButton value="yes">כן</ToggleButton>
-            <ToggleButton value="no">לא</ToggleButton>
-          </ToggleButtonGroup>
+          <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
+            {({ field, form }: FieldProps) => (
+              <ToggleButtonGroup
+                exclusive
+                value={field.value}
+                onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+              >
+                <ToggleButton value={false} sx={{ minWidth: '80px' }}>
+                  לא
+                </ToggleButton>
+                <ToggleButton value={true} sx={{ minWidth: '80px' }}>
+                  כן
+                </ToggleButton>
+              </ToggleButtonGroup>
+            )}
+          </Field>
         ) : clause.type === 'enum' ? (
-          <ToggleButtonGroup color="success">
-            {localizedMission.clauses[index].labels?.map(label => (
-              <ToggleButton key={label} value={clause.options ? clause.options[index] : ''}>
-                {label}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
+            {({ field, form }: FieldProps) => (
+              <ToggleButtonGroup
+                exclusive
+                value={field.value}
+                onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+              >
+                {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
+                  <ToggleButton
+                    key={label}
+                    value={clause.options ? clause.options[index] : ''}
+                    sx={{ minWidth: '80px' }}
+                  >
+                    {label}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            )}
+          </Field>
         ) : (
-          <CustomNumberInput min={clause.min} max={clause.max} />
+          <Field
+            name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}
+            component={({ field, form }: FieldProps) => (
+              <CustomNumberInput
+                min={clause.min}
+                max={clause.max}
+                {...field}
+                value={field.value}
+                onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+              />
+            )}
+          />
         )}
-        {/* </Field> */}
       </Grid>
     </>
   );
 };
 
 interface ScoresheetMissionProps {
+  missionIndex: number;
   mission: Mission;
   src: string;
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
 
   return (
@@ -86,7 +117,8 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) =
           {mission.clauses.map((clause, index) => (
             <MissionClause
               key={index}
-              index={index}
+              missionIndex={missionIndex}
+              clauseIndex={index}
               clause={clause}
               localizedMission={localizedMission}
             />

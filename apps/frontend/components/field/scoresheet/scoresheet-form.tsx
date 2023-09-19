@@ -49,11 +49,9 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     formValues: FormikValues | undefined,
     newstatus: string | undefined
   ) => {
-    console.log(formValues);
     const updatedScoresheet = {} as any;
     if (newstatus) updatedScoresheet['status'] = newstatus;
     if (formValues) updatedScoresheet['data'] = formValues;
-    console.log(updatedScoresheet);
 
     socket.emit(
       'updateScoresheet',
@@ -116,13 +114,12 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
       <Formik
         initialValues={scoresheet.data || getDefaultScoresheet()}
         validate={validateScoresheet}
-        validateOnBlur={true}
-        validateOnChange={false}
         onSubmit={(values, actions) => {
           // This should return to the referee page
           actions.setSubmitting(false);
         }}
         enableReinitialize
+        validateOnChange
         validateOnMount
       >
         {({ values, isValid, validateForm, resetForm }) => (
@@ -149,9 +146,10 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
             </Stack>
 
             <Stack spacing={4}>
-              {SEASON_SCORESHEET.missions.map(mission => (
+              {SEASON_SCORESHEET.missions.map((mission, index) => (
                 <ScoresheetMission
                   key={mission.id}
+                  missionIndex={index}
                   src={`/assets/scoresheet/missions/${mission.id}.webp`}
                   mission={mission}
                 />

@@ -23,7 +23,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
     },
     {
       id: 'm02',
-      title: 'קולנוע תלת מימד',
+      title: 'החלפת תפאורה',
       clauses: [
         {
           description: 'הדגל האדום של התיאטרון שלכם מופנה כלפי מטה, וצבע התפאורה הפעילה הוא:',
@@ -44,7 +44,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'חוויה עוטפת',
       clauses: [{ description: 'כל שלושת המסכים של ״חוויה עוטפת״ מורמים:' }],
       remarks: [
-        'כדי לזכות בנימוק, אסור לציוד של הקבוצה לגעת בדגם משימות ״חוויה עוטפת״ בסיום המקצה.'
+        'כדי לזכות בניקוד, אסור לציוד של הקבוצה לגעת בדגם משימות ״חוויה עוטפת״ בסיום המקצה.'
       ]
     },
     {

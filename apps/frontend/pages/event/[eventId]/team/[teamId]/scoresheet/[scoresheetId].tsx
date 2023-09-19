@@ -83,7 +83,7 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
       {
         name: 'scoresheetUpdated',
         handler: (teamId, scoresheeId) => {
-          if (scoresheeId === router.query.scoresheeId) updateScoresheet();
+          if (scoresheeId === router.query.scoresheetId) updateScoresheet();
         }
       }
     ]
@@ -173,7 +173,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     return { props: { user, event, table, team, match } };
   } catch (err) {
-    console.log(err);
     return { redirect: { destination: '/login', permanent: false } };
   }
 };
