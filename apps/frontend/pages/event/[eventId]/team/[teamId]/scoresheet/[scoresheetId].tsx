@@ -16,6 +16,7 @@ import { localizeTeam } from '../../../../../../localization/teams';
 import { localizedMatchType } from '../../../../../../localization/field';
 import ScoresheetMission from '../../../../../../components/field/scoresheet/scoresheet-mission';
 import { SEASON_SCORESHEET } from '@lems/season';
+import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
 
 interface ScoresheetSelectorProps {
   event: WithId<Event>;
@@ -88,7 +89,6 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
     ]
   );
 
-  console.log(scoresheet);
   return (
     <RoleAuthorizer
       user={user}
@@ -114,15 +114,15 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
           <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
             <ScoresheetSelector event={event} team={team} />
           </RoleAuthorizer>
-          <Stack spacing={4}>
-            {SEASON_SCORESHEET.missions.map(mission => (
-              <ScoresheetMission
-                key={mission.id}
-                src={`/assets/scoresheet/missions/${mission.id.toUpperCase()}.png`}
-                mission={mission}
-              />
-            ))}
-          </Stack>
+          {scoresheet && (
+            <ScoresheetForm
+              event={event}
+              team={team}
+              scoresheet={scoresheet}
+              user={user}
+              socket={socket}
+            />
+          )}
         </Layout>
       )}
     </RoleAuthorizer>

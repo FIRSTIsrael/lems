@@ -18,6 +18,7 @@ import { fullMatch } from '@lems/utils';
 import { SEASON_SCORESHEET } from '@lems/season';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
+import ScoresheetMission from './scoresheet-mission';
 
 interface Props {
   event: WithId<Event>;
@@ -29,14 +30,18 @@ interface Props {
 
 const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
   const router = useRouter();
-
-  //fields and whatnot go here
   const isEditable = true;
 
   const getDefaultScoresheet = () => {
-    //returns the data component
-    //like the rubric couterpart
-    return {};
+    const missions = SEASON_SCORESHEET.missions.map(m => {
+      return {
+        id: m.id,
+        clauses: m.clauses.map(c => {
+          return { type: c.type, value: c.default };
+        })
+      };
+    });
+    return { missions: missions, signature: '', gp: 0, score: 0 };
   };
 
   const handleSync = async (
@@ -44,9 +49,11 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     formValues: FormikValues | undefined,
     newstatus: string | undefined
   ) => {
+    console.log(formValues);
     const updatedScoresheet = {} as any;
     if (newstatus) updatedScoresheet['status'] = newstatus;
     if (formValues) updatedScoresheet['data'] = formValues;
+    console.log(updatedScoresheet);
 
     socket.emit(
       'updateScoresheet',
@@ -139,6 +146,16 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                   דף הניקוד נעול, אין באפשרותך לערוך אותו.
                 </Alert>
               )}
+            </Stack>
+
+            <Stack spacing={4}>
+              {SEASON_SCORESHEET.missions.map(mission => (
+                <ScoresheetMission
+                  key={mission.id}
+                  src={`/assets/scoresheet/missions/${mission.id}.webp`}
+                  mission={mission}
+                />
+              ))}
             </Stack>
 
             {!isValid && (

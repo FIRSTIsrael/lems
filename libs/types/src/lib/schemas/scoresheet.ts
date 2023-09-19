@@ -6,7 +6,6 @@ export type ScoresheetStatus = Status | 'waiting-for-head-ref';
 export interface MissionClause {
   type: MissionClauseType;
   value: boolean | string | number;
-  points: number;
 }
 
 export interface Mission {
@@ -21,9 +20,9 @@ export interface Scoresheet {
   round: number;
   status: ScoresheetStatus;
   data?: {
-    missionData: Mission[];
+    missions: Mission[];
     signature: string;
     gp: number;
-    totalPoints: number;
+    score: number;
   };
 }

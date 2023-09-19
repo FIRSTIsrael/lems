@@ -109,7 +109,7 @@ export const handleUpdateMatch = async (
   namespace.to('field').emit('matchUpdated', tableId, matchId);
 };
 
-export const updateScoresheet = async (
+export const handleUpdateScoresheet = async (
   namespace,
   eventId,
   teamId,
@@ -117,7 +117,7 @@ export const updateScoresheet = async (
   scoresheetData,
   callback
 ) => {
-  const scoresheet = await db.getRubric({
+  const scoresheet = await db.getScoresheet({
     team: new ObjectId(teamId),
     _id: new ObjectId(scoresheetId)
   });

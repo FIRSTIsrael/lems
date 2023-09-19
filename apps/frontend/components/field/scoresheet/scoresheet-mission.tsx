@@ -10,8 +10,10 @@ import {
   Typography
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
+import { Field } from 'formik';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
+import CustomNumberInput from './number-input';
 
 interface MissionClauseProps {
   index: number;
@@ -26,8 +28,9 @@ const MissionClause: React.FC<MissionClauseProps> = ({ index, clause, localizedM
         <ReactMarkdown>{localizedMission.clauses[index].description}</ReactMarkdown>
       </Grid>
       <Grid xs={12} ml={3}>
+        {/* <Field> */}
         {clause.type === 'boolean' ? (
-          <ToggleButtonGroup color="success" value="no">
+          <ToggleButtonGroup color="success">
             <ToggleButton value="yes">כן</ToggleButton>
             <ToggleButton value="no">לא</ToggleButton>
           </ToggleButtonGroup>
@@ -40,8 +43,9 @@ const MissionClause: React.FC<MissionClauseProps> = ({ index, clause, localizedM
             ))}
           </ToggleButtonGroup>
         ) : (
-          <></>
+          <CustomNumberInput min={clause.min} max={clause.max} />
         )}
+        {/* </Field> */}
       </Grid>
     </>
   );
@@ -55,13 +59,12 @@ interface ScoresheetMissionProps {
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
 
-  console.log(src);
   return (
     localizedMission && (
       <Grid component={Paper} container spacing={0} pb={2}>
         <Grid container xs={8} spacing={0}>
           <Grid
-            pt={1}
+            py={1}
             xs={2}
             alignSelf="flex-start"
             bgcolor="#388e3c"

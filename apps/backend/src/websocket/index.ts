@@ -7,7 +7,7 @@ import {
 } from '@lems/types';
 import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
-import { handleStartMatch, handleUpdateMatch } from './handlers/field';
+import { handleStartMatch, handleUpdateMatch, handleUpdateScoresheet } from './handlers/field';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -39,6 +39,8 @@ const websocket = (
   socket.on('startMatch', (...args) => handleStartMatch(namespace, ...args));
 
   socket.on('updateMatch', (...args) => handleUpdateMatch(namespace, ...args));
+
+  socket.on('updateScoresheet', (...args) => handleUpdateScoresheet(namespace, ...args));
 
   socket.on('disconnect', () => {
     console.log(`❌ WS: Disconnection from event ${eventId}`);
