@@ -1,5 +1,14 @@
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
-import { Box, Button, ButtonGroup, Paper, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Paper,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -18,16 +27,18 @@ const MissionClause: React.FC<MissionClauseProps> = ({ index, clause, localizedM
       </Grid>
       <Grid xs={12} ml={3}>
         {clause.type === 'boolean' ? (
-          <ButtonGroup variant="contained">
-            <Button>כן</Button>
-            <Button>לא</Button>
-          </ButtonGroup>
+          <ToggleButtonGroup color="success" value="no">
+            <ToggleButton value="yes">כן</ToggleButton>
+            <ToggleButton value="no">לא</ToggleButton>
+          </ToggleButtonGroup>
         ) : clause.type === 'enum' ? (
-          <ButtonGroup variant="contained">
+          <ToggleButtonGroup color="success">
             {localizedMission.clauses[index].labels?.map(label => (
-              <Button key={label}>{label}</Button>
+              <ToggleButton key={label} value={clause.options ? clause.options[index] : ''}>
+                {label}
+              </ToggleButton>
             ))}
-          </ButtonGroup>
+          </ToggleButtonGroup>
         ) : (
           <></>
         )}
@@ -50,7 +61,8 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) =
       <Grid component={Paper} container spacing={0} pb={2}>
         <Grid container xs={8} spacing={0}>
           <Grid
-            xs={6}
+            pt={1}
+            xs={2}
             alignSelf="flex-start"
             bgcolor="#388e3c"
             borderRadius="8px 0 0 0"
@@ -60,8 +72,8 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) =
               {mission.id.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid xs={6}>
-            <Typography fontSize="1.5rem" fontWeight={600} pl={2}>
+          <Grid xs={6} pt={1}>
+            <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
               {localizedMission.title}
             </Typography>
           </Grid>
@@ -90,7 +102,20 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ mission, src }) =
             ))}
           </Grid>
         </Grid>
-        <Grid component="img" src={src} alt={`תמונה של משימה ${mission.id}`} xs={4} />
+        <Grid component={Box} borderRadius={8} p={2} xs={4}>
+          <Image
+            src={src}
+            width={0}
+            height={0}
+            sizes="100vw"
+            alt={`תמונה של משימה ${mission.id}`}
+            style={{
+              objectFit: 'cover',
+              width: '100%',
+              height: 'auto'
+            }}
+          />
+        </Grid>
       </Grid>
     )
   );

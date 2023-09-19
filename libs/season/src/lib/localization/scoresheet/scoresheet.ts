@@ -49,7 +49,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
     },
     {
       id: 'm04',
-      title: 'MASTERPIECE℠',
+      title: '℠MASTERPIECE',
       clauses: [
         {
           description:
