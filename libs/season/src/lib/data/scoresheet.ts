@@ -21,7 +21,7 @@ export const scoresheet: Scoresheet = {
       ],
       calculation: (clause1, clause2) => {
         if (clause2) {
-          if (clause1 === 'none') throw new ScoresheetError('m02-e1');
+          if (clause1 === 'none') return new ScoresheetError('m02-e1');
           return clause1 === 'blue' ? 30 : clause1 === 'pink' ? 50 : 40;
         }
         return clause1 === 'blue' ? 10 : clause1 === 'pink' ? 20 : clause1 === 'orange' ? 30 : 0;
@@ -40,7 +40,7 @@ export const scoresheet: Scoresheet = {
       ],
       calculation: (clause1, clause2) => {
         if (clause2) {
-          if (!clause1) throw new ScoresheetError('m04-e1');
+          if (!clause1) return new ScoresheetError('m04-e1');
           return 30;
         }
         return clause1 ? 10 : 0;
@@ -139,7 +139,7 @@ export const scoresheet: Scoresheet = {
       ],
       calculation: (clause1, clause2) => {
         if (clause2) {
-          if (!clause1) throw new ScoresheetError('m12-e1');
+          if (!clause1) return new ScoresheetError('m12-e1');
           return 30;
         }
         return clause1 ? 10 : 0;
@@ -169,8 +169,8 @@ export const scoresheet: Scoresheet = {
         points += Number(clause1) * 5;
         points += Number(clause2) * 5;
 
-        if (Number(clause2) > Number(clause1)) throw new ScoresheetError('m14-e1');
-        if (Number(clause1) > 0 && Number(clause2) === 0) throw new ScoresheetError('m14-e2');
+        if (Number(clause2) > Number(clause1)) return new ScoresheetError('m14-e1');
+        if (Number(clause1) > 0 && Number(clause2) === 0) return new ScoresheetError('m14-e2');
 
         return points;
       }
@@ -185,6 +185,8 @@ export const scoresheet: Scoresheet = {
       clauses: [{ type: 'number', min: 0, max: 6, default: 6 }],
       calculation: clause1 => {
         switch (Number(clause1)) {
+          case 0:
+            return 0;
           case 1:
             return 10;
           case 2:

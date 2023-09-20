@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
-import { Form, Formik, FormikValues } from 'formik';
+import { Field, Form, Formik, FormikValues } from 'formik';
 import ReactMarkdown from 'react-markdown';
-import { Typography, Button, Alert, Stack, SxProps, Theme } from '@mui/material';
+import { Typography, Button, Alert, Stack, SxProps, Theme, Paper } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import {
   Event,
@@ -12,10 +12,11 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   SafeUser,
-  Scoresheet
+  Scoresheet,
+  MissionClause
 } from '@lems/types';
 import { fullMatch } from '@lems/utils';
-import { SEASON_SCORESHEET } from '@lems/season';
+import { SEASON_SCORESHEET, ScoresheetError, localizedScoresheet } from '@lems/season';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 import ScoresheetMission from './scoresheet-mission';
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
+  const [errors, setErrors] = useState<Array<string | undefined>>([]);
   const router = useRouter();
   const isEditable = true;
 
@@ -42,6 +44,27 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
       };
     });
     return { missions: missions, signature: '', gp: 0, score: 0 };
+  };
+
+  const calculateScore = (values: FormikValues) => {
+    let score = 0;
+    const scoresheetErrors: Array<string | undefined> = [];
+    SEASON_SCORESHEET.missions.forEach((mission, missionIndex) => {
+      const clauses = values.missions[missionIndex].clauses;
+      const calculationOrError = mission.calculation(
+        ...clauses.map((clause: MissionClause) => clause.value)
+      );
+      if (typeof calculationOrError === 'number') {
+        score += calculationOrError;
+      } else {
+        const missionErrors = localizedScoresheet.missions[missionIndex].errors;
+        if (missionErrors && missionErrors.length > 0)
+          scoresheetErrors.push(
+            missionErrors.find(e => e.id === calculationOrError.id)?.description
+          );
+      }
+    });
+    return { score, scoresheetErrors };
   };
 
   const handleSync = async (
@@ -90,7 +113,14 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         newStatus = scoresheet.status;
       }
 
-      if (!fullMatch(scoresheet.data, formValues) || scoresheet.status !== newStatus) {
+      const { score, scoresheetErrors } = calculateScore(formValues);
+      setErrors(scoresheetErrors);
+      const data = scoresheet.data;
+      if (data) {
+        data.score = score;
+      }
+
+      if (!fullMatch(data, formValues) || scoresheet.status !== newStatus) {
         handleSync(false, formValues, newStatus);
       }
     }
@@ -123,7 +153,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         validateOnMount
       >
         {({ values, isValid, validateForm, resetForm }) => (
-          <Form>
+          <>
             <Stack
               spacing={2}
               sx={{
@@ -144,6 +174,22 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                 </Alert>
               )}
             </Stack>
+
+            <Paper
+              sx={{
+                p: 4,
+                mb: 2,
+                position: 'sticky',
+                top: theme => theme.mixins.toolbar.minHeight,
+                zIndex: 1,
+                backgroundColor: errors.length > 0 ? '#d32f2f' : '',
+                color: errors.length > 0 ? '#fff' : ''
+              }}
+            >
+              <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
+                {errors.length > 0 ? `שגיאה: ${errors[0]}` : `${values.score} נקודות`}
+              </Typography>
+            </Paper>
 
             <Stack spacing={4}>
               {SEASON_SCORESHEET.missions.map((mission, index) => (
@@ -172,7 +218,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
             )}
 
             <Stack direction="row" spacing={4} justifyContent="center"></Stack>
-          </Form>
+          </>
         )}
       </Formik>
     </>

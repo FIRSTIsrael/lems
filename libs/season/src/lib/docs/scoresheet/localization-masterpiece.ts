@@ -1,4 +1,4 @@
-import { LocalizedScoresheet } from './typing';
+import { LocalizedScoresheet } from '../../localization/scoresheet/typing';
 
 export const localizedScoresheet: LocalizedScoresheet = {
   missions: [

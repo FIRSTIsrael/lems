@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Button, Paper, Stack, Typography, Box } from '@mui/material';
+import { Button, Paper, Stack, Typography } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import { Event, RobotGameMatch, RobotGameTable, SafeUser, Scoresheet, Team } from '@lems/types';
@@ -14,8 +14,6 @@ import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
 import { localizedMatchType } from '../../../../../../localization/field';
-import ScoresheetMission from '../../../../../../components/field/scoresheet/scoresheet-mission';
-import { SEASON_SCORESHEET } from '@lems/season';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
 
 interface ScoresheetSelectorProps {
