@@ -1,4 +1,5 @@
 import { Scoresheet, ScoresheetError } from '../../data/scoresheet-types';
+import { findMission } from '../../data/helpers';
 
 const scoresheet: Scoresheet = {
   season: 'REPLAY℠',
@@ -216,21 +217,18 @@ const scoresheet: Scoresheet = {
     }
   ],
   validators: [
-    values => {
-      const m06 = values.find(m => m.id === 'm06');
-      const m07 = values.find(m => m.id === 'm07');
-      if (m06 && m07) {
-        if (m06.values[1] && m07.values[0]) throw new ScoresheetError('e1');
-      }
+    missions => {
+      const m06 = findMission(missions, 'm06');
+      const m07 = findMission(missions, 'm07');
+      if (m06.values[1] && m07.values[0]) throw new ScoresheetError('e1');
     },
-    values => {
-      const m04 = values.find(m => m.id === 'm04');
-      const m05 = values.find(m => m.id === 'm05');
-      const m08 = values.find(m => m.id === 'm08');
-      if (m04 && m05 && m08) {
-        if (Number(m04.values[1]) + Number(m05.values[0]) + Number(m08.values[1]) > 18)
-          throw new ScoresheetError('e2');
-      }
+    missions => {
+      const m04 = findMission(missions, 'm04');
+      const m05 = findMission(missions, 'm05');
+      const m08 = findMission(missions, 'm08');
+
+      if (Number(m04.values[1]) + Number(m05.values[0]) + Number(m08.values[1]) > 18)
+        throw new ScoresheetError('e2');
     }
   ]
 };

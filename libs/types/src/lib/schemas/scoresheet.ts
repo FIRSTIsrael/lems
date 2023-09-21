@@ -5,7 +5,7 @@ export type ScoresheetStatus = Status | 'waiting-for-head-ref';
 
 export interface MissionClause {
   type: MissionClauseType;
-  value: boolean | string | number;
+  value: boolean | string | number | null;
 }
 
 export interface Mission {

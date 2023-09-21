@@ -11,7 +11,7 @@ export interface MissionClause {
 export interface Mission {
   id: string;
   clauses: MissionClause[];
-  calculation: (...args: Array<boolean | string | number>) => number | ScoresheetError;
+  calculation: (...args: Array<boolean | string | number>) => number;
 }
 
 export interface Scoresheet {

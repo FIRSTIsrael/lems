@@ -7,4 +7,5 @@ export * from './lib/localization/scoresheet/typing';
 export * from './lib/localization/scoresheet/scoresheet';
 export * from './lib/localization/judging';
 export * from './lib/localization/rubrics';
+export * from './lib/constants';
 export { scoresheet as SEASON_SCORESHEET } from './lib/data/scoresheet';

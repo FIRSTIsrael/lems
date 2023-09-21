@@ -14,7 +14,7 @@ The logic contain only the pure logic and identifiers reusable across languages.
 ### Writing Missions
 
 Each mission is structured as follows:
-`id`: ID of the mission. Usually begins with M. Follow the IDs in the RGR.
+`id`: ID of the mission. Usually begins with 'm' followed by 2 numbers (e.g. `m01`). Follow the IDs in the RGR.
 `clauses`: Array of mission clauses. Explained in further detail below.
 `calculation`: Function that accepts clause values and returns calculated points.
 Calculation functions also validate the clause values within each mission against one another.
@@ -45,7 +45,7 @@ Make sure to unclude a default value that corresponds to the initial setting of 
 #### Calculation
 
 The `calculation` function of each mission accepts clause values in order as arguments.
-Each calculation should return on single number representing points earned in the mission.
+Each calculation should return one single number representing points earned in the mission.
 Calculation functions can throw a `ScoresheetError` if conditions within the mission are not met.
 
 Note regarding calculation functions:
@@ -119,7 +119,7 @@ Notice that the calculation number throws an error if the amount of flipped tire
 
 CARGO CONNECT M17
 This mission will reward more points if more tokens are left on the field.
-Notice the default value of 6 since we start with 6 tokens.a
+Notice the default value of 6 since we start with 6 tokens.
 
 ```typescript
 
@@ -152,10 +152,9 @@ These cases require you to write a validator function, which receives a paramete
 `[{id: string, values: [clause1, clause2, clause3]}]` where clauses can be any type of clause.
 Validators should throw an error if their conditions are not satisfied.
 
-When writing validators, mission results are obtained using `Array.find()`.
-This is declared as `T | undefined`, meaning that first you have to declare all the missions, and then have an `if`
-condition to satisfy the compiler and make it know that these values are defined.
-For debugging - it might be useful to throw an error in the `else` statement.
+When writing validators, mission results are obtained using `findMission`.
+In case an invalid mission is accessed, error `e-00` will be thrown.
+Make sure to include it in the localization.
 
 #### Validator Examples
 
@@ -163,32 +162,25 @@ REPLAY Season
 In this season, M06 Clause 2 cannot be completed with M07.
 
 ```typescript
-
-values => {
-      const m06 = values.find(m => m.id === 'm06');
-      const m07 = values.find(m => m.id === 'm07');
-      if (m06 && m07) {
-        if (m06.values[1] && m07.values[0]) throw new ScoresheetError('e1');
-      }
-    }
-
+missions => {
+  const m06 = findMission(missions, 'm06');
+  const m07 = findMission(missions, 'm07');
+  if (m06.values[1] && m07.values[0]) throw new ScoresheetError('e1');
+};
 ```
 
 CARGO CONNECT Season
 In this season, there were a limited number of containers and multiple missions that used them.
 
 ```typescript
+missions => {
+  // Cargo containers cannot be in circles no matter what
+  const m15 = findMission(missions, 'm15');
+  const m16 = findMission(missions, 'm16');
 
-values => {
-      // Cargo containers cannot be in circles no matter what
-      const m15 = values.find(m => m.id === 'm15');
-      const m16 = values.find(m => m.id === 'm16');
-      if (m15 && m16) {
-        if (Number(m15.values[2]) + Number(m16.values[0]) + Number(m16.values[1]) > 8)
-          throw new ScoresheetError('e1');
-      }
-    }
-
+  if (Number(m15.values[2]) + Number(m16.values[0]) + Number(m16.values[1]) > 8)
+    throw new ScoresheetError('e1');
+};
 ```
 
 ## Localization File Format

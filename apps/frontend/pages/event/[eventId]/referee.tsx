@@ -199,7 +199,7 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
   useEffect(() => {
     const getScoresheet = (matchId: ObjectId) => {
       return apiFetch(
-        `/api/event/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`
+        `/api/events/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`
       ).then(res => res.json());
     };
 

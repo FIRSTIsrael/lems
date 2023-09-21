@@ -32,7 +32,7 @@ export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
 
     apiFetch('/api/me').then(response => {
       if (!response.ok && !publicPaths.includes(path)) {
-        apiFetch('/auth/logout').then(response => {
+        apiFetch('/auth/logout', { method: 'POST' }).then(response => {
           setAuthorized(false);
           router.push({
             pathname: '/login',
