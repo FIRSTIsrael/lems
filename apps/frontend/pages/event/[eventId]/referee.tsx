@@ -35,6 +35,7 @@ import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeTeam } from '../../../localization/teams';
+import { enqueueSnackbar } from 'notistack';
 
 interface ReadyCheckProps {
   event: WithId<Event>;
@@ -54,7 +55,9 @@ const ReadyCheck: React.FC<ReadyCheckProps> = ({ event, table, team, match, sock
         match._id.toString(),
         { ready: e.target.checked },
         response => {
-          // { ok: true }
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון הסטטוס נכשל.', { variant: 'error' });
+          }
         }
       );
   };

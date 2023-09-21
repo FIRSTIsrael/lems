@@ -12,6 +12,7 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents
 } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
 
 const getButtonColor = (status: Status) => {
   switch (status) {
@@ -42,7 +43,9 @@ const StartJudgingSessionButton: React.FC<Props> = ({
 }) => {
   const startSession = (eventId: string, roomId: string, sessionId: string) => {
     socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
-      // { ok: true }
+      if (!response.ok) {
+        enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
+      }
     });
   };
 
