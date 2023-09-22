@@ -26,6 +26,7 @@ import {
 } from '@lems/season';
 import { enqueueSnackbar } from 'notistack';
 import ScoresheetMission from './scoresheet-mission';
+import GpSelector from './gp';
 
 interface Props {
   event: WithId<Event>;
@@ -38,7 +39,9 @@ interface Props {
 const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
   const router = useRouter();
   const isEditable = true;
-  const [scoresheetErrors, setScoresheetErrors] = useState<Array<string | undefined>>([]);
+  const [missionErrors, setMissionErrors] = useState<
+    Array<{ id: string; description: string } | undefined>
+  >([]);
   const [mode, setMode] = useState<'scoring' | 'gp'>('scoring');
   const signatureRef = useRef<SignatureCanvas | null>(null);
 
@@ -51,12 +54,12 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         })
       };
     });
-    return { missions: missions, signature: '', gp: 0, score: 0 };
+    return { missions: missions, signature: '', gp: null, score: 0 };
   };
 
   const calculateScore = (values: FormikValues) => {
     let score = 0;
-    const scoresheetErrors: Array<string | undefined> = [];
+    const currentErrors: Array<{ id: string; description: string } | undefined> = [];
 
     SEASON_SCORESHEET.missions.forEach((mission, missionIndex) => {
       const clauses = values.missions[missionIndex].clauses;
@@ -64,13 +67,13 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         score += mission.calculation(...clauses.map((clause: MissionClause) => clause.value));
       } catch (error: any) {
         if (error instanceof ScoresheetError) {
-          const missionErrors = localizedScoresheet.missions[missionIndex].errors;
-          if (missionErrors && missionErrors.length > 0)
-            scoresheetErrors.push(missionErrors.find(e => e.id === error.id)?.description);
+          const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
+          if (localizedErrors && localizedErrors.length > 0)
+            currentErrors.push(localizedErrors.find(e => e.id === error.id));
         }
       }
     });
-    return { score, scoresheetErrors };
+    return { score, currentErrors };
   };
 
   const handleSync = async (
@@ -103,14 +106,20 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
   const validateScoresheet = (formValues: FormikValues) => {
     const errors: any = {};
 
-    console.log('i am validating');
+    const { score, currentErrors } = calculateScore(formValues);
+    setMissionErrors(currentErrors);
 
-    const { score, scoresheetErrors } = calculateScore(formValues);
-    setScoresheetErrors(scoresheetErrors);
+    //set errors to include all mission errors
+
+    // Error if a clause has value null (each null = 1 error)
+    // missions.clauses have no clause with .value === null
+    // signature is length > 0 error if this happens
 
     if (isEditable) {
       const isCompleted = Object.keys(errors).length === 0;
-      const isEmpty = Object.values(formValues).filter(x => !!x).length === 0;
+      const isEmpty = Object.values(formValues).filter(x => !!x).length === 0; //TODO: make this scan for nulls and then not complete if there are nulls
+      // Is empty (update)
+      // missions.clauses have all clauses with .value === null
 
       // TODO: scoresheet status for waiting for head ref
       let newStatus = undefined;
@@ -129,17 +138,6 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
       }
 
       return errors;
-    }
-  };
-
-  const actionButtonStyle: SxProps<Theme> = {
-    minWidth: 120,
-    fontSize: '1rem',
-    fontWeight: 500,
-    color: '#fff',
-    backgroundColor: purple[500],
-    '&:hover': {
-      backgroundColor: purple[700]
     }
   };
 
@@ -187,15 +185,11 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                     mb: 2,
                     position: 'sticky',
                     top: theme => theme.mixins.toolbar.minHeight,
-                    zIndex: 1,
-                    backgroundColor: scoresheetErrors.length > 0 ? '#f44336' : '',
-                    color: scoresheetErrors.length > 0 ? '#fff' : ''
+                    zIndex: 1
                   }}
                 >
                   <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
-                    {scoresheetErrors.length > 0
-                      ? `שגיאה: ${scoresheetErrors[0]}`
-                      : `${values.score} נקודות`}
+                    {values.score} נקודות
                   </Typography>
                 </Paper>
 
@@ -206,6 +200,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                       missionIndex={index}
                       src={`/assets/scoresheet/missions/${mission.id}.webp`}
                       mission={mission}
+                      errors={missionErrors.filter(e => e?.id.startsWith(mission.id))}
                     />
                   ))}
                 </Stack>
@@ -270,12 +265,14 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                 </Stack>
               </>
             ) : (
-              <>
-                <Typography>Cool GP Page</Typography>
-                <Button variant="contained" onClick={() => setMode('scoring')}>
-                  חזור
-                </Button>
-              </>
+              <GpSelector
+                onBack={() => setMode('scoring')}
+                onSubmit={() => {
+                  handleSync(false, values, 'completed').then(() =>
+                    router.push(`/event/${event._id}/${user.role}`)
+                  );
+                }}
+              />
             )}
           </Form>
         )}

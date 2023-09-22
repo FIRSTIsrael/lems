@@ -5,7 +5,6 @@ import { Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import CustomNumberInput from './number-input';
-
 interface MissionClauseProps {
   missionIndex: number;
   clauseIndex: number;
@@ -85,11 +84,16 @@ interface ScoresheetMissionProps {
   missionIndex: number;
   mission: Mission;
   src: string;
+  errors: Array<{ id: string; description: string } | undefined>;
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  missionIndex,
+  mission,
+  src,
+  errors
+}) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
-
   return (
     localizedMission && (
       <Grid component={Paper} container spacing={0} pb={2}>
@@ -98,7 +102,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
             py={1}
             xs={2}
             alignSelf="flex-start"
-            bgcolor="#388e3c"
+            bgcolor={errors.length > 0 ? '#f44336' : '#388e3c'}
             borderRadius="8px 0 0 0"
             textAlign="center"
           >
@@ -136,6 +140,14 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
               </Typography>
             ))}
           </Grid>
+          {errors.length > 0 &&
+            errors.map(e => (
+              <Grid key={e?.id} xs={12} mt={2}>
+                <Typography pl={3} fontSize="1rem" color="error" fontWeight={700}>
+                  {e?.description}
+                </Typography>
+              </Grid>
+            ))}
         </Grid>
         <Grid component={Box} borderRadius={8} p={2} xs={4}>
           <Image
