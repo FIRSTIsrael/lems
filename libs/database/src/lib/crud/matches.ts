@@ -11,7 +11,7 @@ export const getEventMatches = (eventId: ObjectId) => {
     .collection('matches')
     .aggregate<WithId<RobotGameMatch>>([
       {
-        $match: { event: eventId }
+        $match: { eventId: eventId }
       },
       {
         $lookup: {
