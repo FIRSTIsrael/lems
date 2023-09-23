@@ -147,14 +147,10 @@ Notice the default value of 6 since we start with 6 tokens.
 ### Validators
 
 In some cases, validating mission clauses within the mission is not enough.
-These cases require you to write a validator function, which receives a parameter called `values`.
-`values` is an array of mission values, structured as follows:
-`[{id: string, values: [clause1, clause2, clause3]}]` where clauses can be any type of clause.
+These cases require you to write a validator function, which receives a parameter called `missions`.
+`missions` is an object with each key being a mission ID, and an array of mission values, structured as follows:
+`[{m01, [clause1, clause2, clause3]}]` where clauses can be any type of clause.
 Validators should throw an error if their conditions are not satisfied.
-
-When writing validators, mission results are obtained using `findMission`.
-In case an invalid mission is accessed, error `e-00` will be thrown.
-Make sure to include it in the localization.
 
 #### Validator Examples
 
@@ -163,9 +159,7 @@ In this season, M06 Clause 2 cannot be completed with M07.
 
 ```typescript
 missions => {
-  const m06 = findMission(missions, 'm06');
-  const m07 = findMission(missions, 'm07');
-  if (m06.values[1] && m07.values[0]) throw new ScoresheetError('e1');
+  if (missions['m06'][1] && missions['m07'][0]) throw new ScoresheetError('e1');
 };
 ```
 
@@ -175,10 +169,7 @@ In this season, there were a limited number of containers and multiple missions 
 ```typescript
 missions => {
   // Cargo containers cannot be in circles no matter what
-  const m15 = findMission(missions, 'm15');
-  const m16 = findMission(missions, 'm16');
-
-  if (Number(m15.values[2]) + Number(m16.values[0]) + Number(m16.values[1]) > 8)
+  if (Number(missions['m15'][2]) + Number(missions['m16'][0]) + Number(missions['m16'][1]) > 8)
     throw new ScoresheetError('e1');
 };
 ```

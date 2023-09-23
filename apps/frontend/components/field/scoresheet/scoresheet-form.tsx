@@ -146,13 +146,13 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     }
 
     const validatorErrors: Array<{ id: string; description: string }> = [];
+    const toValidate = Object.fromEntries(
+      formValues.missions.map((m: Mission) => [m.id, m.clauses.map((c: MissionClause) => c.value)])
+    );
+    console.log(toValidate);
     SEASON_SCORESHEET.validators.forEach(validator => {
       try {
-        validator(
-          formValues.missions.map((m: Mission) => {
-            return { id: m.id, values: m.clauses.map((c: MissionClause) => c.value) };
-          })
-        );
+        validator(toValidate);
       } catch (error: any) {
         if (error instanceof ScoresheetError) {
           const description =

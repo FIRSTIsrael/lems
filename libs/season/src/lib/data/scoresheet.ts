@@ -1,5 +1,4 @@
 import { Scoresheet, ScoresheetError } from './scoresheet-types';
-import { findMission } from './helpers';
 
 export const scoresheet: Scoresheet = {
   season: 'MASTERPIECE℠',
