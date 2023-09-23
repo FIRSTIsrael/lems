@@ -10,19 +10,19 @@ const jwtSecret = process.env.JWT_SECRET;
 const wsAuth = async (socket: Socket, next) => {
   let token = socket.handshake.auth.token;
 
-  // Fallback to cookie if auth has nothing
-  if (!token) {
-    const cookie = socket.request.headers.cookie;
-    if (cookie) {
-      token = parseCookie(cookie)['auth-token'];
-    }
-  }
-
-  // Fallback to header if cookie has nothing
+  // Fallback to Authorization header
   if (!token) {
     const authHeader = socket.handshake.headers.authorization as string;
     if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
       token = authHeader.split('Bearer ')[1];
+    }
+  }
+
+  // Fallback to cookie
+  if (!token) {
+    const cookie = socket.request.headers.cookie;
+    if (cookie) {
+      token = parseCookie(cookie)['auth-token'];
     }
   }
 
