@@ -98,15 +98,13 @@ export interface WSClientEmittedEvents {
 
   startMatch: (
     eventId: string,
-    tableId: string,
-    matchId: string,
+    matchNumber: number,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   abortMatch: (
     eventId: string,
-    tableId: string,
-    matchId: string,
+    matchNumber: number,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

@@ -6,7 +6,6 @@ export interface RobotGameMatch {
   number: number;
   type: RobotGameMatchType;
   round: number;
-  time: Date;
   teamId: ObjectId;
   team?: Team;
   tableId: ObjectId;
@@ -14,5 +13,6 @@ export interface RobotGameMatch {
   status: RobotGameMatchStatus;
   present: RobotGameMatchPresent;
   ready: boolean;
-  start?: Date;
+  scheduledTime?: Date;
+  startTime?: Date;
 }

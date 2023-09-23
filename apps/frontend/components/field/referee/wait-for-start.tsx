@@ -2,7 +2,7 @@ import { RobotGameMatch, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button, Box } from '@mui/material';
 import { WithId } from 'mongodb';
 import { localizeTeam } from '../../../localization/teams';
-import PresentSwitch from './present-switch';
+import { localizedMatchPresent } from '../../../localization/field';
 
 interface WaitForMatchStartProps {
   match: WithId<RobotGameMatch>;
@@ -16,7 +16,7 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({ match, updateMatc
         המתינו להתחלת מקצה {match.number}
       </Typography>
       <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
-        {localizeTeam(match.team as Team)} ({match.present})
+        {localizeTeam(match.team as Team)} ({localizedMatchPresent[match.present]})
       </Typography>
 
       <Stack alignItems="center" mt={4}>

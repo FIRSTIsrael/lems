@@ -1,5 +1,6 @@
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { RobotGameMatchPresent } from '@lems/types';
+import { localizedMatchPresent } from '../../../localization/field';
 
 interface PresentSwitchProps {
   value?: RobotGameMatchPresent;
@@ -58,9 +59,9 @@ const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange, disabled
             }
           }}
         >
-          לא נוכחת
+          {localizedMatchPresent['no-show']}
         </ToggleButton>
-        <ToggleButton value="present">נוכחת</ToggleButton>
+        <ToggleButton value="present"> {localizedMatchPresent['present']}</ToggleButton>
       </ToggleButtonGroup>
     </Paper>
   );

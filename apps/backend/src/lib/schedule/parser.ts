@@ -142,7 +142,7 @@ const parseMatches = (
           number,
           type,
           round,
-          time: startTime.toDate(),
+          scheduledTime: startTime.toDate(),
           teamId: team._id,
           tableId: table._id,
           ready: false,
