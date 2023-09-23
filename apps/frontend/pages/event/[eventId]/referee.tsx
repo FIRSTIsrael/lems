@@ -1,20 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  LinearProgress,
-  Paper,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Paper, Stack, Typography } from '@mui/material';
 import {
   Event,
   Team,
@@ -24,13 +14,13 @@ import {
   RobotGameTable,
   EventState,
   WSClientEmittedEvents,
-  WSServerEmittedEvents,
-  MATCH_LENGTH
+  WSServerEmittedEvents
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import Countdown from '../../../components/general/countdown';
+import Timer from '../../../components/referee/timer';
+import DoneCard from '../../../components/referee/done-card';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -87,93 +77,6 @@ const ReadyCheck: React.FC<ReadyCheckProps> = ({ event, table, team, match, sock
           sx={{ '& .MuiSvgIcon-root': { fontSize: 35 } }}
         />
         <Button onClick={handleStart}>Click me!</Button>
-      </Stack>
-    </Paper>
-  );
-};
-
-interface TimerProps {
-  team: Team;
-  match: WithId<RobotGameMatch>;
-}
-
-const Timer: React.FC<TimerProps> = ({ team, match }) => {
-  const matchEnd = dayjs(match.start).add(MATCH_LENGTH, 'seconds');
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
-
-  useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(dayjs()), 100);
-    return () => {
-      clearInterval(interval);
-    };
-  });
-
-  const percentLeft = useMemo(
-    () => matchEnd.diff(currentTime) / (10 * MATCH_LENGTH),
-    [currentTime, matchEnd]
-  );
-
-  return (
-    match.start && (
-      <Box sx={{ transform: 'translateY(100%)' }}>
-        <Paper sx={{ mt: 4, py: 4, px: 2, textAlign: 'center' }}>
-          <Countdown
-            targetDate={matchEnd.toDate()}
-            expiredText="00:00"
-            variant="h1"
-            fontSize="10rem"
-            fontWeight={700}
-            dir="ltr"
-          />
-          <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
-            {localizeTeam(team)}
-          </Typography>
-        </Paper>
-        <LinearProgress
-          variant="determinate"
-          value={percentLeft}
-          color={percentLeft <= 20 ? 'error' : 'primary'}
-          sx={{
-            height: 16,
-            borderBottomLeftRadius: 8,
-            borderBottomRightRadius: 8,
-            mt: -2
-          }}
-        />
-      </Box>
-    )
-  );
-};
-
-const DonePaper = () => {
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        transform: 'translateY(100%)',
-        boxShadow:
-          '0 0, -15px 0 30px -10px #ff66017e, 0 0 30px -10px #c4007952, 15px 0 30px -10px #2b01d447',
-        mt: 4,
-        p: 4
-      }}
-    >
-      <Stack spacing={2} alignItems="center" textAlign="center">
-        <Image
-          src="/assets/emojis/party-popper.png"
-          alt="אימוג׳י של קונפטי"
-          height={42}
-          width={42}
-        />
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          סיימתם את המקצים של השולחן שלכם!
-        </Typography>
-        <Typography fontSize="1.15rem" color="#666">
-          אנו מודים לכם שהתנדבתם איתנו היום ועל התמיכה במשימתנו. ביחד, אנו מעצימים את הדור הבא של
-          מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.
-        </Typography>
-        <Typography fontSize="1rem" color="#666">
-          זה זמן טוב להחזיר את הטאבלט לטעינה ולחזור לחדר המתנדבים.
-        </Typography>
       </Stack>
     </Paper>
   );
@@ -306,7 +209,7 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
           <ReadyCheck event={event} table={table} team={team} match={match} socket={socket} />
         )}
         {team && match && pageState === 'timer' && <Timer team={team} match={match} />}
-        {pageState === 'done' && <DonePaper />}
+        {pageState === 'done' && <DoneCard />}
       </Layout>
     </RoleAuthorizer>
   );
