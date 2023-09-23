@@ -2,30 +2,33 @@ import { Filter, ObjectId, WithId } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
 
+export const findMatches = (filter: Filter<RobotGameMatch>) => {
+  return db.collection('matches').aggregate<WithId<RobotGameMatch>>([
+    {
+      $match: filter
+    },
+    {
+      $lookup: {
+        from: 'teams',
+        localField: 'teamId',
+        foreignField: '_id',
+        as: 'team'
+      }
+    },
+    {
+      $unwind: '$team'
+    }
+  ]);
+};
+
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
-  return db.collection<RobotGameMatch>('matches').findOne(filter);
+  return findMatches(filter).next();
 };
 
 export const getEventMatches = (eventId: string) => {
-  return db
-    .collection('matches')
-    .aggregate<WithId<RobotGameMatch>>([
-      {
-        $match: { eventId: new ObjectId(eventId) }
-      },
-      {
-        $lookup: {
-          from: 'teams',
-          localField: 'teamId',
-          foreignField: '_id',
-          as: 'team'
-        }
-      },
-      {
-        $unwind: '$team'
-      }
-    ])
-    .toArray();
+  return findMatches({
+    eventId: new ObjectId(eventId)
+  }).toArray();
 };
 
 export const getTableMatches = (tableId: string) => {
@@ -43,9 +46,7 @@ export const getTableMatches = (tableId: string) => {
           as: 'team'
         }
       },
-      {
-        $unwind: '$team'
-      }
+      { $unwind: '$team' }
     ])
     .toArray();
 };

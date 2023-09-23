@@ -146,8 +146,9 @@ const parseMatches = (
           teamId: team._id,
           tableId: table._id,
           ready: false,
-          status: 'not-started'
-        } as RobotGameMatch);
+          status: 'not-started',
+          present: 'present'
+        } satisfies RobotGameMatch);
       }
     }
   });

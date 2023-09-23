@@ -3,8 +3,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, LinearProgress, Paper, Typography } from '@mui/material';
 import { Team, RobotGameMatch, MATCH_LENGTH } from '@lems/types';
-import Countdown from '../../components/general/countdown';
-import { localizeTeam } from '../../localization/teams';
+import Countdown from '../../general/countdown';
+import { localizeTeam } from '../../../localization/teams';
 
 interface TimerProps {
   team: Team;

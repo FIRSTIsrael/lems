@@ -174,21 +174,21 @@ const theme = createTheme({
           boxShadow: '0 2px 10px 0 rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 4%)'
         }
       }
-    },
-    MuiToggleButton: {
-      styleOverrides: {
-        root: {
-          '&.Mui-selected': {
-            '&:hover': {
-              color: '#fff',
-              backgroundColor: '#81c784'
-            },
-            color: '#fff',
-            backgroundColor: '#388e3c'
-          }
-        }
-      }
     }
+    // MuiToggleButton: {
+    //   styleOverrides: {
+    //     root: {
+    //       '&.Mui-selected': {
+    //         '&:hover': {
+    //           color: '#fff',
+    //           backgroundColor: '#81c784'
+    //         },
+    //         color: '#fff',
+    //         backgroundColor: '#388e3c'
+    //       }
+    //     }
+    //   }
+    // }
   }
 });
 

@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import dayjs from 'dayjs';
-import { MATCH_LENGTH } from '@lems/types';
+import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 
 export const handleStartMatch = async (namespace, eventId, tableId, matchId, callback) => {
   const eventState = await db.getEventState({ event: new ObjectId(eventId) });
@@ -83,25 +83,23 @@ export const abortMatch = async (namespace, eventId, tableId, matchId, callback)
 
 export const handleUpdateMatch = async (
   namespace,
-  eventId,
-  tableId,
-  matchId,
-  matchData,
+  eventId: string,
+  matchId: string,
+  matchData: Partial<RobotGameMatch>,
   callback
 ) => {
   const match = await db.getMatch({
-    table: new ObjectId(tableId),
     _id: new ObjectId(matchId)
   });
   if (!match) {
     callback({
       ok: false,
-      error: `Could not find match ${matchId} for table ${tableId} in event ${eventId}!`
+      error: `Could not find match ${matchId} in event ${eventId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating match ${matchId} for table ${tableId} in event ${eventId}`);
+  console.log(`🖊️ Updating match ${matchId} in event ${eventId}`);
 
   await db.updateMatch(
     {
@@ -111,7 +109,7 @@ export const handleUpdateMatch = async (
   );
 
   callback({ ok: true });
-  namespace.to('field').emit('matchUpdated', tableId, matchId);
+  namespace.to('field').emit('matchUpdated', matchId);
 };
 
 export const handleUpdateScoresheet = async (

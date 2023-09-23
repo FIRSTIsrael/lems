@@ -35,11 +35,11 @@ export interface WSServerEmittedEvents {
 
   matchCompleted: (matchNumber: number) => void;
 
-  matchSubmitted: (match: RobotGameMatch) => void;
+  matchSubmitted: (matchId: string) => void;
 
   matchAborted: (matchNumber: number) => void;
 
-  matchUpdated: (match: RobotGameMatch) => void;
+  matchUpdated: (matchId: string) => void;
 
   scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
 
@@ -112,7 +112,6 @@ export interface WSClientEmittedEvents {
 
   updateMatch: (
     eventId: string,
-    tableId: string,
     matchId: string,
     matchData: Partial<RobotGameMatch>,
     callback: (response: { ok: boolean; error?: string }) => void

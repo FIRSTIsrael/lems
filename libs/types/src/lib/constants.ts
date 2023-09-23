@@ -11,6 +11,8 @@ export type RobotGameMatchType = (typeof RobotGameMatchTypes)[number];
 
 export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'scoring' | 'submitted';
 
+export type RobotGameMatchPresent = 'present' | 'no-robot' | 'no-show';
+
 export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
 export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 
