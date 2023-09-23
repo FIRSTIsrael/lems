@@ -17,7 +17,6 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
   try {
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
-    console.log(tokenData);
     if (tokenData?.userId) {
       const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
 
@@ -27,7 +26,6 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
       }
     }
   } catch (err) {
-    console.log(err);
     //Invalid token
   }
 

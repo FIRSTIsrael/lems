@@ -54,7 +54,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   console.log('✅ Finished parsing schedule!');
 
   const dbSessions = await db.getEventSessions(event._id);
-  const dbMatches = await db.getEventMatches(event._id);
+  const dbMatches = await db.getEventMatches(event._id.toString());
 
   console.log('📄 Generating rubrics');
   const rubrics = getEventRubrics(dbSessions);

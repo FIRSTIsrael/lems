@@ -1,11 +1,11 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getTableMatches(new ObjectId(req.params.tableId)).then(matches => {
+  db.getTableMatches(req.params.tableId).then(matches => {
     res.json(matches);
   });
 });

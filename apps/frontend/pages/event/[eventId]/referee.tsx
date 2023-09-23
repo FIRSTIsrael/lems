@@ -95,8 +95,6 @@ const ReadyCheck: React.FC<ReadyCheckProps> = ({ event, table, team, match, sock
   );
 };
 
-type RefereePageStatus = 'timer' | 'ready-check' | 'done' | undefined;
-
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
@@ -108,63 +106,6 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<EventState | undefined>(undefined);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
-  const [pageState, setPageState] = useState<RefereePageStatus>(undefined);
-
-  useEffect(() => {
-    const getScoresheet = (matchId: ObjectId) => {
-      return apiFetch(
-        `/api/events/${user.event}/tables/${table._id}/matches/${matchId}/scoresheet`
-      ).then(res => res.json());
-    };
-
-    // if (eventState?.activeMatch && matches) {
-    //   const handleScoringLogic = (_match: WithId<RobotGameMatch>) => {
-    //     getScoresheet(_match._id).then((scoresheet: WithId<Scoresheet>) => {
-    //       if (scoresheet.status === 'not-started' || scoresheet.status === 'in-progress') {
-    //         router.push(`/event/${user.event}/team/${_match.team}/scoresheet/${scoresheet._id}`);
-    //       } else {
-    //         const nextMatch = matches.find(m => m.number > eventState.activeMatch);
-    //         if (nextMatch) {
-    //           setMatch(nextMatch);
-    //           setTeam(teams.find(t => t._id === nextMatch.team));
-    //           setPageState('ready-check');
-    //           return;
-    //         }
-    //         setMatch(undefined);
-    //         setTeam(undefined);
-    //         setPageState('done');
-    //         return;
-    //       }
-    //     });
-    //   };
-
-    //   const activeMatch = matches.find(m => m.number === eventState.activeMatch);
-    //   if (activeMatch) {
-    //     if (activeMatch.status === 'in-progress') {
-    //       setMatch(activeMatch);
-    //       setTeam(teams.find(t => t._id === activeMatch.team));
-    //       setPageState('timer');
-    //       return;
-    //     }
-    //     handleScoringLogic(activeMatch);
-    //     return;
-    //   } else {
-    //     const previousMatch = matches.find(m => m.number < (eventState.activeMatch as number));
-    //     if (previousMatch) {
-    //       handleScoringLogic(previousMatch);
-    //       return;
-    //     } else {
-    //       const firstMatch = matches.reduce((prev, curr) =>
-    //         prev.number < curr.number ? prev : curr
-    //       );
-    //       setMatch(firstMatch);
-    //       setTeam(teams.find(t => t._id === firstMatch.team));
-    //       setPageState('ready-check');
-    //       return;
-    //     }
-    //   }
-    // }
-  }, [eventState, matches, teams, router, table._id, user.event]);
 
   const fetchMatches = useCallback(() => {
     apiFetch(`/api/events/${user.event}/tables/${table._id}/matches`)
@@ -174,15 +115,7 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
       });
   }, [table._id, user.event]);
 
-  const onMatchStarted = (tableId: string, matchId: string) => {
-    if (tableId === table._id.toString()) fetchMatches();
-  };
-
-  const onMatchUpdate = (tableId: string, matchId: string) => {
-    if (tableId === table._id.toString()) fetchMatches();
-  };
-
-  const getData = () => {
+  const fetchInitialData = () => {
     apiFetch(`/api/events/${user.event}/state`)
       .then(res => res.json())
       .then(data => {
@@ -192,13 +125,20 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
     fetchMatches();
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], getData, [
-    { name: 'matchLoaded', handler: onMatchStarted },
-    { name: 'matchStarted', handler: onMatchStarted },
-    { name: 'matchUpdated', handler: onMatchUpdate }
+  const handleMatchLoaded = (matchNumber: number) => {
+    setEventState(prev => (prev ? { ...prev, loadedMatch: matchNumber } : prev));
+  };
+
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], fetchInitialData, [
+    { name: 'matchLoaded', handler: handleMatchLoaded },
+    { name: 'matchStarted', handler: fetchMatches },
+    { name: 'matchUpdated', handler: fetchMatches }
   ]);
 
-  const activeMatches = matches?.filter(m => m.status === 'in-progress' || m.status === 'scoring');
+  const activeMatches = matches?.filter(
+    m =>
+      m.status === 'in-progress' || m.status === 'scoring' || m.number === eventState?.loadedMatch
+  );
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
@@ -208,11 +148,14 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        <Paper sx={{ p: 4 }}>
+        <Paper sx={{ p: 4, my: 6 }}>
           <List>
             {matches?.map(match => (
               <ListItemButton key={match._id.toString()} sx={{ borderRadius: 2 }} component="a">
-                <ListItemText primary={`מקצה ${match.number}`} secondary={`${match.teamId}`} />
+                <ListItemText
+                  primary={`מקצה ${match.number}`}
+                  secondary={`${match.team?.affiliation.name}, ${match.team?.affiliation.city}`}
+                />
               </ListItemButton>
             ))}
           </List>

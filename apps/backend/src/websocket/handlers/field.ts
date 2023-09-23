@@ -19,7 +19,7 @@ export const handleStartMatch = async (namespace, eventId, tableId, matchId, cal
     callback({ ok: false, error: `Match ${matchId} has already started!` });
     return;
   }
-  const tableMatches = await db.getTableMatches(new ObjectId(tableId));
+  const tableMatches = await db.getTableMatches(tableId);
   if (tableMatches.find(match => match.status === 'in-progress')) {
     callback({ ok: false, error: `Table ${tableId} already has a running match!` });
     return;

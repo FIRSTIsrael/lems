@@ -6,12 +6,12 @@ export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').findOne(filter);
 };
 
-export const getEventMatches = (eventId: ObjectId) => {
+export const getEventMatches = (eventId: string) => {
   return db
     .collection('matches')
     .aggregate<WithId<RobotGameMatch>>([
       {
-        $match: { eventId: eventId }
+        $match: { eventId: new ObjectId(eventId) }
       },
       {
         $lookup: {
@@ -20,13 +20,34 @@ export const getEventMatches = (eventId: ObjectId) => {
           foreignField: '_id',
           as: 'team'
         }
+      },
+      {
+        $unwind: '$team'
       }
     ])
     .toArray();
 };
 
-export const getTableMatches = (tableId: ObjectId) => {
-  return db.collection<RobotGameMatch>('matches').find({ table: tableId }).toArray();
+export const getTableMatches = (tableId: string) => {
+  return db
+    .collection('matches')
+    .aggregate<WithId<RobotGameMatch>>([
+      {
+        $match: { tableId: new ObjectId(tableId) }
+      },
+      {
+        $lookup: {
+          from: 'teams',
+          localField: 'teamId',
+          foreignField: '_id',
+          as: 'team'
+        }
+      },
+      {
+        $unwind: '$team'
+      }
+    ])
+    .toArray();
 };
 
 export const addMatch = (match: RobotGameMatch) => {

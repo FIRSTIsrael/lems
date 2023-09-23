@@ -29,17 +29,17 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticketId: string) => void;
 
-  matchLoaded: (tableId: string, matchId: string) => void;
+  matchLoaded: (matchNumber: number) => void;
 
-  matchStarted: (tableId: string, matchId: string) => void;
+  matchStarted: (matchNumber: number) => void;
 
-  matchCompleted: (tableId: string, matchId: string) => void;
+  matchCompleted: (matchNumber: number) => void;
 
-  matchSubmitted: (tableId: string, matchId: string) => void;
+  matchSubmitted: (match: RobotGameMatch) => void;
 
-  matchAborted: (tableId: string, matchId: string) => void;
+  matchAborted: (matchNumber: number) => void;
 
-  matchUpdated: (tableId: string, matchId: string) => void;
+  matchUpdated: (match: RobotGameMatch) => void;
 
   scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
 

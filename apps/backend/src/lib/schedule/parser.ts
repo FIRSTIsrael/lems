@@ -60,7 +60,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
         name: rawTeam[1],
         registered: false,
         affiliation: {
-          institution: rawTeam[2],
+          name: rawTeam[2],
           city: rawTeam[3]
         }
       } as Team)
