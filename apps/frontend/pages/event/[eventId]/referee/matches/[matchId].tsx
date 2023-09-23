@@ -70,15 +70,15 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
 
   useEffect(() => {
     if (!match.team?.registered) {
-      setMatch(match => ({ ...match, present: 'no-show' }));
+      updateMatch({ present: 'no-show' });
     }
-  }, [match.team?.registered]);
+  }, [match.team?.registered, updateMatch]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`שולחן ${table.name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
