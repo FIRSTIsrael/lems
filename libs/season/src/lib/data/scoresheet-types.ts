@@ -17,9 +17,7 @@ export interface Mission {
 export interface Scoresheet {
   season: string;
   missions: Mission[];
-  validators: Array<
-    (values: Array<{ id: string; values: Array<boolean | string | number> }>) => void
-  >;
+  validators: Array<(missions: { [key: string]: Array<boolean | string | number> }) => void>;
 }
 
 export class ScoresheetError extends Error {

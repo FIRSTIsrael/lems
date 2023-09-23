@@ -1,6 +1,8 @@
 import { JudgingCategory, TicketType } from './constants';
+import { RobotGameMatch } from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
+import { Scoresheet } from './schemas/scoresheet';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -26,6 +28,18 @@ export interface WSServerEmittedEvents {
   ticketCreated: (ticketId: string) => void;
 
   ticketUpdated: (ticketId: string) => void;
+
+  matchStarted: (tableId: string, matchId: string) => void;
+
+  matchCompleted: (tableId: string, matchId: string) => void;
+
+  matchAborted: (tableId: string, matchId: string) => void;
+
+  matchUpdated: (tableId: string, matchId: string) => void;
+
+  scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
+
+  scoresheetStatusChanged: (teamId: string, matchId: string, scoresheetId: string) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -75,6 +89,36 @@ export interface WSClientEmittedEvents {
     teamId: string,
     ticketId: string,
     ticketData: Partial<Ticket>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  startMatch: (
+    eventId: string,
+    tableId: string,
+    matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  abortMatch: (
+    eventId: string,
+    tableId: string,
+    matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateMatch: (
+    eventId: string,
+    tableId: string,
+    matchId: string,
+    matchData: Partial<RobotGameMatch>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateScoresheet: (
+    eventId: string,
+    teamId: string,
+    scoresheetId: string,
+    scoresheetData: Partial<Scoresheet>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }

@@ -210,14 +210,10 @@ const scoresheet: Scoresheet = {
     }
   ],
   validators: [
-    values => {
+    missions => {
       // Cargo containers cannot be in circles no matter what
-      const m15 = values.find(m => m.id === 'm15');
-      const m16 = values.find(m => m.id === 'm16');
-      if (m15 && m16) {
-        if (Number(m15.values[2]) + Number(m16.values[0]) + Number(m16.values[1]) > 8)
-          throw new ScoresheetError('e1');
-      }
+      if (Number(missions['m15'][2]) + Number(missions['m16'][0]) + Number(missions['m16'][1]) > 8)
+        throw new ScoresheetError('e1');
     }
   ]
 };

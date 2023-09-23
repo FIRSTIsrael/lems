@@ -37,7 +37,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const dbTables = await db.getEventTables(event._id);
   const dbRooms = await db.getEventRooms(event._id);
 
-  const { matches, sessions, rounds } = await parseEventSchedule(
+  const { matches, sessions } = await parseEventSchedule(
     event,
     dbTeams,
     dbTables,
@@ -53,14 +53,17 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
   console.log('✅ Finished parsing schedule!');
 
+  const dbSessions = await db.getEventSessions(event._id);
+  const dbMatches = await db.getEventMatches(event._id);
+
   console.log('📄 Generating rubrics');
-  const rubrics = getEventRubrics(dbTeams);
+  const rubrics = getEventRubrics(dbSessions);
   if (!(await db.addRubrics(rubrics)).acknowledged)
     return res.status(500).json({ error: 'Could not create rubrics!' });
   console.log('✅ Generated rubrics');
 
   console.log('📄 Generating scoresheets');
-  const scoresheets = getEventScoresheets(dbTeams, rounds);
+  const scoresheets = getEventScoresheets(dbMatches);
   if (!(await db.addScoresheets(scoresheets)).acknowledged)
     return res.status(500).json({ error: 'Could not create scoresheets!' });
   console.log('✅ Generated scoresheets!');

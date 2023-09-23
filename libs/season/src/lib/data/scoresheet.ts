@@ -1,6 +1,6 @@
 import { Scoresheet, ScoresheetError } from './scoresheet-types';
 
-const scoresheet: Scoresheet = {
+export const scoresheet: Scoresheet = {
   season: 'MASTERPIECE℠',
   missions: [
     {
@@ -185,6 +185,8 @@ const scoresheet: Scoresheet = {
       clauses: [{ type: 'number', min: 0, max: 6, default: 6 }],
       calculation: clause1 => {
         switch (Number(clause1)) {
+          case 0:
+            return 0;
           case 1:
             return 10;
           case 2:
@@ -201,5 +203,3 @@ const scoresheet: Scoresheet = {
   ],
   validators: []
 };
-
-export default scoresheet;

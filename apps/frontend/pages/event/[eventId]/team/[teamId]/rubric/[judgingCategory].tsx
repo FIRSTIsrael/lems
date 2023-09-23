@@ -24,6 +24,7 @@ import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
 import { apiFetch } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
+import { localizeTeam } from '../../../../../../localization/teams';
 
 interface RubricSelectorProps {
   event: WithId<Event>;
@@ -37,7 +38,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCat
       {JudgingCategoryTypes.map(category => (
         <NextLink
           key={category}
-          href={`/event/${event._id}/team/${team._id}/rubrics/${category}`}
+          href={`/event/${event._id}/team/${team._id}/rubric/${category}`}
           passHref
         >
           <Button
@@ -67,11 +68,13 @@ interface Props {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
+  session: WithId<JudgingSession>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room, team }) => {
+const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
   const router = useRouter();
   if (!team.registered) router.back();
+  if (session.status !== 'completed') router.back();
 
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
@@ -118,8 +121,7 @@ const Page: NextPage<Props> = ({ user, event, room, team }) => {
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
-              קבוצה #{team.number}, {team.name} | {team.affiliation.institution},{' '}
-              {team.affiliation.city} | חדר שיפוט {room.name}
+              {localizeTeam(team)} | חדר שיפוט {room.name}
             </Typography>
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['judge', 'judge-advisor']}>
@@ -174,9 +176,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
       res => res?.json()
     );
+
     const [room, team, event] = await Promise.all([roomPromise, teamPromise, eventPromise]);
 
-    return { props: { user, event, room, team } };
+    const session = await apiFetch(
+      `/api/events/${user.event}/rooms/${roomId}/sessions`,
+      undefined,
+      ctx
+    ).then(res =>
+      res?.json().then(sessions => sessions.find((s: JudgingSession) => s.team == team._id))
+    );
+
+    return { props: { user, event, room, team, session } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

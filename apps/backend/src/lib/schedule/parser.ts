@@ -68,7 +68,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
 };
 
 const parseTables = (lines: Line[], event: WithId<Event>) => {
-  const LINES_TO_SKIP = 5;
+  const LINES_TO_SKIP = 4;
   lines = (lines || []).splice(LINES_TO_SKIP);
 
   const tables = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
@@ -121,35 +121,37 @@ const parseMatches = (
   lines = (lines || []).splice(LINES_TO_SKIP);
   const matches: RobotGameMatch[] = [];
 
-  const rounds = parseInt((lines.shift() || [])[1]);
   const tableNames = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
 
   lines.forEach(line => {
     const number = parseInt(line[0]);
-    const [hour, minute] = line[1].split(':');
+    const round = parseInt(line[1]);
+    const [hour, minute] = line[2].split(':');
     const startTime = dayjs(event.startDate)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
       .set('second', 0);
 
-    for (let i = 3; i < line.length; i++) {
+    for (let i = 4; i < line.length; i++) {
       if (line[i]) {
-        const table = tables.find(table => table.name === tableNames[i - 3]);
+        const table = tables.find(table => table.name === tableNames[i - 4]);
         const team = teams.find(team => team.number === parseInt(line[i]));
 
         matches.push({
           number,
           type,
+          round,
           time: startTime.toDate(),
           team: team._id,
           table: table._id,
+          ready: false,
           status: 'not-started'
         } as RobotGameMatch);
       }
     }
   });
 
-  return { matches, rounds };
+  return matches;
 };
 
 const parseSessions = (
@@ -203,14 +205,14 @@ export const parseEventSchedule = async (
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
   const blocks = parseBlocks(file);
-  const { matches: practiceMatches, rounds: practiceRounds } = parseMatches(
+  const practiceMatches = parseMatches(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',
     event,
     teams,
     tables
   );
-  const { matches: rankingMatches, rounds: rankingRounds } = parseMatches(
+  const rankingMatches = parseMatches(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
     event,
@@ -219,7 +221,6 @@ export const parseEventSchedule = async (
   );
   const matches = practiceMatches.concat(rankingMatches);
   const sessions = parseSessions(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event, teams, rooms);
-  const rounds = { practice: practiceRounds, ranking: rankingRounds };
 
-  return { matches, sessions, rounds };
+  return { matches, sessions };
 };

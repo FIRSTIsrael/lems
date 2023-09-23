@@ -14,6 +14,7 @@ export interface RubricValue {
 
 export interface Rubric<T extends JudgingCategory> {
   team: ObjectId;
+  session: ObjectId;
   category: T;
   status: RubricStatus;
   data?: {

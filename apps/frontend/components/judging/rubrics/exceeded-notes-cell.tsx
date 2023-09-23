@@ -3,10 +3,11 @@ import { TableCell, Typography, TableRow, Box, TextField } from '@mui/material';
 
 interface Props {
   name: string;
+  placeholder?: string;
   disabled?: boolean;
 }
 
-const ExceededNotesCell: React.FC<Props> = ({ name, disabled }) => {
+const ExceededNotesCell: React.FC<Props> = ({ name, placeholder, disabled }) => {
   return (
     <TableRow>
       <TableCell
@@ -44,7 +45,7 @@ const ExceededNotesCell: React.FC<Props> = ({ name, disabled }) => {
                 spellCheck
                 multiline
                 variant="standard"
-                placeholder="כיצד הקבוצה התבלטה כמצטיינת?"
+                placeholder={placeholder || 'כיצד הקבוצה התבלטה כמצטיינת?'}
                 InputProps={{ disableUnderline: true }}
                 {...field}
               />

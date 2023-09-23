@@ -3,10 +3,12 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import eventValidator from '../../../middlewares/event-validator';
 import sessionsRouter from './sessions';
+import matchesRouter from './matches';
 import roomsRouter from './rooms';
 import usersRouter from './users';
 import teamsRouter from './teams';
 import rubricsRouter from './rubrics';
+import tablesRouter from './tables';
 
 const router = express.Router({ mergeParams: true });
 
@@ -24,9 +26,13 @@ router.get('/:eventId/state', (req: Request, res: Response) => {
 
 router.use('/:eventId/rooms', roomsRouter);
 
+router.use('/:eventId/tables', tablesRouter);
+
 router.use('/:eventId/users', usersRouter);
 
 router.use('/:eventId/sessions', sessionsRouter);
+
+router.use('/:eventId/matches', matchesRouter);
 
 router.use('/:eventId/teams', teamsRouter);
 
