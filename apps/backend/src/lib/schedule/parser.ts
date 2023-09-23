@@ -138,12 +138,13 @@ const parseMatches = (
         const team = teams.find(team => team.number === parseInt(line[i]));
 
         matches.push({
+          eventId: event._id,
           number,
           type,
           round,
           time: startTime.toDate(),
-          team: team._id,
-          table: table._id,
+          teamId: team._id,
+          tableId: table._id,
           ready: false,
           status: 'not-started'
         } as RobotGameMatch);

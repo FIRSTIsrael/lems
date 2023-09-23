@@ -1,23 +1,28 @@
 import { Filter, ObjectId, WithId } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
-import { getEventTables } from './tables';
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').findOne(filter);
 };
 
 export const getEventMatches = (eventId: ObjectId) => {
-  return getEventTables(eventId).then(async tables => {
-    let matches: Array<WithId<RobotGameMatch>> = [];
-    await Promise.all(
-      tables.map(async table => {
-        const tableMatches = await getTableMatches(table._id);
-        matches = matches.concat(tableMatches);
-      })
-    );
-    return matches;
-  });
+  return db
+    .collection('matches')
+    .aggregate<WithId<RobotGameMatch>>([
+      {
+        $match: { event: eventId }
+      },
+      {
+        $lookup: {
+          from: 'teams',
+          localField: 'teamId',
+          foreignField: '_id',
+          as: 'team'
+        }
+      }
+    ])
+    .toArray();
 };
 
 export const getTableMatches = (tableId: ObjectId) => {

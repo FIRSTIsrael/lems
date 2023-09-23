@@ -139,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         res => res?.json()
       );
       tableId = matches.find(
-        (match: RobotGameMatch) => match.team == new ObjectId(String(ctx.params?.teamId))
+        (match: RobotGameMatch) => match.teamId == new ObjectId(String(ctx.params?.teamId))
       ).table;
     }
 
@@ -166,7 +166,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       undefined,
       ctx
     ).then(res =>
-      res?.json().then(matches => matches.find((m: RobotGameMatch) => m.team == team._id))
+      res?.json().then(matches => matches.find((m: RobotGameMatch) => m.teamId == team._id))
     );
 
     return { props: { user, event, table, team, match } };

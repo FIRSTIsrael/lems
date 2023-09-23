@@ -1,14 +1,17 @@
 import { ObjectId } from 'mongodb';
-import { RobotGameMatchType, Status } from '../constants';
+import { RobotGameMatchType, RobotGameMatchStatus } from '../constants';
+import { Team } from './team';
 
 export interface RobotGameMatch {
   number: number;
   type: RobotGameMatchType;
   round: number;
   time: Date;
-  team: ObjectId;
-  table: ObjectId;
-  status: Status;
+  teamId: ObjectId;
+  team?: Team;
+  tableId: ObjectId;
+  eventId: ObjectId;
+  status: RobotGameMatchStatus;
   ready: boolean;
   start?: Date;
 }

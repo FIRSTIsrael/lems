@@ -6,8 +6,9 @@ export const getEventScoresheets = (matches: Array<WithId<RobotGameMatch>>): Arr
 
   matches.forEach(match => {
     const scoresheet: Scoresheet = {
-      team: match.team,
-      match: match._id,
+      eventId: match.eventId,
+      matchId: match._id,
+      teamId: match.teamId,
       stage: match.type,
       round: match.round,
       status: 'not-started'

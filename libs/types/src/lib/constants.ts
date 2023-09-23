@@ -9,6 +9,8 @@ export type MissionClauseType = 'boolean' | 'enum' | 'number';
 export const RobotGameMatchTypes = ['practice', 'ranking'] as const;
 export type RobotGameMatchType = (typeof RobotGameMatchTypes)[number];
 
+export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'scoring' | 'submitted';
+
 export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
 export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 

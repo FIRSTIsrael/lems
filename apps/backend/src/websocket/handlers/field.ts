@@ -38,17 +38,22 @@ export const handleStartMatch = async (namespace, eventId, tableId, matchId, cal
     function () {
       db.getMatch({ _id: new ObjectId(match._id) }).then(newMatch => {
         if (dayjs(newMatch.start).isSame(dayjs(match.start)) && newMatch.status === 'in-progress') {
-          console.log(`✅ Match ${match._id} completed`);
-          db.updateMatch({ _id: match._id }, { status: 'completed' });
+          console.log(`✅ Match ${match._id} completed!`);
+          db.updateMatch({ _id: match._id }, { status: 'scoring' });
+          db.updateEventState({ _id: eventState._id }, { activeMatch: null });
           namespace.to('field').emit('matchCompleted', tableId, matchId);
         }
       });
     }.bind(null, match, [tableId])
   );
 
-  if (!eventState.activeMatch || match.number > eventState.activeMatch) {
-    await db.updateEventState({ _id: eventState._id }, { activeMatch: match.number });
-  }
+  await db.updateEventState(
+    { _id: eventState._id },
+    {
+      activeMatch: match.number,
+      loadedMatch: null
+    }
+  );
 
   callback({ ok: true });
   namespace.to('field').emit('matchStarted', tableId, matchId);

@@ -29,9 +29,13 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticketId: string) => void;
 
+  matchLoaded: (tableId: string, matchId: string) => void;
+
   matchStarted: (tableId: string, matchId: string) => void;
 
   matchCompleted: (tableId: string, matchId: string) => void;
+
+  matchSubmitted: (tableId: string, matchId: string) => void;
 
   matchAborted: (tableId: string, matchId: string) => void;
 
