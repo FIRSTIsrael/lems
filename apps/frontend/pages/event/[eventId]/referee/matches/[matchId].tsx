@@ -1,27 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Socket } from 'socket.io-client';
-import { Paper } from '@mui/material';
-import {
-  Event,
-  Team,
-  SafeUser,
-  RobotGameMatch,
-  RobotGameTable,
-  WSClientEmittedEvents,
-  WSServerEmittedEvents
-} from '@lems/types';
+import { Event, Team, SafeUser, RobotGameMatch, RobotGameTable } from '@lems/types';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../components/connection-indicator';
 import Layout from '../../../../../components/layout';
 import MatchPrestart from '../../../../../components/field/referee/prestart';
+import WaitForMatchStart from '../../../../../components/field/referee/wait-for-start';
 import { apiFetch } from '../../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../../localization/roles';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
-import WaitForMatchStart from 'apps/frontend/components/field/referee/wait-for-start';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -77,6 +67,12 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
     },
     [match._id, match.eventId, socket]
   );
+
+  useEffect(() => {
+    if (!match.team?.registered) {
+      setMatch(match => ({ ...match, present: 'no-show' }));
+    }
+  }, [match.team?.registered]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>

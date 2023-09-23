@@ -19,7 +19,11 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({ match, updateMatch }) => 
         {localizeTeam(match.team as Team)}
       </Typography>
 
-      <PresentSwitch value={match.present} onChange={present => updateMatch({ present })} />
+      <PresentSwitch
+        value={match.present}
+        onChange={present => updateMatch({ present })}
+        disabled={!match.team?.registered}
+      />
 
       <Stack alignItems="center" mt={6}>
         <Button onClick={() => updateMatch({ ready: true })} variant="contained" color="primary">

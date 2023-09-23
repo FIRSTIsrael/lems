@@ -4,9 +4,10 @@ import { RobotGameMatchPresent } from '@lems/types';
 interface PresentSwitchProps {
   value?: RobotGameMatchPresent;
   onChange?: (value: RobotGameMatchPresent) => void;
+  disabled?: boolean;
 }
 
-const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange }) => {
+const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange, disabled }) => {
   return (
     <Paper
       elevation={0}
@@ -20,6 +21,7 @@ const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange }) => {
         value={value}
         exclusive
         onChange={(event, value) => onChange?.(value)}
+        disabled={disabled}
         sx={theme => ({
           '& .MuiToggleButtonGroup-grouped': {
             margin: theme.spacing(0.5),
@@ -48,8 +50,16 @@ const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange }) => {
           }
         })}
       >
-        <ToggleButton value="no-show">לא נוכחת</ToggleButton>
-        <ToggleButton value="no-robot">ללא רובוט</ToggleButton>
+        <ToggleButton
+          value="no-show"
+          sx={{
+            '&.Mui-selected': {
+              color: theme => `${theme.palette.error.main} !important`
+            }
+          }}
+        >
+          לא נוכחת
+        </ToggleButton>
         <ToggleButton value="present">נוכחת</ToggleButton>
       </ToggleButtonGroup>
     </Paper>
