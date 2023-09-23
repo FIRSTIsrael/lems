@@ -181,5 +181,6 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'אסימוני דיוק',
       clauses: [{ description: 'מספר אסימוני הדיוק הנותרים הוא:' }]
     }
-  ]
+  ],
+  errors: []
 };

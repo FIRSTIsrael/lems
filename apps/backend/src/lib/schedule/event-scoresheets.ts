@@ -10,7 +10,7 @@ export const getEventScoresheets = (matches: Array<WithId<RobotGameMatch>>): Arr
       match: match._id,
       stage: match.type,
       round: match.round,
-      status: 'not-started'
+      status: 'empty'
     };
     scoresheets.push(scoresheet);
   });

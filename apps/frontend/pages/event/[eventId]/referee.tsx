@@ -109,7 +109,7 @@ const Page: NextPage<Props> = ({ user, event, table, teams }) => {
     if (eventState && matches) {
       const handleScoringLogic = (_match: WithId<RobotGameMatch>) => {
         getScoresheet(_match._id).then((scoresheet: WithId<Scoresheet>) => {
-          if (scoresheet.status === 'not-started' || scoresheet.status === 'in-progress') {
+          if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
             router.push(`/event/${user.event}/team/${_match.team}/scoresheet/${scoresheet._id}`);
           } else {
             const nextMatch = matches.find(m => m.number > eventState.activeMatch);

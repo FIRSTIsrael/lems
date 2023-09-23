@@ -1,7 +1,15 @@
 import { ObjectId } from 'mongodb';
-import { MissionClauseType, RobotGameMatchType, Status } from '../constants';
+import { MissionClauseType, RobotGameMatchType } from '../constants';
 
-export type ScoresheetStatus = Status | 'waiting-for-head-ref';
+export const ScoresheetStatusTypes = [
+  'empty',
+  'in-progress',
+  'waiting-for-head-ref',
+  'completed',
+  'waiting-for-gp',
+  'ready'
+] as const;
+export type ScoresheetStatus = (typeof ScoresheetStatusTypes)[number];
 
 export interface MissionClause {
   type: MissionClauseType;
@@ -22,7 +30,7 @@ export interface Scoresheet {
   data?: {
     missions: Mission[];
     signature: string;
-    gp: number;
+    gp: { value: string; notes?: string };
     score: number;
   };
 }

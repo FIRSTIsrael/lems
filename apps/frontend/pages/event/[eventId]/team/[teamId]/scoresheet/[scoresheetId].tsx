@@ -64,8 +64,10 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
-  // if (!team.registered) router.back();
-  // if (session.status !== 'completed') router.back();
+  if (!team.registered) router.back();
+  if (match.status !== 'completed') router.back();
+  if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
+    router.push(`/event/${event._id}/${user.role}`);
 
   const updateScoresheet = () => {
     apiFetch(`/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`)
@@ -90,7 +92,11 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={['referee', 'head-referee']}
+      allowedRoles={
+        scoresheet?.status === 'waiting-for-head-ref'
+          ? ['head-referee']
+          : ['referee', 'head-referee']
+      }
       onFail={() => router.back()}
     >
       {team && (

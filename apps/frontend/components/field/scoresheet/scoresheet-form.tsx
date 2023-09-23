@@ -1,13 +1,24 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Form, Formik, FormikValues } from 'formik';
-import { Typography, Button, Alert, Stack, SxProps, Theme, Paper, Box } from '@mui/material';
-import { purple } from '@mui/material/colors';
+import {
+  Typography,
+  Button,
+  Alert,
+  Stack,
+  Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import SportsIcon from '@mui/icons-material/Sports';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {
   Event,
   Team,
@@ -15,7 +26,8 @@ import {
   WSClientEmittedEvents,
   SafeUser,
   Scoresheet,
-  MissionClause
+  MissionClause,
+  Mission
 } from '@lems/types';
 import { fullMatch } from '@lems/utils';
 import {
@@ -27,6 +39,7 @@ import {
 import { enqueueSnackbar } from 'notistack';
 import ScoresheetMission from './scoresheet-mission';
 import GpSelector from './gp';
+import { RoleAuthorizer } from '../../role-authorizer';
 
 interface Props {
   event: WithId<Event>;
@@ -38,12 +51,18 @@ interface Props {
 
 const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
   const router = useRouter();
-  const isEditable = true;
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
   >([]);
-  const [mode, setMode] = useState<'scoring' | 'gp'>('scoring');
+  const [scoresheetErrors, setScoresheetErros] = useState<
+    Array<{ id: string; description: string }>
+  >([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
+  const [headRefDialogue, setHeadRefDialogue] = useState<boolean>(false);
+
+  const mode = useMemo(() => {
+    return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
+  }, [scoresheet]);
 
   const getDefaultScoresheet = () => {
     const missions = SEASON_SCORESHEET.missions.map(m => {
@@ -109,36 +128,72 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     const { score, currentErrors } = calculateScore(formValues);
     setMissionErrors(currentErrors);
 
-    //set errors to include all mission errors
+    currentErrors.forEach(e => {
+      if (e) errors[e.id] = e.description;
+    });
 
-    // Error if a clause has value null (each null = 1 error)
-    // missions.clauses have no clause with .value === null
-    // signature is length > 0 error if this happens
+    formValues.missions.forEach((m: Mission, missionIndex: number) => {
+      m.clauses.forEach((c: MissionClause, clauseIndex: number) => {
+        if (c.value === null) {
+          if (!errors[missionIndex]) errors[missionIndex] = { clauses: [] };
+          errors[missionIndex].clauses[clauseIndex] = 'שדה חובה';
+        }
+      });
+    });
 
-    if (isEditable) {
-      const isCompleted = Object.keys(errors).length === 0;
-      const isEmpty = Object.values(formValues).filter(x => !!x).length === 0; //TODO: make this scan for nulls and then not complete if there are nulls
-      // Is empty (update)
-      // missions.clauses have all clauses with .value === null
+    if (signatureRef.current?.isEmpty() && formValues.signature.length === 0) {
+      errors.signature = 'הקבוצה טרם חתמה על דף הניקוד';
+    }
 
-      // TODO: scoresheet status for waiting for head ref
-      let newStatus = undefined;
+    const validatorErrors: Array<{ id: string; description: string }> = [];
+    SEASON_SCORESHEET.validators.forEach(validator => {
+      try {
+        validator(
+          formValues.missions.map((m: Mission) => {
+            return { id: m.id, values: m.clauses.map((c: MissionClause) => c.value) };
+          })
+        );
+      } catch (error: any) {
+        if (error instanceof ScoresheetError) {
+          const description =
+            localizedScoresheet.errors.find(e => e.id == error.id)?.description || '';
+          errors[error.id] = description;
+          validatorErrors.push({ id: error.id, description });
+        }
+      }
+    });
+    setScoresheetErros(validatorErrors);
+
+    if (mode === 'gp') {
+      if (formValues.gp.value !== '3' && !formValues.gp.notes)
+        errors.gp = 'נדרש הסבר לציון המקצועיות האדיבה';
+    }
+
+    const isCompleted = Object.keys(errors).length === 0;
+    const isEmpty = fullMatch(formValues, getDefaultScoresheet());
+
+    let newStatus = undefined;
+    if (['empty', 'in-progress', 'completed'].includes(scoresheet.status)) {
       if (isEmpty) {
         newStatus = 'empty';
       } else if (!isCompleted) {
         newStatus = 'in-progress';
-      } else if (isCompleted && ['empty', 'in-progress', 'completed'].includes(scoresheet.status)) {
+      } else if (isCompleted) {
         newStatus = 'completed';
       }
-
-      formValues.score = score;
-
-      if (!fullMatch(scoresheet.data, formValues) || scoresheet.status !== newStatus) {
-        handleSync(false, formValues, newStatus);
-      }
-
-      return errors;
+    } else {
+      newStatus = scoresheet.status;
     }
+
+    formValues.score = score;
+
+    if (!fullMatch(scoresheet.data, formValues) || scoresheet.status !== newStatus) {
+      handleSync(false, formValues, newStatus);
+    }
+
+    console.log(errors);
+
+    return errors;
   };
 
   return (
@@ -165,30 +220,18 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                     mx: 'auto',
                     my: 4
                   }}
-                >
-                  {!isEditable && (
-                    <Alert
-                      severity="warning"
-                      sx={{
-                        fontWeight: 500,
-                        border: '1px solid #ff9800'
-                      }}
-                    >
-                      דף הניקוד נעול, אין באפשרותך לערוך אותו.
-                    </Alert>
-                  )}
-                </Stack>
+                ></Stack>
 
                 <Paper
                   sx={{
                     p: 4,
                     mb: 2,
                     position: 'sticky',
-                    top: theme => theme.mixins.toolbar.minHeight,
+                    top: '4rem',
                     zIndex: 1
                   }}
                 >
-                  <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
+                  <Typography fontSize="1.5rem" fontWeight={600} align="center">
                     {values.score} נקודות
                   </Typography>
                 </Paper>
@@ -205,7 +248,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                   ))}
                 </Stack>
 
-                <Box py={4} justifyContent="center" display="flex">
+                <Stack spacing={2} alignItems="center" my={6}>
                   {values.signature ? (
                     <Image
                       src={values.signature}
@@ -225,50 +268,106 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                       ref={ref => {
                         signatureRef.current = ref;
                       }}
+                      onEnd={() => validateForm()}
                     />
                   )}
-                </Box>
 
-                {!isValid && (
-                  <Alert
-                    severity="warning"
-                    sx={{
-                      fontWeight: 500,
-                      mb: 4,
-                      maxWidth: '20rem',
-                      mx: 'auto',
-                      border: '1px solid #ff9800'
-                    }}
-                  >
-                    דף הניקוד אינו מלא.
-                  </Alert>
-                )}
+                  {!isValid && (
+                    <Alert
+                      severity="warning"
+                      sx={{
+                        fontWeight: 500,
+                        mb: 4,
+                        maxWidth: '20rem',
+                        mx: 'auto',
+                        border: '1px solid #ff9800'
+                      }}
+                    >
+                      דף הניקוד אינו מלא.
+                    </Alert>
+                  )}
+                  {scoresheetErrors.map((e: { id: string; description: string }) => (
+                    <Alert
+                      severity="error"
+                      key={e.id}
+                      sx={{
+                        fontWeight: 500,
+                        mb: 4,
+                        maxWidth: '20rem',
+                        mx: 'auto',
+                        border: '1px solid #ff2f00'
+                      }}
+                    >
+                      {e.description}
+                    </Alert>
+                  ))}
 
-                <Stack direction="row" justifyContent="center">
-                  <Button
-                    variant="contained"
-                    sx={{ minWidth: 200, mb: 6 }}
-                    endIcon={<ChevronLeftIcon />}
-                    disabled={!isValid}
-                    onClick={() => {
-                      if (signatureRef.current)
-                        setFieldValue(
-                          'signature',
-                          signatureRef.current.getCanvas().toDataURL('image/png'),
-                          true
-                        );
-                      setMode('gp');
-                    }}
-                  >
-                    המשך
-                  </Button>
+                  <Stack direction="row" spacing={2}>
+                    <RoleAuthorizer user={user} allowedRoles={['referee']}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          minWidth: 200
+                        }}
+                        endIcon={<SportsIcon />}
+                        disabled={!isValid}
+                        onClick={() => {
+                          setHeadRefDialogue(true);
+                        }}
+                      >
+                        העברת דף הניקוד לשופט ראשי
+                      </Button>
+                      <Dialog
+                        open={headRefDialogue}
+                        onClose={() => setHeadRefDialogue(false)}
+                        aria-labelledby="headref-dialog-title"
+                        aria-describedby="headref-dialog-description"
+                      >
+                        <DialogTitle id="headref-dialog-title">
+                          העברת דף הניקוד לשופט הראשי
+                        </DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="headref-dialog-description">
+                            העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר אותך למקצה הבא.
+                            לא תוכלו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
+                            ביטול
+                          </Button>
+                          <Button onClick={() => handleSync(true, values, 'waiting-for-head-ref')}>
+                            אישור
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </RoleAuthorizer>
+                    <Button
+                      variant="contained"
+                      sx={{ minWidth: 200 }}
+                      endIcon={<ChevronLeftIcon />}
+                      disabled={!isValid}
+                      onClick={() => {
+                        if (signatureRef.current)
+                          setFieldValue(
+                            'signature',
+                            signatureRef.current.getCanvas().toDataURL('image/png'),
+                            true
+                          );
+                        handleSync(true, values, 'waiting-for-gp');
+                      }}
+                    >
+                      המשך
+                    </Button>
+                  </Stack>
                 </Stack>
               </>
             ) : (
               <GpSelector
-                onBack={() => setMode('scoring')}
+                user={user}
+                onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
-                  handleSync(false, values, 'completed').then(() =>
+                  handleSync(false, values, 'ready').then(() =>
                     router.push(`/event/${event._id}/${user.role}`)
                   );
                 }}
