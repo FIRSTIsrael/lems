@@ -45,8 +45,16 @@ const Page: NextPage<Props> = ({ user, event }) => {
   const handleMatchLoaded = (matchNumber: number) => {
     setEventState(prev => (prev ? { ...prev, loadedMatch: matchNumber } : prev));
   };
-  const handleMatchStarted = (matchNumber: number) => {
-    setEventState(prev => (prev ? { ...prev, activeMatch: matchNumber, loadedMatch: null } : prev));
+  const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
+    setEventState(prev =>
+      prev
+        ? {
+            ...prev,
+            activeMatch: data.matchNumber,
+            loadedMatch: null
+          }
+        : prev
+    );
   };
   const matchCompleted = (matchNumber: number) => {
     setEventState(prev => (prev ? { ...prev, activeMatch: null } : prev));
@@ -87,6 +95,9 @@ const Page: NextPage<Props> = ({ user, event }) => {
             <ActiveMatch
               title="מקצה רץ"
               teams={matches?.filter(match => match.number === eventState?.activeMatch) || []}
+              startTime={
+                matches?.find(match => match.number === eventState?.activeMatch)?.startTime
+              }
             />
             <ActiveMatch
               title="המקצה הבא"

@@ -31,7 +31,7 @@ export interface WSServerEmittedEvents {
 
   matchLoaded: (matchNumber: number) => void;
 
-  matchStarted: (matchNumber: number) => void;
+  matchStarted: (data: { matchNumber: number; startedAt: number }) => void;
 
   matchCompleted: (matchNumber: number) => void;
 

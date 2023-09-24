@@ -88,7 +88,7 @@ export const handleStartMatch = async (
   );
 
   callback({ ok: true });
-  namespace.to('field').emit('matchStarted', matchNumber);
+  namespace.to('field').emit('matchStarted', { matchNumber, startedAt: match.startTime });
 };
 
 export const abortMatch = async (namespace, eventId: string, matchNumber: number, callback) => {

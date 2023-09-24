@@ -29,12 +29,12 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
       .then(res => res.json())
       .then(setMatch);
 
-  const handleMatchStarted = (matchNumber: number) => {
-    if (matchNumber === match.number) {
+  const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
+    if (data.matchNumber === match.number) {
       fetchMatchData();
 
       // Fast update
-      setMatch(match => ({ ...match, status: 'in-progress' }));
+      setMatch(match => ({ ...match, status: 'in-progress', startTime: new Date(data.startedAt) }));
     }
   };
 
