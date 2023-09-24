@@ -7,7 +7,12 @@ import {
 } from '@lems/types';
 import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
-import { handleStartMatch, handleUpdateMatch, handleUpdateScoresheet } from './handlers/field';
+import {
+  handleLoadMatch,
+  handleStartMatch,
+  handleUpdateMatch,
+  handleUpdateScoresheet
+} from './handlers/field';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -35,6 +40,8 @@ const websocket = (
   socket.on('createTicket', (...args) => handleCreateTicket(namespace, ...args));
 
   socket.on('updateTicket', (...args) => handleUpdateTicket(namespace, ...args));
+
+  socket.on('loadMatch', (...args) => handleLoadMatch(namespace, ...args));
 
   socket.on('startMatch', (...args) => handleStartMatch(namespace, ...args));
 

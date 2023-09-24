@@ -16,6 +16,19 @@ export const findMatches = (filter: Filter<RobotGameMatch>) => {
       }
     },
     {
+      $lookup: {
+        from: 'tables',
+        localField: 'tableId',
+        foreignField: '_id',
+        as: 'tableName'
+      }
+    },
+    {
+      $set: {
+        tableName: { $arrayElemAt: ['$tableName.name', 0] }
+      }
+    },
+    {
       $unwind: '$team'
     }
   ]);

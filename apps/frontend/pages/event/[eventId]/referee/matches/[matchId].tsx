@@ -9,7 +9,6 @@ import Layout from '../../../../../components/layout';
 import MatchPrestart from '../../../../../components/field/referee/prestart';
 import WaitForMatchStart from '../../../../../components/field/referee/wait-for-start';
 import { apiFetch } from '../../../../../lib/utils/fetch';
-import { localizedRoles } from '../../../../../localization/roles';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 

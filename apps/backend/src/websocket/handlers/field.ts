@@ -4,6 +4,32 @@ import * as db from '@lems/database';
 import dayjs from 'dayjs';
 import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 
+export const handleLoadMatch = async (
+  namespace,
+  eventId: string,
+  matchNumber: number,
+  callback
+) => {
+  const match = await db.getMatch({
+    eventId: new ObjectId(eventId),
+    number: matchNumber
+  });
+  if (!match) {
+    callback({ ok: false, error: `Could not find match #${matchNumber}!` });
+    return;
+  }
+
+  await db.updateEventState(
+    { event: new ObjectId(eventId) },
+    {
+      loadedMatch: matchNumber
+    }
+  );
+
+  callback({ ok: true });
+  namespace.to('field').emit('matchLoaded', matchNumber);
+};
+
 export const handleStartMatch = async (
   namespace,
   eventId: string,

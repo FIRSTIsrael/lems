@@ -54,7 +54,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
 
   const activeMatches = matches?.filter(
     m =>
-      m.status === 'in-progress' || m.status !== 'scoring' || m.number === eventState?.loadedMatch
+      m.status === 'in-progress' || m.status === 'scoring' || m.number === eventState?.loadedMatch
   );
 
   return (
@@ -65,7 +65,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        <Paper sx={{ p: 4, my: 6 }}>
+        <Paper sx={{ px: 4, py: 2, my: 6 }}>
           {activeMatches?.length === 0 ? (
             <Typography fontSize="xl" fontWeight={500} align="center">
               אין מקצים פעילים

@@ -96,6 +96,12 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  loadMatch: (
+    eventId: string,
+    matchNumber: number,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   startMatch: (
     eventId: string,
     matchNumber: number,
