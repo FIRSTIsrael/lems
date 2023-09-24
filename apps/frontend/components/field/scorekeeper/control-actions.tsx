@@ -31,12 +31,20 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   }, [eventId, nextMatchNumber, socket]);
 
   const startMatch = useCallback(() => {
-    socket.emit('startMatch', eventId, loadedMatchNumber || 0, response => {
+    socket.emit('startMatch', eventId, loadedMatchNumber || -1, response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
       }
     });
   }, [eventId, loadedMatchNumber, socket]);
+
+  const abortMatch = useCallback(() => {
+    socket.emit('abortMatch', eventId, activeMatchNumber || -1, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
+      }
+    });
+  }, [activeMatchNumber, eventId, socket]);
 
   useEffect(() => {
     setPreviewShown(false);
@@ -72,15 +80,21 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       >
         הצגת המקצה
       </Button>
-      <Button
-        variant="contained"
-        color={loadedMatchNumber === undefined ? 'inherit' : 'success'}
-        disabled={loadedMatchNumber === undefined || activeMatchNumber !== undefined}
-        size="large"
-        onClick={startMatch}
-      >
-        התחלת המקצה
-      </Button>
+      {activeMatchNumber === undefined ? (
+        <Button
+          variant="contained"
+          color={loadedMatchNumber === undefined ? 'inherit' : 'success'}
+          disabled={loadedMatchNumber === undefined || activeMatchNumber !== undefined}
+          size="large"
+          onClick={startMatch}
+        >
+          התחלת המקצה
+        </Button>
+      ) : (
+        <Button variant="contained" color="error" size="large" onClick={abortMatch}>
+          עצירת המקצה
+        </Button>
+      )}
     </Stack>
   );
 };

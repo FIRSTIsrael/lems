@@ -8,6 +8,7 @@ import {
 import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
+  handleAbortMatch,
   handleLoadMatch,
   handleStartMatch,
   handleUpdateMatch,
@@ -44,6 +45,8 @@ const websocket = (
   socket.on('loadMatch', (...args) => handleLoadMatch(namespace, ...args));
 
   socket.on('startMatch', (...args) => handleStartMatch(namespace, ...args));
+
+  socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
 
   socket.on('updateMatch', (...args) => handleUpdateMatch(namespace, ...args));
 

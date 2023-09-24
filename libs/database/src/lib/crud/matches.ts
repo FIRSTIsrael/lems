@@ -84,6 +84,13 @@ export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: Partial<Ro
     .updateOne(filter, { $set: newMatch }, { upsert: true });
 };
 
+export const updateMatches = (
+  filter: Filter<RobotGameMatch>,
+  newMatch: Partial<RobotGameMatch>
+) => {
+  return db.collection<RobotGameMatch>('matches').updateMany(filter, { $set: newMatch });
+};
+
 export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
   return db
     .collection<RobotGameMatch>('matches')

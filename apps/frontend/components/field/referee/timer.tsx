@@ -1,18 +1,17 @@
 import { useState, useMemo, useEffect } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
-import { Box, LinearProgress, Paper, Typography } from '@mui/material';
-import { Team, RobotGameMatch, MATCH_LENGTH } from '@lems/types';
+import { LinearProgress, Paper, Typography } from '@mui/material';
+import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
 
 interface TimerProps {
-  team: Team;
   match: WithId<RobotGameMatch>;
 }
 
-const Timer: React.FC<TimerProps> = ({ team, match }) => {
-  const matchEnd = dayjs(match.start).add(MATCH_LENGTH, 'seconds');
+const Timer: React.FC<TimerProps> = ({ match }) => {
+  const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
 
   useEffect(() => {
@@ -28,34 +27,34 @@ const Timer: React.FC<TimerProps> = ({ team, match }) => {
   );
 
   return (
-    match.start && (
-      <Box sx={{ transform: 'translateY(100%)' }}>
-        <Paper sx={{ mt: 4, py: 4, px: 2, textAlign: 'center' }}>
-          <Countdown
-            targetDate={matchEnd.toDate()}
-            expiredText="00:00"
-            variant="h1"
-            fontSize="10rem"
-            fontWeight={700}
-            dir="ltr"
-          />
-          <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
-            {localizeTeam(team)}
-          </Typography>
-        </Paper>
-        <LinearProgress
-          variant="determinate"
-          value={percentLeft}
-          color={percentLeft <= 20 ? 'error' : 'primary'}
-          sx={{
-            height: 16,
-            borderBottomLeftRadius: 8,
-            borderBottomRightRadius: 8,
-            mt: -2
-          }}
+    <>
+      <Paper sx={{ mt: 4, py: 4, px: 2, textAlign: 'center' }}>
+        <Countdown
+          targetDate={matchEnd.toDate()}
+          expiredText="00:00"
+          variant="h1"
+          fontSize="5rem"
+          fontWeight={700}
+          dir="ltr"
         />
-      </Box>
-    )
+        {match.team && (
+          <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
+            {localizeTeam(match.team)}
+          </Typography>
+        )}
+      </Paper>
+      <LinearProgress
+        variant="determinate"
+        value={percentLeft}
+        color={percentLeft <= 20 ? 'error' : 'primary'}
+        sx={{
+          height: 16,
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
+          mt: -2
+        }}
+      />
+    </>
   );
 };
 

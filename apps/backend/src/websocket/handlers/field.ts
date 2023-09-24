@@ -36,18 +36,6 @@ export const handleStartMatch = async (
   matchNumber: number,
   callback
 ) => {
-  const match = await db.getMatch({
-    eventId: new ObjectId(eventId),
-    number: matchNumber
-  });
-  if (!match) {
-    callback({ ok: false, error: `Could not find match #${matchNumber}!` });
-    return;
-  }
-  if (match.status !== 'not-started') {
-    callback({ ok: false, error: `Match #${matchNumber} has already started!` });
-    return;
-  }
   const eventState = await db.getEventState({ event: new ObjectId(eventId) });
   if (eventState.activeMatch !== null) {
     callback({
@@ -59,56 +47,80 @@ export const handleStartMatch = async (
 
   console.log(`❗ Starting match #${matchNumber} in event ${eventId}`);
 
-  match.startTime = new Date();
-  match.status = 'in-progress';
-  const { _id, ...matchData } = match;
-  await db.updateMatch({ _id: match._id }, matchData);
+  const startTime = new Date();
+  await db.updateMatches(
+    {
+      eventId: new ObjectId(eventId),
+      number: matchNumber
+    },
+    {
+      status: 'in-progress',
+      startTime
+    }
+  );
 
   const matchEnd: Date = dayjs().add(MATCH_LENGTH, 'seconds').toDate();
-  scheduler.scheduleJob(matchEnd, function () {
-    db.getMatch({ _id: new ObjectId(match._id) }).then(newMatch => {
-      if (
-        dayjs(newMatch.startTime).isSame(dayjs(match.startTime)) &&
-        newMatch.status === 'in-progress'
-      ) {
-        console.log(`✅ Match ${match._id} completed!`);
-        db.updateMatch({ _id: match._id }, { status: 'scoring' });
-        db.updateEventState({ _id: eventState._id }, { activeMatch: null });
-        namespace.to('field').emit('matchCompleted', matchNumber);
+  scheduler.scheduleJob(matchEnd, async () => {
+    const result = await db.updateMatches(
+      {
+        eventId: new ObjectId(eventId),
+        number: matchNumber,
+        status: 'in-progress',
+        startTime
+      },
+      {
+        status: 'scoring'
       }
-    });
+    );
+
+    if (result.matchedCount > 0) {
+      console.log(`✅ Match ${matchNumber} completed!`);
+      db.updateEventState({ _id: eventState._id }, { activeMatch: null });
+      namespace.to('field').emit('matchCompleted', matchNumber);
+    }
   });
 
   await db.updateEventState(
     { _id: eventState._id },
     {
-      activeMatch: match.number,
+      activeMatch: matchNumber,
       loadedMatch: null
     }
   );
 
   callback({ ok: true });
-  namespace.to('field').emit('matchStarted', { matchNumber, startedAt: match.startTime });
+  namespace.to('field').emit('matchStarted', { matchNumber, startedAt: startTime });
 };
 
-export const abortMatch = async (namespace, eventId: string, matchNumber: number, callback) => {
-  const match = await db.getMatch({
-    eventId: new ObjectId(eventId),
-    number: matchNumber
-  });
-  if (!match) {
-    callback({ ok: false, error: `Could not find match #${matchNumber}!` });
-    return;
-  }
-  if (match.status !== 'in-progress') {
-    callback({ ok: false, error: `Match #${matchNumber} is not in progress!` });
+export const handleAbortMatch = async (
+  namespace,
+  eventId: string,
+  matchNumber: number,
+  callback
+) => {
+  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  if (eventState.activeMatch !== matchNumber) {
+    callback({
+      ok: false,
+      error: `Match #${matchNumber} is not running!`
+    });
     return;
   }
 
   console.log(`❌ Aborting match ${matchNumber} in event ${eventId}`);
 
-  await db.updateMatch({ _id: match._id }, { startTime: undefined, status: 'not-started' });
-  db.updateEventState(
+  await db.updateMatches(
+    {
+      eventId: new ObjectId(eventId),
+      number: matchNumber
+    },
+    {
+      status: 'not-started',
+      startTime: undefined
+    }
+  );
+
+  await db.updateEventState(
     { event: new ObjectId(eventId) },
     {
       activeMatch: null,

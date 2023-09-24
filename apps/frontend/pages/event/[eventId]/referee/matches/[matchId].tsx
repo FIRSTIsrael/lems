@@ -8,6 +8,7 @@ import ConnectionIndicator from '../../../../../components/connection-indicator'
 import Layout from '../../../../../components/layout';
 import MatchPrestart from '../../../../../components/field/referee/prestart';
 import WaitForMatchStart from '../../../../../components/field/referee/wait-for-start';
+import Timer from '../../../../../components/field/referee/timer';
 import { apiFetch } from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
@@ -30,12 +31,21 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
       .then(setMatch);
 
   const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
-    if (data.matchNumber === match.number) {
-      fetchMatchData();
+    if (data.matchNumber !== match.number) return;
+    setMatch(match => ({
+      ...match,
+      status: 'in-progress',
+      startTime: new Date(data.startedAt)
+    }));
+  };
 
-      // Fast update
-      setMatch(match => ({ ...match, status: 'in-progress', startTime: new Date(data.startedAt) }));
-    }
+  const handleMatchAborted = (matchNumber: number) => {
+    if (matchNumber !== match.number) return;
+    setMatch(match => ({
+      ...match,
+      status: 'not-started',
+      startTime: undefined
+    }));
   };
 
   const handleMatchUpdated = (matchId: string) => {
@@ -46,6 +56,7 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
 
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     { name: 'matchStarted', handler: handleMatchStarted },
+    { name: 'matchAborted', handler: handleMatchAborted },
     { name: 'matchUpdated', handler: handleMatchUpdated }
   ]);
 
@@ -81,8 +92,13 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {!match?.ready && <MatchPrestart match={match} updateMatch={updateMatch} />}
-        {match?.ready && <WaitForMatchStart match={match} updateMatch={updateMatch} />}
+        {match.status === 'in-progress' ? (
+          <Timer match={match} />
+        ) : match.ready ? (
+          <WaitForMatchStart match={match} updateMatch={updateMatch} />
+        ) : (
+          <MatchPrestart match={match} updateMatch={updateMatch} />
+        )}
       </Layout>
     </RoleAuthorizer>
   );
