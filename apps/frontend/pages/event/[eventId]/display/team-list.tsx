@@ -60,8 +60,10 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       registration: (a, b) => (b.registered ? 1 : -1)
     };
 
-    setTeams(teams.sort(sortFunctions[sortBy]));
-  }, [teams, sortBy]);
+    const sorted = teams.sort(sortFunctions[sortBy]);
+    if (sortDirection === 'desc') sorted.reverse();
+    setTeams(sorted);
+  }, [teams, sortBy, sortDirection]);
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], updateTeams, [
     { name: 'teamRegistered', handler: updateTeams }
@@ -94,7 +96,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
               <TableHead>
                 <TableRow>
                   {headCells.map((cell, index) => (
-                    <TableCell key={index}>
+                    <TableCell key={index} align="left">
                       <TableSortLabel
                         active={sortBy === cell.sort}
                         direction={sortBy === cell.sort ? sortDirection : 'asc'}
@@ -113,11 +115,6 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
                       </TableSortLabel>
                     </TableCell>
                   ))}
-                  <TableCell align="left">מספר</TableCell>
-                  <TableCell align="left">שם</TableCell>
-                  <TableCell align="left">מוסד</TableCell>
-                  <TableCell align="left">עיר</TableCell>
-                  <TableCell align="left">רישום</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
