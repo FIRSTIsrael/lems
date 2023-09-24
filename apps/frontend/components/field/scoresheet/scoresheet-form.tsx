@@ -16,7 +16,7 @@ import {
   DialogTitle
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import SportsIcon from '@mui/icons-material/Sports';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
@@ -165,7 +165,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     setScoresheetErros(validatorErrors);
 
     if (mode === 'gp') {
-      if (formValues.gp.value !== '3' && !formValues.gp.notes)
+      if (formValues.gp?.value !== '3' && !formValues.gp?.notes)
         errors.gp = 'נדרש הסבר לציון המקצועיות האדיבה';
     }
 
@@ -309,7 +309,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                         sx={{
                           minWidth: 200
                         }}
-                        endIcon={<SportsIcon />}
+                        endIcon={<SportsScoreIcon />}
                         disabled={!isValid}
                         onClick={() => {
                           setHeadRefDialogue(true);

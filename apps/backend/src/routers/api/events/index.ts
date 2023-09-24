@@ -9,6 +9,7 @@ import usersRouter from './users';
 import teamsRouter from './teams';
 import rubricsRouter from './rubrics';
 import tablesRouter from './tables';
+import scoresheetRouter from './scoresheets';
 
 const router = express.Router({ mergeParams: true });
 
@@ -37,5 +38,7 @@ router.use('/:eventId/matches', matchesRouter);
 router.use('/:eventId/teams', teamsRouter);
 
 router.use('/:eventId/rubrics', rubricsRouter);
+
+router.use('/:eventId/scoresheets', scoresheetRouter);
 
 export default router;

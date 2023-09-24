@@ -82,8 +82,8 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
     [
       {
         name: 'scoresheetUpdated',
-        handler: (teamId, scoresheeId) => {
-          if (scoresheeId === router.query.scoresheetId) updateScoresheet();
+        handler: (teamId, scoresheetId) => {
+          if (scoresheetId === router.query.scoresheetId) updateScoresheet();
         }
       }
     ]
@@ -171,9 +171,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       `/api/events/${user.event}/tables/${tableId}/matches`,
       undefined,
       ctx
-    ).then(res =>
-      res?.json().then(matches => matches.find((m: RobotGameMatch) => m.team == team._id))
-    );
+    )
+      .then(res => res?.json())
+      .then(matches => matches.find((m: RobotGameMatch) => m.team == team._id));
 
     return { props: { user, event, table, team, match } };
   } catch (err) {
