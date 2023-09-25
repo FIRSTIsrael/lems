@@ -140,7 +140,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
             <TableCell></TableCell>
             {rooms.map(room => (
               <TableCell key={room._id.toString()} align="center">
-                {room.name}
+                {`חדר ${room.name}`}
               </TableCell>
             ))}
           </TableRow>
@@ -259,11 +259,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
   );
 
   return (
-    <RoleAuthorizer
-      user={user}
-      allowedRoles={['display', 'head-referee']}
-      onFail={() => router.back()}
-    >
+    <RoleAuthorizer user={user} allowedRoles={['display']} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
