@@ -55,8 +55,8 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <GridPaperLink path="team-list">
             <Typography variant="h4">רשימת קבוצות</Typography>
           </GridPaperLink>
-          <GridPaperLink path="judging-status">
-            <Typography variant="h4">ב</Typography>
+          <GridPaperLink path="judging-schedule">
+            <Typography variant="h4">{'לו"ז שיפוט'}</Typography>
           </GridPaperLink>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">ג</Typography>
