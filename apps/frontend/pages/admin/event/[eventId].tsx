@@ -1,48 +1,33 @@
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { apiFetch } from '../../../lib/utils/fetch';
-import { Avatar, Box, Typography } from '@mui/material';
-import ManageIcon from '@mui/icons-material/WidgetsRounded';
+import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { Paper } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event } from '@lems/types';
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-
-interface AdminEventPageProps {
+import { Event, SafeUser } from '@lems/types';
+import { apiFetch } from '../../../lib/utils/fetch';
+import Layout from '../../../components/layout';
+interface Props {
+  user: WithId<SafeUser>;
   event: WithId<Event>;
 }
 
-const AdminEventPage = ({ event }: AdminEventPageProps) => {
+const Page: NextPage<Props> = ({ user, event }) => {
+  const router = useRouter();
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        pb: 3
-      }}
-    >
-      <Avatar
-        sx={{
-          bgcolor: '#ccfbf1',
-          color: '#2dd4bf',
-          width: '2rem',
-          height: '2rem',
-          mr: 1
-        }}
-      >
-        <ManageIcon sx={{ fontSize: '1rem' }} />
-      </Avatar>
-      <Typography variant="h2" fontSize="1.25rem">
-        {event.name}
-      </Typography>
-    </Box>
+    <Layout maxWidth="sm" title={`ניהול אירוע: ${event.name}`}>
+      <Paper sx={{ p: 4, mt: 4 }}>פה יהיו דברים מגניבים כמו יצירת לוז</Paper>
+    </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const event = await apiFetch(`/public/events/${(ctx.params as Params).eventId}`, undefined, ctx).then(res =>
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+
+  const event = await apiFetch(`/api/events/${ctx.params?.eventId}`, undefined, ctx).then(res =>
     res?.json()
   );
-  return { props: { event } };
+
+  return { props: { user, event } };
 };
 
-export default AdminEventPage;
+export default Page;

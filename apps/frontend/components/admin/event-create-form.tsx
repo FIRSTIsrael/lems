@@ -15,10 +15,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import 'dayjs/locale/he';
 import dayjs, { Dayjs } from 'dayjs';
 import { useState } from 'react';
-import { apiFetch } from "../../lib/utils/fetch";
-import { useRouter } from "next/router";
+import { apiFetch } from '../../lib/utils/fetch';
+import { useRouter } from 'next/router';
 
-const Page = () => {
+const EventCreateForm: React.FC = () => {
   const [eventId, setEventId] = useState('');
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
@@ -26,8 +26,7 @@ const Page = () => {
   const [color, setColor] = useState('red');
   const router = useRouter();
 
-  const createEvent = () =>
-  {
+  const createEvent = () => {
     apiFetch('/api/admin/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,4 +126,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default EventCreateForm;

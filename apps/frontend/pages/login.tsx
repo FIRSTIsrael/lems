@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId, ObjectId } from 'mongodb';
-import { Paper, Box, Link } from '@mui/material';
+import { Paper, Box, Link, Stack, Typography } from '@mui/material';
 import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/login/event-selector';
@@ -57,7 +57,12 @@ const Page: NextPage<PageProps> = ({ events }) => {
             }}
           />
         ) : (
-          <EventSelector events={events} onChange={selectEvent} />
+          <Stack direction="column">
+            <Typography variant="h2" pb={2} textAlign={'center'}>
+              בחירת אירוע
+            </Typography>
+            <EventSelector events={events} onChange={selectEvent} />
+          </Stack>
         )}
       </Paper>
       <Box
