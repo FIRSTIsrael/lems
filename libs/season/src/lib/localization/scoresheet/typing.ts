@@ -14,5 +14,5 @@ export interface LocalizedMission {
 
 export interface LocalizedScoresheet {
   missions: Array<LocalizedMission>;
-  errors?: Array<{ id: string; description: string }>;
+  errors: Array<{ id: string; description: string }>;
 }

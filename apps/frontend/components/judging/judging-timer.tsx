@@ -4,6 +4,7 @@ import { Typography, Paper } from '@mui/material';
 import { JUDGING_SESSION_LENGTH, JudgingSession, Team } from '@lems/types';
 import useCountdown from '../../hooks/use-countdown';
 import Countdown from '../general/countdown';
+import { localizeTeam } from '../../localization/teams';
 
 interface TimerProps {
   session: JudgingSession;
@@ -85,7 +86,7 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
         {stageText}
       </Typography>
       <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
-        קבוצת {team.name} #{team.number} מ{team.affiliation.institution}, {team.affiliation.city}
+        {localizeTeam(team)}
       </Typography>
       <Typography variant="body1" fontSize="1rem" fontWeight={600} color="#666" gutterBottom>
         מפגש השיפוט יסתיים בשעה {sessionEnd.format('HH:mm')}

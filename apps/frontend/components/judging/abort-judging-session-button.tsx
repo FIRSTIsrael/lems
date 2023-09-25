@@ -18,6 +18,7 @@ import {
   WSClientEmittedEvents
 } from '@lems/types';
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props extends ButtonProps {
   event: WithId<Event>;
@@ -31,7 +32,11 @@ const AbortJudgingSessionButton: React.FC<Props> = ({ event, room, session, sock
 
   const abortSession = (eventId: string, roomId: string, sessionId: string) => {
     socket.emit('abortJudgingSession', eventId, roomId, sessionId, response => {
-      // { ok: true }
+      if (response.ok) {
+        enqueueSnackbar('מפגש השיפוט הופסק בהצלחה!', { variant: 'success' });
+      } else {
+        enqueueSnackbar('אופס, הפסקת מפגש השיפוט נכשלה.', { variant: 'error' });
+      }
     });
   };
 
