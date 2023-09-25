@@ -12,6 +12,7 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import 'dayjs/locale/he';
 import dayjs, { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { apiFetch } from "../../lib/utils/fetch";
@@ -39,7 +40,7 @@ const Page = () => {
       })
     })
       .then(res => res.json())
-      .then(({ id }) => router.back());
+      .then(() => router.back());
   };
 
   return (
@@ -66,7 +67,7 @@ const Page = () => {
           variant="outlined"
           type="text"
           value={eventId}
-          onChange={(e: any) => setEventId(e.target.value)}
+          onChange={e => setEventId(e.target.value)}
           label="מזהה אירוע"
           fullWidth
         />
@@ -74,7 +75,7 @@ const Page = () => {
           variant="outlined"
           type="text"
           value={name}
-          onChange={(e: any) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           label="שם אירוע"
           fullWidth
         />
@@ -83,20 +84,26 @@ const Page = () => {
             label="תאריך התחלה"
             value={startDate}
             onChange={newDate => setStartDate(newDate)}
-            renderInput={(params: any) => <TextField {...params} />}
+            format="DD/MM/YYYY"
+            slots={{
+              textField: params => <TextField {...params} />
+            }}
           />
           <DatePicker
             label="תאריך סיום"
             value={endDate}
             onChange={newDate => setEndDate(newDate)}
-            renderInput={(params: any) => <TextField {...params} />}
+            format="DD/MM/YYYY"
+            slots={{
+              textField: params => <TextField {...params} />
+            }}
           />
         </LocalizationProvider>
         <FormControl>
           <InputLabel id="event-color">צבע</InputLabel>
           <Select
             value={color}
-            onChange={(e: any) => setColor(e.target.value)}
+            onChange={e => setColor(e.target.value)}
             labelId="event-color"
             label="צבע"
           >

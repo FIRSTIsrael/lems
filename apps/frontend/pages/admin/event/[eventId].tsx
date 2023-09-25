@@ -4,6 +4,7 @@ import { Avatar, Box, Typography } from '@mui/material';
 import ManageIcon from '@mui/icons-material/WidgetsRounded';
 import { WithId } from 'mongodb';
 import { Event } from '@lems/types';
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 interface AdminEventPageProps {
   event: WithId<Event>;
@@ -38,12 +39,10 @@ const AdminEventPage = ({ event }: AdminEventPageProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const event = await apiFetch(`/public/events/${(ctx.params as any).eventId}`, undefined, ctx).then(res =>
+  const event = await apiFetch(`/public/events/${(ctx.params as Params).eventId}`, undefined, ctx).then(res =>
     res?.json()
   );
   return { props: { event } };
 };
-
-AdminEventPage.layout = 'admin';
 
 export default AdminEventPage;
