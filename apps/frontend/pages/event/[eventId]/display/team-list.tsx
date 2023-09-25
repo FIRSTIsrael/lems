@@ -14,7 +14,7 @@ import {
   Box
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Event, Team, JudgingRoom, SafeUser } from '@lems/types';
+import { Event, Team, SafeUser } from '@lems/types';
 import BooleanIcon from '../../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -26,10 +26,9 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  rooms: Array<WithId<JudgingRoom>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, rooms }) => {
+const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [sortBy, setSortBy] = useState<string>('number');
