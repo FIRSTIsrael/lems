@@ -205,25 +205,32 @@ const TicketCreationPanel: React.FC<TicketCreationPanel> = ({ socket, event, tea
 interface Props {
   user: User;
   event: WithId<Event>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event }) => {
-  const [teams, setTeams] = useState<Array<WithId<Team>> | undefined>(undefined);
+const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [activeTab, setActiveTab] = useState<string>('1');
 
-  const updateTeams = () => {
-    apiFetch(`/api/events/${user.event}/teams`)
-      .then(res => res?.json())
-      .then(data => {
-        setTeams(data);
-      });
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        } else {
+          return t;
+        }
+      })
+    );
   };
 
   const { connectionStatus, socket } = useWebsocket(
     event._id.toString(),
     ['pit-admin'],
-    updateTeams,
-    [{ name: 'teamRegistered', handler: updateTeams }]
+    () => {
+      return;
+    },
+    [{ name: 'teamRegistered', handler: handleTeamRegistered }]
   );
 
   return (
@@ -262,10 +269,17 @@ const Page: NextPage<Props> = ({ user, event }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-    const event = await apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
+
+    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    return { props: { user, event } };
+    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
+      res?.json()
+    );
+
+    const [event, teams] = await Promise.all([eventPromise, teamsPromise]);
+
+    return { props: { user, event, teams } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
