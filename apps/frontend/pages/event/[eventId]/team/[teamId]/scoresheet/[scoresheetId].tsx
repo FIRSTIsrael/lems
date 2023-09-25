@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ObjectId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -19,36 +19,61 @@ import ScoresheetForm from '../../../../../../components/field/scoresheet/scores
 interface ScoresheetSelectorProps {
   event: WithId<Event>;
   team: WithId<Team>;
+  matchScoresheet: WithId<Scoresheet>;
 }
 
-const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({ event, team }) => {
-  // TODO: this will make a button for each round appear for head refs
+const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
+  event,
+  team,
+  matchScoresheet
+}) => {
+  const [teamScoresheets, setTeamScoresheets] = useState<Array<WithId<Scoresheet>> | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    apiFetch(`/api/events/${event._id}/teams/${team._id}/scoresheets`)
+      .then(res => res.json())
+      .then((data: Array<WithId<Scoresheet>>) =>
+        setTeamScoresheets(
+          data.sort((a, b) =>
+            a.stage === b.stage ? a.round - b.round : a.stage === 'practice' ? -1 : 1
+          )
+        )
+      );
+  }, [event._id, team._id]);
+
   return (
     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-      {[1, 2, 3, 4].map(match => (
-        <NextLink
-          key={match}
-          href={`/event/${event._id}/team/${team._id}/scoresheet/${match}`}
-          passHref
-        >
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              backgroundColor: 1 === match ? purple[700] : 'transparent',
-              color: 1 === match ? '#fff' : purple[700],
-              borderRadius: '2rem',
-              '&:hover': {
-                backgroundColor: 1 === match ? purple[700] : purple[700] + '1f'
-              }
-            }}
-          >
-            Some round
-          </Button>
-        </NextLink>
-      ))}
+      {teamScoresheets &&
+        teamScoresheets.map(scoresheet => {
+          return (
+            <NextLink
+              key={scoresheet._id.toString()}
+              href={`/event/${event._id}/team/${team._id}/scoresheet/${scoresheet._id}`}
+              passHref
+            >
+              <Button
+                variant="contained"
+                color="inherit"
+                sx={{
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  backgroundColor:
+                    matchScoresheet._id === scoresheet._id ? purple[700] : 'transparent',
+                  color: matchScoresheet._id === scoresheet._id ? '#fff' : purple[700],
+                  borderRadius: '2rem',
+                  '&:hover': {
+                    backgroundColor:
+                      matchScoresheet._id == scoresheet._id ? purple[700] : purple[700] + '1f'
+                  }
+                }}
+              >
+                {localizedMatchType[scoresheet.stage]} #{scoresheet.round}
+              </Button>
+            </NextLink>
+          );
+        })}
     </Stack>
   );
 };
@@ -82,8 +107,8 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
     [
       {
         name: 'scoresheetUpdated',
-        handler: (teamId, scoresheeId) => {
-          if (scoresheeId === router.query.scoresheetId) updateScoresheet();
+        handler: (teamId, scoresheetId) => {
+          if (scoresheetId === router.query.scoresheetId) updateScoresheet();
         }
       }
     ]
@@ -116,7 +141,11 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
             </Typography>
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-            <ScoresheetSelector event={event} team={team} />
+            <ScoresheetSelector
+              event={event}
+              team={team}
+              matchScoresheet={scoresheet as WithId<Scoresheet>}
+            />
           </RoleAuthorizer>
           {scoresheet && (
             <ScoresheetForm
@@ -171,9 +200,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       `/api/events/${user.event}/tables/${tableId}/matches`,
       undefined,
       ctx
-    ).then(res =>
-      res?.json().then(matches => matches.find((m: RobotGameMatch) => m.team == team._id))
-    );
+    )
+      .then(res => res?.json())
+      .then(matches => matches.find((m: RobotGameMatch) => m.team == team._id));
 
     return { props: { user, event, table, team, match } };
   } catch (err) {
