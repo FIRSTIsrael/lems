@@ -26,11 +26,12 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event }) => {
+const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -42,12 +43,16 @@ const Page: NextPage<Props> = ({ user, event }) => {
     { label: 'רישום', sort: 'registration' }
   ];
 
-  const updateTeams = () => {
-    apiFetch(`/api/events/${user.event}/teams`)
-      .then(res => res?.json())
-      .then(data => {
-        setTeams(data);
-      });
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        } else {
+          return t;
+        }
+      })
+    );
   };
 
   useEffect(() => {
@@ -64,9 +69,14 @@ const Page: NextPage<Props> = ({ user, event }) => {
     setTeams(sorted);
   }, [teams, sortBy, sortDirection]);
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], updateTeams, [
-    { name: 'teamRegistered', handler: updateTeams }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['pit-admin'],
+    () => {
+      return;
+    },
+    [{ name: 'teamRegistered', handler: handleTeamRegistered }]
+  );
 
   return (
     <RoleAuthorizer
@@ -143,11 +153,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const event = await apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
+    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
+    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
+      res?.json()
+    );
+    const [event, teams] = await Promise.all([eventPromise, teamsPromise]);
 
-    return { props: { user, event } };
+    return { props: { user, event, teams } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };
