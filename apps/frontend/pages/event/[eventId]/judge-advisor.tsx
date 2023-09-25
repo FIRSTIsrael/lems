@@ -45,10 +45,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
-    // TODO: only one team can be registered at a time because in this function
-    // 'teams' is always the initial state and never gets updated (fucking listeners man)
-    // we need to use usecallbakc in listeners lol
-    setTeams(
+    setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {
           return team;
