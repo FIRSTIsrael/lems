@@ -69,7 +69,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו"ז שיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/display`}
+        back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus !== 'connecting'}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>

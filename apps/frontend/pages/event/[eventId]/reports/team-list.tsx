@@ -85,7 +85,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/display`}
+        back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus !== 'connecting'}
       >
         <Paper
