@@ -13,3 +13,17 @@ export const getAllEvents = () => {
 export const updateEvent = (filter: Filter<Event>, newEvent: Partial<Event>) => {
   return db.collection<Event>('events').updateOne(filter, { $set: newEvent }, { upsert: true });
 };
+
+export const addEvent = (event: Event) => {
+  return db
+    .collection<Event>('events')
+    .insertOne(event)
+    .then(response => response);
+};
+
+export const deleteEvent = (filter: Filter<Event>) => {
+  return db
+    .collection<Event>('events')
+    .deleteOne(filter)
+    .then(response => response);
+};

@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
@@ -6,6 +6,10 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
   db.getAllEvents().then(events => res.json(events));
+});
+
+router.get('/:eventId', (req: Request, res: Response) => {
+  db.getEvent(new ObjectId(req.params.eventId)).then(event => res.json(event));
 });
 
 router.get('/:eventId/rooms', (req: Request, res: Response) => {
