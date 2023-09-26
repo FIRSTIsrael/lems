@@ -23,6 +23,7 @@ import {
   JudgingSession,
   SafeUser,
   EventState,
+  RoleTypes,
   JUDGING_SESSION_LENGTH
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -263,7 +264,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
   );
 
   return (
-    <RoleAuthorizer user={user} allowedRoles={['display']} onFail={() => router.back()}>
+    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}

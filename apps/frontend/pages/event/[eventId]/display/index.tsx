@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { User, Event } from '@lems/types';
+import { User, Event, RoleTypes } from '@lems/types';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch } from '../../../../lib/utils/fetch';
@@ -37,13 +37,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
-
   return (
-    <RoleAuthorizer
-      user={user}
-      allowedRoles={['display', 'head-referee']}
-      onFail={() => router.back()}
-    >
+    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
