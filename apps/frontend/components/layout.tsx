@@ -1,9 +1,16 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import {
   AppBar,
   Box,
   Breakpoint,
+  Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Toolbar,
   Tooltip,
@@ -40,6 +47,7 @@ const Layout: React.FC<Props> = ({
   error
 }) => {
   const router = useRouter();
+  const [open, setOpen] = useState<boolean>(false);
 
   const logout = () => {
     apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/'));
@@ -83,7 +91,7 @@ const Layout: React.FC<Props> = ({
 
               {action}
               <Tooltip title="התנתק" arrow>
-                <IconButton onClick={logout} sx={{ ml: 2 }}>
+                <IconButton onClick={() => setOpen(true)} sx={{ ml: 2 }}>
                   <LogoutIcon />
                 </IconButton>
               </Tooltip>
@@ -92,6 +100,25 @@ const Layout: React.FC<Props> = ({
           <Box sx={{ height: theme => theme.mixins.toolbar.minHeight }} />
         </>
       )}
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="logout-title"
+        aria-describedby="logout-description"
+      >
+        <DialogTitle id="logout-title">התנתקות</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="logout-description">
+            האם אתם בטוחים שברצונכם להתנתק?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>ביטול</Button>
+          <Button onClick={logout} autoFocus>
+            אישור
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Container
         maxWidth={isNaN(maxWidth as number) ? (maxWidth as Breakpoint) : undefined}
         sx={{
