@@ -14,7 +14,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
   const eventState = await db.getEventState({ event: event._id });
   if (eventState)
-    return res.status(400).json({ message: 'Could not parse schedule: Event has data' });
+    return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
 
   console.log('👓 Parsing schedule...');
   const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
