@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import {
   AppBar,
   Box,
@@ -5,11 +6,14 @@ import {
   Container,
   IconButton,
   Toolbar,
+  Tooltip,
   Typography,
   keyframes
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import LogoutIcon from '@mui/icons-material/Logout';
 import NextLink from 'next/link';
+import { apiFetch } from '../lib/utils/fetch';
 
 interface Props {
   title?: string | React.ReactNode;
@@ -35,6 +39,12 @@ const Layout: React.FC<Props> = ({
   action,
   error
 }) => {
+  const router = useRouter();
+
+  const logout = () => {
+    apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/'));
+  };
+
   return (
     <>
       {title && (
@@ -72,6 +82,11 @@ const Layout: React.FC<Props> = ({
               </Typography>
 
               {action}
+              <Tooltip title="התנתק" arrow>
+                <IconButton onClick={logout} sx={{ ml: 2 }}>
+                  <LogoutIcon />
+                </IconButton>
+              </Tooltip>
             </Toolbar>
           </AppBar>
           <Box sx={{ height: theme => theme.mixins.toolbar.minHeight }} />
