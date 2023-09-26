@@ -19,7 +19,7 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
     <Grid xs={3}>
       <Paper>
         <Button
-          href={'display/' + path}
+          href={'reports/' + path}
           fullWidth
           sx={{ py: 8, px: 10, textAlign: 'center', color: '#000' }}
         >

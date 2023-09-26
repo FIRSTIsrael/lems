@@ -270,7 +270,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/display`}
+        back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus !== 'connecting'}
       >
         <JudgingStatusTimer
