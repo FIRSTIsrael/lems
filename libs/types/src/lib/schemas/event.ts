@@ -1,7 +1,7 @@
 import { DivisionColor } from '../constants';
 import { Role } from '../roles';
 
-export interface EventScheduleEntry {
+export interface EventPlanEntry {
   startTime: Date;
   endTime: Date;
   name: string;
@@ -13,5 +13,5 @@ export interface Event {
   startDate: Date;
   endDate: Date;
   color: DivisionColor;
-  schedule?: Array<EventScheduleEntry>;
+  plan?: Array<EventPlanEntry>;
 }
