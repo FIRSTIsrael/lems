@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import {
   Paper,
   Button,
@@ -14,19 +16,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import 'dayjs/locale/he';
 import dayjs, { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
-import { useRouter } from 'next/router';
 
 const EventCreateForm: React.FC = () => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState<string>('');
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
-  const [color, setColor] = useState('red');
+  const [color, setColor] = useState<DivisionColor>('red');
   const router = useRouter();
 
   const createEvent = () => {
-    apiFetch('/api/admin/events', {
+    apiFetch('/api/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -92,7 +93,7 @@ const EventCreateForm: React.FC = () => {
           <InputLabel id="event-color">צבע</InputLabel>
           <Select
             value={color}
-            onChange={e => setColor(e.target.value)}
+            onChange={e => setColor(e.target.value as DivisionColor)}
             labelId="event-color"
             label="צבע"
           >
