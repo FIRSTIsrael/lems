@@ -4,7 +4,6 @@ import fileUpload from 'express-fileupload';
 import * as db from '@lems/database';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
-import { cleanEventData } from '../../../../lib/schedule/cleaner';
 import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
 import { getEventScoresheets } from '../../../../lib/schedule/event-scoresheets';
 
@@ -13,13 +12,9 @@ const router = express.Router({ mergeParams: true });
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-  console.log('🚮 Deleting event data');
-  try {
-    await cleanEventData(event);
-  } catch (error) {
-    return res.status(500).json(error.message);
-  }
-  console.log('✅ Deleted event data!');
+  const eventState = await db.getEventState({ event: event._id });
+  if (eventState)
+    return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
 
   console.log('👓 Parsing schedule...');
   const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
