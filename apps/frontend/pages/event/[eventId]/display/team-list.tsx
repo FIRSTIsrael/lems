@@ -14,7 +14,7 @@ import {
   Box
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Event, Team, SafeUser } from '@lems/types';
+import { Event, Team, SafeUser, RoleTypes } from '@lems/types';
 import BooleanIcon from '../../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -79,11 +79,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
   );
 
   return (
-    <RoleAuthorizer
-      user={user}
-      allowedRoles={['display', 'head-referee']}
-      onFail={() => router.back()}
-    >
+    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${event.name}`}
