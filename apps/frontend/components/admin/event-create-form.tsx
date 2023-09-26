@@ -19,7 +19,6 @@ import { apiFetch } from '../../lib/utils/fetch';
 import { useRouter } from 'next/router';
 
 const EventCreateForm: React.FC = () => {
-  const [eventId, setEventId] = useState('');
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
@@ -31,7 +30,6 @@ const EventCreateForm: React.FC = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: eventId,
         name,
         startDate: startDate?.toDate(),
         endDate: endDate?.toDate(),
@@ -62,14 +60,6 @@ const EventCreateForm: React.FC = () => {
         <Typography variant="h2" align="center">
           צור אירוע
         </Typography>
-        <TextField
-          variant="outlined"
-          type="text"
-          value={eventId}
-          onChange={e => setEventId(e.target.value)}
-          label="מזהה אירוע"
-          fullWidth
-        />
         <TextField
           variant="outlined"
           type="text"
