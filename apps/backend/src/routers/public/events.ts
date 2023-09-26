@@ -5,11 +5,21 @@ import * as db from '@lems/database';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getAllEvents().then(events => res.json(events));
+  db.getAllEvents().then(events =>
+    res.json(
+      events.map(e => {
+        const { schedule, ...rest } = e;
+        return rest;
+      })
+    )
+  );
 });
 
 router.get('/:eventId', (req: Request, res: Response) => {
-  db.getEvent(new ObjectId(req.params.eventId)).then(event => res.json(event));
+  db.getEvent(new ObjectId(req.params.eventId)).then(event => {
+    const { schedule, ...rest } = event;
+    res.json(rest);
+  });
 });
 
 router.get('/:eventId/rooms', (req: Request, res: Response) => {

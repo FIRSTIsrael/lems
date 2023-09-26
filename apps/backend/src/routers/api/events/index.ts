@@ -16,7 +16,12 @@ const router = express.Router({ mergeParams: true });
 router.use('/:eventId', eventValidator);
 
 router.get('/:eventId', (req: Request, res: Response) => {
-  db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => res.json(event));
+  db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => {
+    if (req.query.withSchedule) return res.json(event);
+
+    const { schedule, ...rest } = event;
+    res.json(rest);
+  });
 });
 
 router.get('/:eventId/state', (req: Request, res: Response) => {
