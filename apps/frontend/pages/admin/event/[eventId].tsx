@@ -1,21 +1,30 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Paper } from '@mui/material';
+import { Paper, Typography, Box, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
 import { Event, SafeUser } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
+import GenerateScheduleButton from '../../../components/admin/generate-schedule';
+import UploadScheduleButton from '../../../components/admin/upload-schedule';
+
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
 }
 
 const Page: NextPage<Props> = ({ user, event }) => {
-  const router = useRouter();
-
   return (
-    <Layout maxWidth="sm" title={`ניהול אירוע: ${event.name}`}>
-      <Paper sx={{ p: 4, mt: 4 }}>פה יהיו דברים מגניבים כמו יצירת לוז</Paper>
+    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`}>
+      <Paper sx={{ p: 4, mt: 4 }}>
+        <Stack alignItems="center" justifyContent="center" minHeight={500}>
+          <Typography variant="h2">{event.name}</Typography>
+          <Box>
+            <UploadScheduleButton event={event} sx={{ m: 2 }} />
+            <GenerateScheduleButton event={event} sx={{ m: 2 }} />
+          </Box>
+        </Stack>
+      </Paper>
     </Layout>
   );
 };
