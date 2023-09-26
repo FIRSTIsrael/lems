@@ -1,7 +1,52 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
+import { Event } from '@lems/types';
+import * as db from '@lems/database';
 import eventScheduleRouter from './schedule';
 
 const router = express.Router({ mergeParams: true });
+
+router.post('/', (req: Request, res: Response) => {
+  const body: Event = { ...req.body };
+  body.startDate = new Date(body.startDate);
+  body.endDate = new Date(body.endDate);
+
+  if (body) {
+    console.log('⏬ Creating Event...');
+    db.addEvent(body).then(task => {
+      if (task.acknowledged) {
+        console.log('✅ Event created!');
+        return res.json({ ok: true, id: task.insertedId });
+      } else {
+        console.log('❌ Could not create Event');
+        return res.status(500).json({ ok: false });
+      }
+    });
+  } else {
+    return res.status(400).json({ ok: false });
+  }
+});
+
+router.put('/:eventId', (req: Request, res: Response) => {
+  const body: Event = { ...req.body };
+  body.startDate = new Date(body.startDate);
+  body.endDate = new Date(body.endDate);
+
+  if (body) {
+    console.log(`⏬ Updating Event ${req.params.eventId}`);
+    db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body).then(task => {
+      if (task.acknowledged) {
+        console.log('✅ Event updated!');
+        return res.json({ ok: true, id: task.upsertedId });
+      } else {
+        console.log('❌ Could not update Event');
+        return res.status(500).json({ ok: false });
+      }
+    });
+  } else {
+    return res.status(400).json({ ok: false });
+  }
+});
 
 router.use('/:eventId/schedule', eventScheduleRouter);
 

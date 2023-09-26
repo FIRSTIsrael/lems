@@ -27,7 +27,7 @@ const EventCreateForm: React.FC = () => {
   const router = useRouter();
 
   const createEvent = () => {
-    apiFetch('/api/events', {
+    apiFetch('/api/admin/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

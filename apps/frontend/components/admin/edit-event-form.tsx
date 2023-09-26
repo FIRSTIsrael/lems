@@ -31,7 +31,7 @@ const EditEventForm: React.FC<Props> = ({ event, onSubmit }) => {
   const [color, setColor] = useState<DivisionColor>(event.color);
 
   const updateEvent = () => {
-    apiFetch(`/api/events/${event._id}`, {
+    apiFetch(`/api/admin/events/${event._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
