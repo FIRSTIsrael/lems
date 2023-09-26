@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { Event } from '@lems/types';
 import * as db from '@lems/database';
 import eventScheduleRouter from './schedule';
+import { cleanEventData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
 
@@ -46,6 +47,19 @@ router.put('/:eventId', (req: Request, res: Response) => {
   } else {
     return res.status(400).json({ ok: false });
   }
+});
+
+router.delete('/:eventId/data', async (req: Request, res: Response) => {
+  const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
+
+  console.log(`🚮 Deleting data from event ${req.params.eventId}`);
+  try {
+    await cleanEventData(event);
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+  console.log('✅ Deleted event data!');
+  return res.status(200).json({ ok: true });
 });
 
 router.use('/:eventId/schedule', eventScheduleRouter);

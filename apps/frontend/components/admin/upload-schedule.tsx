@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
+import { useRouter } from 'next/router';
 import {
   Button,
   ButtonProps,
@@ -24,6 +25,7 @@ interface Props extends ButtonProps {
 }
 
 const UploadScheduleButton: React.FC<Props> = ({ event, ...props }) => {
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -45,6 +47,7 @@ const UploadScheduleButton: React.FC<Props> = ({ event, ...props }) => {
           enqueueSnackbar('לוח הזמנים עודכן בהצלחה.', { variant: 'success' });
           setDialogOpen(false);
           setFile(null);
+          router.reload();
         } else {
           throw new Error('HTTP-ERROR');
         }
