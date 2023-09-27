@@ -16,10 +16,10 @@ import {
   RoleAssociationType,
   getAssociationType
 } from '@lems/types';
+import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
-import { localizedJudgingCategory } from '../../../../libs/season/src/lib/localization/judging';
 
 interface LoginFormProps {
   event: WithId<Event>;

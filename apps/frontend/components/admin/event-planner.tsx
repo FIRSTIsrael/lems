@@ -23,14 +23,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddIcon from '@mui/icons-material/Add';
 import dayjs from 'dayjs';
 import { Event, EventPlanEntry, Role, RoleTypes } from '@lems/types';
-import { replaceArrayElement } from '@lems/utils';
 import { localizedRoles } from '../../localization/roles';
-
-// TODO: תפקידים label is too low when its empty
-// TODO: Time picker gui (click on the clocks) is wonk af
-// TODO: Roles field grows but the other stay small
-// TODO: save button saves in db
-// TODO: This entire code needs cleaning because its not DRY at all and its very dumb
+import { apiFetch } from '../../lib/utils/fetch';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props extends ButtonProps {
   event: WithId<Event>;
@@ -39,6 +34,20 @@ interface Props extends ButtonProps {
 const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
   const theme = useTheme();
   const [plan, setPlan] = useState<Array<EventPlanEntry>>(event.plan || []);
+
+  const updateEvent = () => {
+    apiFetch(`/api/admin/events/${event._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
+    }).then(res => {
+      if (res.ok) {
+        enqueueSnackbar('תוכנית האירוע נשמרה בהצלחה!', { variant: 'success' });
+      } else {
+        enqueueSnackbar('אופס, שמירת תוכנית האירוע נכשלה.', { variant: 'error' });
+      }
+    });
+  };
 
   const getStyles = (name: string, personName: readonly string[], theme: Theme) => {
     return {
@@ -50,7 +59,13 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
   };
 
   return (
-    <>
+    <Box
+      component="form"
+      onSubmit={e => {
+        e.preventDefault();
+        updateEvent();
+      }}
+    >
       <Typography variant="h2" fontSize="1.25rem" fontWeight={600} gutterBottom>
         תכנית האירוע
       </Typography>
@@ -60,19 +75,18 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
             <Stack direction="row" spacing={2} key={index} alignItems="flex-start">
               <TextField
                 label="שם"
+                size="small"
                 fullWidth
                 value={entry.name}
                 onChange={e =>
-                  setPlan(plan =>
-                    replaceArrayElement(
-                      plan,
-                      (element: EventPlanEntry) => element.name === entry.name,
-                      {
-                        ...entry,
-                        name: e.target.value
-                      }
-                    )
-                  )
+                  setPlan(plan => {
+                    const newPlan = [...plan];
+                    newPlan[index] = {
+                      ...entry,
+                      name: e.target.value
+                    };
+                    return newPlan;
+                  })
                 }
               />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -82,22 +96,25 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                   sx={{ minWidth: 110 }}
                   onChange={newTime => {
                     if (newTime) {
-                      setPlan(plan =>
-                        replaceArrayElement(
-                          plan,
-                          (element: EventPlanEntry) => element.name === entry.name,
-                          {
-                            ...entry,
-                            startTime: newTime.toDate()
-                          }
-                        )
-                      );
+                      setPlan(plan => {
+                        const newPlan = [...plan];
+                        newPlan[index] = {
+                          ...entry,
+                          startTime: newTime.toDate()
+                        };
+                        return newPlan.sort(
+                          (a, b) =>
+                            new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+                        );
+                      });
                     }
                   }}
+                  ampm={false}
                   format="HH:mm"
                   slots={{
                     textField: params => <TextField {...params} />
                   }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
                 <TimePicker
                   label="שעת סיום"
@@ -105,22 +122,22 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                   sx={{ minWidth: 110 }}
                   onChange={newTime => {
                     if (newTime) {
-                      setPlan(plan =>
-                        replaceArrayElement(
-                          plan,
-                          (element: EventPlanEntry) => element.name === entry.name,
-                          {
-                            ...entry,
-                            endTime: newTime.toDate()
-                          }
-                        )
-                      );
+                      setPlan(plan => {
+                        const newPlan = [...plan];
+                        newPlan[index] = {
+                          ...entry,
+                          endTime: newTime.toDate()
+                        };
+                        return newPlan;
+                      });
                     }
                   }}
+                  ampm={false}
                   format="HH:mm"
                   slots={{
                     textField: params => <TextField {...params} />
                   }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
               </LocalizationProvider>
               <FormControl fullWidth>
@@ -135,20 +152,17 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                     const {
                       target: { value }
                     } = e;
-                    setPlan(plan =>
-                      replaceArrayElement(
-                        plan,
-                        (element: EventPlanEntry) => element.name === entry.name,
-                        {
-                          ...entry,
-                          // On autofill we get a stringified value.
-                          roles:
-                            typeof value === 'string'
-                              ? (value.split(',') as Array<Role>)
-                              : (value as Array<Role>)
-                        }
-                      )
-                    );
+                    setPlan(plan => {
+                      const newPlan = [...plan];
+                      newPlan[index] = {
+                        ...entry,
+                        roles:
+                          typeof value === 'string'
+                            ? (value.split(',') as Array<Role>)
+                            : (value as Array<Role>)
+                      };
+                      return newPlan;
+                    });
                   }}
                   input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
                   renderValue={selected => (
@@ -182,10 +196,17 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
       <IconButton
         sx={{ mt: 2 }}
         onClick={() =>
-          setPlan(plan => [
-            ...plan,
-            { name: 'test', startTime: new Date(), endTime: new Date(), roles: [] }
-          ])
+          setPlan(plan =>
+            [
+              ...plan,
+              {
+                name: `מרכיב תכנית ${plan.length + 1}`,
+                startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
+                endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
+                roles: []
+              }
+            ].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+          )
         }
       >
         <AddIcon />
@@ -196,7 +217,7 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
           שמירה
         </Button>
       </Box>
-    </>
+    </Box>
   );
 };
 
