@@ -1,26 +1,26 @@
-import { ObjectId, W, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { RobotGameMatchType, RobotGameMatchStatus, RobotGameMatchPresent } from '../constants';
 import { Team } from './team';
 
 export interface RobotGameMatchBrief {
+  eventId: ObjectId;
   number: number;
   type: RobotGameMatchType;
-  eventId: ObjectId;
   status: RobotGameMatchStatus;
   scheduledTime?: Date;
   startTime?: Date;
 }
 
-export interface RobotGameMatch extends RobotGameMatchBrief {
-  round: number;
+interface RobotGameMatchParticipant {
   teamId: ObjectId;
   team?: Team;
   tableId: ObjectId;
   tableName?: string;
+  round: number;
   present: RobotGameMatchPresent;
   ready: boolean;
 }
 
-export interface RobotGameMatchGroup extends RobotGameMatchBrief {
-  teams: WithId<RobotGameMatch>[];
+export interface RobotGameMatch extends RobotGameMatchBrief {
+  participants: RobotGameMatchParticipant[];
 }

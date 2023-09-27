@@ -1,20 +1,14 @@
 import { WithId } from 'mongodb';
 import { Scoresheet, RobotGameMatch } from '@lems/types';
 
-export const getEventScoresheets = (matches: Array<WithId<RobotGameMatch>>): Array<Scoresheet> => {
-  const scoresheets = [];
-
-  matches.forEach(match => {
-    const scoresheet: Scoresheet = {
+export const getEventScoresheets = (matches: Array<WithId<RobotGameMatch>>): Array<Scoresheet> =>
+  matches.flatMap(match =>
+    match.participants.map(participant => ({
       eventId: match.eventId,
       matchId: match._id,
-      teamId: match.teamId,
+      teamId: participant.teamId,
       stage: match.type,
-      round: match.round,
+      round: participant.round,
       status: 'empty'
-    };
-    scoresheets.push(scoresheet);
-  });
-
-  return scoresheets;
-};
+    }))
+  );

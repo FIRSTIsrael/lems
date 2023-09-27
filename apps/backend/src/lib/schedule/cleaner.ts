@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import * as db from '@lems/database';
-import { Event, RobotGameTable, JudgingRoom, Team } from '@lems/types';
+import { Event, JudgingRoom, Team } from '@lems/types';
 
 export const cleanEventData = async (event: WithId<Event>) => {
   const oldEventState = await db.getEventStateFromEvent(event._id);
@@ -9,16 +9,8 @@ export const cleanEventData = async (event: WithId<Event>) => {
       throw new Error('Could not delete event state!');
   }
 
-  const oldTables = await db.getEventTables(event._id);
   const oldRooms = await db.getEventRooms(event._id);
   const oldTeams = await db.getEventTeams(event._id);
-
-  await Promise.all(
-    oldTables.map(async (table: WithId<RobotGameTable>) => {
-      if (!(await db.deleteTableMatches(table._id)).acknowledged)
-        throw new Error('Could not delete matches!');
-    })
-  );
 
   await Promise.all(
     oldRooms.map(async (room: WithId<JudgingRoom>) => {
@@ -46,6 +38,8 @@ export const cleanEventData = async (event: WithId<Event>) => {
   if (!(await db.deleteEventTables(event._id)).acknowledged)
     throw new Error('Could not delete tables!');
   if (!(await db.deleteEventRooms(event._id)).acknowledged)
+    throw new Error('Could not delete rooms!');
+  if (!(await db.deleteEventMatches(event._id)).acknowledged)
     throw new Error('Could not delete rooms!');
   if (!(await db.deleteEventUsers(event._id)).acknowledged)
     throw new Error('Could not delete users!');

@@ -120,37 +120,39 @@ const parseMatches = (
   const LINES_TO_SKIP = 4;
   lines = (lines || []).splice(LINES_TO_SKIP);
   const matches: RobotGameMatch[] = [];
-
   const tableNames = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
 
   lines.forEach(line => {
-    const number = parseInt(line[0]);
     const round = parseInt(line[1]);
     const [hour, minute] = line[2].split(':');
-    const startTime = dayjs(event.startDate)
-      .set('hour', parseInt(hour))
-      .set('minute', parseInt(minute))
-      .set('second', 0);
+    const match: RobotGameMatch = {
+      eventId: event._id,
+      number: parseInt(line[0]),
+      type,
+      status: 'not-started',
+      scheduledTime: dayjs(event.startDate)
+        .set('hour', parseInt(hour))
+        .set('minute', parseInt(minute))
+        .set('second', 0)
+        .toDate(),
+      participants: []
+    };
 
     for (let i = 4; i < line.length; i++) {
       if (line[i]) {
         const table = tables.find(table => table.name === tableNames[i - 4]);
         const team = teams.find(team => team.number === parseInt(line[i]));
-
-        matches.push({
-          eventId: event._id,
-          number,
-          type,
+        match.participants.push({
           round,
-          scheduledTime: startTime.toDate(),
           teamId: team._id,
           tableId: table._id,
           ready: false,
-          status: 'not-started',
           present: 'present'
-        } satisfies RobotGameMatch);
+        });
       }
     }
+
+    matches.push(match);
   });
 
   return matches;

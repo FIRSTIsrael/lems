@@ -3,35 +3,7 @@ import { RobotGameMatch } from '@lems/types';
 import db from '../database';
 
 export const findMatches = (filter: Filter<RobotGameMatch>) => {
-  return db.collection('matches').aggregate<WithId<RobotGameMatch>>([
-    {
-      $match: filter
-    },
-    {
-      $lookup: {
-        from: 'teams',
-        localField: 'teamId',
-        foreignField: '_id',
-        as: 'team'
-      }
-    },
-    {
-      $lookup: {
-        from: 'tables',
-        localField: 'tableId',
-        foreignField: '_id',
-        as: 'tableName'
-      }
-    },
-    {
-      $set: {
-        tableName: { $arrayElemAt: ['$tableName.name', 0] }
-      }
-    },
-    {
-      $unwind: '$team'
-    }
-  ]);
+  return db.collection<RobotGameMatch>('matches').find(filter);
 };
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
@@ -95,6 +67,13 @@ export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
   return db
     .collection<RobotGameMatch>('matches')
     .deleteOne(filter)
+    .then(response => response);
+};
+
+export const deleteEventMatches = (eventId: ObjectId) => {
+  return db
+    .collection<RobotGameMatch>('matches')
+    .deleteMany({ eventId: eventId })
     .then(response => response);
 };
 
