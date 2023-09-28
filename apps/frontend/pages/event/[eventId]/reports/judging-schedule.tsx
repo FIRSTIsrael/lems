@@ -20,7 +20,8 @@ import {
   SafeUser,
   JudgingSession,
   RoleTypes,
-  JUDGING_SESSION_LENGTH
+  JUDGING_SESSION_LENGTH,
+  EventPlanEntry
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -66,11 +67,20 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
 };
 
 interface PlanRowProps {
-  plan: number; // TODO
+  plan: EventPlanEntry;
+  colSpan: number;
 }
 
-const PlanRow: React.FC<PlanRowProps> = ({ plan }) => {
-  return <Typography>Hi</Typography>;
+const PlanRow: React.FC<PlanRowProps> = ({ plan, colSpan }) => {
+  return (
+    <TableRow>
+      <TableCell>{dayjs(plan.startTime).format('HH:mm')}</TableCell>
+      <TableCell>{dayjs(plan.endTime).format('HH:mm')}</TableCell>
+      <TableCell colSpan={colSpan} sx={{ textAlign: 'center' }}>
+        {plan.name}
+      </TableCell>
+    </TableRow>
+  );
 };
 
 interface Props {
@@ -132,23 +142,53 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
               </TableRow>
             </TableHead>
             <TableBody>
+              {judgingPlan
+                .filter(p => {
+                  const firstSession = Math.min(...sessions.flatMap(s => s.number));
+                  const firstSessionTime = dayjs(
+                    sessions.find(s => s.number === firstSession)?.time
+                  );
+
+                  return dayjs(p.startTime).isBefore(firstSessionTime);
+                })
+                .map(rp => (
+                  <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                ))}
               {[...new Set(sessions.flatMap(s => s.number))].map(row => {
                 const rowTime = dayjs(sessions.find(s => s.number === row)?.time);
                 const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.time);
-
-                // before each judging row - if judgingPlan has entries with starttime < rowTime and starttime > previousRowTime
-                // display a plan row for every entry
+                const rowPlan =
+                  judgingPlan.filter(
+                    p =>
+                      dayjs(p.startTime).isBefore(rowTime) &&
+                      dayjs(p.startTime).isAfter(prevRowTime)
+                  ) || [];
 
                 return (
-                  <JudgingScheduleRow
-                    key={row}
-                    number={row}
-                    teams={teams}
-                    sessions={sessions}
-                    rooms={rooms}
-                  />
+                  <>
+                    {rowPlan.map(rp => (
+                      <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                    ))}
+                    <JudgingScheduleRow
+                      key={row}
+                      number={row}
+                      teams={teams}
+                      sessions={sessions}
+                      rooms={rooms}
+                    />
+                  </>
                 );
               })}
+              {judgingPlan
+                .filter(p => {
+                  const lastSession = Math.max(...sessions.flatMap(s => s.number));
+                  const lastSessionTime = dayjs(sessions.find(s => s.number === lastSession)?.time);
+
+                  return dayjs(p.startTime).isAfter(lastSessionTime);
+                })
+                .map(rp => (
+                  <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
