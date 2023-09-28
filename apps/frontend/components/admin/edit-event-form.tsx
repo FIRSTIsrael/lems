@@ -19,6 +19,7 @@ import 'dayjs/locale/he';
 import dayjs, { Dayjs } from 'dayjs';
 import { DivisionColor, Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props extends ButtonProps {
   event: WithId<Event>;
@@ -40,7 +41,13 @@ const EditEventForm: React.FC<Props> = ({ event, onSubmit }) => {
         endDate: endDate?.toDate(),
         color
       })
-    }).then(res => res.json());
+    }).then(res => {
+      if (res.ok) {
+        enqueueSnackbar('פרטי האירוע נשמרו בהצלחה!', { variant: 'success' });
+      } else {
+        enqueueSnackbar('אופס, שמירת פרטי האירוע נכשלה.', { variant: 'error' });
+      }
+    });
   };
 
   return (

@@ -33,6 +33,11 @@ router.put('/:eventId', (req: Request, res: Response) => {
   body.startDate = new Date(body.startDate);
   body.endDate = new Date(body.endDate);
 
+  if (body.schedule)
+    body.schedule = body.schedule.map(e => {
+      return { ...e, startTime: new Date(e.startTime), endTime: new Date(e.endTime) };
+    });
+
   if (body) {
     console.log(`⏬ Updating Event ${req.params.eventId}`);
     db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body).then(task => {
