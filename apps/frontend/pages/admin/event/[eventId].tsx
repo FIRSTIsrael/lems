@@ -8,7 +8,7 @@ import GenerateScheduleButton from '../../../components/admin/generate-schedule'
 import UploadScheduleButton from '../../../components/admin/upload-schedule';
 import EditEventForm from '../../../components/admin/edit-event-form';
 import DeleteEventData from '../../../components/admin/delete-event-data';
-import EventPlanner from '../../../components/admin/event-planner';
+import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -24,7 +24,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
       </Paper>
 
       <Paper sx={{ p: 4, mt: 2 }}>
-        <EventPlanner event={event} />
+        <EventScheduleEditor event={event} />
       </Paper>
 
       <Paper sx={{ p: 4, mt: 2 }}>
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
   const event = await apiFetch(
-    `/api/events/${ctx.params?.eventId}?withPlan=true`,
+    `/api/events/${ctx.params?.eventId}?withSchedule=true`,
     undefined,
     ctx
   ).then(res => res?.json());

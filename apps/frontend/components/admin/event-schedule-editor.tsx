@@ -22,7 +22,7 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddIcon from '@mui/icons-material/Add';
 import dayjs from 'dayjs';
-import { Event, EventPlanEntry, Role, RoleTypes } from '@lems/types';
+import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
@@ -31,15 +31,15 @@ interface Props extends ButtonProps {
   event: WithId<Event>;
 }
 
-const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
+const EventScheduleEditor: React.FC<Props> = ({ event, ...props }) => {
   const theme = useTheme();
-  const [plan, setPlan] = useState<Array<EventPlanEntry>>(event.plan || []);
+  const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
 
   const updateEvent = () => {
     apiFetch(`/api/admin/events/${event._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan })
+      body: JSON.stringify({ schedule: schedule })
     }).then(res => {
       if (res.ok) {
         enqueueSnackbar('תוכנית האירוע נשמרה בהצלחה!', { variant: 'success' });
@@ -70,7 +70,7 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
         תכנית האירוע
       </Typography>
       <Stack spacing={2} mt={2}>
-        {plan.map((entry, index) => {
+        {schedule.map((entry, index) => {
           return (
             <Stack direction="row" spacing={2} key={index} alignItems="flex-start">
               <TextField
@@ -79,13 +79,13 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                 fullWidth
                 value={entry.name}
                 onChange={e =>
-                  setPlan(plan => {
-                    const newPlan = [...plan];
-                    newPlan[index] = {
+                  setSchedule(schedule => {
+                    const newSchedule = [...schedule];
+                    newSchedule[index] = {
                       ...entry,
                       name: e.target.value
                     };
-                    return newPlan;
+                    return newSchedule;
                   })
                 }
               />
@@ -96,13 +96,13 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                   sx={{ minWidth: 110 }}
                   onChange={newTime => {
                     if (newTime) {
-                      setPlan(plan => {
-                        const newPlan = [...plan];
-                        newPlan[index] = {
+                      setSchedule(schedule => {
+                        const newSchedule = [...schedule];
+                        newSchedule[index] = {
                           ...entry,
                           startTime: newTime.toDate()
                         };
-                        return newPlan.sort(
+                        return newSchedule.sort(
                           (a, b) =>
                             new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
                         );
@@ -122,13 +122,13 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                   sx={{ minWidth: 110 }}
                   onChange={newTime => {
                     if (newTime) {
-                      setPlan(plan => {
-                        const newPlan = [...plan];
-                        newPlan[index] = {
+                      setSchedule(schedule => {
+                        const newSchedule = [...schedule];
+                        newSchedule[index] = {
                           ...entry,
                           endTime: newTime.toDate()
                         };
-                        return newPlan;
+                        return newSchedule;
                       });
                     }
                   }}
@@ -152,16 +152,16 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
                     const {
                       target: { value }
                     } = e;
-                    setPlan(plan => {
-                      const newPlan = [...plan];
-                      newPlan[index] = {
+                    setSchedule(schedule => {
+                      const newSchedule = [...schedule];
+                      newSchedule[index] = {
                         ...entry,
                         roles:
                           typeof value === 'string'
                             ? (value.split(',') as Array<Role>)
                             : (value as Array<Role>)
                       };
-                      return newPlan;
+                      return newSchedule;
                     });
                   }}
                   input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
@@ -196,11 +196,11 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
       <IconButton
         sx={{ mt: 2 }}
         onClick={() =>
-          setPlan(plan =>
+          setSchedule(schedule =>
             [
-              ...plan,
+              ...schedule,
               {
-                name: `מרכיב תכנית ${plan.length + 1}`,
+                name: `מרכיב תכנית ${schedule.length + 1}`,
                 startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
@@ -221,4 +221,4 @@ const EventPlanner: React.FC<Props> = ({ event, ...props }) => {
   );
 };
 
-export default EventPlanner;
+export default EventScheduleEditor;

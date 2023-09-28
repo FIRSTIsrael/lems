@@ -21,7 +21,7 @@ import {
   JudgingSession,
   RoleTypes,
   JUDGING_SESSION_LENGTH,
-  EventPlanEntry
+  EventScheduleEntry
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -66,18 +66,18 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
   );
 };
 
-interface PlanRowProps {
-  plan: EventPlanEntry;
+interface GeneralScheduleRowProps {
+  schedule: EventScheduleEntry;
   colSpan: number;
 }
 
-const PlanRow: React.FC<PlanRowProps> = ({ plan, colSpan }) => {
+const GeneralScheduleRow: React.FC<GeneralScheduleRowProps> = ({ schedule, colSpan }) => {
   return (
     <TableRow>
-      <TableCell>{dayjs(plan.startTime).format('HH:mm')}</TableCell>
-      <TableCell>{dayjs(plan.endTime).format('HH:mm')}</TableCell>
+      <TableCell>{dayjs(schedule.startTime).format('HH:mm')}</TableCell>
+      <TableCell>{dayjs(schedule.endTime).format('HH:mm')}</TableCell>
       <TableCell colSpan={colSpan} sx={{ textAlign: 'center' }}>
-        {plan.name}
+        {schedule.name}
       </TableCell>
     </TableRow>
   );
@@ -95,7 +95,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
 
-  const judgingPlan = event.plan?.filter(p => p.roles.includes('judge')) || [];
+  const judgesGeneralSchedule = event.schedule?.filter(s => s.roles.includes('judge')) || [];
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -142,23 +142,23 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
               </TableRow>
             </TableHead>
             <TableBody>
-              {judgingPlan
-                .filter(p => {
+              {judgesGeneralSchedule
+                .filter(s => {
                   const firstSession = Math.min(...sessions.flatMap(s => s.number));
                   const firstSessionTime = dayjs(
                     sessions.find(s => s.number === firstSession)?.time
                   );
 
-                  return dayjs(p.startTime).isBefore(firstSessionTime);
+                  return dayjs(s.startTime).isBefore(firstSessionTime);
                 })
-                .map(rp => (
-                  <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                .map(rs => (
+                  <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
                 ))}
               {[...new Set(sessions.flatMap(s => s.number))].map(row => {
                 const rowTime = dayjs(sessions.find(s => s.number === row)?.time);
                 const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.time);
-                const rowPlan =
-                  judgingPlan.filter(
+                const rowSchedule =
+                  judgesGeneralSchedule.filter(
                     p =>
                       dayjs(p.startTime).isBefore(rowTime) &&
                       dayjs(p.startTime).isAfter(prevRowTime)
@@ -166,8 +166,8 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
 
                 return (
                   <>
-                    {rowPlan.map(rp => (
-                      <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                    {rowSchedule.map(rs => (
+                      <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
                     ))}
                     <JudgingScheduleRow
                       key={row}
@@ -179,15 +179,15 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
                   </>
                 );
               })}
-              {judgingPlan
-                .filter(p => {
+              {judgesGeneralSchedule
+                .filter(s => {
                   const lastSession = Math.max(...sessions.flatMap(s => s.number));
                   const lastSessionTime = dayjs(sessions.find(s => s.number === lastSession)?.time);
 
-                  return dayjs(p.startTime).isAfter(lastSessionTime);
+                  return dayjs(s.startTime).isAfter(lastSessionTime);
                 })
-                .map(rp => (
-                  <PlanRow key={rp.name} plan={rp} colSpan={rooms.length} />
+                .map(rs => (
+                  <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
                 ))}
             </TableBody>
           </Table>
@@ -201,9 +201,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}?withPlan=true`, undefined, ctx).then(
-      res => res?.json()
-    );
+    const eventPromise = apiFetch(
+      `/api/events/${user.event}?withSchedule=true`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
 
     const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
       res?.json()

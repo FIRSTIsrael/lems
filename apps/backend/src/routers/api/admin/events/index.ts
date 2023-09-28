@@ -33,8 +33,8 @@ router.put('/:eventId', (req: Request, res: Response) => {
   body.startDate = new Date(body.startDate);
   body.endDate = new Date(body.endDate);
 
-  if (body.plan)
-    body.plan = body.plan.map(e => {
+  if (body.schedule)
+    body.schedule = body.schedule.map(e => {
       return { ...e, startTime: new Date(e.startTime), endTime: new Date(e.endTime) };
     });
 

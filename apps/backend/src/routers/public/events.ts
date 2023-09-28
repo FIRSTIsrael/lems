@@ -8,7 +8,7 @@ router.get('/', (req: Request, res: Response) => {
   db.getAllEvents().then(events =>
     res.json(
       events.map(e => {
-        const { plan, ...rest } = e;
+        const { schedule, ...rest } = e;
         return rest;
       })
     )
@@ -17,7 +17,7 @@ router.get('/', (req: Request, res: Response) => {
 
 router.get('/:eventId', (req: Request, res: Response) => {
   db.getEvent(new ObjectId(req.params.eventId)).then(event => {
-    const { plan, ...rest } = event;
+    const { schedule, ...rest } = event;
     res.json(rest);
   });
 });
