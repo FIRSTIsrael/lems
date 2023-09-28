@@ -42,9 +42,9 @@ const EventScheduleEditor: React.FC<Props> = ({ event, ...props }) => {
       body: JSON.stringify({ schedule: schedule })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('תוכנית האירוע נשמרה בהצלחה!', { variant: 'success' });
+        enqueueSnackbar('לוח הזמנים של האירוע נשמרה בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת תוכנית האירוע נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, שמירת לוח הזמנים של האירוע נכשלה.', { variant: 'error' });
       }
     });
   };
@@ -67,7 +67,7 @@ const EventScheduleEditor: React.FC<Props> = ({ event, ...props }) => {
       }}
     >
       <Typography variant="h2" fontSize="1.25rem" fontWeight={600} gutterBottom>
-        תכנית האירוע
+        לוח זמנים כללי לאירוע
       </Typography>
       <Stack spacing={2} mt={2}>
         {schedule.map((entry, index) => {
@@ -200,7 +200,7 @@ const EventScheduleEditor: React.FC<Props> = ({ event, ...props }) => {
             [
               ...schedule,
               {
-                name: `מרכיב תכנית ${schedule.length + 1}`,
+                name: `מרכיב לו"ז ${schedule.length + 1}`,
                 startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
