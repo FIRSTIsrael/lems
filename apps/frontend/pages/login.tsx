@@ -6,8 +6,9 @@ import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/login/event-selector';
 import LoginForm from '../components/login/login-form';
-import { apiFetch } from '../lib/utils/fetch';
 import AdminLoginForm from '../components/login/admin-login-form';
+import { apiFetch } from '../lib/utils/fetch';
+import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
   events: Array<WithId<Event>>;
@@ -23,6 +24,16 @@ const Page: NextPage<PageProps> = ({ events }) => {
     const selectedEvent = events.find(e => e._id == eventId);
     setEvent(selectedEvent);
   };
+
+  useEffect(() => {
+    loadScriptByURL(
+      'recaptcha-key',
+      `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`,
+      () => {
+        //Callback here
+      }
+    );
+  }, []);
 
   useEffect(() => {
     if (event) {

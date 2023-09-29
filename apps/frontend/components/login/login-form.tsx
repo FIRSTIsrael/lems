@@ -9,7 +9,6 @@ import {
   Event,
   JudgingRoom,
   RobotGameTable,
-  User,
   JudgingCategoryTypes,
   RoleTypes,
   Role,
@@ -63,36 +62,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    apiFetch('/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        isAdmin: false,
-        event: event?._id,
-        role,
-        ...(association
-          ? {
-              roleAssociation: {
-                type: associationType,
-                value: association
+
+    grecaptcha.ready(() => {
+      grecaptcha
+        .execute(`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`, {
+          action: 'submit'
+        })
+        .then(captchaToken => {
+          apiFetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              isAdmin: false,
+              event: event?._id,
+              role,
+              ...(association
+                ? {
+                    roleAssociation: {
+                      type: associationType,
+                      value: association
+                    }
+                  }
+                : undefined),
+              password,
+              captchaToken
+            })
+          })
+            .then(async res => {
+              const data = await res.json();
+              if (data) {
+                const returnUrl = router.query.returnUrl || `/event/${event._id}`;
+                router.push(returnUrl as string);
+              } else if (data.error === 'INVALID_CREDENTIALS') {
+                enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
+              } else {
+                throw new Error(res.statusText);
               }
-            }
-          : undefined),
-        password
-      } as User)
-    })
-      .then(async res => {
-        const data = await res.json();
-        if (data) {
-          const returnUrl = router.query.returnUrl || `/event/${event._id}`;
-          router.push(returnUrl as string);
-        } else if (data.error === 'INVALID_CREDENTIALS') {
-          enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
-        } else {
-          throw new Error(res.statusText);
-        }
-      })
-      .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
+            })
+            .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
+        });
+    });
   };
 
   return (

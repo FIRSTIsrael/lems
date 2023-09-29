@@ -4,3 +4,12 @@ import { JwtPayload } from 'jsonwebtoken';
 export interface JwtTokenData extends JwtPayload {
   userId: ObjectId;
 }
+
+export interface RecaptchaResponse {
+  success: boolean;
+  score: number;
+  action: string;
+  challenge_ts: string;
+  hostname: string;
+  'error-codes'?: Array<string>;
+}
