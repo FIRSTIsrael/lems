@@ -21,7 +21,7 @@ router.get('/:matchId', (req: Request, res: Response) => {
 
 router.get('/:matchId/scoresheet', (req: Request, res: Response) => {
   db.getScoresheet({
-    match: new ObjectId(req.params.matchId)
+    matchId: new ObjectId(req.params.matchId)
   }).then(match => {
     res.json(match);
   });

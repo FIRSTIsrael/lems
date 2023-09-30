@@ -37,11 +37,7 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
-  const handleMatchEvent = (
-    newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
-  ) => {
-    setEventState(newEventState);
+  const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === newMatch._id) {
@@ -52,11 +48,20 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    setEventState(newEventState);
+    updateMatches(newMatch);
+  };
+
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'matchStarted', handler: handleMatchEvent },
     { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent }
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: updateMatches }
   ]);
 
   return (
@@ -111,8 +116,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       eventStatePromise,
       matchesPromise
     ]);
-
-    console.log(matches);
 
     return { props: { user, event, table, eventState, matches } };
   } catch (err) {

@@ -92,7 +92,7 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
   if (!team.registered) router.back();
-  if (match.status !== 'scoring') router.back();
+  if (match.status !== 'completed') router.back();
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
     router.push(`/event/${event._id}/${user.role}`);
 

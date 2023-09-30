@@ -15,7 +15,7 @@ import {
 } from '@lems/types';
 import WaitForMatchStart from './wait-for-start';
 import MatchPrestart from './prestart';
-import DoneCard from './done-card';
+import NoMatchCard from './no-match-card';
 import Timer from './timer';
 import { apiFetch } from '../../../lib/utils/fetch';
 
@@ -55,7 +55,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       if (match) {
         const participantIndex = match.participants.findIndex(p => p.tableId === table._id);
         if (participantIndex !== -1) {
-          const updatedMatch = { ...match };
+          const { _id, ...updatedMatch } = { ...match };
           updatedMatch.participants[participantIndex] = {
             ...updatedMatch.participants[participantIndex],
             ...updatedMatchParticipant
@@ -78,16 +78,6 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   );
 
   useEffect(() => {
-    // if active match and we are in active match
-    // timer
-
-    // get our table's highest match that has been completed
-    // did we finished doing the scoresheet
-    // if not then scoresheet
-    // if we did - loaded match?
-    // yes - prestart
-    // no - no-match
-
     const getScoresheet = (matchId: ObjectId) => {
       return apiFetch(
         `/api/events/${event._id}/tables/${table._id}/matches/${matchId}/scoresheet`
@@ -104,13 +94,16 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       const loadedMatch = matches.find(m => m._id === eventState.loadedMatch);
       const completedMatches = matches.filter(m => m.status === 'completed');
       const lastCompletedMatch = completedMatches[completedMatches.length - 1];
+      const completedMatchParticipant = lastCompletedMatch?.participants.find(
+        p => p.tableId === table._id
+      );
 
       if (lastCompletedMatch) {
         // Check if we finished doing the scoresheet of the last completed match
         getScoresheet(lastCompletedMatch._id).then(scoresheet => {
           if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
             router.push(
-              `/event/${event._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`
+              `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
             );
           } else {
             setMatch(loadedMatch);
@@ -146,7 +139,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       {participant && match && displayState === 'timer' && (
         <Timer participant={participant} match={match} />
       )}
-      {displayState === 'no-match' && <DoneCard />}
+      {displayState === 'no-match' && <NoMatchCard />}
     </>
   );
 };

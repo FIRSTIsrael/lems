@@ -169,7 +169,7 @@ export const handleUpdateScoresheet = async (
   callback
 ) => {
   const scoresheet = await db.getScoresheet({
-    team: new ObjectId(teamId),
+    teamId: new ObjectId(teamId),
     _id: new ObjectId(scoresheetId)
   });
   if (!scoresheet) {

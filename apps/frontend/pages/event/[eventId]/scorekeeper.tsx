@@ -31,11 +31,7 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<EventState>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
-  const handleMatchEvent = (
-    newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
-  ) => {
-    setEventState(newEventState);
+  const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === newMatch._id) {
@@ -46,11 +42,20 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    setEventState(newEventState);
+    updateMatches(newMatch);
+  };
+
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchAborted', handler: handleMatchEvent },
     { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent }
+    { name: 'matchUpdated', handler: updateMatches }
   ]);
 
   const nextMatchId = matches?.find(match => match.status === 'not-started')?._id;
