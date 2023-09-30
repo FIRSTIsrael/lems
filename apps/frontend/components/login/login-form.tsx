@@ -18,18 +18,18 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { withRecaptchaToken } from '../../lib/utils/captcha';
+import { createRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
 
 interface Props {
-  recaptcha: boolean;
+  recaptchaRequired: boolean;
   event: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<Props> = ({ recaptcha, event, rooms, tables, onCancel }) => {
+const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, onCancel }) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -99,7 +99,7 @@ const LoginForm: React.FC<Props> = ({ recaptcha, event, rooms, tables, onCancel 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    recaptcha ? withRecaptchaToken(login) : login();
+    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
   };
 
   return (

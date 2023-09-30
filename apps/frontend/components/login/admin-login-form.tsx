@@ -4,13 +4,13 @@ import { useSnackbar } from 'notistack';
 import { Button, Box, Typography, Stack, TextField } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { apiFetch } from '../../lib/utils/fetch';
-import { withRecaptchaToken } from '../../lib/utils/captcha';
+import { createRecaptchaToken } from '../../lib/utils/captcha';
 
 interface Props {
-  recaptcha: boolean;
+  recaptchaRequired: boolean;
 }
 
-const AdminLoginForm: React.FC<Props> = ({ recaptcha }) => {
+const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -44,7 +44,7 @@ const AdminLoginForm: React.FC<Props> = ({ recaptcha }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    recaptcha ? withRecaptchaToken(login) : login();
+    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
   };
 
   return (

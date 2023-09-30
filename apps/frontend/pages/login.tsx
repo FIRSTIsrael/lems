@@ -12,10 +12,10 @@ import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
   events: Array<WithId<Event>>;
-  recaptcha: boolean;
+  recaptchaRequired: boolean;
 }
 
-const Page: NextPage<PageProps> = ({ events, recaptcha }) => {
+const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
   const [event, setEvent] = useState<WithId<Event> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
@@ -27,13 +27,10 @@ const Page: NextPage<PageProps> = ({ events, recaptcha }) => {
   };
 
   useEffect(() => {
-    if (recaptcha) {
+    if (recaptchaRequired) {
       loadScriptByURL(
         'recaptcha-key',
-        `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`,
-        () => {
-          //Callback here
-        }
+        `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
       );
     }
   }, []);
@@ -58,10 +55,10 @@ const Page: NextPage<PageProps> = ({ events, recaptcha }) => {
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
-          <AdminLoginForm recaptcha={recaptcha} />
+          <AdminLoginForm recaptchaRequired={recaptchaRequired} />
         ) : event && rooms && tables ? (
           <LoginForm
-            recaptcha={recaptcha}
+            recaptchaRequired={recaptchaRequired}
             event={event}
             rooms={rooms}
             tables={tables}
@@ -109,7 +106,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return response.ok ? response.json() : undefined;
   });
 
-  const recaptcha = process.env.RECAPTCHA === 'true';
+  const recaptchaRequired = process.env.RECAPTCHA === 'true';
 
   if (user) {
     return user.isAdmin
@@ -119,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return apiFetch('/public/events', undefined, ctx)
       .then(response => response.json())
       .then((events: Array<WithId<Event>>) => {
-        return { props: { events, recaptcha } };
+        return { props: { events, recaptchaRequired } };
       });
   }
 };
