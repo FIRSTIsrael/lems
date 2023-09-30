@@ -2,15 +2,16 @@ import { useState, useMemo, useEffect } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
 import { LinearProgress, Paper, Typography } from '@mui/material';
-import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
+import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
 
-interface TimerProps {
+interface Props {
+  participant: RobotGameMatchParticipant;
   match: WithId<RobotGameMatch>;
 }
 
-const Timer: React.FC<TimerProps> = ({ match }) => {
+const Timer: React.FC<Props> = ({ participant, match }) => {
   const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
 
@@ -26,8 +27,6 @@ const Timer: React.FC<TimerProps> = ({ match }) => {
     [currentTime, matchEnd]
   );
 
-  //TODO: edit to match new schema
-
   return (
     <>
       <Paper sx={{ mt: 4, py: 4, px: 2, textAlign: 'center' }}>
@@ -39,11 +38,11 @@ const Timer: React.FC<TimerProps> = ({ match }) => {
           fontWeight={700}
           dir="ltr"
         />
-        {/* {match.team && (
+        {participant.team && (
           <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
-            {localizeTeam(match.team)}
+            {localizeTeam(participant.team)}
           </Typography>
-        )} */}
+        )}
       </Paper>
       <LinearProgress
         variant="determinate"

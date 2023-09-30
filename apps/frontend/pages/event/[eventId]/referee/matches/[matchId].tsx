@@ -2,7 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Event, Team, SafeUser, RobotGameMatch, RobotGameTable } from '@lems/types';
+import {
+  Event,
+  Team,
+  SafeUser,
+  RobotGameMatch,
+  RobotGameMatchParticipant,
+  RobotGameTable
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../components/connection-indicator';
 import Layout from '../../../../../components/layout';
@@ -24,6 +31,7 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
   const router = useRouter();
   const [match, setMatch] = useState<WithId<RobotGameMatch>>(initialMatch);
+  const participant = match.participants.find(p => p.tableId === table._id);
 
   const fetchMatchData = () =>
     apiFetch(`/api/events/${user.event}/matches/${match._id}`)
@@ -60,8 +68,9 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
     { name: 'matchUpdated', handler: handleMatchUpdated }
   ]);
 
-  const updateMatch = useCallback(
-    (updatedMatch: Partial<RobotGameMatch>) => {
+  const updateMatchParticipant = useCallback(
+    // TODO: make this set the match accordingly and send to the backend
+    (updatedMatch: Partial<RobotGameMatchParticipant>) => {
       setMatch(match => ({ ...match, ...updatedMatch }));
       socket.emit(
         'updateMatch',
@@ -78,13 +87,13 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
     [match._id, match.eventId, socket]
   );
 
-  //TODO: fix matches
-
-  // useEffect(() => {
-  //   if (!match.team?.registered) {
-  //     updateMatch({ present: 'no-show' });
-  //   }
-  // }, [match.team?.registered, updateMatch]);
+  useEffect(() => {
+    if (participant) {
+      if (!participant.team?.registered) {
+        updateMatchParticipant({ present: 'no-show' });
+      }
+    }
+  }, [participant, updateMatchParticipant]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
@@ -94,13 +103,22 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {/* {match.status === 'in-progress' ? (
-          <Timer match={match} />
-        ) : match.ready ? (
-          <WaitForMatchStart match={match} updateMatch={updateMatch} />
-        ) : (
-          <MatchPrestart match={match} updateMatch={updateMatch} />
-        )} */}
+        {participant &&
+          (match.status === 'in-progress' ? (
+            <Timer participant={participant} match={match} />
+          ) : participant.ready ? (
+            <WaitForMatchStart
+              participant={participant}
+              match={match}
+              updateMatchParticipant={updateMatchParticipant}
+            />
+          ) : (
+            <MatchPrestart
+              participant={participant}
+              match={match}
+              updateMatchParticipant={updateMatchParticipant}
+            />
+          ))}
       </Layout>
     </RoleAuthorizer>
   );

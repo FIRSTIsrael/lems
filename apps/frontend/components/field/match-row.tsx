@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import BooleanIcon from '../general/boolean-icon';
 import ScoresheetStatusIcon from './scoresheet-status-icon';
-import { Event, EventState, RobotGameMatch, Scoresheet, Team } from '@lems/types';
+import { Event, EventState, RobotGameMatch, Scoresheet } from '@lems/types';
 import NextLink from 'next/link';
 
 interface Props {
@@ -15,34 +15,32 @@ interface Props {
 }
 
 const MatchRow: React.FC<Props> = ({ event, match, scoresheets, eventState }) => {
-  //TODO: rewrite with new match schema
-
   return (
     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      Hello there
-      {/* {firstMatch && (
-        <TableCell component="th">
-          {localizedMatchType[firstMatch.type]} #{matchNumber}
-          <br />
-          {dayjs(firstMatch.startTime).format('HH:mm')}
-        </TableCell>
-      )}
-      {matches.map((match, index) => {
-        const scoresheet = scoresheets.find(scoresheet => scoresheet.matchId === match?._id);
-        return match && scoresheet ? (
+      <TableCell component="th">
+        {localizedMatchType[match.type]} #{match.number}
+        <br />
+        {dayjs(match.scheduledTime).format('HH:mm')}
+      </TableCell>
+      {match.participants.map((participant, index) => {
+        const scoresheet = scoresheets.find(
+          scoresheet =>
+            scoresheet.matchId === match?._id && scoresheet.teamId === participant.teamId
+        );
+        return scoresheet ? (
           <NextLink
-            href={`/event/${event._id}/team/${match.team}/scoresheet/${scoresheet._id}`}
+            href={`/event/${event._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
             key={match._id.toString()}
             legacyBehavior
           >
             <TableCell align="center">
-              {parseInt(matchNumber) === eventState.activeMatch + 1 ? (
+              {match.number === eventState.currentMatch + 1 ? (
                 <>
-                  <BooleanIcon condition={match.ready} />
+                  <BooleanIcon condition={participant.ready} />
                   <br />
                 </>
               ) : (
-                parseInt(matchNumber) < eventState.activeMatch + 1 &&
+                match.number < eventState.currentMatch + 1 &&
                 scoresheet && (
                   <>
                     <ScoresheetStatusIcon status={scoresheet.status} />
@@ -50,13 +48,13 @@ const MatchRow: React.FC<Props> = ({ event, match, scoresheets, eventState }) =>
                   </>
                 )
               )}
-              קבוצה #{teams.find(t => t._id === match.team)?.number}
+              קבוצה #{participant.team?.number}
             </TableCell>
           </NextLink>
         ) : (
-          <TableCell key={matchNumber + index} />
+          <TableCell key={match.number + index} />
         );
-      })} */}
+      })}
     </TableRow>
   );
 };

@@ -11,7 +11,7 @@ export interface RobotGameMatchBrief {
   startTime?: Date;
 }
 
-interface RobotGameMatchParticipant {
+export interface RobotGameMatchParticipant {
   teamId: ObjectId;
   team?: Team;
   tableId: ObjectId;

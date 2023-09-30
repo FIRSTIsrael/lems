@@ -1,4 +1,4 @@
-import { RobotGameMatch, Team } from '@lems/types';
+import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import { Paper, Stack, Typography, Button, Box } from '@mui/material';
 import { WithId } from 'mongodb';
 import { localizeTeam } from '../../../localization/teams';
@@ -6,20 +6,25 @@ import { localizedMatchPresent } from '../../../localization/field';
 
 interface WaitForMatchStartProps {
   match: WithId<RobotGameMatch>;
-  updateMatch: (match: Partial<RobotGameMatch>) => void;
+  participant: RobotGameMatchParticipant;
+  updateMatchParticipant: (match: Partial<RobotGameMatchParticipant>) => void;
 }
 
-//TODO: edit to match new schema
-
-const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({ match, updateMatch }) => {
+const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({
+  match,
+  participant,
+  updateMatchParticipant
+}) => {
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
       <Typography fontSize="1.5rem" fontWeight={700}>
         המתינו להתחלת מקצה {match.number}
       </Typography>
-      {/* <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
-        {localizeTeam(match.team as Team)} ({localizedMatchPresent[match.present]})
-      </Typography> */}
+      {participant.team && (
+        <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
+          {localizeTeam(participant.team)} ({localizedMatchPresent[participant.present]})
+        </Typography>
+      )}
 
       <Stack alignItems="center" mt={4}>
         <Box
@@ -39,8 +44,7 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({ match, updateMatc
           ALL SET
         </Box>
         <Button
-          // TODO: upate to match new schema
-          // onClick={() => updateMatch({ ready: false })}
+          onClick={() => updateMatchParticipant({ ready: false })}
           variant="contained"
           color="error"
           size="small"
