@@ -3,26 +3,30 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { Button, Box, Typography, Stack, TextField } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { User } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import { createRecaptchaToken } from '../../lib/utils/captcha';
 
-const AdminLoginForm: React.FC = () => {
+interface Props {
+  recaptchaRequired: boolean;
+}
+
+const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const login = (captchaToken?: string) => {
     apiFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         isAdmin: true,
         username,
-        password
-      } as User)
+        password,
+        ...(captchaToken ? { captchaToken } : {})
+      })
     })
       .then(async res => {
         const data = await res.json();
@@ -35,6 +39,12 @@ const AdminLoginForm: React.FC = () => {
         }
       })
       .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
   };
 
   return (

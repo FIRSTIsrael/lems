@@ -6,14 +6,16 @@ import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/login/event-selector';
 import LoginForm from '../components/login/login-form';
-import { apiFetch } from '../lib/utils/fetch';
 import AdminLoginForm from '../components/login/admin-login-form';
+import { apiFetch } from '../lib/utils/fetch';
+import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
   events: Array<WithId<Event>>;
+  recaptchaRequired: boolean;
 }
 
-const Page: NextPage<PageProps> = ({ events }) => {
+const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
   const [event, setEvent] = useState<WithId<Event> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
@@ -23,6 +25,15 @@ const Page: NextPage<PageProps> = ({ events }) => {
     const selectedEvent = events.find(e => e._id == eventId);
     setEvent(selectedEvent);
   };
+
+  useEffect(() => {
+    if (recaptchaRequired) {
+      loadScriptByURL(
+        'recaptcha-key',
+        `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (event) {
@@ -44,9 +55,10 @@ const Page: NextPage<PageProps> = ({ events }) => {
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
-          <AdminLoginForm />
+          <AdminLoginForm recaptchaRequired={recaptchaRequired} />
         ) : event && rooms && tables ? (
           <LoginForm
+            recaptchaRequired={recaptchaRequired}
             event={event}
             rooms={rooms}
             tables={tables}
@@ -94,6 +106,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return response.ok ? response.json() : undefined;
   });
 
+  const recaptchaRequired = process.env.RECAPTCHA === 'true';
+
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
@@ -102,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return apiFetch('/public/events', undefined, ctx)
       .then(response => response.json())
       .then((events: Array<WithId<Event>>) => {
-        return { props: { events } };
+        return { props: { events, recaptchaRequired } };
       });
   }
 };

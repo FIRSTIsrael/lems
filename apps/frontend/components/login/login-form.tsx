@@ -9,7 +9,6 @@ import {
   Event,
   JudgingRoom,
   RobotGameTable,
-  User,
   JudgingCategoryTypes,
   RoleTypes,
   Role,
@@ -19,16 +18,18 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
+import { createRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
 
-interface LoginFormProps {
+interface Props {
+  recaptchaRequired: boolean;
   event: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel }) => {
+const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, onCancel }) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -61,8 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const login = (captchaToken?: string) => {
     apiFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -78,8 +78,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
               }
             }
           : undefined),
-        password
-      } as User)
+        password,
+        ...(captchaToken ? { captchaToken } : {})
+      })
     })
       .then(async res => {
         const data = await res.json();
@@ -93,6 +94,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
         }
       })
       .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
   };
 
   return (
