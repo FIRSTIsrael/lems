@@ -6,7 +6,7 @@ import { localizedOptionalAward } from '../rubrics';
 
 const category = 'core-values' as JudgingCategory;
 
-const rubricSections: RubricSchemaSection<typeof category>[] = [
+const rubricSections: Array<RubricSchemaSection<typeof category>> = [
   {
     title: 'גילוי',
     description: 'הקבוצה חקרה רעיונות ומיומנויות חדשים.',

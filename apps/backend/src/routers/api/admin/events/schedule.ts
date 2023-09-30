@@ -4,7 +4,6 @@ import fileUpload from 'express-fileupload';
 import * as db from '@lems/database';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
-import { cleanEventData } from '../../../../lib/schedule/cleaner';
 import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
 import { getEventScoresheets } from '../../../../lib/schedule/event-scoresheets';
 
@@ -14,13 +13,9 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   try {
     const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-    console.log('🚮 Deleting event data');
-    try {
-      await cleanEventData(event);
-    } catch (error) {
-      return res.status(500).json(error.message);
-    }
-    console.log('✅ Deleted event data!');
+    const eventState = await db.getEventState({ event: event._id });
+    if (eventState)
+      return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
 
     console.log('👓 Parsing file...');
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
@@ -60,7 +55,6 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
     const dbSessions = await db.getEventSessions(event._id);
     const dbMatches = await db.getEventMatches(event._id.toString());
-    console.log(matches[0], dbMatches[0]);
 
     console.log('📄 Generating rubrics');
     const rubrics = getEventRubrics(dbSessions);
@@ -86,7 +80,9 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       event: event._id,
       activeMatch: null,
       loadedMatch: null,
-      activeSession: null
+      currentSession: null,
+      currentMatch: 0,
+      activeSession: 0
     });
     console.log('✅ Created event state');
 

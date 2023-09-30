@@ -1,20 +1,64 @@
-import { GetServerSideProps } from 'next';
-import { Container, Paper, Typography } from '@mui/material';
+import { useState } from 'react';
+import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
+import { WithId } from 'mongodb';
+import { Event, SafeUser } from '@lems/types';
+import { apiFetch } from '../../lib/utils/fetch';
+import Layout from '../../components/layout';
+import EventSelector from '../../components/login/event-selector';
+import EventCreateForm from '../../components/admin/event-create-form';
 
-export function Index() {
-  return (
-    <Container>
-      <Paper sx={{ height: 200, mt: 10 }}>
-        <Typography variant="h2" textAlign={'center'}>
-          Hello admin
-        </Typography>
-      </Paper>
-    </Container>
-  );
+interface Props {
+  user: WithId<SafeUser>;
+  events: Array<WithId<Event>>;
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  return { props: {} };
+const Page: NextPage<Props> = ({ user, events }) => {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Layout maxWidth="sm" title="ממשק ניהול">
+      <Paper sx={{ p: 4, mt: 4 }}>
+        <Stack direction="column" spacing={2}>
+          <Typography variant="h2" textAlign={'center'}>
+            בחירת אירוע
+          </Typography>
+          <EventSelector
+            events={events}
+            onChange={eventId => router.push(`/admin/event/${eventId}`)}
+          />
+          <ListItemButton
+            key={'create-event'}
+            dense
+            sx={{ borderRadius: 2, minHeight: '50px' }}
+            onClick={handleOpen}
+          >
+            צור אירוע
+          </ListItemButton>
+          <Modal open={open} onClose={handleClose} aria-labelledby="create-event-model">
+            <EventCreateForm />
+          </Modal>
+        </Stack>
+      </Paper>
+    </Layout>
+  );
 };
 
-export default Index;
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+
+  const events = await apiFetch('/public/events', undefined, ctx).then(res => res?.json());
+
+  return { props: { user, events } };
+};
+
+export default Page;

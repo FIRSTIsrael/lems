@@ -9,10 +9,12 @@ interface MatchPrestartProps {
   updateMatch: (match: Partial<RobotGameMatch>) => void;
 }
 
+//TODO: edit to match new schema
+
 const MatchPrestart: React.FC<MatchPrestartProps> = ({ match, updateMatch }) => {
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
-      <Typography fontSize="1.5rem" fontWeight={700}>
+      {/* <Typography fontSize="1.5rem" fontWeight={700}>
         הכנה למקצה {match.number}
       </Typography>
       <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
@@ -29,7 +31,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({ match, updateMatch }) => 
         <Button onClick={() => updateMatch({ ready: true })} variant="contained" color="primary">
           אנחנו מוכנים!
         </Button>
-      </Stack>
+      </Stack> */}
     </Paper>
   );
 };

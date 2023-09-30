@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -9,12 +8,12 @@ import dayjs from 'dayjs';
 
 interface ActiveMatchProps {
   title: React.ReactNode;
-  teams: WithId<RobotGameMatch>[];
+  match: WithId<RobotGameMatch>;
   startTime?: Date;
 }
 
-const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, teams, startTime }) => {
-  const matchName = useMemo(() => (teams[0] ? `מקצה #${teams[0].number}` : null), [teams]);
+const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) => {
+  const teams = match.participants;
 
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
@@ -22,7 +21,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, teams, startTime }) =>
         {title}
       </Typography>
       <Typography fontSize="1.75rem" fontWeight={700}>
-        {matchName || '-'}
+        {`מקצה #${match.number}` || '-'}
       </Typography>
 
       {startTime ? (
@@ -36,8 +35,8 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, teams, startTime }) =>
         />
       ) : (
         <Grid container columns={4} spacing={1} mt={2}>
-          {teams.map(participant => (
-            <Grid key={participant._id.toString()} xs={1}>
+          {teams.map((participant, index) => (
+            <Grid key={index} xs={1}>
               <Box
                 sx={{
                   color: participant.ready ? green[800] : red[800],

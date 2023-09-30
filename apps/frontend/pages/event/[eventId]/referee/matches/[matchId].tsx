@@ -78,11 +78,13 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
     [match._id, match.eventId, socket]
   );
 
-  useEffect(() => {
-    if (!match.team?.registered) {
-      updateMatch({ present: 'no-show' });
-    }
-  }, [match.team?.registered, updateMatch]);
+  //TODO: fix matches
+
+  // useEffect(() => {
+  //   if (!match.team?.registered) {
+  //     updateMatch({ present: 'no-show' });
+  //   }
+  // }, [match.team?.registered, updateMatch]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
@@ -92,13 +94,13 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {match.status === 'in-progress' ? (
+        {/* {match.status === 'in-progress' ? (
           <Timer match={match} />
         ) : match.ready ? (
           <WaitForMatchStart match={match} updateMatch={updateMatch} />
         ) : (
           <MatchPrestart match={match} updateMatch={updateMatch} />
-        )}
+        )} */}
       </Layout>
     </RoleAuthorizer>
   );

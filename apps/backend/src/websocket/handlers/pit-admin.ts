@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
 export const handleRegisterTeam = async (namespace, eventId, teamId, callback) => {
-  const team = await db.getTeam({
+  let team = await db.getTeam({
     event: new ObjectId(eventId),
     _id: new ObjectId(teamId)
   });
@@ -18,9 +18,10 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
   console.log(`📝 Registered team ${teamId} in event ${eventId}`);
 
   await db.updateTeam({ _id: team._id }, { registered: true });
+  team = await db.getTeam({_id: new ObjectId(teamId)});
 
   callback({ ok: true });
-  namespace.to('pit-admin').emit('teamRegistered', teamId);
+  namespace.to('pit-admin').emit('teamRegistered', team);
 };
 
 export const handleCreateTicket = async (namespace, eventId, teamId, content, type, callback) => {

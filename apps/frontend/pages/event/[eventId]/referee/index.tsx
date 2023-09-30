@@ -57,6 +57,8 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
       m.status === 'in-progress' || m.status === 'scoring' || m.number === eventState?.loadedMatch
   );
 
+  //TODO: referees should have 0 control and choice - display new screens based on old logic
+
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
       <Layout
@@ -79,7 +81,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
                   passHref
                   legacyBehavior
                 >
-                  <ListItemButton sx={{ borderRadius: 2 }} component="a">
+                  {/* <ListItemButton sx={{ borderRadius: 2 }} component="a">
                     <ListItemText
                       primary={`מקצה ${match.number}`}
                       secondary={`${match.team?.affiliation.name}, ${match.team?.affiliation.city}`}
@@ -90,7 +92,7 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
                     {match.status === 'scoring' && (
                       <Chip label="הסתיים, ממתין לניקוד" size="small" />
                     )}
-                  </ListItemButton>
+                  </ListItemButton> */}
                 </NextLink>
               ))}
             </List>

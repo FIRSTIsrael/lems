@@ -22,5 +22,5 @@ interface RobotGameMatchParticipant {
 }
 
 export interface RobotGameMatch extends RobotGameMatchBrief {
-  participants: RobotGameMatchParticipant[];
+  participants: Array<RobotGameMatchParticipant>;
 }

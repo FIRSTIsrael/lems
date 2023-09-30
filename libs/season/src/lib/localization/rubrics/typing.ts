@@ -12,7 +12,7 @@ export interface RubricSchemaField<T extends JudgingCategory> {
 export interface RubricSchemaSection<T extends JudgingCategory> {
   title: string;
   description: string;
-  fields: RubricSchemaField<T>[];
+  fields: Array<RubricSchemaField<T>>;
 }
 
 export interface RubricSchemaAwardCandidature {
@@ -27,7 +27,7 @@ export interface RubricsSchema<T extends JudgingCategory> {
   title: string;
   description: string;
   columns: typeof rubricSchemaColumns;
-  sections: RubricSchemaSection<T>[];
-  awards?: RubricSchemaAwardCandidature[];
+  sections: Array<RubricSchemaSection<T>>;
+  awards?: Array<RubricSchemaAwardCandidature>;
   feedback?: typeof rubricSchemaFeedback;
 }

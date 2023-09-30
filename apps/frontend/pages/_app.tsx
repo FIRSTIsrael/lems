@@ -14,6 +14,7 @@ function CustomApp({
   pageProps,
   emotionCache = clientSideEmotionCache
 }: AppProps & { emotionCache: EmotionCache }) {
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>

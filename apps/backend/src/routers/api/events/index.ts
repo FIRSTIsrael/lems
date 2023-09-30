@@ -9,13 +9,19 @@ import usersRouter from './users';
 import teamsRouter from './teams';
 import rubricsRouter from './rubrics';
 import tablesRouter from './tables';
+import scoresheetRouter from './scoresheets';
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/:eventId', eventValidator);
 
 router.get('/:eventId', (req: Request, res: Response) => {
-  db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => res.json(event));
+  db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => {
+    if (req.query.withSchedule) return res.json(event);
+
+    const { schedule, ...rest } = event;
+    res.json(rest);
+  });
 });
 
 router.get('/:eventId/state', (req: Request, res: Response) => {
@@ -37,5 +43,7 @@ router.use('/:eventId/matches', matchesRouter);
 router.use('/:eventId/teams', teamsRouter);
 
 router.use('/:eventId/rubrics', rubricsRouter);
+
+router.use('/:eventId/scoresheets', scoresheetRouter);
 
 export default router;

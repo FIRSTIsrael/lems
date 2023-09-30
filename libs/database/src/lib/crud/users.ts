@@ -17,7 +17,7 @@ export const addUser = (user: User) => {
     .then(response => response);
 };
 
-export const addUsers = (users: User[]) => {
+export const addUsers = (users: Array<User>) => {
   return db
     .collection<User>('users')
     .insertMany(users)

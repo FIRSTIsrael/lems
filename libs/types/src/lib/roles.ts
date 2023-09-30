@@ -4,12 +4,12 @@ export const RoleTypes = [
   'judge-advisor',
   'lead-judge',
   'judge',
-  'display',
+  'reports',
   'referee',
   'head-referee',
   'scorekeeper',
   'pit-admin',
-  'audience',
+  'audience-display',
   'tournament-manager'
 ] as const;
 export type Role = (typeof RoleTypes)[number];

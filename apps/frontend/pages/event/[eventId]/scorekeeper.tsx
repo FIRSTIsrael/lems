@@ -94,14 +94,20 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <Stack direction="row" spacing={2} my={4}>
             <ActiveMatch
               title="מקצה רץ"
-              teams={matches?.filter(match => match.number === eventState?.activeMatch) || []}
+              match={
+                matches?.find(match => match.number === eventState?.activeMatch) ||
+                ({} as WithId<RobotGameMatch>)
+              }
               startTime={
                 matches?.find(match => match.number === eventState?.activeMatch)?.startTime
               }
             />
             <ActiveMatch
               title="המקצה הבא"
-              teams={matches?.filter(match => match.number === eventState?.loadedMatch) || []}
+              match={
+                matches?.find(match => match.number === eventState?.loadedMatch) ||
+                ({} as WithId<RobotGameMatch>)
+              }
             />
           </Stack>
 

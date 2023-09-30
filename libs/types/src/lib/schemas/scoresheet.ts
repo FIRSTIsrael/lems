@@ -18,7 +18,7 @@ export interface MissionClause {
 
 export interface Mission {
   id: string;
-  clauses: MissionClause[];
+  clauses: Array<MissionClause>;
 }
 
 export interface Scoresheet {
@@ -29,7 +29,7 @@ export interface Scoresheet {
   round: number;
   status: ScoresheetStatus;
   data?: {
-    missions: Mission[];
+    missions: Array<Mission>;
     signature: string;
     gp: { value: string; notes?: string };
     score: number;

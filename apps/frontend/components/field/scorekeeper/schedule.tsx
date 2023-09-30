@@ -1,9 +1,4 @@
-import {
-  RobotGameMatch,
-  RobotGameMatchGroup,
-  WSClientEmittedEvents,
-  WSServerEmittedEvents
-} from '@lems/types';
+import { RobotGameMatch, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import {
   TableContainer,
   Table,
@@ -16,7 +11,7 @@ import {
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 
 interface ScheduleProps {
@@ -26,20 +21,6 @@ interface ScheduleProps {
 }
 
 const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
-  const groupedMatches = useMemo(
-    () =>
-      matches.reduce((acc, match) => {
-        const group = acc.find(g => g.number === match.number);
-        if (group) {
-          group.teams.push(match);
-        } else {
-          acc.push({ ...match, teams: [match] });
-        }
-        return acc;
-      }, [] as Array<RobotGameMatchGroup>),
-
-    [matches]
-  );
   const loadMatch = useCallback(
     (matchNumber: number) => {
       socket.emit('loadMatch', eventId, matchNumber, response => {
@@ -64,14 +45,14 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {groupedMatches.map(match => (
+          {matches.map(match => (
             <TableRow key={match.number} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {match.number}
               </TableCell>
               <TableCell>{dayjs(match.startTime).format('HH:mm')}</TableCell>
               <TableCell>{match.status}</TableCell>
-              <TableCell>{match.teams.map(({ team }) => team?.number).join(', ')}</TableCell>
+              <TableCell>{match.participants.map(({ team }) => team?.number).join(', ')}</TableCell>
               <TableCell sx={{ p: 0 }}>
                 <Button
                   variant="contained"

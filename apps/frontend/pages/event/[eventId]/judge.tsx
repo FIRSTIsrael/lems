@@ -29,14 +29,17 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room }) => {
+const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
-  const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
+  const [currentSession, setcurrentSession] = useState<WithId<JudgingSession> | undefined>(
+    undefined
+  );
 
   const updateSessions = () => {
     return apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
@@ -47,12 +50,16 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       });
   };
 
-  const updateTeams = () => {
-    return apiFetch(`/api/events/${user.event}/teams`)
-      .then(res => res?.json())
-      .then(data => {
-        setTeams(data);
-      });
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        } else {
+          return t;
+        }
+      })
+    );
   };
 
   const updateRubrics = () => {
@@ -64,32 +71,30 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
   };
 
   const getInitialData = () => {
-    updateTeams().then(() => {
-      updateSessions().then(data => {
-        setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
-        updateRubrics();
-      });
+    updateSessions().then(data => {
+      setcurrentSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
+      updateRubrics();
     });
   };
 
   const onSessionStarted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      setActiveSession(s?.status === 'in-progress' ? s : undefined);
+      setcurrentSession(s?.status === 'in-progress' ? s : undefined);
     });
   };
 
   const onSessionCompleted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      if (s?.status === 'completed') setActiveSession(undefined);
+      if (s?.status === 'completed') setcurrentSession(undefined);
     });
   };
 
   const onSessionAborted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      if (s?.status === 'not-started') setActiveSession(undefined);
+      if (s?.status === 'not-started') setcurrentSession(undefined);
     });
   };
 
@@ -101,16 +106,16 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
       { name: 'judgingSessionStarted', handler: onSessionStarted },
       { name: 'judgingSessionCompleted', handler: onSessionCompleted },
       { name: 'judgingSessionAborted', handler: onSessionAborted },
-      { name: 'teamRegistered', handler: updateTeams },
+      { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubrics }
     ]
   );
 
   const activeTeam = useMemo(() => {
-    return activeSession
-      ? teams.find((t: WithId<Team>) => t._id == activeSession.team) || ({} as WithId<Team>)
+    return currentSession
+      ? teams.find((t: WithId<Team>) => t._id == currentSession.team) || ({} as WithId<Team>)
       : ({} as WithId<Team>);
-  }, [teams, activeSession]);
+  }, [teams, currentSession]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
@@ -120,14 +125,14 @@ const Page: NextPage<Props> = ({ user, event, room }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {activeSession && activeTeam ? (
+        {currentSession && activeTeam ? (
           <>
-            <JudgingTimer session={activeSession} team={activeTeam} />
+            <JudgingTimer session={currentSession} team={activeTeam} />
             <Box display="flex" justifyContent="center">
               <AbortJudgingSessionButton
                 event={event}
                 room={room}
-                session={activeSession}
+                session={currentSession}
                 socket={socket}
                 sx={{ mt: 2.5 }}
               />
@@ -193,9 +198,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       undefined,
       ctx
     ).then(res => res?.json());
-    const [room, event] = await Promise.all([roomPromise, eventPromise]);
+    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
+      res?.json()
+    );
+    const [room, event, teams] = await Promise.all([roomPromise, eventPromise, teamsPromise]);
 
-    return { props: { user, event, room } };
+    return { props: { user, event, room, teams } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

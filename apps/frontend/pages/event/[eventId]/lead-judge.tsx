@@ -27,11 +27,12 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, rooms }) => {
+const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
 
@@ -43,14 +44,17 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       });
   };
 
-  const updateTeams = () => {
-    apiFetch(`/api/events/${user.event}/teams`)
-      .then(res => res?.json())
-      .then(data => {
-        setTeams(data);
-      });
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        } else {
+          return t;
+        }
+      })
+    );
   };
-
   const updateRubrics = () => {
     apiFetch(`/api/events/${user.event}/rubrics`)
       .then(res => res?.json())
@@ -59,7 +63,6 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
 
   const updateData = () => {
     updateSessions();
-    updateTeams();
     updateRubrics();
   };
 
@@ -71,7 +74,7 @@ const Page: NextPage<Props> = ({ user, event, rooms }) => {
       { name: 'judgingSessionStarted', handler: updateSessions },
       { name: 'judgingSessionCompleted', handler: updateSessions },
       { name: 'judgingSessionAborted', handler: updateSessions },
-      { name: 'teamRegistered', handler: updateTeams },
+      { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubrics }
     ]
   );
@@ -142,9 +145,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
       res?.json()
     );
-    const [rooms, event] = await Promise.all([roomsPromise, eventPromise]);
+    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
+      res?.json()
+    );
+    const [rooms, event, teams] = await Promise.all([roomsPromise, eventPromise, teamsPromise]);
 
-    return { props: { user, event, rooms } };
+    return { props: { user, event, rooms, teams } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

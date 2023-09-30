@@ -17,7 +17,7 @@ export const addRoom = (room: JudgingRoom) => {
     .then(response => response);
 };
 
-export const addRooms = (rooms: JudgingRoom[]) => {
+export const addRooms = (rooms: Array<JudgingRoom>) => {
   return db
     .collection<JudgingRoom>('rooms')
     .insertMany(rooms)

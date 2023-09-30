@@ -17,7 +17,7 @@ export const addTable = (table: RobotGameTable) => {
     .then(response => response);
 };
 
-export const addTables = (tables: RobotGameTable[]) => {
+export const addTables = (tables: Array<RobotGameTable>) => {
   return db
     .collection<RobotGameTable>('tables')
     .insertMany(tables)

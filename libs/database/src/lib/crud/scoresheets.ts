@@ -17,7 +17,7 @@ export const addScoresheet = (scoresheet: Scoresheet) => {
     .then(response => response);
 };
 
-export const addScoresheets = (scoresheets: Scoresheet[]) => {
+export const addScoresheets = (scoresheets: Array<Scoresheet>) => {
   return db
     .collection<Scoresheet>('scoresheets')
     .insertMany(scoresheets)

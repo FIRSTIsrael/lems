@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { User, Event } from '@lems/types';
+import { User, Event, RoleTypes } from '@lems/types';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch } from '../../../../lib/utils/fetch';
@@ -19,7 +19,7 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
     <Grid xs={3}>
       <Paper>
         <Button
-          href={'display/' + path}
+          href={'reports/' + path}
           fullWidth
           sx={{ py: 8, px: 10, textAlign: 'center', color: '#000' }}
         >
@@ -37,13 +37,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
-
   return (
-    <RoleAuthorizer
-      user={user}
-      allowedRoles={['display', 'head-referee']}
-      onFail={() => router.back()}
-    >
+    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
@@ -55,8 +50,8 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <GridPaperLink path="team-list">
             <Typography variant="h4">רשימת קבוצות</Typography>
           </GridPaperLink>
-          <GridPaperLink path="judging-status">
-            <Typography variant="h4">ב</Typography>
+          <GridPaperLink path="judging-schedule">
+            <Typography variant="h4">{'לו"ז שיפוט'}</Typography>
           </GridPaperLink>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">ג</Typography>

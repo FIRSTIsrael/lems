@@ -9,15 +9,17 @@ interface WaitForMatchStartProps {
   updateMatch: (match: Partial<RobotGameMatch>) => void;
 }
 
+//TODO: edit to match new schema
+
 const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({ match, updateMatch }) => {
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
       <Typography fontSize="1.5rem" fontWeight={700}>
         המתינו להתחלת מקצה {match.number}
       </Typography>
-      <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
+      {/* <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
         {localizeTeam(match.team as Team)} ({localizedMatchPresent[match.present]})
-      </Typography>
+      </Typography> */}
 
       <Stack alignItems="center" mt={4}>
         <Box
@@ -37,7 +39,8 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({ match, updateMatc
           ALL SET
         </Box>
         <Button
-          onClick={() => updateMatch({ ready: false })}
+          // TODO: upate to match new schema
+          // onClick={() => updateMatch({ ready: false })}
           variant="contained"
           color="error"
           size="small"

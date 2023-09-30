@@ -26,6 +26,8 @@ const Timer: React.FC<TimerProps> = ({ match }) => {
     [currentTime, matchEnd]
   );
 
+  //TODO: edit to match new schema
+
   return (
     <>
       <Paper sx={{ mt: 4, py: 4, px: 2, textAlign: 'center' }}>
@@ -37,11 +39,11 @@ const Timer: React.FC<TimerProps> = ({ match }) => {
           fontWeight={700}
           dir="ltr"
         />
-        {match.team && (
+        {/* {match.team && (
           <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
             {localizeTeam(match.team)}
           </Typography>
-        )}
+        )} */}
       </Paper>
       <LinearProgress
         variant="determinate"

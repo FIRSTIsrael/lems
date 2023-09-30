@@ -1,7 +1,9 @@
+import { WithId } from 'mongodb';
 import { JudgingCategory, TicketType } from './constants';
 import { RobotGameMatch } from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
+import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
@@ -23,7 +25,7 @@ export interface WSServerEmittedEvents {
 
   rubricStatusChanged: (rubricId: string) => void;
 
-  teamRegistered: (teamId: string) => void;
+  teamRegistered: (team: WithId<Team>) => void;
 
   ticketCreated: (ticketId: string) => void;
 

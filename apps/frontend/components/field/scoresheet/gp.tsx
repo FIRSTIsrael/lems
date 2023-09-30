@@ -128,7 +128,7 @@ const GpSelector: React.FC<Props> = ({ user, onBack, onSubmit, disabled }) => {
               </TableBody>
             </Table>
 
-            {form.values.gp.value !== '3' && (
+            {field.value && field.value !== '3' && (
               <Box justifyContent="center" display="flex" pt={2}>
                 <FormControlLabel
                   control={<Checkbox />}

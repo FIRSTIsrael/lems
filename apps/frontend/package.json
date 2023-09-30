@@ -1,0 +1,36 @@
+{
+  "name": "frontend",
+  "version": "0.0.1",
+  "dependencies": {
+    "@emotion/cache": "11.11.0",
+    "@emotion/react": "11.11.1",
+    "@emotion/server": "11.11.0",
+    "@emotion/styled": "11.11.0",
+    "@mui/base": "5.0.0-beta.14",
+    "@mui/icons-material": "5.14.8",
+    "@mui/lab": "5.0.0-alpha.143",
+    "@mui/material": "5.14.8",
+    "@mui/system": "5.14.8",
+    "@mui/utils": "5.14.8",
+    "@mui/x-date-pickers": "6.14.0",
+    "@nx/next": "16.7.2",
+    "dayjs": "1.11.9",
+    "formik": "2.4.4",
+    "formik-mui": "5.0.0-alpha.0",
+    "mongodb": "6.0.0",
+    "next": "13.4.1",
+    "notistack": "3.0.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "8.0.7",
+    "react-signature-canvas": "1.0.6",
+    "socket.io-client": "4.7.2",
+    "stylis": "4.3.0",
+    "stylis-plugin-rtl": "2.1.1",
+    "tslib": "2.6.2",
+    "typescript": "5.1.6"
+  },
+  "scripts": {
+    "start": "next start"
+  }
+}

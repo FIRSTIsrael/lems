@@ -43,7 +43,7 @@ export const addMatch = (match: RobotGameMatch) => {
     .then(response => response);
 };
 
-export const addMatches = (matches: RobotGameMatch[]) => {
+export const addMatches = (matches: Array<RobotGameMatch>) => {
   return db
     .collection<RobotGameMatch>('matches')
     .insertMany(matches)
