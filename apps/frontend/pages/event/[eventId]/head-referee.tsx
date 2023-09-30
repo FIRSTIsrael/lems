@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import {
   Event,
-  Team,
   SafeUser,
   Scoresheet,
   RobotGameMatch,
@@ -33,10 +32,9 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
+const Page: NextPage<Props> = ({ user, event, tables }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<EventState | undefined>(undefined);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
@@ -75,18 +73,13 @@ const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
     getMatches();
   };
 
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field', 'pit-admin'],
-    getInitialData,
-    [
-      { name: 'matchStarted', handler: getData },
-      { name: 'matchCompleted', handler: getData },
-      { name: 'matchAborted', handler: getData },
-      { name: 'matchUpdated', handler: getData },
-      { name: 'scoresheetStatusChanged', handler: getScoresheets }
-    ]
-  );
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], getInitialData, [
+    { name: 'matchStarted', handler: getData },
+    { name: 'matchCompleted', handler: getData },
+    { name: 'matchAborted', handler: getData },
+    { name: 'matchUpdated', handler: getData },
+    { name: 'scoresheetStatusChanged', handler: getScoresheets }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="head-referee" onFail={() => router.back()}>
@@ -118,7 +111,8 @@ const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
                       key={match._id.toString()}
                       event={event}
                       match={match}
-                      scoresheets={[]} //TODO: actually pass scoresheets
+                      tables={tables}
+                      scoresheets={scoresheets.filter(s => s.matchId === match._id)}
                       eventState={eventState}
                     />
                   ))}
@@ -142,13 +136,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
+    const [tables, event] = await Promise.all([tablesPromise, eventPromise]);
 
-    const [tables, event, teams] = await Promise.all([tablesPromise, eventPromise, teamsPromise]);
-
-    return { props: { user, event, tables, teams } };
+    return { props: { user, event, tables } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

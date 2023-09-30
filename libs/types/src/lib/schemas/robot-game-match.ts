@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { RobotGameMatchType, RobotGameMatchStatus, RobotGameMatchPresent } from '../constants';
 import { Team } from './team';
 
@@ -13,7 +13,7 @@ export interface RobotGameMatchBrief {
 
 export interface RobotGameMatchParticipant {
   teamId: ObjectId;
-  team?: Team;
+  team?: WithId<Team>;
   tableId: ObjectId;
   tableName?: string;
   round: number;

@@ -3,6 +3,9 @@ import * as db from '@lems/database';
 import { Event, JudgingRoom, Team } from '@lems/types';
 
 export const cleanEventData = async (event: WithId<Event>) => {
+  if (!(await db.deleteEventUsers(event._id)).acknowledged)
+    throw new Error('Could not delete users!');
+
   const oldEventState = await db.getEventStateFromEvent(event._id);
   if (oldEventState) {
     if (!(await db.deleteEventState(oldEventState)).acknowledged)

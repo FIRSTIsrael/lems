@@ -15,11 +15,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-interface Props {
+interface DeleteEventDataProps {
   event: WithId<Event>;
 }
 
-const DeleteEventData: React.FC<Props> = ({ event }) => {
+const DeleteEventData: React.FC<DeleteEventDataProps> = ({ event }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
@@ -44,7 +44,7 @@ const DeleteEventData: React.FC<Props> = ({ event }) => {
             border: '1px solid #ff2f00'
           }}
         >
-          יש כבר נותנים לאירוע
+          יש כבר נתונים לאירוע
         </Alert>
         <Button
           variant="contained"

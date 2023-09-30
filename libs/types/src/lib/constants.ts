@@ -9,7 +9,7 @@ export type MissionClauseType = 'boolean' | 'enum' | 'number';
 export const RobotGameMatchTypes = ['practice', 'ranking'] as const;
 export type RobotGameMatchType = (typeof RobotGameMatchTypes)[number];
 
-export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'scoring' | 'submitted';
+export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'completed';
 
 export type RobotGameMatchPresent = 'present' | 'no-show';
 
@@ -56,3 +56,10 @@ export type RubricInnerFields<T extends JudgingCategory> =
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const SEASON_NAME = 'MASTERPIECE℠';
+
+// All these values will have no effect at V2.0
+// Support will be added in future versions
+export const ALLOW_MATCH_SELECTOR = false;
+export const COUNTDOWN_BEFORE_MATCH = false;
+export const ALLOW_UNREGULATED_START = false;
+export const ALLOW_UNREGULATED_LOAD = true;

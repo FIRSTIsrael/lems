@@ -27,7 +27,8 @@ import {
   SafeUser,
   Scoresheet,
   MissionClause,
-  Mission
+  Mission,
+  ScoresheetStatus
 } from '@lems/types';
 import { fullMatch } from '@lems/utils';
 import {
@@ -41,7 +42,7 @@ import ScoresheetMission from './scoresheet-mission';
 import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
 
-interface Props {
+interface ScoresheetFormProps {
   event: WithId<Event>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
@@ -49,7 +50,13 @@ interface Props {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
+const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
+  event,
+  team,
+  scoresheet,
+  user,
+  socket
+}) => {
   const router = useRouter();
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
@@ -98,11 +105,11 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
   const handleSync = async (
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
-    newstatus: string | undefined
+    newStatus: ScoresheetStatus | undefined
   ) => {
-    const updatedScoresheet = {} as any;
-    if (newstatus) updatedScoresheet['status'] = newstatus;
-    if (formValues) updatedScoresheet['data'] = formValues;
+    const updatedScoresheet = {} as Partial<Scoresheet>;
+    if (newStatus) updatedScoresheet.status = newStatus;
+    if (formValues) (updatedScoresheet as any).data = formValues;
 
     socket.emit(
       'updateScoresheet',
@@ -172,7 +179,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     const isCompleted = Object.keys(errors).length === 0;
     const isEmpty = fullMatch(formValues, getDefaultScoresheet());
 
-    let newStatus = undefined;
+    let newStatus: ScoresheetStatus | undefined = undefined;
     if (['empty', 'in-progress', 'completed'].includes(scoresheet.status)) {
       if (isEmpty) {
         newStatus = 'empty';

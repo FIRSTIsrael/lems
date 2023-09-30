@@ -2,61 +2,65 @@ import { useCallback, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { Button, Stack } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
+import { ObjectId } from 'mongodb';
 import { WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 
 interface ControlActionsProps {
   eventId: string;
-  nextMatchNumber?: number;
-  loadedMatchNumber?: number;
-  activeMatchNumber?: number;
+  nextMatchId?: ObjectId;
+  loadedMatchId?: ObjectId;
+  activeMatchId?: ObjectId;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const ControlActions: React.FC<ControlActionsProps> = ({
   eventId,
-  nextMatchNumber,
-  loadedMatchNumber,
-  activeMatchNumber,
+  nextMatchId,
+  loadedMatchId,
+  activeMatchId,
   socket
 }) => {
   const [previewShown, setPreviewShown] = useState<boolean>(false);
   const [matchShown, setMatchShown] = useState<boolean>(false);
 
   const loadNextMatch = useCallback(() => {
-    socket.emit('loadMatch', eventId, nextMatchNumber || 0, response => {
+    if (nextMatchId === undefined) return;
+    socket.emit('loadMatch', eventId, nextMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
       }
     });
-  }, [eventId, nextMatchNumber, socket]);
+  }, [eventId, nextMatchId, socket]);
 
   const startMatch = useCallback(() => {
-    socket.emit('startMatch', eventId, loadedMatchNumber || -1, response => {
+    if (loadedMatchId === undefined) return;
+    socket.emit('startMatch', eventId, loadedMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
       }
     });
-  }, [eventId, loadedMatchNumber, socket]);
+  }, [eventId, loadedMatchId, socket]);
 
   const abortMatch = useCallback(() => {
-    socket.emit('abortMatch', eventId, activeMatchNumber || -1, response => {
+    if (activeMatchId === undefined) return;
+    socket.emit('abortMatch', eventId, activeMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
       }
     });
-  }, [activeMatchNumber, eventId, socket]);
+  }, [activeMatchId, eventId, socket]);
 
   useEffect(() => {
     setPreviewShown(false);
     setMatchShown(false);
-  }, [loadedMatchNumber]);
+  }, [loadedMatchId]);
 
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
       <Button
         variant="contained"
-        color={loadedMatchNumber !== undefined ? 'inherit' : 'success'}
-        disabled={loadedMatchNumber !== undefined}
+        color={loadedMatchId !== undefined ? 'inherit' : 'success'}
+        disabled={loadedMatchId !== undefined}
         size="large"
         onClick={loadNextMatch}
       >
@@ -64,8 +68,8 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       </Button>
       <Button
         variant="contained"
-        color={loadedMatchNumber === undefined ? 'inherit' : previewShown ? 'warning' : 'success'}
-        disabled={loadedMatchNumber === undefined || activeMatchNumber !== undefined}
+        color={loadedMatchId === undefined ? 'inherit' : previewShown ? 'warning' : 'success'}
+        disabled={loadedMatchId === undefined || activeMatchId !== undefined}
         size="large"
         onClick={() => setPreviewShown(true)}
       >
@@ -73,18 +77,18 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       </Button>
       <Button
         variant="contained"
-        color={loadedMatchNumber === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
-        disabled={loadedMatchNumber === undefined || activeMatchNumber !== undefined}
+        color={loadedMatchId === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
+        disabled={loadedMatchId === undefined || activeMatchId !== undefined}
         size="large"
         onClick={() => setMatchShown(true)}
       >
         הצגת המקצה
       </Button>
-      {activeMatchNumber === undefined ? (
+      {activeMatchId === undefined ? (
         <Button
           variant="contained"
-          color={loadedMatchNumber === undefined ? 'inherit' : 'success'}
-          disabled={loadedMatchNumber === undefined || activeMatchNumber !== undefined}
+          color={loadedMatchId === undefined ? 'inherit' : 'success'}
+          disabled={loadedMatchId === undefined || activeMatchId !== undefined}
           size="large"
           onClick={startMatch}
         >

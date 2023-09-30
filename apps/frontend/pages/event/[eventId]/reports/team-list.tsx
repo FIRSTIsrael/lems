@@ -69,14 +69,9 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
     setTeams(sorted);
   }, [teams, sortBy, sortDirection]);
 
-  const { connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['pit-admin'],
-    () => {
-      return;
-    },
-    [{ name: 'teamRegistered', handler: handleTeamRegistered }]
-  );
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
+    { name: 'teamRegistered', handler: handleTeamRegistered }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>

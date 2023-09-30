@@ -2,9 +2,8 @@ import { ObjectId } from 'mongodb';
 
 export interface EventState {
   event: ObjectId;
-  currentMatch: number;
-  loadedMatch: number | null;
-  activeMatch: number | null;
+  loadedMatch: ObjectId | null;
+  activeMatch: ObjectId | null;
   currentSession: number;
   activeSession: number | null;
   // TODO: make this hold the current running session if any

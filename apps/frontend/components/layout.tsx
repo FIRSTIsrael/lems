@@ -22,7 +22,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import NextLink from 'next/link';
 import { apiFetch } from '../lib/utils/fetch';
 
-interface Props {
+interface LayoutProps {
   title?: string | React.ReactNode;
   children?: React.ReactNode;
   maxWidth?: Breakpoint | number;
@@ -37,7 +37,7 @@ const errorAnimation = keyframes`
   to { background: #fca5a5; }
 `;
 
-const Layout: React.FC<Props> = ({
+const Layout: React.FC<LayoutProps> = ({
   title,
   back,
   backDisabled,

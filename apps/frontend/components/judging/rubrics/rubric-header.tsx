@@ -14,11 +14,11 @@ import {
 import { Team } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
 
-interface Props {
+interface RubricHeaderProps {
   team: WithId<Team>;
 }
 
-const RubricHeader: React.FC<Props> = ({ team }) => {
+const RubricHeader: React.FC<RubricHeaderProps> = ({ team }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 

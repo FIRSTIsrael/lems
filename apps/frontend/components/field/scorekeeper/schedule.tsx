@@ -8,8 +8,9 @@ import {
   TableBody,
   Button
 } from '@mui/material';
+import { localizedMatchStatus } from '../../../localization/field';
 import dayjs from 'dayjs';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
@@ -22,8 +23,8 @@ interface ScheduleProps {
 
 const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
   const loadMatch = useCallback(
-    (matchNumber: number) => {
-      socket.emit('loadMatch', eventId, matchNumber, response => {
+    (matchId: ObjectId) => {
+      socket.emit('loadMatch', eventId, matchId.toString(), response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
         }
@@ -50,15 +51,15 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
               <TableCell component="th" scope="row">
                 {match.number}
               </TableCell>
-              <TableCell>{dayjs(match.startTime).format('HH:mm')}</TableCell>
-              <TableCell>{match.status}</TableCell>
+              <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
+              <TableCell>{localizedMatchStatus[match.status]}</TableCell>
               <TableCell>{match.participants.map(({ team }) => team?.number).join(', ')}</TableCell>
               <TableCell sx={{ p: 0 }}>
                 <Button
                   variant="contained"
                   color="inherit"
                   size="small"
-                  onClick={() => loadMatch(match.number)}
+                  onClick={() => loadMatch(match._id)}
                 >
                   התחל
                 </Button>

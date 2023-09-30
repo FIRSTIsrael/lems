@@ -1,9 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Paper, Stack } from '@mui/material';
-import { Event, Team, SafeUser, RobotGameMatch, EventState } from '@lems/types';
+import { Event, SafeUser, RobotGameMatch, EventState } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import ActiveMatch from '../../../components/field/scorekeeper/active-match';
@@ -12,76 +12,53 @@ import ControlActions from '../../../components/field/scorekeeper/control-action
 import Layout from '../../../components/layout';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { localizedRoles } from '../../../localization/roles';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  teams: Array<WithId<Team>>;
+  eventState: WithId<EventState>;
+  matches: Array<WithId<RobotGameMatch>>;
 }
 
-const Page: NextPage<Props> = ({ user, event }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  eventState: initialEventState,
+  matches: initialMatches
+}) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<EventState | undefined>(undefined);
-  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
+  const [eventState, setEventState] = useState<EventState>(initialEventState);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
-  const fetchMatches = useCallback(() => {
-    apiFetch(`/api/events/${user.event}/matches`)
-      .then(res => res.json())
-      .then(data => {
-        setMatches(data);
-      });
-  }, [user.event]);
-
-  const fetchInitialData = () => {
-    apiFetch(`/api/events/${user.event}/state`)
-      .then(res => res.json())
-      .then(data => {
-        setEventState(data);
-      });
-
-    fetchMatches();
-  };
-
-  const handleMatchLoaded = (matchNumber: number) => {
-    setEventState(prev => (prev ? { ...prev, loadedMatch: matchNumber } : prev));
-  };
-  const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
-    setEventState(prev =>
-      prev
-        ? {
-            ...prev,
-            activeMatch: data.matchNumber,
-            loadedMatch: null
-          }
-        : prev
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    setEventState(newEventState);
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === newMatch._id) {
+          return newMatch;
+        }
+        return m;
+      })
     );
   };
-  const matchCompleted = (matchNumber: number) => {
-    setEventState(prev => (prev ? { ...prev, activeMatch: null } : prev));
-  };
-  const matchAborted = (matchNumber: number) => {
-    setEventState(prev => (prev ? { ...prev, activeMatch: null } : prev));
-  };
 
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field'],
-    fetchInitialData,
-    [
-      { name: 'matchLoaded', handler: handleMatchLoaded },
-      { name: 'matchStarted', handler: handleMatchStarted },
-      { name: 'matchCompleted', handler: matchCompleted },
-      { name: 'matchAborted', handler: matchAborted },
-      { name: 'matchSubmitted', handler: fetchMatches }
-    ]
-  );
+  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'matchAborted', handler: handleMatchEvent }
+  ]);
 
-  const nextMatchNumber = matches?.find(match => match.status === 'not-started')?.number;
+  const nextMatchId = matches?.find(match => match.status === 'not-started')?._id;
 
   return (
     <RoleAuthorizer user={user} allowedRoles="scorekeeper" onFail={() => router.back()}>
       <Layout
-        title={`בקרה | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
@@ -95,17 +72,15 @@ const Page: NextPage<Props> = ({ user, event }) => {
             <ActiveMatch
               title="מקצה רץ"
               match={
-                matches?.find(match => match.number === eventState?.activeMatch) ||
+                matches?.find(match => match._id === eventState.activeMatch) ||
                 ({} as WithId<RobotGameMatch>)
               }
-              startTime={
-                matches?.find(match => match.number === eventState?.activeMatch)?.startTime
-              }
+              startTime={matches?.find(match => match._id === eventState.activeMatch)?.startTime}
             />
             <ActiveMatch
               title="המקצה הבא"
               match={
-                matches?.find(match => match.number === eventState?.loadedMatch) ||
+                matches?.find(match => match._id === eventState.loadedMatch) ||
                 ({} as WithId<RobotGameMatch>)
               }
             />
@@ -113,13 +88,13 @@ const Page: NextPage<Props> = ({ user, event }) => {
 
           <ControlActions
             eventId={event._id.toString()}
-            nextMatchNumber={nextMatchNumber}
-            loadedMatchNumber={eventState?.loadedMatch || undefined}
-            activeMatchNumber={eventState?.activeMatch || undefined}
+            nextMatchId={nextMatchId}
+            loadedMatchId={eventState.loadedMatch || undefined}
+            activeMatchId={eventState.activeMatch || undefined}
             socket={socket}
           />
 
-          <Paper sx={{ p: 4, my: 6 }}>
+          <Paper sx={{ px: 4, py: 1, my: 4, overflowY: 'scroll' }}>
             <Schedule eventId={event._id.toString()} matches={matches || []} socket={socket} />
           </Paper>
         </Stack>
@@ -132,11 +107,24 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const event = await apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
+    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
 
-    return { props: { user, event } };
+    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
+      res => res?.json()
+    );
+    const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
+      res.json()
+    );
+
+    const [event, eventState, matches] = await Promise.all([
+      eventPromise,
+      eventStatePromise,
+      matchesPromise
+    ]);
+
+    return { props: { user, event, eventState, matches } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

@@ -1,13 +1,13 @@
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
 
-interface Props {
+interface FeedbackNoteProps {
   label: string;
   name: string;
   disabled?: boolean;
 }
 
-const FeedbackNote: React.FC<Props> = ({ label, name, disabled }) => {
+const FeedbackNote: React.FC<FeedbackNoteProps> = ({ label, name, disabled }) => {
   return (
     <Field
       component={TextField}

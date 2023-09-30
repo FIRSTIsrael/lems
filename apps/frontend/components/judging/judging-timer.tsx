@@ -78,6 +78,7 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
         targetDate={sessionEnd.toDate()}
         expiredText="00:00"
         variant="h1"
+        fontFamily={'Roboto Mono'}
         fontSize="10rem"
         fontWeight={700}
         dir="ltr"

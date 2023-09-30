@@ -25,7 +25,7 @@ const getButtonColor = (status: Status) => {
   }
 };
 
-interface Props extends IconButtonProps {
+interface StartJudgingSessionButtonProps extends IconButtonProps {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
@@ -33,7 +33,7 @@ interface Props extends IconButtonProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const StartJudgingSessionButton: React.FC<Props> = ({
+const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
   event,
   room,
   session,

@@ -5,6 +5,7 @@ import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
+import { EventState } from './schemas/event-state';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -31,17 +32,15 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticketId: string) => void;
 
-  matchLoaded: (matchNumber: number) => void;
+  matchLoaded: (match: RobotGameMatch) => void;
 
-  matchStarted: (data: { matchNumber: number; startedAt: number }) => void;
+  matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchCompleted: (matchNumber: number) => void;
+  matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchSubmitted: (matchId: string) => void;
+  matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchAborted: (matchNumber: number) => void;
-
-  matchUpdated: (matchId: string) => void;
+  matchUpdated: (match: RobotGameMatch) => void;
 
   scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
 
@@ -100,19 +99,19 @@ export interface WSClientEmittedEvents {
 
   loadMatch: (
     eventId: string,
-    matchNumber: number,
+    matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   startMatch: (
     eventId: string,
-    matchNumber: number,
+    matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   abortMatch: (
     eventId: string,
-    matchNumber: number,
+    matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

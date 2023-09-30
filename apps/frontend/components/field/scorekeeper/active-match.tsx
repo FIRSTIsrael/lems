@@ -13,15 +13,13 @@ interface ActiveMatchProps {
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) => {
-  const teams = match.participants;
-
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
       <Typography component="h2" fontSize="1.125rem" fontWeight={500}>
         {title}
       </Typography>
       <Typography fontSize="1.75rem" fontWeight={700}>
-        {`מקצה #${match.number}` || '-'}
+        {match.number ? `מקצה #${match.number}` : '-'}
       </Typography>
 
       {startTime ? (
@@ -35,7 +33,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) =>
         />
       ) : (
         <Grid container columns={4} spacing={1} mt={2}>
-          {teams.map((participant, index) => (
+          {match.participants?.map((participant, index) => (
             <Grid key={index} xs={1}>
               <Box
                 sx={{

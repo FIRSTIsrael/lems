@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import {
   Event,
-  Team,
   SafeUser,
   RobotGameMatch,
   RobotGameMatchParticipant,
-  RobotGameTable
+  RobotGameTable,
+  ALLOW_MATCH_SELECTOR
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../components/connection-indicator';
@@ -20,90 +20,101 @@ import { apiFetch } from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 
+// TODO: This page needs to be tested and implemented in a future release
+
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
-  teams: Array<WithId<Team>>;
 }
 
 const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
-  const router = useRouter();
-  const [match, setMatch] = useState<WithId<RobotGameMatch>>(initialMatch);
-  const participant = match.participants.find(p => p.tableId === table._id);
+  // const router = useRouter();
+  // const [match, setMatch] = useState<WithId<RobotGameMatch>>(initialMatch);
+  // const participant = match.participants.find(p => p.tableId === table._id);
 
-  const fetchMatchData = () =>
-    apiFetch(`/api/events/${user.event}/matches/${match._id}`)
-      .then(res => res.json())
-      .then(setMatch);
+  // const fetchMatchData = () =>
+  //   apiFetch(`/api/events/${user.event}/matches/${match._id}`)
+  //     .then(res => res.json())
+  //     .then(setMatch);
 
-  const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
-    if (data.matchNumber !== match.number) return;
-    setMatch(match => ({
-      ...match,
-      status: 'in-progress',
-      startTime: new Date(data.startedAt)
-    }));
-  };
+  // const handleMatchStarted = (data: { matchNumber: number; startedAt: number }) => {
+  //   if (data.matchNumber !== match.number) return;
+  //   setMatch(match => ({
+  //     ...match,
+  //     status: 'in-progress',
+  //     startTime: new Date(data.startedAt)
+  //   }));
+  // };
 
-  const handleMatchAborted = (matchNumber: number) => {
-    if (matchNumber !== match.number) return;
-    setMatch(match => ({
-      ...match,
-      status: 'not-started',
-      startTime: undefined
-    }));
-  };
+  // const handleMatchAborted = (matchNumber: number) => {
+  //   if (matchNumber !== match.number) return;
+  //   setMatch(match => ({
+  //     ...match,
+  //     status: 'not-started',
+  //     startTime: undefined
+  //   }));
+  // };
 
-  const handleMatchUpdated = (matchId: string) => {
-    if (matchId === match._id.toString()) {
-      fetchMatchData();
-    }
-  };
+  // const handleMatchUpdated = (matchId: string) => {
+  //   if (matchId === match._id.toString()) {
+  //     fetchMatchData();
+  //   }
+  // };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchStarted', handler: handleMatchStarted },
-    { name: 'matchAborted', handler: handleMatchAborted },
-    { name: 'matchUpdated', handler: handleMatchUpdated }
-  ]);
+  // const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+  //   { name: 'matchStarted', handler: handleMatchStarted },
+  //   { name: 'matchAborted', handler: handleMatchAborted },
+  //   { name: 'matchUpdated', handler: handleMatchUpdated }
+  // ]);
 
-  const updateMatchParticipant = useCallback(
-    // TODO: make this set the match accordingly and send to the backend
-    (updatedMatch: Partial<RobotGameMatchParticipant>) => {
-      setMatch(match => ({ ...match, ...updatedMatch }));
-      socket.emit(
-        'updateMatch',
-        match.eventId.toString(),
-        match._id.toString(),
-        updatedMatch,
-        response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
-          }
-        }
-      );
-    },
-    [match._id, match.eventId, socket]
-  );
+  // const updateMatchParticipant = useCallback(
+  //   (updatedMatchParticipant: Partial<RobotGameMatchParticipant>) => {
+  //     const participantIndex = match.participants.findIndex(p => p.tableId === table._id);
+  //     if (participantIndex !== -1) {
+  //       const updatedMatch = { ...match };
+  //       updatedMatch.participants[participantIndex] = {
+  //         ...updatedMatch.participants[participantIndex],
+  //         ...updatedMatchParticipant
+  //       };
+  //       socket.emit(
+  //         'updateMatch',
+  //         match.eventId.toString(),
+  //         match._id.toString(),
+  //         updatedMatch,
+  //         response => {
+  //           if (!response.ok) {
+  //             enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+  //           }
+  //         }
+  //       );
+  //     }
+  //   },
+  //   [match, socket, table._id]
+  // );
 
-  useEffect(() => {
-    if (participant) {
-      if (!participant.team?.registered) {
-        updateMatchParticipant({ present: 'no-show' });
-      }
-    }
-  }, [participant, updateMatchParticipant]);
+  // useEffect(() => {
+  //   if (participant) {
+  //     if (!participant.team?.registered) {
+  //       updateMatchParticipant({ present: 'no-show' });
+  //     }
+  //   }
+  // }, [participant, updateMatchParticipant]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="referee"
+      // onFail={() => router.back()}
+    >
       <Layout
         maxWidth={800}
         title={`שולחן ${table.name} | ${event.name}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        // error={connectionStatus === 'disconnected'}
+        // action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {participant &&
+        {/* {participant &&
           (match.status === 'in-progress' ? (
             <Timer participant={participant} match={match} />
           ) : participant.ready ? (
@@ -118,7 +129,7 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
               match={match}
               updateMatchParticipant={updateMatchParticipant}
             />
-          ))}
+          ))} */}
       </Layout>
     </RoleAuthorizer>
   );
@@ -127,6 +138,10 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    if (!ALLOW_MATCH_SELECTOR)
+      return {
+        redirect: { destination: `/event/${ctx.params?.eventId}/${user.role}`, permanent: false }
+      };
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()

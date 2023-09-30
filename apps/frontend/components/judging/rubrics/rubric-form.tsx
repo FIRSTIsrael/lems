@@ -37,7 +37,7 @@ import FeedbackNote from './feedback-note';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 
-interface Props {
+interface RubricFormProps {
   event: WithId<Event>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
@@ -48,7 +48,7 @@ interface Props {
   hideDescription?: boolean;
 }
 
-const RubricForm: React.FC<Props> = ({
+const RubricForm: React.FC<RubricFormProps> = ({
   event,
   team,
   rubric,

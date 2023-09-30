@@ -146,6 +146,8 @@ const parseMatches = (
           round,
           teamId: team._id,
           tableId: table._id,
+          tableName: table.name,
+          team: team,
           ready: false,
           present: 'present'
         });

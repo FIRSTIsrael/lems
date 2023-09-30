@@ -85,6 +85,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               allowNegativeValues={true}
               targetDate={dayjs(nextSessions[0].time).toDate()}
               variant="h1"
+              fontFamily={'Roboto Mono'}
               fontSize="10rem"
               fontWeight={700}
               dir="ltr"

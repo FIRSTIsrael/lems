@@ -1,63 +1,63 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Chip, List, ListItemButton, ListItemText, Paper, Typography } from '@mui/material';
-import { Event, Team, SafeUser, RobotGameMatch, RobotGameTable, EventState } from '@lems/types';
+import {
+  Event,
+  SafeUser,
+  RobotGameMatch,
+  RobotGameTable,
+  EventState,
+  ALLOW_MATCH_SELECTOR
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import MatchSelector from '../../../../components/field/referee/match-selector';
+import StrictRefereeDisplay from '../../../../components/field/referee/strict-referee-display';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   table: WithId<RobotGameTable>;
-  teams: Array<WithId<Team>>;
+  eventState: WithId<EventState>;
+  matches: Array<WithId<RobotGameMatch>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, table }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  table,
+  eventState: initialEventState,
+  matches: initialMatches
+}) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<EventState | undefined>(undefined);
-  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
-  const fetchMatches = useCallback(() => {
-    apiFetch(`/api/events/${user.event}/tables/${table._id}/matches`)
-      .then(res => res.json())
-      .then(data => {
-        setMatches(data);
-      });
-  }, [table._id, user.event]);
-
-  const fetchInitialData = () => {
-    apiFetch(`/api/events/${user.event}/state`)
-      .then(res => res.json())
-      .then(data => {
-        setEventState(data);
-      });
-
-    fetchMatches();
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    setEventState(newEventState);
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === newMatch._id) {
+          return newMatch;
+        }
+        return m;
+      })
+    );
   };
 
-  const handleMatchLoaded = (matchNumber: number) => {
-    setEventState(prev => (prev ? { ...prev, loadedMatch: matchNumber } : prev));
-  };
-
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], fetchInitialData, [
-    { name: 'matchLoaded', handler: handleMatchLoaded },
-    { name: 'matchStarted', handler: fetchMatches },
-    { name: 'matchCompleted', handler: fetchMatches },
-    { name: 'matchSubmitted', handler: fetchMatches }
+  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchAborted', handler: handleMatchEvent },
+    { name: 'matchCompleted', handler: handleMatchEvent }
   ]);
-
-  const activeMatches = matches?.filter(
-    m =>
-      m.status === 'in-progress' || m.status === 'scoring' || m.number === eventState?.loadedMatch
-  );
-
-  //TODO: referees should have 0 control and choice - display new screens based on old logic
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
@@ -67,37 +67,17 @@ const Page: NextPage<Props> = ({ user, event, table }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        <Paper sx={{ px: 4, py: 2, my: 6 }}>
-          {activeMatches?.length === 0 ? (
-            <Typography fontSize="xl" fontWeight={500} align="center">
-              אין מקצים פעילים
-            </Typography>
-          ) : (
-            <List>
-              {activeMatches?.map(match => (
-                <NextLink
-                  key={match._id.toString()}
-                  href={`/event/${event._id}/referee/matches/${match._id}`}
-                  passHref
-                  legacyBehavior
-                >
-                  {/* <ListItemButton sx={{ borderRadius: 2 }} component="a">
-                    <ListItemText
-                      primary={`מקצה ${match.number}`}
-                      secondary={`${match.team?.affiliation.name}, ${match.team?.affiliation.city}`}
-                    />
-                    {match.status === 'in-progress' && (
-                      <Chip label="התחיל" color="primary" size="small" />
-                    )}
-                    {match.status === 'scoring' && (
-                      <Chip label="הסתיים, ממתין לניקוד" size="small" />
-                    )}
-                  </ListItemButton> */}
-                </NextLink>
-              ))}
-            </List>
-          )}
-        </Paper>
+        {ALLOW_MATCH_SELECTOR ? (
+          <MatchSelector event={event} eventState={eventState} table={table} matches={matches} />
+        ) : (
+          <StrictRefereeDisplay
+            event={event}
+            eventState={eventState}
+            table={table}
+            matches={matches}
+            socket={socket}
+          />
+        )}
       </Layout>
     </RoleAuthorizer>
   );
@@ -116,9 +96,25 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     ).then(res => res?.json());
 
-    const [table, event] = await Promise.all([tablePromise, eventPromise]);
+    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
+      res => res?.json()
+    );
+    const matchesPromise = apiFetch(
+      `/api/events/${user.event}/tables/${user.roleAssociation.value}/matches`,
+      undefined,
+      ctx
+    ).then(res => res.json());
 
-    return { props: { user, event, table } };
+    const [table, event, eventState, matches] = await Promise.all([
+      tablePromise,
+      eventPromise,
+      eventStatePromise,
+      matchesPromise
+    ]);
+
+    console.log(matches);
+
+    return { props: { user, event, table, eventState, matches } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

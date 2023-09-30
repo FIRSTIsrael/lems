@@ -1,4 +1,4 @@
-import { RobotGameMatchPresent } from '@lems/types';
+import { RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
 
 export const localizedMatchType = {
   practice: 'מקצה אימונים',
@@ -8,4 +8,10 @@ export const localizedMatchType = {
 export const localizedMatchPresent: Record<RobotGameMatchPresent, string> = {
   present: 'נוכחת',
   'no-show': 'לא נוכחת'
+};
+
+export const localizedMatchStatus: Record<RobotGameMatchStatus, string> = {
+  'not-started': 'לא התחיל',
+  'in-progress': 'מקצה רץ',
+  completed: 'מקצה הושלם'
 };

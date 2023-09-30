@@ -7,7 +7,7 @@ export const getScoresheet = (filter: Filter<Scoresheet>) => {
 };
 
 export const getTeamScoresheets = (teamId: ObjectId) => {
-  return db.collection<Scoresheet>('scoresheets').find({ team: teamId }).toArray();
+  return db.collection<Scoresheet>('scoresheets').find({ teamId: teamId }).toArray();
 };
 
 export const addScoresheet = (scoresheet: Scoresheet) => {
@@ -43,6 +43,6 @@ export const deleteScoresheet = (filter: Filter<Scoresheet>) => {
 export const deleteTeamScoresheets = (teamId: ObjectId) => {
   return db
     .collection<Scoresheet>('scoresheets')
-    .deleteMany({ team: teamId })
+    .deleteMany({ teamId: teamId })
     .then(response => response);
 };

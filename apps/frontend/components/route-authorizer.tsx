@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { apiFetch } from '../lib/utils/fetch';
 
-interface Props {
+interface RouteAuthorizerProps {
   children?: React.ReactNode;
 }
 
-export const RouteAuthorizer: React.FC<Props> = ({ children }) => {
+export const RouteAuthorizer: React.FC<RouteAuthorizerProps> = ({ children }) => {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
 

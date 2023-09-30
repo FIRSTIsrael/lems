@@ -109,14 +109,9 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
     );
   };
 
-  const { connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['pit-admin'],
-    () => {
-      return;
-    },
-    [{ name: 'teamRegistered', handler: handleTeamRegistered }]
-  );
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
+    { name: 'teamRegistered', handler: handleTeamRegistered }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>

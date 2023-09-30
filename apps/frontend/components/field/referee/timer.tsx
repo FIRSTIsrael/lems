@@ -6,12 +6,12 @@ import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH } from '@lems/t
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
 
-interface Props {
+interface TimerProps {
   participant: RobotGameMatchParticipant;
   match: WithId<RobotGameMatch>;
 }
 
-const Timer: React.FC<Props> = ({ participant, match }) => {
+const Timer: React.FC<TimerProps> = ({ participant, match }) => {
   const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
 
@@ -34,6 +34,7 @@ const Timer: React.FC<Props> = ({ participant, match }) => {
           targetDate={matchEnd.toDate()}
           expiredText="00:00"
           variant="h1"
+          fontFamily={'Roboto Mono'}
           fontSize="5rem"
           fontWeight={700}
           dir="ltr"

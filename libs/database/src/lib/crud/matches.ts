@@ -1,4 +1,4 @@
-import { Filter, ObjectId, WithId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
 
@@ -17,37 +17,17 @@ export const getEventMatches = (eventId: string) => {
 };
 
 export const getTableMatches = (tableId: string) => {
-  return db
-    .collection('matches')
-    .aggregate<WithId<RobotGameMatch>>([
-      {
-        $match: { tableId: new ObjectId(tableId) }
-      },
-      {
-        $lookup: {
-          from: 'teams',
-          localField: 'teamId',
-          foreignField: '_id',
-          as: 'team'
-        }
-      },
-      { $unwind: '$team' }
-    ])
-    .toArray();
+  return findMatches({
+    'participants.tableId': new ObjectId(tableId)
+  }).toArray();
 };
 
 export const addMatch = (match: RobotGameMatch) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .insertOne(match)
-    .then(response => response);
+  return db.collection<RobotGameMatch>('matches').insertOne(match);
 };
 
 export const addMatches = (matches: Array<RobotGameMatch>) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .insertMany(matches)
-    .then(response => response);
+  return db.collection<RobotGameMatch>('matches').insertMany(matches);
 };
 
 export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: Partial<RobotGameMatch>) => {

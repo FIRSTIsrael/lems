@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
 import * as db from '@lems/database';
@@ -80,9 +80,8 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       event: event._id,
       activeMatch: null,
       loadedMatch: null,
-      currentSession: null,
-      currentMatch: 0,
-      activeSession: 0
+      currentSession: 0,
+      activeSession: null
     });
     console.log('✅ Created event state');
 

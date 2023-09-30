@@ -10,14 +10,19 @@ import {
   Typography
 } from '@mui/material';
 
-interface Props {
+interface AwardCandidatureCheckboxProps {
   name: string;
   title: string;
   description: string;
   disabled?: boolean;
 }
 
-const AwardCandidatureCheckbox: React.FC<Props> = ({ name, title, description, disabled }) => {
+const AwardCandidatureCheckbox: React.FC<AwardCandidatureCheckboxProps> = ({
+  name,
+  title,
+  description,
+  disabled
+}) => {
   return (
     <FastField name={`${name}`}>
       {({ field: { onBlur, checked, ...field }, form }: FieldProps) => (
