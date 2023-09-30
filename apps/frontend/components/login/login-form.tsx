@@ -18,16 +18,18 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
+import { withRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
 
-interface LoginFormProps {
+interface Props {
+  recaptcha: boolean;
   event: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel }) => {
+const LoginForm: React.FC<Props> = ({ recaptcha, event, rooms, tables, onCancel }) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -60,48 +62,44 @@ const LoginForm: React.FC<LoginFormProps> = ({ event, rooms, tables, onCancel })
     }
   };
 
+  const login = (captchaToken?: string) => {
+    apiFetch('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        isAdmin: false,
+        event: event?._id,
+        role,
+        ...(association
+          ? {
+              roleAssociation: {
+                type: associationType,
+                value: association
+              }
+            }
+          : undefined),
+        password,
+        ...(captchaToken ? { captchaToken } : {})
+      })
+    })
+      .then(async res => {
+        const data = await res.json();
+        if (data) {
+          const returnUrl = router.query.returnUrl || `/event/${event._id}`;
+          router.push(returnUrl as string);
+        } else if (data.error === 'INVALID_CREDENTIALS') {
+          enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
+        } else {
+          throw new Error(res.statusText);
+        }
+      })
+      .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    grecaptcha.ready(() => {
-      grecaptcha
-        .execute(`${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`, {
-          action: 'submit'
-        })
-        .then(captchaToken => {
-          apiFetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              isAdmin: false,
-              event: event?._id,
-              role,
-              ...(association
-                ? {
-                    roleAssociation: {
-                      type: associationType,
-                      value: association
-                    }
-                  }
-                : undefined),
-              password,
-              captchaToken
-            })
-          })
-            .then(async res => {
-              const data = await res.json();
-              if (data) {
-                const returnUrl = router.query.returnUrl || `/event/${event._id}`;
-                router.push(returnUrl as string);
-              } else if (data.error === 'INVALID_CREDENTIALS') {
-                enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
-              } else {
-                throw new Error(res.statusText);
-              }
-            })
-            .catch(() => enqueueSnackbar('אופס, החיבור לשרת נכשל.', { variant: 'error' }));
-        });
-    });
+    recaptcha ? withRecaptchaToken(login) : login();
   };
 
   return (

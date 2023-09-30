@@ -12,9 +12,10 @@ import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
   events: Array<WithId<Event>>;
+  recaptcha: boolean;
 }
 
-const Page: NextPage<PageProps> = ({ events }) => {
+const Page: NextPage<PageProps> = ({ events, recaptcha }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
   const [event, setEvent] = useState<WithId<Event> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
@@ -26,13 +27,15 @@ const Page: NextPage<PageProps> = ({ events }) => {
   };
 
   useEffect(() => {
-    loadScriptByURL(
-      'recaptcha-key',
-      `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`,
-      () => {
-        //Callback here
-      }
-    );
+    if (recaptcha) {
+      loadScriptByURL(
+        'recaptcha-key',
+        `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`,
+        () => {
+          //Callback here
+        }
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -55,9 +58,10 @@ const Page: NextPage<PageProps> = ({ events }) => {
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
-          <AdminLoginForm />
+          <AdminLoginForm recaptcha={recaptcha} />
         ) : event && rooms && tables ? (
           <LoginForm
+            recaptcha={recaptcha}
             event={event}
             rooms={rooms}
             tables={tables}
@@ -105,6 +109,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return response.ok ? response.json() : undefined;
   });
 
+  const recaptcha = process.env.RECAPTCHA === 'true';
+
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
@@ -113,7 +119,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     return apiFetch('/public/events', undefined, ctx)
       .then(response => response.json())
       .then((events: Array<WithId<Event>>) => {
-        return { props: { events } };
+        return { props: { events, recaptcha } };
       });
   }
 };

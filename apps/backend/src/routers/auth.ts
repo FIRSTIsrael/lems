@@ -11,15 +11,17 @@ const router = express.Router({ mergeParams: true });
 const jwtSecret = process.env.JWT_SECRET;
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-  const { captchaToken, ...loginDetails }: { captchaToken: string } & User = req.body;
+  const { captchaToken, ...loginDetails }: { captchaToken?: string } & User = req.body;
 
-  const captcha: RecaptchaResponse = await fetch(
-    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
-    { method: 'POST' }
-  ).then(res => res.json());
+  if (process.env.RECAPTCHA === 'true') {
+    const captcha: RecaptchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
+      { method: 'POST' }
+    ).then(res => res.json());
 
-  if (captcha.action != 'submit' || captcha.score < 0.5)
-    return res.status(429).json({ error: 'Captcha Failure, please try again later' });
+    if (captcha.action != 'submit' || captcha.score < 0.5)
+      return res.status(429).json({ error: 'Captcha Failure, please try again later' });
+  }
 
   if (loginDetails.event) loginDetails.event = new ObjectId(loginDetails.event);
   if (loginDetails.roleAssociation && loginDetails.roleAssociation.type != 'category')
