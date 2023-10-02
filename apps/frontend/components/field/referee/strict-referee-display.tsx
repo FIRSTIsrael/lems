@@ -19,12 +19,7 @@ import NoMatchCard from './no-match-card';
 import Timer from './timer';
 import { apiFetch } from '../../../lib/utils/fetch';
 
-type StrictRefereeDisplayState =
-  | 'timer'
-  | 'prestart'
-  | 'waiting-for-start'
-  | 'no-match'
-  | undefined;
+type StrictRefereeDisplayState = 'timer' | 'prestart' | 'no-match' | undefined;
 
 interface MatchPrestartProps {
   event: WithId<Event>;
@@ -54,24 +49,22 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
     (updatedMatchParticipant: Partial<RobotGameMatchParticipant>) => {
       if (match) {
         const participantIndex = match.participants.findIndex(p => p.tableId === table._id);
-        if (participantIndex !== -1) {
-          const { _id, ...updatedMatch } = { ...match };
-          updatedMatch.participants[participantIndex] = {
-            ...updatedMatch.participants[participantIndex],
-            ...updatedMatchParticipant
-          };
-          socket.emit(
-            'updateMatch',
-            match.eventId.toString(),
-            match._id.toString(),
-            updatedMatch,
-            response => {
-              if (!response.ok) {
-                enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
-              }
+        socket.emit(
+          'updateMatch',
+          match.eventId.toString(),
+          match._id.toString(),
+          Object.fromEntries(
+            Object.entries(updatedMatchParticipant).map(([key, value]) => [
+              `participants.${participantIndex}.${key}`,
+              value
+            ])
+          ),
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
             }
-          );
-        }
+          }
+        );
       }
     },
     [match, socket, table._id]
@@ -110,7 +103,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
             setDisplayState(loadedMatch ? 'prestart' : 'no-match');
           }
         });
-      } else if (eventState.loadedMatch) {
+      } else if (loadedMatch) {
         setMatch(loadedMatch);
         setDisplayState('prestart');
       } else {
@@ -122,20 +115,22 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
 
   return (
     <>
-      {participant && match && displayState === 'prestart' && (
-        <MatchPrestart
-          participant={participant}
-          match={match}
-          updateMatchParticipant={updateMatchParticipant}
-        />
-      )}
-      {participant && match && displayState === 'waiting-for-start' && (
-        <WaitForMatchStart
-          participant={participant}
-          match={match}
-          updateMatchParticipant={updateMatchParticipant}
-        />
-      )}
+      {participant &&
+        match &&
+        displayState === 'prestart' &&
+        (participant.ready ? (
+          <WaitForMatchStart
+            participant={participant}
+            match={match}
+            updateMatchParticipant={updateMatchParticipant}
+          />
+        ) : (
+          <MatchPrestart
+            participant={participant}
+            match={match}
+            updateMatchParticipant={updateMatchParticipant}
+          />
+        ))}
       {participant && match && displayState === 'timer' && (
         <Timer participant={participant} match={match} />
       )}

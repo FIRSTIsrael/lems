@@ -1,9 +1,40 @@
-import { Filter, ObjectId } from 'mongodb';
+import { Filter, ObjectId, WithId, AggregationCursor } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
 
 export const findMatches = (filter: Filter<RobotGameMatch>) => {
-  return db.collection<RobotGameMatch>('matches').find(filter);
+  return db.collection<RobotGameMatch>('matches').aggregate([
+    { $match: filter },
+    {
+      $unwind: '$participants'
+    },
+    {
+      $lookup: {
+        from: 'teams',
+        localField: 'participants.teamId',
+        foreignField: '_id',
+        as: 'participants.team'
+      }
+    },
+    {
+      $addFields: {
+        'participants.team': { $arrayElemAt: ['$participants.team', 0] }
+      }
+    },
+    {
+      $group: {
+        _id: '$_id',
+        participants: { $push: '$participants' },
+        data: { $first: '$$ROOT' }
+      }
+    },
+    {
+      $replaceRoot: {
+        newRoot: { $mergeObjects: ['$data', { participants: '$participants' }] }
+      }
+    },
+    { $sort: { number: 1 } }
+  ]) as AggregationCursor<WithId<RobotGameMatch>>;
 };
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {

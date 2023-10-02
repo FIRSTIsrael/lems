@@ -61,7 +61,17 @@ const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange, disabled
         >
           {localizedMatchPresent['no-show']}
         </ToggleButton>
-        <ToggleButton value="present"> {localizedMatchPresent['present']}</ToggleButton>
+        <ToggleButton
+          value="present"
+          sx={{
+            '&.Mui-selected': {
+              color: theme => `${theme.palette.primary.main} !important`
+            }
+          }}
+        >
+          {' '}
+          {localizedMatchPresent['present']}
+        </ToggleButton>
       </ToggleButtonGroup>
     </Paper>
   );

@@ -20,7 +20,6 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   activeMatchId,
   socket
 }) => {
-  const [previewShown, setPreviewShown] = useState<boolean>(false);
   const [matchShown, setMatchShown] = useState<boolean>(false);
 
   const loadNextMatch = useCallback(() => {
@@ -51,7 +50,6 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   }, [activeMatchId, eventId, socket]);
 
   useEffect(() => {
-    setPreviewShown(false);
     setMatchShown(false);
   }, [loadedMatchId]);
 
@@ -59,21 +57,12 @@ const ControlActions: React.FC<ControlActionsProps> = ({
     <Stack direction="row" spacing={1} justifyContent="center">
       <Button
         variant="contained"
-        color={loadedMatchId !== undefined ? 'inherit' : 'success'}
-        disabled={loadedMatchId !== undefined}
+        color={loadedMatchId === nextMatchId ? 'inherit' : 'success'}
+        disabled={loadedMatchId === nextMatchId}
         size="large"
         onClick={loadNextMatch}
       >
         טעינת המקצה הבא
-      </Button>
-      <Button
-        variant="contained"
-        color={loadedMatchId === undefined ? 'inherit' : previewShown ? 'warning' : 'success'}
-        disabled={loadedMatchId === undefined || activeMatchId !== undefined}
-        size="large"
-        onClick={() => setPreviewShown(true)}
-      >
-        הצגת Preview
       </Button>
       <Button
         variant="contained"

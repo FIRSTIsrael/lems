@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Paper, Stack } from '@mui/material';
 import { Event, SafeUser, RobotGameMatch, EventState } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -13,6 +13,7 @@ import Layout from '../../../components/layout';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,6 +31,9 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [eventState, setEventState] = useState<EventState>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
+    matches?.find(match => match.status === 'not-started')?._id
+  );
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>
@@ -50,15 +54,43 @@ const Page: NextPage<Props> = ({
     updateMatches(newMatch);
   };
 
+  const handleMatchStarted = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    handleMatchEvent(newMatch, newEventState);
+    const newNextMatchId = matches?.find(
+      match => match.status === 'not-started' && match._id != newMatch._id
+    )?._id;
+    setNextMatchId(newNextMatchId);
+    if (newNextMatchId)
+      socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
+        }
+      });
+  };
+
+  const handleMatchAborted = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    handleMatchEvent(newMatch, newEventState);
+    setNextMatchId(newMatch._id);
+    socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
+      }
+    });
+  };
+
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
+    { name: 'matchStarted', handler: handleMatchStarted },
+    { name: 'matchAborted', handler: handleMatchAborted },
     { name: 'matchCompleted', handler: handleMatchEvent },
     { name: 'matchUpdated', handler: updateMatches }
   ]);
-
-  const nextMatchId = matches?.find(match => match.status === 'not-started')?._id;
 
   return (
     <RoleAuthorizer user={user} allowedRoles="scorekeeper" onFail={() => router.back()}>

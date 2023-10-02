@@ -13,7 +13,7 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
     callback({ ok: false, error: `Could not find match #${matchId} in event ${eventId}!` });
     return;
   }
-  console.log(`🧑‍🍳🔃 Loading match #${matchId} in event ${eventId}`);
+  console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
 
   await db.updateEventState(
     { event: new ObjectId(eventId) },

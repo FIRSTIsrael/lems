@@ -53,7 +53,11 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
               </TableCell>
               <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
               <TableCell>{localizedMatchStatus[match.status]}</TableCell>
-              <TableCell>{match.participants.map(({ team }) => team?.number).join(', ')}</TableCell>
+              <TableCell>
+                {match.participants
+                  .map(({ team, tableName }) => `${tableName} - #${team?.number}`)
+                  .join(', ')}
+              </TableCell>
               <TableCell sx={{ p: 0 }}>
                 <Button
                   variant="contained"
@@ -61,7 +65,7 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
                   size="small"
                   onClick={() => loadMatch(match._id)}
                 >
-                  התחל
+                  טעינה
                 </Button>
               </TableCell>
             </TableRow>

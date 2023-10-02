@@ -61,7 +61,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
   >([]);
-  const [scoresheetErrors, setScoresheetErros] = useState<
+  const [scoresheetErrors, setScoresheetErrors] = useState<
     Array<{ id: string; description: string }>
   >([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
@@ -169,7 +169,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         }
       }
     });
-    setScoresheetErros(validatorErrors);
+    setScoresheetErrors(validatorErrors);
 
     if (mode === 'gp') {
       if (formValues.gp?.value !== '3' && !formValues.gp?.notes)
@@ -216,7 +216,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         validateOnChange
         validateOnMount
       >
-        {({ values, isValid, setFieldValue, validateForm, resetForm }) => (
+        {({ values, isValid, setFieldValue, validateForm, setValues }) => (
           <Form>
             {mode === 'scoring' ? (
               <>
@@ -317,7 +317,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           minWidth: 200
                         }}
                         endIcon={<SportsScoreIcon />}
-                        disabled={!isValid}
                         onClick={() => {
                           setHeadRefDialogue(true);
                         }}
@@ -348,6 +347,18 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           </Button>
                         </DialogActions>
                       </Dialog>
+                    </RoleAuthorizer>
+                    <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          minWidth: 200
+                        }}
+                        disabled={values === getDefaultScoresheet()}
+                        onClick={() => setValues(getDefaultScoresheet())}
+                      >
+                        איפוס דף הניקוד
+                      </Button>
                     </RoleAuthorizer>
                     <Button
                       variant="contained"
