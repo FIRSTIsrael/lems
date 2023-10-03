@@ -156,7 +156,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     const toValidate = Object.fromEntries(
       formValues.missions.map((m: Mission) => [m.id, m.clauses.map((c: MissionClause) => c.value)])
     );
-    console.log(toValidate);
     SEASON_SCORESHEET.validators.forEach(validator => {
       try {
         validator(toValidate);
@@ -197,8 +196,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     if (!fullMatch(scoresheet.data, formValues) || scoresheet.status !== newStatus) {
       handleSync(false, formValues, newStatus);
     }
-
-    console.log(errors);
 
     return errors;
   };
