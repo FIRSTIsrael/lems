@@ -169,16 +169,23 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     let tableId;
+    let matches;
     if (user.roleAssociation && user.roleAssociation.type === 'table') {
       tableId = user.roleAssociation.value;
+
+      matches = await apiFetch(`/api/events/${user.event}/tables/${tableId}/matches`, undefined, ctx).then(
+        res => res?.json()
+      )
     } else {
-      const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
+      matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
         res => res?.json()
       );
       tableId = matches.find((match: RobotGameMatch) =>
         match.participants.find(p => p.teamId == new ObjectId(String(ctx.params?.teamId)))
       ).table;
     }
+
+    const match = matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId == team._id))
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
@@ -197,18 +204,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     ).then(res => res?.json());
 
     const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
-
-    const match = await apiFetch(
-      `/api/events/${user.event}/tables/${tableId}/matches`,
-      undefined,
-      ctx
-    ).then(res =>
-      res
-        ?.json()
-        .then(matches =>
-          matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId == team._id))
-        )
-    );
 
     return { props: { user, event, table, team, match } };
   } catch (err) {

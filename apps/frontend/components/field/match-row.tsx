@@ -38,13 +38,13 @@ const MatchRow: React.FC<MatchRowProps> = ({ event, match, tables, scoresheets, 
                 legacyBehavior
               >
                 <TableCell align="center">
-                  {match.number === eventState.activeMatch + 1 ? (
+                  {match._id === eventState.loadedMatch ? (
                     <>
                       <BooleanIcon condition={participant.ready} />
                       <br />
                     </>
                   ) : (
-                    match.number < eventState.activeMatch + 1 &&
+                    match.status === 'completed' &&
                     scoresheet && (
                       <>
                         <ScoresheetStatusIcon status={scoresheet.status} />

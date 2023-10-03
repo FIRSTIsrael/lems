@@ -41,7 +41,7 @@ const Page: NextPage<Props> = ({ user, event, tables }) => {
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>> | undefined>(undefined);
 
   const getEventState = () => {
-    apiFetch(`/api/events/${user.event}/state/`)
+    apiFetch(`/api/events/${user.event}/state`)
       .then(res => res.json())
       .then(data => {
         setEventState(data);
@@ -55,7 +55,7 @@ const Page: NextPage<Props> = ({ user, event, tables }) => {
   };
 
   const getScoresheets = () => {
-    apiFetch(`/api/events/${user.event}/scoresheets/`)
+    apiFetch(`/api/events/${user.event}/scoresheets`)
       .then(res => res.json())
       .then(data => {
         setScoresheets(data);
@@ -133,7 +133,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    const tablesPromise = apiFetch(`/api/events/${user.event}/tables/`, undefined, ctx).then(res =>
+    const tablesPromise = apiFetch(`/api/events/${user.event}/tables`, undefined, ctx).then(res =>
       res?.json()
     );
 
