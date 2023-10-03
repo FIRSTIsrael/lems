@@ -43,7 +43,7 @@ export const cleanEventData = async (event: WithId<Event>) => {
   if (!(await db.deleteEventRooms(event._id)).acknowledged)
     throw new Error('Could not delete rooms!');
   if (!(await db.deleteEventMatches(event._id)).acknowledged)
-    throw new Error('Could not delete rooms!');
+    throw new Error('Could not delete matches!');
   if (!(await db.deleteEventUsers(event._id)).acknowledged)
     throw new Error('Could not delete users!');
 };
