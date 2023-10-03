@@ -1,13 +1,13 @@
 import { Field, FieldProps } from 'formik';
 import { TableCell, Typography, TableRow, Box, TextField } from '@mui/material';
 
-interface Props {
+interface ExceededNotesCellProps {
   name: string;
   placeholder?: string;
   disabled?: boolean;
 }
 
-const ExceededNotesCell: React.FC<Props> = ({ name, placeholder, disabled }) => {
+const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder, disabled }) => {
   return (
     <TableRow>
       <TableCell

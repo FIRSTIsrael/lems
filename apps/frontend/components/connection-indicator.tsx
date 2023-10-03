@@ -35,11 +35,11 @@ const rippleAnimation = keyframes`
   100% {transform: scale(1);}
 `;
 
-interface Props {
+interface ConnectionIndicatorProps {
   status: ConnectionStatus;
 }
 
-const ConnectionIndicator: React.FC<Props> = ({ status }) => {
+const ConnectionIndicator: React.FC<ConnectionIndicatorProps> = ({ status }) => {
   const { rippleColor, textColor, backgroundColor, text } = config[status];
   return (
     <Box

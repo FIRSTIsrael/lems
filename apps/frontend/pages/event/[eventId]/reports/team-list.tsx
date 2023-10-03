@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
     const sortFunctions: { [key: string]: (a: WithId<Team>, b: WithId<Team>) => number } = {
       number: (a, b) => a.number - b.number,
       name: (a, b) => a.name.localeCompare(b.name),
-      institution: (a, b) => a.affiliation.institution.localeCompare(b.affiliation.institution),
+      institution: (a, b) => a.affiliation.name.localeCompare(b.affiliation.name),
       city: (a, b) => a.affiliation.city.localeCompare(b.affiliation.city),
       registration: (a, b) => (b.registered ? 1 : -1)
     };
@@ -69,14 +69,9 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
     setTeams(sorted);
   }, [teams, sortBy, sortDirection]);
 
-  const { connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['pit-admin'],
-    () => {
-      return;
-    },
-    [{ name: 'teamRegistered', handler: handleTeamRegistered }]
-  );
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
+    { name: 'teamRegistered', handler: handleTeamRegistered }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
@@ -128,7 +123,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
                     <TableRow key={team._id.toString()}>
                       <TableCell align="left">{team.number}</TableCell>
                       <TableCell align="left">{team.name}</TableCell>
-                      <TableCell align="left">{team.affiliation.institution}</TableCell>
+                      <TableCell align="left">{team.affiliation.name}</TableCell>
                       <TableCell align="left">{team.affiliation.city}</TableCell>
                       <TableCell align="left">
                         <BooleanIcon condition={team.registered} />

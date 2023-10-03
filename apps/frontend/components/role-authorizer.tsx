@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Role, SafeUser } from '@lems/types';
 import { ensureArray, partialMatch } from '@lems/utils';
 
-interface Props {
+interface RoleAuthorizerProps {
   user: SafeUser;
   allowedRoles?: Role | Array<Role>;
   conditionalRoles?: Role | Array<Role>;
@@ -11,7 +11,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export const RoleAuthorizer: React.FC<Props> = ({
+export const RoleAuthorizer: React.FC<RoleAuthorizerProps> = ({
   user,
   allowedRoles,
   conditionalRoles,

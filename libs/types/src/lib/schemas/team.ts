@@ -5,6 +5,9 @@ export interface Team {
   number: number;
   name: string;
   registered: boolean;
-  affiliation: { institution: string; city: string };
+  affiliation: {
+    name: string;
+    city: string;
+  };
   profileDocument?: { id: string; link: string };
 }

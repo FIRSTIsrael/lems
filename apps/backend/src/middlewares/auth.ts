@@ -7,14 +7,12 @@ import { JwtTokenData } from '../types/auth';
 const jwtSecret = process.env.JWT_SECRET;
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  let token = req.cookies?.['auth-token'];
-
-  // Fallback to header if cookie has nothing
-  if (!token) {
-    const authHeader = req.headers.authorization as string;
-    if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split('Bearer ')[1];
-    }
+  let token = '';
+  const authHeader = req.headers.authorization as string;
+  if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split('Bearer ')[1];
+  } else {
+    token = req.cookies?.['auth-token'];
   }
 
   try {

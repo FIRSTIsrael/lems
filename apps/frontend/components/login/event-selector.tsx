@@ -5,12 +5,12 @@ import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
-interface Props {
+interface EventSelectorProps {
   events: Array<WithId<Event>>;
   onChange: (eventId: string | ObjectId) => void;
 }
 
-const EventSelector: React.FC<Props> = ({ events, onChange }) => {
+const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange }) => {
   return (
     <Stack direction="column" spacing={2}>
       {events.map(event => {

@@ -31,7 +31,7 @@ export const addSession = (session: JudgingSession) => {
     .then(response => response);
 };
 
-export const addSessions = (sessions: JudgingSession[]) => {
+export const addSessions = (sessions: Array<JudgingSession>) => {
   return db
     .collection<JudgingSession>('sessions')
     .insertMany(sessions)

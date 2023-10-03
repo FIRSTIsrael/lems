@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "author": "FIRST Israel",
+  "prettier": "@firstisrael/prettier-config",
   "scripts": {
     "dev": "npx nx run-many --target=serve --projects=backend,frontend"
   },
@@ -45,6 +46,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
+    "@firstisrael/prettier-config": "^1.1.0",
     "@nx/eslint-plugin": "16.7.2",
     "@nx/express": "^16.7.2",
     "@nx/jest": "16.7.2",

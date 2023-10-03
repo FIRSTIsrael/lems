@@ -36,13 +36,13 @@ import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface JudgingStatusTimerProps {
-  activeSessions: Array<WithId<JudgingSession>>;
+  currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
 }
 
 const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
-  activeSessions,
+  currentSessions,
   nextSessions,
   teams
 }) => {
@@ -62,11 +62,11 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
 
   const progressToNextSessionStart = useMemo(
     () =>
-      activeSessions.length > 0 && nextSessions.length > 0
+      currentSessions.length > 0 && nextSessions.length > 0
         ? (dayjs(nextSessions[0].time).diff(currentTime) * 100) /
-          dayjs(activeSessions[0].time).diff(dayjs(nextSessions[0].time))
+          dayjs(currentSessions[0].time).diff(dayjs(nextSessions[0].time))
         : 0,
-    [currentTime, activeSessions, nextSessions]
+    [currentTime, currentSessions, nextSessions]
   );
 
   return (
@@ -85,16 +85,17 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               allowNegativeValues={true}
               targetDate={dayjs(nextSessions[0].time).toDate()}
               variant="h1"
+              fontFamily={'Roboto Mono'}
               fontSize="10rem"
               fontWeight={700}
               dir="ltr"
             />
           )}
-          {activeSessions.length > 0 && (
+          {currentSessions.length > 0 && (
             <Typography variant="h4">
-              {activeSessions.filter(session => !!session.start).length} מתוך{' '}
+              {currentSessions.filter(session => !!session.start).length} מתוך{' '}
               {
-                activeSessions.filter(
+                currentSessions.filter(
                   session => teams.find(team => team._id === session.team)?.registered
                 ).length
               }{' '}
@@ -103,7 +104,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
           )}
         </Stack>
       </Paper>
-      {activeSessions.length > 0 && nextSessions.length > 0 && (
+      {currentSessions.length > 0 && nextSessions.length > 0 && (
         <LinearProgress
           color={ahead ? 'success' : 'error'}
           variant="determinate"
@@ -121,14 +122,14 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
 };
 
 interface JudgingStatusTableProps {
-  activeSessions: Array<WithId<JudgingSession>>;
+  currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
 }
 
 const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
-  activeSessions,
+  currentSessions,
   nextSessions,
   rooms,
   teams
@@ -147,14 +148,14 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {activeSessions.length > 0 && (
+          {currentSessions.length > 0 && (
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th">
                 סבב נוכחי:
                 <br />
-                {dayjs(activeSessions[0].time).format('HH:mm')}
+                {dayjs(currentSessions[0].time).format('HH:mm')}
               </TableCell>
-              {activeSessions.map(session => (
+              {currentSessions.map(session => (
                 <TableCell key={session._id.toString()} align="center">
                   <Box alignItems="center">
                     {teams.find(t => t._id === session.team)?.name}
@@ -253,13 +254,13 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
     ]
   );
 
-  const activeSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.activeSession),
+  const currentSessions = useMemo(
+    () => sessions.filter(session => session.number === eventState.currentSession),
     [sessions, eventState]
   );
 
   const nextSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.activeSession + 1),
+    () => sessions.filter(session => session.number === eventState.currentSession + 1),
     [sessions, eventState]
   );
 
@@ -275,11 +276,11 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
       >
         <JudgingStatusTimer
           teams={teams}
-          activeSessions={activeSessions}
+          currentSessions={currentSessions}
           nextSessions={nextSessions}
         />
         <JudgingStatusTable
-          activeSessions={activeSessions}
+          currentSessions={currentSessions}
           nextSessions={nextSessions}
           rooms={rooms}
           teams={teams}

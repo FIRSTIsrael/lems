@@ -227,9 +227,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
   const { connectionStatus, socket } = useWebsocket(
     event._id.toString(),
     ['pit-admin'],
-    () => {
-      return;
-    },
+    undefined,
     [{ name: 'teamRegistered', handler: handleTeamRegistered }]
   );
 

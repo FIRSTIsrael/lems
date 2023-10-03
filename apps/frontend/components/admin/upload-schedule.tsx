@@ -20,11 +20,11 @@ import { Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { useSnackbar } from 'notistack';
 
-interface Props extends ButtonProps {
+interface UploadScheduleButtonProps extends ButtonProps {
   event: WithId<Event>;
 }
 
-const UploadScheduleButton: React.FC<Props> = ({ event, ...props }) => {
+const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...props }) => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [isDialogOpen, setDialogOpen] = useState(false);

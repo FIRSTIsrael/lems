@@ -18,17 +18,18 @@ export interface MissionClause {
 
 export interface Mission {
   id: string;
-  clauses: MissionClause[];
+  clauses: Array<MissionClause>;
 }
 
 export interface Scoresheet {
-  team: ObjectId;
-  match: ObjectId;
+  eventId: ObjectId;
+  matchId: ObjectId;
+  teamId: ObjectId;
   stage: RobotGameMatchType;
   round: number;
   status: ScoresheetStatus;
   data?: {
-    missions: Mission[];
+    missions: Array<Mission>;
     signature: string;
     gp: { value: string; notes?: string };
     score: number;

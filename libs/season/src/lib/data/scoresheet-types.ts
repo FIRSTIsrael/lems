@@ -10,13 +10,13 @@ export interface MissionClause {
 
 export interface Mission {
   id: string;
-  clauses: MissionClause[];
+  clauses: Array<MissionClause>;
   calculation: (...args: Array<boolean | string | number>) => number;
 }
 
 export interface Scoresheet {
   season: string;
-  missions: Mission[];
+  missions: Array<Mission>;
   validators: Array<(missions: { [key: string]: Array<boolean | string | number> }) => void>;
 }
 

@@ -3,7 +3,7 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 import { JudgingCategory } from '@lems/types';
 import { rubricSchemaColumns } from '@lems/season';
 
-interface Props {
+interface HeaderRowProps {
   columns: typeof rubricSchemaColumns;
   category: JudgingCategory;
   hideDescriptions?: boolean;
@@ -15,7 +15,11 @@ const colors: { [K in JudgingCategory]: string[] } = {
   'robot-design': ['#EDF4EC', '#C6DDC5', '#99C69C', '#64AF75']
 };
 
-const HeaderRow: React.FC<Props> = ({ columns, category: type, hideDescriptions = false }) => {
+const HeaderRow: React.FC<HeaderRowProps> = ({
+  columns,
+  category: type,
+  hideDescriptions = false
+}) => {
   return (
     <TableRow>
       {columns.map((column, index) => (

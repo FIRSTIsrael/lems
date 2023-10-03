@@ -49,8 +49,8 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
     }.bind(null, session)
   );
 
-  if (!eventState.activeSession || session.number > eventState.activeSession) {
-    await db.updateEventState({ _id: eventState._id }, { activeSession: session.number });
+  if (!eventState.currentSession || session.number > eventState.currentSession) {
+    await db.updateEventState({ _id: eventState._id }, { currentSession: session.number });
   }
 
   callback({ ok: true });

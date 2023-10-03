@@ -17,7 +17,7 @@ export const addRubric = (rubric: Rubric<JudgingCategory>) => {
     .then(response => response);
 };
 
-export const addRubrics = (rubrics: Rubric<JudgingCategory>[]) => {
+export const addRubrics = (rubrics: Array<Rubric<JudgingCategory>>) => {
   return db
     .collection<Rubric<JudgingCategory>>('rubrics')
     .insertMany(rubrics)

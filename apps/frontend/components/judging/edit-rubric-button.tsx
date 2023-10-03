@@ -60,13 +60,6 @@ const mapStatus: {
   }
 };
 
-interface Props {
-  href?: string;
-  status: string;
-  active: boolean;
-  children: React.ReactNode;
-}
-
 interface WrapperProps {
   href?: string;
   active: boolean;
@@ -85,7 +78,14 @@ const Wrapper: React.FC<WrapperProps> = ({ active, href, children }) => {
   }
 };
 
-const EditRubricButton: React.FC<Props> = ({ ...props }) => {
+interface EditRubricButtonProps {
+  href?: string;
+  status: string;
+  active: boolean;
+  children: React.ReactNode;
+}
+
+const EditRubricButton: React.FC<EditRubricButtonProps> = ({ ...props }) => {
   const { href, status, active, children } = props;
   const { title, sx } = mapStatus[status];
   return (

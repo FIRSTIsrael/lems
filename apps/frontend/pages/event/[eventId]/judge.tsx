@@ -37,7 +37,9 @@ const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
-  const [activeSession, setActiveSession] = useState<WithId<JudgingSession> | undefined>(undefined);
+  const [currentSession, setcurrentSession] = useState<WithId<JudgingSession> | undefined>(
+    undefined
+  );
 
   const updateSessions = () => {
     return apiFetch(`/api/events/${user.event}/rooms/${room._id}/sessions`)
@@ -70,7 +72,7 @@ const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
 
   const getInitialData = () => {
     updateSessions().then(data => {
-      setActiveSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
+      setcurrentSession(data.find((s: WithId<JudgingSession>) => s.status === 'in-progress'));
       updateRubrics();
     });
   };
@@ -78,21 +80,21 @@ const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
   const onSessionStarted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      setActiveSession(s?.status === 'in-progress' ? s : undefined);
+      setcurrentSession(s?.status === 'in-progress' ? s : undefined);
     });
   };
 
   const onSessionCompleted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      if (s?.status === 'completed') setActiveSession(undefined);
+      if (s?.status === 'completed') setcurrentSession(undefined);
     });
   };
 
   const onSessionAborted = (sessionId: string) => {
     updateSessions().then(newSessions => {
       const s = newSessions.find((s: WithId<JudgingSession>) => s._id.toString() === sessionId);
-      if (s?.status === 'not-started') setActiveSession(undefined);
+      if (s?.status === 'not-started') setcurrentSession(undefined);
     });
   };
 
@@ -110,10 +112,10 @@ const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
   );
 
   const activeTeam = useMemo(() => {
-    return activeSession
-      ? teams.find((t: WithId<Team>) => t._id == activeSession.team) || ({} as WithId<Team>)
+    return currentSession
+      ? teams.find((t: WithId<Team>) => t._id == currentSession.team) || ({} as WithId<Team>)
       : ({} as WithId<Team>);
-  }, [teams, activeSession]);
+  }, [teams, currentSession]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="judge" onFail={() => router.back()}>
@@ -123,14 +125,14 @@ const Page: NextPage<Props> = ({ user, event, room, teams: initialTeams }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        {activeSession && activeTeam ? (
+        {currentSession && activeTeam ? (
           <>
-            <JudgingTimer session={activeSession} team={activeTeam} />
+            <JudgingTimer session={currentSession} team={activeTeam} />
             <Box display="flex" justifyContent="center">
               <AbortJudgingSessionButton
                 event={event}
                 room={room}
-                session={activeSession}
+                session={currentSession}
                 socket={socket}
                 sx={{ mt: 2.5 }}
               />

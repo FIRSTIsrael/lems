@@ -1,14 +1,26 @@
-import { ObjectId } from 'mongodb';
-import { RobotGameMatchType, Status } from '../constants';
+import { ObjectId, WithId } from 'mongodb';
+import { RobotGameMatchType, RobotGameMatchStatus, RobotGameMatchPresent } from '../constants';
+import { Team } from './team';
 
-export interface RobotGameMatch {
+export interface RobotGameMatchBrief {
+  eventId: ObjectId;
   number: number;
   type: RobotGameMatchType;
+  status: RobotGameMatchStatus;
+  scheduledTime?: Date;
+  startTime?: Date;
+}
+
+export interface RobotGameMatchParticipant {
+  teamId: ObjectId;
+  team?: WithId<Team>;
+  tableId: ObjectId;
+  tableName?: string;
   round: number;
-  time: Date;
-  team: ObjectId;
-  table: ObjectId;
-  status: Status;
+  present: RobotGameMatchPresent;
   ready: boolean;
-  start?: Date;
+}
+
+export interface RobotGameMatch extends RobotGameMatchBrief {
+  participants: Array<RobotGameMatchParticipant>;
 }

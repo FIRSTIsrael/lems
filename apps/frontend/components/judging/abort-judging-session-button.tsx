@@ -20,14 +20,20 @@ import {
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
-interface Props extends ButtonProps {
+interface AbortJudgingSessionButtonProps extends ButtonProps {
   event: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const AbortJudgingSessionButton: React.FC<Props> = ({ event, room, session, socket, ...props }) => {
+const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
+  event,
+  room,
+  session,
+  socket,
+  ...props
+}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const abortSession = (eventId: string, roomId: string, sessionId: string) => {

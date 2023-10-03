@@ -5,7 +5,7 @@ import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 const category = 'innovation-project' as JudgingCategory;
 
-const rubricSections: RubricSchemaSection<typeof category>[] = [
+const rubricSections: Array<RubricSchemaSection<typeof category>> = [
   {
     title: 'זיהוי',
     description: 'הקבוצה הגדירה את הבעיה באופן ברור וחקרה אותה היטב.',

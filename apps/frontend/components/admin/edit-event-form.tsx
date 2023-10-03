@@ -21,11 +21,11 @@ import { DivisionColor, Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 
-interface Props extends ButtonProps {
+interface EditEventFormProps extends ButtonProps {
   event: WithId<Event>;
 }
 
-const EditEventForm: React.FC<Props> = ({ event, onSubmit }) => {
+const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
   const [name, setName] = useState<string>(event.name);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));

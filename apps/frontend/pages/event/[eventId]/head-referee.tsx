@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import {
   Event,
-  Team,
   SafeUser,
   Scoresheet,
   RobotGameMatch,
@@ -33,21 +32,16 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
 }
 
-type GroupedMatches = {
-  [key: string]: Array<WithId<RobotGameMatch>>;
-};
-
-const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
+const Page: NextPage<Props> = ({ user, event, tables }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<EventState | undefined>(undefined);
-  const [matches, setMatches] = useState<GroupedMatches | undefined>(undefined);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>> | undefined>(undefined);
 
   const getEventState = () => {
-    apiFetch(`/api/events/${user.event}/state/`)
+    apiFetch(`/api/events/${user.event}/state`)
       .then(res => res.json())
       .then(data => {
         setEventState(data);
@@ -57,19 +51,11 @@ const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
   const getMatches = () => {
     apiFetch(`/api/events/${user.event}/matches`)
       .then(res => res.json())
-      .then((data: Array<WithId<RobotGameMatch>>) => {
-        setMatches(
-          data.reduce((r, match) => {
-            r[match.number] = r[match.number] ?? Array(tables.length).fill(undefined);
-            r[match.number][tables.findIndex(t => t._id === match.table)] = match;
-            return r;
-          }, Object.create(null))
-        );
-      });
+      .then(data => setMatches(data));
   };
 
   const getScoresheets = () => {
-    apiFetch(`/api/events/${user.event}/scoresheets/`)
+    apiFetch(`/api/events/${user.event}/scoresheets`)
       .then(res => res.json())
       .then(data => {
         setScoresheets(data);
@@ -87,18 +73,14 @@ const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
     getMatches();
   };
 
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field', 'pit-admin'],
-    getInitialData,
-    [
-      { name: 'matchStarted', handler: getData },
-      { name: 'matchCompleted', handler: getData },
-      { name: 'matchAborted', handler: getData },
-      { name: 'matchUpdated', handler: getData },
-      { name: 'scoresheetStatusChanged', handler: getScoresheets }
-    ]
-  );
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], getInitialData, [
+    { name: 'matchStarted', handler: getData },
+    { name: 'matchCompleted', handler: getData },
+    { name: 'matchAborted', handler: getData },
+    { name: 'matchUpdated', handler: getData },
+    { name: 'matchParticipantPrestarted', handler: getData },
+    { name: 'scoresheetStatusChanged', handler: getScoresheets }
+  ]);
 
   return (
     <RoleAuthorizer user={user} allowedRoles="head-referee" onFail={() => router.back()}>
@@ -125,17 +107,14 @@ const Page: NextPage<Props> = ({ user, event, tables, teams }) => {
               <TableBody>
                 {matches &&
                   scoresheets &&
-                  Object.keys(matches).map(matchNumber => (
+                  matches.map(match => (
                     <MatchRow
-                      key={matchNumber}
+                      key={match._id.toString()}
                       event={event}
-                      matchNumber={matchNumber}
-                      matches={matches[matchNumber]}
-                      scoresheets={scoresheets.filter(scoresheet =>
-                        matches[matchNumber].map(match => match?._id).includes(scoresheet.match)
-                      )}
+                      match={match}
+                      tables={tables}
+                      scoresheets={scoresheets.filter(s => s.matchId === match._id)}
                       eventState={eventState}
-                      teams={teams}
                     />
                   ))}
               </TableBody>
@@ -154,17 +133,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
-    const tablesPromise = apiFetch(`/api/events/${user.event}/tables/`, undefined, ctx).then(res =>
+    const tablesPromise = apiFetch(`/api/events/${user.event}/tables`, undefined, ctx).then(res =>
       res?.json()
     );
 
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
+    const [tables, event] = await Promise.all([tablesPromise, eventPromise]);
 
-    const [tables, event, teams] = await Promise.all([tablesPromise, eventPromise, teamsPromise]);
-
-    return { props: { user, event, tables, teams } };
+    return { props: { user, event, tables } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

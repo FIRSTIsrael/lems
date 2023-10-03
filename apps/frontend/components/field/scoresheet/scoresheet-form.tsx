@@ -27,7 +27,8 @@ import {
   SafeUser,
   Scoresheet,
   MissionClause,
-  Mission
+  Mission,
+  ScoresheetStatus
 } from '@lems/types';
 import { fullMatch } from '@lems/utils';
 import {
@@ -41,7 +42,7 @@ import ScoresheetMission from './scoresheet-mission';
 import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
 
-interface Props {
+interface ScoresheetFormProps {
   event: WithId<Event>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
@@ -49,12 +50,18 @@ interface Props {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket }) => {
+const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
+  event,
+  team,
+  scoresheet,
+  user,
+  socket
+}) => {
   const router = useRouter();
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
   >([]);
-  const [scoresheetErrors, setScoresheetErros] = useState<
+  const [scoresheetErrors, setScoresheetErrors] = useState<
     Array<{ id: string; description: string }>
   >([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
@@ -98,11 +105,11 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
   const handleSync = async (
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
-    newstatus: string | undefined
+    newStatus: ScoresheetStatus | undefined
   ) => {
-    const updatedScoresheet = {} as any;
-    if (newstatus) updatedScoresheet['status'] = newstatus;
-    if (formValues) updatedScoresheet['data'] = formValues;
+    const updatedScoresheet = {} as Partial<Scoresheet>;
+    if (newStatus) updatedScoresheet.status = newStatus;
+    if (formValues) (updatedScoresheet as any).data = formValues;
 
     socket.emit(
       'updateScoresheet',
@@ -162,7 +169,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         }
       }
     });
-    setScoresheetErros(validatorErrors);
+    setScoresheetErrors(validatorErrors);
 
     if (mode === 'gp') {
       if (formValues.gp?.value !== '3' && !formValues.gp?.notes)
@@ -172,7 +179,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
     const isCompleted = Object.keys(errors).length === 0;
     const isEmpty = fullMatch(formValues, getDefaultScoresheet());
 
-    let newStatus = undefined;
+    let newStatus: ScoresheetStatus | undefined = undefined;
     if (['empty', 'in-progress', 'completed'].includes(scoresheet.status)) {
       if (isEmpty) {
         newStatus = 'empty';
@@ -209,7 +216,7 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
         validateOnChange
         validateOnMount
       >
-        {({ values, isValid, setFieldValue, validateForm, resetForm }) => (
+        {({ values, isValid, setFieldValue, validateForm, setValues }) => (
           <Form>
             {mode === 'scoring' ? (
               <>
@@ -310,7 +317,6 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                           minWidth: 200
                         }}
                         endIcon={<SportsScoreIcon />}
-                        disabled={!isValid}
                         onClick={() => {
                           setHeadRefDialogue(true);
                         }}
@@ -341,6 +347,21 @@ const ScoresheetForm: React.FC<Props> = ({ event, team, scoresheet, user, socket
                           </Button>
                         </DialogActions>
                       </Dialog>
+                    </RoleAuthorizer>
+                    <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          minWidth: 200
+                        }}
+                        disabled={values === getDefaultScoresheet()}
+                        onClick={() => 
+                          setValues(getDefaultScoresheet()).then(() => 
+                            handleSync(true, values, 'empty')
+                          )} 
+                      >
+                        איפוס דף הניקוד
+                      </Button>
                     </RoleAuthorizer>
                     <Button
                       variant="contained"

@@ -44,7 +44,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
         <Tooltip
           title={
             team.registered
-              ? `${team.name}, ${team.affiliation.institution}, ${team.affiliation.city}`
+              ? `${team.name}, ${team.affiliation.name}, ${team.affiliation.city}`
               : 'הקבוצה טרם הגיעה לאירוע'
           }
           arrow

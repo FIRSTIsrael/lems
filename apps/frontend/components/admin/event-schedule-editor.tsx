@@ -27,11 +27,11 @@ import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 
-interface Props extends ButtonProps {
+interface EventScheduleEditorProps extends ButtonProps {
   event: WithId<Event>;
 }
 
-const EventScheduleEditor: React.FC<Props> = ({ event, ...props }) => {
+const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...props }) => {
   const theme = useTheme();
   const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
 

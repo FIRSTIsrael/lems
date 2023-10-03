@@ -1,10 +1,11 @@
 import { WithId } from 'mongodb';
 import { JudgingCategory, TicketType } from './constants';
-import { RobotGameMatch } from './schemas/robot-game-match';
+import { RobotGameMatch, RobotGameMatchParticipant } from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
+import { EventState } from './schemas/event-state';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -31,13 +32,17 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticketId: string) => void;
 
-  matchStarted: (tableId: string, matchId: string) => void;
+  matchLoaded: (match: RobotGameMatch) => void;
 
-  matchCompleted: (tableId: string, matchId: string) => void;
+  matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchAborted: (tableId: string, matchId: string) => void;
+  matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchUpdated: (tableId: string, matchId: string) => void;
+  matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
+
+  matchUpdated: (match: RobotGameMatch) => void;
+
+  matchParticipantPrestarted: (match: RobotGameMatch) => void;
 
   scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
 
@@ -94,25 +99,35 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  loadMatch: (
+    eventId: string,
+    matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   startMatch: (
     eventId: string,
-    tableId: string,
     matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   abortMatch: (
     eventId: string,
-    tableId: string,
     matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateMatch: (
     eventId: string,
-    tableId: string,
     matchId: string,
     matchData: Partial<RobotGameMatch>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  prestartMatchParticipant: (
+    eventId: string,
+    matchId: string,
+    data: { teamId: string } & Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

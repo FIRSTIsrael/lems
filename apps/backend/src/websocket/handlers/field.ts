@@ -2,111 +2,206 @@ import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import dayjs from 'dayjs';
-import { MATCH_LENGTH } from '@lems/types';
+import { MATCH_LENGTH, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 
-export const handleStartMatch = async (namespace, eventId, tableId, matchId, callback) => {
-  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
-
-  const match = await db.getMatch({
-    table: new ObjectId(tableId),
+export const handleLoadMatch = async (namespace, eventId: string, matchId: string, callback) => {
+  let match = await db.getMatch({
+    eventId: new ObjectId(eventId),
     _id: new ObjectId(matchId)
   });
   if (!match) {
-    callback({ ok: false, error: `Could not find match ${matchId} in table ${tableId}!` });
+    callback({ ok: false, error: `Could not find match #${matchId} in event ${eventId}!` });
     return;
   }
-  if (match.status !== 'not-started') {
-    callback({ ok: false, error: `Match ${matchId} has already started!` });
-    return;
-  }
-  const tableMatches = await db.getTableMatches(new ObjectId(tableId));
-  if (tableMatches.find(match => match.status === 'in-progress')) {
-    callback({ ok: false, error: `Table ${tableId} already has a running match!` });
-    return;
-  }
+  console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
 
-  console.log(`❗ Starting match ${matchId} for table ${tableId} in event ${eventId}`);
-
-  match.start = new Date();
-  match.status = 'in-progress';
-  const { _id, ...matchData } = match;
-  await db.updateMatch({ _id: match._id }, matchData);
-
-  const matchEnd: Date = dayjs().add(MATCH_LENGTH, 'seconds').toDate();
-  scheduler.scheduleJob(
-    matchEnd,
-    function () {
-      db.getMatch({ _id: new ObjectId(match._id) }).then(newMatch => {
-        if (dayjs(newMatch.start).isSame(dayjs(match.start)) && newMatch.status === 'in-progress') {
-          console.log(`✅ Match ${match._id} completed`);
-          db.updateMatch({ _id: match._id }, { status: 'completed' });
-          namespace.to('field').emit('matchCompleted', tableId, matchId);
-        }
-      });
-    }.bind(null, match, [tableId])
+  await db.updateEventState(
+    { event: new ObjectId(eventId) },
+    {
+      loadedMatch: match._id
+    }
   );
 
-  if (!eventState.activeMatch || match.number > eventState.activeMatch) {
-    await db.updateEventState({ _id: eventState._id }, { activeMatch: match.number });
-  }
-
+  console.log(`✅ Loaded match #${matchId}!`);
   callback({ ok: true });
-  namespace.to('field').emit('matchStarted', tableId, matchId);
+  match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
+  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
-export const abortMatch = async (namespace, eventId, tableId, matchId, callback) => {
-  const match = await db.getMatch({
-    match: new ObjectId(tableId),
-    _id: new ObjectId(matchId)
-  });
-  if (!match) {
-    callback({ ok: false, error: `Could not find match ${matchId} in table ${tableId}!` });
-    return;
-  }
-  if (match.status !== 'in-progress') {
-    callback({ ok: false, error: `Match ${matchId} is not in progress!` });
-    return;
-  }
-
-  console.log(`❌ Aborting match ${matchId} for table ${tableId} in event ${eventId}`);
-
-  await db.updateMatch({ _id: match._id }, { start: undefined, status: 'not-started' });
-
-  callback({ ok: true });
-  namespace.to('field').emit('matchAborted', matchId);
-};
-
-export const handleUpdateMatch = async (
-  namespace,
-  eventId,
-  tableId,
-  matchId,
-  matchData,
-  callback
-) => {
-  const match = await db.getMatch({
-    table: new ObjectId(tableId),
-    _id: new ObjectId(matchId)
-  });
-  if (!match) {
+export const handleStartMatch = async (namespace, eventId: string, matchId: string, callback) => {
+  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  if (eventState.activeMatch !== null) {
     callback({
       ok: false,
-      error: `Could not find match ${matchId} for table ${tableId} in event ${eventId}!`
+      error: `Event already has a running match (${eventState.activeMatch})!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating match ${matchId} for table ${tableId} in event ${eventId}`);
+  console.log(`❗ Starting match ${matchId} in event ${eventId}`);
+
+  const startTime = new Date();
+  await db.updateMatches(
+    {
+      _id: new ObjectId(matchId)
+    },
+    {
+      status: 'in-progress',
+      startTime
+    }
+  );
+
+  const matchEnd: Date = dayjs().add(MATCH_LENGTH, 'seconds').toDate();
+  scheduler.scheduleJob(matchEnd, async () => {
+    const result = await db.updateMatches(
+      {
+        _id: new ObjectId(matchId),
+        status: 'in-progress',
+        startTime
+      },
+      {
+        status: 'completed'
+      }
+    );
+
+    if (result.matchedCount > 0) {
+      console.log(`✅ Match ${matchId} completed!`);
+      db.updateEventState({ _id: eventState._id }, { activeMatch: null });
+
+      const match = await db.getMatch({ _id: new ObjectId(matchId) });
+      eventState = await db.getEventState({ event: new ObjectId(eventId) });
+      namespace.to('field').emit('matchCompleted', match, eventState);
+    }
+  });
+
+  const match = await db.getMatch({ _id: new ObjectId(matchId) });
+
+  await db.updateEventState(
+    { _id: eventState._id },
+    {
+      activeMatch: match._id,
+      loadedMatch: null
+    }
+  );
+
+  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  callback({ ok: true });
+  namespace.to('field').emit('matchStarted', match, eventState);
+};
+
+export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
+  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  if (eventState.activeMatch.toString() !== matchId) {
+    callback({
+      ok: false,
+      error: `Match ${matchId} is not running!`
+    });
+    return;
+  }
+
+  console.log(`❌ Aborting match ${matchId} in event ${eventId}`);
+
+  await db.updateMatches(
+    {
+      eventId: new ObjectId(eventId),
+      _id: new ObjectId(matchId)
+    },
+    {
+      status: 'not-started',
+      startTime: undefined
+    }
+  );
+
+  await db.updateEventState(
+    { event: new ObjectId(eventId) },
+    {
+      activeMatch: null,
+      loadedMatch: new ObjectId(matchId)
+    }
+  );
+
+  callback({ ok: true });
+  const match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
+  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  namespace.to('field').emit('matchAborted', match, eventState);
+  namespace.to('field').emit('matchLoaded', match, eventState);
+};
+
+export const handleUpdateMatch = async (
+  namespace,
+  eventId: string,
+  matchId: string,
+  matchData: Partial<RobotGameMatch>,
+  callback
+) => {
+  let match = await db.getMatch({
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
+  });
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find match ${matchId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️ Updating match ${matchId} in event ${eventId}`);
 
   await db.updateMatch(
     {
-      _id: match._id
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId)
     },
     matchData
   );
 
   callback({ ok: true });
-  namespace.to('field').emit('matchUpdated', tableId, matchId);
+  match = await db.getMatch({ _id: new ObjectId(matchId) });
+  namespace.to('field').emit('matchUpdated', match);
+};
+
+export const handlePrestartMatchParticipant = async (
+  namespace,
+  eventId: string,
+  matchId: string,
+  {
+    teamId,
+    ...data
+  }: { teamId: string } & Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>,
+  callback
+) => {
+  let match = await db.getMatch({
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
+  });
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find match ${matchId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(
+    `🖊️ Updating prestart data of team ${teamId} in match ${matchId} at event ${eventId}`
+  );
+
+  await db.updateMatch(
+    {
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId),
+      'participants.teamId': new ObjectId(teamId)
+    },
+    Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [`participants.$.${key}` as string, value])
+    )
+  );
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  namespace.to('field').emit('matchParticipantPrestarted', match);
 };
 
 export const handleUpdateScoresheet = async (
@@ -118,7 +213,7 @@ export const handleUpdateScoresheet = async (
   callback
 ) => {
   const scoresheet = await db.getScoresheet({
-    team: new ObjectId(teamId),
+    teamId: new ObjectId(teamId),
     _id: new ObjectId(scoresheetId)
   });
   if (!scoresheet) {

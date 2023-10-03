@@ -87,6 +87,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
+  const teamMatch = match.participants.find(p => p.teamId == team._id);
+
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
   if (!team.registered) router.back();
@@ -127,9 +129,9 @@ const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchType[match.type]} #${match.round} של קבוצה #${team.number}, ${
-            team.name
-          } | ${event.name}`}
+          title={`${localizedMatchType[match.type]} #${teamMatch?.round} של קבוצה #${
+            team.number
+          }, ${team.name} | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
@@ -167,16 +169,23 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     let tableId;
+    let matches;
     if (user.roleAssociation && user.roleAssociation.type === 'table') {
       tableId = user.roleAssociation.value;
+
+      matches = await apiFetch(`/api/events/${user.event}/tables/${tableId}/matches`, undefined, ctx).then(
+        res => res?.json()
+      )
     } else {
-      const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
+      matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
         res => res?.json()
       );
-      tableId = matches.find(
-        (match: RobotGameMatch) => match.team == new ObjectId(String(ctx.params?.teamId))
+      tableId = matches.find((match: RobotGameMatch) =>
+        match.participants.find(p => p.teamId == new ObjectId(String(ctx.params?.teamId)))
       ).table;
     }
+
+    const match = matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId.toString() === ctx.params?.teamId))
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
@@ -196,16 +205,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
 
-    const match = await apiFetch(
-      `/api/events/${user.event}/tables/${tableId}/matches`,
-      undefined,
-      ctx
-    )
-      .then(res => res?.json())
-      .then(matches => matches.find((m: RobotGameMatch) => m.team == team._id));
-
     return { props: { user, event, table, team, match } };
   } catch (err) {
+    console.log(err)
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

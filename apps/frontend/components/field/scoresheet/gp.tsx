@@ -25,7 +25,7 @@ import ExceededNotesCell from '../../judging/rubrics/exceeded-notes-cell';
 import { SafeUser } from '@lems/types';
 import { RoleAuthorizer } from '../../role-authorizer';
 
-interface Props {
+interface GpSelectorProps {
   user: SafeUser;
   onBack: () => void;
   onSubmit: () => void;
@@ -38,7 +38,7 @@ const columns = [
   { name: '4', title: 'מצטיינת', color: '#E4928B', value: 4 }
 ];
 
-const GpSelector: React.FC<Props> = ({ user, onBack, onSubmit, disabled }) => {
+const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disabled }) => {
   const [checked, setChecked] = useState<boolean>(false);
   const name = 'gp';
   return (
