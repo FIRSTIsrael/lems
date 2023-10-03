@@ -84,12 +84,16 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
     })
       .then(async res => {
         const data = await res.json();
-        if (data) {
+        if (data && !data.error) {
           const returnUrl = router.query.returnUrl || `/event/${event._id}`;
           router.push(returnUrl as string);
-        } else if (data.error === 'INVALID_CREDENTIALS') {
-          enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
-        } else {
+        } else if (data.error) {
+          if (data.error === 'INVALID_CREDENTIALS') {
+            enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
+          } else {
+            enqueueSnackbar('הגישה נדחתה, נסו שנית מאוחר יותר.', { variant: 'error' });
+          }
+        }else {
           throw new Error(res.statusText);
         }
       })
