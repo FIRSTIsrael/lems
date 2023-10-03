@@ -185,7 +185,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ).table;
     }
 
-    const match = matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId == team._id))
+    const match = matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId.toString() === ctx.params?.teamId))
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
@@ -207,6 +207,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     return { props: { user, event, table, team, match } };
   } catch (err) {
+    console.log(err)
     return { redirect: { destination: '/login', permanent: false } };
   }
 };
