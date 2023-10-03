@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import dayjs from 'dayjs';
-import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
+import { MATCH_LENGTH, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 
 export const handleLoadMatch = async (namespace, eventId: string, matchId: string, callback) => {
   let match = await db.getMatch({
@@ -136,7 +136,8 @@ export const handleUpdateMatch = async (
   callback
 ) => {
   let match = await db.getMatch({
-    _id: new ObjectId(matchId)
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
   });
   if (!match) {
     callback({
@@ -150,7 +151,8 @@ export const handleUpdateMatch = async (
 
   await db.updateMatch(
     {
-      _id: match._id
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId)
     },
     matchData
   );
@@ -158,6 +160,48 @@ export const handleUpdateMatch = async (
   callback({ ok: true });
   match = await db.getMatch({ _id: new ObjectId(matchId) });
   namespace.to('field').emit('matchUpdated', match);
+};
+
+export const handlePrestartMatchParticipant = async (
+  namespace,
+  eventId: string,
+  matchId: string,
+  {
+    teamId,
+    ...data
+  }: { teamId: string } & Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>,
+  callback
+) => {
+  let match = await db.getMatch({
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
+  });
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find match ${matchId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(
+    `🖊️ Updating prestart data of team ${teamId} in match ${matchId} at event ${eventId}`
+  );
+
+  await db.updateMatch(
+    {
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId),
+      'participants.teamId': new ObjectId(teamId)
+    },
+    Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [`participants.$.${key}` as string, value])
+    )
+  );
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  namespace.to('field').emit('matchParticipantPrestarted', match);
 };
 
 export const handleUpdateScoresheet = async (

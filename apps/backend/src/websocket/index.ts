@@ -10,6 +10,7 @@ import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './ha
 import {
   handleAbortMatch,
   handleLoadMatch,
+  handlePrestartMatchParticipant,
   handleStartMatch,
   handleUpdateMatch,
   handleUpdateScoresheet
@@ -49,6 +50,10 @@ const websocket = (
   socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
 
   socket.on('updateMatch', (...args) => handleUpdateMatch(namespace, ...args));
+
+  socket.on('prestartMatchParticipant', (...args) =>
+    handlePrestartMatchParticipant(namespace, ...args)
+  );
 
   socket.on('updateScoresheet', (...args) => handleUpdateScoresheet(namespace, ...args));
 

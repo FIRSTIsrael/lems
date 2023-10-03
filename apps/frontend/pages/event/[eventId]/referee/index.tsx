@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({
     { name: 'matchStarted', handler: handleMatchEvent },
     { name: 'matchAborted', handler: handleMatchEvent },
     { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: updateMatches }
+    { name: 'matchParticipantPrestarted', handler: updateMatches }
   ]);
 
   return (

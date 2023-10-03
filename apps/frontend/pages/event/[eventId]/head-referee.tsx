@@ -78,6 +78,7 @@ const Page: NextPage<Props> = ({ user, event, tables }) => {
     { name: 'matchCompleted', handler: getData },
     { name: 'matchAborted', handler: getData },
     { name: 'matchUpdated', handler: getData },
+    { name: 'matchParticipantPrestarted', handler: getData },
     { name: 'scoresheetStatusChanged', handler: getScoresheets }
   ]);
 

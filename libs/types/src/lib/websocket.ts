@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { JudgingCategory, TicketType } from './constants';
-import { RobotGameMatch } from './schemas/robot-game-match';
+import { RobotGameMatch, RobotGameMatchParticipant } from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
@@ -41,6 +41,8 @@ export interface WSServerEmittedEvents {
   matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
 
   matchUpdated: (match: RobotGameMatch) => void;
+
+  matchParticipantPrestarted: (match: RobotGameMatch) => void;
 
   scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
 
@@ -119,6 +121,13 @@ export interface WSClientEmittedEvents {
     eventId: string,
     matchId: string,
     matchData: Partial<RobotGameMatch>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  prestartMatchParticipant: (
+    eventId: string,
+    matchId: string,
+    data: { teamId: string } & Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

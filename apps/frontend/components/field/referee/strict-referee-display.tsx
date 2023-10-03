@@ -46,28 +46,24 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   );
 
   const updateMatchParticipant = useCallback(
-    (updatedMatchParticipant: Partial<RobotGameMatchParticipant>) => {
-      if (match) {
-        const participantIndex = match.participants.findIndex(p => p.tableId === table._id);
-        socket.emit(
-          'updateMatch',
-          match.eventId.toString(),
-          match._id.toString(),
-          Object.fromEntries(
-            Object.entries(updatedMatchParticipant).map(([key, value]) => [
-              `participants.${participantIndex}.${key}`,
-              value
-            ])
-          ),
-          response => {
-            if (!response.ok) {
-              enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
-            }
+    (updatedMatchParticipant: Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>) => {
+      if (!match || !participant) return;
+      socket.emit(
+        'prestartMatchParticipant',
+        match.eventId.toString(),
+        match._id.toString(),
+        {
+          teamId: participant.teamId.toString(),
+          ...updatedMatchParticipant
+        },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
           }
-        );
-      }
+        }
+      );
     },
-    [match, socket, table._id]
+    [socket, match, participant]
   );
 
   useEffect(() => {
