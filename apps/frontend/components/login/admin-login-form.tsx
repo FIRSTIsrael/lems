@@ -30,10 +30,14 @@ const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
     })
       .then(async res => {
         const data = await res.json();
-        if (data) {
+        if (data && !data.error) {
           router.push('/admin');
-        } else if (data.error === 'INVALID_CREDENTIALS') {
-          enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
+        } else if (data.error) {
+          if (data.error === 'INVALID_CREDENTIALS') {
+            enqueueSnackbar('אופס, הסיסמה שגויה.', { variant: 'error' });
+          } else {
+            enqueueSnackbar('הגישה נדחתה, נסו שנית מאוחר יותר.', { variant: 'error' });
+          }
         } else {
           throw new Error(res.statusText);
         }
