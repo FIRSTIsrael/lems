@@ -6,17 +6,18 @@ import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
 import { parseEventData, parseEventSchedule } from '../../../../lib/schedule/parser';
 import { getEventScoresheets } from '../../../../lib/schedule/event-scoresheets';
+import { cleanEventData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
 
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
+  const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
+
+  const eventState = await db.getEventState({ event: event._id });
+  if (eventState)
+    return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
+
   try {
-    const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
-
-    const eventState = await db.getEventState({ event: event._id });
-    if (eventState)
-      return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
-
     console.log('👓 Parsing file...');
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
 
@@ -88,6 +89,8 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   } catch (error) {
     console.log('❌ Error parsing schedule');
     console.log(error);
+    await cleanEventData(event);
+    console.log('✅ Deleted event data!');
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
   }
 });
