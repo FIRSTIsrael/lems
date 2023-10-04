@@ -1,4 +1,4 @@
-import { Field } from 'formik';
+import { FastField } from 'formik';
 import { TextField } from 'formik-mui';
 
 interface FeedbackNoteProps {
@@ -9,7 +9,7 @@ interface FeedbackNoteProps {
 
 const FeedbackNote: React.FC<FeedbackNoteProps> = ({ label, name, disabled }) => {
   return (
-    <Field
+    <FastField
       component={TextField}
       fullWidth
       label={label}
