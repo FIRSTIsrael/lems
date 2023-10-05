@@ -196,21 +196,21 @@ interface Props {
   event: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
+  sessions: Array<WithId<JudgingSession>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  rooms,
+  teams: initialTeams,
+  sessions: initialSessions
+}) => {
   const router = useRouter();
-  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>([]);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [eventState, setEventState] = useState<WithId<EventState>>({} as WithId<EventState>);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
-  const updateSessions = () => {
-    apiFetch(`/api/events/${user.event}/sessions`)
-      .then(res => res?.json())
-      .then(data => {
-        setSessions(data);
-      });
-  };
+  const [eventState, setEventState] = useState<WithId<EventState>>({} as WithId<EventState>);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -232,24 +232,27 @@ const Page: NextPage<Props> = ({ user, event, rooms, teams: initialTeams }) => {
       });
   };
 
-  const updateData = () => {
-    updateSessions();
-    updateEventState();
-  };
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
 
-  const onSessionUpdate = () => {
-    updateSessions();
     updateEventState();
   };
 
   const { connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin'],
-    updateData,
+    updateEventState,
     [
-      { name: 'judgingSessionStarted', handler: onSessionUpdate },
-      { name: 'judgingSessionCompleted', handler: onSessionUpdate },
-      { name: 'judgingSessionAborted', handler: onSessionUpdate },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );
@@ -297,15 +300,29 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
     );
+
     const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
       res?.json()
     );
+
     const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
       res?.json()
     );
-    const [rooms, event, teams] = await Promise.all([roomsPromise, eventPromise, teamsPromise]);
 
-    return { props: { user, event, rooms, teams } };
+    const sessionsPromise = apiFetch(
+      `/api/events/${user.event}/rooms/${user.roleAssociation.value}/sessions`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
+
+    const [rooms, event, teams, sessions] = await Promise.all([
+      roomsPromise,
+      eventPromise,
+      teamsPromise,
+      sessionsPromise
+    ]);
+
+    return { props: { user, event, rooms, teams, sessions } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

@@ -7,7 +7,7 @@ import { JUDGING_SESSION_LENGTH } from '@lems/types';
 export const handleStartSession = async (namespace, eventId, roomId, sessionId, callback) => {
   const eventState = await db.getEventState({ event: new ObjectId(eventId) });
 
-  const session = await db.getSession({
+  let session = await db.getSession({
     room: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
@@ -43,7 +43,8 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
         ) {
           console.log(`✅ Session ${session._id} completed`);
           db.updateSession({ _id: session._id }, { status: 'completed' });
-          namespace.to('judging').emit('judgingSessionCompleted', sessionId);
+          const updatedSession = db.getSession({ _id: new ObjectId(session._id) });
+          namespace.to('judging').emit('judgingSessionCompleted', updatedSession);
         }
       });
     }.bind(null, session)
@@ -54,11 +55,12 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
   }
 
   callback({ ok: true });
-  namespace.to('judging').emit('judgingSessionStarted', sessionId);
+  session = await db.getSession({ _id: new ObjectId(sessionId) });
+  namespace.to('judging').emit('judgingSessionStarted', session);
 };
 
 export const handleAbortSession = async (namespace, eventId, roomId, sessionId, callback) => {
-  const session = await db.getSession({
+  let session = await db.getSession({
     room: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
@@ -76,7 +78,8 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
   await db.updateSession({ _id: session._id }, { start: undefined, status: 'not-started' });
 
   callback({ ok: true });
-  namespace.to('judging').emit('judgingSessionAborted', sessionId);
+  session = await db.getSession({ _id: new ObjectId(sessionId) });
+  namespace.to('judging').emit('judgingSessionAborted', session);
 };
 
 export const handleUpdateRubric = async (

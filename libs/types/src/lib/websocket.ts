@@ -6,6 +6,7 @@ import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { EventState } from './schemas/event-state';
+import { JudgingSession } from './schemas/judging-session';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -16,11 +17,11 @@ interface EventsMap {
 type EventNames<Map extends EventsMap> = keyof Map & (string | symbol);
 
 export interface WSServerEmittedEvents {
-  judgingSessionStarted: (sessionId: string) => void;
+  judgingSessionStarted: (session: JudgingSession) => void;
 
-  judgingSessionCompleted: (sessionId: string) => void;
+  judgingSessionCompleted: (session: JudgingSession) => void;
 
-  judgingSessionAborted: (sessionId: string) => void;
+  judgingSessionAborted: (session: JudgingSession) => void;
 
   rubricUpdated: (teamId: string, rubricId: string) => void;
 
