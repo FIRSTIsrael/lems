@@ -84,37 +84,34 @@ interface Props {
   table: WithId<RobotGameTable>;
   team: WithId<Team>;
   match: WithId<RobotGameMatch>;
+  scoresheet: WithId<Scoresheet>;
 }
 
-const Page: NextPage<Props> = ({ user, event, table, team, match }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  table,
+  team,
+  match,
+  scoresheet: initialScoresheet
+}) => {
   const teamMatch = match.participants.find(p => p.teamId == team._id);
-
   const router = useRouter();
-  const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(undefined);
+  const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(initialScoresheet);
+
   if (!team.registered) router.back();
   if (match.status !== 'completed') router.back();
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
     router.push(`/event/${event._id}/${user.role}`);
 
-  const updateScoresheet = () => {
-    apiFetch(`/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`)
-      .then(res => res?.json())
-      .then(data => setScoresheet(data));
-  };
-
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field'],
-    updateScoresheet,
-    [
-      {
-        name: 'scoresheetUpdated',
-        handler: (teamId, scoresheetId) => {
-          if (scoresheetId === router.query.scoresheetId) updateScoresheet();
-        }
+  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+    {
+      name: 'scoresheetUpdated',
+      handler: scoresheet => {
+        if (scoresheet._id === router.query.scoresheetId) setScoresheet(scoresheet);
       }
-    ]
-  );
+    }
+  ]);
 
   return (
     <RoleAuthorizer
@@ -173,19 +170,23 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     if (user.roleAssociation && user.roleAssociation.type === 'table') {
       tableId = user.roleAssociation.value;
 
-      matches = await apiFetch(`/api/events/${user.event}/tables/${tableId}/matches`, undefined, ctx).then(
-        res => res?.json()
-      )
+      matches = await apiFetch(
+        `/api/events/${user.event}/tables/${tableId}/matches`,
+        undefined,
+        ctx
+      ).then(res => res?.json());
     } else {
-      matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
-        res => res?.json()
+      matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
+        res?.json()
       );
       tableId = matches.find((match: RobotGameMatch) =>
         match.participants.find(p => p.teamId == new ObjectId(String(ctx.params?.teamId)))
       ).table;
     }
 
-    const match = matches.find((m: RobotGameMatch) => m.participants.find(p => p.teamId.toString() === ctx.params?.teamId))
+    const match = matches.find((m: RobotGameMatch) =>
+      m.participants.find(p => p.teamId.toString() === ctx.params?.teamId)
+    );
 
     const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
       res?.json()
@@ -205,9 +206,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
 
-    return { props: { user, event, table, team, match } };
+    const scoresheet = await apiFetch(
+      `/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`
+    ).then(res => res?.json());
+
+    return { props: { user, event, table, team, match, scoresheet } };
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

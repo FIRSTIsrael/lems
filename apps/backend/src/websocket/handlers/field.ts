@@ -212,7 +212,7 @@ export const handleUpdateScoresheet = async (
   scoresheetData,
   callback
 ) => {
-  const scoresheet = await db.getScoresheet({
+  let scoresheet = await db.getScoresheet({
     teamId: new ObjectId(teamId),
     _id: new ObjectId(scoresheetId)
   });
@@ -229,9 +229,8 @@ export const handleUpdateScoresheet = async (
   await db.updateScoresheet({ _id: scoresheet._id }, scoresheetData);
 
   callback({ ok: true });
-
-  namespace.to('field').emit('scoresheetUpdated', teamId, scoresheetId);
-
+  scoresheet = await db.getScoresheet({ _id: new ObjectId(scoresheetId) });
+  namespace.to('field').emit('scoresheetUpdated', scoresheet);
   if (scoresheetData.status !== scoresheet.status)
-    namespace.to('field').emit('scoresheetStatusChanged', scoresheetId);
+    namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
 };
