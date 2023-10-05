@@ -45,9 +45,9 @@ export interface WSServerEmittedEvents {
 
   matchParticipantPrestarted: (match: RobotGameMatch) => void;
 
-  scoresheetUpdated: (teamId: string, matchId: string, scoresheetId: string) => void;
+  scoresheetUpdated: (scoresheet: Scoresheet) => void;
 
-  scoresheetStatusChanged: (teamId: string, matchId: string, scoresheetId: string) => void;
+  scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
 }
 
 export interface WSClientEmittedEvents {

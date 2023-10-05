@@ -352,10 +352,10 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           minWidth: 200
                         }}
                         disabled={values === getDefaultScoresheet()}
-                        onClick={() => 
-                          setValues(getDefaultScoresheet()).then(() => 
-                            handleSync(true, values, 'empty')
-                          )} 
+                        onClick={() => {
+                          handleSync(true, getDefaultScoresheet(), 'empty');
+                          setValues(getDefaultScoresheet());
+                        }}
                       >
                         איפוס דף הניקוד
                       </Button>
