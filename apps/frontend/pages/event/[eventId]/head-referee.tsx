@@ -32,54 +32,61 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   tables: Array<WithId<RobotGameTable>>;
+  scoresheets: Array<WithId<Scoresheet>>;
+  eventState: WithId<EventState>;
+  matches: Array<WithId<RobotGameMatch>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, tables }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  tables,
+  eventState: initialEventState,
+  matches: initialMatches,
+  scoresheets: initialScoresheets
+}) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<EventState | undefined>(undefined);
-  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>> | undefined>(undefined);
-  const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>> | undefined>(undefined);
+  const [eventState, setEventState] = useState<EventState>(initialEventState);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
 
-  const getEventState = () => {
-    apiFetch(`/api/events/${user.event}/state`)
-      .then(res => res.json())
-      .then(data => {
-        setEventState(data);
-      });
+  const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === newMatch._id) {
+          return newMatch;
+        }
+        return m;
+      })
+    );
   };
 
-  const getMatches = () => {
-    apiFetch(`/api/events/${user.event}/matches`)
-      .then(res => res.json())
-      .then(data => setMatches(data));
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState: WithId<EventState>
+  ) => {
+    setEventState(newEventState);
+    updateMatches(newMatch);
   };
 
-  const getScoresheets = () => {
-    apiFetch(`/api/events/${user.event}/scoresheets`)
-      .then(res => res.json())
-      .then(data => {
-        setScoresheets(data);
-      });
+  const updateScoresheet = (scoresheet: WithId<Scoresheet>) => {
+    setScoresheets(scoresheets =>
+      scoresheets.map(s => {
+        if (s._id === scoresheet._id) {
+          return scoresheet;
+        }
+        return s;
+      })
+    );
   };
 
-  const getInitialData = () => {
-    getEventState();
-    getMatches();
-    getScoresheets();
-  };
-
-  const getData = () => {
-    getEventState();
-    getMatches();
-  };
-
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], getInitialData, [
-    { name: 'matchStarted', handler: getData },
-    { name: 'matchCompleted', handler: getData },
-    { name: 'matchAborted', handler: getData },
-    { name: 'matchUpdated', handler: getData },
-    { name: 'matchParticipantPrestarted', handler: getData },
-    { name: 'scoresheetStatusChanged', handler: getScoresheets }
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+    { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'matchAborted', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
+    { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
+    { name: 'scoresheetStatusChanged', handler: updateScoresheet }
   ]);
 
   return (
@@ -137,9 +144,26 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const [tables, event] = await Promise.all([tablesPromise, eventPromise]);
+    const scoresheetsPromise = apiFetch(`/api/events/${user.event}/scoresheets`).then(res =>
+      res.json()
+    );
 
-    return { props: { user, event, tables } };
+    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
+      res => res?.json()
+    );
+    const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
+      res.json()
+    );
+
+    const [tables, event, scoresheets, eventState, matches] = await Promise.all([
+      tablesPromise,
+      eventPromise,
+      scoresheetsPromise,
+      eventStatePromise,
+      matchesPromise
+    ]);
+
+    return { props: { user, event, tables, scoresheets, eventState, matches } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
