@@ -69,36 +69,26 @@ interface Props {
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
   session: WithId<JudgingSession>;
+  rubric: WithId<Rubric<JudgingCategory>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
+const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initialRubric }) => {
   const router = useRouter();
   if (!team.registered) router.back();
   if (session.status !== 'completed') router.back();
 
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
-  const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>> | undefined>(undefined);
+  const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>>>(initialRubric);
 
-  const updateRubric = () => {
-    apiFetch(`/api/events/${user.event}/teams/${router.query.teamId}/rubrics/${judgingCategory}`)
-      .then(res => res?.json())
-      .then(data => setRubric(data));
-  };
-
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['judging'],
-    updateRubric,
-    [
-      {
-        name: 'rubricUpdated',
-        handler: (teamId, rubricId) => {
-          if (teamId === router.query.teamId) updateRubric();
-        }
+  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], undefined, [
+    {
+      name: 'rubricUpdated',
+      handler: rubric => {
+        if (rubric.team === router.query.teamId) setRubric(rubric);
       }
-    ]
-  );
+    }
+  ]);
 
   return (
     <RoleAuthorizer
@@ -108,7 +98,7 @@ const Page: NextPage<Props> = ({ user, event, room, team, session }) => {
       conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
       onFail={() => router.back()}
     >
-      {team && rubric && (
+      {team && (
         <Layout
           maxWidth="md"
           title={`מחוון ${
@@ -187,7 +177,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json().then(sessions => sessions.find((s: JudgingSession) => s.team == team._id))
     );
 
-    return { props: { user, event, room, team, session } };
+    const rubric = await apiFetch(
+      `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
+
+    return { props: { user, event, room, team, session, rubric } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

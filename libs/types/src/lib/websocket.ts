@@ -23,9 +23,9 @@ export interface WSServerEmittedEvents {
 
   judgingSessionAborted: (session: JudgingSession) => void;
 
-  rubricUpdated: (teamId: string, rubricId: string) => void;
+  rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;
 
-  rubricStatusChanged: (rubricId: string) => void;
+  rubricStatusChanged: (rubric: Rubric<JudgingCategory>) => void;
 
   teamRegistered: (team: WithId<Team>) => void;
 

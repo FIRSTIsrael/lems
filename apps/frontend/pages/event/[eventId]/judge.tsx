@@ -31,6 +31,7 @@ interface Props {
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -38,11 +39,12 @@ const Page: NextPage<Props> = ({
   event,
   room,
   teams: initialTeams,
-  sessions: initialSessions
+  sessions: initialSessions,
+  rubrics: initialRubrics
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>([]);
+  const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
   const currentSession = useMemo(
@@ -78,24 +80,27 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const updateRubrics = () => {
-    return apiFetch(`/api/events/${user.event}/rooms/${room._id}/rubrics`)
-      .then(res => res?.json())
-      .then(data => {
-        setRubrics(data);
-      });
+  const updateRubric = (rubric: WithId<Rubric<JudgingCategory>>) => {
+    setRubrics(rubrics =>
+      rubrics.map(r => {
+        if (r._id === rubric._id) {
+          return rubric;
+        }
+        return r;
+      })
+    );
   };
 
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin'],
-    updateRubrics,
+    undefined,
     [
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'rubricStatusChanged', handler: updateRubrics }
+      { name: 'rubricStatusChanged', handler: updateRubric }
     ]
   );
 
@@ -199,7 +204,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       sessionsPromise
     ]);
 
-    return { props: { user, event, room, teams, sessions } };
+    const rubrics = await apiFetch(
+      `/api/events/${user.event}/rooms/${user.roleAssociation.value}/rubrics`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
+
+    return { props: { user, event, room, teams, sessions, rubrics } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
