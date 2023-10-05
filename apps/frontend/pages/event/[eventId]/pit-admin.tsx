@@ -247,7 +247,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
               centered
             >
               <Tab label="רישום קבוצות" value="1" />
-              <Tab label="פתיחת בקשות" value="2" />
+              <Tab label="פתיחת קריאות" value="2" />
             </Tabs>
           </Paper>
           {teams && (
