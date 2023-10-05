@@ -178,7 +178,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     const rubric = await apiFetch(
-      `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+      `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`,
+      undefined,
+      ctx
     ).then(res => res?.json());
 
     return { props: { user, event, room, team, session, rubric } };
