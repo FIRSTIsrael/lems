@@ -207,7 +207,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
 
     const scoresheet = await apiFetch(
-      `/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`
+      `/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`,
+      undefined,
+      ctx
     ).then(res => res?.json());
 
     return { props: { user, event, table, team, match, scoresheet } };

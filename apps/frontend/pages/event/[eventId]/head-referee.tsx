@@ -144,9 +144,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const scoresheetsPromise = apiFetch(`/api/events/${user.event}/scoresheets`).then(res =>
-      res.json()
-    );
+    const scoresheetsPromise = apiFetch(
+      `/api/events/${user.event}/scoresheets`,
+      undefined,
+      ctx
+    ).then(res => res.json());
 
     const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
       res => res?.json()
