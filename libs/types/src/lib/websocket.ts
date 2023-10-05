@@ -7,6 +7,7 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { EventState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
+import { Rubric } from './schemas/rubric';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -23,9 +24,9 @@ export interface WSServerEmittedEvents {
 
   judgingSessionAborted: (session: JudgingSession) => void;
 
-  rubricUpdated: (teamId: string, rubricId: string) => void;
+  rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;
 
-  rubricStatusChanged: (rubricId: string) => void;
+  rubricStatusChanged: (rubric: Rubric<JudgingCategory>) => void;
 
   teamRegistered: (team: WithId<Team>) => void;
 

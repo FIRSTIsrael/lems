@@ -90,7 +90,7 @@ export const handleUpdateRubric = async (
   rubricData,
   callback
 ) => {
-  const rubric = await db.getRubric({
+  let rubric = await db.getRubric({
     team: new ObjectId(teamId),
     _id: new ObjectId(rubricId)
   });
@@ -107,9 +107,9 @@ export const handleUpdateRubric = async (
   await db.updateRubric({ _id: rubric._id }, rubricData);
 
   callback({ ok: true });
+  rubric = await db.getRubric({ _id: new ObjectId(rubricId) });
 
-  namespace.to('judging').emit('rubricUpdated', teamId, rubricId);
-
+  namespace.to('judging').emit('rubricUpdated', rubric);
   if (rubricData.status !== rubric.status)
-    namespace.to('judging').emit('rubricStatusChanged', rubricId);
+    namespace.to('judging').emit('rubricStatusChanged', rubric);
 };
