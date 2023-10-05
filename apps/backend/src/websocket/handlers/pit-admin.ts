@@ -18,7 +18,7 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
   console.log(`📝 Registered team ${teamId} in event ${eventId}`);
 
   await db.updateTeam({ _id: team._id }, { registered: true });
-  team = await db.getTeam({_id: new ObjectId(teamId)});
+  team = await db.getTeam({ _id: new ObjectId(teamId) });
 
   callback({ ok: true });
   namespace.to('pit-admin').emit('teamRegistered', team);
@@ -36,17 +36,21 @@ export const handleCreateTicket = async (namespace, eventId, teamId, content, ty
 
   console.log(`🎫 Creating ticket for team ${teamId} in event ${eventId}`);
 
-  const ticket = await db.addTicket({
-    event: new ObjectId(eventId),
-    team: new ObjectId(teamId),
-    created: new Date(),
-    status: 'not-started',
-    content: content,
-    type: type
-  });
+  const ticketId = await db
+    .addTicket({
+      event: new ObjectId(eventId),
+      team: new ObjectId(teamId),
+      created: new Date(),
+      status: 'not-started',
+      content: content,
+      type: type
+    })
+    .then(result => result.insertedId);
+
+  const ticket = db.getTicket({ _id: ticketId });
 
   callback({ ok: true });
-  namespace.to('pit-admin').emit('ticketCreated', ticket.insertedId.toString());
+  namespace.to('pit-admin').emit('ticketCreated', ticket);
 };
 
 export const handleUpdateTicket = async (
@@ -57,7 +61,7 @@ export const handleUpdateTicket = async (
   ticketData,
   callback
 ) => {
-  const ticket = await db.getTicket({
+  let ticket = await db.getTicket({
     event: new ObjectId(eventId),
     team: new ObjectId(teamId),
     _id: new ObjectId(ticketId)
@@ -80,5 +84,6 @@ export const handleUpdateTicket = async (
   );
 
   callback({ ok: true });
-  namespace.to('pit-admin').emit('ticketUpdated', ticketId);
+  ticket = await db.getTicket({ _id: new ObjectId(ticketId) });
+  namespace.to('pit-admin').emit('ticketUpdated', ticket);
 };
