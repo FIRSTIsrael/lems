@@ -127,6 +127,7 @@ const parseMatches = (
     const [hour, minute] = line[2].split(':');
     const match: RobotGameMatch = {
       eventId: event._id,
+      round,
       number: parseInt(line[0]),
       type,
       status: 'not-started',
@@ -143,7 +144,6 @@ const parseMatches = (
         const table = tables.find(table => table.name === tableNames[i - 4]);
         const team = teams.find(team => team.number === parseInt(line[i]));
         match.participants.push({
-          round,
           teamId: team._id,
           tableId: table._id,
           tableName: table.name,

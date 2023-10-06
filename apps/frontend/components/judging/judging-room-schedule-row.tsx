@@ -17,6 +17,7 @@ import {
 } from '@lems/types';
 import EditRubricButton from './edit-rubric-button';
 import StartJudgingSessionButton from './start-judging-session-button';
+import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { RoleAuthorizer } from '../role-authorizer';
 import { localizedJudgingCategory } from '@lems/season';
 import StatusIcon from '../general/status-icon';
@@ -41,16 +42,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
         {dayjs(session.time).format('HH:mm')}
       </TableCell>
       <TableCell align="left">
-        <Tooltip
-          title={
-            team.registered
-              ? `${team.name}, ${team.affiliation.name}, ${team.affiliation.city}`
-              : 'הקבוצה טרם הגיעה לאירוע'
-          }
-          arrow
-        >
-          <span style={{ color: !team.registered ? '#f57c00' : '' }}>#{team.number}</span>
-        </Tooltip>
+        <StyledTeamTooltip team={team} />
       </TableCell>
       <RoleAuthorizer user={user} allowedRoles="judge">
         <TableCell align="center">

@@ -4,6 +4,7 @@ import { Team } from './team';
 
 export interface RobotGameMatchBrief {
   eventId: ObjectId;
+  round: number;
   number: number;
   type: RobotGameMatchType;
   status: RobotGameMatchStatus;
@@ -16,7 +17,6 @@ export interface RobotGameMatchParticipant {
   team?: WithId<Team>;
   tableId: ObjectId;
   tableName?: string;
-  round: number;
   present: RobotGameMatchPresent;
   ready: boolean;
 }

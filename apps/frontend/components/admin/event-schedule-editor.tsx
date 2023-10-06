@@ -212,7 +212,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
             [
               ...schedule,
               {
-                name: `מרכיב לו"ז ${schedule.length + 1}`,
+                name: `מרכיב לו״ז ${schedule.length + 1}`,
                 startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
