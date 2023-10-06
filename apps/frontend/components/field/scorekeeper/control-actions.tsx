@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import { Button, Stack } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Stack
+} from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { ObjectId } from 'mongodb';
 import { WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
@@ -21,6 +29,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   socket
 }) => {
   const [matchShown, setMatchShown] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const loadNextMatch = useCallback(() => {
     if (nextMatchId === undefined) return;
@@ -84,9 +93,30 @@ const ControlActions: React.FC<ControlActionsProps> = ({
           התחלת המקצה
         </Button>
       ) : (
-        <Button variant="contained" color="error" size="large" onClick={abortMatch}>
-          עצירת המקצה
-        </Button>
+        <>
+          <Button variant="contained" color="error" size="large" onClick={() => setOpen(true)}>
+            עצירת המקצה
+          </Button>
+          <Dialog
+            open={open}
+            onClose={() => setOpen(false)}
+            aria-labelledby="abort-dialog-title"
+            aria-describedby="abort-dialog-description"
+          >
+            <DialogTitle id="abort-dialog-title">הפסקת המקצה</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                האם אתם בטוחים שאתם רוצים להפסיק את המקצה?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpen(false)} autoFocus>
+                ביטול
+              </Button>
+              <Button onClick={abortMatch}>אישור</Button>
+            </DialogActions>
+          </Dialog>
+        </>
       )}
     </Stack>
   );
