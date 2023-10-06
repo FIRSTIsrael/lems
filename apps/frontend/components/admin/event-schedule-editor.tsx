@@ -21,6 +21,7 @@ import {
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import dayjs from 'dayjs';
 import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
@@ -73,6 +74,17 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
         {schedule.map((entry, index) => {
           return (
             <Stack direction="row" spacing={2} key={index} alignItems="flex-start">
+              <IconButton
+                onClick={() =>
+                  setSchedule(schedule => {
+                    const newSchedule = [...schedule];
+                    newSchedule.splice(index, 1);
+                    return newSchedule;
+                  })
+                }
+              >
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
               <TextField
                 label="שם"
                 size="small"
