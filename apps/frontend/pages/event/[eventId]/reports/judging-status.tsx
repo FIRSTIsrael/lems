@@ -309,11 +309,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const sessionsPromise = apiFetch(
-      `/api/events/${user.event}/rooms/${user.roleAssociation.value}/sessions`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
+    const sessionsPromise = apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
+      res => res?.json()
+    );
 
     const [rooms, event, teams, sessions] = await Promise.all([
       roomsPromise,

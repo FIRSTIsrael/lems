@@ -27,7 +27,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
         <EventScheduleEditor event={event} />
       </Paper>
 
-      <Paper sx={{ p: 4, mt: 2 }}>
+      <Paper sx={{ p: 4, my: 2 }}>
         {eventState && <DeleteEventData event={event} />}
         <Stack justifyContent="center" direction="row" spacing={2}>
           <UploadScheduleButton event={event} disabled={!!eventState} />

@@ -57,7 +57,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
         return (
           <TableCell key={r._id.toString()}>
             <Typography
-              color={team?.registered ? '#fff' : 'error'}
+              color={team?.registered ? '#000' : 'error'}
             >{`#${team?.number}`}</Typography>
           </TableCell>
         );
