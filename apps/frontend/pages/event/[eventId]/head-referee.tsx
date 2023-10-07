@@ -30,7 +30,6 @@ interface Props {
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
   matches: Array<WithId<RobotGameMatch>>;
-  teams: Array<WithId<Team>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -39,15 +38,13 @@ const Page: NextPage<Props> = ({
   eventState: initialEventState,
   tables,
   scoresheets: initialScoresheets,
-  matches: initialMatches,
-  teams: initialTeams
+  matches: initialMatches
 }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
 
   const headRefereeGeneralSchedule =
     (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
@@ -83,25 +80,32 @@ const Page: NextPage<Props> = ({
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
-    setTeams(teams =>
-      teams.map(t => {
-        if (t._id == team._id) {
-          return team;
-        } else {
-          return t;
+    setMatches(matches =>
+      matches.map(m => {
+        const teamIndex = m.participants.findIndex(p => p.teamId === team._id);
+        if (teamIndex !== -1) {
+          const newMatch = structuredClone(m);
+          newMatch.participants[teamIndex].team = team;
+          return newMatch;
         }
+        return m;
       })
     );
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
-    { name: 'scoresheetStatusChanged', handler: updateScoresheet },
-    { name: 'teamRegistered', handler: handleTeamRegistered }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['field', 'pit-admin'],
+    undefined,
+    [
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
+      { name: 'scoresheetStatusChanged', handler: updateScoresheet },
+      { name: 'teamRegistered', handler: handleTeamRegistered }
+    ]
+  );
 
   const practiceMatches = matches.filter(m => m.type === 'practice');
   const rankingMatches = matches.filter(m => m.type === 'ranking');
@@ -164,12 +168,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
+        event: `/api/events/${user.event}/?withSchedule=true`,
         eventState: `/api/events/${user.event}/state`,
         tables: `/api/events/${user.event}/tables`,
         matches: `/api/events/${user.event}/matches`,
-        scoresheets: `/api/events/${user.event}/scoresheets`,
-        teams: `/api/events/${user.event}/teams`
+        scoresheets: `/api/events/${user.event}/scoresheets`
       },
       ctx
     );
