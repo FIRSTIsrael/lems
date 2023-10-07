@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 
 const getApiBase = (forceClient = false) => {
