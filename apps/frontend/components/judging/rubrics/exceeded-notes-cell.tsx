@@ -48,7 +48,7 @@ const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder
                 placeholder={placeholder || 'כיצד הקבוצה התבלטה כמצטיינת?'}
                 InputProps={{ disableUnderline: true }}
                 {...field}
-                onChange={(e) => form.setFieldValue(field.name, e.target.value, false)}
+                onChange={e => form.setFieldValue(field.name, e.target.value, false)}
               />
             </Box>
           )}

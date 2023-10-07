@@ -93,7 +93,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
           } else {
             enqueueSnackbar('הגישה נדחתה, נסו שנית מאוחר יותר.', { variant: 'error' });
           }
-        }else {
+        } else {
           throw new Error(res.statusText);
         }
       })

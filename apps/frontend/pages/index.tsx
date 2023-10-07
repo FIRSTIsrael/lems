@@ -5,7 +5,6 @@ const Page: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-
   return { redirect: { destination: '/login', permanent: false } };
 };
 

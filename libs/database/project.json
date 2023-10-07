@@ -18,10 +18,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/database/**/*.ts",
-          "libs/database/package.json"
-        ]
+        "lintFilePatterns": ["libs/database/**/*.ts", "libs/database/package.json"]
       }
     }
   },
