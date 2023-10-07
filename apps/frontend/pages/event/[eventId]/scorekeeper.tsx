@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -33,6 +33,17 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
     matches?.find(match => match.status === 'not-started')?._id
+  );
+
+  const activeMatch = useMemo(
+    () =>
+      matches.find(match => match._id === eventState.activeMatch) || ({} as WithId<RobotGameMatch>),
+    [eventState.activeMatch, matches]
+  );
+  const loadedMatch = useMemo(
+    () =>
+      matches.find(match => match._id === eventState.loadedMatch) || ({} as WithId<RobotGameMatch>),
+    [eventState.loadedMatch, matches]
   );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
@@ -100,18 +111,11 @@ const Page: NextPage<Props> = ({
           }}
         >
           <Stack direction="row" spacing={2} my={4}>
-            <ActiveMatch
-              title="מקצה רץ"
-              match={
-                matches?.find(match => match._id === eventState.activeMatch) ||
-                ({} as WithId<RobotGameMatch>)
-              }
-              startTime={matches?.find(match => match._id === eventState.activeMatch)?.startTime}
-            />
+            <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
             <ActiveMatch
               title="המקצה הבא"
               match={
-                matches?.find(match => match._id === eventState.loadedMatch) ||
+                matches.find(match => match._id === eventState.loadedMatch) ||
                 ({} as WithId<RobotGameMatch>)
               }
             />
@@ -120,8 +124,8 @@ const Page: NextPage<Props> = ({
           <ControlActions
             eventId={event._id.toString()}
             nextMatchId={nextMatchId}
-            loadedMatchId={eventState.loadedMatch || undefined}
-            activeMatchId={eventState.activeMatch || undefined}
+            loadedMatch={loadedMatch}
+            activeMatchId={activeMatch._id}
             socket={socket}
           />
 

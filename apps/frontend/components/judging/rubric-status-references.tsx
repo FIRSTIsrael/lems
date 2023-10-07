@@ -3,7 +3,6 @@ import { RubricStatusTypes } from '@lems/types';
 import { localizedRubricStatus } from '@lems/season';
 import EditRubricButton from './edit-rubric-button';
 
-
 const RubricStatusReferences = () => {
   return (
     <Stack direction="row" justifyContent="center">
