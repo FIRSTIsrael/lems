@@ -10,64 +10,41 @@ import {
   TableRow
 } from '@mui/material';
 import {
-  Team,
-  MATCH_LENGTH,
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchType,
-  EventScheduleEntry
+  EventScheduleEntry,
+  Scoresheet,
+  Event,
+  EventState
 } from '@lems/types';
-import StyledTeamTooltip from '../../components/general/styled-team-tooltip';
-import { localizedMatchType } from '../../localization/field';
+import { localizedMatchType } from '../../../localization/field';
+import HeadRefereeMatchScheduleRow from './head-referee-match-schedule-row';
 
-interface MatchScheduleRowProps {
-  match: WithId<RobotGameMatch>;
-  tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
-}
-
-const MatchScheduleRow: React.FC<MatchScheduleRowProps> = ({ match, tables, teams }) => {
-  const startTime = dayjs(match.scheduledTime);
-
-  return (
-    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell>{startTime.format('HH:mm')}</TableCell>
-      <TableCell>{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
-      {tables.map(table => {
-        const team = teams.find(
-          t => t._id === match.participants.find(p => p.tableId === table._id)?.teamId
-        );
-
-        return (
-          <TableCell key={table._id.toString()} align="center">
-            {team && <StyledTeamTooltip team={team} />}
-          </TableCell>
-        );
-      })}
-    </TableRow>
-  );
-};
-
-interface RoundScheduleProps {
+interface ReportRoundScheduleProps {
+  event: WithId<Event>;
+  eventState: WithId<EventState>;
   roundType: RobotGameMatchType;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
+  scoresheets: Array<WithId<Scoresheet>>;
   eventSchedule: Array<EventScheduleEntry>;
 }
 
-const RoundSchedule: React.FC<RoundScheduleProps> = ({
+const HeadRefereeRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
+  event,
+  eventState,
   roundType,
   roundNumber,
   matches,
   tables,
-  teams,
+  scoresheets,
   eventSchedule
 }) => {
   return (
     <TableContainer component={Paper}>
-      <Table size="small">
+      <Table>
         <TableHead>
           <TableRow>
             <TableCell colSpan={2 + tables.length} align="center">
@@ -86,7 +63,14 @@ const RoundSchedule: React.FC<RoundScheduleProps> = ({
         </TableHead>
         <TableBody>
           {matches.map(m => (
-            <MatchScheduleRow match={m} tables={tables} teams={teams} key={m.number} />
+            <HeadRefereeMatchScheduleRow
+              key={m.number}
+              event={event}
+              eventState={eventState}
+              tables={tables}
+              match={m}
+              scoresheets={scoresheets}
+            />
           ))}
           {eventSchedule
             .filter(c => {
@@ -111,4 +95,4 @@ const RoundSchedule: React.FC<RoundScheduleProps> = ({
   );
 };
 
-export default RoundSchedule;
+export default HeadRefereeRoundSchedule;
