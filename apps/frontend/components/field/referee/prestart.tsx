@@ -27,11 +27,16 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
             {localizeTeam(participant.team)}
           </Typography>
 
-          <PresentSwitch
-            value={participant.present}
-            onChange={present => updateMatchParticipant({ present })}
-            disabled={!participant.team.registered}
-          />
+          {participant.team.registered ? (
+            <PresentSwitch
+              value={participant.present}
+              onChange={present => updateMatchParticipant({ present })}
+            />
+          ) : (
+            <Typography fontSize="1.125rem" fontWeight={700}>
+              שימו לב: הקבוצה טרם הגיעה לאירוע
+            </Typography>
+          )}
 
           <Stack alignItems="center" mt={6}>
             <Button

@@ -88,17 +88,26 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       );
 
       if (lastCompletedMatch) {
-        // Check if we finished doing the scoresheet of the last completed match
-        getScoresheet(lastCompletedMatch._id).then(scoresheet => {
-          if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
-            router.push(
-              `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
-            );
-          } else {
-            setMatch(loadedMatch);
-            setDisplayState(loadedMatch ? 'prestart' : 'no-match');
-          }
-        });
+        // Check if no show
+        const lastCompletedMatchParticipant = lastCompletedMatch.participants.find(
+          p => p.tableId === table._id
+        );
+        if (lastCompletedMatchParticipant?.present === 'no-show') {
+          setMatch(loadedMatch);
+          setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+        } else {
+          // Check if we finished doing the scoresheet of the last completed match
+          getScoresheet(lastCompletedMatch._id).then(scoresheet => {
+            if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
+              router.push(
+                `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
+              );
+            } else {
+              setMatch(loadedMatch);
+              setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+            }
+          });
+        }
       } else if (loadedMatch) {
         setMatch(loadedMatch);
         setDisplayState('prestart');
