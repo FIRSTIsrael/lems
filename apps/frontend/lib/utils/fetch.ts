@@ -1,3 +1,4 @@
+import { keyframes } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 
 const getApiBase = (forceClient = false) => {
@@ -32,9 +33,9 @@ export const serverSideGetRequests = async (
   const result: { [key: string]: any } = {};
 
   await Promise.all(
-    Object.entries(toFetch).map(async entry => {
-      const data = await apiFetch(entry[1], undefined, ctx).then(res => res?.json());
-      result[entry[0]] = data;
+    Object.entries(toFetch).map(async ([key, urlPath]) => {
+      const data = await apiFetch(urlPath, undefined, ctx).then(res => res?.json());
+      result[key] = data;
     })
   );
 
