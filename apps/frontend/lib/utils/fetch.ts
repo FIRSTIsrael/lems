@@ -24,3 +24,19 @@ export const apiFetch = (
     return response;
   });
 };
+
+export const serverSideGetRequests = async (
+  toFetch: { [key: string]: string },
+  ctx: GetServerSidePropsContext
+) => {
+  const result: { [key: string]: any } = {};
+
+  await Promise.all(
+    Object.entries(toFetch).map(async ([key, urlPath]) => {
+      const data = await apiFetch(urlPath, undefined, ctx).then(res => res?.json());
+      result[key] = data;
+    })
+  );
+
+  return result;
+};

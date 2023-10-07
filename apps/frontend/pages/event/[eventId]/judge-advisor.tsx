@@ -15,7 +15,7 @@ import {
   Rubric
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import { apiFetch } from '../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -153,33 +153,19 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
-    );
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
-    const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const sessionsPromise = apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
-      res => res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        eventState: `/api/events/${user.event}/state`,
+        teams: `/api/events/${user.event}/teams`,
+        rooms: `/api/events/${user.event}/rooms`,
+        sessions: `/api/events/${user.event}/sessions`,
+        rubrics: `/api/events/${user.event}/rubrics`
+      },
+      ctx
     );
 
-    const rubricsPromise = apiFetch(`/api/events/${user.event}/rubrics`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const [rooms, event, teams, sessions, rubrics] = await Promise.all([
-      roomsPromise,
-      eventPromise,
-      teamsPromise,
-      sessionsPromise,
-      rubricsPromise
-    ]);
-
-    return { props: { user, event, rooms, teams, sessions, rubrics } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

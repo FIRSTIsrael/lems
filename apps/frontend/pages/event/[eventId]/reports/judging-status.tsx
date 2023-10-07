@@ -32,7 +32,7 @@ import StatusIcon from '../../../../components/general/status-icon';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
@@ -301,35 +301,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        eventState: `/api/events/${user.event}/state`,
+        teams: `/api/events/${user.event}/teams`,
+        rooms: `/api/events/${user.event}/rooms`,
+        sessions: `/api/events/${user.event}/sessions`
+      },
+      ctx
     );
 
-    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
-      res => res?.json()
-    );
-
-    const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const sessionsPromise = apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
-      res => res?.json()
-    );
-
-    const [rooms, event, eventState, teams, sessions] = await Promise.all([
-      roomsPromise,
-      eventPromise,
-      eventStatePromise,
-      teamsPromise,
-      sessionsPromise
-    ]);
-
-    return { props: { user, event, eventState, rooms, teams, sessions } };
+    return { props: { user, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

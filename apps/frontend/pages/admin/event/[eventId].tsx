@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { Paper, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
 import { Event, EventState, SafeUser } from '@lems/types';
-import { apiFetch } from '../../../lib/utils/fetch';
+import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
 import UploadScheduleButton from '../../../components/admin/upload-schedule';
@@ -39,21 +39,15 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-
-  const event = await apiFetch(
-    `/api/events/${ctx.params?.eventId}?withSchedule=true`,
-    undefined,
+  const data = await serverSideGetRequests(
+    {
+      user: '/api/me',
+      event: `/api/events/${ctx.params?.eventId}?withSchedule=true`,
+      eventState: `/api/events/${ctx.params?.eventId}/state`
+    },
     ctx
-  ).then(res => res?.json());
-
-  const eventState = await apiFetch(
-    `/api/events/${ctx.params?.eventId}/state`,
-    undefined,
-    ctx
-  ).then(res => res.json());
-
-  return { props: { user, event, eventState } };
+  );
+  return { props: data };
 };
 
 export default Page;

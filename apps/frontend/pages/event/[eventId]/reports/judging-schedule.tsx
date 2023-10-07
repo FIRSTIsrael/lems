@@ -27,7 +27,7 @@ import {
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
@@ -88,12 +88,12 @@ const GeneralScheduleRow: React.FC<GeneralScheduleRowProps> = ({ schedule, colSp
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
-  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTeams }) => {
+const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessions }) => {
   const router = useRouter();
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -216,32 +216,17 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(
-      `/api/events/${user.event}?withSchedule=true`,
-      undefined,
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}?withSchedule=true`,
+        teams: `/api/events/${user.event}/teams`,
+        rooms: `/api/events/${user.event}/rooms`,
+        sessions: `/api/events/${user.event}/sessions`
+      },
       ctx
-    ).then(res => res?.json());
-
-    const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
-      res?.json()
     );
 
-    const sessionsPromise = apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
-      res => res?.json()
-    );
-
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const [rooms, sessions, event, teams] = await Promise.all([
-      roomsPromise,
-      sessionsPromise,
-      eventPromise,
-      teamsPromise
-    ]);
-
-    return { props: { user, event, rooms, sessions, teams } };
+    return { props: { user, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

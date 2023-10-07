@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
 import { WithId } from 'mongodb';
 import { Event, SafeUser } from '@lems/types';
-import { apiFetch } from '../../lib/utils/fetch';
+import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
 import EventSelector from '../../components/login/event-selector';
 import EventCreateForm from '../../components/admin/event-create-form';
@@ -54,11 +54,8 @@ const Page: NextPage<Props> = ({ user, events }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-
-  const events = await apiFetch('/public/events', undefined, ctx).then(res => res?.json());
-
-  return { props: { user, events } };
+  const data = await serverSideGetRequests({ user: '/api/me', events: '/public/events' }, ctx);
+  return { props: data };
 };
 
 export default Page;
