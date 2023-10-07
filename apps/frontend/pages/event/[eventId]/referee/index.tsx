@@ -13,7 +13,7 @@ import {
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import MatchSelector from '../../../../components/field/referee/match-selector';
 import StrictRefereeDisplay from '../../../../components/field/referee/strict-referee-display';
@@ -21,16 +21,16 @@ import StrictRefereeDisplay from '../../../../components/field/referee/strict-re
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  table: WithId<RobotGameTable>;
   eventState: WithId<EventState>;
+  table: WithId<RobotGameTable>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
   event,
-  table,
   eventState: initialEventState,
+  table,
   matches: initialMatches
 }) => {
   const router = useRouter();
@@ -92,32 +92,17 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
-    );
-    const tablePromise = apiFetch(
-      `/api/events/${user.event}/tables/${user.roleAssociation.value}`,
-      undefined,
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        eventState: `/api/events/${user.event}/state`,
+        table: `/api/events/${user.event}/tables/${user.roleAssociation.value}`,
+        matches: `/api/events/${user.event}/tables/${user.roleAssociation.value}/matches`
+      },
       ctx
-    ).then(res => res?.json());
-
-    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
-      res => res?.json()
     );
-    const matchesPromise = apiFetch(
-      `/api/events/${user.event}/tables/${user.roleAssociation.value}/matches`,
-      undefined,
-      ctx
-    ).then(res => res.json());
 
-    const [table, event, eventState, matches] = await Promise.all([
-      tablePromise,
-      eventPromise,
-      eventStatePromise,
-      matchesPromise
-    ]);
-
-    return { props: { user, event, table, eventState, matches } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

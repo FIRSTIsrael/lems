@@ -16,7 +16,7 @@ import Layout from '../../../../../components/layout';
 import MatchPrestart from '../../../../../components/field/referee/prestart';
 import WaitForMatchStart from '../../../../../components/field/referee/wait-for-start';
 import Timer from '../../../../../components/field/referee/timer';
-import { apiFetch } from '../../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 
@@ -138,30 +138,22 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+
     if (!ALLOW_MATCH_SELECTOR)
       return {
         redirect: { destination: `/event/${ctx.params?.eventId}/${user.role}`, permanent: false }
       };
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        table: `/api/events/${user.event}/tables/${user.roleAssociation.value}`,
+        match: `/api/events/${user.event}/matches/${ctx.params?.matchId}`
+      },
+      ctx
     );
-    const tablePromise = apiFetch(
-      `/api/events/${user.event}/tables/${user.roleAssociation.value}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
 
-    const matchPromise = apiFetch(
-      `/api/events/${user.event}/matches/${ctx.params?.matchId}
-    `,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const [table, event, match] = await Promise.all([tablePromise, eventPromise, matchPromise]);
-
-    return { props: { user, event, table, match } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

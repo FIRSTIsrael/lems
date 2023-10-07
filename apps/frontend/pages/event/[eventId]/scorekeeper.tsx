@@ -10,7 +10,7 @@ import ActiveMatch from '../../../components/field/scorekeeper/active-match';
 import Schedule from '../../../components/field/scorekeeper/schedule';
 import ControlActions from '../../../components/field/scorekeeper/control-actions';
 import Layout from '../../../components/layout';
-import { apiFetch } from '../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
@@ -138,24 +138,16 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        eventState: `/api/events/${user.event}/state`,
+        matches: `/api/events/${user.event}/matches`
+      },
+      ctx
     );
 
-    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
-      res => res?.json()
-    );
-    const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
-      res.json()
-    );
-
-    const [event, eventState, matches] = await Promise.all([
-      eventPromise,
-      eventStatePromise,
-      matchesPromise
-    ]);
-
-    return { props: { user, event, eventState, matches } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

@@ -22,7 +22,7 @@ import Layout from '../../../../../../components/layout';
 import RubricForm from '../../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
-import { apiFetch } from '../../../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
 
@@ -153,37 +153,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ).room;
     }
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        team: `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
+        room: `/api/events/${user.event}/rooms/${roomId}`,
+        session: `/api/events/${user.event}/rooms/${roomId}/sessions`,
+        rubric: `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+      },
+      ctx
     );
 
-    const teamPromise = apiFetch(
-      `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const roomPromise = apiFetch(`/api/events/${user.event}/rooms/${roomId}`, undefined, ctx).then(
-      res => res?.json()
-    );
-
-    const [room, team, event] = await Promise.all([roomPromise, teamPromise, eventPromise]);
-
-    const session = await apiFetch(
-      `/api/events/${user.event}/rooms/${roomId}/sessions`,
-      undefined,
-      ctx
-    ).then(res =>
-      res?.json().then(sessions => sessions.find((s: JudgingSession) => s.team == team._id))
-    );
-
-    const rubric = await apiFetch(
-      `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    return { props: { user, event, room, team, session, rubric } };
+    return { props: { user, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

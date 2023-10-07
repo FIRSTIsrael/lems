@@ -18,7 +18,7 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import Countdown from '../../../../components/general/countdown';
 import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
@@ -115,8 +115,8 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   eventState: WithId<EventState>;
-  tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
+  tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
@@ -124,8 +124,8 @@ const Page: NextPage<Props> = ({
   user,
   event,
   eventState: initialEventState,
-  tables,
   teams: initialTeams,
+  tables,
   matches: initialMatches
 }) => {
   const router = useRouter();
@@ -217,35 +217,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        eventState: `/api/events/${user.event}/state`,
+        teams: `/api/events/${user.event}/teams`,
+        tables: `/api/events/${user.event}/tables`,
+        matches: `/api/events/${user.event}/matches`
+      },
+      ctx
     );
 
-    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
-      res => res?.json()
-    );
-
-    const tablesPromise = apiFetch(`/api/events/${user.event}/tables`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const [tables, event, eventState, teams, matches] = await Promise.all([
-      tablesPromise,
-      eventPromise,
-      eventStatePromise,
-      teamsPromise,
-      matchesPromise
-    ]);
-
-    return { props: { user, event, eventState, tables, teams, matches } };
+    return { props: { user, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

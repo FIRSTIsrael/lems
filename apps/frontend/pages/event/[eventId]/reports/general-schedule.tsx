@@ -14,7 +14,7 @@ import {
 import { Event, SafeUser, RoleTypes, EventScheduleEntry } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 
 interface EventScheduleRowProps {
@@ -76,13 +76,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const event = await apiFetch(
-      `/api/events/${user.event}?withSchedule=true`,
-      undefined,
+    const data = await serverSideGetRequests(
+      { event: `/api/events/${user.event}?withSchedule=true` },
       ctx
-    ).then(res => res?.json());
+    );
 
-    return { props: { user, event } };
+    return { props: { user, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

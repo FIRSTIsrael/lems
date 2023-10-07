@@ -10,7 +10,7 @@ import { Event, RobotGameMatch, RobotGameTable, SafeUser, Scoresheet, Team } fro
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
-import { apiFetch } from '../../../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
 import { localizedMatchType } from '../../../../../../localization/field';
@@ -81,8 +81,8 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  table: WithId<RobotGameTable>;
   team: WithId<Team>;
+  table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
   scoresheet: WithId<Scoresheet>;
 }
@@ -90,8 +90,8 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   event,
-  table,
   team,
+  table,
   match,
   scoresheet: initialScoresheet
 }) => {
@@ -126,9 +126,9 @@ const Page: NextPage<Props> = ({
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchType[match.type]} #${teamMatch?.round} של קבוצה #${
-            team.number
-          }, ${team.name} | ${event.name}`}
+          title={`${localizedMatchType[match.type]} #${match.round} של קבוצה #${team.number}, ${
+            team.name
+          } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
@@ -188,31 +188,17 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       m.participants.find(p => p.teamId.toString() === ctx.params?.teamId)
     );
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        team: `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
+        table: `/api/events/${user.event}/tables/${tableId}`,
+        scoresheet: `/api/events/${user.event}/tables/${tableId}/matches/${match._id}/scoresheet`
+      },
+      ctx
     );
 
-    const teamPromise = apiFetch(
-      `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const tablePromise = apiFetch(
-      `/api/events/${user.event}/tables/${tableId}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const [table, team, event] = await Promise.all([tablePromise, teamPromise, eventPromise]);
-
-    const scoresheet = await apiFetch(
-      `/api/events/${user.event}/tables/${table._id}/matches/${match._id}/scoresheet`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    return { props: { user, event, table, team, match, scoresheet } };
+    return { props: { user, match, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

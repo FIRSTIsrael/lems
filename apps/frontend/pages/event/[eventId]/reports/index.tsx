@@ -6,7 +6,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { User, Event, RoleTypes } from '@lems/types';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 
 interface GridPaperLinkProps {
@@ -74,10 +74,10 @@ const Page: NextPage<Props> = ({ user, event }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-    const event = await apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
-    );
-    return { props: { user, event } };
+
+    const data = await serverSideGetRequests({ event: `/api/events/${user.event}` }, ctx);
+
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

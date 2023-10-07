@@ -22,7 +22,7 @@ import Layout from '../../../components/layout';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import JudgingTimer from '../../../components/judging/judging-timer';
 import AbortJudgingSessionButton from '../../../components/judging/abort-judging-session-button';
-import { apiFetch } from '../../../lib/utils/fetch';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
@@ -178,40 +178,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const eventPromise = apiFetch(`/api/events/${user.event}`, undefined, ctx).then(res =>
-      res?.json()
+    const data = await serverSideGetRequests(
+      {
+        event: `/api/events/${user.event}`,
+        teams: `/api/events/${user.event}/teams`,
+        room: `/api/events/${user.event}/rooms/${user.roleAssociation.value}`,
+        sessions: `/api/events/${user.event}/rooms/${user.roleAssociation.value}/sessions`,
+        rubrics: `/api/events/${user.event}/rooms/${user.roleAssociation.value}/rubrics`
+      },
+      ctx
     );
 
-    const roomPromise = apiFetch(
-      `/api/events/${user.event}/rooms/${user.roleAssociation.value}`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const teamsPromise = apiFetch(`/api/events/${user.event}/teams`, undefined, ctx).then(res =>
-      res?.json()
-    );
-
-    const sessionsPromise = apiFetch(
-      `/api/events/${user.event}/rooms/${user.roleAssociation.value}/sessions`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    const [room, event, teams, sessions] = await Promise.all([
-      roomPromise,
-      eventPromise,
-      teamsPromise,
-      sessionsPromise
-    ]);
-
-    const rubrics = await apiFetch(
-      `/api/events/${user.event}/rooms/${user.roleAssociation.value}/rubrics`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
-
-    return { props: { user, event, room, teams, sessions, rubrics } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
