@@ -17,7 +17,7 @@ interface EventsMap {
 type EventNames<Map extends EventsMap> = keyof Map & (string | symbol);
 
 export interface WSServerEmittedEvents {
-  judgingSessionStarted: (session: JudgingSession) => void;
+  judgingSessionStarted: (session: JudgingSession, eventState: EventState) => void;
 
   judgingSessionCompleted: (session: JudgingSession) => void;
 
@@ -40,8 +40,6 @@ export interface WSServerEmittedEvents {
   matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
 
   matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
-
-  matchUpdated: (match: RobotGameMatch) => void;
 
   matchParticipantPrestarted: (match: RobotGameMatch) => void;
 
@@ -115,13 +113,6 @@ export interface WSClientEmittedEvents {
   abortMatch: (
     eventId: string,
     matchId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  updateMatch: (
-    eventId: string,
-    matchId: string,
-    matchData: Partial<RobotGameMatch>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

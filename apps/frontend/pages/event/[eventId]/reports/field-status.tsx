@@ -3,51 +3,34 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
-import {
-  Box,
-  LinearProgress,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography
-} from '@mui/material';
+import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import {
   Event,
   Team,
-  JudgingRoom,
-  JudgingSession,
   SafeUser,
   EventState,
+  RobotGameMatch,
   RoleTypes,
-  JUDGING_SESSION_LENGTH
+  RobotGameTable
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
-import StatusIcon from '../../../../components/general/status-icon';
 import Countdown from '../../../../components/general/countdown';
+import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
-import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 
-interface JudgingStatusTimerProps {
-  currentSessions: Array<WithId<JudgingSession>>;
-  nextSessions: Array<WithId<JudgingSession>>;
+interface MatchStatusTimerProps {
+  activeMatch: WithId<RobotGameMatch> | undefined;
+  loadedMatch: WithId<RobotGameMatch> | undefined;
   teams: Array<WithId<Team>>;
 }
 
-const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
-  currentSessions,
-  nextSessions,
-  teams
-}) => {
+const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loadedMatch, teams }) => {
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const twoMinutes = 2 * 60;
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(dayjs()), 1000);
@@ -56,19 +39,25 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
     };
   });
 
-  const ahead = useMemo(
-    () => nextSessions.length > 0 && dayjs(nextSessions[0].time) > currentTime,
-    [currentTime, nextSessions]
-  );
+  const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
+    if (loadedMatch) {
+      if (dayjs(loadedMatch.scheduledTime) > currentTime) {
+        return dayjs(loadedMatch.scheduledTime).diff(currentTime, 'seconds') > twoMinutes
+          ? 'ahead'
+          : 'close';
+      }
+      return 'behind';
+    }
+    return 'done';
+  }, [loadedMatch, currentTime, twoMinutes]);
 
-  const progressToNextSessionStart = useMemo(
-    () =>
-      currentSessions.length > 0 && nextSessions.length > 0
-        ? (dayjs(nextSessions[0].time).diff(currentTime) * 100) /
-          dayjs(currentSessions[0].time).diff(dayjs(nextSessions[0].time))
-        : 0,
-    [currentTime, currentSessions, nextSessions]
-  );
+  const progressToNextMatchStart = useMemo(() => {
+    if (loadedMatch) {
+      const diff = dayjs(loadedMatch.scheduledTime).diff(currentTime, 'seconds');
+      return (Math.abs(Math.min(twoMinutes, diff)) / twoMinutes) * 100;
+    }
+    return 0;
+  }, [currentTime, twoMinutes, loadedMatch]);
 
   return (
     <>
@@ -81,10 +70,10 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
         }}
       >
         <Stack spacing={2}>
-          {nextSessions.length > 0 && (
+          {loadedMatch && (
             <Countdown
               allowNegativeValues={true}
-              targetDate={dayjs(nextSessions[0].time).toDate()}
+              targetDate={dayjs(loadedMatch.scheduledTime).toDate()}
               variant="h1"
               fontFamily={'Roboto Mono'}
               fontSize="10rem"
@@ -92,24 +81,24 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               dir="ltr"
             />
           )}
-          {currentSessions.filter(s => s.status === 'in-progress').length > 0 && (
+          {loadedMatch && (
             <Typography variant="h4">
-              {currentSessions.filter(session => !!session.start).length} מתוך{' '}
+              {loadedMatch.participants.filter(p => !!p.ready).length} מתוך{' '}
               {
-                currentSessions.filter(
-                  session => teams.find(team => team._id === session.team)?.registered
+                loadedMatch.participants.filter(
+                  p => teams.find(team => team._id === p.teamId)?.registered
                 ).length
               }{' '}
-              קבוצות בחדר השיפוט
+              שולחנות מוכנים
             </Typography>
           )}
         </Stack>
       </Paper>
-      {currentSessions.length > 0 && nextSessions.length > 0 && (
+      {getStatus !== 'done' && (
         <LinearProgress
-          color={ahead ? 'success' : 'error'}
+          color={getStatus === 'ahead' ? 'success' : getStatus === 'close' ? 'warning' : 'error'}
           variant="determinate"
-          value={Math.min(Math.abs(progressToNextSessionStart), 100)}
+          value={progressToNextMatchStart}
           sx={{
             height: 16,
             borderBottomLeftRadius: 8,
@@ -122,154 +111,73 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
   );
 };
 
-interface JudgingStatusTableProps {
-  currentSessions: Array<WithId<JudgingSession>>;
-  nextSessions: Array<WithId<JudgingSession>>;
-  rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
-}
-
-const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
-  currentSessions,
-  nextSessions,
-  rooms,
-  teams
-}) => {
-  return (
-    <TableContainer component={Paper} sx={{ mt: 4 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell></TableCell>
-            {rooms.map(room => (
-              <TableCell key={room._id.toString()} align="center">
-                {`חדר ${room.name}`}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currentSessions.length > 0 && (
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th">
-                סבב נוכחי:
-                <br />
-                {dayjs(currentSessions[0].time).format('HH:mm')}
-              </TableCell>
-              {currentSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <Box alignItems="center">
-                    <StyledTeamTooltip
-                      team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                    />
-                    <br />
-                    <StatusIcon status={session.status} />
-                    <br />
-                    {session.start &&
-                      `סיום: ${dayjs(session.start)
-                        .add(JUDGING_SESSION_LENGTH, 'seconds')
-                        .format('HH:mm')}`}
-                  </Box>
-                </TableCell>
-              ))}
-            </TableRow>
-          )}
-          {nextSessions.length > 0 && (
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th">
-                סבב הבא:
-                <br />
-                {dayjs(nextSessions[0].time).format('HH:mm')}
-              </TableCell>
-              {nextSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <StyledTeamTooltip
-                    team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                  />
-                </TableCell>
-              ))}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
-
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
-  rooms: Array<WithId<JudgingRoom>>;
+  eventState: WithId<EventState>;
+  tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
-  sessions: Array<WithId<JudgingSession>>;
+  matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
   event,
-  rooms,
+  eventState: initialEventState,
+  tables,
   teams: initialTeams,
-  sessions: initialSessions
+  matches: initialMatches
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
-  const [eventState, setEventState] = useState<WithId<EventState>>({} as WithId<EventState>);
+  const activeMatch = useMemo(
+    () => matches.find(m => m._id === eventState.activeMatch),
+    [matches, eventState.activeMatch]
+  );
+  const loadedMatch = useMemo(
+    () => matches.find(m => m._id === eventState.loadedMatch),
+    [matches, eventState.loadedMatch]
+  );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {
           return team;
-        } else {
-          return t;
         }
+        return t;
       })
     );
   };
 
-  const updateEventState = () => {
-    apiFetch(`/api/events/${user.event}/state`)
-      .then(res => res?.json())
-      .then(data => {
-        setEventState(data);
-      });
-  };
-
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
-    setSessions(sessions =>
-      sessions.map(s => {
-        if (s._id === session._id) {
-          return session;
+  const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
         }
-        return s;
+        return m;
       })
     );
 
-    updateEventState();
+    if (eventState) setEventState(eventState);
   };
 
   const { connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['judging', 'pit-admin'],
-    updateEventState,
+    ['field', 'pit-admin'],
+    undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'teamRegistered', handler: handleTeamRegistered }
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchParticipantPrestarted', handler: handleMatchEvent }
     ]
-  );
-
-  const currentSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession),
-    [sessions, eventState]
-  );
-
-  const nextSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession + 1),
-    [sessions, eventState]
   );
 
   return (
@@ -282,17 +190,24 @@ const Page: NextPage<Props> = ({
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus !== 'connecting'}
       >
-        <JudgingStatusTimer
-          teams={teams}
-          currentSessions={currentSessions}
-          nextSessions={nextSessions}
-        />
-        <JudgingStatusTable
-          currentSessions={currentSessions}
-          nextSessions={nextSessions}
-          rooms={rooms}
-          teams={teams}
-        />
+        <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
+        <Stack direction="row" spacing={2} my={4}>
+          <ActiveMatch
+            title="מקצה רץ"
+            match={
+              matches?.find(match => match._id === eventState.activeMatch) ||
+              ({} as WithId<RobotGameMatch>)
+            }
+            startTime={matches?.find(match => match._id === eventState.activeMatch)?.startTime}
+          />
+          <ActiveMatch
+            title="המקצה הבא"
+            match={
+              matches?.find(match => match._id === eventState.loadedMatch) ||
+              ({} as WithId<RobotGameMatch>)
+            }
+          />
+        </Stack>
       </Layout>
     </RoleAuthorizer>
   );
@@ -306,7 +221,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
+    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
+      res => res?.json()
+    );
+
+    const tablesPromise = apiFetch(`/api/events/${user.event}/tables`, undefined, ctx).then(res =>
       res?.json()
     );
 
@@ -314,18 +233,19 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
-    const sessionsPromise = apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
-      res => res?.json()
+    const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
+      res?.json()
     );
 
-    const [rooms, event, teams, sessions] = await Promise.all([
-      roomsPromise,
+    const [tables, event, eventState, teams, matches] = await Promise.all([
+      tablesPromise,
       eventPromise,
+      eventStatePromise,
       teamsPromise,
-      sessionsPromise
+      matchesPromise
     ]);
 
-    return { props: { user, event, rooms, teams, sessions } };
+    return { props: { user, event, eventState, tables, teams, matches } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

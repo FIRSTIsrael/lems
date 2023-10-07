@@ -84,7 +84,6 @@ const Page: NextPage<Props> = ({
     { name: 'matchStarted', handler: handleMatchEvent },
     { name: 'matchCompleted', handler: handleMatchEvent },
     { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
     { name: 'scoresheetStatusChanged', handler: updateScoresheet }
   ]);
@@ -153,6 +152,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
       res => res?.json()
     );
+
     const matchesPromise = apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(res =>
       res.json()
     );

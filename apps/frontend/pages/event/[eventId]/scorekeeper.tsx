@@ -35,23 +35,17 @@ const Page: NextPage<Props> = ({
     matches?.find(match => match.status === 'not-started')?._id
   );
 
-  const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
+  const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
     setMatches(matches =>
       matches.map(m => {
-        if (m._id === newMatch._id) {
-          return newMatch;
+        if (m._id === match._id) {
+          return match;
         }
         return m;
       })
     );
-  };
 
-  const handleMatchEvent = (
-    newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
-  ) => {
-    setEventState(newEventState);
-    updateMatches(newMatch);
+    if (eventState) setEventState(eventState);
   };
 
   const handleMatchStarted = (
@@ -89,7 +83,7 @@ const Page: NextPage<Props> = ({
     { name: 'matchStarted', handler: handleMatchStarted },
     { name: 'matchAborted', handler: handleMatchAborted },
     { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchParticipantPrestarted', handler: updateMatches }
+    { name: 'matchParticipantPrestarted', handler: handleMatchEvent }
   ]);
 
   return (
