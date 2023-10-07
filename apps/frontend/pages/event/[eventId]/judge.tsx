@@ -11,7 +11,8 @@ import {
   Rubric,
   JudgingSession,
   SafeUser,
-  JudgingCategory
+  JudgingCategory,
+  EventState
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
@@ -58,7 +59,7 @@ const Page: NextPage<Props> = ({
       : ({} as WithId<Team>);
   }, [teams, currentSession]);
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {

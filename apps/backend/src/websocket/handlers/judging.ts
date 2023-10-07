@@ -5,7 +5,7 @@ import * as db from '@lems/database';
 import { JUDGING_SESSION_LENGTH } from '@lems/types';
 
 export const handleStartSession = async (namespace, eventId, roomId, sessionId, callback) => {
-  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
 
   let session = await db.getSession({
     room: new ObjectId(roomId),
@@ -56,7 +56,8 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });
-  namespace.to('judging').emit('judgingSessionStarted', session);
+  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  namespace.to('judging').emit('judgingSessionStarted', session, eventState);
 };
 
 export const handleAbortSession = async (namespace, eventId, roomId, sessionId, callback) => {

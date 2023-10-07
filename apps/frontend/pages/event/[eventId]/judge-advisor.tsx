@@ -9,6 +9,7 @@ import {
   JudgingSession,
   SafeUser,
   Event,
+  EventState,
   Team,
   JudgingCategory,
   Rubric
@@ -45,7 +46,7 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {

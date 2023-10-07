@@ -11,7 +11,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 import {
   Event,
@@ -29,6 +30,7 @@ import Layout from '../../../../components/layout';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
 
 interface JudgingScheduleRowProps {
   number: number;
@@ -55,11 +57,11 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
         );
 
         return (
-          <TableCell key={r._id.toString()}>
-            <Typography
-              color={team?.registered ? '#000' : 'error'}
-            >{`#${team?.number}`}</Typography>
-          </TableCell>
+          team && (
+            <TableCell key={r._id.toString()} align="center">
+              <StyledTeamTooltip team={team} />
+            </TableCell>
+          )
         );
       })}
     </TableRow>
@@ -93,6 +95,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTeams }) => {
   const router = useRouter();
+  const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
 
   const judgesGeneralSchedule = event.schedule?.filter(s => s.roles.includes('judge')) || [];
@@ -117,7 +120,7 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
     <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו"ז שיפוט | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
@@ -137,18 +140,19 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
               </TableRow>
             </TableHead>
             <TableBody>
-              {judgesGeneralSchedule
-                .filter(s => {
-                  const firstSession = Math.min(...sessions.flatMap(s => s.number));
-                  const firstSessionTime = dayjs(
-                    sessions.find(s => s.number === firstSession)?.time
-                  );
+              {showGeneralSchedule &&
+                judgesGeneralSchedule
+                  .filter(s => {
+                    const firstSession = Math.min(...sessions.flatMap(s => s.number));
+                    const firstSessionTime = dayjs(
+                      sessions.find(s => s.number === firstSession)?.time
+                    );
 
-                  return dayjs(s.startTime).isBefore(firstSessionTime);
-                })
-                .map(rs => (
-                  <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
-                ))}
+                    return dayjs(s.startTime).isBefore(firstSessionTime);
+                  })
+                  .map(rs => (
+                    <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
+                  ))}
               {[...new Set(sessions.flatMap(s => s.number))].map(row => {
                 const rowTime = dayjs(sessions.find(s => s.number === row)?.time);
                 const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.time);
@@ -161,9 +165,10 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
 
                 return (
                   <>
-                    {rowSchedule.map(rs => (
-                      <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
-                    ))}
+                    {showGeneralSchedule &&
+                      rowSchedule.map(rs => (
+                        <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
+                      ))}
                     <JudgingScheduleRow
                       key={row}
                       number={row}
@@ -174,19 +179,34 @@ const Page: NextPage<Props> = ({ user, event, rooms, sessions, teams: initialTea
                   </>
                 );
               })}
-              {judgesGeneralSchedule
-                .filter(s => {
-                  const lastSession = Math.max(...sessions.flatMap(s => s.number));
-                  const lastSessionTime = dayjs(sessions.find(s => s.number === lastSession)?.time);
+              {showGeneralSchedule &&
+                judgesGeneralSchedule
+                  .filter(s => {
+                    const lastSession = Math.max(...sessions.flatMap(s => s.number));
+                    const lastSessionTime = dayjs(
+                      sessions.find(s => s.number === lastSession)?.time
+                    );
 
-                  return dayjs(s.startTime).isAfter(lastSessionTime);
-                })
-                .map(rs => (
-                  <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
-                ))}
+                    return dayjs(s.startTime).isAfter(lastSessionTime);
+                  })
+                  .map(rs => (
+                    <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <FormControlLabel
+          sx={{ mt: 2 }}
+          control={
+            <Switch
+              checked={showGeneralSchedule}
+              onChange={event => {
+                setShowGeneralSchedule(event.target.checked);
+              }}
+            />
+          }
+          label="הצג אירועים כלליים"
+        />
       </Layout>
     </RoleAuthorizer>
   );

@@ -31,6 +31,7 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import StatusIcon from '../../../../components/general/status-icon';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
+import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
@@ -47,6 +48,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
   teams
 }) => {
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const fiveMinutes = 5 * 60;
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(dayjs()), 1000);
@@ -55,19 +57,25 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
     };
   });
 
-  const ahead = useMemo(
-    () => nextSessions.length > 0 && dayjs(nextSessions[0].time) > currentTime,
-    [currentTime, nextSessions]
-  );
+  const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
+    if (nextSessions.length > 0) {
+      if (dayjs(nextSessions[0].time) > currentTime) {
+        return dayjs(nextSessions[0].time).diff(currentTime, 'seconds') > fiveMinutes
+          ? 'ahead'
+          : 'close';
+      }
+      return 'behind';
+    }
+    return 'done';
+  }, [currentTime, fiveMinutes, nextSessions]);
 
-  const progressToNextSessionStart = useMemo(
-    () =>
-      currentSessions.length > 0 && nextSessions.length > 0
-        ? (dayjs(nextSessions[0].time).diff(currentTime) * 100) /
-          dayjs(currentSessions[0].time).diff(dayjs(nextSessions[0].time))
-        : 0,
-    [currentTime, currentSessions, nextSessions]
-  );
+  const progressToNextSessionStart = useMemo(() => {
+    if (nextSessions.length > 0) {
+      const diff = dayjs(nextSessions[0].time).diff(currentTime, 'seconds');
+      return (Math.abs(Math.min(fiveMinutes, diff)) / fiveMinutes) * 100;
+    }
+    return 0;
+  }, [currentTime, fiveMinutes, nextSessions]);
 
   return (
     <>
@@ -91,7 +99,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               dir="ltr"
             />
           )}
-          {currentSessions.length > 0 && (
+          {currentSessions.filter(s => s.status === 'in-progress').length > 0 && (
             <Typography variant="h4">
               {currentSessions.filter(session => !!session.start).length} מתוך{' '}
               {
@@ -104,11 +112,11 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
           )}
         </Stack>
       </Paper>
-      {currentSessions.length > 0 && nextSessions.length > 0 && (
+      {getStatus !== 'done' && (
         <LinearProgress
-          color={ahead ? 'success' : 'error'}
+          color={getStatus === 'ahead' ? 'success' : getStatus === 'close' ? 'warning' : 'error'}
           variant="determinate"
-          value={Math.min(Math.abs(progressToNextSessionStart), 100)}
+          value={progressToNextSessionStart}
           sx={{
             height: 16,
             borderBottomLeftRadius: 8,
@@ -158,7 +166,9 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               {currentSessions.map(session => (
                 <TableCell key={session._id.toString()} align="center">
                   <Box alignItems="center">
-                    {teams.find(t => t._id === session.team)?.name}
+                    <StyledTeamTooltip
+                      team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
+                    />
                     <br />
                     <StatusIcon status={session.status} />
                     <br />
@@ -180,7 +190,9 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               </TableCell>
               {nextSessions.map(session => (
                 <TableCell key={session._id.toString()} align="center">
-                  {teams.find(t => t._id === session.team)?.name}
+                  <StyledTeamTooltip
+                    team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
+                  />
                 </TableCell>
               ))}
             </TableRow>
@@ -194,6 +206,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -202,6 +215,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   event,
+  eventState: initialEventState,
   rooms,
   teams: initialTeams,
   sessions: initialSessions
@@ -209,30 +223,20 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
-
-  const [eventState, setEventState] = useState<WithId<EventState>>({} as WithId<EventState>);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {
           return team;
-        } else {
-          return t;
         }
+        return t;
       })
     );
   };
 
-  const updateEventState = () => {
-    apiFetch(`/api/events/${user.event}/state`)
-      .then(res => res?.json())
-      .then(data => {
-        setEventState(data);
-      });
-  };
-
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -242,13 +246,13 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    updateEventState();
+    if (eventState) setEventState(eventState);
   };
 
   const { connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin'],
-    updateEventState,
+    undefined,
     [
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
@@ -301,6 +305,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res?.json()
     );
 
+    const eventStatePromise = apiFetch(`/api/events/${user.event}/state`, undefined, ctx).then(
+      res => res?.json()
+    );
+
     const roomsPromise = apiFetch(`/api/events/${user.event}/rooms`, undefined, ctx).then(res =>
       res?.json()
     );
@@ -313,14 +321,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       res => res?.json()
     );
 
-    const [rooms, event, teams, sessions] = await Promise.all([
+    const [rooms, event, eventState, teams, sessions] = await Promise.all([
       roomsPromise,
       eventPromise,
+      eventStatePromise,
       teamsPromise,
       sessionsPromise
     ]);
 
-    return { props: { user, event, rooms, teams, sessions } };
+    return { props: { user, event, eventState, rooms, teams, sessions } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

@@ -128,40 +128,6 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
-export const handleUpdateMatch = async (
-  namespace,
-  eventId: string,
-  matchId: string,
-  matchData: Partial<RobotGameMatch>,
-  callback
-) => {
-  let match = await db.getMatch({
-    _id: new ObjectId(matchId),
-    eventId: new ObjectId(eventId)
-  });
-  if (!match) {
-    callback({
-      ok: false,
-      error: `Could not find match ${matchId} in event ${eventId}!`
-    });
-    return;
-  }
-
-  console.log(`🖊️ Updating match ${matchId} in event ${eventId}`);
-
-  await db.updateMatch(
-    {
-      _id: new ObjectId(matchId),
-      eventId: new ObjectId(eventId)
-    },
-    matchData
-  );
-
-  callback({ ok: true });
-  match = await db.getMatch({ _id: new ObjectId(matchId) });
-  namespace.to('field').emit('matchUpdated', match);
-};
-
 export const handlePrestartMatchParticipant = async (
   namespace,
   eventId: string,

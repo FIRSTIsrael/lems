@@ -47,17 +47,23 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <GridPaperLink path="judging-status">
             <Typography variant="h4">מצב השיפוט</Typography>
           </GridPaperLink>
+          <GridPaperLink path="field-status">
+            <Typography variant="h4">מצב הזירה</Typography>
+          </GridPaperLink>
           <GridPaperLink path="team-list">
             <Typography variant="h4">רשימת קבוצות</Typography>
           </GridPaperLink>
           <GridPaperLink path="judging-schedule">
-            <Typography variant="h4">{'לו"ז שיפוט'}</Typography>
+            <Typography variant="h4">לו״ז שיפוט</Typography>
           </GridPaperLink>
-          <GridPaperLink path="judging-status">
-            <Typography variant="h4">ג</Typography>
+          <GridPaperLink path="field-schedule">
+            <Typography variant="h4">לו״ז זירה</Typography>
           </GridPaperLink>
-          <GridPaperLink path="judging-status">
-            <Typography variant="h4">ד</Typography>
+          <GridPaperLink path="pit-map">
+            <Typography variant="h4">מפת פיטים</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="general-schedule">
+            <Typography variant="h4">לו״ז כללי</Typography>
           </GridPaperLink>
         </Grid>
       </Layout>

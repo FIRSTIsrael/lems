@@ -6,6 +6,7 @@ import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   Event,
+  EventState,
   Team,
   JudgingRoom,
   JudgingSession,
@@ -45,7 +46,7 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
