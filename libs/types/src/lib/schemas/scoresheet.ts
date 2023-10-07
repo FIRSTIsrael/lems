@@ -4,9 +4,9 @@ import { MissionClauseType, RobotGameMatchType } from '../constants';
 export const ScoresheetStatusTypes = [
   'empty',
   'in-progress',
-  'waiting-for-head-ref',
   'completed',
   'waiting-for-gp',
+  'waiting-for-head-ref',
   'ready'
 ] as const;
 export type ScoresheetStatus = (typeof ScoresheetStatusTypes)[number];

@@ -5,6 +5,7 @@ export * from './lib/localization/rubrics/common';
 export * from './lib/localization/rubrics/typing';
 export * from './lib/localization/scoresheet/typing';
 export * from './lib/localization/scoresheet/scoresheet';
+export * from './lib/localization/scoresheet/general';
 export * from './lib/localization/judging';
 export * from './lib/localization/rubrics';
 export * from './lib/constants';

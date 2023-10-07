@@ -7,7 +7,7 @@ import { Event, Team, SafeUser, RoleTypes, RobotGameMatch, RobotGameTable } from
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
-import RoundSchedule from '../../../../components/field/round-schedule';
+import ReportRoundSchedule from '../../../../components/field/report-round-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
@@ -50,7 +50,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
       <Grid xs={12} xl={6} key={'practice' + r}>
-        <RoundSchedule
+        <ReportRoundSchedule
           eventSchedule={refereeGeneralSchedule}
           roundType={'practice'}
           roundNumber={r}
@@ -63,7 +63,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     .concat(
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
         <Grid xs={12} xl={6} key={'ranking' + r}>
-          <RoundSchedule
+          <ReportRoundSchedule
             eventSchedule={refereeGeneralSchedule}
             roundType={'ranking'}
             roundNumber={r}
