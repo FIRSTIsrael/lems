@@ -8,6 +8,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   EventState,
+  Team,
   ALLOW_MATCH_SELECTOR
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -56,13 +57,33 @@ const Page: NextPage<Props> = ({
     updateMatches(newMatch);
   };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchParticipantPrestarted', handler: updateMatches }
-  ]);
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        const teamIndex = m.participants.findIndex(p => p.teamId === team._id);
+        if (teamIndex !== -1) {
+          const newMatch = structuredClone(m);
+          newMatch.participants[teamIndex].team = team;
+          return newMatch;
+        }
+        return m;
+      })
+    );
+  };
+
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['field', 'pit-admin'],
+    undefined,
+    [
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchParticipantPrestarted', handler: updateMatches },
+      { name: 'teamRegistered', handler: handleTeamRegistered }
+    ]
+  );
 
   return (
     <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>

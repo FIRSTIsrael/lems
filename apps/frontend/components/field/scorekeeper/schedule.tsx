@@ -64,6 +64,7 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
                   color="inherit"
                   size="small"
                   onClick={() => loadMatch(match._id)}
+                  disabled={match.status === 'completed'}
                 >
                   טעינה
                 </Button>
