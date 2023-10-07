@@ -10,13 +10,13 @@ import {
   Stack
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { ObjectId } from 'mongodb';
-import { WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { ObjectId, WithId } from 'mongodb';
+import { RobotGameMatch, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 
 interface ControlActionsProps {
   eventId: string;
   nextMatchId?: ObjectId;
-  loadedMatchId?: ObjectId;
+  loadedMatch?: WithId<RobotGameMatch>;
   activeMatchId?: ObjectId;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
@@ -24,7 +24,7 @@ interface ControlActionsProps {
 const ControlActions: React.FC<ControlActionsProps> = ({
   eventId,
   nextMatchId,
-  loadedMatchId,
+  loadedMatch,
   activeMatchId,
   socket
 }) => {
@@ -41,13 +41,13 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   }, [eventId, nextMatchId, socket]);
 
   const startMatch = useCallback(() => {
-    if (loadedMatchId === undefined) return;
-    socket.emit('startMatch', eventId, loadedMatchId.toString(), response => {
+    if (loadedMatch === undefined) return;
+    socket.emit('startMatch', eventId, loadedMatch._id.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
       }
     });
-  }, [eventId, loadedMatchId, socket]);
+  }, [eventId, loadedMatch, socket]);
 
   const abortMatch = useCallback(() => {
     if (activeMatchId === undefined) return;
@@ -60,14 +60,14 @@ const ControlActions: React.FC<ControlActionsProps> = ({
 
   useEffect(() => {
     setMatchShown(false);
-  }, [loadedMatchId]);
+  }, [loadedMatch]);
 
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
       <Button
         variant="contained"
-        color={loadedMatchId === nextMatchId ? 'inherit' : 'success'}
-        disabled={loadedMatchId === nextMatchId}
+        color={loadedMatch?._id === nextMatchId ? 'inherit' : 'success'}
+        disabled={loadedMatch?._id === nextMatchId}
         size="large"
         onClick={loadNextMatch}
       >
@@ -75,8 +75,8 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       </Button>
       <Button
         variant="contained"
-        color={loadedMatchId === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
-        disabled={loadedMatchId === undefined || activeMatchId !== undefined}
+        color={loadedMatch?._id === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
+        disabled={loadedMatch?._id === undefined || activeMatchId !== undefined}
         size="large"
         onClick={() => setMatchShown(true)}
       >
@@ -85,8 +85,12 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       {activeMatchId === undefined ? (
         <Button
           variant="contained"
-          color={loadedMatchId === undefined ? 'inherit' : 'success'}
-          disabled={loadedMatchId === undefined || activeMatchId !== undefined}
+          color={loadedMatch?._id === undefined ? 'inherit' : 'success'}
+          disabled={
+            loadedMatch?._id === undefined ||
+            activeMatchId !== undefined ||
+            !!loadedMatch.participants.find(p => !p.ready)
+          }
           size="large"
           onClick={startMatch}
         >
