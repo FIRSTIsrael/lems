@@ -14,7 +14,8 @@ import {
   MATCH_LENGTH,
   RobotGameMatch,
   RobotGameTable,
-  RobotGameMatchType
+  RobotGameMatchType,
+  EventScheduleEntry
 } from '@lems/types';
 import StyledTeamTooltip from '../../components/general/styled-team-tooltip';
 import { localizedMatchType } from '../../localization/field';
@@ -53,6 +54,7 @@ interface RoundScheduleProps {
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
+  eventSchedule: Array<EventScheduleEntry>;
 }
 
 const RoundSchedule: React.FC<RoundScheduleProps> = ({
@@ -60,12 +62,12 @@ const RoundSchedule: React.FC<RoundScheduleProps> = ({
   roundNumber,
   matches,
   tables,
-  teams
+  teams,
+  eventSchedule
 }) => {
-  console.log(roundNumber);
   return (
     <TableContainer component={Paper}>
-      <Table>
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell colSpan={2 + tables.length} align="center">
@@ -86,6 +88,23 @@ const RoundSchedule: React.FC<RoundScheduleProps> = ({
           {matches.map(m => (
             <MatchScheduleRow match={m} tables={tables} teams={teams} key={m.number} />
           ))}
+          {eventSchedule
+            .filter(c => {
+              const timeDiff = dayjs(c.startTime).diff(
+                matches[matches.length - 1].scheduledTime,
+                'minutes'
+              );
+              return timeDiff > 0 && timeDiff <= 15;
+            })
+            .map((c, index) => (
+              <TableRow key={c.name + index}>
+                <TableCell>{dayjs(c.startTime).format('HH:mm')}</TableCell>
+                <TableCell>{dayjs(c.endTime).format('HH:mm')}</TableCell>
+                <TableCell colSpan={tables.length} align="center">
+                  {c.name}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>
