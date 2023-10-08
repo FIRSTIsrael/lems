@@ -32,7 +32,7 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<EventState>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
-    matches?.find(match => match.status === 'not-started')?._id
+    matches?.find(match => match.status === 'not-started' && match.type !== 'test')?._id
   );
 
   const activeMatch = useMemo(
@@ -67,13 +67,16 @@ const Page: NextPage<Props> = ({
     const newNextMatchId = matches?.find(
       match => match.status === 'not-started' && match._id != newMatch._id
     )?._id;
-    setNextMatchId(newNextMatchId);
-    if (newNextMatchId)
-      socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
-        }
-      });
+    console.log(newMatch);
+    if (newEventState.loadedMatch === null && newMatch.type !== 'test') {
+      setNextMatchId(newNextMatchId);
+      if (newNextMatchId)
+        socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
+          }
+        });
+    }
   };
 
   const handleMatchAborted = (
@@ -81,12 +84,14 @@ const Page: NextPage<Props> = ({
     newEventState: WithId<EventState>
   ) => {
     handleMatchEvent(newMatch, newEventState);
-    setNextMatchId(newMatch._id);
-    socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
-      }
-    });
+    if (newMatch.type !== 'test') {
+      setNextMatchId(newMatch._id);
+      socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
+        }
+      });
+    }
   };
 
   const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
@@ -130,7 +135,11 @@ const Page: NextPage<Props> = ({
           />
 
           <Paper sx={{ px: 4, py: 1, my: 4, overflowY: 'scroll' }}>
-            <Schedule eventId={event._id.toString()} matches={matches || []} socket={socket} />
+            <Schedule
+              eventId={event._id.toString()}
+              matches={matches.filter(m => m.type !== 'test') || []}
+              socket={socket}
+            />
           </Paper>
         </Stack>
       </Layout>

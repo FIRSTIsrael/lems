@@ -6,42 +6,45 @@ export const findMatches = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').aggregate([
     { $match: filter },
     {
-      $unwind: '$participants'
-    },
-    {
-      $lookup: {
-        from: 'teams',
-        localField: 'participants.teamId',
-        foreignField: '_id',
-        as: 'participants.team'
+      $unwind: {
+        path: '$participants',
+        preserveNullAndEmptyArrays: true
       }
     },
-    {
-      $addFields: {
-        'participants.team': { $arrayElemAt: ['$participants.team', 0] }
-      }
-    },
-    {
-      $group: {
-        _id: '$_id',
-        participants: { $push: '$participants' },
-        data: { $first: '$$ROOT' }
-      }
-    },
-    {
-      $replaceRoot: {
-        newRoot: { $mergeObjects: ['$data', { participants: '$participants' }] }
-      }
-    },
+    ...(filter.type !== 'test'
+      ? [
+          {
+            $lookup: {
+              from: 'teams',
+              localField: 'participants.teamId',
+              foreignField: '_id',
+              as: 'participants.team'
+            }
+          },
+          {
+            $addFields: {
+              'participants.team': { $arrayElemAt: ['$participants.team', 0] }
+            }
+          },
+          {
+            $group: {
+              _id: '$_id',
+              participants: { $push: '$participants' },
+              data: { $first: '$$ROOT' }
+            }
+          },
+          {
+            $replaceRoot: {
+              newRoot: { $mergeObjects: ['$data', { participants: '$participants' }] }
+            }
+          }
+        ]
+      : []),
     { $sort: { number: 1 } }
   ]) as AggregationCursor<WithId<RobotGameMatch>>;
 };
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
-  // TODO: remove the next 3 lines
-  findMatches(filter)
-    .toArray()
-    .then(res => console.log(res));
   return findMatches(filter).next();
 };
 
