@@ -3,7 +3,7 @@ import { User } from '@lems/types';
 import { randomString } from '@lems/utils';
 
 const connectionString = process.env.MONGODB_URI || 'mongodb://127.0.0.1';
-const port = process.env.MONGODB_PORT || 27101;
+const port = process.env.MONGODB_PORT || 27017;
 
 const initDbClient = async () => {
   const client = new MongoClient(`${connectionString}:${port}`);
