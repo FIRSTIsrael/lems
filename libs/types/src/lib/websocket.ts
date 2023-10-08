@@ -110,6 +110,11 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  startTestMatch: (
+    eventId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   abortMatch: (
     eventId: string,
     matchId: string,

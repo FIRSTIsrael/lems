@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
 import {
   Team,
@@ -19,6 +19,16 @@ const TEAMS_BLOCK_ID = 1;
 const PRACTICE_MATCHES_BLOCK_ID = 4;
 const RANKING_MATCHES_BLOCK_ID = 2;
 const JUDGING_SESSIONS_BLOCK_ID = 3;
+
+const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
+  return {
+    eventId,
+    round: 0,
+    type: 'test',
+    status: 'not-started',
+    participants: []
+  } as RobotGameMatch;
+};
 
 const getBlock = (blocks: Array<Block>, id: number) => {
   const block = blocks.find(b => b.id === id)?.lines;
@@ -225,6 +235,7 @@ export const parseEventSchedule = async (
     tables
   );
   const matches = practiceMatches.concat(rankingMatches);
+  matches.push(getTestMatch(event._id));
   const sessions = parseSessions(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event, teams, rooms);
 
   return { matches, sessions };

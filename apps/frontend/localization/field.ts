@@ -2,7 +2,8 @@ import { RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
 
 export const localizedMatchType = {
   practice: 'מקצה אימונים',
-  ranking: 'מקצה רשמי'
+  ranking: 'מקצה רשמי',
+  test: 'מקצה בדיקה'
 };
 
 export const localizedMatchPresent: Record<RobotGameMatchPresent, string> = {

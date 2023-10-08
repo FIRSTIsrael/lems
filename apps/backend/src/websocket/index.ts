@@ -12,6 +12,7 @@ import {
   handleLoadMatch,
   handlePrestartMatchParticipant,
   handleStartMatch,
+  handleStartTestMatch,
   handleUpdateScoresheet
 } from './handlers/field';
 
@@ -45,6 +46,8 @@ const websocket = (
   socket.on('loadMatch', (...args) => handleLoadMatch(namespace, ...args));
 
   socket.on('startMatch', (...args) => handleStartMatch(namespace, ...args));
+
+  socket.on('startTestMatch', (...args) => handleStartTestMatch(namespace, ...args));
 
   socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
 

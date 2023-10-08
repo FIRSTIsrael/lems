@@ -6,7 +6,7 @@ export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
 
 export type MissionClauseType = 'boolean' | 'enum' | 'number';
 
-export const RobotGameMatchTypes = ['practice', 'ranking'] as const;
+export const RobotGameMatchTypes = ['practice', 'ranking', 'test'] as const;
 export type RobotGameMatchType = (typeof RobotGameMatchTypes)[number];
 
 export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'completed';
