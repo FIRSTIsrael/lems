@@ -1,7 +1,7 @@
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
 import { Box, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
-import { Field, FieldProps } from 'formik';
+import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import CustomNumberInput from './number-input';
@@ -62,7 +62,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
             )}
           </Field>
         ) : (
-          <Field
+          <FastField
             name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}
             component={({ field, form }: FieldProps) => (
               <CustomNumberInput

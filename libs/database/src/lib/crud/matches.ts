@@ -5,14 +5,14 @@ import db from '../database';
 export const findMatches = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').aggregate([
     { $match: filter },
-    {
-      $unwind: {
-        path: '$participants',
-        preserveNullAndEmptyArrays: true
-      }
-    },
     ...(filter.type !== 'test'
       ? [
+          {
+            $unwind: {
+              path: '$participants',
+              preserveNullAndEmptyArrays: true
+            }
+          },
           {
             $lookup: {
               from: 'teams',
