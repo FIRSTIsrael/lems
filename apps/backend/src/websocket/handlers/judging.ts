@@ -27,28 +27,31 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
 
   console.log(`❗ Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
-  session.start = new Date();
+  const startTime = new Date();
+  session.start = startTime;
   session.status = 'in-progress';
   const { _id, ...sessionData } = session;
-  await db.updateSession({ _id: session._id }, sessionData);
+  await db.updateSession({ _id }, sessionData);
 
   const sessionEnd: Date = dayjs().add(JUDGING_SESSION_LENGTH, 'seconds').toDate();
-  scheduler.scheduleJob(
-    sessionEnd,
-    function () {
-      db.getSession({ _id: new ObjectId(session._id) }).then(newSession => {
-        if (
-          dayjs(newSession.start).isSame(dayjs(session.start)) &&
-          newSession.status === 'in-progress'
-        ) {
-          console.log(`✅ Session ${session._id} completed`);
-          db.updateSession({ _id: session._id }, { status: 'completed' });
-          const updatedSession = db.getSession({ _id: new ObjectId(session._id) });
-          namespace.to('judging').emit('judgingSessionCompleted', updatedSession);
-        }
-      });
-    }.bind(null, session)
-  );
+  scheduler.scheduleJob(sessionEnd, async () => {
+    const result = await db.updateSession(
+      {
+        _id,
+        status: 'in-progress',
+        start: startTime
+      },
+      {
+        status: 'completed'
+      }
+    );
+
+    if (result.matchedCount > 0) {
+      console.log(`✅ Session ${_id} completed`);
+      const updatedSession = await db.getSession({ _id });
+      namespace.to('judging').emit('judgingSessionCompleted', updatedSession);
+    }
+  });
 
   if (!eventState.currentSession || session.number > eventState.currentSession) {
     await db.updateEventState({ _id: eventState._id }, { currentSession: session.number });

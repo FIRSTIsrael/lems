@@ -67,7 +67,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
 
     if (result.matchedCount > 0) {
       console.log(`✅ Match ${matchId} completed!`);
-      db.updateEventState({ _id: eventState._id }, { activeMatch: null });
+      await db.updateEventState({ _id: eventState._id }, { activeMatch: null });
 
       const match = await db.getMatch({ _id: new ObjectId(matchId) });
       eventState = await db.getEventState({ event: new ObjectId(eventId) });
@@ -171,7 +171,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   console.log(`❌ Aborting match ${matchId} in event ${eventId}`);
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
-  if (match.type !== 'test') {
+  if (match.type !== 'test')
     await db.updateMatches(
       {
         eventId: new ObjectId(eventId),
@@ -183,21 +183,13 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
       }
     );
 
-    await db.updateEventState(
-      { event: new ObjectId(eventId) },
-      {
-        activeMatch: null,
-        loadedMatch: new ObjectId(matchId)
-      }
-    );
-  } else {
-    await db.updateEventState(
-      { event: new ObjectId(eventId) },
-      {
-        activeMatch: null
-      }
-    );
-  }
+  await db.updateEventState(
+    { event: new ObjectId(eventId) },
+    {
+      activeMatch: null,
+      ...(match.type !== 'test' && { loadedMatch: new ObjectId(matchId) })
+    }
+  );
 
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
