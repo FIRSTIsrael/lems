@@ -38,6 +38,10 @@ export const findMatches = (filter: Filter<RobotGameMatch>) => {
 };
 
 export const getMatch = (filter: Filter<RobotGameMatch>) => {
+  // TODO: remove the next 3 lines
+  findMatches(filter)
+    .toArray()
+    .then(res => console.log(res));
   return findMatches(filter).next();
 };
 

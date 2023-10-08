@@ -49,6 +49,15 @@ const ControlActions: React.FC<ControlActionsProps> = ({
     });
   }, [eventId, loadedMatch, socket]);
 
+  const startTestMatch = useCallback(() => {
+    if (activeMatchId) return;
+    socket.emit('startTestMatch', eventId, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
+      }
+    });
+  }, [eventId, activeMatchId, socket]);
+
   const abortMatch = useCallback(() => {
     if (activeMatchId === undefined) return;
     socket.emit('abortMatch', eventId, activeMatchId.toString(), response => {
@@ -64,6 +73,15 @@ const ControlActions: React.FC<ControlActionsProps> = ({
 
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
+      <Button
+        variant="contained"
+        color={'success'}
+        disabled={!!activeMatchId}
+        size="large"
+        onClick={startTestMatch}
+      >
+        התחלת מקצה בדיקה
+      </Button>
       <Button
         variant="contained"
         color={loadedMatch?._id === nextMatchId ? 'inherit' : 'success'}

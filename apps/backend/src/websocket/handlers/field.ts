@@ -90,6 +90,49 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
   namespace.to('field').emit('matchStarted', match, eventState);
 };
 
+export const handleStartTestMatch = async (namespace, eventId: string, callback) => {
+  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  if (eventState.activeMatch !== null) {
+    callback({
+      ok: false,
+      error: `Event already has a running match (${eventState.activeMatch})!`
+    });
+    return;
+  }
+
+  const match = await db.getMatch({ eventId: new ObjectId(eventId), type: 'test' });
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find test match`
+    });
+    return;
+  }
+  console.log(`❗ Starting test match ${match._id} in event ${eventId}`);
+
+  const matchEnd: Date = dayjs().add(MATCH_LENGTH, 'seconds').toDate();
+  scheduler.scheduleJob(matchEnd, async () => {
+    eventState = await db.getEventState({ event: new ObjectId(eventId) });
+    if (eventState.activeMatch === match._id) {
+      console.log(`✅ Test match ${match._id} completed!`);
+      db.updateEventState({ _id: eventState._id }, { activeMatch: null });
+      eventState = await db.getEventState({ event: new ObjectId(eventId) });
+      namespace.to('field').emit('matchCompleted', match, eventState);
+    }
+  });
+
+  await db.updateEventState(
+    { _id: eventState._id },
+    {
+      activeMatch: match._id
+    }
+  );
+
+  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  callback({ ok: true });
+  namespace.to('field').emit('matchStarted', match, eventState);
+};
+
 export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
   let eventState = await db.getEventState({ event: new ObjectId(eventId) });
   if (eventState.activeMatch.toString() !== matchId) {
