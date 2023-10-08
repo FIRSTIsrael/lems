@@ -60,6 +60,7 @@ router.delete('/:eventId/data', async (req: Request, res: Response) => {
   console.log(`🚮 Deleting data from event ${req.params.eventId}`);
   try {
     await cleanEventData(event);
+    await db.updateEvent({ _id: event._id }, { hasState: false });
   } catch (error) {
     return res.status(500).json(error.message);
   }

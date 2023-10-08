@@ -13,5 +13,6 @@ export interface Event {
   startDate: Date;
   endDate: Date;
   color: DivisionColor;
+  hasState: boolean;
   schedule?: Array<EventScheduleEntry>;
 }

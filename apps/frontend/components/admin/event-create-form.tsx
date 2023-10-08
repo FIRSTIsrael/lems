@@ -34,7 +34,8 @@ const EventCreateForm: React.FC = () => {
         name,
         startDate: startDate?.toDate(),
         endDate: endDate?.toDate(),
-        color
+        color,
+        hasState: false
       })
     })
       .then(res => res.json())

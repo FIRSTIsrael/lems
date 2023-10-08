@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Paper, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, EventState, SafeUser } from '@lems/types';
+import { Event } from '@lems/types';
 import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
@@ -11,12 +11,10 @@ import DeleteEventData from '../../../components/admin/delete-event-data';
 import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
 
 interface Props {
-  user: WithId<SafeUser>;
   event: WithId<Event>;
-  eventState: WithId<EventState> | undefined;
 }
 
-const Page: NextPage<Props> = ({ user, event, eventState }) => {
+const Page: NextPage<Props> = ({ event }) => {
   return (
     <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
       <Paper sx={{ p: 4, mt: 4 }}>
@@ -28,9 +26,9 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
       </Paper>
 
       <Paper sx={{ p: 4, my: 2 }}>
-        {eventState && <DeleteEventData event={event} />}
+        {event.hasState && <DeleteEventData event={event} />}
         <Stack justifyContent="center" direction="row" spacing={2}>
-          <UploadScheduleButton event={event} disabled={!!eventState} />
+          <UploadScheduleButton event={event} disabled={event.hasState} />
           <GenerateScheduleButton event={event} />
         </Stack>
       </Paper>
@@ -41,9 +39,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
-      user: '/api/me',
-      event: `/api/events/${ctx.params?.eventId}?withSchedule=true`,
-      eventState: `/api/events/${ctx.params?.eventId}/state`
+      event: `/api/events/${ctx.params?.eventId}?withSchedule=true`
     },
     ctx
   );
