@@ -67,7 +67,6 @@ const Page: NextPage<Props> = ({
     const newNextMatchId = matches?.find(
       match => match.status === 'not-started' && match._id != newMatch._id
     )?._id;
-    console.log(newMatch);
     if (newEventState.loadedMatch === null && newMatch.type !== 'test') {
       setNextMatchId(newNextMatchId);
       if (newNextMatchId)
