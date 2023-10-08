@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
 
-const getApiBase = (forceClient = false) => {
+export const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
   return isSsr ? process.env.LOCAL_BASE_URL : process.env.NEXT_PUBLIC_BASE_URL;
 };

@@ -9,6 +9,7 @@ import UploadScheduleButton from '../../../components/admin/upload-schedule';
 import EditEventForm from '../../../components/admin/edit-event-form';
 import DeleteEventData from '../../../components/admin/delete-event-data';
 import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
+import DownloadUsersButton from '../../../components/admin/download-users';
 
 interface Props {
   event: WithId<Event>;
@@ -30,6 +31,7 @@ const Page: NextPage<Props> = ({ event }) => {
         <Stack justifyContent="center" direction="row" spacing={2}>
           <UploadScheduleButton event={event} disabled={event.hasState} />
           <GenerateScheduleButton event={event} />
+          <DownloadUsersButton event={event} disabled={!event.hasState} />
         </Stack>
       </Paper>
     </Layout>
