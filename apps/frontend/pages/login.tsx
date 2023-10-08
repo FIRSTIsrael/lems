@@ -73,7 +73,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             <Typography variant="h2" pb={2} textAlign={'center'}>
               בחירת אירוע
             </Typography>
-            <EventSelector events={events} onChange={selectEvent} />
+            <EventSelector
+              events={events}
+              isEventDisabled={event => !event.hasState}
+              onChange={selectEvent}
+            />
           </Stack>
         )}
       </Paper>

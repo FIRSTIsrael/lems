@@ -85,6 +85,8 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     });
     console.log('✅ Created event state');
 
+    await db.updateEvent({ _id: event._id }, { hasState: true });
+
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.log('❌ Error parsing schedule');
