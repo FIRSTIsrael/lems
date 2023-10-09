@@ -47,6 +47,7 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
         enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
       }
     });
+    new Audio('/assets/sounds/judging/judging-start.wav').play();
   };
 
   return (

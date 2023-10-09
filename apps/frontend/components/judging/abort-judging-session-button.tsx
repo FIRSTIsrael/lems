@@ -56,7 +56,7 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
         variant="contained"
         {...props}
       >
-        הפסק מפגש שיפוט
+        הפסקת מפגש השיפוט
       </Button>
       <Dialog
         open={open}

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Typography, Paper } from '@mui/material';
 import { JUDGING_SESSION_LENGTH, JudgingSession, Team } from '@lems/types';
@@ -61,6 +61,16 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
 
     return '#ffffff';
   }, [secondsJudging]);
+
+  useEffect(() => {
+    if (secondsJudging === JUDGING_SESSION_LENGTH) {
+      new Audio('/assets/sounds/judging/judging-end.wav').play();
+    }
+  }, [secondsJudging]);
+
+  useEffect(() => {
+    if (barColor !== '#ffffff') new Audio('/assets/sounds/judging/judging-change.wav').play();
+  }, [barColor]);
 
   return (
     <Paper
