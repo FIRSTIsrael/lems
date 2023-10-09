@@ -8,6 +8,8 @@ import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
+import { enqueueSnackbar } from 'notistack';
+import { WithId } from 'mongodb';
 
 interface GridPaperLinkProps {
   path: string;
@@ -32,13 +34,20 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
 
 interface Props {
   user: User;
-  event: Event;
+  event: WithId<Event>;
 }
 
 const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
   return (
-    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={[...RoleTypes]}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}

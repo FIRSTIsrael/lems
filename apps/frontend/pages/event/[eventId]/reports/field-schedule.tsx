@@ -11,6 +11,7 @@ import ReportRoundSchedule from '../../../../components/field/report-round-sched
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -76,7 +77,14 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     );
 
   return (
-    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={[...RoleTypes]}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="xl"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}

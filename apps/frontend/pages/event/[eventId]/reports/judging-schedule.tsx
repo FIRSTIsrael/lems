@@ -31,6 +31,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
+import { enqueueSnackbar } from 'notistack';
 
 interface JudgingScheduleRowProps {
   number: number;
@@ -117,7 +118,14 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessio
   ]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={[...RoleTypes]}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}

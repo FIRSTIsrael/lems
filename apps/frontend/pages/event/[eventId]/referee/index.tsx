@@ -18,6 +18,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import MatchSelector from '../../../../components/field/referee/match-selector';
 import StrictRefereeDisplay from '../../../../components/field/referee/strict-referee-display';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -86,7 +87,14 @@ const Page: NextPage<Props> = ({
   );
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="referee" onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="referee"
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth={800}
         title={`שולחן ${table.name} | ${event.name}`}
