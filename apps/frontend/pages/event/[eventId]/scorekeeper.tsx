@@ -102,7 +102,14 @@ const Page: NextPage<Props> = ({
   ]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="scorekeeper" onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="scorekeeper"
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}

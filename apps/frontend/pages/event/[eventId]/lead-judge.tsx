@@ -23,6 +23,7 @@ import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -94,7 +95,14 @@ const Page: NextPage<Props> = ({
   );
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="lead-judge" onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="lead-judge"
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}

@@ -22,6 +22,7 @@ import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import HeadRefereeRoundSchedule from '../../../components/field/headReferee/head-referee-round-schedule';
 import ScoresheetStatusReferences from '../../../components/field/headReferee/scoresheet-status-references';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -143,7 +144,14 @@ const Page: NextPage<Props> = ({
     );
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="head-referee" onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="head-referee"
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}

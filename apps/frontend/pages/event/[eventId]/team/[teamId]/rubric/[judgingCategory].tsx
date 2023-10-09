@@ -25,6 +25,7 @@ import ConnectionIndicator from '../../../../../../components/connection-indicat
 import { apiFetch, serverSideGetRequests } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
+import { enqueueSnackbar } from 'notistack';
 
 interface RubricSelectorProps {
   event: WithId<Event>;
@@ -74,8 +75,14 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initialRubric }) => {
   const router = useRouter();
-  if (!team.registered) router.back();
-  if (session.status !== 'completed') router.back();
+  if (!team.registered) {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
+  }
+  if (session.status !== 'completed') {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('מפגש השיפוט טרם נגמר.', { variant: 'info' });
+  }
 
   const judgingCategory: string =
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';

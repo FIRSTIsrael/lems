@@ -16,6 +16,7 @@ import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
+import { enqueueSnackbar } from 'notistack';
 
 interface EventScheduleRowProps {
   entry: EventScheduleEntry;
@@ -43,7 +44,14 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
   return (
-    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={[...RoleTypes]}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${event.name}`}

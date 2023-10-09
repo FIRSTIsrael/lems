@@ -9,6 +9,7 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -21,7 +22,14 @@ const Page: NextPage<Props> = ({ user, event }) => {
   const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, []);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles={[...RoleTypes]} onFail={() => router.back()}>
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={[...RoleTypes]}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${event.name}`}

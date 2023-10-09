@@ -14,6 +14,7 @@ import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
 import { localizedMatchType } from '../../../../../../localization/field';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
+import { enqueueSnackbar } from 'notistack';
 
 interface ScoresheetSelectorProps {
   event: WithId<Event>;
@@ -97,8 +98,14 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(initialScoresheet);
 
-  if (!team.registered) router.back();
-  if (match.status !== 'completed') router.back();
+  if (!team.registered) {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
+  }
+  if (match.status !== 'completed') {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('המקצה טרם נגמר.', { variant: 'info' });
+  }
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
     router.push(`/event/${event._id}/${user.role}`);
 
@@ -119,7 +126,10 @@ const Page: NextPage<Props> = ({
           ? ['head-referee']
           : ['referee', 'head-referee']
       }
-      onFail={() => router.back()}
+      onFail={() => {
+        router.push(`/event/${event._id}/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
     >
       {team && (
         <Layout
