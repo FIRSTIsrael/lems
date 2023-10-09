@@ -110,6 +110,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     const updatedScoresheet = {} as Partial<Scoresheet>;
     if (newStatus) updatedScoresheet.status = newStatus;
     if (formValues) (updatedScoresheet as any).data = formValues;
+    if (signatureRef.current && updatedScoresheet.data)
+      updatedScoresheet.data.signature = signatureRef.current.getCanvas().toDataURL('image/png');
 
     socket.emit(
       'updateScoresheet',
@@ -120,7 +122,12 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       response => {
         if (response.ok) {
           if (showSnackbar) {
-            enqueueSnackbar('דף הניקוד נשמר בהצלחה.', { variant: 'success' });
+            enqueueSnackbar(
+              updatedScoresheet.data?.gp
+                ? 'דירוג המקצועיות האדיבה נשמר בהצלחה.'
+                : 'דף הניקוד נשמר בהצלחה.',
+              { variant: 'success' }
+            );
           }
         } else {
           enqueueSnackbar('אופס, שמירת דף הניקוד נכשלה.', { variant: 'error' });
@@ -365,15 +372,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       sx={{ minWidth: 200 }}
                       endIcon={<ChevronLeftIcon />}
                       disabled={!isValid}
-                      onClick={() => {
-                        if (signatureRef.current)
-                          setFieldValue(
-                            'signature',
-                            signatureRef.current.getCanvas().toDataURL('image/png'),
-                            true
-                          );
-                        handleSync(true, values, 'waiting-for-gp');
-                      }}
+                      onClick={() => handleSync(true, values, 'waiting-for-gp')}
                     >
                       המשך
                     </Button>
@@ -385,7 +384,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 user={user}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
-                  handleSync(false, values, 'ready').then(() =>
+                  handleSync(true, values, 'ready').then(() =>
                     router.push(`/event/${event._id}/${user.role}`)
                   );
                 }}
