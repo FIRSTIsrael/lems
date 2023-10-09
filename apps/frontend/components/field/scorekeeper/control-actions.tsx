@@ -65,6 +65,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
         enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
       }
     });
+    setOpen(false);
   }, [activeMatchId, eventId, socket]);
 
   useEffect(() => {
