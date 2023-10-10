@@ -16,7 +16,15 @@ const HotspotReminder: React.FC = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <Paper sx={{ p: 8, textAlign: 'center', mx: '50px', borderRadius: 8 }}>
+      <Paper
+        sx={{
+          p: 8,
+          textAlign: 'center',
+          mx: '50px',
+          borderRadius: 8,
+          border: '1rem solid #facc15'
+        }}
+      >
         <Typography variant="h1" fontSize="6rem" gutterBottom>
           בבקשה כבו את ה-WiFi בטלפונים
         </Typography>
