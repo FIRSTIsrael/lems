@@ -16,12 +16,11 @@ const Countdown: React.FC<CountdownProps> = ({
   const [days, hours, minutes, seconds] = useCountdown(targetDate);
   const [upDays, upHours, upMinutes, upSeconds] = useStopwatch(targetDate);
 
-  if (days + hours + minutes + seconds <= 0) {
+  if (days + hours + minutes + seconds < 0) {
     if (allowNegativeValues) {
       return (
         <Typography {...props}>
-          {'-'}
-          {(upMinutes + upHours * 60 + upDays * 24 * 60).toString().padStart(2, '0')}:
+          -{(upMinutes + upHours * 60 + upDays * 24 * 60).toString().padStart(2, '0')}:
           {upSeconds.toString().padStart(2, '0')}
         </Typography>
       );
