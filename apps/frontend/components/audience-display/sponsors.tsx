@@ -1,42 +1,40 @@
-import { Box } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
+import Images from '../../public/assets/audience-display/sponsors';
 
 const Sponsors: React.FC = () => {
-  const sponsors = useMemo(() => ['john', 'wifi', 'ofek'], []);
   const [index, setIndex] = useState<number>(0);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setIndex((index + 1) % sponsors.length), 5000);
+    const timeout = setTimeout(() => setIndex((index + 1) % Object.values(Images).length), 5000);
 
     return () => clearTimeout(timeout);
-  }, [index, sponsors.length]);
+  }, [index]);
 
-  const sponsorImage = useMemo(
-    () => `/assets/audience-display/sponsors/${sponsors[index]}.webp`,
-    [sponsors, index]
-  );
+  const sponsorImage = useMemo(() => Object.values(Images)[index], [index]);
 
   return (
-    <Box
+    <Stack
       height="100%"
       width="100%"
       position="absolute"
       top={0}
       left={0}
       sx={{
-        backgroundImage: 'url(/assets/audience-display/sponsors-background.webp)',
-        backgroundRepeat: 'no-repeat'
+        backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
       }}
+      flexWrap="wrap"
+      alignItems="center"
+      justifyContent="center"
     >
-      <Image
-        src={sponsorImage}
-        width={600}
-        height={600}
-        style={{ position: 'absolute', top: 375, left: 660 }}
-        alt="תמונת ספונסר"
-      />
-    </Box>
+      <Typography variant="h1" fontSize="7rem" mb={20}>
+        תודה רבה לשותפים שלנו!
+      </Typography>
+      <Image src={sponsorImage} style={{ height: '60%', width: '80%' }} alt="תמונת ספונסר" />
+    </Stack>
   );
 };
 

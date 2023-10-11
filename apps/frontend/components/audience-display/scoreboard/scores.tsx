@@ -13,6 +13,7 @@ import {
 import RemoveIcon from '@mui/icons-material/Remove';
 import { WithId } from 'mongodb';
 import { localizedMatchStage } from '../../../localization/field';
+import { localizeTeam } from '../../../localization/teams';
 
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;
@@ -33,16 +34,18 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
       )
   ];
 
-  const maxScores = teams.map(t => {
-    return {
-      team: t,
-      score: Math.max(
-        ...scoresheets
-          .filter(s => s.teamId === t._id && s.stage === 'ranking')
-          .map(s => s.data?.score || 0)
-      )
-    };
-  });
+  const maxScores = teams
+    .map(t => {
+      return {
+        team: t,
+        score: Math.max(
+          ...scoresheets
+            .filter(s => s.teamId === t._id && s.stage === 'ranking')
+            .map(s => s.data?.score || 0)
+        )
+      };
+    })
+    .sort((a, b) => a.score - b.score);
 
   const marquee = keyframes`
   from {transform: translateY(0)}
@@ -61,8 +64,8 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }}>מספר קבוצה</TableCell>
-            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }}>שם קבוצה</TableCell>
+            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }} />
+            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }}>קבוצה</TableCell>
             {eventState.currentStage !== 'practice' && (
               <TableCell align="center" sx={{ fontSize: '1.5rem', fontWeight: 700 }}>
                 ניקוד גבוה ביותר
@@ -81,19 +84,17 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         </TableHead>
         <ScoreboardScoresBody
           scoresheets={scoresheets}
-          teams={teams}
           rounds={rounds}
           currentStage={eventState.currentStage}
           maxScores={maxScores}
-          sx={{ animation: `${marquee} 30s linear infinite` }}
+          sx={{ animation: `${marquee} 60s linear infinite` }}
         />
         <ScoreboardScoresBody
           scoresheets={scoresheets}
-          teams={teams}
           rounds={rounds}
           currentStage={eventState.currentStage}
           maxScores={maxScores}
-          sx={{ animation: `${marquee} 30s linear infinite` }}
+          sx={{ animation: `${marquee} 60s linear infinite` }}
         />
       </Table>
     </TableContainer>
@@ -102,7 +103,6 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
 
 interface ScoreboardScoresBodyProps extends TableBodyProps {
   scoresheets: Array<WithId<Scoresheet>>;
-  teams: Array<WithId<Team>>;
   rounds: Array<{ stage: string; round: number }>;
   currentStage: 'practice' | 'ranking';
   maxScores: Array<{ team: WithId<Team>; score: number }>;
@@ -110,7 +110,6 @@ interface ScoreboardScoresBodyProps extends TableBodyProps {
 
 const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
   scoresheets,
-  teams,
   rounds,
   currentStage,
   maxScores,
@@ -118,35 +117,39 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
 }) => {
   return (
     <TableBody {...props}>
-      {teams.map(t => (
-        <TableRow key={t._id.toString()}>
-          <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>{t.number}</TableCell>
-          <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>{t.name}</TableCell>
-          {currentStage !== 'practice' && (
-            <TableCell align="center" sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
-              {maxScores.find(ms => ms.team._id === t._id)?.score || <RemoveIcon />}
+      {maxScores.map(({ team, score }, index) => {
+        return (
+          <TableRow key={team._id.toString()}>
+            <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>{index + 1}</TableCell>
+            <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
+              {localizeTeam(team, false)}
             </TableCell>
-          )}
-          {rounds.map(r => {
-            const scoresheet = scoresheets.find(
-              s => s.teamId === t._id && s.stage === r.stage && s.round === r.round
-            );
-            return (
-              <TableCell
-                key={r.stage + r.round + 'points'}
-                align="center"
-                sx={{ fontSize: '1.125rem', fontWeight: 700 }}
-              >
-                {scoresheet?.data && scoresheet.status === 'ready' ? (
-                  scoresheet.data.score
-                ) : (
-                  <RemoveIcon />
-                )}
+            {currentStage !== 'practice' && (
+              <TableCell align="center" sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
+                {score || <RemoveIcon />}
               </TableCell>
-            );
-          })}
-        </TableRow>
-      ))}
+            )}
+            {rounds.map(r => {
+              const scoresheet = scoresheets.find(
+                s => s.teamId === team._id && s.stage === r.stage && s.round === r.round
+              );
+              return (
+                <TableCell
+                  key={r.stage + r.round + 'points'}
+                  align="center"
+                  sx={{ fontSize: '1.125rem', fontWeight: 700 }}
+                >
+                  {scoresheet?.data && scoresheet.status === 'ready' ? (
+                    scoresheet.data.score
+                  ) : (
+                    <RemoveIcon />
+                  )}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        );
+      })}
     </TableBody>
   );
 };

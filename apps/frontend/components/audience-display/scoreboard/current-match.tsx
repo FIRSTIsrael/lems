@@ -30,9 +30,15 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
     [currentTime, matchEnd]
   );
 
+  const secondsLeft = useMemo(() => matchEnd.diff(currentTime, 'seconds'), [currentTime, matchEnd]);
+
   useEffect(() => {
-    percentLeft === 20 && new Audio('/assets/sounds/field/field-endgame.wav').play();
-  }, [percentLeft]);
+    if (activeMatch) {
+      secondsLeft === MATCH_LENGTH && new Audio('/assets/sounds/field/field-start.wav').play();
+      secondsLeft === 30 && new Audio('/assets/sounds/field/field-endgame.wav').play();
+      secondsLeft === 0 && new Audio('/assets/sounds/field/field-end.wav').play();
+    }
+  }, [activeMatch, secondsLeft]);
 
   return (
     <>

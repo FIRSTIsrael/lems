@@ -21,8 +21,6 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 
-type AudienceDisplayState = 'scores' | 'awards' | 'sponsors' | 'logo' | 'hotspot';
-
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
@@ -41,7 +39,6 @@ const Page: NextPage<Props> = ({
   scoresheets: initialScoresheets
 }) => {
   const router = useRouter();
-  const [state, setState] = useState<AudienceDisplayState>('scores');
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
@@ -91,28 +88,18 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    {
-      name: 'matchStarted',
-      handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
-        new Audio('/assets/sounds/field/field-start.wav').play();
-      }
-    },
+    { name: 'matchStarted', handler: handleMatchEvent },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
         handleMatchEvent(newMatch, newEventState);
-        new Audio('/assets/sounds/field/field-abort.wav').play();
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-abort.wav').play();
       }
     },
-    {
-      name: 'matchCompleted',
-      handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
-        new Audio('/assets/sounds/field/field-end.wav').play();
-      }
-    },
-    { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
+    { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);
 
   return (
@@ -125,10 +112,10 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
-        {state === 'logo' && <FIRSTLogo />}
-        {state === 'hotspot' && <HotspotReminder />}
-        {state === 'sponsors' && <Sponsors />}
-        {state === 'scores' && (
+        {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
+        {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
+        {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
+        {eventState.audienceDisplayState === 'scores' && (
           <Scoreboard
             activeMatch={activeMatch}
             previousMatch={previousMatch}

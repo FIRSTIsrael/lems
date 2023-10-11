@@ -58,7 +58,7 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
           ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
           : undefined
       }
-      disabled={dayjs() <= dayjs(session.time).subtract(5, 'minutes') || !team.registered}
+      disabled={dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered}
       sx={{
         color: getButtonColor(session.status),
         ...(session.status !== 'not-started' && {

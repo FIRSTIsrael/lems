@@ -24,8 +24,8 @@ export const addTeams = (teams: Array<Team>) => {
     .then(response => response);
 };
 
-export const updateTeam = (filter: Filter<Team>, newTeam: Partial<Team>) => {
-  return db.collection<Team>('teams').updateOne(filter, { $set: newTeam }, { upsert: true });
+export const updateTeam = (filter: Filter<Team>, newTeam: Partial<Team>, upsert = false) => {
+  return db.collection<Team>('teams').updateOne(filter, { $set: newTeam }, { upsert });
 };
 
 export const deleteTeam = (filter: Filter<Team>) => {

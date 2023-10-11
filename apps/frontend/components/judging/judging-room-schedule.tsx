@@ -42,7 +42,7 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, rubrics, sock
             const team = teams.find(team => team._id === session.team);
             return (
               <RoomScheduleRow
-                key={String(session.team) + session.time}
+                key={String(session.team) + session.scheduledTime}
                 event={event}
                 team={team ? team : ({} as WithId<Team>)}
                 room={room}

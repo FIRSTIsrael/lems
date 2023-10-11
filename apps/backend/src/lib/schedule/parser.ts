@@ -196,7 +196,7 @@ const parseSessions = (
 
         sessions.push({
           number,
-          time: startTime.toDate(),
+          scheduledTime: startTime.toDate(),
           team: team._id,
           room: room._id,
           status: 'not-started'

@@ -26,11 +26,12 @@ export const addRubrics = (rubrics: Array<Rubric<JudgingCategory>>) => {
 
 export const updateRubric = (
   filter: Filter<Rubric<JudgingCategory>>,
-  newRubric: Partial<Rubric<JudgingCategory>>
+  newRubric: Partial<Rubric<JudgingCategory>>,
+  upsert = false
 ) => {
   return db
     .collection<Rubric<JudgingCategory>>('rubrics')
-    .updateOne(filter, { $set: newRubric }, { upsert: true });
+    .updateOne(filter, { $set: newRubric }, { upsert });
 };
 
 export const deleteRubric = (filter: Filter<Rubric<JudgingCategory>>) => {

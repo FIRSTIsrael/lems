@@ -60,8 +60,8 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
 
   const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
     if (nextSessions.length > 0) {
-      if (dayjs(nextSessions[0].time) > currentTime) {
-        return dayjs(nextSessions[0].time).diff(currentTime, 'seconds') > fiveMinutes
+      if (dayjs(nextSessions[0].scheduledTime) > currentTime) {
+        return dayjs(nextSessions[0].scheduledTime).diff(currentTime, 'seconds') > fiveMinutes
           ? 'ahead'
           : 'close';
       }
@@ -72,7 +72,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
 
   const progressToNextSessionStart = useMemo(() => {
     if (nextSessions.length > 0) {
-      const diff = dayjs(nextSessions[0].time).diff(currentTime, 'seconds');
+      const diff = dayjs(nextSessions[0].scheduledTime).diff(currentTime, 'seconds');
       return (Math.abs(Math.min(fiveMinutes, diff)) / fiveMinutes) * 100;
     }
     return 0;
@@ -92,7 +92,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
           {nextSessions.length > 0 && (
             <Countdown
               allowNegativeValues={true}
-              targetDate={dayjs(nextSessions[0].time).toDate()}
+              targetDate={dayjs(nextSessions[0].scheduledTime).toDate()}
               variant="h1"
               fontFamily={'Roboto Mono'}
               fontSize="10rem"
@@ -102,7 +102,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
           )}
           {currentSessions.filter(s => s.status === 'in-progress').length > 0 && (
             <Typography variant="h4">
-              {currentSessions.filter(session => !!session.start).length} מתוך{' '}
+              {currentSessions.filter(session => !!session.startTime).length} מתוך{' '}
               {
                 currentSessions.filter(
                   session => teams.find(team => team._id === session.team)?.registered
@@ -162,7 +162,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               <TableCell component="th">
                 סבב נוכחי:
                 <br />
-                {dayjs(currentSessions[0].time).format('HH:mm')}
+                {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
               {currentSessions.map(session => (
                 <TableCell key={session._id.toString()} align="center">
@@ -173,8 +173,8 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                     <br />
                     <StatusIcon status={session.status} />
                     <br />
-                    {session.start &&
-                      `סיום: ${dayjs(session.start)
+                    {session.startTime &&
+                      `סיום: ${dayjs(session.startTime)
                         .add(JUDGING_SESSION_LENGTH, 'seconds')
                         .format('HH:mm')}`}
                   </Box>
@@ -187,7 +187,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               <TableCell component="th">
                 סבב הבא:
                 <br />
-                {dayjs(nextSessions[0].time).format('HH:mm')}
+                {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
               {nextSessions.map(session => (
                 <TableCell key={session._id.toString()} align="center">

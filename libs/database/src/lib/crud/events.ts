@@ -10,8 +10,8 @@ export const getAllEvents = () => {
   return db.collection<Event>('events').find({}).toArray();
 };
 
-export const updateEvent = (filter: Filter<Event>, newEvent: Partial<Event>) => {
-  return db.collection<Event>('events').updateOne(filter, { $set: newEvent }, { upsert: true });
+export const updateEvent = (filter: Filter<Event>, newEvent: Partial<Event>, upsert = false) => {
+  return db.collection<Event>('events').updateOne(filter, { $set: newEvent }, { upsert });
 };
 
 export const addEvent = (event: Event) => {
