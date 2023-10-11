@@ -5,27 +5,55 @@ import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab } from '@mui/material';
-import { Event, SafeUser, Team, Ticket } from '@lems/types';
+import {
+  Event,
+  JudgingRoom,
+  JudgingSession,
+  SafeUser,
+  Team,
+  Ticket,
+  RobotGameTable,
+  RobotGameMatch
+} from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
+import TicketPanel from '../../../components/general/ticket-panel';
+import EventPanel from '../../../components/tournament-manager/event-panel';
+import AwardsPanel from '../../../components/tournament-manager/awards-panel';
+import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
+import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
+import ConnectionIndicator from '../../../components/connection-indicator';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  tables: Array<WithId<RobotGameTable>>;
+  matches: Array<WithId<RobotGameMatch>>;
+  sessions: Array<WithId<JudgingSession>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: initialTickets }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  teams: initialTeams,
+  tickets: initialTickets,
+  rooms,
+  tables,
+  matches: initialMatches,
+  sessions: initialSessions
+}) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -106,6 +134,18 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
               <Tab label="קריאות" value="5" />
             </Tabs>
           </Paper>
+          <TabPanel value="1">
+            <FieldScheduleEditor teams={teams} tables={tables} matches={matches} />
+          </TabPanel>
+          <TabPanel value="2">
+            <JudgingScheduleEditor teams={teams} rooms={rooms} sessions={sessions} />
+          </TabPanel>
+          <TabPanel value="3">
+            <AwardsPanel />
+          </TabPanel>
+          <TabPanel value="4">
+            <EventPanel />
+          </TabPanel>
           <TabPanel value="5">
             <TicketPanel
               event={event}
@@ -129,7 +169,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         event: `/api/events/${user.event}`,
         teams: `/api/events/${user.event}/teams`,
-        tickets: `/api/events/${user.event}/tickets`
+        tickets: `/api/events/${user.event}/tickets`,
+        rooms: `/api/events/${user.event}/rooms`,
+        tables: `/api/events/${user.event}/tables`,
+        matches: `/api/events/${user.event}/matches`,
+        sessions: `/api/events/${user.event}/sessions`
       },
       ctx
     );

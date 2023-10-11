@@ -5,7 +5,7 @@ import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import { Event, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
-import TeamSelection from './team-selection';
+import TeamSelection from '../general/team-selection';
 
 interface TeamRegistrationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

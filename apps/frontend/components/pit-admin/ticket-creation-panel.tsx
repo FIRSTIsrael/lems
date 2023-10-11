@@ -23,7 +23,7 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import { localizedTicketTypes } from '../../localization/tickets';
-import TeamSelection from './team-selection';
+import TeamSelection from '../general/team-selection';
 
 interface TicketCreationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
