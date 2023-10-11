@@ -96,16 +96,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
 };
 
 export const handleStartTestMatch = async (namespace, eventId: string, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
-  if (eventState.activeMatch !== null) {
-    callback({
-      ok: false,
-      error: `Event already has a running match (${eventState.activeMatch})!`
-    });
-    return;
-  }
-
-  let match = await db.getMatch({ eventId: new ObjectId(eventId), stage: 'test' });
+  const match = await db.getMatch({ eventId: new ObjectId(eventId), stage: 'test' });
   if (!match) {
     callback({
       ok: false,
@@ -115,55 +106,7 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
   }
   console.log(`❗ Starting test match ${match._id} in event ${eventId}`);
 
-  const startTime = new Date();
-  await db.updateMatches(
-    {
-      _id: new ObjectId(match._id)
-    },
-    {
-      status: 'in-progress',
-      startTime
-    }
-  );
-
-  const matchEnd: Date = dayjs().add(MATCH_LENGTH, 'seconds').toDate();
-  scheduler.scheduleJob(
-    matchEnd,
-    async function () {
-      const result = await db.updateMatches(
-        {
-          _id: match._id,
-          status: 'in-progress',
-          startTime
-        },
-        {
-          status: 'completed'
-        }
-      );
-
-      if (result.matchedCount > 0) {
-        console.log(`✅ Match ${match._id} completed!`);
-        db.updateEventState({ _id: eventState._id }, { activeMatch: null });
-
-        match = await db.getMatch({ _id: new ObjectId(match._id) });
-        eventState = await db.getEventState({ event: new ObjectId(eventId) });
-        namespace.to('field').emit('matchCompleted', match, eventState);
-      }
-    }.bind(null, startTime)
-  );
-
-  match = await db.getMatch({ _id: new ObjectId(match._id) });
-
-  await db.updateEventState(
-    { _id: eventState._id },
-    {
-      activeMatch: match._id
-    }
-  );
-
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
-  callback({ ok: true });
-  namespace.to('field').emit('matchStarted', match, eventState);
+  handleStartMatch(namespace, eventId, match._id.toString(), callback);
 };
 
 export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {

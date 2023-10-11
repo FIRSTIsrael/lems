@@ -30,14 +30,13 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
     [currentTime, matchEnd]
   );
 
-  const secondsLeft = useMemo(() => matchEnd.diff(currentTime, 'seconds'), [currentTime, matchEnd]);
+  const secondsLeft = useMemo(
+    () => Math.ceil(matchEnd.diff(currentTime, 'milliseconds') / 1000),
+    [currentTime, matchEnd]
+  );
 
   useEffect(() => {
-    if (activeMatch) {
-      secondsLeft === MATCH_LENGTH && new Audio('/assets/sounds/field/field-start.wav').play();
-      secondsLeft === 30 && new Audio('/assets/sounds/field/field-endgame.wav').play();
-      secondsLeft === 0 && new Audio('/assets/sounds/field/field-end.wav').play();
-    }
+    activeMatch && secondsLeft === 30 && new Audio('/assets/sounds/field/field-endgame.wav').play();
   }, [activeMatch, secondsLeft]);
 
   return (

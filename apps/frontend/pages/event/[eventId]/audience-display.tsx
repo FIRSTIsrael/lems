@@ -88,7 +88,14 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchStarted', handler: handleMatchEvent },
+    {
+      name: 'matchStarted',
+      handler: (newMatch, newEventState) => {
+        handleMatchEvent(newMatch, newEventState);
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-start.wav').play();
+      }
+    },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
@@ -97,7 +104,14 @@ const Page: NextPage<Props> = ({
           new Audio('/assets/sounds/field/field-abort.wav').play();
       }
     },
-    { name: 'matchCompleted', handler: handleMatchEvent },
+    {
+      name: 'matchCompleted',
+      handler: (newMatch, newEventState) => {
+        handleMatchEvent(newMatch, newEventState);
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-end.wav').play();
+      }
+    },
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
     { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);
