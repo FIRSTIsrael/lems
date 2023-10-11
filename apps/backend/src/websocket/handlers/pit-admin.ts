@@ -41,13 +41,12 @@ export const handleCreateTicket = async (namespace, eventId, teamId, content, ty
       event: new ObjectId(eventId),
       team: new ObjectId(teamId),
       created: new Date(),
-      status: 'not-started',
       content: content,
       type: type
     })
     .then(result => result.insertedId);
 
-  const ticket = db.getTicket({ _id: ticketId });
+  const ticket = await db.getTicket({ _id: ticketId });
 
   callback({ ok: true });
   namespace.to('pit-admin').emit('ticketCreated', ticket);
