@@ -16,7 +16,7 @@ import Layout from '../../../components/layout';
 import FIRSTLogo from '../../../components/audience-display/first-logo';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
 import Sponsors from '../../../components/audience-display/sponsors';
-import Scoreboard from '../../../components/audience-display/scoreboard';
+import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
@@ -29,11 +29,13 @@ interface Props {
   eventState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
+  teams: Array<WithId<Team>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
   event,
+  teams,
   eventState: initialEventState,
   matches: initialMatches,
   scoresheets: initialScoresheets
@@ -47,6 +49,15 @@ const Page: NextPage<Props> = ({
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
     [matches, eventState]
+  );
+
+  const previousMatch = useMemo(
+    () =>
+      matches
+        .slice()
+        .reverse()
+        .find(m => m.status === 'completed'),
+    [matches]
   );
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
@@ -80,9 +91,27 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
+    {
+      name: 'matchStarted',
+      handler: (newMatch, newEventState) => {
+        handleMatchEvent(newMatch, newEventState);
+        new Audio('/assets/sounds/field/field-start.wav').play();
+      }
+    },
+    {
+      name: 'matchAborted',
+      handler: (newMatch, newEventState) => {
+        handleMatchEvent(newMatch, newEventState);
+        new Audio('/assets/sounds/field/field-abort.wav').play();
+      }
+    },
+    {
+      name: 'matchCompleted',
+      handler: (newMatch, newEventState) => {
+        handleMatchEvent(newMatch, newEventState);
+        new Audio('/assets/sounds/field/field-end.wav').play();
+      }
+    },
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
   ]);
 
@@ -101,8 +130,10 @@ const Page: NextPage<Props> = ({
         {state === 'sponsors' && <Sponsors />}
         {state === 'scores' && (
           <Scoreboard
-            activeMatch={activeMatch || ({} as WithId<RobotGameMatch>)}
+            activeMatch={activeMatch}
+            previousMatch={previousMatch}
             scoresheets={scorehseets}
+            teams={teams}
             eventState={eventState}
           />
         )}
@@ -121,7 +152,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/events/${user.event}/teams`,
         eventState: `/api/events/${user.event}/state`,
         matches: `/api/events/${user.event}/matches`,
-        scoresheets: `/api/events/${user.event}/scorehseets`
+        scoresheets: `/api/events/${user.event}/scoresheets`
       },
       ctx
     );

@@ -32,7 +32,7 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<EventState>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
-    matches?.find(match => match.status === 'not-started' && match.type !== 'test')?._id
+    matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id
   );
 
   const activeMatch = useMemo(
@@ -67,7 +67,7 @@ const Page: NextPage<Props> = ({
     const newNextMatchId = matches?.find(
       match => match.status === 'not-started' && match._id != newMatch._id
     )?._id;
-    if (newEventState.loadedMatch === null && newMatch.type !== 'test') {
+    if (newEventState.loadedMatch === null && newMatch.stage !== 'test') {
       setNextMatchId(newNextMatchId);
       if (newNextMatchId)
         socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
@@ -83,7 +83,7 @@ const Page: NextPage<Props> = ({
     newEventState: WithId<EventState>
   ) => {
     handleMatchEvent(newMatch, newEventState);
-    if (newMatch.type !== 'test') {
+    if (newMatch.stage !== 'test') {
       setNextMatchId(newMatch._id);
       socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
@@ -143,7 +143,7 @@ const Page: NextPage<Props> = ({
           <Paper sx={{ px: 4, py: 1, my: 4, overflowY: 'scroll' }}>
             <Schedule
               eventId={event._id.toString()}
-              matches={matches.filter(m => m.type !== 'test') || []}
+              matches={matches.filter(m => m.stage !== 'test') || []}
               socket={socket}
             />
           </Paper>

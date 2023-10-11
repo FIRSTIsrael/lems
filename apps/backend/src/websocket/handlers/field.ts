@@ -81,7 +81,9 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     { _id: eventState._id },
     {
       activeMatch: match._id,
-      loadedMatch: null
+      loadedMatch: null,
+      ...(match.stage === 'ranking' &&
+        eventState.currentStage === 'practice' && { currentStage: 'ranking' })
     }
   );
 
@@ -100,7 +102,7 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
     return;
   }
 
-  let match = await db.getMatch({ eventId: new ObjectId(eventId), type: 'test' });
+  let match = await db.getMatch({ eventId: new ObjectId(eventId), stage: 'test' });
   if (!match) {
     callback({
       ok: false,
@@ -171,7 +173,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   console.log(`❌ Aborting match ${matchId} in event ${eventId}`);
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
-  if (match.type !== 'test')
+  if (match.stage !== 'test')
     await db.updateMatches(
       {
         eventId: new ObjectId(eventId),
@@ -187,7 +189,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
     { event: new ObjectId(eventId) },
     {
       activeMatch: null,
-      ...(match.type !== 'test' && { loadedMatch: new ObjectId(matchId) })
+      ...(match.stage !== 'test' && { loadedMatch: new ObjectId(matchId) })
     }
   );
 
@@ -195,7 +197,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
   eventState = await db.getEventState({ event: new ObjectId(eventId) });
   namespace.to('field').emit('matchAborted', match, eventState);
-  if (match.type !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
+  if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
 export const handlePrestartMatchParticipant = async (

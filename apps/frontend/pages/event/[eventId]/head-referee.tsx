@@ -108,8 +108,8 @@ const Page: NextPage<Props> = ({
     ]
   );
 
-  const practiceMatches = matches.filter(m => m.type === 'practice');
-  const rankingMatches = matches.filter(m => m.type === 'ranking');
+  const practiceMatches = matches.filter(m => m.stage === 'practice');
+  const rankingMatches = matches.filter(m => m.stage === 'ranking');
 
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
@@ -118,7 +118,7 @@ const Page: NextPage<Props> = ({
           event={event}
           eventState={eventState}
           eventSchedule={headRefereeGeneralSchedule}
-          roundType={'practice'}
+          roundStage={'practice'}
           roundNumber={r}
           tables={tables}
           matches={practiceMatches.filter(m => m.round === r)}
@@ -133,7 +133,7 @@ const Page: NextPage<Props> = ({
             event={event}
             eventState={eventState}
             eventSchedule={headRefereeGeneralSchedule}
-            roundType={'ranking'}
+            roundStage={'ranking'}
             roundNumber={r}
             tables={tables}
             matches={rankingMatches.filter(m => m.round === r)}

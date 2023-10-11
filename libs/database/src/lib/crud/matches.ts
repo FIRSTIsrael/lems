@@ -5,7 +5,7 @@ import db from '../database';
 export const findMatches = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').aggregate([
     { $match: filter },
-    ...(filter.type !== 'test'
+    ...(filter.stage !== 'test'
       ? [
           {
             $unwind: {

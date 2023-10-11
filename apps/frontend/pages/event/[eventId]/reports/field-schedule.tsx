@@ -45,15 +45,15 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     { name: 'teamRegistered', handler: handleTeamRegistered }
   ]);
 
-  const practiceMatches = matches.filter(m => m.type === 'practice');
-  const rankingMatches = matches.filter(m => m.type === 'ranking');
+  const practiceMatches = matches.filter(m => m.stage === 'practice');
+  const rankingMatches = matches.filter(m => m.stage === 'ranking');
 
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
       <Grid xs={12} xl={6} key={'practice' + r}>
         <ReportRoundSchedule
           eventSchedule={refereeGeneralSchedule}
-          roundType={'practice'}
+          roundStage={'practice'}
           roundNumber={r}
           matches={practiceMatches.filter(m => m.round === r)}
           tables={tables}
@@ -66,7 +66,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
         <Grid xs={12} xl={6} key={'ranking' + r}>
           <ReportRoundSchedule
             eventSchedule={refereeGeneralSchedule}
-            roundType={'ranking'}
+            roundStage={'ranking'}
             roundNumber={r}
             matches={rankingMatches.filter(m => m.round === r)}
             tables={tables}

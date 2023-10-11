@@ -21,7 +21,11 @@ const FIRSTLogo: React.FC = () => {
         top: 0
       }}
     >
-      <Image alt="לוגו של FIRST ישראל" src="/assets/audience-display/first-israel.svg" fill />
+      <Image
+        alt="לוגו של FIRST ישראל"
+        src="/assets/audience-display/first-israel-vertical.svg"
+        fill
+      />
     </Box>
   );
 };

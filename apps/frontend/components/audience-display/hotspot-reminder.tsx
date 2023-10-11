@@ -12,7 +12,7 @@ const HotspotReminder: React.FC = () => {
       top={0}
       left={0}
       sx={{
-        backgroundImage: 'url(/assets/audience-display/hotspot-background.webp)',
+        backgroundImage: 'url(/assets/audience-display/season-background.webp)',
         backgroundRepeat: 'no-repeat'
       }}
     >

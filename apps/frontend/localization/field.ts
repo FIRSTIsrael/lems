@@ -1,6 +1,6 @@
 import { RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
 
-export const localizedMatchType = {
+export const localizedMatchStage = {
   practice: 'מקצה אימונים',
   ranking: 'מקצה רשמי',
   test: 'מקצה בדיקה'

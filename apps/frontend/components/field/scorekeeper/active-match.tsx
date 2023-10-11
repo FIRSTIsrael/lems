@@ -19,7 +19,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) =>
         {title}
       </Typography>
       <Typography fontSize="1.75rem" fontWeight={700}>
-        {match.number ? `מקצה #${match.number}` : match.type === 'test' ? 'מקצה בדיקה' : '-'}
+        {match.number ? `מקצה #${match.number}` : match.stage === 'test' ? 'מקצה בדיקה' : '-'}
       </Typography>
 
       {startTime ? (

@@ -12,7 +12,7 @@ import ConnectionIndicator from '../../../../../../components/connection-indicat
 import { apiFetch, serverSideGetRequests } from '../../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
-import { localizedMatchType } from '../../../../../../localization/field';
+import { localizedMatchStage } from '../../../../../../localization/field';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
 import { enqueueSnackbar } from 'notistack';
 
@@ -69,7 +69,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                   }
                 }}
               >
-                {localizedMatchType[scoresheet.stage]} #{scoresheet.round}
+                {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
               </Button>
             </NextLink>
           );
@@ -134,7 +134,7 @@ const Page: NextPage<Props> = ({
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchType[match.type]} #${match.round} של קבוצה #${team.number}, ${
+          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
             team.name
           } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
