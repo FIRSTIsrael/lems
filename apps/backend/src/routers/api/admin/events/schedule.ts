@@ -81,7 +81,9 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       event: event._id,
       activeMatch: null,
       loadedMatch: null,
-      currentSession: 0
+      currentStage: 'practice',
+      currentSession: 0,
+      audienceDisplayState: 'scoring'
     });
     console.log('✅ Created event state');
 

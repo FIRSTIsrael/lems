@@ -24,8 +24,12 @@ export const addTickets = (tickets: Array<Ticket>) => {
     .then(response => response);
 };
 
-export const updateTicket = (filter: Filter<Ticket>, newTicket: Partial<Ticket>) => {
-  return db.collection<Ticket>('tickets').updateOne(filter, { $set: newTicket }, { upsert: true });
+export const updateTicket = (
+  filter: Filter<Ticket>,
+  newTicket: Partial<Ticket>,
+  upsert = false
+) => {
+  return db.collection<Ticket>('tickets').updateOne(filter, { $set: newTicket }, { upsert });
 };
 
 export const deleteTicket = (filter: Filter<Ticket>) => {

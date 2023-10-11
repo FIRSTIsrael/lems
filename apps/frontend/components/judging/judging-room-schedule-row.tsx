@@ -35,11 +35,11 @@ interface Props {
 const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, socket }: Props) => {
   return (
     <TableRow
-      key={room.name + session.time}
+      key={room.name + session.scheduledTime}
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
     >
       <TableCell component="th" scope="row" align="center">
-        {dayjs(session.time).format('HH:mm')}
+        {dayjs(session.scheduledTime).format('HH:mm')}
       </TableCell>
       <TableCell align="left">
         <StyledTeamTooltip team={team} />

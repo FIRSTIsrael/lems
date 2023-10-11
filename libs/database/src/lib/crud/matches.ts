@@ -5,7 +5,7 @@ import db from '../database';
 export const findMatches = (filter: Filter<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').aggregate([
     { $match: filter },
-    ...(filter.type !== 'test'
+    ...(filter.stage !== 'test'
       ? [
           {
             $unwind: {
@@ -68,10 +68,12 @@ export const addMatches = (matches: Array<RobotGameMatch>) => {
   return db.collection<RobotGameMatch>('matches').insertMany(matches);
 };
 
-export const updateMatch = (filter: Filter<RobotGameMatch>, newMatch: Partial<RobotGameMatch>) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .updateOne(filter, { $set: newMatch }, { upsert: true });
+export const updateMatch = (
+  filter: Filter<RobotGameMatch>,
+  newMatch: Partial<RobotGameMatch>,
+  upsert = false
+) => {
+  return db.collection<RobotGameMatch>('matches').updateOne(filter, { $set: newMatch }, { upsert });
 };
 
 export const updateMatches = (

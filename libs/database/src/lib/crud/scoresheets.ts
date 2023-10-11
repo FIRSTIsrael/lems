@@ -26,11 +26,12 @@ export const addScoresheets = (scoresheets: Array<Scoresheet>) => {
 
 export const updateScoresheet = (
   filter: Filter<Scoresheet>,
-  newScoresheet: Partial<Scoresheet>
+  newScoresheet: Partial<Scoresheet>,
+  upsert = false
 ) => {
   return db
     .collection<Scoresheet>('scoresheets')
-    .updateOne(filter, { $set: newScoresheet }, { upsert: true });
+    .updateOne(filter, { $set: newScoresheet }, { upsert });
 };
 
 export const deleteScoresheet = (filter: Filter<Scoresheet>) => {

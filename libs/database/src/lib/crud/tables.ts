@@ -24,10 +24,12 @@ export const addTables = (tables: Array<RobotGameTable>) => {
     .then(response => response);
 };
 
-export const updateTable = (filter: Filter<RobotGameTable>, newTable: Partial<RobotGameTable>) => {
-  return db
-    .collection<RobotGameTable>('tables')
-    .updateOne(filter, { $set: newTable }, { upsert: true });
+export const updateTable = (
+  filter: Filter<RobotGameTable>,
+  newTable: Partial<RobotGameTable>,
+  upsert = false
+) => {
+  return db.collection<RobotGameTable>('tables').updateOne(filter, { $set: newTable }, { upsert });
 };
 
 export const deleteTable = (filter: Filter<RobotGameTable>) => {

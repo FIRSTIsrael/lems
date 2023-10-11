@@ -24,8 +24,8 @@ export const addUsers = (users: Array<User>) => {
     .then(response => response);
 };
 
-export const updateUser = (filter: Filter<User>, newUser: Partial<User>) => {
-  return db.collection<User>('users').updateOne(filter, { $set: newUser }, { upsert: true });
+export const updateUser = (filter: Filter<User>, newUser: Partial<User>, upsert = false) => {
+  return db.collection<User>('users').updateOne(filter, { $set: newUser }, { upsert });
 };
 
 export const deleteUser = (filter: Filter<User>) => {

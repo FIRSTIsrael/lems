@@ -41,7 +41,7 @@ router.put('/:eventId', (req: Request, res: Response) => {
 
   if (body) {
     console.log(`⏬ Updating Event ${req.params.eventId}`);
-    db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body).then(task => {
+    db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body, true).then(task => {
       if (task.acknowledged) {
         console.log('✅ Event updated!');
         return res.json({ ok: true, id: task.upsertedId });

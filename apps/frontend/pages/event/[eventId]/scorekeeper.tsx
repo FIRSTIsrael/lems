@@ -1,19 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
-import { Paper, Stack } from '@mui/material';
+import { Paper, Tabs, Tab } from '@mui/material';
+import { TabContext, TabPanel } from '@mui/lab';
 import { Event, SafeUser, RobotGameMatch, EventState } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import ActiveMatch from '../../../components/field/scorekeeper/active-match';
-import Schedule from '../../../components/field/scorekeeper/schedule';
-import ControlActions from '../../../components/field/scorekeeper/control-actions';
 import Layout from '../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
+import FieldControl from '../../../components/field/scorekeeper/field-control';
+import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -32,19 +32,9 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<EventState>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
-    matches?.find(match => match.status === 'not-started' && match.type !== 'test')?._id
+    matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id
   );
-
-  const activeMatch = useMemo(
-    () =>
-      matches.find(match => match._id === eventState.activeMatch) || ({} as WithId<RobotGameMatch>),
-    [eventState.activeMatch, matches]
-  );
-  const loadedMatch = useMemo(
-    () =>
-      matches.find(match => match._id === eventState.loadedMatch) || ({} as WithId<RobotGameMatch>),
-    [eventState.loadedMatch, matches]
-  );
+  const [activeTab, setActiveTab] = useState<string>('1');
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -67,7 +57,7 @@ const Page: NextPage<Props> = ({
     const newNextMatchId = matches?.find(
       match => match.status === 'not-started' && match._id != newMatch._id
     )?._id;
-    if (newEventState.loadedMatch === null && newMatch.type !== 'test') {
+    if (newEventState.loadedMatch === null && newMatch.stage !== 'test') {
       setNextMatchId(newNextMatchId);
       if (newNextMatchId)
         socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
@@ -83,7 +73,7 @@ const Page: NextPage<Props> = ({
     newEventState: WithId<EventState>
   ) => {
     handleMatchEvent(newMatch, newEventState);
-    if (newMatch.type !== 'test') {
+    if (newMatch.stage !== 'test') {
       setNextMatchId(newMatch._id);
       socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
@@ -98,7 +88,8 @@ const Page: NextPage<Props> = ({
     { name: 'matchStarted', handler: handleMatchStarted },
     { name: 'matchAborted', handler: handleMatchAborted },
     { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchParticipantPrestarted', handler: handleMatchEvent }
+    { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
+    { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);
 
   return (
@@ -115,39 +106,30 @@ const Page: NextPage<Props> = ({
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
-        <Stack
-          sx={{
-            height: 'calc(100vh - 56px)',
-            overflow: 'hidden'
-          }}
-        >
-          <Stack direction="row" spacing={2} my={4}>
-            <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-            <ActiveMatch
-              title="המקצה הבא"
-              match={
-                matches.find(match => match._id === eventState.loadedMatch) ||
-                ({} as WithId<RobotGameMatch>)
-              }
-            />
-          </Stack>
-
-          <ControlActions
-            eventId={event._id.toString()}
-            nextMatchId={nextMatchId}
-            loadedMatch={loadedMatch}
-            activeMatchId={activeMatch._id}
-            socket={socket}
-          />
-
-          <Paper sx={{ px: 4, py: 1, my: 4, overflowY: 'scroll' }}>
-            <Schedule
-              eventId={event._id.toString()}
-              matches={matches.filter(m => m.type !== 'test') || []}
+        <TabContext value={activeTab}>
+          <Paper sx={{ mt: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
+              centered
+            >
+              <Tab label="מגרש" value="1" />
+              <Tab label="תצוגת קהל" value="2" />
+            </Tabs>
+          </Paper>
+          <TabPanel value="1">
+            <FieldControl
+              event={event}
+              eventState={eventState}
+              matches={matches}
+              nextMatchId={nextMatchId}
               socket={socket}
             />
-          </Paper>
-        </Stack>
+          </TabPanel>
+          <TabPanel value="2">
+            <VideoSwitch eventState={eventState} socket={socket} />
+          </TabPanel>
+        </TabContext>
       </Layout>
     </RoleAuthorizer>
   );

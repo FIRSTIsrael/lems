@@ -8,7 +8,7 @@ import {
   RobotGameMatch,
   JudgingRoom,
   JudgingSession,
-  RobotGameMatchType
+  RobotGameMatchStage
 } from '@lems/types';
 
 type CSVLine = Record<string, string>;
@@ -24,7 +24,7 @@ const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
   return {
     eventId,
     round: 0,
-    type: 'test',
+    stage: 'test',
     status: 'not-started',
     participants: []
   } as RobotGameMatch;
@@ -122,7 +122,7 @@ export const parseEventData = async (event: WithId<Event>, csvData: string) => {
 
 const parseMatches = (
   lines: Line[],
-  type: RobotGameMatchType,
+  stage: RobotGameMatchStage,
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>
@@ -139,7 +139,7 @@ const parseMatches = (
       eventId: event._id,
       round,
       number: parseInt(line[0]),
-      type,
+      stage,
       status: 'not-started',
       scheduledTime: dayjs(event.startDate)
         .set('hour', parseInt(hour))
@@ -196,7 +196,7 @@ const parseSessions = (
 
         sessions.push({
           number,
-          time: startTime.toDate(),
+          scheduledTime: startTime.toDate(),
           team: team._id,
           room: room._id,
           status: 'not-started'

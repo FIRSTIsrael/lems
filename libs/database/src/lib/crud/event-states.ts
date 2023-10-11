@@ -19,11 +19,12 @@ export const addEventState = (state: EventState) => {
 
 export const updateEventState = (
   filter: Filter<EventState>,
-  newEventState: Partial<EventState>
+  newEventState: Partial<EventState>,
+  upsert = false
 ) => {
   return db
     .collection<EventState>('event-states')
-    .updateOne(filter, { $set: newEventState }, { upsert: true });
+    .updateOne(filter, { $set: newEventState }, { upsert });
 };
 
 export const deleteEventState = (filter: Filter<EventState>) => {

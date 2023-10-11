@@ -46,7 +46,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
   rooms,
   teams
 }) => {
-  const startTime = dayjs(sessions.find(s => s.number === number)?.time);
+  const startTime = dayjs(sessions.find(s => s.number === number)?.scheduledTime);
 
   return (
     <TableRow>
@@ -153,7 +153,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessio
                   .filter(s => {
                     const firstSession = Math.min(...sessions.flatMap(s => s.number));
                     const firstSessionTime = dayjs(
-                      sessions.find(s => s.number === firstSession)?.time
+                      sessions.find(s => s.number === firstSession)?.scheduledTime
                     );
 
                     return dayjs(s.startTime).isBefore(firstSessionTime);
@@ -162,8 +162,8 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessio
                     <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
                   ))}
               {[...new Set(sessions.flatMap(s => s.number))].map(row => {
-                const rowTime = dayjs(sessions.find(s => s.number === row)?.time);
-                const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.time);
+                const rowTime = dayjs(sessions.find(s => s.number === row)?.scheduledTime);
+                const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.scheduledTime);
                 const rowSchedule =
                   judgesGeneralSchedule.filter(
                     p =>
@@ -192,7 +192,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessio
                   .filter(s => {
                     const lastSession = Math.max(...sessions.flatMap(s => s.number));
                     const lastSessionTime = dayjs(
-                      sessions.find(s => s.number === lastSession)?.time
+                      sessions.find(s => s.number === lastSession)?.scheduledTime
                     );
 
                     return dayjs(s.startTime).isAfter(lastSessionTime);

@@ -28,37 +28,40 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
   console.log(`❗ Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
   const startTime = new Date();
-  session.start = startTime;
+  session.startTime = startTime;
   session.status = 'in-progress';
   const { _id, ...sessionData } = session;
   await db.updateSession({ _id }, sessionData);
 
   const sessionEnd: Date = dayjs().add(JUDGING_SESSION_LENGTH, 'seconds').toDate();
-  scheduler.scheduleJob(sessionEnd, async () => {
-    const result = await db.updateSession(
-      {
-        _id,
-        status: 'in-progress',
-        start: startTime
-      },
-      {
-        status: 'completed'
-      }
-    );
+  scheduler.scheduleJob(
+    sessionEnd,
+    async function () {
+      const result = await db.updateSession(
+        {
+          _id,
+          status: 'in-progress',
+          startTime
+        },
+        {
+          status: 'completed'
+        }
+      );
 
-    if (result.matchedCount > 0) {
-      console.log(`✅ Session ${_id} completed`);
-      const updatedSession = await db.getSession({ _id });
-      namespace.to('judging').emit('judgingSessionCompleted', updatedSession);
-    }
-  });
+      if (result.matchedCount > 0) {
+        console.log(`✅ Session ${_id} completed`);
+        const updatedSession = await db.getSession({ _id });
+        namespace.to('judging').emit('judgingSessionCompleted', updatedSession);
+      }
+    }.bind(null, startTime)
+  );
 
   if (!eventState.currentSession || session.number > eventState.currentSession) {
     await db.updateEventState({ _id: eventState._id }, { currentSession: session.number });
   }
 
   callback({ ok: true });
-  session = await db.getSession({ _id: new ObjectId(sessionId) });
+  session = await db.getSession({ _id });
   eventState = await db.getEventState({ event: new ObjectId(eventId) });
   namespace.to('judging').emit('judgingSessionStarted', session, eventState);
 };
@@ -79,7 +82,7 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
 
   console.log(`❌ Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
 
-  await db.updateSession({ _id: session._id }, { start: undefined, status: 'not-started' });
+  await db.updateSession({ _id: session._id }, { startTime: undefined, status: 'not-started' });
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });

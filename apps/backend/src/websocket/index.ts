@@ -13,7 +13,8 @@ import {
   handlePrestartMatchParticipant,
   handleStartMatch,
   handleStartTestMatch,
-  handleUpdateScoresheet
+  handleUpdateScoresheet,
+  handleUpdateAudienceDisplayState
 } from './handlers/field';
 
 const websocket = (
@@ -56,6 +57,10 @@ const websocket = (
   );
 
   socket.on('updateScoresheet', (...args) => handleUpdateScoresheet(namespace, ...args));
+
+  socket.on('updateAudienceDisplayState', (...args) =>
+    handleUpdateAudienceDisplayState(namespace, ...args)
+  );
 
   socket.on('disconnect', () => {
     console.log(`❌ WS: Disconnection from event ${eventId}`);

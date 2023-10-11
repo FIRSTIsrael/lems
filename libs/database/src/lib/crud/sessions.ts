@@ -40,11 +40,12 @@ export const addSessions = (sessions: Array<JudgingSession>) => {
 
 export const updateSession = (
   filter: Filter<JudgingSession>,
-  newSession: Partial<JudgingSession>
+  newSession: Partial<JudgingSession>,
+  upsert = false
 ) => {
   return db
     .collection<JudgingSession>('sessions')
-    .updateOne(filter, { $set: newSession }, { upsert: true });
+    .updateOne(filter, { $set: newSession }, { upsert });
 };
 
 export const deleteSession = (filter: Filter<JudgingSession>) => {

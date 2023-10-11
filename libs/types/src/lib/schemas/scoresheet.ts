@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { MissionClauseType, RobotGameMatchType } from '../constants';
+import { MissionClauseType, RobotGameMatchStage } from '../constants';
 
 export const ScoresheetStatusTypes = [
   'empty',
@@ -25,7 +25,7 @@ export interface Scoresheet {
   eventId: ObjectId;
   matchId: ObjectId;
   teamId: ObjectId;
-  stage: RobotGameMatchType;
+  stage: RobotGameMatchStage;
   round: number;
   status: ScoresheetStatus;
   data?: {

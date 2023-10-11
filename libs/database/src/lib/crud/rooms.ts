@@ -24,8 +24,12 @@ export const addRooms = (rooms: Array<JudgingRoom>) => {
     .then(response => response);
 };
 
-export const updateRoom = (filter: Filter<JudgingRoom>, newRoom: Partial<JudgingRoom>) => {
-  return db.collection<JudgingRoom>('rooms').updateOne(filter, { $set: newRoom }, { upsert: true });
+export const updateRoom = (
+  filter: Filter<JudgingRoom>,
+  newRoom: Partial<JudgingRoom>,
+  upsert = false
+) => {
+  return db.collection<JudgingRoom>('rooms').updateOne(filter, { $set: newRoom }, { upsert });
 };
 
 export const deleteRoom = (filter: Filter<JudgingRoom>) => {

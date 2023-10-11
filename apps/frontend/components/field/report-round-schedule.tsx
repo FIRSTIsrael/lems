@@ -14,11 +14,11 @@ import {
   MATCH_LENGTH,
   RobotGameMatch,
   RobotGameTable,
-  RobotGameMatchType,
+  RobotGameMatchStage,
   EventScheduleEntry
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
-import { localizedMatchType } from '../../localization/field';
+import { localizedMatchStage } from '../../localization/field';
 
 interface ReportMatchScheduleRowProps {
   match: WithId<RobotGameMatch>;
@@ -53,7 +53,7 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
 };
 
 interface ReportRoundScheduleProps {
-  roundType: RobotGameMatchType;
+  roundStage: RobotGameMatchStage;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -62,7 +62,7 @@ interface ReportRoundScheduleProps {
 }
 
 const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
-  roundType,
+  roundStage,
   roundNumber,
   matches,
   tables,
@@ -75,7 +75,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
         <TableHead>
           <TableRow>
             <TableCell colSpan={2 + tables.length} align="center">
-              {localizedMatchType[roundType]} #{roundNumber}
+              {localizedMatchStage[roundStage]} #{roundNumber}
             </TableCell>
           </TableRow>
           <TableRow>

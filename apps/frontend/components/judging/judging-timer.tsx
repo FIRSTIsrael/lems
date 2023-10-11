@@ -12,7 +12,7 @@ interface TimerProps {
 }
 
 const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
-  const sessionEnd = dayjs(session.start).add(JUDGING_SESSION_LENGTH, 'seconds');
+  const sessionEnd = dayjs(session.startTime).add(JUDGING_SESSION_LENGTH, 'seconds');
   const [, , minutes, seconds] = useCountdown(sessionEnd.toDate());
 
   const secondsJudging: number = useMemo(() => {

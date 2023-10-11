@@ -7,7 +7,7 @@ export const getEventScoresheets = (matches: Array<WithId<RobotGameMatch>>): Arr
       eventId: match.eventId,
       matchId: match._id,
       teamId: participant.teamId,
-      stage: match.type,
+      stage: match.stage,
       round: match.round,
       status: 'empty'
     }))

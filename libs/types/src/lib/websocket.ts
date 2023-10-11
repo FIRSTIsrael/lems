@@ -7,6 +7,7 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { EventState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
+import { AudienceDisplayState } from './constants';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
 
@@ -46,6 +47,8 @@ export interface WSServerEmittedEvents {
   scoresheetUpdated: (scoresheet: Scoresheet) => void;
 
   scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
+
+  audienceDisplayStateUpdated: (eventState: EventState) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -133,6 +136,12 @@ export interface WSClientEmittedEvents {
     teamId: string,
     scoresheetId: string,
     scoresheetData: Partial<Scoresheet>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateAudienceDisplayState: (
+    eventId: string,
+    newDisplayState: AudienceDisplayState,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }
