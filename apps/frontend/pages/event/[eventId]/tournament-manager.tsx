@@ -1,32 +1,31 @@
-import { GetServerSideProps, NextPage } from 'next';
-import router from 'next/router';
-import { WithId } from 'mongodb';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-import { Tabs, Tab, Paper } from '@mui/material';
+import { useRouter } from 'next/router';
+import { GetServerSideProps, NextPage } from 'next';
+import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, Team, Ticket, User } from '@lems/types';
-import ConnectionIndicator from '../../../components/connection-indicator';
+import { Paper, Tabs, Tab } from '@mui/material';
+import { Event, SafeUser, Team, Ticket } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import TicketCreationPanel from '../../../components/pit-admin/ticket-creation-panel';
-import TeamRegistrationPanel from '../../../components/pit-admin/team-registration-panel';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { localizedRoles } from '../../../localization/roles';
+import ConnectionIndicator from '../../../components/connection-indicator';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
-  user: User;
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
 }
 
 const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: initialTickets }) => {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>('1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
-  const [activeTab, setActiveTab] = useState<string>('1');
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -56,56 +55,63 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
     );
   };
 
-  const { connectionStatus, socket } = useWebsocket(
+  const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['pit-admin'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'ticketCreated', handler: handleTicketCreated },
-      { name: 'ticketUpdated', handler: handleTicketUpdated }
+      {
+        name: 'ticketCreated',
+        handler: ticket => {
+          handleTicketCreated(ticket);
+          enqueueSnackbar('נוצרה קריאה חדשה!', { variant: 'warning' });
+        }
+      },
+      {
+        name: 'ticketUpdated',
+        handler: ticket => {
+          handleTicketUpdated(ticket);
+          enqueueSnackbar('עודכנה קריאה!', { variant: 'info' });
+        }
+      }
     ]
   );
 
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles="pit-admin"
+      allowedRoles="tournament-manager"
       onFail={() => {
         router.push(`/event/${event._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
-        maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
       >
         <TabContext value={activeTab}>
-          <Paper sx={{ mt: 4 }}>
+          <Paper sx={{ mt: 2 }}>
             <Tabs
               value={activeTab}
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="רישום קבוצות" value="1" />
-              <Tab label="פתיחת קריאות" value="2" />
-              <Tab label="קריאות פתוחות" value="3" />
+              <Tab label="זירה" value="1" />
+              <Tab label="שיפוט" value="2" />
+              <Tab label="פרסים" value="3" />
+              <Tab label="אירוע" value="4" />
+              <Tab label="קריאות" value="5" />
             </Tabs>
           </Paper>
-          <TabPanel value="1">
-            <TeamRegistrationPanel socket={socket} event={event} teams={teams} />
-          </TabPanel>
-          <TabPanel value="2">
-            <TicketCreationPanel socket={socket} event={event} teams={teams} />
-          </TabPanel>
-          <TabPanel value="3">
+          <TabPanel value="5">
             <TicketPanel
               event={event}
-              tickets={tickets}
               teams={teams}
-              showClosed={false}
+              tickets={tickets}
+              showClosed={true}
               socket={socket}
             />
           </TabPanel>

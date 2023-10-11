@@ -3,6 +3,7 @@ import { enqueueSnackbar } from 'notistack';
 import { Socket } from 'socket.io-client';
 import {
   Paper,
+  PaperProps,
   Typography,
   Box,
   IconButton,
@@ -20,14 +21,14 @@ import { localizeTeam } from '../../localization/teams';
 import { localizedTicketTypes } from '../../localization/tickets';
 import { useState } from 'react';
 
-interface TicketCardProps {
+interface TicketCardProps extends PaperProps {
   event: WithId<Event>;
   ticket: WithId<Ticket>;
   team: WithId<Team>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket }) => {
+const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -40,17 +41,20 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket }) 
         height={225}
         overflow="auto"
         position="relative"
+        {...props}
       >
         <Typography fontSize="1rem" fontWeight={700} gutterBottom>
           {localizeTeam(team)}
         </Typography>
         <Typography fontSize="1rem">{localizedTicketTypes[ticket.type]}</Typography>
         <Typography color="text.secondary">{ticket.content}</Typography>
-        <Box display="flex" justifyContent="flex-end" position="absolute" bottom={10} right={10}>
-          <IconButton onClick={() => setOpen(true)}>
-            <TaskIcon />
-          </IconButton>
-        </Box>
+        {!ticket.closed && (
+          <Box display="flex" justifyContent="flex-end" position="absolute" bottom={10} right={10}>
+            <IconButton onClick={() => setOpen(true)}>
+              <TaskIcon />
+            </IconButton>
+          </Box>
+        )}
       </Grid>
       <Dialog
         open={open}
