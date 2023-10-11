@@ -30,9 +30,9 @@ export interface WSServerEmittedEvents {
 
   teamRegistered: (team: WithId<Team>) => void;
 
-  ticketCreated: (ticket: Ticket) => void;
+  ticketCreated: (ticket: WithId<Ticket>) => void;
 
-  ticketUpdated: (ticket: Ticket) => void;
+  ticketUpdated: (ticket: WithId<Ticket>) => void;
 
   matchLoaded: (match: RobotGameMatch) => void;
 
