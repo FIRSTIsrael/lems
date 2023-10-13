@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
-import { Paper, Typography } from '@mui/material';
+import { Box, LinearProgress, Paper, Typography } from '@mui/material';
 import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -30,10 +30,28 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(dayjs()), 100);
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
     [matches, eventState.activeMatch]
+  );
+
+  const matchEnd = useMemo(
+    () => dayjs(activeMatch?.startTime).add(MATCH_LENGTH, 'seconds'),
+    [activeMatch?.startTime]
+  );
+
+  const percentLeft = useMemo(
+    () => matchEnd.diff(currentTime) / (10 * MATCH_LENGTH),
+    [currentTime, matchEnd]
   );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
@@ -64,16 +82,9 @@ const Page: NextPage<Props> = ({
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
-      <Layout
-        maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
-      >
-        <Paper sx={{ p: 2, flex: 1 }}>
-          <Typography fontSize="1.75rem" fontWeight={700}>
+      <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
+        <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
+          <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
             {activeMatch?.number
               ? `מקצה #${activeMatch?.number}`
               : activeMatch?.stage === 'test'
@@ -84,13 +95,27 @@ const Page: NextPage<Props> = ({
             <Countdown
               targetDate={dayjs(activeMatch.startTime).add(MATCH_LENGTH, 'seconds').toDate()}
               expiredText="00:00"
-              fontFamily={'Roboto Mono'}
-              fontSize="3rem"
+              fontFamily="Roboto Mono"
+              fontSize="15rem"
               fontWeight={700}
               textAlign="center"
             />
           )}
         </Paper>
+        {activeMatch?.startTime && (
+          <LinearProgress
+            variant="determinate"
+            value={percentLeft}
+            color={percentLeft <= 20 ? 'error' : 'primary'}
+            sx={{
+              height: 48,
+              borderBottomLeftRadius: 8,
+              borderBottomRightRadius: 8,
+              mt: -2
+            }}
+          />
+        )}
+        {/* </Box> */}
       </Layout>
     </RoleAuthorizer>
   );
