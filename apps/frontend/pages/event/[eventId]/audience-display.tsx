@@ -17,6 +17,7 @@ import FIRSTLogo from '../../../components/audience-display/first-logo';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
+import MatchPreview from '../../../components/audience-display/match-preview';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
@@ -45,6 +46,11 @@ const Page: NextPage<Props> = ({
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
+    [matches, eventState]
+  );
+
+  const loadedMatch = useMemo(
+    () => matches.find(m => m._id === eventState.loadedMatch),
     [matches, eventState]
   );
 
@@ -129,6 +135,9 @@ const Page: NextPage<Props> = ({
         {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
         {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
         {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
+        {eventState.audienceDisplayState === 'match-preview' && (
+          <MatchPreview match={loadedMatch} />
+        )}
         {eventState.audienceDisplayState === 'scores' && (
           <Scoreboard
             activeMatch={activeMatch}

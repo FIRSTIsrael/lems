@@ -31,7 +31,14 @@ export type RubricStatus = (typeof RubricStatusTypes)[number];
 export const TicketTypes = ['general', 'schedule', 'utilities', 'incident'] as const;
 export type TicketType = (typeof TicketTypes)[number];
 
-export const AudienceDisplayStateTypes = ['scores', 'awards', 'sponsors', 'logo', 'hotspot'];
+export const AudienceDisplayStateTypes = [
+  'scores',
+  'match-preview',
+  'awards',
+  'sponsors',
+  'logo',
+  'hotspot'
+];
 export type AudienceDisplayState = (typeof AudienceDisplayStateTypes)[number];
 
 export type RubricFields<T extends JudgingCategory> = T extends 'core-values'
