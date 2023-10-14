@@ -118,6 +118,7 @@ const Page: NextPage<Props> = ({
           new Audio('/assets/sounds/field/field-end.wav').play();
       }
     },
+    { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
     { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);
@@ -136,7 +137,7 @@ const Page: NextPage<Props> = ({
         {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
         {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
         {eventState.audienceDisplayState === 'match-preview' && (
-          <MatchPreview match={loadedMatch} />
+          <MatchPreview event={event} match={loadedMatch} />
         )}
         {eventState.audienceDisplayState === 'scores' && (
           <Scoreboard
