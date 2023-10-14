@@ -87,7 +87,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     >
       <Layout
         maxWidth="xl"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}

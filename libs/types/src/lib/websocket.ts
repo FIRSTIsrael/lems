@@ -34,7 +34,7 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticket: WithId<Ticket>) => void;
 
-  matchLoaded: (match: RobotGameMatch) => void;
+  matchLoaded: (match: RobotGameMatch, eventState: EventState) => void;
 
   matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
 
