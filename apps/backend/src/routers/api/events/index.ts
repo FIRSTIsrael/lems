@@ -5,6 +5,7 @@ import eventValidator from '../../../middlewares/event-validator';
 import sessionsRouter from './sessions';
 import matchesRouter from './matches';
 import roomsRouter from './rooms';
+import awardsRouter from './awards';
 import usersRouter from './users';
 import teamsRouter from './teams';
 import rubricsRouter from './rubrics';
@@ -30,6 +31,8 @@ router.get('/:eventId/state', (req: Request, res: Response) => {
     res.json(eventState)
   );
 });
+
+router.use('/:eventId/awards', awardsRouter);
 
 router.use('/:eventId/rooms', roomsRouter);
 

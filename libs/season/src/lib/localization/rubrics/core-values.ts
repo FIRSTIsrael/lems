@@ -1,4 +1,4 @@
-import { JudgingCategory, OptionalAwardsTypes, SEASON_NAME } from '@lems/types';
+import { JudgingCategory, CoreValuesAwardsTypes, SEASON_NAME } from '@lems/types';
 import { RubricsSchema, RubricSchemaSection } from './typing';
 import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 import { localizedJudgingCategory } from '../judging';
@@ -46,7 +46,7 @@ const coreValuesRubric: RubricsSchema<typeof category> = {
   description:
     'ערכי הליבה צריכים לשמש כזכוכית מגדלת דרכה אתם מסתכלים על הופעת הקבוצה. כל חברי הקבוצה צריכים להדגים את ערכי הליבה בכל דבר שהם עושים. מחוון זה צריך לשמש לתיעוד ערכי הליבה, בהם הבחנתם בעת מפגש השיפוט. הערכת ערכי הליבה תתבצע גם במהלך כל משחק הרובוט, על ידי ניקוד של **מקצועיות אדיבה®**, אשר יתווסף להערכה כללית של ערכי הליבה.',
   columns: rubricSchemaColumns,
-  awards: OptionalAwardsTypes.map(id => ({
+  awards: CoreValuesAwardsTypes.map(id => ({
     id,
     title: localizedOptionalAward[id].name,
     description: localizedOptionalAward[id].description
