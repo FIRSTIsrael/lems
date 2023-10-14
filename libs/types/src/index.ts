@@ -10,5 +10,6 @@ export * from './lib/schemas/rubric';
 export * from './lib/schemas/scoresheet';
 export * from './lib/schemas/ticket';
 export * from './lib/roles';
+export * from './lib/schemas/award';
 export * from './lib/constants';
 export * from './lib/websocket';
