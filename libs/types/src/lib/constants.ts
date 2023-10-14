@@ -19,6 +19,16 @@ export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 export const OptionalAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
 export type OptionalAwards = (typeof OptionalAwardsTypes)[number];
 
+export const AwardNameTypes = [
+  'core-values',
+  'innovation-prokect',
+  'robot-design',
+  'robot-performance',
+  'champions',
+  ...OptionalAwardsTypes
+] as const;
+export type Awards = (typeof AwardNameTypes)[number];
+
 export const RubricStatusTypes = [
   'empty',
   'in-progress',
