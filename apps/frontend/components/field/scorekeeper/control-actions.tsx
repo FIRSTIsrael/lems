@@ -47,6 +47,9 @@ const ControlActions: React.FC<ControlActionsProps> = ({
         enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
       }
     });
+    socket.emit('updateAudienceDisplayState', eventId, 'scores', response => {
+      return; // This will be ok false if the state was already 'scores' but we dont care
+    });
   }, [eventId, loadedMatch, socket]);
 
   const startTestMatch = useCallback(() => {
@@ -97,7 +100,13 @@ const ControlActions: React.FC<ControlActionsProps> = ({
         color={loadedMatch?._id === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
         disabled={loadedMatch?._id === undefined || activeMatchId !== undefined}
         size="large"
-        onClick={() => setMatchShown(true)}
+        onClick={() => {
+          setMatchShown(true);
+          socket.emit('updateAudienceDisplayState', eventId, 'match-preview', response => {
+            if (!response.ok)
+              enqueueSnackbar('אופס, לא הצלחנו לשנות את תצוגת הקהל.', { variant: 'error' });
+          });
+        }}
       >
         הצגת המקצה
       </Button>

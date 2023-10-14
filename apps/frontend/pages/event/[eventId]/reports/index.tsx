@@ -74,6 +74,9 @@ const Page: NextPage<Props> = ({ user, event }) => {
           <GridPaperLink path="general-schedule">
             <Typography variant="h4">לו״ז כללי</Typography>
           </GridPaperLink>
+          <GridPaperLink path="field-timer">
+            <Typography variant="h4">שעון מקצים</Typography>
+          </GridPaperLink>
         </Grid>
       </Layout>
     </RoleAuthorizer>
