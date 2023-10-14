@@ -23,6 +23,7 @@ import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
 interface AwardItemProps {
   name: Awards;
@@ -37,9 +38,9 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   return (
     <Draggable draggableId={name} index={index}>
       {provided => (
-        <Stack
+        <Grid
+          container
           component={Paper}
-          py={1.5}
           px={2}
           direction="row"
           alignItems="center"
@@ -48,30 +49,38 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <DragIndicatorIcon color="disabled" />
-          {isMandatory ? (
-            <Tooltip title="פרס חובה" arrow>
-              <span>
-                <IconButton disabled>
-                  <LockOutlinedIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          ) : (
-            <IconButton onClick={onRemove}>
-              <DeleteOutlineIcon />
-            </IconButton>
-          )}
-          <Typography>פרס {localizedAward[name].name || name}</Typography>
-          <CustomNumberInput
-            value={quantity}
-            onChange={(_e, value) => {
-              if (value !== undefined) setQuantity(value);
-            }}
-            min={1}
-            max={5}
-          />
-        </Stack>
+          <Grid xs={1} display="flex" alignItems="center">
+            <DragIndicatorIcon color="disabled" />
+          </Grid>
+          <Grid xs={1} display="flex" alignItems="center">
+            {isMandatory ? (
+              <Tooltip title="פרס חובה" arrow>
+                <span>
+                  <IconButton disabled>
+                    <LockOutlinedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            ) : (
+              <IconButton onClick={onRemove}>
+                <DeleteOutlineIcon />
+              </IconButton>
+            )}
+          </Grid>
+          <Grid xs={3}>
+            <Typography>פרס {localizedAward[name].name || name}</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <CustomNumberInput
+              value={quantity}
+              onChange={(_e, value) => {
+                if (value !== undefined) setQuantity(value);
+              }}
+              min={1}
+              max={5}
+            />
+          </Grid>
+        </Grid>
       )}
     </Draggable>
   );
@@ -115,9 +124,14 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId }) => {
           )}
         </Droppable>
       </DragDropContext>
-      <Button variant="contained" sx={{ my: 4 }} onClick={() => setOpen(true)}>
-        הוספת פרס רשות
-      </Button>
+      <Stack my={4} direction="row" spacing={2}>
+        <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 150 }}>
+          הוספת פרס רשות
+        </Button>
+        <Button variant="contained" onClick={() => console.log('click')} sx={{ minWidth: 150 }}>
+          שמירה
+        </Button>
+      </Stack>
       <Dialog
         open={open}
         fullWidth
