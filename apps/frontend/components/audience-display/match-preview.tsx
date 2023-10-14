@@ -64,13 +64,13 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
                 justifyContent="space-between"
               >
                 <Typography fontSize="3.5rem" fontWeight={700}>
-                  {p.team && `קבוצה #${p.team.number}`}
+                  {p.team && `#${p.team.number}`}
                 </Typography>
-                <Typography fontSize="2.5rem" fontWeight={700}>
+                <Typography fontSize="2.5rem" fontWeight={700} sx={{ wordWrap: 'break-word' }}>
                   {p.team && p.team.name}
                 </Typography>
                 <Typography fontSize="1.5rem" fontWeight={500}>
-                  {p.team && `מ${p.team.affiliation.name}, ${p.team.affiliation.city}`}
+                  {p.team && `${p.team.affiliation.name}, ${p.team.affiliation.city}`}
                 </Typography>
                 <Typography fontSize="1.25rem" fontWeight={700} color="text.secondary">
                   שולחן {p.tableName && p.tableName}
