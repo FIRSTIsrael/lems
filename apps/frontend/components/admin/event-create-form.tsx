@@ -16,6 +16,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import 'dayjs/locale/he';
 import dayjs, { Dayjs } from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
 import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
@@ -26,7 +27,8 @@ const EventCreateForm: React.FC = () => {
   const [color, setColor] = useState<DivisionColor>('red');
   const router = useRouter();
 
-  const createEvent = () => {
+  const createEvent = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     apiFetch('/api/admin/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -38,8 +40,15 @@ const EventCreateForm: React.FC = () => {
         hasState: false
       })
     })
-      .then(res => res.json())
-      .then(() => router.back());
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw 'http-error';
+        }
+      })
+      .then(data => router.push(`/admin/event/${data.id}`))
+      .catch(() => enqueueSnackbar('אופס, לא הצלחנו ליצור את האירוע.', { variant: 'error' }));
   };
 
   return (
