@@ -213,7 +213,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         initialValues={scoresheet.data || getDefaultScoresheet()}
         validate={validateScoresheet}
         onSubmit={(values, actions) => {
-          // TODO: This should return to the referee page
           actions.setSubmitting(false);
         }}
         enableReinitialize

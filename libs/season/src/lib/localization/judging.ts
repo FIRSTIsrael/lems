@@ -1,4 +1,4 @@
-import { JudgingCategory, Awards } from '@lems/types';
+import { JudgingCategory, AwardNames } from '@lems/types';
 
 export const localizedJudgingCategory: {
   [key in JudgingCategory]: { name: string };
@@ -9,7 +9,7 @@ export const localizedJudgingCategory: {
 };
 
 export const localizedAward: {
-  [key in Awards]: { name: string };
+  [key in AwardNames]: { name: string };
 } = {
   coreValues: { name: 'ערכי הליבה' },
   innovationProject: { name: 'פרויקט החדשנות' },

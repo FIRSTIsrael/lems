@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
-import { Awards } from '../constants';
+import { AwardNames } from '../constants';
 import { Team } from './team';
 
 export interface Award {
   eventId: ObjectId;
-  name: Awards;
+  name: AwardNames;
   index: number;
   place: number;
   winner?: Team | string;

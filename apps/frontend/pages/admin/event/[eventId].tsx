@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, Award } from '@lems/types';
+import { Event, AwardSchema } from '@lems/types';
 import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
@@ -16,10 +16,10 @@ import DownloadUsersButton from '../../../components/admin/download-users';
 
 interface Props {
   event: WithId<Event>;
-  awards: Array<WithId<Award>>;
+  awardSchema: AwardSchema;
 }
 
-const Page: NextPage<Props> = ({ event, awards }) => {
+const Page: NextPage<Props> = ({ event, awardSchema }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   return (
@@ -56,7 +56,7 @@ const Page: NextPage<Props> = ({ event, awards }) => {
           </Paper>
         </TabPanel>
         <TabPanel value="3">
-          <EventAwardEditor eventId={event._id} awards={awards} />
+          <EventAwardEditor eventId={event._id} awardSchema={awardSchema} />
         </TabPanel>
       </TabContext>
     </Layout>
@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
       event: `/api/events/${ctx.params?.eventId}?withSchedule=true`,
-      awards: `/api/events/${ctx.params?.eventId}/awards`
+      awardSchema: `/api/admin/events/${ctx.params?.eventId}/awards/schema`
     },
     ctx
   );

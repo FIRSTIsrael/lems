@@ -37,7 +37,9 @@ export const MandatoryAwardTypes = [
 export type MandatoryAwards = (typeof MandatoryAwardTypes)[number];
 
 export const AwardNameTypes = [...MandatoryAwardTypes, ...OptionalAwardTypes] as const;
-export type Awards = (typeof AwardNameTypes)[number];
+export type AwardNames = (typeof AwardNameTypes)[number];
+
+export type AwardSchema = { [key in AwardNames]: { index: number; count: number } };
 
 export const RubricStatusTypes = [
   'empty',
