@@ -28,7 +28,6 @@
     "express-fileupload": "^1.4.0",
     "express-winston": "^4.2.0",
     "formik": "^2.4.4",
-    "formik-mui": "^5.0.0-alpha.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.0.0",
     "next": "13.5.4",
