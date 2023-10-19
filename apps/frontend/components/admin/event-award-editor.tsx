@@ -35,6 +35,7 @@ import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils';
 import CustomNumberInput from '../field/scoresheet/number-input';
 import { apiFetch } from '../../lib/utils/fetch';
+import { enqueueSnackbar } from 'notistack';
 
 interface AwardItemProps {
   name: AwardNames;
@@ -168,6 +169,12 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchem
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(schema)
+        }).then(res => {
+          if (res.ok) {
+            enqueueSnackbar('רשימת הפרסים נשמרה בהצלחה!', { variant: 'success' });
+          } else {
+            enqueueSnackbar('אופס, לא הצלחנו לשמור את רשימת הפרסים.', { variant: 'error' });
+          }
         });
 
         actions.setSubmitting(false);

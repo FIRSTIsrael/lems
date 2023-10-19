@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { AwardNames } from '../constants';
 import { Team } from './team';
 
@@ -7,5 +7,5 @@ export interface Award {
   name: AwardNames;
   index: number;
   place: number;
-  winner?: Team | string;
+  winner?: WithId<Team> | string;
 }

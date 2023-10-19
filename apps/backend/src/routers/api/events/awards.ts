@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
+import { WithId, ObjectId } from 'mongodb';
+import { Award } from '@lems/types';
 import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
@@ -17,6 +18,26 @@ router.get('/:awardId', (req: Request, res: Response) => {
   }).then(award => {
     res.json(award);
   });
+});
+
+router.put('/winners', async (req: Request, res: Response) => {
+  const newAwards: Array<WithId<Award>> = req.body;
+
+  newAwards.forEach(award => {
+    award._id = new ObjectId(award._id);
+    if (typeof award.winner === 'string') return;
+    award.winner._id = new ObjectId(award.winner?._id);
+    award.winner.event = new ObjectId(award.winner?.event);
+  });
+
+  await Promise.all(
+    newAwards.map(async (award: WithId<Award>) => {
+      if (!(await db.updateAward({ _id: award._id }, { winner: award.winner })).acknowledged)
+        return res.status(500).json({ ok: false });
+    })
+  );
+
+  res.json({ ok: true });
 });
 
 export default router;
