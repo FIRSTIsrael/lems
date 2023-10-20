@@ -77,11 +77,11 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
       <Grid
         container
         xs={9}
-        columns={4}
+        columns={previousMatch?.participants.filter(p => p.teamId).length}
         alignContent="center"
         direction="row"
-        spacing={2}
         height="100%"
+        spacing={2}
       >
         {previousMatch?.participants
           .filter(p => p.teamId)
