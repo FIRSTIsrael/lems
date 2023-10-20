@@ -83,19 +83,21 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
         spacing={2}
         height="100%"
       >
-        {previousMatch?.participants.map(p => {
-          const scoresheet = previousScoresheets.find(s => s.teamId === p.teamId);
-          return (
-            scoresheet && (
-              <Grid key={scoresheet._id.toString()} xs={1} height="100%">
-                <TeamScoreBox
-                  team={p.team || ({} as WithId<Team>)}
-                  scoresheet={scoresheet || ({} as WithId<Scoresheet>)}
-                />
-              </Grid>
-            )
-          );
-        })}
+        {previousMatch?.participants
+          .filter(p => p.teamId)
+          .map(p => {
+            const scoresheet = previousScoresheets.find(s => s.teamId === p.teamId);
+            return (
+              scoresheet && (
+                <Grid key={scoresheet._id.toString()} xs={1} height="100%">
+                  <TeamScoreBox
+                    team={p.team || ({} as WithId<Team>)}
+                    scoresheet={scoresheet || ({} as WithId<Scoresheet>)}
+                  />
+                </Grid>
+              )
+            );
+          })}
       </Grid>
     </Grid>
   );

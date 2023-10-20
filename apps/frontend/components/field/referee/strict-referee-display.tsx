@@ -41,13 +41,13 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   const [match, setMatch] = useState<WithId<RobotGameMatch> | undefined>(undefined);
 
   const participant = useMemo(
-    () => match?.participants.find(p => p.tableId === table._id),
+    () => match?.participants.filter(p => p.teamId).find(p => p.tableId === table._id),
     [match?.participants, table._id]
   );
 
   const updateMatchParticipant = useCallback(
     (updatedMatchParticipant: Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>) => {
-      if (!match || !participant) return;
+      if (!match || !participant || !participant.teamId) return;
       socket.emit(
         'prestartMatchParticipant',
         match.eventId.toString(),
@@ -74,7 +74,9 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
     };
 
     const activeMatch = matches.find(m => m._id === eventState.activeMatch);
-    const isActiveInTable = !!activeMatch?.participants.find(p => p.tableId === table._id);
+    const isActiveInTable = !!activeMatch?.participants
+      .filter(p => p.teamId)
+      .find(p => p.tableId === table._id);
 
     if (isActiveInTable) {
       setMatch(activeMatch);
@@ -83,15 +85,15 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       const loadedMatch = matches.find(m => m._id === eventState.loadedMatch);
       const completedMatches = matches.filter(m => m.status === 'completed');
       const lastCompletedMatch = completedMatches[completedMatches.length - 1];
-      const completedMatchParticipant = lastCompletedMatch?.participants.find(
-        p => p.tableId === table._id
-      );
+      const completedMatchParticipant = lastCompletedMatch?.participants
+        .filter(p => p.teamId)
+        .find(p => p.tableId === table._id);
 
       if (lastCompletedMatch) {
         // Check if no show
-        const lastCompletedMatchParticipant = lastCompletedMatch.participants.find(
-          p => p.tableId === table._id
-        );
+        const lastCompletedMatchParticipant = lastCompletedMatch.participants
+          .filter(p => p.teamId)
+          .find(p => p.tableId === table._id);
         if (lastCompletedMatchParticipant?.present === 'no-show') {
           setMatch(loadedMatch);
           setDisplayState(loadedMatch ? 'prestart' : 'no-match');

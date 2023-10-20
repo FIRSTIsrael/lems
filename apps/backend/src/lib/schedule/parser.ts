@@ -149,18 +149,21 @@ const parseMatches = (
       participants: []
     };
 
-    for (let i = 4; i < line.length; i++) {
+    for (let i = 4; i < tableNames.length + 4; i++) {
+      const table = tables.find(table => table.name === tableNames[i - 4]);
+
+      let team = null;
       if (line[i]) {
-        const table = tables.find(table => table.name === tableNames[i - 4]);
-        const team = teams.find(team => team.number === parseInt(line[i]));
-        match.participants.push({
-          teamId: team._id,
-          tableId: table._id,
-          tableName: table.name,
-          ready: false,
-          present: 'no-show'
-        });
+        team = teams.find(team => team.number === parseInt(line[i]));
       }
+
+      match.participants.push({
+        teamId: team?._id || null,
+        tableId: table._id,
+        tableName: table.name,
+        ready: false,
+        present: 'no-show'
+      });
     }
 
     matches.push(match);

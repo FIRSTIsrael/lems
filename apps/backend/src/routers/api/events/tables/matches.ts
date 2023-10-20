@@ -12,7 +12,9 @@ router.get('/', (req: Request, res: Response) => {
 
 router.get('/:matchId/scoresheet', async (req: Request, res: Response) => {
   const match = await db.getMatch({ _id: new ObjectId(req.params.matchId) });
-  const teamId = match.participants.find(p => p.tableId.toString() === req.params.tableId).teamId;
+  const teamId = match.participants
+    .filter(p => p.teamId)
+    .find(p => p.tableId.toString() === req.params.tableId).teamId;
 
   db.getScoresheet({
     matchId: new ObjectId(req.params.matchId),

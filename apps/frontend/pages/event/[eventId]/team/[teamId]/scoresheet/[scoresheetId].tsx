@@ -185,7 +185,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ).then(res => res?.json());
 
       match = matches.find((m: RobotGameMatch) =>
-        m.participants.find(p => p.teamId.toString() === ctx.params?.teamId)
+        m.participants.filter(p => p.teamId).find(p => p.teamId?.toString() === ctx.params?.teamId)
       );
     } else {
       const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
@@ -194,13 +194,19 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
       match = matches.find(
         (match: RobotGameMatch) =>
-          !!match.participants.find(p => p.teamId?.toString() === ctx.params?.teamId)
+          !!match.participants
+            .filter(p => p.teamId)
+            .find(p => p.teamId?.toString() === ctx.params?.teamId)
       );
 
-      tableId = match.participants.find(p => p.teamId?.toString() === ctx.params?.teamId)?.tableId;
+      tableId = match.participants
+        .filter(p => p.teamId)
+        .find(p => p.teamId?.toString() === ctx.params?.teamId)?.tableId;
     }
 
-    const team = match.participants.find(p => p.teamId.toString() === ctx.params?.teamId)?.team;
+    const team = match.participants
+      .filter(p => p.teamId)
+      .find(p => p.teamId?.toString() === ctx.params?.teamId)?.team;
 
     const data = await serverSideGetRequests(
       {
