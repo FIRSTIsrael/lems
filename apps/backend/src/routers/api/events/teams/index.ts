@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import rubricsRouter from './rubrics';
@@ -15,7 +15,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:teamId', (req: Request, res: Response) => {
   db.getTeam({
     _id: new ObjectId(req.params.teamId),
-    event: new ObjectId(req.params.eventId)
+    eventId: new ObjectId(req.params.eventId)
   }).then(team => {
     res.json(team);
   });

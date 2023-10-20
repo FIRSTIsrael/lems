@@ -142,7 +142,7 @@ const Page: NextPage<Props> = ({
                 </Typography>
               </Box>
               <JudgingRoomSchedule
-                sessions={sessions.filter(s => s.room === room._id)}
+                sessions={sessions.filter(s => s.roomId === room._id)}
                 event={event}
                 room={room}
                 teams={teams}
@@ -164,11 +164,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        teams: `/api/events/${user.event}/teams`,
-        rooms: `/api/events/${user.event}/rooms`,
-        sessions: `/api/events/${user.event}/sessions`,
-        rubrics: `/api/events/${user.event}/rubrics`
+        event: `/api/events/${user.eventId}`,
+        teams: `/api/events/${user.eventId}/teams`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`,
+        rubrics: `/api/events/${user.eventId}/rubrics`
       },
       ctx
     );

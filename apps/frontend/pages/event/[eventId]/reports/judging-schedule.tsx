@@ -54,7 +54,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
       <TableCell>{startTime.add(JUDGING_SESSION_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {rooms.map(r => {
         const team = teams.find(
-          t => t._id === sessions.find(s => s.number === number && s.room === r._id)?.team
+          t => t._id === sessions.find(s => s.number === number && s.roomId === r._id)?.teamId
         );
 
         return (
@@ -224,10 +224,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}?withSchedule=true`,
-        teams: `/api/events/${user.event}/teams`,
-        rooms: `/api/events/${user.event}/rooms`,
-        sessions: `/api/events/${user.event}/sessions`
+        event: `/api/events/${user.eventId}?withSchedule=true`,
+        teams: `/api/events/${user.eventId}/teams`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
     );

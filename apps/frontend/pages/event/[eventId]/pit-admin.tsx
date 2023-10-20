@@ -121,9 +121,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        teams: `/api/events/${user.event}/teams`,
-        tickets: `/api/events/${user.event}/tickets`
+        event: `/api/events/${user.eventId}`,
+        teams: `/api/events/${user.eventId}/teams`,
+        tickets: `/api/events/${user.eventId}/tickets`
       },
       ctx
     );

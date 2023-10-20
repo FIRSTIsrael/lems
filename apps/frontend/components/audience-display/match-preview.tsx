@@ -7,7 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { blue, red } from '@mui/material/colors';
 
 interface MatchPreviewProps {
-  event: Event;
+  event: WithId<Event>;
   match?: WithId<RobotGameMatch>;
 }
 

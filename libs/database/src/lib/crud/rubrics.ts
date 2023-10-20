@@ -7,7 +7,7 @@ export const getRubric = (filter: Filter<Rubric<JudgingCategory>>) => {
 };
 
 export const getTeamRubrics = (teamId: ObjectId) => {
-  return db.collection<Rubric<JudgingCategory>>('rubrics').find({ team: teamId }).toArray();
+  return db.collection<Rubric<JudgingCategory>>('rubrics').find({ teamId }).toArray();
 };
 
 export const addRubric = (rubric: Rubric<JudgingCategory>) => {
@@ -44,6 +44,6 @@ export const deleteRubric = (filter: Filter<Rubric<JudgingCategory>>) => {
 export const deleteTeamRubrics = (teamId: ObjectId) => {
   return db
     .collection<Rubric<JudgingCategory>>('rubrics')
-    .deleteMany({ team: teamId })
+    .deleteMany({ teamId })
     .then(response => response);
 };

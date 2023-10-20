@@ -5,10 +5,10 @@ import * as db from '@lems/database';
 import { JUDGING_SESSION_LENGTH } from '@lems/types';
 
 export const handleStartSession = async (namespace, eventId, roomId, sessionId, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
 
   let session = await db.getSession({
-    room: new ObjectId(roomId),
+    roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
   if (!session) {
@@ -62,13 +62,13 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
 
   callback({ ok: true });
   session = await db.getSession({ _id });
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('judging').emit('judgingSessionStarted', session, eventState);
 };
 
 export const handleAbortSession = async (namespace, eventId, roomId, sessionId, callback) => {
   let session = await db.getSession({
-    room: new ObjectId(roomId),
+    roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
   if (!session) {
@@ -103,7 +103,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
 
   console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
 
-  await db.updateSession({ _id: session._id }, { team: teamId ? new ObjectId(teamId) : null });
+  await db.updateSession({ _id: session._id }, { teamId: teamId ? new ObjectId(teamId) : null });
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });
@@ -119,7 +119,7 @@ export const handleUpdateRubric = async (
   callback
 ) => {
   let rubric = await db.getRubric({
-    team: teamId ? new ObjectId(teamId) : null,
+    teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(rubricId)
   });
   if (!rubric) {

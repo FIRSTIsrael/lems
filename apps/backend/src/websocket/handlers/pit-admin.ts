@@ -3,7 +3,7 @@ import * as db from '@lems/database';
 
 export const handleRegisterTeam = async (namespace, eventId, teamId, callback) => {
   let team = await db.getTeam({
-    event: new ObjectId(eventId),
+    eventId: new ObjectId(eventId),
     _id: new ObjectId(teamId)
   });
   if (!team) {
@@ -26,7 +26,7 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
 
 export const handleCreateTicket = async (namespace, eventId, teamId, content, type, callback) => {
   const team = await db.getTeam({
-    event: new ObjectId(eventId),
+    eventId: new ObjectId(eventId),
     _id: new ObjectId(teamId)
   });
   if (!team) {
@@ -38,8 +38,8 @@ export const handleCreateTicket = async (namespace, eventId, teamId, content, ty
 
   const ticketId = await db
     .addTicket({
-      event: new ObjectId(eventId),
-      team: new ObjectId(teamId),
+      eventId: new ObjectId(eventId),
+      teamId: new ObjectId(teamId),
       created: new Date(),
       content: content,
       type: type
@@ -61,8 +61,8 @@ export const handleUpdateTicket = async (
   callback
 ) => {
   let ticket = await db.getTicket({
-    event: new ObjectId(eventId),
-    team: new ObjectId(teamId),
+    eventId: new ObjectId(eventId),
+    teamId: new ObjectId(teamId),
     _id: new ObjectId(ticketId)
   });
   if (!ticket) {

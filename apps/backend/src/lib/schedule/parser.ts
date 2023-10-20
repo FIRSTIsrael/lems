@@ -65,7 +65,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
   return lines.map(
     rawTeam =>
       ({
-        event: event._id,
+        eventId: event._id,
         number: parseInt(rawTeam[0]),
         name: rawTeam[1],
         registered: false,
@@ -86,7 +86,7 @@ const parseTables = (lines: Line[], event: WithId<Event>) => {
   return tables.map(
     name =>
       ({
-        event: event._id,
+        eventId: event._id,
         name
       } as RobotGameTable)
   );
@@ -101,7 +101,7 @@ const parseRooms = (lines: Line[], event: WithId<Event>) => {
   return rooms.map(
     name =>
       ({
-        event: event._id,
+        eventId: event._id,
         name
       } as JudgingRoom)
   );
@@ -197,13 +197,13 @@ const parseSessions = (
       const session = {
         number,
         scheduledTime: startTime.toDate(),
-        room: room._id,
-        team: null,
+        roomId: room._id,
+        teamId: null,
         status: 'not-started'
       };
 
       if (line[i]) {
-        session.team = teams.find(team => team.number === parseInt(line[i]))._id;
+        session.teamId = teams.find(team => team.number === parseInt(line[i]))._id;
       }
 
       sessions.push(session as JudgingSession);

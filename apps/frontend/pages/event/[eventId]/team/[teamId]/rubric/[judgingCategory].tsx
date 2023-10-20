@@ -92,7 +92,7 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
     {
       name: 'rubricUpdated',
       handler: rubric => {
-        if (rubric.team === router.query.teamId) setRubric(rubric);
+        if (rubric.teamId === router.query.teamId) setRubric(rubric);
       }
     }
   ]);
@@ -152,27 +152,27 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     if (user.roleAssociation && user.roleAssociation.type === 'room') {
       roomId = user.roleAssociation.value;
     } else {
-      const sessions = await apiFetch(`/api/events/${user.event}/sessions`, undefined, ctx).then(
+      const sessions = await apiFetch(`/api/events/${user.eventId}/sessions`, undefined, ctx).then(
         res => res?.json()
       );
       roomId = sessions.find(
-        (session: JudgingSession) => session.team == new ObjectId(String(ctx.params?.teamId))
-      ).room;
+        (session: JudgingSession) => session.teamId == new ObjectId(String(ctx.params?.teamId))
+      ).roomId;
     }
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        team: `/api/events/${user.event}/teams/${ctx.params?.teamId}`,
-        room: `/api/events/${user.event}/rooms/${roomId}`,
-        session: `/api/events/${user.event}/rooms/${roomId}/sessions`,
-        rubric: `/api/events/${user.event}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+        event: `/api/events/${user.eventId}`,
+        team: `/api/events/${user.eventId}/teams/${ctx.params?.teamId}`,
+        room: `/api/events/${user.eventId}/rooms/${roomId}`,
+        session: `/api/events/${user.eventId}/rooms/${roomId}/sessions`,
+        rubric: `/api/events/${user.eventId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
       },
       ctx
     );
 
     data.session = data.session.find(
-      (s: JudgingSession) => s.team == new ObjectId(String(ctx.params?.teamId))
+      (s: JudgingSession) => s.teamId == new ObjectId(String(ctx.params?.teamId))
     );
 
     return { props: { user, ...data } };

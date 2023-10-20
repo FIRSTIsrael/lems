@@ -68,7 +68,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         isAdmin: false,
-        event: event?._id,
+        eventId: event?._id,
         role,
         ...(association
           ? {

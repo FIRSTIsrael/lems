@@ -184,7 +184,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       tableId = user.roleAssociation.value;
 
       const matches = await apiFetch(
-        `/api/events/${user.event}/tables/${tableId}/matches`,
+        `/api/events/${user.eventId}/tables/${tableId}/matches`,
         undefined,
         ctx
       ).then(res => res?.json());
@@ -193,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         m.participants.filter(p => p.teamId).find(p => p.teamId?.toString() === ctx.params?.teamId)
       );
     } else {
-      const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
+      const matches = await apiFetch(`/api/events/${user.eventId}/matches`, undefined, ctx).then(
         res => res?.json()
       );
 
@@ -215,9 +215,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        table: `/api/events/${user.event}/tables/${tableId}`,
-        scoresheet: `/api/events/${user.event}/teams/${team?._id}/scoresheets/?stage=${match.stage}&round=${match.round}`
+        event: `/api/events/${user.eventId}`,
+        table: `/api/events/${user.eventId}/tables/${tableId}`,
+        scoresheet: `/api/events/${user.eventId}/teams/${team?._id}/scoresheets/?stage=${match.stage}&round=${match.round}`
       },
       ctx
     );

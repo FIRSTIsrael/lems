@@ -7,7 +7,7 @@ export const getTicket = (filter: Filter<Ticket>) => {
 };
 
 export const getEventTickets = (eventId: ObjectId) => {
-  return db.collection<Ticket>('tickets').find({ event: eventId }).toArray();
+  return db.collection<Ticket>('tickets').find({ eventId: eventId }).toArray();
 };
 
 export const addTicket = (ticket: Ticket) => {
@@ -42,6 +42,6 @@ export const deleteTicket = (filter: Filter<Ticket>) => {
 export const deleteEventTickets = (eventId: ObjectId) => {
   return db
     .collection<Ticket>('tickets')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId: eventId })
     .then(response => response);
 };

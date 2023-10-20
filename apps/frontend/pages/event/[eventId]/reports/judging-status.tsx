@@ -105,7 +105,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               {currentSessions.filter(session => !!session.startTime).length} מתוך{' '}
               {
                 currentSessions.filter(
-                  session => teams.find(team => team._id === session.team)?.registered
+                  session => teams.find(team => team._id === session.teamId)?.registered
                 ).length
               }{' '}
               קבוצות בחדר השיפוט
@@ -165,7 +165,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
               {currentSessions.map(session => {
-                const team = teams.find(t => t._id === session.team);
+                const team = teams.find(t => t._id === session.teamId);
                 return (
                   <TableCell key={session._id.toString()} align="center">
                     <Box alignItems="center">
@@ -191,7 +191,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
               {nextSessions.map(session => {
-                const team = teams.find(t => t._id === session.team);
+                const team = teams.find(t => t._id === session.teamId);
                 return (
                   <TableCell key={session._id.toString()} align="center">
                     {team && <StyledTeamTooltip team={team} />}
@@ -314,11 +314,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        eventState: `/api/events/${user.event}/state`,
-        teams: `/api/events/${user.event}/teams`,
-        rooms: `/api/events/${user.event}/rooms`,
-        sessions: `/api/events/${user.event}/sessions`
+        event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
+        teams: `/api/events/${user.eventId}/teams`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
     );

@@ -16,7 +16,7 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
   console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     {
       loadedMatch: match._id
     }
@@ -25,12 +25,12 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
   console.log(`✅ Loaded match #${matchId}!`);
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  const eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
 export const handleStartMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   if (eventState.activeMatch !== null) {
     callback({
       ok: false,
@@ -72,7 +72,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
         await db.updateEventState({ _id: eventState._id }, { activeMatch: null });
 
         const match = await db.getMatch({ _id: new ObjectId(matchId) });
-        eventState = await db.getEventState({ event: new ObjectId(eventId) });
+        eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
         namespace.to('field').emit('matchCompleted', match, eventState);
       }
     }.bind(null, startTime)
@@ -90,7 +90,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     }
   );
 
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   callback({ ok: true });
   namespace.to('field').emit('matchStarted', match, eventState);
 };
@@ -110,7 +110,7 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
 };
 
 export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   if (eventState.activeMatch.toString() !== matchId) {
     callback({
       ok: false,
@@ -135,7 +135,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
     );
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     {
       activeMatch: null,
       ...(match.stage !== 'test' && { loadedMatch: new ObjectId(matchId) })
@@ -144,7 +144,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
 
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('matchAborted', match, eventState);
   if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
 };
@@ -261,7 +261,7 @@ export const handleUpdateAudienceDisplayState = async (
   newDisplayState,
   callback
 ) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
 
   if (!eventState) {
     callback({
@@ -280,10 +280,10 @@ export const handleUpdateAudienceDisplayState = async (
   }
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     { audienceDisplayState: newDisplayState }
   );
 
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('audienceDisplayStateUpdated', eventState);
 };

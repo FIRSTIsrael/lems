@@ -34,7 +34,7 @@ export const getEventUsers = (
 
       iterable.forEach(value => {
         const user: User = {
-          event: event._id,
+          eventId: event._id,
           isAdmin: false,
           role: role,
           roleAssociation: {
@@ -49,7 +49,7 @@ export const getEventUsers = (
       });
     } else {
       const user: User = {
-        event: event._id,
+        eventId: event._id,
         isAdmin: false,
         role: role,
         password: randomString(4),
