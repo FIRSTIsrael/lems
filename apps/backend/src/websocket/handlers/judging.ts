@@ -103,7 +103,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
 
   console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
 
-  await db.updateSession({ _id: session._id }, { team: teamId });
+  await db.updateSession({ _id: session._id }, { team: new ObjectId(teamId) });
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });

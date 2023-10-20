@@ -54,17 +54,16 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
     console.log('✅ Finished parsing schedule!');
 
-    const dbSessions = await db.getEventSessions(event._id);
     const dbMatches = await db.getEventMatches(event._id.toString());
 
     console.log('📄 Generating rubrics');
-    const rubrics = getEventRubrics(dbSessions);
+    const rubrics = getEventRubrics(dbTeams);
     if (!(await db.addRubrics(rubrics)).acknowledged)
       return res.status(500).json({ error: 'Could not create rubrics!' });
     console.log('✅ Generated rubrics');
 
     console.log('📄 Generating scoresheets');
-    const scoresheets = getEventScoresheets(dbMatches);
+    const scoresheets = getEventScoresheets(event, dbTeams, dbMatches);
 
     if (!(await db.addScoresheets(scoresheets)).acknowledged)
       return res.status(500).json({ error: 'Could not create scoresheets!' });

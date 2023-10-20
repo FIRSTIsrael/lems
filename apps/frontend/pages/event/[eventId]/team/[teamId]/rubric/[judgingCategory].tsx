@@ -171,6 +171,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     );
 
+    data.session = data.session.find(
+      (s: JudgingSession) => s.team == new ObjectId(String(ctx.params?.teamId))
+    );
+
     return { props: { user, ...data } };
   } catch (err) {
     console.log(err);

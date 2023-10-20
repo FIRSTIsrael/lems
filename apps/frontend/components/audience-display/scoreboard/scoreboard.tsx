@@ -46,7 +46,12 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       {showPreviousMatch && (
         <ScoreboardPreviousMatch
           previousMatch={previousMatch}
-          previousScoresheets={scoresheets.filter(s => s.matchId === previousMatch?._id)}
+          previousScoresheets={scoresheets.filter(
+            s =>
+              s.stage === previousMatch?.stage &&
+              s.round === previousMatch?.round &&
+              previousMatch?.participants.some(p => p.teamId === s.teamId)
+          )}
           xs={12}
           px={4}
           py={2}
