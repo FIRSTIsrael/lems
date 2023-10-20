@@ -1,48 +1,97 @@
+import { useState } from 'react';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Unstable_Grid2';
-import { Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import { Button, Stack } from '@mui/material';
+import {
+  Event,
+  Team,
+  RobotGameMatch,
+  RobotGameTable,
+  RobotGameMatchStage,
+  WSClientEmittedEvents,
+  WSServerEmittedEvents
+} from '@lems/types';
 import RoundScheduleEditor from './round-schedule-editor';
+import { purple } from '@mui/material/colors';
+import { localizedMatchStage } from '../../localization/field';
+import { Socket } from 'socket.io-client';
+
+type RoundInfo = { stage: RobotGameMatchStage; number: number };
 
 interface FieldScheduleEditorProps {
+  event: WithId<Event>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({ teams, tables, matches }) => {
+const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({
+  event,
+  teams,
+  tables,
+  matches,
+  socket
+}) => {
   const practiceMatches = matches.filter(m => m.stage === 'practice');
   const rankingMatches = matches.filter(m => m.stage === 'ranking');
 
-  const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
-    .map(r => (
-      <Grid xs={12} key={'practice' + r}>
-        <RoundScheduleEditor
-          roundStage={'practice'}
-          roundNumber={r}
-          matches={practiceMatches.filter(m => m.round === r)}
-          tables={tables}
-          teams={teams}
-        />
-      </Grid>
-    ))
+  const rounds: Array<RoundInfo> = [...new Set(practiceMatches.flatMap(m => m.round))]
+    .map(r => {
+      return { stage: 'practice', number: r } as RoundInfo;
+    })
     .concat(
-      [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
-        <Grid xs={12} key={'ranking' + r}>
-          <RoundScheduleEditor
-            roundStage={'ranking'}
-            roundNumber={r}
-            matches={rankingMatches.filter(m => m.round === r)}
-            tables={tables}
-            teams={teams}
-          />
-        </Grid>
-      ))
+      [...new Set(rankingMatches.flatMap(m => m.round))].map(r => {
+        return { stage: 'ranking', number: r } as RoundInfo;
+      })
     );
 
+  const [activeRound, setActiveRound] = useState<RoundInfo>(rounds[0]);
+
   return (
-    <Grid container spacing={2}>
-      {...roundSchedules}
-    </Grid>
+    <Stack spacing={2}>
+      <Stack justifyContent="center" direction="row" spacing={2}>
+        {rounds.map(r => (
+          <Button
+            key={r.stage + r.number}
+            variant="contained"
+            color="inherit"
+            sx={{
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              backgroundColor:
+                r.stage === activeRound.stage && r.number === activeRound.number
+                  ? purple[700]
+                  : 'transparent',
+              color:
+                r.stage === activeRound.stage && r.number === activeRound.number
+                  ? '#fff'
+                  : purple[700],
+              borderRadius: '2rem',
+              '&:hover': {
+                backgroundColor:
+                  r.stage === activeRound.stage && r.number === activeRound.number
+                    ? purple[700]
+                    : purple[700] + '1f'
+              }
+            }}
+            onClick={() => setActiveRound(r)}
+          >
+            {localizedMatchStage[r.stage]} #{r.number}
+          </Button>
+        ))}
+      </Stack>
+      <RoundScheduleEditor
+        event={event}
+        roundStage={activeRound.stage}
+        roundNumber={activeRound.number}
+        matches={matches.filter(
+          m => m.round === activeRound.number && m.stage === activeRound.stage
+        )}
+        tables={tables}
+        teams={teams}
+        socket={socket}
+      />
+    </Stack>
   );
 };
 

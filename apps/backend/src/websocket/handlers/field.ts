@@ -149,6 +149,35 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
+export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTeams, callback) => {
+  let match = await db.getMatch({ _id: new ObjectId(matchId) });
+
+  if (!match) {
+    callback({ ok: false, error: `Could not find match ${matchId}!` });
+    return;
+  }
+  if (match.status !== 'not-started') {
+    callback({ ok: false, error: `Match ${matchId} is not editable!` });
+    return;
+  }
+
+  console.log(`🖊️ Updating teams for match ${matchId} in event ${eventId}`);
+
+  newTeams.forEach(async newTeam => {
+    const participantIndex = match.participants.findIndex(
+      p => p.tableId.toString() === newTeam.tableId
+    );
+    await db.updateMatch(
+      { _id: match._id },
+      { [`participants.${participantIndex}.teamId`]: new ObjectId(newTeam.teamId) }
+    );
+  });
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId) });
+  namespace.to('field').emit('matchUpdated', match);
+};
+
 export const handlePrestartMatchParticipant = async (
   namespace,
   eventId: string,

@@ -19,7 +19,8 @@ import {
   handleStartMatch,
   handleStartTestMatch,
   handleUpdateScoresheet,
-  handleUpdateAudienceDisplayState
+  handleUpdateAudienceDisplayState,
+  handleUpdateMatchTeams
 } from './handlers/field';
 
 const websocket = (
@@ -58,6 +59,8 @@ const websocket = (
   socket.on('startTestMatch', (...args) => handleStartTestMatch(namespace, ...args));
 
   socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
+
+  socket.on('updateMatchTeams', (...args) => handleUpdateMatchTeams(namespace, ...args));
 
   socket.on('prestartMatchParticipant', (...args) =>
     handlePrestartMatchParticipant(namespace, ...args)

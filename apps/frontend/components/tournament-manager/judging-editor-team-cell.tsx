@@ -3,13 +3,13 @@ import { Field, FieldProps } from 'formik';
 import { Autocomplete, TextField } from '@mui/material';
 import { Team } from '@lems/types';
 
-interface EditableTeamCellProps {
+interface JudgingEditorTeamCellProps {
   name: string;
   teams: Array<WithId<Team>>;
   disabled: boolean;
 }
 
-const EditableTeamCell: React.FC<EditableTeamCellProps> = ({ name, teams, disabled }) => {
+const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, teams, disabled }) => {
   let dropdownOptions: Array<WithId<Team> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
@@ -64,4 +64,4 @@ const EditableTeamCell: React.FC<EditableTeamCellProps> = ({ name, teams, disabl
   );
 };
 
-export default EditableTeamCell;
+export default JudgingEditorTeamCell;

@@ -133,6 +133,13 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  updateMatchTeams: (
+    eventId: string,
+    matchId: string,
+    newTeams: Array<Partial<RobotGameMatchParticipant>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   prestartMatchParticipant: (
     eventId: string,
     matchId: string,

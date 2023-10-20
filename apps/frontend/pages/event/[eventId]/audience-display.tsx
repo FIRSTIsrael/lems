@@ -119,6 +119,7 @@ const Page: NextPage<Props> = ({
       }
     },
     { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
     { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);

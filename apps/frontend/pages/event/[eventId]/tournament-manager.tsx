@@ -7,7 +7,6 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab } from '@mui/material';
 import {
   Event,
-  EventState,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -94,7 +93,17 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  //TODO: handle match updated
+  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
+        }
+        return m;
+      })
+    );
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['pit-admin', 'field', 'judging'],
@@ -118,7 +127,12 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent }
     ]
   );
 
@@ -143,33 +157,39 @@ const Page: NextPage<Props> = ({
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="זירה" value="1" />
-              <Tab label="שיפוט" value="2" />
-              <Tab label="אירוע" value="3" />
-              <Tab label="קריאות" value="4" />
+              <Tab label="קריאות" value="1" />
+              <Tab label="אירוע" value="2" />
+              <Tab label="זירה" value="3" />
+              <Tab label="שיפוט" value="4" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <FieldScheduleEditor teams={teams} tables={tables} matches={matches} />
-          </TabPanel>
-          <TabPanel value="2">
-            <JudgingScheduleEditor
-              event={event}
-              teams={teams}
-              rooms={rooms}
-              sessions={sessions}
-              socket={socket}
-            />
-          </TabPanel>
-          <TabPanel value="3">
-            <EventPanel />
-          </TabPanel>
-          <TabPanel value="4">
             <TicketPanel
               event={event}
               teams={teams}
               tickets={tickets}
               showClosed={true}
+              socket={socket}
+            />
+          </TabPanel>
+          <TabPanel value="2">
+            <EventPanel />
+          </TabPanel>
+          <TabPanel value="3">
+            <FieldScheduleEditor
+              event={event}
+              teams={teams}
+              tables={tables}
+              matches={matches}
+              socket={socket}
+            />
+          </TabPanel>
+          <TabPanel value="4">
+            <JudgingScheduleEditor
+              event={event}
+              teams={teams}
+              rooms={rooms}
+              sessions={sessions}
               socket={socket}
             />
           </TabPanel>

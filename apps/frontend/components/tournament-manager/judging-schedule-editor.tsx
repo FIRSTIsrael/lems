@@ -25,7 +25,7 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import EditableTeamCell from './editable-team-cell';
+import JudgingEditorTeamCell from './judging-editor-team-cell';
 interface JudgingScheduleEditorRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
@@ -50,7 +50,7 @@ const JudgingScheduleEditorRow: React.FC<JudgingScheduleEditorRowProps> = ({
 
         return (
           <TableCell key={r._id.toString()} align="center">
-            <EditableTeamCell
+            <JudgingEditorTeamCell
               teams={teams}
               name={`${session?._id.toString()}`}
               disabled={session?.status !== 'not-started'}
