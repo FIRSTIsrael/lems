@@ -6,18 +6,20 @@ export const getEventRubrics = (
 ): Rubric<JudgingCategory>[] => {
   const rubrics = [];
 
-  sessions.forEach(session => {
-    JudgingCategoryTypes.forEach(category => {
-      const rubric: Rubric<JudgingCategory> = {
-        team: session.team,
-        session: session._id,
-        category: category,
-        status: 'empty'
-      };
+  sessions
+    .filter(s => s.team)
+    .forEach(session => {
+      JudgingCategoryTypes.forEach(category => {
+        const rubric: Rubric<JudgingCategory> = {
+          team: session.team,
+          session: session._id,
+          category: category,
+          status: 'empty'
+        };
 
-      rubrics.push(rubric);
+        rubrics.push(rubric);
+      });
     });
-  });
 
   return rubrics;
 };
