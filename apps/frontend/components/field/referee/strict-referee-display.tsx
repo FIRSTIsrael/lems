@@ -67,9 +67,11 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   );
 
   useEffect(() => {
-    const getScoresheet = (matchId: ObjectId) => {
+    const getScoresheet = (fromMatch: WithId<RobotGameMatch>) => {
+      const fromParticipant = fromMatch.participants.find(p => p.tableId === table._id);
+
       return apiFetch(
-        `/api/events/${event._id}/tables/${table._id}/matches/${matchId}/scoresheet`
+        `/api/events/${event._id}/teams/${fromParticipant?.teamId}/scoresheets/?stage=${fromMatch?.stage}&round=${fromMatch?.round}`
       ).then<WithId<Scoresheet>>(res => res.json());
     };
 
@@ -99,7 +101,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
           setDisplayState(loadedMatch ? 'prestart' : 'no-match');
         } else {
           // Check if we finished doing the scoresheet of the last completed match
-          getScoresheet(lastCompletedMatch._id).then(scoresheet => {
+          getScoresheet(lastCompletedMatch).then(scoresheet => {
             if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
               router.push(
                 `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`

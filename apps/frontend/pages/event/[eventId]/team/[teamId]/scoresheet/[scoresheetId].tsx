@@ -106,6 +106,11 @@ const Page: NextPage<Props> = ({
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('המקצה טרם נגמר.', { variant: 'info' });
   }
+  if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
+  }
+
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
     router.push(`/event/${event._id}/${user.role}`);
 
@@ -212,7 +217,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         event: `/api/events/${user.event}`,
         table: `/api/events/${user.event}/tables/${tableId}`,
-        scoresheet: `/api/events/${user.event}/tables/${tableId}/matches/${match._id}/scoresheet`
+        scoresheet: `/api/events/${user.event}/teams/${team?._id}/scoresheets/?stage=${match.stage}&round=${match.round}`
       },
       ctx
     );

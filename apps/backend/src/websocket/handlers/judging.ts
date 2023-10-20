@@ -103,7 +103,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
 
   console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
 
-  await db.updateSession({ _id: session._id }, { team: new ObjectId(teamId) });
+  await db.updateSession({ _id: session._id }, { team: teamId ? new ObjectId(teamId) : null });
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });
@@ -119,7 +119,7 @@ export const handleUpdateRubric = async (
   callback
 ) => {
   let rubric = await db.getRubric({
-    team: new ObjectId(teamId),
+    team: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(rubricId)
   });
   if (!rubric) {

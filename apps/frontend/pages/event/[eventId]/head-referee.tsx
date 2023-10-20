@@ -63,10 +63,10 @@ const Page: NextPage<Props> = ({
 
   const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
+    newEventState?: WithId<EventState>
   ) => {
-    setEventState(newEventState);
     updateMatches(newMatch);
+    if (newEventState) setEventState(newEventState);
   };
 
   const updateScoresheet = (scoresheet: WithId<Scoresheet>) => {

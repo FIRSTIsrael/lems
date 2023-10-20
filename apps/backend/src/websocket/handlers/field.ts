@@ -169,7 +169,11 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
     );
     await db.updateMatch(
       { _id: match._id },
-      { [`participants.${participantIndex}.teamId`]: new ObjectId(newTeam.teamId) }
+      {
+        [`participants.${participantIndex}.teamId`]: newTeam.teamId
+          ? new ObjectId(newTeam.teamId)
+          : null
+      }
     );
   });
 
@@ -229,7 +233,7 @@ export const handleUpdateScoresheet = async (
   callback
 ) => {
   let scoresheet = await db.getScoresheet({
-    teamId: new ObjectId(teamId),
+    teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(scoresheetId)
   });
   if (!scoresheet) {
