@@ -189,19 +189,21 @@ const parseSessions = (
       .set('minute', parseInt(minute))
       .set('second', 0);
 
-    for (let i = 3; i < line.length; i++) {
-      if (line[i]) {
-        const room = rooms.find(table => table.name === roomNames[i - 3]);
-        const team = teams.find(team => team.number === parseInt(line[i]));
+    for (let i = 3; i < roomNames.length + 3; i++) {
+      const room = rooms.find(table => table.name === roomNames[i - 3]);
+      const session = {
+        number,
+        scheduledTime: startTime.toDate(),
+        room: room._id,
+        team: null,
+        status: 'not-started'
+      };
 
-        sessions.push({
-          number,
-          scheduledTime: startTime.toDate(),
-          team: team._id,
-          room: room._id,
-          status: 'not-started'
-        } as JudgingSession);
+      if (line[i]) {
+        session.team = teams.find(team => team.number === parseInt(line[i]))._id;
       }
+
+      sessions.push(session as JudgingSession);
     }
   });
 

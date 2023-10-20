@@ -164,22 +164,23 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {currentSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <Box alignItems="center">
-                    <StyledTeamTooltip
-                      team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                    />
-                    <br />
-                    <StatusIcon status={session.status} />
-                    <br />
-                    {session.startTime &&
-                      `סיום: ${dayjs(session.startTime)
-                        .add(JUDGING_SESSION_LENGTH, 'seconds')
-                        .format('HH:mm')}`}
-                  </Box>
-                </TableCell>
-              ))}
+              {currentSessions.map(session => {
+                const team = teams.find(t => t._id === session.team);
+                return (
+                  <TableCell key={session._id.toString()} align="center">
+                    <Box alignItems="center">
+                      {team && <StyledTeamTooltip team={team} />}
+                      <br />
+                      <StatusIcon status={session.status} />
+                      <br />
+                      {session.startTime &&
+                        `סיום: ${dayjs(session.startTime)
+                          .add(JUDGING_SESSION_LENGTH, 'seconds')
+                          .format('HH:mm')}`}
+                    </Box>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           )}
           {nextSessions.length > 0 && (
@@ -189,13 +190,14 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {nextSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <StyledTeamTooltip
-                    team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                  />
-                </TableCell>
-              ))}
+              {nextSessions.map(session => {
+                const team = teams.find(t => t._id === session.team);
+                return (
+                  <TableCell key={session._id.toString()} align="center">
+                    {team && <StyledTeamTooltip team={team} />}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           )}
         </TableBody>
@@ -258,6 +260,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );

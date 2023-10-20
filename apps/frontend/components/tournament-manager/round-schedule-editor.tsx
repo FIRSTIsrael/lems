@@ -43,7 +43,7 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 
         return (
           <TableCell key={table._id.toString()} align="center">
-            <EditableTeamCell teams={teams} initialTeam={team || null} />
+            {/* <EditableTeamCell teams={teams} initialTeam={team || null} /> */}
           </TableCell>
         );
       })}

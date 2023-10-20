@@ -7,6 +7,7 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab } from '@mui/material';
 import {
   Event,
+  EventState,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -19,7 +20,6 @@ import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
 import EventPanel from '../../../components/tournament-manager/event-panel';
-import AwardsPanel from '../../../components/tournament-manager/awards-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -83,9 +83,21 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+  };
+
+  //TODO: handle match updated
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['pit-admin'],
+    ['pit-admin', 'field', 'judging'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
@@ -102,7 +114,11 @@ const Page: NextPage<Props> = ({
           handleTicketUpdated(ticket);
           enqueueSnackbar('עודכנה קריאה!', { variant: 'info' });
         }
-      }
+      },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 
@@ -137,7 +153,13 @@ const Page: NextPage<Props> = ({
             <FieldScheduleEditor teams={teams} tables={tables} matches={matches} />
           </TabPanel>
           <TabPanel value="2">
-            <JudgingScheduleEditor teams={teams} rooms={rooms} sessions={sessions} />
+            <JudgingScheduleEditor
+              event={event}
+              teams={teams}
+              rooms={rooms}
+              sessions={sessions}
+              socket={socket}
+            />
           </TabPanel>
           <TabPanel value="3">
             <EventPanel />
