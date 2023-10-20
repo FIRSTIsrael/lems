@@ -85,7 +85,12 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       setDisplayState('timer');
     } else {
       const loadedMatch = matches.find(m => m._id === eventState.loadedMatch);
-      const completedMatches = matches.filter(m => m.status === 'completed');
+      const loadedMatchParticipant = loadedMatch?.participants
+        .filter(p => p.teamId)
+        .find(p => p.tableId === table._id);
+      const completedMatches = matches
+        .filter(m => m.participants.some(p => p.tableId === table._id && p.teamId))
+        .filter(m => m.status === 'completed');
       const lastCompletedMatch = completedMatches[completedMatches.length - 1];
       const completedMatchParticipant = lastCompletedMatch?.participants
         .filter(p => p.teamId)
@@ -98,21 +103,23 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
           .find(p => p.tableId === table._id);
         if (lastCompletedMatchParticipant?.present === 'no-show') {
           setMatch(loadedMatch);
-          setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+          setDisplayState(loadedMatchParticipant ? 'prestart' : 'no-match');
         } else {
           // Check if we finished doing the scoresheet of the last completed match
           getScoresheet(lastCompletedMatch).then(scoresheet => {
+            console.log(scoresheet);
+
             if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
               router.push(
                 `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
               );
             } else {
               setMatch(loadedMatch);
-              setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+              setDisplayState(loadedMatchParticipant ? 'prestart' : 'no-match');
             }
           });
         }
-      } else if (loadedMatch) {
+      } else if (loadedMatchParticipant) {
         setMatch(loadedMatch);
         setDisplayState('prestart');
       } else {

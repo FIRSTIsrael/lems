@@ -15,9 +15,9 @@ import { RobotGameMatch, WSClientEmittedEvents, WSServerEmittedEvents } from '@l
 
 interface ControlActionsProps {
   eventId: string;
-  nextMatchId?: ObjectId;
-  loadedMatch?: WithId<RobotGameMatch>;
-  activeMatchId?: ObjectId;
+  nextMatchId: ObjectId | null;
+  loadedMatch: WithId<RobotGameMatch> | null;
+  activeMatchId: ObjectId | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
@@ -32,7 +32,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   const [open, setOpen] = useState<boolean>(false);
 
   const loadNextMatch = useCallback(() => {
-    if (nextMatchId === undefined) return;
+    if (!nextMatchId) return;
     socket.emit('loadMatch', eventId, nextMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
@@ -41,7 +41,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   }, [eventId, nextMatchId, socket]);
 
   const startMatch = useCallback(() => {
-    if (loadedMatch === undefined) return;
+    if (!loadedMatch) return;
     socket.emit('startMatch', eventId, loadedMatch._id.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
@@ -62,7 +62,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   }, [eventId, activeMatchId, socket]);
 
   const abortMatch = useCallback(() => {
-    if (activeMatchId === undefined) return;
+    if (!activeMatchId) return;
     socket.emit('abortMatch', eventId, activeMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
@@ -97,8 +97,8 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       </Button>
       <Button
         variant="contained"
-        color={loadedMatch?._id === undefined ? 'inherit' : matchShown ? 'warning' : 'success'}
-        disabled={loadedMatch?._id === undefined || activeMatchId !== undefined}
+        color={!loadedMatch?._id ? 'inherit' : matchShown ? 'warning' : 'success'}
+        disabled={!loadedMatch?._id || activeMatchId !== undefined}
         size="large"
         onClick={() => {
           setMatchShown(true);
@@ -110,13 +110,13 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       >
         הצגת המקצה
       </Button>
-      {activeMatchId === undefined ? (
+      {!activeMatchId ? (
         <Button
           variant="contained"
-          color={loadedMatch?._id === undefined ? 'inherit' : 'success'}
+          color={!loadedMatch?._id ? 'inherit' : 'success'}
           disabled={
-            loadedMatch?._id === undefined ||
-            activeMatchId !== undefined ||
+            !loadedMatch?._id ||
+            activeMatchId ||
             !!loadedMatch.participants.filter(p => p.teamId).find(p => !p.ready)
           }
           size="large"

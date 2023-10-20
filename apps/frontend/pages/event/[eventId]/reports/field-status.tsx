@@ -24,8 +24,8 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 
 interface MatchStatusTimerProps {
-  activeMatch: WithId<RobotGameMatch> | undefined;
-  loadedMatch: WithId<RobotGameMatch> | undefined;
+  activeMatch: WithId<RobotGameMatch> | null;
+  loadedMatch: WithId<RobotGameMatch> | null;
   teams: Array<WithId<Team>>;
 }
 
@@ -198,22 +198,20 @@ const Page: NextPage<Props> = ({
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus !== 'connecting'}
       >
-        <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
+        <MatchStatusTimer
+          activeMatch={activeMatch || null}
+          loadedMatch={loadedMatch || null}
+          teams={teams}
+        />
         <Stack direction="row" spacing={2} my={4}>
           <ActiveMatch
             title="מקצה רץ"
-            match={
-              matches?.find(match => match._id === eventState.activeMatch) ||
-              ({} as WithId<RobotGameMatch>)
-            }
+            match={matches?.find(match => match._id === eventState.activeMatch) || null}
             startTime={matches?.find(match => match._id === eventState.activeMatch)?.startTime}
           />
           <ActiveMatch
             title="המקצה הבא"
-            match={
-              matches?.find(match => match._id === eventState.loadedMatch) ||
-              ({} as WithId<RobotGameMatch>)
-            }
+            match={matches?.find(match => match._id === eventState.loadedMatch) || null}
           />
         </Stack>
       </Layout>

@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
       matches
         .slice()
         .reverse()
-        .find(m => m.status === 'completed'),
+        .find(m => m.status === 'completed' && m.stage !== 'test'),
     [matches]
   );
 
@@ -76,10 +76,10 @@ const Page: NextPage<Props> = ({
 
   const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
+    newEventState?: WithId<EventState>
   ) => {
-    setEventState(newEventState);
     updateMatches(newMatch);
+    if (newEventState) setEventState(newEventState);
   };
 
   const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {

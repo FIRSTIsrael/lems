@@ -101,6 +101,7 @@ const Page: NextPage<Props> = ({
     ['field', 'pit-admin'],
     undefined,
     [
+      { name: 'matchLoaded', handler: handleMatchEvent },
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },

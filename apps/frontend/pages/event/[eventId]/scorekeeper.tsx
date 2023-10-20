@@ -122,7 +122,7 @@ const Page: NextPage<Props> = ({
               event={event}
               eventState={eventState}
               matches={matches}
-              nextMatchId={nextMatchId}
+              nextMatchId={nextMatchId || null}
               socket={socket}
             />
           </TabPanel>

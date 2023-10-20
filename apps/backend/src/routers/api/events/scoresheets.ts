@@ -18,4 +18,13 @@ router.get('/', async (req: Request, res: Response) => {
   res.json(scoresheets);
 });
 
+router.get('/:scoresheetId', (req: Request, res: Response) => {
+  db.getScoresheet({
+    _id: new ObjectId(req.params.scoresheetId),
+    eventId: new ObjectId(req.params.eventId)
+  }).then(scoresheet => {
+    res.json(scoresheet);
+  });
+});
+
 export default router;

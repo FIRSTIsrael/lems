@@ -18,7 +18,7 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, showCl
   return (
     <Grid container columnGap={4} rowGap={2} justifyContent="center">
       {tickets.filter(t => !t.closed).length === 0 && (
-        <Grid component={Paper} p={2} textAlign="center">
+        <Grid component={Paper} p={4} textAlign="center">
           <Typography variant="h1">אין קריאות פתוחות כרגע</Typography>
         </Grid>
       )}

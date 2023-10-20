@@ -45,7 +45,7 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         )
       };
     })
-    .sort((a, b) => a.score - b.score);
+    .sort((a, b) => b.score - a.score);
 
   const marquee = keyframes`
   from {transform: translateY(0)}

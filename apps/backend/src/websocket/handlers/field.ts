@@ -249,9 +249,10 @@ export const handleUpdateScoresheet = async (
   await db.updateScoresheet({ _id: scoresheet._id }, scoresheetData);
 
   callback({ ok: true });
+  const oldScoresheet = scoresheet;
   scoresheet = await db.getScoresheet({ _id: new ObjectId(scoresheetId) });
   namespace.to('field').emit('scoresheetUpdated', scoresheet);
-  if (scoresheetData.status !== scoresheet.status)
+  if (scoresheetData.status !== oldScoresheet.status)
     namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
 };
 

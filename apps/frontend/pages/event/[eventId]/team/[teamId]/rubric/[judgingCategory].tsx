@@ -92,7 +92,11 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
     {
       name: 'rubricUpdated',
       handler: rubric => {
-        if (rubric.teamId === router.query.teamId) setRubric(rubric);
+        if (
+          rubric.teamId === router.query.teamId &&
+          rubric.category === router.query.judgingCategory
+        )
+          setRubric(rubric);
       }
     }
   ]);

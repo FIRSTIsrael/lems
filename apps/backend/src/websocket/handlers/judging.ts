@@ -135,9 +135,9 @@ export const handleUpdateRubric = async (
   await db.updateRubric({ _id: rubric._id }, rubricData);
 
   callback({ ok: true });
+  const oldRubric = rubric;
   rubric = await db.getRubric({ _id: new ObjectId(rubricId) });
-
   namespace.to('judging').emit('rubricUpdated', rubric);
-  if (rubricData.status !== rubric.status)
+  if (rubricData.status !== oldRubric.status)
     namespace.to('judging').emit('rubricStatusChanged', rubric);
 };

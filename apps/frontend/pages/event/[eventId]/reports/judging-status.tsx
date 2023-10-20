@@ -151,7 +151,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
             <TableCell></TableCell>
             {rooms.map(room => (
               <TableCell key={room._id.toString()} align="center">
-                {`חדר ${room.name}`}
+                חדר {room.name}
               </TableCell>
             ))}
           </TableRow>
@@ -164,21 +164,24 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {currentSessions.map(session => {
-                const team = teams.find(t => t._id === session.teamId);
+              {rooms.map(room => {
+                const session = currentSessions.find(s => s.roomId === room._id);
+                const team = teams.find(t => t._id === session?.teamId);
                 return (
-                  <TableCell key={session._id.toString()} align="center">
-                    <Box alignItems="center">
-                      {team && <StyledTeamTooltip team={team} />}
-                      <br />
-                      <StatusIcon status={session.status} />
-                      <br />
-                      {session.startTime &&
-                        `סיום: ${dayjs(session.startTime)
-                          .add(JUDGING_SESSION_LENGTH, 'seconds')
-                          .format('HH:mm')}`}
-                    </Box>
-                  </TableCell>
+                  session && (
+                    <TableCell key={session._id.toString()} align="center">
+                      <Box alignItems="center">
+                        {team && <StyledTeamTooltip team={team} />}
+                        <br />
+                        <StatusIcon status={session.status} />
+                        <br />
+                        {session.startTime &&
+                          `סיום: ${dayjs(session.startTime)
+                            .add(JUDGING_SESSION_LENGTH, 'seconds')
+                            .format('HH:mm')}`}
+                      </Box>
+                    </TableCell>
+                  )
                 );
               })}
             </TableRow>
@@ -190,12 +193,15 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {nextSessions.map(session => {
-                const team = teams.find(t => t._id === session.teamId);
+              {rooms.map(room => {
+                const session = nextSessions.find(s => s.roomId === room._id);
+                const team = teams.find(t => t._id === session?.teamId);
                 return (
-                  <TableCell key={session._id.toString()} align="center">
-                    {team && <StyledTeamTooltip team={team} />}
-                  </TableCell>
+                  session && (
+                    <TableCell key={session._id.toString()} align="center">
+                      {team && <StyledTeamTooltip team={team} />}
+                    </TableCell>
+                  )
                 );
               })}
             </TableRow>
