@@ -1,5 +1,7 @@
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
+import { Socket } from 'socket.io-client';
+import { enqueueSnackbar } from 'notistack';
 import { Formik, Form, FormikValues, FormikHelpers } from 'formik';
 import {
   Button,
@@ -13,6 +15,7 @@ import {
   TableRow
 } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
   Event,
   Team,
@@ -23,8 +26,6 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import EditableTeamCell from './editable-team-cell';
-import { Socket } from 'socket.io-client';
-import { enqueueSnackbar } from 'notistack';
 interface JudgingScheduleEditorRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
@@ -76,7 +77,13 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
   sessions,
   socket
 }) => {
-  const handleSubmit = (values: FormikValues, actions: FormikHelpers<any>) => {
+  const getInitialValues = () => {
+    return Object.fromEntries(
+      sessions.map(s => [s._id.toString(), teams.find(t => t._id === s.team) || null])
+    );
+  };
+
+  const handleSubmit = (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const sessionsChanged = Object.keys(values).filter(
       sessionId =>
         sessions.find(s => s._id.toString() === sessionId)?.team?.toString() !==
@@ -103,14 +110,8 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
   };
 
   return (
-    <Formik
-      initialValues={Object.fromEntries(
-        sessions.map(s => [s._id.toString(), teams.find(t => t._id === s.team)])
-      )}
-      enableReinitialize
-      onSubmit={handleSubmit}
-    >
-      {({ submitForm }) => (
+    <Formik initialValues={getInitialValues()} enableReinitialize onSubmit={handleSubmit}>
+      {({ resetForm, submitForm }) => (
         <Form>
           <TableContainer component={Paper}>
             <Table>
@@ -140,7 +141,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
               </TableBody>
             </Table>
           </TableContainer>
-          <Stack justifyContent="center" direction="row" mt={2}>
+          <Stack justifyContent="center" direction="row" mt={2} spacing={2}>
             <Button
               startIcon={<SaveOutlinedIcon />}
               sx={{ minWidth: 200 }}
@@ -148,6 +149,15 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
               onClick={submitForm}
             >
               שמירה
+            </Button>
+            <Button
+              startIcon={<RestartAltIcon />}
+              sx={{ minWidth: 200 }}
+              variant="contained"
+              color="warning"
+              onClick={() => resetForm()}
+            >
+              ביטול
             </Button>
           </Stack>
         </Form>

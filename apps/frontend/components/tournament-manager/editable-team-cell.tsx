@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { FastField, FieldProps } from 'formik';
+import { Field, FieldProps } from 'formik';
 import { Autocomplete, TextField } from '@mui/material';
 import { Team } from '@lems/types';
 
@@ -14,12 +14,27 @@ const EditableTeamCell: React.FC<EditableTeamCellProps> = ({ name, teams, disabl
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
   return (
-    <FastField
+    <Field
       name={name}
       component={({ field, form }: FieldProps) => (
         <Autocomplete
-          options={dropdownOptions}
+          options={dropdownOptions.sort((a, b) => {
+            if (!a) return -1;
+            if (!b) return 1;
+
+            return (
+              Object.values(form.values).filter(v => v === a).length -
+              Object.values(form.values).filter(v => v === b).length
+            );
+          })}
           getOptionLabel={team => (team ? team.number.toString() : '-')}
+          groupBy={team =>
+            !team
+              ? ''
+              : Object.values(form.values).filter(v => v === team).length === 0
+              ? 'חסר'
+              : 'קיים'
+          }
           inputMode="search"
           disableClearable={field.value !== null}
           disabled={disabled}
@@ -33,6 +48,14 @@ const EditableTeamCell: React.FC<EditableTeamCellProps> = ({ name, teams, disabl
               }}
             />
           )}
+          sx={{
+            '& .MuiAutocomplete-inputRoot': {
+              color:
+                Object.values(form.values).filter(v => v === field.value).length > 1
+                  ? '#f57c00'
+                  : ''
+            }
+          }}
           value={field.value}
           onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
         />
