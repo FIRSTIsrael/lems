@@ -61,7 +61,9 @@ const Page: NextPage<Props> = ({
   const handleTeamRegistered = (team: WithId<Team>) => {
     setMatches(matches =>
       matches.map(m => {
-        const teamIndex = m.participants.findIndex(p => p.teamId === team._id);
+        const teamIndex = m.participants
+          .filter(p => p.teamId)
+          .findIndex(p => p.teamId === team._id);
         if (teamIndex !== -1) {
           const newMatch = structuredClone(m);
           newMatch.participants[teamIndex].team = team;
@@ -81,7 +83,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchParticipantPrestarted', handler: updateMatches },
+      { name: 'matchUpdated', handler: updateMatches },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );

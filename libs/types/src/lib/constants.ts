@@ -63,7 +63,7 @@ export type RubricInnerFields<T extends JudgingCategory> =
   | RubricInnerFieldPairs<T>[0]
   | RubricInnerFieldPairs<T>[1];
 
-export const JUDGING_SESSION_LENGTH = 2 * 60;
+export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const SEASON_NAME = 'MASTERPIECE℠';
 

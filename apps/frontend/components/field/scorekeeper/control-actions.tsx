@@ -117,7 +117,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
           disabled={
             loadedMatch?._id === undefined ||
             activeMatchId !== undefined ||
-            !!loadedMatch.participants.find(p => !p.ready)
+            !!loadedMatch.participants.filter(p => p.teamId).find(p => !p.ready)
           }
           size="large"
           onClick={startMatch}

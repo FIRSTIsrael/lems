@@ -55,6 +55,7 @@ const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
               <TableCell>{localizedMatchStatus[match.status]}</TableCell>
               <TableCell>
                 {match.participants
+                  .filter(p => p.teamId)
                   .map(({ team, tableName }) => `${tableName} - #${team?.number}`)
                   .join(', ')}
               </TableCell>

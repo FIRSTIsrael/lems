@@ -84,11 +84,11 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
           )}
           {loadedMatch && (
             <Typography variant="h4">
-              {loadedMatch.participants.filter(p => !!p.ready).length} מתוך{' '}
+              {loadedMatch.participants.filter(p => p.teamId).filter(p => !!p.ready).length} מתוך{' '}
               {
-                loadedMatch.participants.filter(
-                  p => teams.find(team => team._id === p.teamId)?.registered
-                ).length
+                loadedMatch.participants
+                  .filter(p => p.teamId)
+                  .filter(p => teams.find(team => team._id === p.teamId)?.registered).length
               }{' '}
               שולחנות מוכנים
             </Typography>
@@ -177,7 +177,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchParticipantPrestarted', handler: handleMatchEvent }
+      { name: 'matchUpdated', handler: handleMatchEvent }
     ]
   );
 

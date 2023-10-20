@@ -58,11 +58,9 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
         );
 
         return (
-          team && (
-            <TableCell key={r._id.toString()} align="center">
-              <StyledTeamTooltip team={team} />
-            </TableCell>
-          )
+          <TableCell key={r._id.toString()} align="center">
+            {team && <StyledTeamTooltip team={team} />}
+          </TableCell>
         );
       })}
     </TableRow>

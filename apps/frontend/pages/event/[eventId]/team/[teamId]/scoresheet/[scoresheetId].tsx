@@ -106,6 +106,11 @@ const Page: NextPage<Props> = ({
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('המקצה טרם נגמר.', { variant: 'info' });
   }
+  if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
+    router.push(`/event/${event._id}/${user.role}`);
+    enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
+  }
+
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
     router.push(`/event/${event._id}/${user.role}`);
 
@@ -185,7 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ).then(res => res?.json());
 
       match = matches.find((m: RobotGameMatch) =>
-        m.participants.find(p => p.teamId.toString() === ctx.params?.teamId)
+        m.participants.filter(p => p.teamId).find(p => p.teamId?.toString() === ctx.params?.teamId)
       );
     } else {
       const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
@@ -194,19 +199,25 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
       match = matches.find(
         (match: RobotGameMatch) =>
-          !!match.participants.find(p => p.teamId?.toString() === ctx.params?.teamId)
+          !!match.participants
+            .filter(p => p.teamId)
+            .find(p => p.teamId?.toString() === ctx.params?.teamId)
       );
 
-      tableId = match.participants.find(p => p.teamId?.toString() === ctx.params?.teamId)?.tableId;
+      tableId = match.participants
+        .filter(p => p.teamId)
+        .find(p => p.teamId?.toString() === ctx.params?.teamId)?.tableId;
     }
 
-    const team = match.participants.find(p => p.teamId.toString() === ctx.params?.teamId)?.team;
+    const team = match.participants
+      .filter(p => p.teamId)
+      .find(p => p.teamId?.toString() === ctx.params?.teamId)?.team;
 
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.event}`,
         table: `/api/events/${user.event}/tables/${tableId}`,
-        scoresheet: `/api/events/${user.event}/tables/${tableId}/matches/${match._id}/scoresheet`
+        scoresheet: `/api/events/${user.event}/teams/${team?._id}/scoresheets/?stage=${match.stage}&round=${match.round}`
       },
       ctx
     );

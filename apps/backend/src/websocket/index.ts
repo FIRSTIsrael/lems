@@ -5,7 +5,12 @@ import {
   WSInterServerEvents,
   WSSocketData
 } from '@lems/types';
-import { handleStartSession, handleAbortSession, handleUpdateRubric } from './handlers/judging';
+import {
+  handleStartSession,
+  handleAbortSession,
+  handleUpdateSessionTeam,
+  handleUpdateRubric
+} from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
   handleAbortMatch,
@@ -14,7 +19,8 @@ import {
   handleStartMatch,
   handleStartTestMatch,
   handleUpdateScoresheet,
-  handleUpdateAudienceDisplayState
+  handleUpdateAudienceDisplayState,
+  handleUpdateMatchTeams
 } from './handlers/field';
 
 const websocket = (
@@ -36,6 +42,8 @@ const websocket = (
 
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));
 
+  socket.on('updateJudgingSessionTeam', (...args) => handleUpdateSessionTeam(namespace, ...args));
+
   socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
 
   socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
@@ -51,6 +59,8 @@ const websocket = (
   socket.on('startTestMatch', (...args) => handleStartTestMatch(namespace, ...args));
 
   socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
+
+  socket.on('updateMatchTeams', (...args) => handleUpdateMatchTeams(namespace, ...args));
 
   socket.on('prestartMatchParticipant', (...args) =>
     handlePrestartMatchParticipant(namespace, ...args)
