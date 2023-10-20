@@ -7,7 +7,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Typography
 } from '@mui/material';
 import {
   Event,
@@ -17,8 +18,7 @@ import {
   JudgingSession,
   JUDGING_SESSION_LENGTH
 } from '@lems/types';
-import StyledTeamTooltip from '../general/styled-team-tooltip';
-
+import EditableTeamCell from './editable-team-cell';
 interface JudgingScheduleRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
@@ -44,11 +44,9 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
         );
 
         return (
-          team && (
-            <TableCell key={r._id.toString()} align="center">
-              <StyledTeamTooltip team={team} />
-            </TableCell>
-          )
+          <TableCell key={r._id.toString()} align="center">
+            <EditableTeamCell teams={teams} initialTeam={team || null} />
+          </TableCell>
         );
       })}
     </TableRow>

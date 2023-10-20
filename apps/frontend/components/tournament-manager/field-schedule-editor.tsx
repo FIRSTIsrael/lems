@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Team, RobotGameMatch, RobotGameTable } from '@lems/types';
-import ReportRoundSchedule from '../field/report-round-schedule';
+import RoundScheduleEditor from './round-schedule-editor';
 
 interface FieldScheduleEditorProps {
   teams: Array<WithId<Team>>;
@@ -16,8 +16,7 @@ const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({ teams, tables
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
       <Grid xs={12} key={'practice' + r}>
-        <ReportRoundSchedule
-          eventSchedule={[]}
+        <RoundScheduleEditor
           roundStage={'practice'}
           roundNumber={r}
           matches={practiceMatches.filter(m => m.round === r)}
@@ -29,8 +28,7 @@ const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({ teams, tables
     .concat(
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
         <Grid xs={12} key={'ranking' + r}>
-          <ReportRoundSchedule
-            eventSchedule={[]}
+          <RoundScheduleEditor
             roundStage={'ranking'}
             roundNumber={r}
             matches={rankingMatches.filter(m => m.round === r)}
