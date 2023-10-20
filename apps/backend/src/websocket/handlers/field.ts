@@ -188,7 +188,7 @@ export const handlePrestartMatchParticipant = async (
 
   callback({ ok: true });
   match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
-  namespace.to('field').emit('matchParticipantPrestarted', match);
+  namespace.to('field').emit('matchUpdated', match);
 };
 
 export const handleUpdateScoresheet = async (
