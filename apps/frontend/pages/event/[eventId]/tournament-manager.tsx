@@ -129,9 +129,8 @@ const Page: NextPage<Props> = ({
             >
               <Tab label="זירה" value="1" />
               <Tab label="שיפוט" value="2" />
-              <Tab label="פרסים" value="3" />
-              <Tab label="אירוע" value="4" />
-              <Tab label="קריאות" value="5" />
+              <Tab label="אירוע" value="3" />
+              <Tab label="קריאות" value="4" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
@@ -141,12 +140,9 @@ const Page: NextPage<Props> = ({
             <JudgingScheduleEditor teams={teams} rooms={rooms} sessions={sessions} />
           </TabPanel>
           <TabPanel value="3">
-            <AwardsPanel />
-          </TabPanel>
-          <TabPanel value="4">
             <EventPanel />
           </TabPanel>
-          <TabPanel value="5">
+          <TabPanel value="4">
             <TicketPanel
               event={event}
               teams={teams}
