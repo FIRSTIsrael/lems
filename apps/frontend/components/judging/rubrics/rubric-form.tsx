@@ -178,7 +178,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
         enableReinitialize
         validateOnMount
       >
-        {({ values, isValid, validateForm, resetForm }) => (
+        {({ values, isValid, resetForm }) => (
           <Form>
             {!hideTitle && (
               <Typography variant="h2" sx={{ mb: 2 }}>
