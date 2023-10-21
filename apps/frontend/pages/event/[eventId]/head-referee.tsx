@@ -63,10 +63,10 @@ const Page: NextPage<Props> = ({
 
   const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
+    newEventState?: WithId<EventState>
   ) => {
-    setEventState(newEventState);
     updateMatches(newMatch);
+    if (newEventState) setEventState(newEventState);
   };
 
   const updateScoresheet = (scoresheet: WithId<Scoresheet>) => {
@@ -83,7 +83,9 @@ const Page: NextPage<Props> = ({
   const handleTeamRegistered = (team: WithId<Team>) => {
     setMatches(matches =>
       matches.map(m => {
-        const teamIndex = m.participants.findIndex(p => p.teamId === team._id);
+        const teamIndex = m.participants
+          .filter(p => p.teamId)
+          .findIndex(p => p.teamId === team._id);
         if (teamIndex !== -1) {
           const newMatch = structuredClone(m);
           newMatch.participants[teamIndex].team = team;
@@ -99,10 +101,11 @@ const Page: NextPage<Props> = ({
     ['field', 'pit-admin'],
     undefined,
     [
+      { name: 'matchLoaded', handler: handleMatchEvent },
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'scoresheetStatusChanged', handler: updateScoresheet },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
@@ -176,11 +179,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}/?withSchedule=true`,
-        eventState: `/api/events/${user.event}/state`,
-        tables: `/api/events/${user.event}/tables`,
-        matches: `/api/events/${user.event}/matches`,
-        scoresheets: `/api/events/${user.event}/scoresheets`
+        event: `/api/events/${user.eventId}/?withSchedule=true`,
+        eventState: `/api/events/${user.eventId}/state`,
+        tables: `/api/events/${user.eventId}/tables`,
+        matches: `/api/events/${user.eventId}/matches`,
+        scoresheets: `/api/events/${user.eventId}/scoresheets`
       },
       ctx
     );

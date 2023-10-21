@@ -16,7 +16,7 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
   console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     {
       loadedMatch: match._id
     }
@@ -25,12 +25,12 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
   console.log(`✅ Loaded match #${matchId}!`);
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  const eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  const eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('matchLoaded', match, eventState);
 };
 
 export const handleStartMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   if (eventState.activeMatch !== null) {
     callback({
       ok: false,
@@ -72,7 +72,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
         await db.updateEventState({ _id: eventState._id }, { activeMatch: null });
 
         const match = await db.getMatch({ _id: new ObjectId(matchId) });
-        eventState = await db.getEventState({ event: new ObjectId(eventId) });
+        eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
         namespace.to('field').emit('matchCompleted', match, eventState);
       }
     }.bind(null, startTime)
@@ -90,7 +90,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     }
   );
 
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   callback({ ok: true });
   namespace.to('field').emit('matchStarted', match, eventState);
 };
@@ -110,7 +110,7 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
 };
 
 export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   if (eventState.activeMatch.toString() !== matchId) {
     callback({
       ok: false,
@@ -135,7 +135,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
     );
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     {
       activeMatch: null,
       ...(match.stage !== 'test' && { loadedMatch: new ObjectId(matchId) })
@@ -144,9 +144,42 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
 
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('matchAborted', match, eventState);
   if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
+};
+
+export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTeams, callback) => {
+  let match = await db.getMatch({ _id: new ObjectId(matchId) });
+
+  if (!match) {
+    callback({ ok: false, error: `Could not find match ${matchId}!` });
+    return;
+  }
+  if (match.status !== 'not-started') {
+    callback({ ok: false, error: `Match ${matchId} is not editable!` });
+    return;
+  }
+
+  console.log(`🖊️ Updating teams for match ${matchId} in event ${eventId}`);
+
+  newTeams.forEach(async newTeam => {
+    const participantIndex = match.participants.findIndex(
+      p => p.tableId.toString() === newTeam.tableId
+    );
+    await db.updateMatch(
+      { _id: match._id },
+      {
+        [`participants.${participantIndex}.teamId`]: newTeam.teamId
+          ? new ObjectId(newTeam.teamId)
+          : null
+      }
+    );
+  });
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId) });
+  namespace.to('field').emit('matchUpdated', match);
 };
 
 export const handlePrestartMatchParticipant = async (
@@ -188,7 +221,7 @@ export const handlePrestartMatchParticipant = async (
 
   callback({ ok: true });
   match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
-  namespace.to('field').emit('matchParticipantPrestarted', match);
+  namespace.to('field').emit('matchUpdated', match);
 };
 
 export const handleUpdateScoresheet = async (
@@ -200,7 +233,7 @@ export const handleUpdateScoresheet = async (
   callback
 ) => {
   let scoresheet = await db.getScoresheet({
-    teamId: new ObjectId(teamId),
+    teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(scoresheetId)
   });
   if (!scoresheet) {
@@ -216,9 +249,10 @@ export const handleUpdateScoresheet = async (
   await db.updateScoresheet({ _id: scoresheet._id }, scoresheetData);
 
   callback({ ok: true });
+  const oldScoresheet = scoresheet;
   scoresheet = await db.getScoresheet({ _id: new ObjectId(scoresheetId) });
   namespace.to('field').emit('scoresheetUpdated', scoresheet);
-  if (scoresheetData.status !== scoresheet.status)
+  if (scoresheetData.status !== oldScoresheet.status)
     namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
 };
 
@@ -228,7 +262,7 @@ export const handleUpdateAudienceDisplayState = async (
   newDisplayState,
   callback
 ) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
 
   if (!eventState) {
     callback({
@@ -247,10 +281,10 @@ export const handleUpdateAudienceDisplayState = async (
   }
 
   await db.updateEventState(
-    { event: new ObjectId(eventId) },
+    { eventId: new ObjectId(eventId) },
     { audienceDisplayState: newDisplayState }
   );
 
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('field').emit('audienceDisplayStateUpdated', eventState);
 };

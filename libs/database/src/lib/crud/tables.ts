@@ -7,7 +7,7 @@ export const getTable = (filter: Filter<RobotGameTable>) => {
 };
 
 export const getEventTables = (eventId: ObjectId) => {
-  return db.collection<RobotGameTable>('tables').find({ event: eventId }).toArray();
+  return db.collection<RobotGameTable>('tables').find({ eventId }).toArray();
 };
 
 export const addTable = (table: RobotGameTable) => {
@@ -42,6 +42,6 @@ export const deleteTable = (filter: Filter<RobotGameTable>) => {
 export const deleteEventTables = (eventId: ObjectId) => {
   return db
     .collection<RobotGameTable>('tables')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId })
     .then(response => response);
 };

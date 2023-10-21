@@ -65,7 +65,7 @@ const parseTeams = (lines: Line[], event: WithId<Event>) => {
   return lines.map(
     rawTeam =>
       ({
-        event: event._id,
+        eventId: event._id,
         number: parseInt(rawTeam[0]),
         name: rawTeam[1],
         registered: false,
@@ -86,7 +86,7 @@ const parseTables = (lines: Line[], event: WithId<Event>) => {
   return tables.map(
     name =>
       ({
-        event: event._id,
+        eventId: event._id,
         name
       } as RobotGameTable)
   );
@@ -101,7 +101,7 @@ const parseRooms = (lines: Line[], event: WithId<Event>) => {
   return rooms.map(
     name =>
       ({
-        event: event._id,
+        eventId: event._id,
         name
       } as JudgingRoom)
   );
@@ -149,18 +149,21 @@ const parseMatches = (
       participants: []
     };
 
-    for (let i = 4; i < line.length; i++) {
+    for (let i = 4; i < tableNames.length + 4; i++) {
+      const table = tables.find(table => table.name === tableNames[i - 4]);
+
+      let team = null;
       if (line[i]) {
-        const table = tables.find(table => table.name === tableNames[i - 4]);
-        const team = teams.find(team => team.number === parseInt(line[i]));
-        match.participants.push({
-          teamId: team._id,
-          tableId: table._id,
-          tableName: table.name,
-          ready: false,
-          present: 'no-show'
-        });
+        team = teams.find(team => team.number === parseInt(line[i]));
       }
+
+      match.participants.push({
+        teamId: team?._id || null,
+        tableId: table._id,
+        tableName: table.name,
+        ready: false,
+        present: 'no-show'
+      });
     }
 
     matches.push(match);
@@ -189,19 +192,21 @@ const parseSessions = (
       .set('minute', parseInt(minute))
       .set('second', 0);
 
-    for (let i = 3; i < line.length; i++) {
-      if (line[i]) {
-        const room = rooms.find(table => table.name === roomNames[i - 3]);
-        const team = teams.find(team => team.number === parseInt(line[i]));
+    for (let i = 3; i < roomNames.length + 3; i++) {
+      const room = rooms.find(table => table.name === roomNames[i - 3]);
+      const session = {
+        number,
+        scheduledTime: startTime.toDate(),
+        roomId: room._id,
+        teamId: null,
+        status: 'not-started'
+      };
 
-        sessions.push({
-          number,
-          scheduledTime: startTime.toDate(),
-          team: team._id,
-          room: room._id,
-          status: 'not-started'
-        } as JudgingSession);
+      if (line[i]) {
+        session.teamId = teams.find(team => team.number === parseInt(line[i]))._id;
       }
+
+      sessions.push(session as JudgingSession);
     }
   });
 

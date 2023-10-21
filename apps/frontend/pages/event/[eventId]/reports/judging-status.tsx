@@ -105,7 +105,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               {currentSessions.filter(session => !!session.startTime).length} מתוך{' '}
               {
                 currentSessions.filter(
-                  session => teams.find(team => team._id === session.team)?.registered
+                  session => teams.find(team => team._id === session.teamId)?.registered
                 ).length
               }{' '}
               קבוצות בחדר השיפוט
@@ -151,7 +151,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
             <TableCell></TableCell>
             {rooms.map(room => (
               <TableCell key={room._id.toString()} align="center">
-                {`חדר ${room.name}`}
+                חדר {room.name}
               </TableCell>
             ))}
           </TableRow>
@@ -164,22 +164,26 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {currentSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <Box alignItems="center">
-                    <StyledTeamTooltip
-                      team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                    />
-                    <br />
-                    <StatusIcon status={session.status} />
-                    <br />
-                    {session.startTime &&
-                      `סיום: ${dayjs(session.startTime)
-                        .add(JUDGING_SESSION_LENGTH, 'seconds')
-                        .format('HH:mm')}`}
-                  </Box>
-                </TableCell>
-              ))}
+              {rooms.map(room => {
+                const session = currentSessions.find(s => s.roomId === room._id);
+                const team = teams.find(t => t._id === session?.teamId);
+                return (
+                  session && (
+                    <TableCell key={session._id.toString()} align="center">
+                      <Box alignItems="center">
+                        {team && <StyledTeamTooltip team={team} />}
+                        <br />
+                        <StatusIcon status={session.status} />
+                        <br />
+                        {session.startTime &&
+                          `סיום: ${dayjs(session.startTime)
+                            .add(JUDGING_SESSION_LENGTH, 'seconds')
+                            .format('HH:mm')}`}
+                      </Box>
+                    </TableCell>
+                  )
+                );
+              })}
             </TableRow>
           )}
           {nextSessions.length > 0 && (
@@ -189,13 +193,17 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                 <br />
                 {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </TableCell>
-              {nextSessions.map(session => (
-                <TableCell key={session._id.toString()} align="center">
-                  <StyledTeamTooltip
-                    team={teams.find(t => t._id === session.team) || ({} as WithId<Team>)}
-                  />
-                </TableCell>
-              ))}
+              {rooms.map(room => {
+                const session = nextSessions.find(s => s.roomId === room._id);
+                const team = teams.find(t => t._id === session?.teamId);
+                return (
+                  session && (
+                    <TableCell key={session._id.toString()} align="center">
+                      {team && <StyledTeamTooltip team={team} />}
+                    </TableCell>
+                  )
+                );
+              })}
             </TableRow>
           )}
         </TableBody>
@@ -258,6 +266,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );
@@ -311,11 +320,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        eventState: `/api/events/${user.event}/state`,
-        teams: `/api/events/${user.event}/teams`,
-        rooms: `/api/events/${user.event}/rooms`,
-        sessions: `/api/events/${user.event}/sessions`
+        event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
+        teams: `/api/events/${user.eventId}/teams`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
     );

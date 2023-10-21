@@ -36,10 +36,12 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
       </TableCell>
       {tables.map(table => {
         const participant = match.participants.find(p => p.tableId === table._id);
-        if (participant) {
+        if (participant?.teamId) {
           const scoresheet = scoresheets.find(
             scoresheet =>
-              scoresheet.matchId === match?._id && scoresheet.teamId === participant.teamId
+              scoresheet.stage === match.stage &&
+              scoresheet.round === match.round &&
+              scoresheet.teamId === participant.teamId
           );
           return (
             scoresheet && (

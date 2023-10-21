@@ -56,7 +56,7 @@ const Page: NextPage<Props> = ({
 
   const activeTeam = useMemo(() => {
     return currentSession
-      ? teams.find((t: WithId<Team>) => t._id == currentSession.team) || ({} as WithId<Team>)
+      ? teams.find((t: WithId<Team>) => t._id == currentSession.teamId) || ({} as WithId<Team>)
       : ({} as WithId<Team>);
   }, [teams, currentSession]);
 
@@ -101,6 +101,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric }
     ]
@@ -188,11 +189,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        teams: `/api/events/${user.event}/teams`,
-        room: `/api/events/${user.event}/rooms/${user.roleAssociation.value}`,
-        sessions: `/api/events/${user.event}/rooms/${user.roleAssociation.value}/sessions`,
-        rubrics: `/api/events/${user.event}/rooms/${user.roleAssociation.value}/rubrics`
+        event: `/api/events/${user.eventId}`,
+        teams: `/api/events/${user.eventId}/teams`,
+        room: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}`,
+        sessions: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}/sessions`,
+        rubrics: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}/rubrics`
       },
       ctx
     );

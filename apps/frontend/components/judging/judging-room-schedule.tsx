@@ -39,18 +39,20 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, rubrics, sock
         </TableHead>
         <TableBody>
           {sessions.map(session => {
-            const team = teams.find(team => team._id === session.team);
+            const team = teams.find(team => team._id === session.teamId);
             return (
-              <RoomScheduleRow
-                key={String(session.team) + session.scheduledTime}
-                event={event}
-                team={team ? team : ({} as WithId<Team>)}
-                room={room}
-                session={session}
-                user={user}
-                rubrics={rubrics}
-                socket={socket}
-              />
+              team && (
+                <RoomScheduleRow
+                  key={String(session.teamId) + session.scheduledTime}
+                  event={event}
+                  team={team}
+                  room={room}
+                  session={session}
+                  user={user}
+                  rubrics={rubrics}
+                  socket={socket}
+                />
+              )
             );
           })}
         </TableBody>

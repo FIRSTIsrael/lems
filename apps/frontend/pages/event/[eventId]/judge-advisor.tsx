@@ -104,6 +104,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric }
     ]
@@ -288,13 +289,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        eventState: `/api/events/${user.event}/state`,
-        teams: `/api/events/${user.event}/teams`,
-        rooms: `/api/events/${user.event}/rooms`,
-        sessions: `/api/events/${user.event}/sessions`,
-        rubrics: `/api/events/${user.event}/rubrics`,
-        awards: `/api/events/${user.event}/awards`
+        event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
+        teams: `/api/events/${user.eventId}/teams`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`,
+        rubrics: `/api/events/${user.eventId}/rubrics`,
+        awards: `/api/events/${user.eventId}/awards`
       },
       ctx
     );

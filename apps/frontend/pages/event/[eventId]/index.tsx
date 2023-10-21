@@ -7,7 +7,7 @@ export const Page: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-  return { redirect: { destination: `/event/${user.event}/${user.role}`, permanent: false } };
+  return { redirect: { destination: `/event/${user.eventId}/${user.role}`, permanent: false } };
 };
 
 export default Page;

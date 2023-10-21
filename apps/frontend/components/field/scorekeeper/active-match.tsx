@@ -8,18 +8,20 @@ import dayjs from 'dayjs';
 
 interface ActiveMatchProps {
   title: React.ReactNode;
-  match: WithId<RobotGameMatch>;
+  match: WithId<RobotGameMatch> | null;
   startTime?: Date;
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) => {
+  console.log(match);
+
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
       <Typography component="h2" fontSize="1.125rem" fontWeight={500}>
         {title}
       </Typography>
       <Typography fontSize="1.75rem" fontWeight={700}>
-        {match.number ? `מקצה #${match.number}` : match.stage === 'test' ? 'מקצה בדיקה' : '-'}
+        {match?.number ? `מקצה #${match?.number}` : match?.stage === 'test' ? 'מקצה בדיקה' : '-'}
       </Typography>
 
       {startTime ? (
@@ -33,25 +35,28 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) =>
         />
       ) : (
         <Grid container columns={4} spacing={1} mt={2}>
-          {match.participants?.map((participant, index) => (
-            <Grid key={index} xs={1}>
-              <Box
-                sx={{
-                  color: participant.ready ? green[800] : red[800],
-                  border: `1px solid ${participant.ready ? green[300] : red[300]}`,
-                  backgroundColor: participant.ready ? green[100] : red[100],
-                  borderRadius: '0.5rem',
-                  px: 1.5,
-                  py: 0.5
-                }}
-              >
-                <Typography fontWeight={500}>#{participant.team?.number}</Typography>
-                <Typography fontSize="0.875rem" color="text.secondary">
-                  {participant.tableName}
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
+          {match &&
+            match.participants
+              .filter(p => p.teamId)
+              .map((participant, index) => (
+                <Grid key={index} xs={1}>
+                  <Box
+                    sx={{
+                      color: participant.ready ? green[800] : red[800],
+                      border: `1px solid ${participant.ready ? green[300] : red[300]}`,
+                      backgroundColor: participant.ready ? green[100] : red[100],
+                      borderRadius: '0.5rem',
+                      px: 1.5,
+                      py: 0.5
+                    }}
+                  >
+                    <Typography fontWeight={500}>#{participant.team?.number}</Typography>
+                    <Typography fontSize="0.875rem" color="text.secondary">
+                      {participant.tableName}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
         </Grid>
       )}
     </Paper>

@@ -88,7 +88,7 @@ const Page: NextPage<Props> = ({
     { name: 'matchStarted', handler: handleMatchStarted },
     { name: 'matchAborted', handler: handleMatchAborted },
     { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchParticipantPrestarted', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'audienceDisplayStateUpdated', handler: setEventState }
   ]);
 
@@ -122,7 +122,7 @@ const Page: NextPage<Props> = ({
               event={event}
               eventState={eventState}
               matches={matches}
-              nextMatchId={nextMatchId}
+              nextMatchId={nextMatchId || null}
               socket={socket}
             />
           </TabPanel>
@@ -141,9 +141,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        eventState: `/api/events/${user.event}/state`,
-        matches: `/api/events/${user.event}/matches`
+        event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
+        matches: `/api/events/${user.eventId}/matches`
       },
       ctx
     );

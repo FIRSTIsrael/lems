@@ -18,7 +18,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
   const handleDisplayUpdate = (newDisplayState: string) => {
     socket.emit(
       'updateAudienceDisplayState',
-      eventState.event.toString(),
+      eventState.eventId.toString(),
       newDisplayState,
       response => {
         if (!response.ok)

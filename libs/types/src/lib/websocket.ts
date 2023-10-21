@@ -24,6 +24,8 @@ export interface WSServerEmittedEvents {
 
   judgingSessionAborted: (session: JudgingSession) => void;
 
+  judgingSessionUpdated: (session: JudgingSession) => void;
+
   rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;
 
   rubricStatusChanged: (rubric: Rubric<JudgingCategory>) => void;
@@ -42,7 +44,7 @@ export interface WSServerEmittedEvents {
 
   matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
 
-  matchParticipantPrestarted: (match: RobotGameMatch) => void;
+  matchUpdated: (match: RobotGameMatch) => void;
 
   scoresheetUpdated: (scoresheet: Scoresheet) => void;
 
@@ -63,6 +65,13 @@ export interface WSClientEmittedEvents {
     eventId: string,
     roomId: string,
     sessionId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateJudgingSessionTeam: (
+    eventId: string,
+    sessionId: string,
+    teamId: string | null,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
@@ -121,6 +130,13 @@ export interface WSClientEmittedEvents {
   abortMatch: (
     eventId: string,
     matchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateMatchTeams: (
+    eventId: string,
+    matchId: string,
+    newTeams: Array<Partial<RobotGameMatchParticipant>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

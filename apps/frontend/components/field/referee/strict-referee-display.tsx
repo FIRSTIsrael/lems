@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -41,13 +41,13 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   const [match, setMatch] = useState<WithId<RobotGameMatch> | undefined>(undefined);
 
   const participant = useMemo(
-    () => match?.participants.find(p => p.tableId === table._id),
+    () => match?.participants.filter(p => p.teamId).find(p => p.tableId === table._id),
     [match?.participants, table._id]
   );
 
   const updateMatchParticipant = useCallback(
     (updatedMatchParticipant: Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>) => {
-      if (!match || !participant) return;
+      if (!match || !participant || !participant.teamId) return;
       socket.emit(
         'prestartMatchParticipant',
         match.eventId.toString(),
@@ -67,48 +67,59 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   );
 
   useEffect(() => {
-    const getScoresheet = (matchId: ObjectId) => {
+    const getScoresheet = (fromMatch: WithId<RobotGameMatch>) => {
+      const fromParticipant = fromMatch.participants.find(p => p.tableId === table._id);
+
       return apiFetch(
-        `/api/events/${event._id}/tables/${table._id}/matches/${matchId}/scoresheet`
+        `/api/events/${event._id}/teams/${fromParticipant?.teamId}/scoresheets/?stage=${fromMatch?.stage}&round=${fromMatch?.round}`
       ).then<WithId<Scoresheet>>(res => res.json());
     };
 
     const activeMatch = matches.find(m => m._id === eventState.activeMatch);
-    const isActiveInTable = !!activeMatch?.participants.find(p => p.tableId === table._id);
+    const isActiveInTable = !!activeMatch?.participants
+      .filter(p => p.teamId)
+      .find(p => p.tableId === table._id);
 
     if (isActiveInTable) {
       setMatch(activeMatch);
       setDisplayState('timer');
     } else {
       const loadedMatch = matches.find(m => m._id === eventState.loadedMatch);
-      const completedMatches = matches.filter(m => m.status === 'completed');
+      const loadedMatchParticipant = loadedMatch?.participants
+        .filter(p => p.teamId)
+        .find(p => p.tableId === table._id);
+      const completedMatches = matches
+        .filter(m => m.participants.some(p => p.tableId === table._id && p.teamId))
+        .filter(m => m.status === 'completed');
       const lastCompletedMatch = completedMatches[completedMatches.length - 1];
-      const completedMatchParticipant = lastCompletedMatch?.participants.find(
-        p => p.tableId === table._id
-      );
+      const completedMatchParticipant = lastCompletedMatch?.participants
+        .filter(p => p.teamId)
+        .find(p => p.tableId === table._id);
 
       if (lastCompletedMatch) {
         // Check if no show
-        const lastCompletedMatchParticipant = lastCompletedMatch.participants.find(
-          p => p.tableId === table._id
-        );
+        const lastCompletedMatchParticipant = lastCompletedMatch.participants
+          .filter(p => p.teamId)
+          .find(p => p.tableId === table._id);
         if (lastCompletedMatchParticipant?.present === 'no-show') {
           setMatch(loadedMatch);
-          setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+          setDisplayState(loadedMatchParticipant ? 'prestart' : 'no-match');
         } else {
           // Check if we finished doing the scoresheet of the last completed match
-          getScoresheet(lastCompletedMatch._id).then(scoresheet => {
+          getScoresheet(lastCompletedMatch).then(scoresheet => {
+            console.log(scoresheet);
+
             if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
               router.push(
                 `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
               );
             } else {
               setMatch(loadedMatch);
-              setDisplayState(loadedMatch ? 'prestart' : 'no-match');
+              setDisplayState(loadedMatchParticipant ? 'prestart' : 'no-match');
             }
           });
         }
-      } else if (loadedMatch) {
+      } else if (loadedMatchParticipant) {
         setMatch(loadedMatch);
         setDisplayState('prestart');
       } else {

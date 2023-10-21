@@ -7,7 +7,7 @@ export const getRoom = (filter: Filter<JudgingRoom>) => {
 };
 
 export const getEventRooms = (eventId: ObjectId) => {
-  return db.collection<JudgingRoom>('rooms').find({ event: eventId }).toArray();
+  return db.collection<JudgingRoom>('rooms').find({ eventId }).toArray();
 };
 
 export const addRoom = (room: JudgingRoom) => {
@@ -42,6 +42,6 @@ export const deleteRoom = (filter: Filter<JudgingRoom>) => {
 export const deleteEventRooms = (eventId: ObjectId) => {
   return db
     .collection<JudgingRoom>('rooms')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId })
     .then(response => response);
 };

@@ -5,10 +5,10 @@ import * as db from '@lems/database';
 import { JUDGING_SESSION_LENGTH } from '@lems/types';
 
 export const handleStartSession = async (namespace, eventId, roomId, sessionId, callback) => {
-  let eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
 
   let session = await db.getSession({
-    room: new ObjectId(roomId),
+    roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
   if (!session) {
@@ -62,13 +62,13 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
 
   callback({ ok: true });
   session = await db.getSession({ _id });
-  eventState = await db.getEventState({ event: new ObjectId(eventId) });
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
   namespace.to('judging').emit('judgingSessionStarted', session, eventState);
 };
 
 export const handleAbortSession = async (namespace, eventId, roomId, sessionId, callback) => {
   let session = await db.getSession({
-    room: new ObjectId(roomId),
+    roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
   });
   if (!session) {
@@ -89,6 +89,27 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
   namespace.to('judging').emit('judgingSessionAborted', session);
 };
 
+export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, teamId, callback) => {
+  let session = await db.getSession({ _id: new ObjectId(sessionId) });
+
+  if (!session) {
+    callback({ ok: false, error: `Could not find session ${sessionId}!` });
+    return;
+  }
+  if (session.status !== 'not-started') {
+    callback({ ok: false, error: `Session ${sessionId} is not editable!` });
+    return;
+  }
+
+  console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
+
+  await db.updateSession({ _id: session._id }, { teamId: teamId ? new ObjectId(teamId) : null });
+
+  callback({ ok: true });
+  session = await db.getSession({ _id: new ObjectId(sessionId) });
+  namespace.to('judging').emit('judgingSessionUpdated', session);
+};
+
 export const handleUpdateRubric = async (
   namespace,
   eventId,
@@ -98,7 +119,7 @@ export const handleUpdateRubric = async (
   callback
 ) => {
   let rubric = await db.getRubric({
-    team: new ObjectId(teamId),
+    teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(rubricId)
   });
   if (!rubric) {
@@ -114,9 +135,9 @@ export const handleUpdateRubric = async (
   await db.updateRubric({ _id: rubric._id }, rubricData);
 
   callback({ ok: true });
+  const oldRubric = rubric;
   rubric = await db.getRubric({ _id: new ObjectId(rubricId) });
-
   namespace.to('judging').emit('rubricUpdated', rubric);
-  if (rubricData.status !== rubric.status)
+  if (rubricData.status !== oldRubric.status)
     namespace.to('judging').emit('rubricStatusChanged', rubric);
 };

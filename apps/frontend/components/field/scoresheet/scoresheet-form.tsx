@@ -105,12 +105,13 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const handleSync = async (
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
-    newStatus: ScoresheetStatus | undefined
+    newStatus: ScoresheetStatus | undefined,
+    saveSignature = false
   ) => {
     const updatedScoresheet = {} as Partial<Scoresheet>;
     if (newStatus) updatedScoresheet.status = newStatus;
     if (formValues) (updatedScoresheet as any).data = formValues;
-    if (signatureRef.current && updatedScoresheet.data)
+    if (saveSignature && signatureRef.current && updatedScoresheet.data)
       updatedScoresheet.data.signature = signatureRef.current.getCanvas().toDataURL('image/png');
 
     socket.emit(
@@ -155,7 +156,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       });
     });
 
-    if (signatureRef.current?.isEmpty() && formValues.signature.length === 0) {
+    if (signatureRef.current?.isEmpty() && formValues.signature?.length === 0) {
       errors.signature = 'הקבוצה טרם חתמה על דף הניקוד';
     }
 
@@ -259,7 +260,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 </Stack>
 
                 <Stack spacing={2} alignItems="center" my={6}>
-                  {values.signature ? (
+                  {values.signature && values.signature.length > 0 ? (
                     <Image
                       src={values.signature}
                       alt={`חתימת קבוצה #${team.number}`}
@@ -371,7 +372,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       sx={{ minWidth: 200 }}
                       endIcon={<ChevronLeftIcon />}
                       disabled={!isValid}
-                      onClick={() => handleSync(true, values, 'waiting-for-gp')}
+                      onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
                     >
                       המשך
                     </Button>

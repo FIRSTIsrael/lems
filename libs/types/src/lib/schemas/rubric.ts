@@ -13,8 +13,8 @@ export interface RubricValue {
 }
 
 export interface Rubric<T extends JudgingCategory> {
-  team: ObjectId;
-  session: ObjectId;
+  eventId: ObjectId;
+  teamId: ObjectId;
   category: T;
   status: RubricStatus;
   data?: {

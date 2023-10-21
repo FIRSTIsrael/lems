@@ -1,9 +1,10 @@
+import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
 import { Event, SafeUser } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
 
 interface Props {
-  event: Event;
+  event: WithId<Event>;
   user: SafeUser;
 }
 

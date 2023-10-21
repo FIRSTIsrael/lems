@@ -19,7 +19,6 @@ import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
 import EventPanel from '../../../components/tournament-manager/event-panel';
-import AwardsPanel from '../../../components/tournament-manager/awards-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -83,9 +82,31 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+  };
+
+  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
+        }
+        return m;
+      })
+    );
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['pit-admin'],
+    ['pit-admin', 'field', 'judging'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
@@ -102,7 +123,16 @@ const Page: NextPage<Props> = ({
           handleTicketUpdated(ticket);
           enqueueSnackbar('עודכנה קריאה!', { variant: 'info' });
         }
-      }
+      },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent }
     ]
   );
 
@@ -127,31 +157,39 @@ const Page: NextPage<Props> = ({
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="זירה" value="1" />
-              <Tab label="שיפוט" value="2" />
-              <Tab label="פרסים" value="3" />
-              <Tab label="אירוע" value="4" />
-              <Tab label="קריאות" value="5" />
+              <Tab label="קריאות" value="1" />
+              <Tab label="אירוע" value="2" />
+              <Tab label="זירה" value="3" />
+              <Tab label="שיפוט" value="4" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <FieldScheduleEditor teams={teams} tables={tables} matches={matches} />
-          </TabPanel>
-          <TabPanel value="2">
-            <JudgingScheduleEditor teams={teams} rooms={rooms} sessions={sessions} />
-          </TabPanel>
-          <TabPanel value="3">
-            <AwardsPanel />
-          </TabPanel>
-          <TabPanel value="4">
-            <EventPanel />
-          </TabPanel>
-          <TabPanel value="5">
             <TicketPanel
               event={event}
               teams={teams}
               tickets={tickets}
               showClosed={true}
+              socket={socket}
+            />
+          </TabPanel>
+          <TabPanel value="2">
+            <EventPanel />
+          </TabPanel>
+          <TabPanel value="3">
+            <FieldScheduleEditor
+              event={event}
+              teams={teams}
+              tables={tables}
+              matches={matches}
+              socket={socket}
+            />
+          </TabPanel>
+          <TabPanel value="4">
+            <JudgingScheduleEditor
+              event={event}
+              teams={teams}
+              rooms={rooms}
+              sessions={sessions}
               socket={socket}
             />
           </TabPanel>
@@ -167,13 +205,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        teams: `/api/events/${user.event}/teams`,
-        tickets: `/api/events/${user.event}/tickets`,
-        rooms: `/api/events/${user.event}/rooms`,
-        tables: `/api/events/${user.event}/tables`,
-        matches: `/api/events/${user.event}/matches`,
-        sessions: `/api/events/${user.event}/sessions`
+        event: `/api/events/${user.eventId}`,
+        teams: `/api/events/${user.eventId}/teams`,
+        tickets: `/api/events/${user.eventId}/tickets`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        tables: `/api/events/${user.eventId}/tables`,
+        matches: `/api/events/${user.eventId}/matches`,
+        sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
     );

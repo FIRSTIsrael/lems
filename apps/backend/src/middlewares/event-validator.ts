@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 const eventValidator = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.user?.event?.toString() == req.params.eventId || req.user.isAdmin) {
+  if (req.user?.eventId?.toString() == req.params.eventId || req.user.isAdmin) {
     return next();
   }
 

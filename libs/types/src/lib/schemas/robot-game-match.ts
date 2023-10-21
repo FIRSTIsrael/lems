@@ -13,7 +13,7 @@ export interface RobotGameMatchBrief {
 }
 
 export interface RobotGameMatchParticipant {
-  teamId: ObjectId;
+  teamId: ObjectId | null;
   team?: WithId<Team>;
   tableId: ObjectId;
   tableName?: string;

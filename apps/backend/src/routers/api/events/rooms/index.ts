@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import sessionsRouter from './sessions';
@@ -15,7 +15,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:roomId', (req: Request, res: Response) => {
   db.getRoom({
     _id: new ObjectId(req.params.roomId),
-    event: new ObjectId(req.params.eventId)
+    eventId: new ObjectId(req.params.eventId)
   }).then(room => {
     res.json(room);
   });

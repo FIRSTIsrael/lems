@@ -35,7 +35,7 @@ const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
   // const participant = match.participants.find(p => p.tableId === table._id);
 
   // const fetchMatchData = () =>
-  //   apiFetch(`/api/events/${user.event}/matches/${match._id}`)
+  //   apiFetch(`/api/events/${user.eventId}/matches/${match._id}`)
   //     .then(res => res.json())
   //     .then(setMatch);
 
@@ -146,9 +146,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        table: `/api/events/${user.event}/tables/${user.roleAssociation.value}`,
-        match: `/api/events/${user.event}/matches/${ctx.params?.matchId}`
+        event: `/api/events/${user.eventId}`,
+        table: `/api/events/${user.eventId}/tables/${user.roleAssociation.value}`,
+        match: `/api/events/${user.eventId}/matches/${ctx.params?.matchId}`
       },
       ctx
     );

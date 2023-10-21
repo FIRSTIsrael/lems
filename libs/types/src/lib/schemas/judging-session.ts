@@ -3,8 +3,8 @@ import { RubricStatus, Status } from '../constants';
 
 export interface JudgingSession {
   number: number;
-  team: ObjectId;
-  room: ObjectId;
+  teamId: ObjectId | null;
+  roomId: ObjectId;
   status: Status;
   scheduledTime: Date;
   startTime?: Date;

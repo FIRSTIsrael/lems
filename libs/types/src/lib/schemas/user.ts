@@ -4,7 +4,7 @@ import { Role, RoleAssociation } from '../roles';
 export interface User {
   username?: string;
   isAdmin: boolean;
-  event?: ObjectId;
+  eventId?: ObjectId;
   role?: Role;
   roleAssociation?: RoleAssociation;
   password: string;

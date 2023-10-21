@@ -23,7 +23,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       return res.status(429).json({ error: 'Captcha Failure, please try again later' });
   }
 
-  if (loginDetails.event) loginDetails.event = new ObjectId(loginDetails.event);
+  if (loginDetails.eventId) loginDetails.eventId = new ObjectId(loginDetails.eventId);
   if (loginDetails.roleAssociation && loginDetails.roleAssociation.type != 'category')
     loginDetails.roleAssociation.value = new ObjectId(loginDetails.roleAssociation.value);
 
@@ -32,14 +32,14 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
     if (!user) {
       console.log(
-        `🔑 Login failed ${loginDetails.event ? `to event ${loginDetails.event}` : ''}: ${
+        `🔑 Login failed ${loginDetails.eventId ? `to event ${loginDetails.eventId}` : ''}: ${
           loginDetails.role || 'admin'
         }`
       );
       return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
     }
     console.log(
-      `🔑 Login successful ${loginDetails.event ? `to event ${loginDetails.event}` : ''}: ${
+      `🔑 Login successful ${loginDetails.eventId ? `to event ${loginDetails.eventId}` : ''}: ${
         loginDetails.role || 'admin'
       }`
     );

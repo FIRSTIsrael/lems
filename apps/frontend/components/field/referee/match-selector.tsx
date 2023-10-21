@@ -24,7 +24,9 @@ const MatchSelector: React.FC<MatchSelectorProps> = ({ event, eventState, matche
       ) : (
         <List>
           {activeMatches?.map(match => {
-            const participant = match.participants.find(p => p.tableId === table._id);
+            const participant = match.participants
+              .filter(p => p.teamId)
+              .find(p => p.tableId === table._id);
 
             return (
               <NextLink

@@ -13,7 +13,7 @@ const router = express.Router({ mergeParams: true });
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-  const eventState = await db.getEventState({ event: event._id });
+  const eventState = await db.getEventState({ eventId: event._id });
   if (eventState)
     return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
 
@@ -54,17 +54,16 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
     console.log('✅ Finished parsing schedule!');
 
-    const dbSessions = await db.getEventSessions(event._id);
     const dbMatches = await db.getEventMatches(event._id.toString());
 
     console.log('📄 Generating rubrics');
-    const rubrics = getEventRubrics(dbSessions);
+    const rubrics = getEventRubrics(event, dbTeams);
     if (!(await db.addRubrics(rubrics)).acknowledged)
       return res.status(500).json({ error: 'Could not create rubrics!' });
     console.log('✅ Generated rubrics');
 
     console.log('📄 Generating scoresheets');
-    const scoresheets = getEventScoresheets(dbMatches);
+    const scoresheets = getEventScoresheets(event, dbTeams, dbMatches);
 
     if (!(await db.addScoresheets(scoresheets)).acknowledged)
       return res.status(500).json({ error: 'Could not create scoresheets!' });
@@ -78,7 +77,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
     console.log('🔐 Creating event state');
     await db.addEventState({
-      event: event._id,
+      eventId: event._id,
       activeMatch: null,
       loadedMatch: null,
       currentStage: 'practice',
