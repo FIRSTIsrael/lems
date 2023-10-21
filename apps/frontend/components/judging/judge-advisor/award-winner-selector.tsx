@@ -10,7 +10,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2';
 import { localizeTeam } from '../../../localization/teams';
 import { WithId } from 'mongodb';
-import { Field, FieldProps } from 'formik';
+import { FastField, FieldProps } from 'formik';
 
 interface AwardWinnerSelectorProps {
   award: WithId<Award>;
@@ -30,7 +30,7 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, awardI
         </Typography>
       </Grid>
       <Grid xs={8}>
-        <Field
+        <FastField
           name={`${awardIndex}.winner`}
           component={({ field, form }: FieldProps) => (
             <Autocomplete

@@ -4,8 +4,8 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Avatar, Box, Paper, Stack, Tab, Tabs, Typography, Button } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
+import { Avatar, Box, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -168,7 +168,7 @@ const Page: NextPage<Props> = ({
                     </Typography>
                   </Box>
                   <JudgingRoomSchedule
-                    sessions={sessions.filter(s => s.room === room._id)}
+                    sessions={sessions.filter(s => s.roomId === room._id)}
                     event={event}
                     room={room}
                     teams={teams}
@@ -238,19 +238,20 @@ const Page: NextPage<Props> = ({
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(values)
-                  }).then(res => {
-                    if (res.ok) {
-                      enqueueSnackbar('זוכי הפרסים נשמרו בהצלחה!', { variant: 'success' });
-                    } else {
-                      enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', {
-                        variant: 'error'
-                      });
-                    }
-                  });
-                  actions.setSubmitting(false);
+                  })
+                    .then(res => {
+                      if (res.ok) {
+                        enqueueSnackbar('זוכי הפרסים נשמרו בהצלחה!', { variant: 'success' });
+                      } else {
+                        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', {
+                          variant: 'error'
+                        });
+                      }
+                    })
+                    .then(() => actions.setSubmitting(false));
                 }}
               >
-                {({ submitForm }) => (
+                {({ submitForm, isSubmitting }) => (
                   <Form>
                     <Stack spacing={2}>
                       {awards.map((a, index) => (
@@ -263,14 +264,15 @@ const Page: NextPage<Props> = ({
                       ))}
                     </Stack>
                     <Box display="flex" flexDirection="row" justifyContent="center" mt={2}>
-                      <Button
+                      <LoadingButton
                         startIcon={<SaveOutlinedIcon />}
                         sx={{ minWidth: 250 }}
                         variant="contained"
                         onClick={submitForm}
+                        loading={isSubmitting}
                       >
-                        שמירה
-                      </Button>
+                        <span>שמירה</span>
+                      </LoadingButton>
                     </Box>
                   </Form>
                 )}
