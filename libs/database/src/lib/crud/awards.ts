@@ -38,6 +38,6 @@ export const deleteAwards = (filter: Filter<Award>) => {
 export const deleteEventAwards = (eventId: ObjectId) => {
   return db
     .collection<Award>('awards')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId })
     .then(response => response);
 };

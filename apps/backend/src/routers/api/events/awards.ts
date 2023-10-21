@@ -13,8 +13,8 @@ router.get('/', (req: Request, res: Response) => {
 
 router.get('/:awardId', (req: Request, res: Response) => {
   db.getAward({
-    _id: new ObjectId(req.params.roomId),
-    event: new ObjectId(req.params.eventId)
+    _id: new ObjectId(req.params.awardId),
+    eventId: new ObjectId(req.params.eventId)
   }).then(award => {
     res.json(award);
   });
