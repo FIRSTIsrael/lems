@@ -46,7 +46,7 @@ const JudgingScheduleEditorRow: React.FC<JudgingScheduleEditorRowProps> = ({
       <TableCell>{startTime.format('HH:mm')}</TableCell>
       <TableCell>{startTime.add(JUDGING_SESSION_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {rooms.map(r => {
-        const session = sessions.find(s => s.number === number && s.room === r._id);
+        const session = sessions.find(s => s.number === number && s.roomId === r._id);
 
         return (
           <TableCell key={r._id.toString()} align="center">
@@ -79,14 +79,14 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
 }) => {
   const getInitialValues = () => {
     return Object.fromEntries(
-      sessions.map(s => [s._id.toString(), teams.find(t => t._id === s.team) || null])
+      sessions.map(s => [s._id.toString(), teams.find(t => t._id === s.teamId) || null])
     );
   };
 
   const handleSubmit = (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const sessionsChanged = Object.keys(values).filter(
       sessionId =>
-        sessions.find(s => s._id.toString() === sessionId)?.team?.toString() !==
+        sessions.find(s => s._id.toString() === sessionId)?.teamId?.toString() !==
         values[sessionId]?._id
     );
 

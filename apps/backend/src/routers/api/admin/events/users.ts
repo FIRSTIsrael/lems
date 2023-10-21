@@ -56,7 +56,7 @@ router.get('/export', async (req: Request, res: Response) => {
 router.get('/:userId', (req: Request, res: Response) => {
   db.getUser({
     _id: new ObjectId(req.params.userId),
-    event: new ObjectId(req.params.eventId)
+    eventId: new ObjectId(req.params.eventId)
   }).then(user => {
     return res.json(user);
   });

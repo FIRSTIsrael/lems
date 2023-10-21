@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     const data = await serverSideGetRequests(
-      { event: `/api/events/${user.event}?withSchedule=true` },
+      { event: `/api/events/${user.eventId}?withSchedule=true` },
       ctx
     );
 

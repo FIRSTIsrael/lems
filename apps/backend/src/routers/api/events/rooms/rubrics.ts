@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
@@ -10,7 +10,7 @@ router.get('/', async (req: Request, res: Response) => {
 
   await Promise.all(
     sessions.map(async session => {
-      const teamRubrics = await db.getTeamRubrics(session.team);
+      const teamRubrics = await db.getTeamRubrics(session.teamId);
       rubrics = rubrics.concat(teamRubrics);
     })
   );

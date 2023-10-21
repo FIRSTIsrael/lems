@@ -26,7 +26,7 @@ router.get('/:eventId', (req: Request, res: Response) => {
 });
 
 router.get('/:eventId/state', (req: Request, res: Response) => {
-  db.getEventState({ event: new ObjectId(req.params.eventId) }).then(eventState =>
+  db.getEventState({ eventId: new ObjectId(req.params.eventId) }).then(eventState =>
     res.json(eventState)
   );
 });

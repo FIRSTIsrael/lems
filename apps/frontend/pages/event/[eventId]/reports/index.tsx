@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const data = await serverSideGetRequests({ event: `/api/events/${user.event}` }, ctx);
+    const data = await serverSideGetRequests({ event: `/api/events/${user.eventId}` }, ctx);
 
     return { props: { user, ...data } };
   } catch (err) {

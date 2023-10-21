@@ -5,7 +5,15 @@ import { WithId } from 'mongodb';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
-import { Event, RobotGameMatch, RobotGameTable, SafeUser, Scoresheet, Team } from '@lems/types';
+import {
+  Event,
+  RobotGameMatch,
+  RobotGameMatchParticipant,
+  RobotGameTable,
+  SafeUser,
+  Scoresheet,
+  Team
+} from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../../components/connection-indicator';
@@ -178,51 +186,49 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    let tableId;
-    let match: WithId<RobotGameMatch>;
-    if (user.roleAssociation && user.roleAssociation.type === 'table') {
-      tableId = user.roleAssociation.value;
-
-      const matches = await apiFetch(
-        `/api/events/${user.event}/tables/${tableId}/matches`,
-        undefined,
-        ctx
-      ).then(res => res?.json());
-
-      match = matches.find((m: RobotGameMatch) =>
-        m.participants.filter(p => p.teamId).find(p => p.teamId?.toString() === ctx.params?.teamId)
-      );
-    } else {
-      const matches = await apiFetch(`/api/events/${user.event}/matches`, undefined, ctx).then(
-        res => res?.json()
-      );
-
-      match = matches.find(
-        (match: RobotGameMatch) =>
-          !!match.participants
-            .filter(p => p.teamId)
-            .find(p => p.teamId?.toString() === ctx.params?.teamId)
-      );
-
-      tableId = match.participants
-        .filter(p => p.teamId)
-        .find(p => p.teamId?.toString() === ctx.params?.teamId)?.tableId;
-    }
-
-    const team = match.participants
-      .filter(p => p.teamId)
-      .find(p => p.teamId?.toString() === ctx.params?.teamId)?.team;
-
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.event}`,
-        table: `/api/events/${user.event}/tables/${tableId}`,
-        scoresheet: `/api/events/${user.event}/teams/${team?._id}/scoresheets/?stage=${match.stage}&round=${match.round}`
+        event: `/api/events/${user.eventId}`,
+        scoresheet: `/api/events/${user.eventId}/scoresheets/${ctx.params?.scoresheetId}`
       },
       ctx
     );
 
-    return { props: { user, match, team, ...data } };
+    const matches = await apiFetch(`/api/events/${user.eventId}/matches`, undefined, ctx).then(
+      res => res?.json()
+    );
+    const match = matches.find(
+      (m: RobotGameMatch) =>
+        m.participants
+          .filter(p => p.teamId)
+          .find(p => p.teamId?.toString() === ctx.params?.teamId) &&
+        m.stage === data.scoresheet.stage &&
+        m.round === data.scoresheet.round
+    );
+
+    const team = match.participants
+      .filter((p: RobotGameMatchParticipant) => p.teamId)
+      .find((p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId)?.team;
+
+    let tableId;
+
+    if (user.roleAssociation && user.roleAssociation.type === 'table') {
+      tableId = user.roleAssociation.value;
+    } else {
+      tableId = match.participants
+        .filter((p: RobotGameMatchParticipant) => p.teamId)
+        .find(
+          (p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId
+        )?.tableId;
+    }
+
+    const table = await apiFetch(
+      `/api/events/${user.eventId}/tables/${tableId}`,
+      undefined,
+      ctx
+    ).then(res => res.json());
+
+    return { props: { user, match, team, table, ...data } };
   } catch (err) {
     console.log(err);
     return { redirect: { destination: '/login', permanent: false } };

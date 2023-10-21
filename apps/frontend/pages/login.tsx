@@ -115,7 +115,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
-      : { redirect: { destination: `/event/${user.event}`, permanent: false } };
+      : { redirect: { destination: `/event/${user.eventId}`, permanent: false } };
   } else {
     return apiFetch('/public/events', undefined, ctx)
       .then(response => response.json())

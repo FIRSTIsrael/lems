@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import matchesRouter from './matches';
@@ -14,7 +14,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:tableId', (req: Request, res: Response) => {
   db.getTable({
     _id: new ObjectId(req.params.tableId),
-    event: new ObjectId(req.params.eventId)
+    eventId: new ObjectId(req.params.eventId)
   }).then(table => {
     res.json(table);
   });

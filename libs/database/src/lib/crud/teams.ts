@@ -7,7 +7,7 @@ export const getTeam = (filter: Filter<Team>) => {
 };
 
 export const getEventTeams = (eventId: ObjectId) => {
-  return db.collection<Team>('teams').find({ event: eventId }).toArray();
+  return db.collection<Team>('teams').find({ eventId }).toArray();
 };
 
 export const addTeam = (team: Team) => {
@@ -38,6 +38,6 @@ export const deleteTeam = (filter: Filter<Team>) => {
 export const deleteEventTeams = (eventId: ObjectId) => {
   return db
     .collection<Team>('teams')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId })
     .then(response => response);
 };

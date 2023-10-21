@@ -3,7 +3,7 @@ import { User } from '@lems/types';
 import db from '../database';
 
 export const getEventUsers = (eventId: ObjectId) => {
-  return db.collection<User>('users').find({ event: eventId }).toArray();
+  return db.collection<User>('users').find({ eventId }).toArray();
 };
 
 export const getUser = (filter: Filter<User>) => {
@@ -38,6 +38,6 @@ export const deleteUser = (filter: Filter<User>) => {
 export const deleteEventUsers = (eventId: ObjectId) => {
   return db
     .collection<User>('users')
-    .deleteMany({ event: eventId })
+    .deleteMany({ eventId })
     .then(response => response);
 };

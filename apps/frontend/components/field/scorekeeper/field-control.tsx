@@ -17,7 +17,7 @@ interface FieldControlProps {
   event: WithId<Event>;
   eventState: EventState;
   matches: Array<WithId<RobotGameMatch>>;
-  nextMatchId: ObjectId | undefined;
+  nextMatchId: ObjectId | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
@@ -29,13 +29,11 @@ const FieldControl: React.FC<FieldControlProps> = ({
   socket
 }) => {
   const activeMatch = useMemo(
-    () =>
-      matches.find(match => match._id === eventState.activeMatch) || ({} as WithId<RobotGameMatch>),
+    () => matches.find(match => match._id === eventState.activeMatch) || null,
     [eventState.activeMatch, matches]
   );
   const loadedMatch = useMemo(
-    () =>
-      matches.find(match => match._id === eventState.loadedMatch) || ({} as WithId<RobotGameMatch>),
+    () => matches.find(match => match._id === eventState.loadedMatch) || null,
     [eventState.loadedMatch, matches]
   );
 
@@ -50,10 +48,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
         <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
         <ActiveMatch
           title="המקצה הבא"
-          match={
-            matches.find(match => match._id === eventState.loadedMatch) ||
-            ({} as WithId<RobotGameMatch>)
-          }
+          match={matches.find(match => match._id === eventState.loadedMatch) || null}
         />
       </Stack>
 
@@ -61,7 +56,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
         eventId={event._id.toString()}
         nextMatchId={nextMatchId}
         loadedMatch={loadedMatch}
-        activeMatchId={activeMatch._id}
+        activeMatchId={activeMatch?._id || null}
         socket={socket}
       />
 
