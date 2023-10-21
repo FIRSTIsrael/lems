@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
+import { EventState } from '@lems/types';
 import * as db from '@lems/database';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
@@ -82,8 +83,13 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       loadedMatch: null,
       currentStage: 'practice',
       currentSession: 0,
-      audienceDisplayState: 'scores'
-    });
+      audienceDisplayState: 'scores',
+      awardsPresentation: {
+        enabled: false,
+        slideIndex: 0,
+        stepIndex: 0
+      }
+    } as EventState);
     console.log('✅ Created event state');
 
     await db.updateEvent({ _id: event._id }, { hasState: true });
