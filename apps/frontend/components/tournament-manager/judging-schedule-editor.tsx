@@ -26,6 +26,7 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import JudgingEditorTeamCell from './judging-editor-team-cell';
+import { LoadingButton } from '@mui/lab';
 interface JudgingScheduleEditorRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
@@ -90,28 +91,30 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
         values[sessionId]?._id
     );
 
-    sessionsChanged.forEach(sessionId => {
-      socket.emit(
-        'updateJudgingSessionTeam',
-        event._id.toString(),
-        sessionId,
-        values[sessionId]?._id.toString() || null,
-        response => {
-          if (response.ok) {
-            enqueueSnackbar('מפגש השיפוט עודכן בהצלחה!', { variant: 'success' });
-          } else {
-            enqueueSnackbar('אופס, לא הצלחנו לעדכן את אחד המפגשים.', { variant: 'error' });
-          }
-        }
-      );
-    });
-
-    actions.setSubmitting(false);
+    Promise.all(
+      sessionsChanged.map(sessionId => {
+        return new Promise((resolve, reject) => {
+          if (!socket) reject('No socket connection.');
+          socket.emit(
+            'updateJudgingSessionTeam',
+            event._id.toString(),
+            sessionId,
+            values[sessionId]?._id.toString() || null,
+            response => {
+              response.ok ? resolve(response) : reject(response);
+            }
+          );
+        });
+      })
+    )
+      .then(() => enqueueSnackbar('מפגשי השיפוט עודכנו בהצלחה!', { variant: 'success' }))
+      .catch(() => enqueueSnackbar('אופס, עדכון אחד ממפגשי השיפוט נכשל.', { variant: 'error' }))
+      .finally(() => actions.setSubmitting(false));
   };
 
   return (
     <Formik initialValues={getInitialValues()} enableReinitialize onSubmit={handleSubmit}>
-      {({ resetForm, submitForm }) => (
+      {({ resetForm, submitForm, isSubmitting }) => (
         <Form>
           <TableContainer component={Paper}>
             <Table>
@@ -142,14 +145,15 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
             </Table>
           </TableContainer>
           <Stack justifyContent="center" direction="row" mt={2} spacing={2}>
-            <Button
+            <LoadingButton
               startIcon={<SaveOutlinedIcon />}
               sx={{ minWidth: 200 }}
               variant="contained"
               onClick={submitForm}
+              loading={isSubmitting}
             >
-              שמירה
-            </Button>
+              <span>שמירה</span>
+            </LoadingButton>
             <Button
               startIcon={<RestartAltIcon />}
               sx={{ minWidth: 200 }}

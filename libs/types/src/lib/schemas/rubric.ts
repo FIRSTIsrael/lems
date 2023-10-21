@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import {
   JudgingCategory,
   RubricStatus,
-  OptionalAwards,
+  CoreValuesAwards,
   RubricFields,
   RubricInnerFields
 } from '../constants';
@@ -18,7 +18,7 @@ export interface Rubric<T extends JudgingCategory> {
   category: T;
   status: RubricStatus;
   data?: {
-    awards: T extends 'core-values' ? { [key in OptionalAwards]: boolean } : undefined;
+    awards: T extends 'core-values' ? { [key in CoreValuesAwards]: boolean } : undefined;
     values: T extends 'core-values'
       ? { [key in RubricFields<T>]: RubricValue }
       : {

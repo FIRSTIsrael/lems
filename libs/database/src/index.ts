@@ -8,5 +8,6 @@ export * from './lib/crud/teams';
 export * from './lib/crud/matches';
 export * from './lib/crud/sessions';
 export * from './lib/crud/rubrics';
+export * from './lib/crud/awards';
 export * from './lib/crud/scoresheets';
 export * from './lib/crud/tickets';

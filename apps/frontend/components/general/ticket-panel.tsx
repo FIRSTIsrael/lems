@@ -16,29 +16,16 @@ interface TicketPanelProps {
 
 const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, showClosed, socket }) => {
   return (
-    <Grid container columnGap={4} rowGap={2} justifyContent="center">
+    <>
       {tickets.filter(t => !t.closed).length === 0 && (
-        <Grid component={Paper} p={4} textAlign="center">
+        <Paper sx={{ p: 4, textAlign: 'center', mb: 4 }}>
           <Typography variant="h1">אין קריאות פתוחות כרגע</Typography>
-        </Grid>
+        </Paper>
       )}
-      {tickets
-        .filter(ticket => !ticket.closed)
-        .map(ticket => {
-          const team = teams.find(t => t._id === ticket.teamId) || ({} as WithId<Team>);
-          return (
-            <TicketCard
-              key={ticket._id.toString()}
-              event={event}
-              ticket={ticket}
-              team={team}
-              socket={socket}
-            />
-          );
-        })}
-      {showClosed &&
-        tickets
-          .filter(ticket => ticket.closed)
+
+      <Grid container columnGap={4} rowGap={2} justifyContent="center">
+        {tickets
+          .filter(ticket => !ticket.closed)
           .map(ticket => {
             const team = teams.find(t => t._id === ticket.teamId) || ({} as WithId<Team>);
             return (
@@ -48,11 +35,27 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, showCl
                 ticket={ticket}
                 team={team}
                 socket={socket}
-                sx={{ backgroundColor: green[100] }}
               />
             );
           })}
-    </Grid>
+        {showClosed &&
+          tickets
+            .filter(ticket => ticket.closed)
+            .map(ticket => {
+              const team = teams.find(t => t._id === ticket.teamId) || ({} as WithId<Team>);
+              return (
+                <TicketCard
+                  key={ticket._id.toString()}
+                  event={event}
+                  ticket={ticket}
+                  team={team}
+                  socket={socket}
+                  sx={{ backgroundColor: green[100] }}
+                />
+              );
+            })}
+      </Grid>
+    </>
   );
 };
 

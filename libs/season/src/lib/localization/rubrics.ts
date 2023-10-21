@@ -1,4 +1,4 @@
-import { RubricStatus, OptionalAwards } from '@lems/types';
+import { RubricStatus, CoreValuesAwards } from '@lems/types';
 
 export const localizedRubricStatus: { [key in RubricStatus]: string } = {
   empty: 'לא מולא',
@@ -9,7 +9,7 @@ export const localizedRubricStatus: { [key in RubricStatus]: string } = {
 };
 
 export const localizedOptionalAward: {
-  [key in OptionalAwards]: { name: string; description: string };
+  [key in CoreValuesAwards]: { name: string; description: string };
 } = {
   breakthrough: {
     name: 'פורצי הדרך',

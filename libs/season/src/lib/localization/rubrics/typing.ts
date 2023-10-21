@@ -1,4 +1,4 @@
-import { OptionalAwards, JudgingCategory, RubricFields, RubricInnerFields } from '@lems/types';
+import { CoreValuesAwards, JudgingCategory, RubricFields, RubricInnerFields } from '@lems/types';
 import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 export interface RubricSchemaField<T extends JudgingCategory> {
@@ -16,7 +16,7 @@ export interface RubricSchemaSection<T extends JudgingCategory> {
 }
 
 export interface RubricSchemaAwardCandidature {
-  id: OptionalAwards;
+  id: CoreValuesAwards;
   title: string;
   description: string;
 }

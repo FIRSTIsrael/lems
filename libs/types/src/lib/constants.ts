@@ -16,8 +16,30 @@ export type RobotGameMatchPresent = 'present' | 'no-show';
 export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
 export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 
-export const OptionalAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
-export type OptionalAwards = (typeof OptionalAwardsTypes)[number];
+export const CoreValuesAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
+export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
+
+export const OptionalAwardTypes = [
+  'leadMentor',
+  'impact',
+  'volunteerOfTheYear',
+  ...CoreValuesAwardsTypes
+] as const;
+export type OptionalAwards = (typeof CoreValuesAwardsTypes)[number];
+
+export const MandatoryAwardTypes = [
+  'coreValues',
+  'innovationProject',
+  'robotDesign',
+  'robotPerformance',
+  'champions'
+] as const;
+export type MandatoryAwards = (typeof MandatoryAwardTypes)[number];
+
+export const AwardNameTypes = [...MandatoryAwardTypes, ...OptionalAwardTypes] as const;
+export type AwardNames = (typeof AwardNameTypes)[number];
+
+export type AwardSchema = { [key in AwardNames]: { index: number; count: number } };
 
 export const RubricStatusTypes = [
   'empty',

@@ -4,6 +4,7 @@ import { Event } from '@lems/types';
 import * as db from '@lems/database';
 import eventScheduleRouter from './schedule';
 import eventUsersRouter from './users';
+import eventAwardsRouter from './awards';
 import { cleanEventData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
@@ -71,5 +72,6 @@ router.delete('/:eventId/data', async (req: Request, res: Response) => {
 
 router.use('/:eventId/schedule', eventScheduleRouter);
 router.use('/:eventId/users', eventUsersRouter);
+router.use('/:eventId/awards', eventAwardsRouter);
 
 export default router;

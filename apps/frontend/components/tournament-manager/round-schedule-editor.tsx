@@ -30,6 +30,7 @@ import RoundEditorTeamCell from './round-editor-team-cell';
 import { fullMatch } from '@lems/utils';
 import { enqueueSnackbar } from 'notistack';
 import { Socket } from 'socket.io-client';
+import { LoadingButton } from '@mui/lab';
 
 interface RoundScheduleEditorRowProps {
   match: WithId<RobotGameMatch>;
@@ -102,32 +103,34 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
         )
     );
 
-    matchesChanged.forEach(matchId => {
-      const toUpdate = Object.entries(values[matchId]).map(([tableId, team]: [string, any]) => {
-        return { tableId, teamId: team?._id || null } as unknown;
-      }); // TODO: type this better
+    Promise.all(
+      matchesChanged.map(matchId => {
+        const toUpdate = Object.entries(values[matchId]).map(([tableId, team]: [string, any]) => {
+          return { tableId, teamId: team?._id || null } as unknown;
+        }); // TODO: type this better
 
-      socket.emit(
-        'updateMatchTeams',
-        event._id.toString(),
-        matchId,
-        toUpdate as Array<Partial<RobotGameMatchParticipant>>,
-        response => {
-          if (response.ok) {
-            enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
-          } else {
-            enqueueSnackbar('אופס, לא הצלחנו לעדכן את אחד המפגשים.', { variant: 'error' });
-          }
-        }
-      );
-    });
-
-    actions.setSubmitting(false);
+        return new Promise((resolve, reject) => {
+          if (!socket) reject('No socket connection.');
+          socket.emit(
+            'updateMatchTeams',
+            event._id.toString(),
+            matchId,
+            toUpdate as Array<Partial<RobotGameMatchParticipant>>,
+            response => {
+              response.ok ? resolve(response) : reject(response);
+            }
+          );
+        });
+      })
+    )
+      .then(() => enqueueSnackbar('מפגשי השיפוט עודכנו בהצלחה!', { variant: 'success' }))
+      .catch(() => enqueueSnackbar('אופס, עדכון אחד ממפגשי השיפוט נכשל.', { variant: 'error' }))
+      .finally(() => actions.setSubmitting(false));
   };
 
   return (
     <Formik initialValues={getInitialValues()} enableReinitialize onSubmit={handleSubmit}>
-      {({ resetForm, submitForm }) => (
+      {({ resetForm, submitForm, isSubmitting }) => (
         <Form>
           <TableContainer component={Paper}>
             <Table size="small">
@@ -160,14 +163,15 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
             </Table>
           </TableContainer>
           <Stack justifyContent="center" direction="row" mt={2} spacing={2}>
-            <Button
+            <LoadingButton
               startIcon={<SaveOutlinedIcon />}
               sx={{ minWidth: 200 }}
               variant="contained"
               onClick={submitForm}
+              loading={isSubmitting}
             >
-              שמירה
-            </Button>
+              <span>שמירה</span>
+            </LoadingButton>
             <Button
               startIcon={<RestartAltIcon />}
               sx={{ minWidth: 200 }}
