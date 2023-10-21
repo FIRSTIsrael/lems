@@ -13,7 +13,8 @@ const HotspotReminder: React.FC = () => {
       left={0}
       sx={{
         backgroundImage: 'url(/assets/audience-display/season-background.webp)',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
       }}
     >
       <Paper
