@@ -21,6 +21,8 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     const user = await db.getUserWithCredentials({ _id: new ObjectId(tokenData.userId) });
 
     if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
+      delete user.password;
+      delete user.lastPasswordSetDate;
       req.user = user;
       return next();
     }
