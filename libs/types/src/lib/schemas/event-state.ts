@@ -8,4 +8,9 @@ export interface EventState {
   currentStage: 'practice' | 'ranking';
   currentSession: number;
   audienceDisplayState: AudienceDisplayState;
+  awardsPresentation: {
+    enabled: false;
+    slideIndex: number;
+    stepIndex: number;
+  };
 }

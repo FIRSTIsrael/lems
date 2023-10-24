@@ -13,8 +13,6 @@ interface ActiveMatchProps {
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) => {
-  console.log(match);
-
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
       <Typography component="h2" fontSize="1.125rem" fontWeight={500}>

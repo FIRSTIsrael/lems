@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
+import { EventState } from '@lems/types';
 import * as db from '@lems/database';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';

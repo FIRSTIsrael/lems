@@ -107,8 +107,6 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
         } else {
           // Check if we finished doing the scoresheet of the last completed match
           getScoresheet(lastCompletedMatch).then(scoresheet => {
-            console.log(scoresheet);
-
             if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
               router.push(
                 `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
