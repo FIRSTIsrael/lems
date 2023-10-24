@@ -33,6 +33,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
         `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

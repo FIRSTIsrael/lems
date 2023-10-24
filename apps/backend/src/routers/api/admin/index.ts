@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import adminEventRouter from './events/index';
 import adminValidator from '../../../middlewares/admin-validator';
 

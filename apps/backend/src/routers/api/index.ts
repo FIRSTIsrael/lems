@@ -1,5 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { SafeUser } from '@lems/types';
+import express from 'express';
 import authMiddleware from '../../middlewares/auth';
 import eventsRouter from './events/index';
 import adminRouter from './admin/index';
@@ -12,8 +11,8 @@ router.use('/admin', adminRouter);
 router.use('/events', eventsRouter);
 
 router.get('/me', (req, res) => {
-  const { password, lastPasswordSetDate, ...rest } = req.user;
-  return res.json({ ...rest } as SafeUser);
+  const user = req.user;
+  return res.json(user);
 });
 
 export default router;

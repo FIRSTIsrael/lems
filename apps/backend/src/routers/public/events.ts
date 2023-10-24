@@ -7,9 +7,9 @@ const router = express.Router({ mergeParams: true });
 router.get('/', (req: Request, res: Response) => {
   db.getAllEvents().then(events =>
     res.json(
-      events.map(e => {
-        const { schedule, ...rest } = e;
-        return rest;
+      events.map(event => {
+        delete event.schedule;
+        return event;
       })
     )
   );
@@ -17,8 +17,8 @@ router.get('/', (req: Request, res: Response) => {
 
 router.get('/:eventId', (req: Request, res: Response) => {
   db.getEvent(new ObjectId(req.params.eventId)).then(event => {
-    const { schedule, ...rest } = event;
-    res.json(rest);
+    delete event.schedule;
+    res.json(event);
   });
 });
 

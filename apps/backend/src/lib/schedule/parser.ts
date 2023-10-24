@@ -4,6 +4,7 @@ import { parse } from 'csv-parse/sync';
 import {
   Team,
   Event,
+  EventState,
   RobotGameTable,
   RobotGameMatch,
   JudgingRoom,
@@ -30,109 +31,109 @@ const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
   } as RobotGameMatch;
 };
 
-const getBlock = (blocks: Array<Block>, id: number) => {
-  const block = blocks.find(b => b.id === id)?.lines;
+const getBlock = (blocks: Array<Block>, blockId: number) => {
+  const block = blocks.find(b => b.id === blockId)?.lines;
   return structuredClone(block);
 };
 
-const parseBlocks = (file: CSVLine[]): Array<Block> => {
+const extractBlocksFromFile = (file: CSVLine[]): Array<Block> => {
   const blocks = [];
-  for (let i = 0; i < file.length; i++) {
-    if (file[i][0] === 'Block Format') {
-      const blockId = parseInt(file[i][1]);
-      // New Block starts
+  for (let fileLine = 0; fileLine < file.length; fileLine++) {
+    if (file[fileLine][0] === 'Block Format') {
+      const blockId = parseInt(file[fileLine][1]);
       const blockLines = [];
-      for (let j = i + 1; j < file.length; j++) {
-        // Add all lines until next block
-        if (file[j][0] !== 'Block Format') {
-          blockLines.push(Object.values(file[j]));
+
+      for (let blockLine = fileLine + 1; blockLine < file.length; blockLine++) {
+        if (file[blockLine][0] !== 'Block Format') {
+          blockLines.push(Object.values(file[blockLine]));
         } else {
-          // Skip to the next block
-          i = j - 1;
+          fileLine = blockLine - 1;
           break;
         }
       }
+
       blocks.push({ id: blockId, lines: blockLines });
     }
   }
   return blocks;
 };
 
-const parseTeams = (lines: Line[], event: WithId<Event>) => {
+const extractTeamsFromBlock = (teamBlock: Line[], event: WithId<Event>): Array<Team> => {
   const LINES_TO_SKIP = 1;
-  lines = (lines || []).splice(LINES_TO_SKIP);
+  teamBlock = (teamBlock || []).splice(LINES_TO_SKIP);
 
-  return lines.map(
-    rawTeam =>
-      ({
-        eventId: event._id,
-        number: parseInt(rawTeam[0]),
-        name: rawTeam[1],
-        registered: false,
-        affiliation: {
-          name: rawTeam[2],
-          city: rawTeam[3]
-        }
-      } as Team)
-  );
+  return teamBlock.map(teamLine => ({
+    eventId: event._id,
+    number: parseInt(teamLine[0]),
+    name: teamLine[1],
+    registered: false,
+    affiliation: {
+      name: teamLine[2],
+      city: teamLine[3]
+    }
+  }));
 };
 
-const parseTables = (lines: Line[], event: WithId<Event>) => {
+const extractTablesFromBlock = (
+  practiceMatchBlock: Line[],
+  event: WithId<Event>
+): Array<RobotGameTable> => {
   const LINES_TO_SKIP = 4;
-  lines = (lines || []).splice(LINES_TO_SKIP);
+  practiceMatchBlock = (practiceMatchBlock || []).splice(LINES_TO_SKIP);
 
-  const tables = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
+  const tables = (practiceMatchBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
 
-  return tables.map(
-    name =>
-      ({
-        eventId: event._id,
-        name
-      } as RobotGameTable)
-  );
+  return tables.map(name => ({
+    eventId: event._id,
+    name
+  }));
 };
 
-const parseRooms = (lines: Line[], event: WithId<Event>) => {
+const extractJudgingRoomsFromBlock = (
+  judgingBlock: Line[],
+  event: WithId<Event>
+): Array<JudgingRoom> => {
   const LINES_TO_SKIP = 4;
-  lines = (lines || []).splice(LINES_TO_SKIP);
+  judgingBlock = (judgingBlock || []).splice(LINES_TO_SKIP);
 
-  const rooms = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
+  const rooms = (judgingBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
 
-  return rooms.map(
-    name =>
-      ({
-        eventId: event._id,
-        name
-      } as JudgingRoom)
-  );
+  return rooms.map(name => ({
+    eventId: event._id,
+    name
+  }));
 };
 
-export const parseEventData = async (event: WithId<Event>, csvData: string) => {
+export const parseEventData = (
+  event: WithId<Event>,
+  csvData: string
+): { teams: Array<Team>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
   const file = parse(csvData.trim());
-  const version = parseInt(file.shift()?.[1]); //Version number: 2nd cell of 1st row.
+  const version = parseInt(file.shift()?.[1]); // Version number: 2nd cell of 1st row.
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
-  const blocks = parseBlocks(file);
-  const teams = parseTeams(getBlock(blocks, TEAMS_BLOCK_ID), event);
-  const tables = parseTables(getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID), event);
-  const rooms = parseRooms(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event);
+  const blocks = extractBlocksFromFile(file);
+  const teams = extractTeamsFromBlock(getBlock(blocks, TEAMS_BLOCK_ID), event);
+  const tables = extractTablesFromBlock(getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID), event);
+  const rooms = extractJudgingRoomsFromBlock(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event);
 
   return { teams, tables, rooms };
 };
 
-const parseMatches = (
-  lines: Line[],
+const extractMatchesFromMatchBlock = (
+  matchBlock: Line[],
   stage: RobotGameMatchStage,
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>
-) => {
+): Array<RobotGameMatch> => {
   const LINES_TO_SKIP = 4;
-  lines = (lines || []).splice(LINES_TO_SKIP);
-  const matches: RobotGameMatch[] = [];
-  const tableNames = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
+  matchBlock = (matchBlock || []).splice(LINES_TO_SKIP);
 
-  lines.forEach(line => {
+  const matches: Array<RobotGameMatch> = [];
+  const tableNames = (matchBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
+
+  matchBlock.forEach(line => {
     const round = parseInt(line[1]);
     const [hour, minute] = line[2].split(':');
     const match: RobotGameMatch = {
@@ -172,19 +173,19 @@ const parseMatches = (
   return matches;
 };
 
-const parseSessions = (
-  lines: Line[],
+const extractSessionsFromJudgingBlock = (
+  judgingBlock: Line[],
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
   rooms: Array<WithId<JudgingRoom>>
-) => {
+): Array<JudgingSession> => {
   const LINES_TO_SKIP = 4;
-  lines = (lines || []).splice(LINES_TO_SKIP);
-  const sessions: JudgingSession[] = [];
+  judgingBlock = (judgingBlock || []).splice(LINES_TO_SKIP);
 
-  const roomNames = (lines.shift() || []).slice(1).filter(name => name.trim() !== '');
+  const sessions: Array<JudgingSession> = [];
+  const roomNames = (judgingBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
 
-  lines.forEach(line => {
+  judgingBlock.forEach(line => {
     const number = parseInt(line[0]);
     const [hour, minute] = line[1].split(':');
     const startTime = dayjs(event.startDate)
@@ -194,45 +195,48 @@ const parseSessions = (
 
     for (let i = 3; i < roomNames.length + 3; i++) {
       const room = rooms.find(table => table.name === roomNames[i - 3]);
-      const session = {
+      const session: JudgingSession = {
         number,
         scheduledTime: startTime.toDate(),
         roomId: room._id,
         teamId: null,
-        status: 'not-started'
+        status: 'not-started',
+        coreValues: 'empty',
+        innovationProject: 'empty',
+        robotDesign: 'empty'
       };
 
       if (line[i]) {
         session.teamId = teams.find(team => team.number === parseInt(line[i]))._id;
       }
 
-      sessions.push(session as JudgingSession);
+      sessions.push(session);
     }
   });
 
   return sessions;
 };
 
-export const parseEventSchedule = async (
+export const parseSessionsAndMatches = (
+  csvData: string,
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
-  rooms: Array<WithId<JudgingRoom>>,
-  csvData: string
-) => {
+  rooms: Array<WithId<JudgingRoom>>
+): { matches: Array<RobotGameMatch>; sessions: Array<JudgingSession> } => {
   const file = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); //Version number: 2nd cell of 1st row.
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
-  const blocks = parseBlocks(file);
-  const practiceMatches = parseMatches(
+  const blocks = extractBlocksFromFile(file);
+  const practiceMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',
     event,
     teams,
     tables
   );
-  const rankingMatches = parseMatches(
+  const rankingMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
     event,
@@ -241,7 +245,24 @@ export const parseEventSchedule = async (
   );
   const matches = practiceMatches.concat(rankingMatches);
   matches.push(getTestMatch(event._id));
-  const sessions = parseSessions(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event, teams, rooms);
+
+  const sessions = extractSessionsFromJudgingBlock(
+    getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID),
+    event,
+    teams,
+    rooms
+  );
 
   return { matches, sessions };
+};
+
+export const getInitialEventState = (event: WithId<Event>): EventState => {
+  return {
+    eventId: event._id,
+    activeMatch: null,
+    loadedMatch: null,
+    currentStage: 'practice',
+    currentSession: 0,
+    audienceDisplayState: 'scores'
+  };
 };

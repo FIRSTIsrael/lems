@@ -1,0 +1,26 @@
+{
+  "name": "utils-arrays",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/utils/arrays/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/utils/arrays",
+        "main": "libs/utils/arrays/src/index.ts",
+        "tsConfig": "libs/utils/arrays/tsconfig.lib.json",
+        "assets": ["libs/utils/arrays/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/utils/arrays/**/*.ts", "libs/utils/arrays/package.json"]
+      }
+    }
+  },
+  "tags": []
+}

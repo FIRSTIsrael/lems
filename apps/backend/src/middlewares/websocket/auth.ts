@@ -28,13 +28,10 @@ const wsAuth = async (socket: Socket, next) => {
 
   try {
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
-    if (tokenData?.userId) {
-      const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
+    const user = await db.getUserWithCredentials({ _id: new ObjectId(tokenData.userId) });
 
-      if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
-        next();
-        return;
-      }
+    if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
+      return next();
     }
   } catch (err) {
     //Invalid token

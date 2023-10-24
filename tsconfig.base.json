@@ -18,7 +18,10 @@
       "@lems/database": ["libs/database/src/index.ts"],
       "@lems/season": ["libs/season/src/index.ts"],
       "@lems/types": ["libs/types/src/index.ts"],
-      "@lems/utils": ["libs/utils/src/index.ts"]
+      "@lems/utils": ["libs/utils/src/index.ts"],
+      "@lems/utils/arrays": ["libs/utils/arrays/src/index.ts"],
+      "@lems/utils/objects": ["libs/utils/objects/src/index.ts"],
+      "@lems/utils/random": ["libs/utils/random/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

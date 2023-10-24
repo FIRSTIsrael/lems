@@ -1,13 +1,33 @@
-import { ObjectId, Filter } from 'mongodb';
-import { User } from '@lems/types';
+import { ObjectId, Filter, WithId } from 'mongodb';
+import { User, SafeUser } from '@lems/types';
 import db from '../database';
 
-export const getEventUsers = (eventId: ObjectId) => {
+export const getEventUsersWithCredentials = (eventId: ObjectId) => {
   return db.collection<User>('users').find({ eventId }).toArray();
 };
 
-export const getUser = (filter: Filter<User>) => {
+export const getEventUsers = (eventId: ObjectId): Promise<Array<WithId<SafeUser>>> => {
+  return getEventUsersWithCredentials(eventId).then(users => {
+    return users.map(user => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, lastPasswordSetDate, ...safeUser } = user;
+      return safeUser as WithId<SafeUser>;
+    });
+  });
+};
+
+export const getUserWithCredentials = (filter: Filter<User>) => {
   return db.collection<User>('users').findOne(filter);
+};
+
+export const getUser = (filter: Filter<User>): Promise<WithId<SafeUser> | null> => {
+  return getUserWithCredentials(filter).then(user => {
+    if (!user) return null;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, lastPasswordSetDate, ...safeUser } = user;
+    return safeUser as WithId<SafeUser>;
+  });
 };
 
 export const addUser = (user: User) => {
