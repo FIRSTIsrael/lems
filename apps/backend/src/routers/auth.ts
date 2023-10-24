@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { User } from '@lems/types';
-import { JwtTokenData, RecaptchaResponse } from '../types/auth';
+import { RecaptchaResponse } from '../types/auth';
+import { getRecaptchaResponse } from '../lib/captcha';
 
 const router = express.Router({ mergeParams: true });
 
@@ -14,11 +15,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   const { captchaToken, ...loginDetails }: { captchaToken?: string } & User = req.body;
 
   if (process.env.RECAPTCHA === 'true') {
-    const captcha: RecaptchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
-      { method: 'POST' }
-    ).then(res => res.json());
-
+    const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
     if (captcha.action != 'submit' || captcha.score < 0.5)
       return res.status(429).json({ error: 'Captcha Failure, please try again later' });
   }
@@ -38,6 +35,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       );
       return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
     }
+
     console.log(
       `🔑 Login successful ${loginDetails.eventId ? `to event ${loginDetails.eventId}` : ''}: ${
         loginDetails.role || 'admin'
@@ -50,7 +48,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     const token = jwt.sign(
       {
         userId: user._id
-      } as JwtTokenData,
+      },
       jwtSecret,
       {
         issuer: 'FIRST',
@@ -59,9 +57,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     );
 
     res.cookie('auth-token', token, { expires: expires.toDate(), httpOnly: true, secure: true });
-
-    const { password, lastPasswordSetDate, ...safeUser } = user;
-    return res.json({ ...safeUser });
+    return res.json(user);
   } catch (err) {
     next(err);
   }

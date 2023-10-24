@@ -22,26 +22,32 @@ router.post('/schema', async (req: Request, res: Response) => {
   const schema: AwardSchema = req.body;
   const awards = await db.getEventAwards(new ObjectId(req.params.eventId));
 
-  Object.entries(schema).forEach(([name, { index, count }]) => {
-    const existingAwards = awards.filter(a => a.name === name);
+  await Promise.all(
+    Object.entries(schema).map(([name, { index: awardIndex, count: totalAwardPlaces }]) => {
+      const existingAwards = awards.filter(a => a.name === name);
 
-    existingAwards.forEach(award => {
-      if (award.place > count) db.deleteAwards({ _id: award._id });
-    });
+      existingAwards.forEach(award => {
+        if (award.place > totalAwardPlaces) db.deleteAwards({ _id: award._id });
+      });
 
-    for (let i = 1; i <= count; i++) {
-      db.updateAward(
-        { eventId: new ObjectId(req.params.eventId), name: name as AwardNames, place: i },
-        {
-          eventId: new ObjectId(req.params.eventId),
-          index,
-          name: name as AwardNames,
-          place: i
-        },
-        true
-      );
-    }
-  });
+      const promises = [];
+      for (let i = 1; i <= totalAwardPlaces; i++) {
+        promises.push(
+          db.updateAward(
+            { eventId: new ObjectId(req.params.eventId), name: name as AwardNames, place: i },
+            {
+              eventId: new ObjectId(req.params.eventId),
+              index: awardIndex,
+              name: name as AwardNames,
+              place: i
+            },
+            true
+          )
+        );
+      }
+      return Promise.all(promises);
+    })
+  );
 
   res.json({ ok: true });
 });

@@ -30,7 +30,7 @@ import {
   Mission,
   ScoresheetStatus
 } from '@lems/types';
-import { fullMatch } from '@lems/utils';
+import { fullMatch } from '@lems/utils/objects';
 import {
   SEASON_SCORESHEET,
   ALLOW_SCORESHEET_DEFAULTS,

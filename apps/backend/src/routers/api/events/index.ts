@@ -19,10 +19,8 @@ router.use('/:eventId', eventValidator);
 
 router.get('/:eventId', (req: Request, res: Response) => {
   db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => {
-    if (req.query.withSchedule) return res.json(event);
-
-    const { schedule, ...rest } = event;
-    res.json(rest);
+    if (!req.query.withSchedule) delete event.schedule;
+    res.json(event);
   });
 });
 

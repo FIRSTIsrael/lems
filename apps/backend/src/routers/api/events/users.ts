@@ -8,8 +8,7 @@ router.get('/', (req: Request, res: Response) => {
   db.getEventUsers(new ObjectId(req.params.eventId)).then(users => {
     return Promise.all(
       users.map(user => {
-        const { password, lastPasswordSetDate, ...rest } = user;
-        return res.json(rest);
+        return res.json(user);
       })
     );
   });
@@ -20,8 +19,7 @@ router.get('/:userId', (req: Request, res: Response) => {
     _id: new ObjectId(req.params.userId),
     eventId: new ObjectId(req.params.eventId)
   }).then(user => {
-    const { password, lastPasswordSetDate, ...rest } = user;
-    res.json(rest);
+    res.json(user);
   });
 });
 

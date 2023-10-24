@@ -27,7 +27,7 @@ import {
 } from '@lems/types';
 import { localizedMatchStage } from '../../localization/field';
 import RoundEditorTeamCell from './round-editor-team-cell';
-import { fullMatch } from '@lems/utils';
+import { fullMatch } from '@lems/utils/objects';
 import { enqueueSnackbar } from 'notistack';
 import { Socket } from 'socket.io-client';
 import { LoadingButton } from '@mui/lab';

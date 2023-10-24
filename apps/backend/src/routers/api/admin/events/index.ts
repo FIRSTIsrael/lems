@@ -11,27 +11,27 @@ const router = express.Router({ mergeParams: true });
 
 router.post('/', (req: Request, res: Response) => {
   const body: Event = { ...req.body };
+  if (!body) return res.status(400).json({ ok: false });
+
   body.startDate = new Date(body.startDate);
   body.endDate = new Date(body.endDate);
 
-  if (body) {
-    console.log('⏬ Creating Event...');
-    db.addEvent(body).then(task => {
-      if (task.acknowledged) {
-        console.log('✅ Event created!');
-        return res.json({ ok: true, id: task.insertedId });
-      } else {
-        console.log('❌ Could not create Event');
-        return res.status(500).json({ ok: false });
-      }
-    });
-  } else {
-    return res.status(400).json({ ok: false });
-  }
+  console.log('⏬ Creating Event...');
+  db.addEvent(body).then(task => {
+    if (task.acknowledged) {
+      console.log('✅ Event created!');
+      return res.json({ ok: true, id: task.insertedId });
+    } else {
+      console.log('❌ Could not create Event');
+      return res.status(500).json({ ok: false });
+    }
+  });
 });
 
 router.put('/:eventId', (req: Request, res: Response) => {
   const body: Event = { ...req.body };
+  if (!body) return res.status(400).json({ ok: false });
+
   body.startDate = new Date(body.startDate);
   body.endDate = new Date(body.endDate);
 
@@ -40,20 +40,16 @@ router.put('/:eventId', (req: Request, res: Response) => {
       return { ...e, startTime: new Date(e.startTime), endTime: new Date(e.endTime) };
     });
 
-  if (body) {
-    console.log(`⏬ Updating Event ${req.params.eventId}`);
-    db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body, true).then(task => {
-      if (task.acknowledged) {
-        console.log('✅ Event updated!');
-        return res.json({ ok: true, id: task.upsertedId });
-      } else {
-        console.log('❌ Could not update Event');
-        return res.status(500).json({ ok: false });
-      }
-    });
-  } else {
-    return res.status(400).json({ ok: false });
-  }
+  console.log(`⏬ Updating Event ${req.params.eventId}`);
+  db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body, true).then(task => {
+    if (task.acknowledged) {
+      console.log('✅ Event updated!');
+      return res.json({ ok: true, id: task.upsertedId });
+    } else {
+      console.log('❌ Could not update Event');
+      return res.status(500).json({ ok: false });
+    }
+  });
 });
 
 router.delete('/:eventId/data', async (req: Request, res: Response) => {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Role, SafeUser } from '@lems/types';
-import { ensureArray, partialMatch } from '@lems/utils';
+import { ensureArray } from '@lems/utils/arrays';
+import { partialMatch } from '@lems/utils/objects';
 
 interface RoleAuthorizerProps {
   user: SafeUser;

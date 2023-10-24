@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { User } from '@lems/types';
-import { randomString } from '@lems/utils';
+import { randomString } from '@lems/utils/random';
 
 const connectionString = process.env.MONGODB_URI || 'mongodb://127.0.0.1';
 const port = process.env.MONGODB_PORT || 27017;

@@ -8,6 +8,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   let token = '';
+
   const authHeader = req.headers.authorization as string;
   if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
     token = authHeader.split('Bearer ')[1];
@@ -17,13 +18,13 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
   try {
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
-    if (tokenData?.userId) {
-      const user = await db.getUser({ _id: new ObjectId(tokenData.userId) });
+    const user = await db.getUserWithCredentials({ _id: new ObjectId(tokenData.userId) });
 
-      if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
-        req.user = user;
-        return next();
-      }
+    if (tokenData.iat > new Date(user.lastPasswordSetDate).getTime() / 1000) {
+      delete user.password;
+      delete user.lastPasswordSetDate;
+      req.user = user;
+      return next();
     }
   } catch (err) {
     //Invalid token

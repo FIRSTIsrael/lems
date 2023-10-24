@@ -32,7 +32,7 @@ import {
   AwardSchema
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
-import { reorder } from '@lems/utils';
+import { reorder } from '@lems/utils/arrays';
 import CustomNumberInput from '../field/scoresheet/number-input';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';

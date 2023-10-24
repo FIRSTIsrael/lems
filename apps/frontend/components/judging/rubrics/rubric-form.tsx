@@ -27,7 +27,7 @@ import {
   SafeUser,
   RubricValue
 } from '@lems/types';
-import { fullMatch } from '@lems/utils';
+import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema } from '@lems/season';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
