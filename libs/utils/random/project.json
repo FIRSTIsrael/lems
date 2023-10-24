@@ -1,0 +1,26 @@
+{
+  "name": "utils-random",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/utils/random/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/utils/random",
+        "main": "libs/utils/random/src/index.ts",
+        "tsConfig": "libs/utils/random/tsconfig.lib.json",
+        "assets": ["libs/utils/random/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/utils/random/**/*.ts", "libs/utils/random/package.json"]
+      }
+    }
+  },
+  "tags": []
+}

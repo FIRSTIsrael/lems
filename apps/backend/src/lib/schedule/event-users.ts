@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { randomString } from '@lems/utils';
+import { randomString } from '@lems/utils/random';
 import {
   Event,
   RobotGameTable,
