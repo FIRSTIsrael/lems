@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import eventsRouter from './events';
 
 const router = express.Router({ mergeParams: true });

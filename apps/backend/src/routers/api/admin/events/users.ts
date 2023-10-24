@@ -12,10 +12,9 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/export', async (req: Request, res: Response) => {
-  console.log(req.params.eventId);
-  const users = await db.getEventUsers(new ObjectId(req.params.eventId));
+  const users = await db.getEventUsersWithCredentials(new ObjectId(req.params.eventId));
 
-  const data = await Promise.all(
+  const credentials = await Promise.all(
     users.map(async user => {
       const { role, roleAssociation, password } = user;
 
@@ -46,11 +45,7 @@ router.get('/export', async (req: Request, res: Response) => {
   res.set('Content-Disposition', `attachment; filename=event_${req.params.eventId}_passwords.csv`);
   res.set('Content-Type', 'text/csv');
 
-  if (data.length > 0) {
-    return res.send(`\ufeff${new Parser().parse(data)}`);
-  } else {
-    return res.send('');
-  }
+  return res.send(`\ufeff${new Parser().parse(credentials)}`);
 });
 
 router.get('/:userId', (req: Request, res: Response) => {
