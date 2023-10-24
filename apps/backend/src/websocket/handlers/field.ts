@@ -9,10 +9,12 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
     eventId: new ObjectId(eventId),
     _id: new ObjectId(matchId)
   });
+
   if (!match) {
     callback({ ok: false, error: `Could not find match #${matchId} in event ${eventId}!` });
     return;
   }
+
   console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
 
   await db.updateEventState(
@@ -97,6 +99,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
 
 export const handleStartTestMatch = async (namespace, eventId: string, callback) => {
   const match = await db.getMatch({ eventId: new ObjectId(eventId), stage: 'test' });
+
   if (!match) {
     callback({
       ok: false,
@@ -104,13 +107,14 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
     });
     return;
   }
-  console.log(`❗ Starting test match ${match._id} in event ${eventId}`);
 
+  console.log(`❗ Starting test match ${match._id} in event ${eventId}`);
   handleStartMatch(namespace, eventId, match._id.toString(), callback);
 };
 
 export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
   let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+
   if (eventState.activeMatch.toString() !== matchId) {
     callback({
       ok: false,
@@ -120,6 +124,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   }
 
   console.log(`❌ Aborting match ${matchId} in event ${eventId}`);
+
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
   if (match.stage !== 'test')
@@ -145,6 +150,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   callback({ ok: true });
   match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
   eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+
   namespace.to('field').emit('matchAborted', match, eventState);
   if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
 };
@@ -156,6 +162,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
     callback({ ok: false, error: `Could not find match ${matchId}!` });
     return;
   }
+
   if (match.status !== 'not-started') {
     callback({ ok: false, error: `Match ${matchId} is not editable!` });
     return;
@@ -196,6 +203,7 @@ export const handlePrestartMatchParticipant = async (
     _id: new ObjectId(matchId),
     eventId: new ObjectId(eventId)
   });
+
   if (!match) {
     callback({
       ok: false,
@@ -236,6 +244,7 @@ export const handleUpdateScoresheet = async (
     teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(scoresheetId)
   });
+
   if (!scoresheet) {
     callback({
       ok: false,
@@ -251,6 +260,7 @@ export const handleUpdateScoresheet = async (
   callback({ ok: true });
   const oldScoresheet = scoresheet;
   scoresheet = await db.getScoresheet({ _id: new ObjectId(scoresheetId) });
+
   namespace.to('field').emit('scoresheetUpdated', scoresheet);
   if (scoresheetData.status !== oldScoresheet.status)
     namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
