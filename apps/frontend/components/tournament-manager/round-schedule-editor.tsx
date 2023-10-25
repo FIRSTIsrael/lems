@@ -106,19 +106,13 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
       matchesChanged.map(matchId => {
         const toUpdate = Object.entries(values[matchId]).map(([tableId, team]: [string, any]) => {
           return { tableId, teamId: team?._id || null } as unknown;
-        }); // TODO: type this better
+        }) as Array<Partial<RobotGameMatchParticipant>>;
 
         return new Promise((resolve, reject) => {
           if (!socket) reject('No socket connection.');
-          socket.emit(
-            'updateMatchTeams',
-            event._id.toString(),
-            matchId,
-            toUpdate as Array<Partial<RobotGameMatchParticipant>>,
-            response => {
-              response.ok ? resolve(response) : reject(response);
-            }
-          );
+          socket.emit('updateMatchTeams', event._id.toString(), matchId, toUpdate, response => {
+            response.ok ? resolve(response) : reject(response);
+          });
         });
       })
     )

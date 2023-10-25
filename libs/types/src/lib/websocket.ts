@@ -172,10 +172,6 @@ export interface WSSocketData {
 }
 
 export interface WSEventListener {
-  //TODO: make the function accept the correct args according to the name?
-  //this is extremely difficult and not neccesarily possible
-  //https://github.com/socketio/socket.io/blob/main/lib/typed-events.ts#L35
-
   name: EventNames<WSServerEmittedEvents> | EventNames<WSClientEmittedEvents>;
   handler: (...args: any[]) => void | Promise<void>;
 }

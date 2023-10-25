@@ -15,7 +15,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
   let dropdownOptions: Array<WithId<Team> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
-  //TODO: typing for all matchData attributes
+  // TODO: Can we use form.values on the top level and map once instead of mapping 6 times in the component?
   return (
     <TableCell align="left">
       <Field
@@ -30,10 +30,10 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                 return (
                   Object.values(form.values)
                     .flatMap((matchData: any) => Object.values(matchData))
-                    .filter(v => v === a).length -
+                    .filter(_team => _team === a).length -
                   Object.values(form.values)
                     .flatMap((matchData: any) => Object.values(matchData))
-                    .filter(v => v === b).length
+                    .filter(_team => _team === b).length
                 );
               })}
               getOptionLabel={team => (team ? team.number.toString() : '-')}
@@ -42,7 +42,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                   ? ''
                   : Object.values(form.values)
                       .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(v => v === team).length < 1
+                      .filter(_team => _team === team).length < 1
                   ? 'חסר'
                   : 'קיים'
               }
@@ -64,7 +64,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                   color:
                     Object.values(form.values)
                       .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(v => v === field.value).length > 1
+                      .filter(_team => _team === field.value).length > 1
                       ? '#f57c00'
                       : ''
                 }
@@ -83,7 +83,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                     field.value &&
                     Object.values(form.values)
                       .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(v => v === field.value).length > 1
+                      .filter(_team => _team === field.value).length > 1
                       ? '#f57c00'
                       : '#f7f5f5'
                 }
@@ -95,7 +95,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                     field.value &&
                     Object.values(form.values)
                       .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(v => v === field.value).length > 1
+                      .filter(_team => _team === field.value).length > 1
                       ? '#f57c00'
                       : '#000'
                 }}
