@@ -21,11 +21,16 @@ import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
 const EventCreateForm = forwardRef((props, ref) => {
-  const [name, setName] = useState<string>('');
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
-  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
-  const [color, setColor] = useState<DivisionColor>('red');
   const router = useRouter();
+  const [name, setName] = useState<string>('');
+  const [color, setColor] = useState<DivisionColor>('red');
+
+  const getDefaultDate = () => {
+    return dayjs().set('hours', 0).set('minutes', 0).set('seconds', 0);
+  };
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(getDefaultDate());
+  const [endDate, setEndDate] = useState<Dayjs | null>(getDefaultDate());
 
   const createEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,8 +39,8 @@ const EventCreateForm = forwardRef((props, ref) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate?.toDate() || new Date(),
-        endDate: endDate?.toDate() || new Date(),
+        startDate: (startDate || getDefaultDate()).toDate(),
+        endDate: (endDate || getDefaultDate()).toDate(),
         color,
         hasState: false
       })
