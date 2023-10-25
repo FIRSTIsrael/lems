@@ -55,7 +55,10 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                       }
                       checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
                       checked={field.value === index + 1}
-                      onChange={e => form.setFieldValue(field.name, index + 1)}
+                      onChange={e => {
+                        form.setFieldValue(field.name, index + 1);
+                        setTimeout(() => onBlur(e ?? field.name), 10); // Rubric doesn't update without this
+                      }}
                     />
                   }
                   disabled={disabled || form.isSubmitting}
