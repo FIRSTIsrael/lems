@@ -79,9 +79,13 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
               }}
             >
               <Typography
-                sx={{
-                  color: field.value && fieldOccurances > 1 ? '#f57c00' : '#000'
-                }}
+                sx={
+                  !disabled
+                    ? {
+                        color: field.value && fieldOccurances > 1 ? '#f57c00' : '#000'
+                      }
+                    : {}
+                }
               >
                 {field.value ? field.value.number.toString() : '-'}
               </Typography>
