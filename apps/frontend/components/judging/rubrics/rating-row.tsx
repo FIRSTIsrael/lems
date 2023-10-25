@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableCell, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
+import { TableCell, FormControlLabel, Radio, TableRow, Typography } from '@mui/material';
 import { Field, FieldProps } from 'formik';
 import ReactMarkdown from 'react-markdown';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
@@ -22,14 +22,7 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
     <Field name={`${name}.value`}>
       {({ field: { onBlur, onChange, ...field }, form, meta }: FieldProps) => (
         <>
-          <RadioGroup
-            sx={{ display: 'table-row' }}
-            onChange={e => {
-              onChange(e ?? field.name);
-              setTimeout(() => onBlur(e ?? field.name), 10);
-            }}
-            {...field}
-          >
+          <TableRow>
             {labels.map((label, index) => (
               <TableCell
                 key={label ? label + index : index}
@@ -47,7 +40,7 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                 }}
               >
                 <FormControlLabel
-                  value={String(index + 1)}
+                  value={index + 1}
                   control={
                     <Radio
                       disableRipple
@@ -61,6 +54,8 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                         />
                       }
                       checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
+                      checked={field.value === index + 1}
+                      onChange={e => form.setFieldValue(field.name, index + 1)}
                     />
                   }
                   disabled={disabled || form.isSubmitting}
@@ -78,9 +73,8 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                 />
               </TableCell>
             ))}
-          </RadioGroup>
-
-          {field.value === '4' && <ExceededNotesCell name={name} disabled={disabled} />}
+          </TableRow>
+          {field.value === 4 && <ExceededNotesCell name={name} disabled={disabled} />}
         </>
       )}
     </Field>
