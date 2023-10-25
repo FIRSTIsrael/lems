@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { WithId } from 'mongodb';
-import { Field, FieldProps } from 'formik';
+import { Field, FieldProps, useFormikContext, FormikValues } from 'formik';
 import { Autocomplete, TextField, Button, Typography, TableCell } from '@mui/material';
 import { Team } from '@lems/types';
 
@@ -15,7 +15,23 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
   let dropdownOptions: Array<WithId<Team> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
-  // TODO: Can we use form.values on the top level and map once instead of mapping 6 times in the component?
+  const { values, getFieldMeta } = useFormikContext();
+
+  const getOccurancesInForm = useCallback(
+    (team?: WithId<Team>) => {
+      if (!team) return 1;
+      return Object.values(values as FormikValues)
+        .flatMap(matchData => Object.values(matchData))
+        .filter(_team => _team === team).length;
+    },
+    [values]
+  );
+
+  const fieldOccurances = useMemo(
+    () => getOccurancesInForm((getFieldMeta(name).value as WithId<Team>) || undefined),
+    [getFieldMeta, getOccurancesInForm, name]
+  );
+
   return (
     <TableCell align="left">
       <Field
@@ -27,25 +43,10 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
                 if (!a) return -1;
                 if (!b) return 1;
 
-                return (
-                  Object.values(form.values)
-                    .flatMap((matchData: any) => Object.values(matchData))
-                    .filter(_team => _team === a).length -
-                  Object.values(form.values)
-                    .flatMap((matchData: any) => Object.values(matchData))
-                    .filter(_team => _team === b).length
-                );
+                return getOccurancesInForm(a) - getOccurancesInForm(b);
               })}
               getOptionLabel={team => (team ? team.number.toString() : '-')}
-              groupBy={team =>
-                !team
-                  ? ''
-                  : Object.values(form.values)
-                      .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(_team => _team === team).length < 1
-                  ? 'חסר'
-                  : 'קיים'
-              }
+              groupBy={team => (!team ? '' : getOccurancesInForm(team) === 0 ? 'חסר' : 'קיים')}
               inputMode="search"
               disableClearable={field.value !== null}
               disabled={disabled}
@@ -61,12 +62,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
               )}
               sx={{
                 '& .MuiAutocomplete-inputRoot': {
-                  color:
-                    Object.values(form.values)
-                      .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(_team => _team === field.value).length > 1
-                      ? '#f57c00'
-                      : ''
+                  color: fieldOccurances > 1 ? '#f57c00' : ''
                 }
               }}
               value={field.value}
@@ -75,30 +71,23 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
           ) : (
             <Button
               variant="text"
+              disabled={disabled}
               onClick={e => setEditable(true)}
               sx={{
                 ml: -2,
                 '&:hover': {
-                  backgroundColor:
-                    field.value &&
-                    Object.values(form.values)
-                      .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(_team => _team === field.value).length > 1
-                      ? '#f57c00'
-                      : '#f7f5f5'
+                  backgroundColor: field.value && fieldOccurances > 1 ? '#f57c00' : '#f7f5f5'
                 }
               }}
             >
               <Typography
-                sx={{
-                  color:
-                    field.value &&
-                    Object.values(form.values)
-                      .flatMap((matchData: any) => Object.values(matchData))
-                      .filter(_team => _team === field.value).length > 1
-                      ? '#f57c00'
-                      : '#000'
-                }}
+                sx={
+                  !disabled
+                    ? {
+                        color: field.value && fieldOccurances > 1 ? '#f57c00' : '#000'
+                      }
+                    : {}
+                }
               >
                 {field.value ? field.value.number.toString() : '-'}
               </Typography>

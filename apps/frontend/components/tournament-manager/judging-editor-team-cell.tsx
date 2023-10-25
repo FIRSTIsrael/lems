@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { WithId } from 'mongodb';
-import { Field, FieldProps } from 'formik';
+import { Field, FieldProps, FormikValues, useFormikContext } from 'formik';
 import { Autocomplete, TextField, Button, Typography, TableCell } from '@mui/material';
 import { Team } from '@lems/types';
 
@@ -15,6 +15,21 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
   let dropdownOptions: Array<WithId<Team> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
+  const { values, getFieldMeta } = useFormikContext();
+
+  const getOccurancesInForm = useCallback(
+    (team?: WithId<Team>) => {
+      if (!team) return 1;
+      return Object.values(values as FormikValues).filter(v => v === team).length;
+    },
+    [values]
+  );
+
+  const fieldOccurances = useMemo(
+    () => getOccurancesInForm((getFieldMeta(name).value as WithId<Team>) || undefined),
+    [getFieldMeta, getOccurancesInForm, name]
+  );
+
   return (
     <TableCell align="left">
       <Field
@@ -26,19 +41,10 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
                 if (!a) return -1;
                 if (!b) return 1;
 
-                return (
-                  Object.values(form.values).filter(v => v === a).length -
-                  Object.values(form.values).filter(v => v === b).length
-                );
+                return getOccurancesInForm(a) - getOccurancesInForm(b);
               })}
               getOptionLabel={team => (team ? team.number.toString() : '-')}
-              groupBy={team =>
-                !team
-                  ? ''
-                  : Object.values(form.values).filter(v => v === team).length === 0
-                  ? 'חסר'
-                  : 'קיים'
-              }
+              groupBy={team => (!team ? '' : getOccurancesInForm(team) === 0 ? 'חסר' : 'קיים')}
               inputMode="search"
               disableClearable={field.value !== null}
               disabled={disabled}
@@ -54,10 +60,7 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
               )}
               sx={{
                 '& .MuiAutocomplete-inputRoot': {
-                  color:
-                    Object.values(form.values).filter(v => v === field.value).length > 1
-                      ? '#f57c00'
-                      : ''
+                  color: fieldOccurances > 1 ? '#f57c00' : ''
                 }
               }}
               value={field.value}
@@ -66,25 +69,18 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
           ) : (
             <Button
               variant="text"
+              disabled={disabled}
               onClick={e => setEditable(true)}
               sx={{
                 ml: -2,
                 '&:hover': {
-                  backgroundColor:
-                    field.value &&
-                    Object.values(form.values).filter(v => v === field.value).length > 1
-                      ? '#fff3e7'
-                      : '#f7f5f5'
+                  backgroundColor: field.value && fieldOccurances > 1 ? '#fff3e7' : '#f7f5f5'
                 }
               }}
             >
               <Typography
                 sx={{
-                  color:
-                    field.value &&
-                    Object.values(form.values).filter(v => v === field.value).length > 1
-                      ? '#f57c00'
-                      : '#000'
+                  color: field.value && fieldOccurances > 1 ? '#f57c00' : '#000'
                 }}
               >
                 {field.value ? field.value.number.toString() : '-'}
