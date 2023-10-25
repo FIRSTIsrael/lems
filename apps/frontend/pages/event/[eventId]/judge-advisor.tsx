@@ -263,17 +263,19 @@ const Page: NextPage<Props> = ({
                         />
                       ))}
                     </Stack>
-                    <Box display="flex" flexDirection="row" justifyContent="center" mt={2}>
-                      <LoadingButton
-                        startIcon={<SaveOutlinedIcon />}
-                        sx={{ minWidth: 250 }}
-                        variant="contained"
-                        onClick={submitForm}
-                        loading={isSubmitting}
-                      >
-                        <span>שמירה</span>
-                      </LoadingButton>
-                    </Box>
+                    {awards.length > 0 && (
+                      <Box display="flex" flexDirection="row" justifyContent="center" mt={2}>
+                        <LoadingButton
+                          startIcon={<SaveOutlinedIcon />}
+                          sx={{ minWidth: 250 }}
+                          variant="contained"
+                          onClick={submitForm}
+                          loading={isSubmitting}
+                        >
+                          <span>שמירה</span>
+                        </LoadingButton>
+                      </Box>
+                    )}
                   </Form>
                 )}
               </Formik>
