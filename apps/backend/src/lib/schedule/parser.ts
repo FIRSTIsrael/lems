@@ -263,6 +263,11 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
     loadedMatch: null,
     currentStage: 'practice',
     currentSession: 0,
-    audienceDisplayState: 'scores'
+    audienceDisplayState: 'scores',
+    awardsPresentation: {
+      enabled: false,
+      slideIndex: 0,
+      stepIndex: 0
+    }
   };
 };
