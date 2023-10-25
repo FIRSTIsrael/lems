@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import {
   Paper,
   Button,
@@ -20,7 +20,7 @@ import { enqueueSnackbar } from 'notistack';
 import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-const EventCreateForm: React.FC = () => {
+const EventCreateForm = forwardRef((props, ref) => {
   const [name, setName] = useState<string>('');
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
@@ -125,6 +125,8 @@ const EventCreateForm: React.FC = () => {
       </Stack>
     </Paper>
   );
-};
+});
+
+EventCreateForm.displayName = 'EventCreateForm';
 
 export default EventCreateForm;
