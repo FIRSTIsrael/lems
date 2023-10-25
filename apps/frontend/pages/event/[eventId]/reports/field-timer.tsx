@@ -54,7 +54,7 @@ const Page: NextPage<Props> = ({
     [currentTime, matchEnd]
   );
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
+  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -64,7 +64,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (eventState) setEventState(eventState);
+    if (newEventState) setEventState(newEventState);
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [

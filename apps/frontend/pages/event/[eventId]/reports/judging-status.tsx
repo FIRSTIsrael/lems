@@ -245,7 +245,10 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    newEventState?: WithId<EventState>
+  ) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -255,7 +258,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (eventState) setEventState(eventState);
+    if (newEventState) setEventState(newEventState);
   };
 
   const { connectionStatus } = useWebsocket(

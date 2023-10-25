@@ -36,7 +36,7 @@ const Page: NextPage<Props> = ({
   );
   const [activeTab, setActiveTab] = useState<string>('1');
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, eventState?: WithId<EventState>) => {
+  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -46,7 +46,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (eventState) setEventState(eventState);
+    if (newEventState) setEventState(newEventState);
   };
 
   const handleMatchStarted = (
