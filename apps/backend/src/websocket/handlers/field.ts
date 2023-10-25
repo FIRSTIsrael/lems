@@ -127,17 +127,16 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
 
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
-  if (match.stage !== 'test')
-    await db.updateMatches(
-      {
-        eventId: new ObjectId(eventId),
-        _id: new ObjectId(matchId)
-      },
-      {
-        status: 'not-started',
-        startTime: undefined
-      }
-    );
+  await db.updateMatches(
+    {
+      eventId: new ObjectId(eventId),
+      _id: new ObjectId(matchId)
+    },
+    {
+      status: 'not-started',
+      startTime: undefined
+    }
+  );
 
   await db.updateEventState(
     { eventId: new ObjectId(eventId) },
