@@ -8,11 +8,11 @@ import { useCollectSteps } from '../hooks/use-steps';
 import { ActivationThresholds } from '../hooks/use-steps';
 
 export type SlideContextType = {
-  immediate: boolean;
+  // immediate: boolean;
   slideId: SlideId;
-  isSlideActive: boolean;
+  // isSlideActive: boolean;
   activationThresholds: ActivationThresholds;
-  activeStepIndex: number;
+  // activeStepIndex: number;
 };
 
 export const SlideContext = createContext<SlideContextType>(null as any);
@@ -150,11 +150,11 @@ const Slide: React.FC<SlideProps> = ({
       {placeholder}
       <SlideContext.Provider
         value={{
-          immediate,
+          // immediate,
           slideId,
-          isSlideActive: isActive,
-          activationThresholds,
-          activeStepIndex: internalStepIndex
+          // isSlideActive: isActive,
+          activationThresholds
+          // activeStepIndex: internalStepIndex
         }}
       >
         {slidePortalNode &&
