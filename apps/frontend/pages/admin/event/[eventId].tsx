@@ -51,9 +51,7 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
           </Stack>
         </TabPanel>
         <TabPanel value="2">
-          <Paper sx={{ p: 4 }}>
-            <EventScheduleEditor event={event} />
-          </Paper>
+          <EventScheduleEditor event={event} />
         </TabPanel>
         <TabPanel value="3">
           <EventAwardEditor eventId={event._id} awardSchema={awardSchema} />
