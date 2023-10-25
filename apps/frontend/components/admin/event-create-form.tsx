@@ -34,8 +34,8 @@ const EventCreateForm: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate?.toDate(),
-        endDate: endDate?.toDate(),
+        startDate: startDate?.toDate() || new Date(),
+        endDate: endDate?.toDate() || new Date(),
         color,
         hasState: false
       })
