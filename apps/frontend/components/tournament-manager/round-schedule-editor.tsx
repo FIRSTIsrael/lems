@@ -51,13 +51,12 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
       <TableCell>{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {tables.map(table => {
         return (
-          <TableCell key={table._id.toString()} align="center">
-            <RoundEditorTeamCell
-              teams={teams}
-              name={`${match._id}.${table._id}`}
-              disabled={match.status !== 'not-started'}
-            />
-          </TableCell>
+          <RoundEditorTeamCell
+            key={table._id.toString()}
+            teams={teams}
+            name={`${match._id}.${table._id}`}
+            disabled={match.status !== 'not-started'}
+          />
         );
       })}
     </TableRow>
@@ -144,7 +143,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
                   <TableCell>התחלה</TableCell>
                   <TableCell>סיום</TableCell>
                   {tables.map(table => (
-                    <TableCell key={table._id.toString()} align="center">
+                    <TableCell key={table._id.toString()} align="left">
                       {`שולחן ${table.name}`}
                     </TableCell>
                   ))}
