@@ -38,8 +38,8 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate?.toDate(),
-        endDate: endDate?.toDate(),
+        startDate: startDate.toDate() || event.startDate,
+        endDate: endDate.toDate() || event.endDate,
         color
       })
     }).then(res => {
