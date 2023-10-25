@@ -125,7 +125,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
                           const newSchedule = [...schedule];
                           newSchedule[index] = {
                             ...entry,
-                            startTime: newTime.toDate()
+                            startTime: newTime.set('seconds', 0).toDate()
                           };
                           return newSchedule;
                         });
@@ -145,7 +145,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
                           const newSchedule = [...schedule];
                           newSchedule[index] = {
                             ...entry,
-                            endTime: newTime.toDate()
+                            endTime: newTime.set('seconds', 0).toDate()
                           };
                           return newSchedule;
                         });
