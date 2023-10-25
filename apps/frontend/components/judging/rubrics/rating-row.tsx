@@ -45,6 +45,7 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                     value={cellValue}
                     control={
                       <Radio
+                        id={`${name} ${index}`}
                         disableRipple
                         sx={{ p: '0.5em' }}
                         icon={
