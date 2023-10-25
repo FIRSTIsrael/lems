@@ -133,7 +133,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
     if (isEditable) {
       const isCompleted = Object.keys(errors).length === 0;
-      const isEmpty = Object.values(formValues).filter(x => !!x).length === 0;
+      const isEmpty = fullMatch(formValues, getEmptyRubric());
 
       let newStatus = undefined;
       if (isEmpty) {
