@@ -20,6 +20,15 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(
         decrementButton: StyledButton
       }}
       slotProps={{
+        input: {
+          onKeyDown: e => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              const target = e.target as HTMLInputElement;
+              target.blur();
+            }
+          }
+        },
         incrementButton: {
           children: <AddIcon />,
           className: 'increment'
