@@ -34,6 +34,7 @@
     "next": "13.5.4",
     "node-schedule": "^2.1.1",
     "notistack": "^3.0.1",
+    "promise": "^8.3.0",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
@@ -44,6 +45,7 @@
     "socket.io-client": "^4.7.2",
     "stylis": "^4.3.0",
     "stylis-plugin-rtl": "^2.1.1",
+    "timesync": "^1.0.11",
     "tslib": "^2.3.0",
     "winston": "^3.10.0"
   },
