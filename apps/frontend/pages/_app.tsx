@@ -1,11 +1,15 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { SnackbarProvider } from 'notistack';
+import { create } from 'timesync';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import theme from '../lib/theme';
-import { RouteAuthorizer } from '../components/route-authorizer';
 import { createEmotionCache } from '../lib/emotion-cache';
-import { SnackbarProvider } from 'notistack';
+import { getApiBase } from '../lib/utils/fetch';
+import { RouteAuthorizer } from '../components/route-authorizer';
+import { TimeSyncContext } from '../lib/timesync';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -14,6 +18,28 @@ function CustomApp({
   pageProps,
   emotionCache = clientSideEmotionCache
 }: AppProps & { emotionCache: EmotionCache }) {
+  const [offset, setOffset] = useState<number>(0);
+
+  const timesync = create({
+    server: getApiBase() + '/timesync',
+    delay: 1000,
+    interval: 5 * 60 * 1000,
+    peers: undefined,
+    repeat: 1,
+    timeout: 1000
+  });
+
+  useEffect(() => {
+    timesync.on('change', (newOffset: number) => {
+      setOffset(newOffset);
+    });
+
+    return () => {
+      timesync.off('change');
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -24,11 +50,13 @@ function CustomApp({
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <SnackbarProvider maxSnack={3} TransitionComponent={Grow}>
-          <main className="app">
-            <RouteAuthorizer>
-              <Component {...pageProps} />
-            </RouteAuthorizer>
-          </main>
+          <TimeSyncContext.Provider value={{ offset }}>
+            <main className="app">
+              <RouteAuthorizer>
+                <Component {...pageProps} />
+              </RouteAuthorizer>
+            </main>
+          </TimeSyncContext.Provider>
         </SnackbarProvider>
       </ThemeProvider>
     </CacheProvider>

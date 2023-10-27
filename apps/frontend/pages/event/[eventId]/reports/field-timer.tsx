@@ -1,18 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
-import { Box, LinearProgress, Paper, Typography } from '@mui/material';
+import { LinearProgress, Paper, Typography } from '@mui/material';
 import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import ConnectionIndicator from '../../../../components/connection-indicator';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import { TimeSyncContext } from 'apps/frontend/lib/timesync';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -28,12 +27,16 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
+  const { offset } = useContext(TimeSyncContext);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(dayjs()), 100);
+    const interval = setInterval(
+      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
+      100
+    );
     return () => {
       clearInterval(interval);
     };
@@ -54,6 +57,9 @@ const Page: NextPage<Props> = ({
     [currentTime, matchEnd]
   );
 
+  const getCountdownTarget = (startTime: Date) =>
+    dayjs(startTime).add(MATCH_LENGTH, 'seconds').subtract(offset, 'milliseconds').toDate();
+
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
       matches.map(m => {
@@ -68,9 +74,37 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent }
+    {
+      name: 'matchStarted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-start.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchAborted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-abort.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchEndgame',
+      handler: match => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-endgame.wav').play();
+      }
+    },
+    {
+      name: 'matchCompleted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-end.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    }
   ]);
 
   return (
@@ -93,7 +127,7 @@ const Page: NextPage<Props> = ({
           </Typography>
           {activeMatch?.startTime && (
             <Countdown
-              targetDate={dayjs(activeMatch.startTime).add(MATCH_LENGTH, 'seconds').toDate()}
+              targetDate={getCountdownTarget(activeMatch?.startTime)}
               expiredText="00:00"
               fontFamily="Roboto Mono"
               fontSize="15rem"

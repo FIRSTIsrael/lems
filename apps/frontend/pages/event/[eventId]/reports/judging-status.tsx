@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import {
   Box,
   LinearProgress,
@@ -35,7 +36,7 @@ import StyledTeamTooltip from '../../../../components/general/styled-team-toolti
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
+import { TimeSyncContext } from '../../../../lib/timesync';
 
 interface JudgingStatusTimerProps {
   currentSessions: Array<WithId<JudgingSession>>;
@@ -48,11 +49,15 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
   nextSessions,
   teams
 }) => {
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const { offset } = useContext(TimeSyncContext);
+  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
   const fiveMinutes = 5 * 60;
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(dayjs()), 1000);
+    const interval = setInterval(
+      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
+      1000
+    );
     return () => {
       clearInterval(interval);
     };
@@ -78,6 +83,9 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
     return 0;
   }, [currentTime, fiveMinutes, nextSessions]);
 
+  const getCountdownTarget = (startTime: Date) =>
+    dayjs(startTime).subtract(offset, 'milliseconds').toDate();
+
   return (
     <>
       <Paper
@@ -92,7 +100,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
           {nextSessions.length > 0 && (
             <Countdown
               allowNegativeValues={true}
-              targetDate={dayjs(nextSessions[0].scheduledTime).toDate()}
+              targetDate={getCountdownTarget(nextSessions[0].scheduledTime)}
               variant="h1"
               fontFamily={'Roboto Mono'}
               fontSize="10rem"
