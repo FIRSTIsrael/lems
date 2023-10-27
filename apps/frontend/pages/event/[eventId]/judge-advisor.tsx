@@ -135,6 +135,7 @@ const Page: NextPage<Props> = ({
               >
                 <Tab label="שיפוט" value="1" />
                 <Tab label="פרסים" value="2" />
+                <Tab label="טפסי CV" value="3" />
               </Tabs>
             </Paper>
             <TabPanel value="1">

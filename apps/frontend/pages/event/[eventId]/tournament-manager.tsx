@@ -161,6 +161,7 @@ const Page: NextPage<Props> = ({
               <Tab label="אירוע" value="2" />
               <Tab label="זירה" value="3" />
               <Tab label="שיפוט" value="4" />
+              <Tab label="טפסי CV" value="5" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
@@ -193,6 +194,7 @@ const Page: NextPage<Props> = ({
               socket={socket}
             />
           </TabPanel>
+          <TabPanel value="5"></TabPanel>
         </TabContext>
       </Layout>
     </RoleAuthorizer>
