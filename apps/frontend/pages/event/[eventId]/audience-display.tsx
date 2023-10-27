@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import {
   Event,
   Team,
@@ -19,8 +20,8 @@ import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import MatchPreview from '../../../components/audience-display/match-preview';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import useKeyboardShortcut from '../../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -92,6 +93,12 @@ const Page: NextPage<Props> = ({
       })
     );
   };
+
+  console.log('Ctrl + Shift + L to logout.');
+  useKeyboardShortcut(
+    e => apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/')),
+    { code: 'KeyL', ctrlKey: true, shiftKey: true }
+  );
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     {
