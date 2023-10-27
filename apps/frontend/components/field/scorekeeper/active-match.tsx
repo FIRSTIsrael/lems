@@ -1,10 +1,12 @@
-import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
+import { useContext } from 'react';
+import dayjs from 'dayjs';
+import { WithId } from 'mongodb';
 import { Box, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { green, red } from '@mui/material/colors';
-import { WithId } from 'mongodb';
+import { MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import Countdown from '../../general/countdown';
-import dayjs from 'dayjs';
+import { TimeSyncContext } from '../../../lib/timesync';
 
 interface ActiveMatchProps {
   title: React.ReactNode;
@@ -13,6 +15,10 @@ interface ActiveMatchProps {
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) => {
+  const { offset } = useContext(TimeSyncContext);
+  const getCountdownTarget = (startTime: Date) =>
+    dayjs(startTime).add(MATCH_LENGTH, 'seconds').subtract(offset, 'milliseconds').toDate();
+
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
       <Typography component="h2" fontSize="1.125rem" fontWeight={500}>
@@ -24,7 +30,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime }) =>
 
       {startTime ? (
         <Countdown
-          targetDate={dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate()}
+          targetDate={getCountdownTarget(startTime)}
           expiredText="00:00"
           fontFamily={'Roboto Mono'}
           fontSize="3rem"

@@ -97,25 +97,32 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-start.wav').play();
+        handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-abort.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchEndgame',
+      handler: match => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-endgame.wav').play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-end.wav').play();
+        handleMatchEvent(newMatch, newEventState);
       }
     },
     { name: 'matchLoaded', handler: handleMatchEvent },

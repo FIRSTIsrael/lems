@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import {
   Event,
@@ -21,7 +22,7 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
+import { TimeSyncContext } from '../../../../lib/timesync';
 
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
@@ -30,11 +31,18 @@ interface MatchStatusTimerProps {
 }
 
 const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loadedMatch, teams }) => {
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const { offset } = useContext(TimeSyncContext);
+  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
   const twoMinutes = 2 * 60;
 
+  const getCountdownTarget = (startTime: Date) =>
+    dayjs(startTime).subtract(offset, 'milliseconds').toDate();
+
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(dayjs()), 1000);
+    const interval = setInterval(
+      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
+      1000
+    );
     return () => {
       clearInterval(interval);
     };
@@ -70,19 +78,19 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
           mt: 4
         }}
       >
-        <Stack spacing={2}>
-          {loadedMatch && (
-            <Countdown
-              allowNegativeValues={true}
-              targetDate={dayjs(loadedMatch.scheduledTime).toDate()}
-              variant="h1"
-              fontFamily={'Roboto Mono'}
-              fontSize="10rem"
-              fontWeight={700}
-              dir="ltr"
-            />
-          )}
-          {loadedMatch && (
+        {loadedMatch && (
+          <Stack spacing={2}>
+            {loadedMatch?.scheduledTime && (
+              <Countdown
+                allowNegativeValues={true}
+                targetDate={getCountdownTarget(loadedMatch.scheduledTime)}
+                variant="h1"
+                fontFamily={'Roboto Mono'}
+                fontSize="10rem"
+                fontWeight={700}
+                dir="ltr"
+              />
+            )}
             <Typography variant="h4">
               {loadedMatch.participants.filter(p => p.teamId).filter(p => !!p.ready).length} מתוך{' '}
               {
@@ -92,8 +100,8 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
               }{' '}
               שולחנות מוכנים
             </Typography>
-          )}
-        </Stack>
+          </Stack>
+        )}
       </Paper>
       {getStatus !== 'done' && (
         <LinearProgress

@@ -40,6 +40,8 @@ export interface WSServerEmittedEvents {
 
   matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
 
+  matchEndgame: (match: RobotGameMatch) => void;
+
   matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
 
   matchAborted: (match: RobotGameMatch, eventState: EventState) => void;

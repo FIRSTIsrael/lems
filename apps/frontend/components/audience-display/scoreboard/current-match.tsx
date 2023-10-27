@@ -2,9 +2,10 @@ import { Grid2Props, Paper, Typography, LinearProgress } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
-import { useState, useEffect, useMemo } from 'react';
+import { useContext, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
+import { TimeSyncContext } from '../../../lib/timesync';
 import Countdown from '../../general/countdown';
 
 interface ScoreboardCurrentMatchProps extends Grid2Props {
@@ -15,8 +16,11 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
   activeMatch,
   ...props
 }) => {
-  const matchEnd = dayjs(activeMatch?.startTime).add(MATCH_LENGTH, 'seconds');
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const { offset } = useContext(TimeSyncContext);
+  const matchEnd = dayjs(activeMatch?.startTime)
+    .add(MATCH_LENGTH, 'seconds')
+    .subtract(offset, 'milliseconds');
+  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(dayjs()), 100);
@@ -29,15 +33,6 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
     () => matchEnd.diff(currentTime) / (10 * MATCH_LENGTH),
     [currentTime, matchEnd]
   );
-
-  const secondsLeft = useMemo(
-    () => Math.ceil(matchEnd.diff(currentTime, 'milliseconds') / 1000),
-    [currentTime, matchEnd]
-  );
-
-  useEffect(() => {
-    activeMatch && secondsLeft === 30 && new Audio('/assets/sounds/field/field-endgame.wav').play();
-  }, [activeMatch, secondsLeft]);
 
   return (
     <>

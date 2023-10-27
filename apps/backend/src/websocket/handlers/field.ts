@@ -80,6 +80,23 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     }.bind(null, startTime)
   );
 
+  scheduler.scheduleJob(
+    dayjs(matchEnd).subtract(30, 'seconds').toDate(),
+    async function () {
+      const match = await db.getMatch({
+        _id: new ObjectId(matchId),
+        status: 'in-progress',
+        startTime
+      });
+
+      if (match) {
+        console.log(`🏃 Match ${matchId} endgame!`);
+        eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+        namespace.to('field').emit('matchEndgame', match);
+      }
+    }.bind(null, startTime)
+  );
+
   const match = await db.getMatch({ _id: new ObjectId(matchId) });
 
   await db.updateEventState(
