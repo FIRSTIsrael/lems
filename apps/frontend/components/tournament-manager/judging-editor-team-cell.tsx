@@ -32,9 +32,8 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
 
   return (
     <TableCell align="left">
-      <Field
-        name={name}
-        component={({ field, form }: FieldProps) =>
+      <Field name={name}>
+        {({ field, form }: FieldProps) =>
           editable ? (
             <Autocomplete
               options={dropdownOptions.sort((a, b) => {
@@ -92,7 +91,7 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
             </Button>
           )
         }
-      />
+      </Field>
     </TableCell>
   );
 };

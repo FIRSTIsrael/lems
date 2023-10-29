@@ -34,9 +34,8 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
 
   return (
     <TableCell align="left">
-      <Field
-        name={name}
-        component={({ field, form }: FieldProps) =>
+      <Field name={name}>
+        {({ field, form }: FieldProps) =>
           editable ? (
             <Autocomplete
               options={dropdownOptions.sort((a, b) => {
@@ -94,7 +93,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
             </Button>
           )
         }
-      />
+      </Field>
     </TableCell>
   );
 };

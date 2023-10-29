@@ -1,9 +1,14 @@
 import { ObjectId } from 'mongodb';
 
-export interface CVFormSubject {
-  subjectType: 'team' | 'student' | 'coach' | 'parent' | 'spectator' | 'volunteer';
-  subjectAffiliation?: string;
-}
+export const CVFormSubjectTypes = [
+  'team',
+  'student',
+  'coach',
+  'parent',
+  'spectator',
+  'volunteer'
+] as const;
+export type CVFormSubject = (typeof CVFormSubjectTypes)[number];
 
 export interface CVFormAuthor {
   name: string;
@@ -11,13 +16,15 @@ export interface CVFormAuthor {
   affiliation: string;
 }
 
-export type CVFormCategoryNames =
-  | 'exceedsExpectations'
-  | 'aboveExpectations'
-  | 'standardExpectations'
-  | 'possibleConcern'
-  | 'belowExpectations'
-  | 'inappropriate';
+export const CVFormCategoryNamesTypes = [
+  'exceedsExpectations',
+  'aboveExpectations',
+  'standardExpectations',
+  'possibleConcern',
+  'belowExpectations',
+  'inappropriate'
+] as const;
+export type CVFormCategoryNames = (typeof CVFormCategoryNamesTypes)[number];
 
 export interface CVFormCategory {
   teamOrStudent: {
@@ -32,9 +39,10 @@ export interface CVFormCategory {
 
 export interface CoreValuesForm {
   eventId: ObjectId;
-  teamId: ObjectId;
   observers: Array<CVFormSubject>;
+  observerAffiliation?: string;
   demonstrators: Array<CVFormSubject>;
+  demonstratorAffiliation?: string;
   data: Array<{ [key in CVFormCategoryNames]: CVFormCategory }>;
   details: string;
   completedBy: CVFormAuthor;
