@@ -266,8 +266,14 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
     audienceDisplayState: 'scores',
     awardsPresentation: {
       enabled: false,
-      slideIndex: 0,
-      stepIndex: 0
+      activeView: {
+        slideIndex: 0,
+        stepIndex: 0
+      },
+      pendingView: {
+        slideIndex: 0,
+        stepIndex: 0
+      }
     }
   };
 };

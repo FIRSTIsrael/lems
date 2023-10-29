@@ -5,7 +5,7 @@ export const PLACEHOLDER_CLASS_NAME = 'lems-slide';
 
 // After the initial render pass, this hook actually goes and looks for
 // <Slide> elements rendered lower in the tree. Slides decide on an ID for
-// themselves and communicate via the `data-slide-key` element on their
+// themselves and communicate via the `data-slide-id` element on their
 // placeholder.
 export function useCollectSlides() {
   const [initialized, setInitialized] = useState(false);

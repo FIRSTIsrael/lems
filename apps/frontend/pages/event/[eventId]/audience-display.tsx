@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import {
   Event,
   Team,
@@ -18,9 +19,9 @@ import HotspotReminder from '../../../components/audience-display/hotspot-remind
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import MatchPreview from '../../../components/audience-display/match-preview';
+import AwardsPresentation from '../../../components/audience-display/awards-presentation';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -149,7 +150,7 @@ const Page: NextPage<Props> = ({
             eventState={eventState}
           />
         )}
-        {/* {eventState.audienceDisplayState === 'awards' && <Presentation />} */}
+        {eventState.audienceDisplayState === 'awards' && <AwardsPresentation />}
       </Layout>
     </RoleAuthorizer>
   );
