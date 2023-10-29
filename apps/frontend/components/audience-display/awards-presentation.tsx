@@ -8,7 +8,9 @@ const AwardsPresentation: React.FC = () => {
           <p>meep</p>
         </Appear>
       </Slide>
-      <Slide></Slide>
+      <Slide>
+        <p>peem</p>
+      </Slide>
     </Presentation>
   );
 };
