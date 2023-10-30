@@ -4,7 +4,18 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Avatar, Box, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Card,
+  CardHeader,
+  CardContent,
+  Paper,
+  Stack,
+  Tab,
+  Tabs,
+  Typography
+} from '@mui/material';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
@@ -18,8 +29,10 @@ import {
   Team,
   JudgingCategory,
   Rubric,
-  Award
+  Award,
+  CoreValuesForm
 } from '@lems/types';
+import { cvFormSchema } from '@lems/season';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
@@ -29,6 +42,7 @@ import JudgingRoomSchedule from '../../../components/judging/judging-room-schedu
 import ExportAction from '../../../components/judging/judge-advisor/export-action';
 import AwardWinnerSelector from '../../../components/judging/judge-advisor/award-winner-selector';
 import { localizedRoles } from '../../../localization/roles';
+import { localizedFormSubject } from '../../../localization/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
@@ -39,6 +53,7 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   awards: Array<WithId<Award>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -48,12 +63,14 @@ const Page: NextPage<Props> = ({
   teams: initialTeams,
   sessions: initialSessions,
   rubrics: initialRubrics,
-  awards
+  awards,
+  cvForms: initialCvForms
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
+  const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   awards.sort((a, b) => {
@@ -96,6 +113,22 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleCvFormCreated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms => [...cvForms, cvForm]);
+  };
+
+  const handleCvFormUpdated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms =>
+      cvForms.map(f => {
+        if (f._id === cvForm._id) {
+          return cvForm;
+        } else {
+          return f;
+        }
+      })
+    );
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin'],
@@ -106,7 +139,21 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'rubricStatusChanged', handler: updateRubric }
+      { name: 'rubricStatusChanged', handler: updateRubric },
+      {
+        name: 'cvFormCreated',
+        handler: cvForm => {
+          handleCvFormCreated(cvForm);
+          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', { variant: 'warning' });
+        }
+      },
+      {
+        name: 'cvFormUpdated',
+        handler: cvForm => {
+          handleCvFormUpdated(cvForm);
+          enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
+        }
+      }
     ]
   );
 
@@ -281,6 +328,41 @@ const Page: NextPage<Props> = ({
                 )}
               </Formik>
             </TabPanel>
+            <TabPanel value="3">
+              <Grid container spacing={2}>
+                {cvForms.map(form => (
+                  <Grid xs={6} key={form._id.toString()}>
+                    <Card>
+                      <CardHeader
+                        avatar={
+                          <Avatar
+                            alt="חומרת הטופס"
+                            src={`https://emojicdn.elk.sh/${
+                              cvFormSchema.categories.find(c => c.id === form.severity)?.emoji
+                            }`}
+                          />
+                        }
+                      />
+                      <CardContent>
+                        <Typography>
+                          {`דיווח על ${form.demonstrators
+                            .map(d => localizedFormSubject[d])
+                            .join(', ')}`}
+                        </Typography>
+                        <Typography>
+                          {`נצפה על ידי ${form.observers
+                            .map(o => localizedFormSubject[o])
+                            .join(', ')}`}
+                        </Typography>
+                        <Typography>{`הוגש על ידי ${JSON.stringify(form.completedBy)}`}</Typography>
+                        {/* Maybe we should make the avatar part of the content too? OR lay it out a bit more nicely? */}
+                        {/* Or alternatively have the demonstrator in the title and the rest in the body */}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </TabPanel>
           </TabContext>
         </>
       </Layout>
@@ -300,7 +382,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rooms: `/api/events/${user.eventId}/rooms`,
         sessions: `/api/events/${user.eventId}/sessions`,
         rubrics: `/api/events/${user.eventId}/rubrics`,
-        awards: `/api/events/${user.eventId}/awards`
+        awards: `/api/events/${user.eventId}/awards`,
+        cvForms: `/api/events/${user.eventId}/cv-forms`
       },
       ctx
     );

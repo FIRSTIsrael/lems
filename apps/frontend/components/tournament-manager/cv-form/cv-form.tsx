@@ -133,7 +133,18 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
       initialValues={getEmptyCVForm()}
       validate={validateForm}
       onSubmit={(values, actions) => {
-        socket.emit('createCvForm', event._id.toString(), values, response => {
+        let severity: CVFormCategoryNames = 'standardExpectations';
+        Object.entries(values.data).forEach(([id, category]) => {
+          const allFields = category.teamOrStudent.fields.concat(category.anyoneElse.fields);
+          if (
+            allFields.some((x: boolean) => x) ||
+            category.teamOrStudent.other ||
+            category.anyoneElse.other
+          )
+            severity = id as CVFormCategoryNames;
+        });
+
+        socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
           if (response.ok) {
             enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
             actions.resetForm();

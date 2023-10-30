@@ -46,5 +46,6 @@ export interface CoreValuesForm {
   data: { [key in CVFormCategoryNames]: CVFormCategory };
   details: string;
   completedBy: CVFormAuthor;
+  severity: CVFormCategoryNames;
   actionTaken?: string;
 }
