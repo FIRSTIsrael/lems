@@ -43,8 +43,8 @@ export interface CoreValuesForm {
   observerAffiliation?: string;
   demonstrators: Array<CVFormSubject>;
   demonstratorAffiliation?: string;
-  data: Array<{ [key in CVFormCategoryNames]: CVFormCategory }>;
+  data: { [key in CVFormCategoryNames]: CVFormCategory };
   details: string;
   completedBy: CVFormAuthor;
-  actionTaken: string;
+  actionTaken?: string;
 }

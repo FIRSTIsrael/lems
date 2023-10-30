@@ -10,8 +10,8 @@ import {
   InputLabel
 } from '@mui/material';
 import { CVFormSubjectTypes, CVFormSubject } from '@lems/types';
-import theme from '../../lib/theme';
-import { localizedFormSubject } from '../../localization/cv-form';
+import theme from '../../../lib/theme';
+import { localizedFormSubject } from '../../../localization/cv-form';
 import { FastField, FieldProps } from 'formik';
 
 interface CVFormSubjectSelectProps {

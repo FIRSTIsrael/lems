@@ -1,26 +1,23 @@
-import { TextField } from '@mui/material';
 import { FastField, FieldProps } from 'formik';
+import { TextField, TextFieldProps } from '@mui/material';
 
-interface FeedbackNoteProps {
-  label: string;
+type FormikTextFieldProps = {
   name: string;
+  label: string;
   disabled?: boolean;
-}
+} & TextFieldProps;
 
-const FeedbackNote: React.FC<FeedbackNoteProps> = ({ label, name, disabled }) => {
+const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, disabled, ...props }) => {
   return (
     <FastField name={name}>
       {({ field, form }: FieldProps) => (
         <TextField
           fullWidth
-          label={label}
-          spellCheck
-          multiline
-          minRows={4}
-          variant="outlined"
-          disabled={disabled}
+          {...props}
           {...field}
+          label={label}
           value={field.value}
+          disabled={disabled}
           onChange={e => form.setFieldValue(field.name, e.target.value)}
         />
       )}
@@ -28,4 +25,4 @@ const FeedbackNote: React.FC<FeedbackNoteProps> = ({ label, name, disabled }) =>
   );
 };
 
-export default FeedbackNote;
+export default FormikTextField;

@@ -10,10 +10,10 @@ export const getEventCoreValuesForms = (eventId: ObjectId) => {
   return db.collection<CoreValuesForm>('core-values-forms').find({ eventId: eventId }).toArray();
 };
 
-export const addCoreValuesForm = (state: CoreValuesForm) => {
+export const addCoreValuesForm = (cvForm: CoreValuesForm) => {
   return db
     .collection<CoreValuesForm>('core-values-forms')
-    .insertOne(state)
+    .insertOne(cvForm)
     .then(response => response);
 };
 

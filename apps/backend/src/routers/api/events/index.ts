@@ -12,7 +12,6 @@ import rubricsRouter from './rubrics';
 import tablesRouter from './tables';
 import scoresheetRouter from './scoresheets';
 import ticketsRouter from './tickets';
-import cvFormsRouter from './cv-forms';
 
 const router = express.Router({ mergeParams: true });
 
@@ -50,7 +49,5 @@ router.use('/:eventId/rubrics', rubricsRouter);
 router.use('/:eventId/scoresheets', scoresheetRouter);
 
 router.use('/:eventId/tickets', ticketsRouter);
-
-router.use('/:eventId/cv-forms', cvFormsRouter);
 
 export default router;

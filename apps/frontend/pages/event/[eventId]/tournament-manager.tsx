@@ -22,7 +22,7 @@ import EventPanel from '../../../components/tournament-manager/event-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import CVForm from '../../../components/tournament-manager/cv-form';
+import CVForm from '../../../components/tournament-manager/cv-form/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -196,7 +196,7 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="5">
-            <CVForm teams={teams} socket={socket} />
+            <CVForm event={event} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>
