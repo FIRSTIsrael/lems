@@ -14,13 +14,15 @@ import {
   Stack,
   Tab,
   Tabs,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import ManageIcon from '@mui/icons-material/WidgetsRounded';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import {
   JudgingRoom,
   JudgingSession,
@@ -342,21 +344,34 @@ const Page: NextPage<Props> = ({
                             }`}
                           />
                         }
+                        action={
+                          <IconButton>
+                            <OpenInFullIcon />
+                          </IconButton>
+                        }
+                        title={`דיווח על ${form.demonstrators
+                          .map(d =>
+                            d === 'team'
+                              ? `קבוצה #${form.demonstratorAffiliation}`
+                              : localizedFormSubject[d]
+                          )
+                          .join(', ')}`}
+                        subheader={`נצפה על ידי ${form.observers
+                          .map(o =>
+                            o === 'team'
+                              ? `קבוצה #${form.observerAffiliation}`
+                              : localizedFormSubject[o]
+                          )
+                          .join(', ')}`}
                       />
                       <CardContent>
-                        <Typography>
-                          {`דיווח על ${form.demonstrators
-                            .map(d => localizedFormSubject[d])
-                            .join(', ')}`}
+                        <Typography fontSize="0.875rem">
+                          הוגש על ידי {form.completedBy.name}, טל. {form.completedBy.phone} (
+                          {form.completedBy.affiliation})
                         </Typography>
-                        <Typography>
-                          {`נצפה על ידי ${form.observers
-                            .map(o => localizedFormSubject[o])
-                            .join(', ')}`}
+                        <Typography fontSize="0.875rem" color="text.secondary">
+                          {form.details}
                         </Typography>
-                        <Typography>{`הוגש על ידי ${JSON.stringify(form.completedBy)}`}</Typography>
-                        {/* Maybe we should make the avatar part of the content too? OR lay it out a bit more nicely? */}
-                        {/* Or alternatively have the demonstrator in the title and the rest in the body */}
                       </CardContent>
                     </Card>
                   </Grid>
