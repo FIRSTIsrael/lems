@@ -1,5 +1,8 @@
 import { Form, Formik, FormikValues } from 'formik';
 import { Socket } from 'socket.io-client';
+import { useRouter } from 'next/router';
+import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import {
   Table,
   TableContainer,
@@ -25,12 +28,11 @@ import {
   WSServerEmittedEvents,
   SafeUser
 } from '@lems/types';
+import { fullMatch } from '@lems/utils/objects';
 import { cvFormSchema } from '@lems/season';
 import FormikTextField from '../general/forms/formik-text-field';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
-import { WithId } from 'mongodb';
-import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../role-authorizer';
 
 interface CVFormProps {
@@ -48,6 +50,12 @@ const CVForm: React.FC<CVFormProps> = ({
   cvForm: initialCvForm,
   readOnly = false
 }) => {
+  const router = useRouter();
+  const getCvForm = (cvForm: WithId<CoreValuesForm>) => {
+    const { _id, severity, ...rest } = cvForm;
+    return { ...rest };
+  };
+
   const getEmptyCVForm = () => {
     const eventId = event._id;
     const observers: Array<CVFormSubject> = [];
@@ -168,36 +176,40 @@ const CVForm: React.FC<CVFormProps> = ({
 
   return (
     <Formik
-      initialValues={initialCvForm || getEmptyCVForm()}
+      initialValues={initialCvForm ? getCvForm(initialCvForm) : getEmptyCVForm()}
       validate={validateForm}
       onSubmit={(values, actions) => {
         const severity = getFormSeverity(values);
 
-        initialCvForm
-          ? socket.emit(
-              'updateCvForm',
-              event._id.toString(),
-              initialCvForm._id.toString(),
-              { ...values, severity },
-              response => {
-                if (response.ok) {
-                  enqueueSnackbar('הטופס עודכן בהצלחה!', { variant: 'success' });
-                  actions.resetForm();
-                } else {
-                  enqueueSnackbar('אופס, לא הצלחנו לעדכן את טופס ערכי הליבה.', {
-                    variant: 'error'
-                  });
-                }
-              }
-            )
-          : socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
+        if (initialCvForm) {
+          socket.emit(
+            'updateCvForm',
+            event._id.toString(),
+            initialCvForm._id.toString(),
+            { ...values, severity },
+            response => {
               if (response.ok) {
-                enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
+                enqueueSnackbar('הטופס עודכן בהצלחה!', { variant: 'success' });
                 actions.resetForm();
               } else {
-                enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+                enqueueSnackbar('אופס, לא הצלחנו לעדכן את טופס ערכי הליבה.', {
+                  variant: 'error'
+                });
               }
-            });
+            }
+          );
+          router.reload();
+        } else {
+          socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
+            if (response.ok) {
+              enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
+              actions.resetForm();
+            } else {
+              enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+            }
+          });
+        }
+
         actions.setSubmitting(false);
       }}
       validateOnChange
@@ -253,10 +265,9 @@ const CVForm: React.FC<CVFormProps> = ({
                 <FormikTextField
                   minRows={3}
                   multiline
-                  name="actionsTaken"
+                  name="actionTaken"
                   label="פעולות שננקטו"
-                  color="warning"
-                  autoFocus
+                  {...(initialCvForm?.actionTaken ? {} : { color: 'warning', autoFocus: true })}
                 />
               </RoleAuthorizer>
             </Stack>
@@ -266,7 +277,7 @@ const CVForm: React.FC<CVFormProps> = ({
               variant="contained"
               sx={{ minWidth: 300, mt: 4 }}
               onClick={submitForm}
-              disabled={!isValid || (initialCvForm && values === initialCvForm)}
+              disabled={!isValid || (initialCvForm && fullMatch(values, getCvForm(initialCvForm)))}
             >
               הגשה
             </Button>
