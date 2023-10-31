@@ -22,7 +22,8 @@ import {
   CoreValuesForm,
   Event,
   WSClientEmittedEvents,
-  WSServerEmittedEvents
+  WSServerEmittedEvents,
+  SafeUser
 } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import FormikTextField from '../general/forms/formik-text-field';
@@ -30,21 +31,23 @@ import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
+import { RoleAuthorizer } from '../role-authorizer';
 
 interface CVFormProps {
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   editable?: boolean;
 }
 
-const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, editable }) => {
-  const isEditable = editable || true;
-  const getCvForm = (initialCvForm: WithId<CoreValuesForm>) => {
-    const { severity, ...values } = initialCvForm;
-    return values;
-  };
-
+const CVForm: React.FC<CVFormProps> = ({
+  user,
+  event,
+  socket,
+  cvForm: initialCvForm,
+  editable = true
+}) => {
   const getEmptyCVForm = () => {
     const eventId = event._id;
     const observers: Array<CVFormSubject> = [];
@@ -165,7 +168,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, e
 
   return (
     <Formik
-      initialValues={initialCvForm ? getCvForm(initialCvForm) : getEmptyCVForm()}
+      initialValues={initialCvForm || getEmptyCVForm()}
       validate={validateForm}
       onSubmit={(values, actions) => {
         const severity = getFormSeverity(values);
@@ -184,7 +187,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, e
     >
       {({ values, isValid, submitForm }) => (
         <Form>
-          <CVFormHeader values={values} disabled={!isEditable} />
+          <CVFormHeader values={values} disabled={!editable} />
           <TableContainer component={Paper} sx={{ mt: 4, height: 600, overflowY: 'scroll' }}>
             <Table stickyHeader>
               <TableHead>
@@ -199,7 +202,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, e
               </TableHead>
               <TableBody>
                 {cvFormSchema.categories.map((category, index) => (
-                  <CVFormCategoryRow key={category.id} category={category} disabled={!isEditable} />
+                  <CVFormCategoryRow key={category.id} category={category} disabled={!editable} />
                 ))}
               </TableBody>
             </Table>
@@ -212,21 +215,25 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, e
                 multiline
                 name="details"
                 label="תיאור ההתרחשות"
-                disabled={!isEditable}
+                disabled={!editable}
               />
               <Divider />
               <Typography fontSize="1.25rem" fontWeight={700}>
                 פרטי ממלא הטופס
               </Typography>
               <Stack direction="row" spacing={2}>
-                <FormikTextField name="completedBy.name" label="שם" disabled={!isEditable} />
-                <FormikTextField name="completedBy.phone" label="טלפון" disabled={!isEditable} />
+                <FormikTextField name="completedBy.name" label="שם" disabled={!editable} />
+                <FormikTextField name="completedBy.phone" label="טלפון" disabled={!editable} />
                 <FormikTextField
                   name="completedBy.affiliation"
                   label="תפקיד"
-                  disabled={!isEditable}
+                  disabled={!editable}
                 />
               </Stack>
+              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
+                <Divider />
+                <FormikTextField minRows={3} multiline name="actionsTaken" label="פעולות שננקטו" />
+              </RoleAuthorizer>
             </Stack>
           </Paper>
           <Box display="flex" justifyContent="center">
@@ -234,7 +241,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, e
               variant="contained"
               sx={{ minWidth: 300, mt: 4 }}
               onClick={submitForm}
-              disabled={!isValid || !isEditable}
+              disabled={!isValid || (initialCvForm && values === initialCvForm)}
             >
               הגשה
             </Button>

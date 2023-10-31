@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, Team, Ticket, User } from '@lems/types';
+import { Event, Team, Ticket, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -17,7 +17,7 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
-  user: User;
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;

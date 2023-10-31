@@ -34,7 +34,7 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
               <CVFormSubjectSelect
                 name={subjectType}
                 label={subjectType === 'observers' ? 'עדים' : 'גורמים'}
-                readOnly={false}
+                disabled={disabled}
               />
             </Grid>
             {values[subjectType].includes('team') && (
@@ -42,7 +42,6 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
                 <FastField name={`${subjectType.slice(0, -1)}Affiliation`}>
                   {({ field, form }: FieldProps) => (
                     <TextField
-                      disabled={disabled}
                       fullWidth
                       label="מספר קבוצה"
                       sx={{
@@ -52,6 +51,7 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
                       }}
                       {...field}
                       value={field.value}
+                      disabled={disabled}
                       onChange={e => form.setFieldValue(field.name, e.target.value)}
                     />
                   )}

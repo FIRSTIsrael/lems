@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { CoreValuesForm, Event, User } from '@lems/types';
+import { CoreValuesForm, Event, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
@@ -13,7 +13,7 @@ import CVForm from '../../../../components/cv-form/cv-form';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 
 interface Props {
-  user: User;
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   cvForm: WithId<CoreValuesForm>;
 }
@@ -46,7 +46,7 @@ const Page: NextPage<Props> = ({ user, event, cvForm: initialCvForm }) => {
         action={<ConnectionIndicator status={connectionStatus} />}
       >
         <Paper sx={{ p: 4, mt: 2 }}>
-          <CVForm event={event} socket={socket} cvForm={cvForm} editable={false} />
+          <CVForm user={user} event={event} socket={socket} cvForm={cvForm} editable={false} />
         </Paper>
       </Layout>
     </RoleAuthorizer>
@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.eventId}`,
-        cvForm: `/api/events/${user.eventId}/cv-forms/${ctx.params?.formId}`
+        cvForm: `/api/events/${user.eventId}/cv-forms/${ctx.params?.cvFormId}`
       },
       ctx
     );

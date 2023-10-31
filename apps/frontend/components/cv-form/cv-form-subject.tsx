@@ -17,10 +17,10 @@ import { FastField, FieldProps } from 'formik';
 interface CVFormSubjectSelectProps {
   name: string;
   label: string;
-  readOnly: boolean;
+  disabled?: boolean;
 }
 
-const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, readOnly }) => {
+const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, disabled }) => {
   const getStyles = (name: string, subjectList: readonly string[], theme: Theme) => {
     return {
       fontWeight:
@@ -39,7 +39,7 @@ const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, 
             labelId="subject-chip-label"
             id="subject-chip"
             multiple
-            readOnly={readOnly}
+            disabled={disabled}
             value={field.value}
             onChange={(e: SelectChangeEvent<Array<CVFormSubject>>) =>
               form.setFieldValue(field.name, e.target.value)

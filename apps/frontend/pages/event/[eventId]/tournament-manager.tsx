@@ -196,7 +196,7 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="5">
-            <CVForm event={event} socket={socket} />
+            <CVForm user={user} event={event} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>
