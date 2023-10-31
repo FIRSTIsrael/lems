@@ -10,16 +10,17 @@ import {
   InputLabel
 } from '@mui/material';
 import { CVFormSubjectTypes, CVFormSubject } from '@lems/types';
-import theme from '../../../lib/theme';
-import { localizedFormSubject } from '../../../localization/cv-form';
+import theme from '../../lib/theme';
+import { localizedFormSubject } from '../../localization/cv-form';
 import { FastField, FieldProps } from 'formik';
 
 interface CVFormSubjectSelectProps {
   name: string;
+  label: string;
   readOnly: boolean;
 }
 
-const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, readOnly }) => {
+const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, readOnly }) => {
   const getStyles = (name: string, subjectList: readonly string[], theme: Theme) => {
     return {
       fontWeight:
@@ -33,7 +34,7 @@ const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, readOnl
     <FastField name={name}>
       {({ field, form }: FieldProps) => (
         <FormControl fullWidth>
-          <InputLabel id="subject-chip-label">עדים</InputLabel>
+          <InputLabel id="subject-chip-label">{label}</InputLabel>
           <Select
             labelId="subject-chip-label"
             id="subject-chip"

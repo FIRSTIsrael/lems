@@ -345,7 +345,9 @@ const Page: NextPage<Props> = ({
                           />
                         }
                         action={
-                          <IconButton>
+                          <IconButton
+                            onClick={() => router.push(`/event/${event._id}/cv-forms/${form._id}`)}
+                          >
                             <OpenInFullIcon />
                           </IconButton>
                         }
@@ -366,8 +368,8 @@ const Page: NextPage<Props> = ({
                       />
                       <CardContent>
                         <Typography fontSize="0.875rem">
-                          הוגש על ידי {form.completedBy.name}, טל. {form.completedBy.phone} (
-                          {form.completedBy.affiliation})
+                          הוגש על ידי {form.completedBy.name} ({form.completedBy.affiliation}) טל.{' '}
+                          {form.completedBy.phone}
                         </Typography>
                         <Typography fontSize="0.875rem" color="text.secondary">
                           {form.details}

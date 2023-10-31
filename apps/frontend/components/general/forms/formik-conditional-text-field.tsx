@@ -5,9 +5,14 @@ import { TextField, Checkbox, Stack } from '@mui/material';
 interface FormikConditionalTextFieldProps {
   name: string;
   label: string;
+  disabled?: boolean;
 }
 
-const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({ name, label }) => {
+const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
+  name,
+  label,
+  disabled
+}) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   return (
@@ -15,6 +20,7 @@ const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
       {({ field, form }: FieldProps) => (
         <Stack direction="row" alignItems="center">
           <Checkbox
+            disabled={disabled}
             checked={checked}
             onChange={(_e, newValue) => {
               setChecked(newValue);
@@ -26,7 +32,7 @@ const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
             fullWidth
             {...field}
             label={label}
-            disabled={!checked}
+            disabled={!checked || disabled}
             value={field.value}
             onChange={e => form.setFieldValue(field.name, e.target.value)}
           />

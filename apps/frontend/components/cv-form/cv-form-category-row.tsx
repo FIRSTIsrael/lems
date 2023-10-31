@@ -1,14 +1,15 @@
 import Image from 'next/image';
 import { Typography, TableCell, TableRow, Stack } from '@mui/material';
 import { CVFormSchemaCategory } from '@lems/season';
-import FormikCheckbox from '../../general/forms/formik-checkbox';
-import FormikConditionalTextField from '../../general/forms/formik-conditional-text-field';
+import FormikCheckbox from '../general/forms/formik-checkbox';
+import FormikConditionalTextField from '../general/forms/formik-conditional-text-field';
 
 interface CVFormCategoryRowProps {
   category: CVFormSchemaCategory;
+  disabled?: boolean;
 }
 
-const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category }) => {
+const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category, disabled }) => {
   return (
     <TableRow>
       <TableCell align="center">
@@ -33,11 +34,13 @@ const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category }) => {
                 key={index}
                 name={`data.${category.id}.${columnName}.fields.${index}`}
                 label={clause}
+                disabled={disabled}
               />
             ))}
             <FormikConditionalTextField
               name={`data.${category.id}.${columnName}.other`}
               label="אחר (נא לפרט)"
+              disabled={disabled}
             />
           </Stack>
         </TableCell>

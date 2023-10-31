@@ -19,12 +19,13 @@ import {
   CVFormCategoryNames,
   CVFormCategoryNamesTypes,
   CVFormSubject,
+  CoreValuesForm,
   Event,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
-import FormikTextField from '../../general/forms/formik-text-field';
+import FormikTextField from '../general/forms/formik-text-field';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
 import { WithId } from 'mongodb';
@@ -33,9 +34,17 @@ import { enqueueSnackbar } from 'notistack';
 interface CVFormProps {
   event: WithId<Event>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  cvForm?: WithId<CoreValuesForm>;
+  editable?: boolean;
 }
 
-const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
+const CVForm: React.FC<CVFormProps> = ({ event, socket, cvForm: initialCvForm, editable }) => {
+  const isEditable = editable || true;
+  const getCvForm = (initialCvForm: WithId<CoreValuesForm>) => {
+    const { severity, ...values } = initialCvForm;
+    return values;
+  };
+
   const getEmptyCVForm = () => {
     const eventId = event._id;
     const observers: Array<CVFormSubject> = [];
@@ -128,22 +137,38 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
     return errors;
   };
 
+  const getFormSeverity = (formValues: FormikValues) => {
+    let severity: CVFormCategoryNames = 'standardExpectations';
+    const { data } = formValues;
+
+    const anyCategoryField = (category: CVFormCategory): boolean => {
+      const allFields = category.teamOrStudent.fields.concat(category.anyoneElse.fields);
+      return !!(
+        allFields.some((x: boolean) => x) ||
+        category.teamOrStudent.other ||
+        category.anyoneElse.other
+      );
+    };
+
+    [
+      'aboveExpectations',
+      'exceedsExpectations',
+      'possibleConcern',
+      'belowExpectations',
+      'inappropriate'
+    ].forEach(category => {
+      if (anyCategoryField(data[category])) severity = category as CVFormCategoryNames;
+    });
+
+    return severity;
+  };
+
   return (
     <Formik
-      initialValues={getEmptyCVForm()}
+      initialValues={initialCvForm ? getCvForm(initialCvForm) : getEmptyCVForm()}
       validate={validateForm}
       onSubmit={(values, actions) => {
-        let severity: CVFormCategoryNames = 'standardExpectations';
-        Object.entries(values.data).forEach(([id, category]) => {
-          const allFields = category.teamOrStudent.fields.concat(category.anyoneElse.fields);
-          if (
-            allFields.some((x: boolean) => x) ||
-            category.teamOrStudent.other ||
-            category.anyoneElse.other
-          )
-            severity = id as CVFormCategoryNames;
-        });
-
+        const severity = getFormSeverity(values);
         socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
           if (response.ok) {
             enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
@@ -159,7 +184,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
     >
       {({ values, isValid, submitForm }) => (
         <Form>
-          <CVFormHeader values={values} />
+          <CVFormHeader values={values} disabled={!isEditable} />
           <TableContainer component={Paper} sx={{ mt: 4, height: 600, overflowY: 'scroll' }}>
             <Table stickyHeader>
               <TableHead>
@@ -174,7 +199,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
               </TableHead>
               <TableBody>
                 {cvFormSchema.categories.map((category, index) => (
-                  <CVFormCategoryRow key={category.id} category={category} />
+                  <CVFormCategoryRow key={category.id} category={category} disabled={!isEditable} />
                 ))}
               </TableBody>
             </Table>
@@ -182,15 +207,25 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
 
           <Paper sx={{ p: 4, mt: 2 }}>
             <Stack spacing={2}>
-              <FormikTextField minRows={3} multiline name="details" label="תיאור ההתרחשות" />
+              <FormikTextField
+                minRows={3}
+                multiline
+                name="details"
+                label="תיאור ההתרחשות"
+                disabled={!isEditable}
+              />
               <Divider />
               <Typography fontSize="1.25rem" fontWeight={700}>
                 פרטי ממלא הטופס
               </Typography>
               <Stack direction="row" spacing={2}>
-                <FormikTextField name="completedBy.name" label="שם" />
-                <FormikTextField name="completedBy.phone" label="טלפון" />
-                <FormikTextField name="completedBy.affiliation" label="תפקיד" />
+                <FormikTextField name="completedBy.name" label="שם" disabled={!isEditable} />
+                <FormikTextField name="completedBy.phone" label="טלפון" disabled={!isEditable} />
+                <FormikTextField
+                  name="completedBy.affiliation"
+                  label="תפקיד"
+                  disabled={!isEditable}
+                />
               </Stack>
             </Stack>
           </Paper>
@@ -199,7 +234,7 @@ const CVForm: React.FC<CVFormProps> = ({ event, socket }) => {
               variant="contained"
               sx={{ minWidth: 300, mt: 4 }}
               onClick={submitForm}
-              disabled={!isValid}
+              disabled={!isValid || !isEditable}
             >
               הגשה
             </Button>
