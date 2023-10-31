@@ -22,6 +22,7 @@ import EventPanel from '../../../components/tournament-manager/event-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
+import CVForm from '../../../components/cv-form/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -161,6 +162,7 @@ const Page: NextPage<Props> = ({
               <Tab label="אירוע" value="2" />
               <Tab label="זירה" value="3" />
               <Tab label="שיפוט" value="4" />
+              <Tab label="טפסי CV" value="5" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
@@ -192,6 +194,9 @@ const Page: NextPage<Props> = ({
               sessions={sessions}
               socket={socket}
             />
+          </TabPanel>
+          <TabPanel value="5">
+            <CVForm user={user} event={event} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>

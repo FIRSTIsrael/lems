@@ -9,7 +9,9 @@ import {
   handleStartSession,
   handleAbortSession,
   handleUpdateSessionTeam,
-  handleUpdateRubric
+  handleUpdateRubric,
+  handleCreateCvForm,
+  handleUpdateCvForm
 } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
@@ -45,6 +47,10 @@ const websocket = (
   socket.on('updateJudgingSessionTeam', (...args) => handleUpdateSessionTeam(namespace, ...args));
 
   socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
+
+  socket.on('createCvForm', (...args) => handleCreateCvForm(namespace, ...args));
+
+  socket.on('updateCvForm', (...args) => handleUpdateCvForm(namespace, ...args));
 
   socket.on('registerTeam', (...args) => handleRegisterTeam(namespace, ...args));
 

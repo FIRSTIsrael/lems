@@ -61,10 +61,10 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
     });
   };
 
-  const getStyles = (name: string, personName: readonly string[], theme: Theme) => {
+  const getStyles = (name: string, roleList: readonly string[], theme: Theme) => {
     return {
       fontWeight:
-        personName.indexOf(name) === -1
+        roleList.indexOf(name) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium
     };

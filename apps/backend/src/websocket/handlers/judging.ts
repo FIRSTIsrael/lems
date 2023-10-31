@@ -141,3 +141,38 @@ export const handleUpdateRubric = async (
   if (rubricData.status !== oldRubric.status)
     namespace.to('judging').emit('rubricStatusChanged', rubric);
 };
+
+export const handleCreateCvForm = async (namespace, eventId, content, callback) => {
+  console.log(`📄 Creating Core Values Form in event ${eventId}`);
+  const cvFormId = await db
+    .addCoreValuesForm({ ...content, eventId: new ObjectId(eventId) })
+    .then(result => result.insertedId);
+  const cvForm = await db.getCoreValuesForm({ _id: cvFormId });
+
+  callback({ ok: true });
+  namespace.to('judging').emit('cvFormCreated', cvForm);
+};
+
+export const handleUpdateCvForm = async (namespace, eventId, cvFormId, content, callback) => {
+  let cvForm = await db.getCoreValuesForm({ _id: new ObjectId(cvFormId) });
+  if (!cvForm) {
+    callback({
+      ok: false,
+      error: `Could not find core values form ${cvFormId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️ Updating core values form ${cvFormId} in event ${eventId}`);
+
+  await db.updateCoreValuesForm(
+    {
+      _id: cvForm._id
+    },
+    content
+  );
+
+  callback({ ok: true });
+  cvForm = await db.getCoreValuesForm({ _id: new ObjectId(cvFormId) });
+  namespace.to('judging').emit('cvFormUpdated', cvForm);
+};

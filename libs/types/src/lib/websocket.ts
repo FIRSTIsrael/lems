@@ -7,6 +7,7 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { EventState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
+import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './constants';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
@@ -29,6 +30,10 @@ export interface WSServerEmittedEvents {
   rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;
 
   rubricStatusChanged: (rubric: Rubric<JudgingCategory>) => void;
+
+  cvFormCreated: (cvForm: WithId<CoreValuesForm>) => void;
+
+  cvFormUpdated: (cvForm: WithId<CoreValuesForm>) => void;
 
   teamRegistered: (team: WithId<Team>) => void;
 
@@ -74,6 +79,19 @@ export interface WSClientEmittedEvents {
     eventId: string,
     sessionId: string,
     teamId: string | null,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  createCvForm: (
+    eventId: string,
+    content: CoreValuesForm,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateCvForm: (
+    eventId: string,
+    cvFormId: string,
+    content: Partial<CoreValuesForm>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

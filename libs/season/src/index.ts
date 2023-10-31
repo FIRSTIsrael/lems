@@ -1,5 +1,7 @@
 export * from './lib/data/scoresheet';
 export * from './lib/data/scoresheet-types';
+export * from './lib/localization/cv-form/index';
+export * from './lib/localization/cv-form/typing';
 export * from './lib/localization/rubrics/index';
 export * from './lib/localization/rubrics/common';
 export * from './lib/localization/rubrics/typing';

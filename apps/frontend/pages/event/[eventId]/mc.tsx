@@ -3,14 +3,14 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Typography } from '@mui/material';
-import { Event, User, RoleTypes } from '@lems/types';
+import { Event, SafeUser, RoleTypes } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 
 interface Props {
-  user: User;
+  user: WithId<SafeUser>;
   event: WithId<Event>;
 }
 

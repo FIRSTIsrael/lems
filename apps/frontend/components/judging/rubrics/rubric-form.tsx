@@ -29,11 +29,11 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema } from '@lems/season';
+import FormikTextField from '../../general/forms/formik-text-field';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
-import FeedbackNote from './feedback-note';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 
@@ -313,11 +313,14 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
             <Stack sx={{ my: 4 }} direction="row" spacing={4}>
               {schema.feedback?.map(feedback => (
-                <FeedbackNote
+                <FormikTextField
                   key={feedback.id}
                   name={`feedback.${feedback.id}`}
                   label={feedback.title}
                   disabled={!isEditable}
+                  spellCheck
+                  multiline
+                  minRows={4}
                 />
               ))}
             </Stack>
