@@ -172,14 +172,19 @@ const CVForm: React.FC<CVFormProps> = ({
       validate={validateForm}
       onSubmit={(values, actions) => {
         const severity = getFormSeverity(values);
-        socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
-          if (response.ok) {
-            enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
-            actions.resetForm();
-          } else {
-            enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+        socket.emit(
+          initialCvForm ? 'updateCvForm' : 'createCvForm',
+          event._id.toString(),
+          { ...values, severity },
+          response => {
+            if (response.ok) {
+              enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
+              actions.resetForm();
+            } else {
+              enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+            }
           }
-        });
+        );
         actions.setSubmitting(false);
       }}
       validateOnChange
