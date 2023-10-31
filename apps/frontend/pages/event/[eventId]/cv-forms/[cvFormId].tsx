@@ -44,9 +44,11 @@ const Page: NextPage<Props> = ({ user, event, cvForm: initialCvForm }) => {
         maxWidth="md"
         title={`טופס ערכי ליבה | ${event.name}`}
         action={<ConnectionIndicator status={connectionStatus} />}
+        back={`/event/${event._id}/${user.role}`}
+        backDisabled={connectionStatus !== 'connecting'}
       >
         <Paper sx={{ p: 4, mt: 2 }}>
-          <CVForm user={user} event={event} socket={socket} cvForm={cvForm} editable={false} />
+          <CVForm user={user} event={event} socket={socket} cvForm={cvForm} readOnly={true} />
         </Paper>
       </Layout>
     </RoleAuthorizer>

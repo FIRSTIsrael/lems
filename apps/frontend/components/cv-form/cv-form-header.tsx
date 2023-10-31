@@ -6,10 +6,10 @@ import CVFormSubjectSelect from './cv-form-subject';
 
 interface CVFormHeaderProps {
   values: FormikValues;
-  disabled?: boolean;
+  readOnly?: boolean;
 }
 
-const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
+const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, readOnly }) => {
   return (
     <Grid container spacing={2} sx={{ my: 2 }}>
       <Grid xs={12} md={5}>
@@ -34,7 +34,7 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
               <CVFormSubjectSelect
                 name={subjectType}
                 label={subjectType === 'observers' ? 'עדים' : 'גורמים'}
-                disabled={disabled}
+                readOnly={readOnly}
               />
             </Grid>
             {values[subjectType].includes('team') && (
@@ -51,7 +51,7 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, disabled }) => {
                       }}
                       {...field}
                       value={field.value}
-                      disabled={disabled}
+                      InputProps={{ readOnly }}
                       onChange={e => form.setFieldValue(field.name, e.target.value)}
                     />
                   )}

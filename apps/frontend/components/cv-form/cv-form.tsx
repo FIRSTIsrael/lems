@@ -38,7 +38,7 @@ interface CVFormProps {
   event: WithId<Event>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
-  editable?: boolean;
+  readOnly?: boolean;
 }
 
 const CVForm: React.FC<CVFormProps> = ({
@@ -46,7 +46,7 @@ const CVForm: React.FC<CVFormProps> = ({
   event,
   socket,
   cvForm: initialCvForm,
-  editable = true
+  readOnly = false
 }) => {
   const getEmptyCVForm = () => {
     const eventId = event._id;
@@ -187,7 +187,7 @@ const CVForm: React.FC<CVFormProps> = ({
     >
       {({ values, isValid, submitForm }) => (
         <Form>
-          <CVFormHeader values={values} disabled={!editable} />
+          <CVFormHeader values={values} readOnly={readOnly} />
           <TableContainer component={Paper} sx={{ mt: 4, height: 600, overflowY: 'scroll' }}>
             <Table stickyHeader>
               <TableHead>
@@ -202,7 +202,7 @@ const CVForm: React.FC<CVFormProps> = ({
               </TableHead>
               <TableBody>
                 {cvFormSchema.categories.map((category, index) => (
-                  <CVFormCategoryRow key={category.id} category={category} disabled={!editable} />
+                  <CVFormCategoryRow key={category.id} category={category} readOnly={readOnly} />
                 ))}
               </TableBody>
             </Table>
@@ -213,26 +213,33 @@ const CVForm: React.FC<CVFormProps> = ({
               <FormikTextField
                 minRows={3}
                 multiline
+                InputProps={{ readOnly }}
                 name="details"
                 label="תיאור ההתרחשות"
-                disabled={!editable}
               />
               <Divider />
               <Typography fontSize="1.25rem" fontWeight={700}>
                 פרטי ממלא הטופס
               </Typography>
               <Stack direction="row" spacing={2}>
-                <FormikTextField name="completedBy.name" label="שם" disabled={!editable} />
-                <FormikTextField name="completedBy.phone" label="טלפון" disabled={!editable} />
+                <FormikTextField name="completedBy.name" label="שם" InputProps={{ readOnly }} />
+                <FormikTextField name="completedBy.phone" label="טלפון" InputProps={{ readOnly }} />
                 <FormikTextField
                   name="completedBy.affiliation"
                   label="תפקיד"
-                  disabled={!editable}
+                  InputProps={{ readOnly }}
                 />
               </Stack>
               <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
                 <Divider />
-                <FormikTextField minRows={3} multiline name="actionsTaken" label="פעולות שננקטו" />
+                <FormikTextField
+                  minRows={3}
+                  multiline
+                  name="actionsTaken"
+                  label="פעולות שננקטו"
+                  color="warning"
+                  autoFocus
+                />
               </RoleAuthorizer>
             </Stack>
           </Paper>

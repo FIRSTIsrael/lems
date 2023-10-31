@@ -6,12 +6,14 @@ interface FormikConditionalTextFieldProps {
   name: string;
   label: string;
   disabled?: boolean;
+  readOnly?: boolean;
 }
 
 const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
   name,
   label,
-  disabled
+  disabled,
+  readOnly
 }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -20,19 +22,24 @@ const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
       {({ field, form }: FieldProps) => (
         <Stack direction="row" alignItems="center">
           <Checkbox
-            disabled={disabled}
             checked={checked}
-            onChange={(_e, newValue) => {
-              setChecked(newValue);
-              if (!newValue) form.setFieldValue(field.name, '');
-            }}
+            disabled={disabled}
+            onChange={
+              readOnly
+                ? undefined
+                : (_e, newValue) => {
+                    setChecked(newValue);
+                    if (!newValue) form.setFieldValue(field.name, '');
+                  }
+            }
           />
           <TextField
             variant="standard"
             fullWidth
             {...field}
             label={label}
-            disabled={!checked || disabled}
+            disabled={disabled || readOnly ? false : !checked}
+            InputProps={{ readOnly }}
             value={field.value}
             onChange={e => form.setFieldValue(field.name, e.target.value)}
           />

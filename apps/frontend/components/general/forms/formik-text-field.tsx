@@ -4,10 +4,9 @@ import { TextField, TextFieldProps } from '@mui/material';
 type FormikTextFieldProps = {
   name: string;
   label: string;
-  disabled?: boolean;
 } & TextFieldProps;
 
-const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, disabled, ...props }) => {
+const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, ...props }) => {
   return (
     <FastField name={name}>
       {({ field, form }: FieldProps) => (
@@ -17,7 +16,6 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, disabled
           {...field}
           label={label}
           value={field.value}
-          disabled={disabled}
           onChange={e => form.setFieldValue(field.name, e.target.value)}
         />
       )}

@@ -6,10 +6,10 @@ import FormikConditionalTextField from '../general/forms/formik-conditional-text
 
 interface CVFormCategoryRowProps {
   category: CVFormSchemaCategory;
-  disabled?: boolean;
+  readOnly?: boolean;
 }
 
-const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category, disabled }) => {
+const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category, readOnly }) => {
   return (
     <TableRow>
       <TableCell align="center">
@@ -34,13 +34,13 @@ const CVFormCategoryRow: React.FC<CVFormCategoryRowProps> = ({ category, disable
                 key={index}
                 name={`data.${category.id}.${columnName}.fields.${index}`}
                 label={clause}
-                disabled={disabled}
+                readOnly={readOnly}
               />
             ))}
             <FormikConditionalTextField
               name={`data.${category.id}.${columnName}.other`}
               label="אחר (נא לפרט)"
-              disabled={disabled}
+              readOnly={readOnly}
             />
           </Stack>
         </TableCell>
