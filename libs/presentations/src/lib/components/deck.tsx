@@ -52,6 +52,7 @@ export const Deck: React.FC<DeckProps> = ({
     slideIndex: 0,
     stepIndex: 0
   },
+  // TODO: the initial deck state does not affect what is displayed
   children
 }) => {
   const id = useId();

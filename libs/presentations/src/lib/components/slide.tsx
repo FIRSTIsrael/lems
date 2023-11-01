@@ -7,6 +7,7 @@ import { ActivationThresholds, useCollectSteps } from '../hooks/use-steps';
 export type SlideContextType = {
   slideId: SlideId;
   immediate: boolean;
+  isSlideActive: boolean;
   activationThresholds: ActivationThresholds;
   activeStepIndex: number;
 };
@@ -70,12 +71,23 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
     <>
       {placeholder}
       <SlideContext.Provider
-        value={{ immediate, slideId, activationThresholds, activeStepIndex: internalStepIndex }}
+        value={{
+          immediate,
+          slideId,
+          isSlideActive: isActive,
+          activationThresholds,
+          activeStepIndex: internalStepIndex
+        }}
       >
         {slidePortalNode &&
           createPortal(
-            <div ref={setStepContainer} className={className}>
-              {children}
+            <div
+              ref={setStepContainer}
+              className={className}
+              style={{ ...(isActive && { display: 'unset' }) }}
+            >
+              {isActive && children}
+              {/* TODO: This was originally just children but it displayed ALL slides, i added the isActive */}
             </div>,
             slidePortalNode
           )}
