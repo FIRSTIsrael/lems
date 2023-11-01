@@ -107,7 +107,7 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
       allowedRoles={['judge', 'judge-advisor']}
       conditionalRoles={'lead-judge'}
       conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
-      onFail={() => router.back()}
+      onFail={() => router.push(`/event/${event._id}/${user.role}`)}
     >
       {team && (
         <Layout

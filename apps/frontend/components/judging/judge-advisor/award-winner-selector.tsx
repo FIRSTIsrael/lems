@@ -30,9 +30,8 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, awardI
         </Typography>
       </Grid>
       <Grid xs={8}>
-        <FastField
-          name={`${awardIndex}.winner`}
-          component={({ field, form }: FieldProps) => (
+        <FastField name={`${awardIndex}.winner`}>
+          {({ field, form }: FieldProps) => (
             <Autocomplete
               options={teams}
               getOptionLabel={(winner: Team | string) =>
@@ -47,7 +46,7 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, awardI
               onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
             />
           )}
-        />
+        </FastField>
       </Grid>
     </Grid>
   );

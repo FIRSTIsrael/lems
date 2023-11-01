@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { User, Event, RoleTypes } from '@lems/types';
+import { SafeUser, Event, RoleTypes } from '@lems/types';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
@@ -33,7 +33,7 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
 };
 
 interface Props {
-  user: User;
+  user: WithId<SafeUser>;
   event: WithId<Event>;
 }
 

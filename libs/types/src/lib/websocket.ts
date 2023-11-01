@@ -7,6 +7,7 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { EventState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
+import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './constants';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin';
@@ -30,6 +31,10 @@ export interface WSServerEmittedEvents {
 
   rubricStatusChanged: (rubric: Rubric<JudgingCategory>) => void;
 
+  cvFormCreated: (cvForm: WithId<CoreValuesForm>) => void;
+
+  cvFormUpdated: (cvForm: WithId<CoreValuesForm>) => void;
+
   teamRegistered: (team: WithId<Team>) => void;
 
   ticketCreated: (ticket: WithId<Ticket>) => void;
@@ -39,6 +44,8 @@ export interface WSServerEmittedEvents {
   matchLoaded: (match: RobotGameMatch, eventState: EventState) => void;
 
   matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
+
+  matchEndgame: (match: RobotGameMatch) => void;
 
   matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
 
@@ -72,6 +79,19 @@ export interface WSClientEmittedEvents {
     eventId: string,
     sessionId: string,
     teamId: string | null,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  createCvForm: (
+    eventId: string,
+    content: CoreValuesForm,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateCvForm: (
+    eventId: string,
+    cvFormId: string,
+    content: Partial<CoreValuesForm>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
@@ -172,10 +192,6 @@ export interface WSSocketData {
 }
 
 export interface WSEventListener {
-  //TODO: make the function accept the correct args according to the name?
-  //this is extremely difficult and not neccesarily possible
-  //https://github.com/socketio/socket.io/blob/main/lib/typed-events.ts#L35
-
   name: EventNames<WSServerEmittedEvents> | EventNames<WSClientEmittedEvents>;
   handler: (...args: any[]) => void | Promise<void>;
 }

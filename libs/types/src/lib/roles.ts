@@ -10,7 +10,8 @@ export const RoleTypes = [
   'scorekeeper',
   'pit-admin',
   'audience-display',
-  'tournament-manager'
+  'tournament-manager',
+  'mc'
 ] as const;
 export type Role = (typeof RoleTypes)[number];
 

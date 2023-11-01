@@ -51,13 +51,12 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
       <TableCell>{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {tables.map(table => {
         return (
-          <TableCell key={table._id.toString()} align="center">
-            <RoundEditorTeamCell
-              teams={teams}
-              name={`${match._id}.${table._id}`}
-              disabled={match.status !== 'not-started'}
-            />
-          </TableCell>
+          <RoundEditorTeamCell
+            key={table._id.toString()}
+            teams={teams}
+            name={`${match._id}.${table._id}`}
+            disabled={match.status !== 'not-started'}
+          />
         );
       })}
     </TableRow>
@@ -107,19 +106,13 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
       matchesChanged.map(matchId => {
         const toUpdate = Object.entries(values[matchId]).map(([tableId, team]: [string, any]) => {
           return { tableId, teamId: team?._id || null } as unknown;
-        }); // TODO: type this better
+        }) as Array<Partial<RobotGameMatchParticipant>>;
 
         return new Promise((resolve, reject) => {
           if (!socket) reject('No socket connection.');
-          socket.emit(
-            'updateMatchTeams',
-            event._id.toString(),
-            matchId,
-            toUpdate as Array<Partial<RobotGameMatchParticipant>>,
-            response => {
-              response.ok ? resolve(response) : reject(response);
-            }
-          );
+          socket.emit('updateMatchTeams', event._id.toString(), matchId, toUpdate, response => {
+            response.ok ? resolve(response) : reject(response);
+          });
         });
       })
     )
@@ -144,7 +137,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
                   <TableCell>התחלה</TableCell>
                   <TableCell>סיום</TableCell>
                   {tables.map(table => (
-                    <TableCell key={table._id.toString()} align="center">
+                    <TableCell key={table._id.toString()} align="left">
                       {`שולחן ${table.name}`}
                     </TableCell>
                   ))}

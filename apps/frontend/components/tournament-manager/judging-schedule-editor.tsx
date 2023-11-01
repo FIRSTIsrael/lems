@@ -50,13 +50,12 @@ const JudgingScheduleEditorRow: React.FC<JudgingScheduleEditorRowProps> = ({
         const session = sessions.find(s => s.number === number && s.roomId === r._id);
 
         return (
-          <TableCell key={r._id.toString()} align="center">
-            <JudgingEditorTeamCell
-              teams={teams}
-              name={`${session?._id.toString()}`}
-              disabled={session?.status !== 'not-started'}
-            />
-          </TableCell>
+          <JudgingEditorTeamCell
+            key={r._id.toString()}
+            teams={teams}
+            name={`${session?._id.toString()}`}
+            disabled={session?.status !== 'not-started'}
+          />
         );
       })}
     </TableRow>
@@ -123,7 +122,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
                   <TableCell>התחלה</TableCell>
                   <TableCell>סיום</TableCell>
                   {rooms.map(room => (
-                    <TableCell key={room._id.toString()} align="center">
+                    <TableCell key={room._id.toString()} align="left">
                       חדר {room.name}
                     </TableCell>
                   ))}

@@ -1,6 +1,7 @@
+import { useState, useMemo, useCallback } from 'react';
 import { WithId } from 'mongodb';
-import { Field, FieldProps } from 'formik';
-import { Autocomplete, TextField } from '@mui/material';
+import { Field, FieldProps, FormikValues, useFormikContext } from 'formik';
+import { Autocomplete, TextField, Button, Typography, TableCell } from '@mui/material';
 import { Team } from '@lems/types';
 
 interface JudgingEditorTeamCellProps {
@@ -10,57 +11,88 @@ interface JudgingEditorTeamCellProps {
 }
 
 const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, teams, disabled }) => {
+  const [editable, setEditable] = useState<boolean>(false);
   let dropdownOptions: Array<WithId<Team> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
-  return (
-    <Field
-      name={name}
-      component={({ field, form }: FieldProps) => (
-        <Autocomplete
-          options={dropdownOptions.sort((a, b) => {
-            if (!a) return -1;
-            if (!b) return 1;
+  const { values, getFieldMeta } = useFormikContext();
 
-            return (
-              Object.values(form.values).filter(v => v === a).length -
-              Object.values(form.values).filter(v => v === b).length
-            );
-          })}
-          getOptionLabel={team => (team ? team.number.toString() : '-')}
-          groupBy={team =>
-            !team
-              ? ''
-              : Object.values(form.values).filter(v => v === team).length === 0
-              ? 'חסר'
-              : 'קיים'
-          }
-          inputMode="search"
-          disableClearable={field.value !== null}
-          disabled={disabled}
-          renderInput={params => (
-            <TextField
-              {...params}
-              variant="standard"
-              InputProps={{
-                ...params.InputProps,
-                disableUnderline: true
+  const getOccurancesInForm = useCallback(
+    (team?: WithId<Team>) => {
+      if (!team) return 1;
+      return Object.values(values as FormikValues).filter(v => v === team).length;
+    },
+    [values]
+  );
+
+  const fieldOccurances = useMemo(
+    () => getOccurancesInForm((getFieldMeta(name).value as WithId<Team>) || undefined),
+    [getFieldMeta, getOccurancesInForm, name]
+  );
+
+  return (
+    <TableCell align="left">
+      <Field name={name}>
+        {({ field, form }: FieldProps) =>
+          editable ? (
+            <Autocomplete
+              options={dropdownOptions.sort((a, b) => {
+                if (!a) return -1;
+                if (!b) return 1;
+
+                return getOccurancesInForm(a) - getOccurancesInForm(b);
+              })}
+              getOptionLabel={team => (team ? team.number.toString() : '-')}
+              groupBy={team => (!team ? '' : getOccurancesInForm(team) === 0 ? 'חסר' : 'קיים')}
+              inputMode="search"
+              disableClearable={field.value !== null}
+              disabled={disabled}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  InputProps={{
+                    ...params.InputProps,
+                    disableUnderline: true
+                  }}
+                />
+              )}
+              sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                  color: fieldOccurances > 1 ? '#f57c00' : ''
+                }
               }}
+              value={field.value}
+              onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
             />
-          )}
-          sx={{
-            '& .MuiAutocomplete-inputRoot': {
-              color:
-                Object.values(form.values).filter(v => v === field.value).length > 1
-                  ? '#f57c00'
-                  : ''
-            }
-          }}
-          value={field.value}
-          onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
-        />
-      )}
-    />
+          ) : (
+            <Button
+              variant="text"
+              disabled={disabled}
+              onClick={e => setEditable(true)}
+              sx={{
+                ml: -2,
+                '&:hover': {
+                  backgroundColor: field.value && fieldOccurances > 1 ? '#fff3e7' : '#f7f5f5'
+                }
+              }}
+            >
+              <Typography
+                sx={
+                  !disabled
+                    ? {
+                        color: field.value && fieldOccurances > 1 ? '#f57c00' : '#000'
+                      }
+                    : {}
+                }
+              >
+                {field.value ? field.value.number.toString() : '-'}
+              </Typography>
+            </Button>
+          )
+        }
+      </Field>
+    </TableCell>
   );
 };
 

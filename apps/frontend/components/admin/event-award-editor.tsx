@@ -47,9 +47,8 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
 
   return (
-    <FastField
-      name={`${name}`}
-      component={({ field, form }: FieldProps) => (
+    <FastField name={`${name}`}>
+      {({ field, form }: FieldProps) => (
         <Draggable draggableId={name} index={index} {...field}>
           {provided => (
             <Grid
@@ -103,7 +102,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           )}
         </Draggable>
       )}
-    />
+    </FastField>
   );
 };
 

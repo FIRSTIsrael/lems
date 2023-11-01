@@ -45,9 +45,10 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
     socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
+      } else {
+        new Audio('/assets/sounds/judging/judging-start.wav').play();
       }
     });
-    new Audio('/assets/sounds/judging/judging-start.wav').play();
   };
 
   return (

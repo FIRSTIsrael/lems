@@ -62,9 +62,8 @@ const MissionClause: React.FC<MissionClauseProps> = ({
             )}
           </Field>
         ) : (
-          <FastField
-            name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}
-            component={({ field, form }: FieldProps) => (
+          <FastField name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
+            {({ field, form }: FieldProps) => (
               <CustomNumberInput
                 min={clause.min}
                 max={clause.max}
@@ -73,7 +72,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
               />
             )}
-          />
+          </FastField>
         )}
       </Grid>
     </>

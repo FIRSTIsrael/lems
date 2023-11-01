@@ -21,6 +21,7 @@ import Scoreboard from '../../../components/audience-display/scoreboard/scoreboa
 import MatchPreview from '../../../components/audience-display/match-preview';
 import AwardsPresentation from '../../../components/audience-display/awards-presentation';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import useKeyboardShortcut from '../../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
@@ -94,29 +95,42 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  console.log('Ctrl + Shift + L to logout.');
+  useKeyboardShortcut(
+    e => apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/')),
+    { code: 'KeyL', ctrlKey: true, shiftKey: true }
+  );
+
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-start.wav').play();
+        handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-abort.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchEndgame',
+      handler: match => {
+        if (eventState.audienceDisplayState === 'scores')
+          new Audio('/assets/sounds/field/field-endgame.wav').play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        handleMatchEvent(newMatch, newEventState);
         if (eventState.audienceDisplayState === 'scores')
           new Audio('/assets/sounds/field/field-end.wav').play();
+        handleMatchEvent(newMatch, newEventState);
       }
     },
     { name: 'matchLoaded', handler: handleMatchEvent },

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
 import {
+  Paper,
   ButtonProps,
   Stack,
   Typography,
@@ -27,6 +28,7 @@ import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
+import { fullMatch } from '@lems/utils/objects';
 
 interface EventScheduleEditorProps extends ButtonProps {
   event: WithId<Event>;
@@ -36,11 +38,20 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
   const theme = useTheme();
   const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
 
+  const sortedSchedule = useMemo(
+    () =>
+      [...schedule].sort(
+        (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      ),
+    [schedule]
+  );
+
   const updateEvent = () => {
+    setSchedule(sortedSchedule);
     apiFetch(`/api/admin/events/${event._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ schedule: schedule })
+      body: JSON.stringify({ schedule: sortedSchedule })
     }).then(res => {
       if (res.ok) {
         enqueueSnackbar('לוח הזמנים של האירוע נשמרה בהצלחה!', { variant: 'success' });
@@ -50,10 +61,10 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
     });
   };
 
-  const getStyles = (name: string, personName: readonly string[], theme: Theme) => {
+  const getStyles = (name: string, roleList: readonly string[], theme: Theme) => {
     return {
       fontWeight:
-        personName.indexOf(name) === -1
+        roleList.indexOf(name) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium
     };
@@ -67,96 +78,89 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
         updateEvent();
       }}
     >
-      <Typography variant="h2" fontSize="1.25rem" fontWeight={600} gutterBottom>
-        לוח זמנים כללי לאירוע
-      </Typography>
+      <Paper sx={{ p: 4 }}>
+        <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
+          לוח זמנים כללי לאירוע
+        </Typography>
+      </Paper>
       <Stack spacing={2} mt={2}>
         {schedule.map((entry, index) => {
           return (
-            <Stack direction="row" spacing={2} key={index} alignItems="flex-start">
-              <IconButton
-                onClick={() =>
-                  setSchedule(schedule => {
-                    const newSchedule = [...schedule];
-                    newSchedule.splice(index, 1);
-                    return newSchedule;
-                  })
-                }
-              >
-                <DeleteOutlineIcon fontSize="small" />
-              </IconButton>
-              <TextField
-                label="שם"
-                size="small"
-                fullWidth
-                value={entry.name}
-                onChange={e =>
-                  setSchedule(schedule => {
-                    const newSchedule = [...schedule];
-                    newSchedule[index] = {
-                      ...entry,
-                      name: e.target.value
-                    };
-                    return newSchedule;
-                  })
-                }
-              />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  label="שעת התחלה"
-                  value={dayjs(entry.startTime)}
-                  sx={{ minWidth: 110 }}
-                  onChange={newTime => {
-                    if (newTime) {
-                      setSchedule(schedule => {
-                        const newSchedule = [...schedule];
-                        newSchedule[index] = {
-                          ...entry,
-                          startTime: newTime.toDate()
-                        };
-                        return newSchedule.sort(
-                          (a, b) =>
-                            new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-                        );
-                      });
-                    }
-                  }}
-                  ampm={false}
-                  format="HH:mm"
-                  slots={{
-                    textField: params => <TextField {...params} />
-                  }}
-                  slotProps={{ textField: { size: 'small' } }}
+            <Stack component={Paper} spacing={2} sx={{ p: 4 }} key={index}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <IconButton
+                  onClick={() =>
+                    setSchedule(schedule => {
+                      const newSchedule = [...schedule];
+                      newSchedule.splice(index, 1);
+                      return newSchedule;
+                    })
+                  }
+                >
+                  <DeleteOutlineIcon />
+                </IconButton>
+                <TextField
+                  label="שם"
+                  fullWidth
+                  value={entry.name}
+                  onChange={e =>
+                    setSchedule(schedule => {
+                      const newSchedule = [...schedule];
+                      newSchedule[index] = {
+                        ...entry,
+                        name: e.target.value
+                      };
+                      return newSchedule;
+                    })
+                  }
                 />
-                <TimePicker
-                  label="שעת סיום"
-                  value={dayjs(entry.endTime)}
-                  sx={{ minWidth: 110 }}
-                  onChange={newTime => {
-                    if (newTime) {
-                      setSchedule(schedule => {
-                        const newSchedule = [...schedule];
-                        newSchedule[index] = {
-                          ...entry,
-                          endTime: newTime.toDate()
-                        };
-                        return newSchedule;
-                      });
-                    }
-                  }}
-                  ampm={false}
-                  format="HH:mm"
-                  slots={{
-                    textField: params => <TextField {...params} />
-                  }}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-              </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    label="שעת התחלה"
+                    value={dayjs(entry.startTime)}
+                    sx={{ minWidth: 150 }}
+                    onChange={newTime => {
+                      if (newTime) {
+                        setSchedule(schedule => {
+                          const newSchedule = [...schedule];
+                          newSchedule[index] = {
+                            ...entry,
+                            startTime: newTime.set('seconds', 0).toDate()
+                          };
+                          return newSchedule;
+                        });
+                      }
+                    }}
+                    ampm={false}
+                    format="HH:mm"
+                    views={['minutes', 'hours']}
+                  />
+                  <TimePicker
+                    label="שעת סיום"
+                    value={dayjs(entry.endTime)}
+                    sx={{ minWidth: 150 }}
+                    onChange={newTime => {
+                      if (newTime) {
+                        setSchedule(schedule => {
+                          const newSchedule = [...schedule];
+                          newSchedule[index] = {
+                            ...entry,
+                            endTime: newTime.set('seconds', 0).toDate()
+                          };
+                          return newSchedule;
+                        });
+                      }
+                    }}
+                    ampm={false}
+                    format="HH:mm"
+                    views={['minutes', 'hours']}
+                  />
+                </LocalizationProvider>
+              </Stack>
               <FormControl fullWidth>
                 <InputLabel id="role-chip-label">תפקידים</InputLabel>
                 <Select
                   labelId="role-chip-label"
-                  size="small"
                   id="role-chip"
                   multiple
                   value={entry.roles}
@@ -205,11 +209,10 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
         })}
       </Stack>
 
-      <IconButton
-        sx={{ mt: 2 }}
-        onClick={() =>
-          setSchedule(schedule =>
-            [
+      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+        <IconButton
+          onClick={() =>
+            setSchedule(schedule => [
               ...schedule,
               {
                 name: `מרכיב לו״ז ${schedule.length + 1}`,
@@ -217,18 +220,24 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
                 endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
               }
-            ].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
-          )
-        }
-      >
-        <AddIcon />
-      </IconButton>
-
-      <Box justifyContent="center" display="flex">
+            ])
+          }
+        >
+          <AddIcon />
+        </IconButton>
         <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
           שמירה
         </Button>
-      </Box>
+
+        <Button
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          disabled={fullMatch(schedule, sortedSchedule)}
+          onClick={e => setSchedule(sortedSchedule)}
+        >
+          מיון
+        </Button>
+      </Stack>
     </Box>
   );
 };

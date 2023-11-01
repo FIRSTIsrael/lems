@@ -5,7 +5,6 @@ import {
   Radio,
   Button,
   Stack,
-  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -14,7 +13,6 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
-  FormControl,
   Box
 } from '@mui/material';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
@@ -38,11 +36,11 @@ const columns = [
   { name: '4', title: 'מצטיינת', color: '#E4928B', value: 4 }
 ];
 
-const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disabled }) => {
+const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disabled, ...props }) => {
   const [checked, setChecked] = useState<boolean>(false);
   const name = 'gp';
   return (
-    <Paper sx={{ p: 4 }}>
+    <Paper sx={{ p: 4, mt: 2 }}>
       <Typography variant="h2" fontSize="1.5rem" fontWeight={500} pb={4} textAlign="center">
         דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט
       </Typography>
@@ -78,14 +76,7 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
                 </TableRow>
               </TableHead>
               <TableBody>
-                <RadioGroup
-                  sx={{ display: 'table-row' }}
-                  onChange={e => {
-                    onChange(e ?? field.name);
-                    setTimeout(() => onBlur(e ?? field.name), 10);
-                  }}
-                  {...field}
-                >
+                <TableRow>
                   {columns.map((column, index) => (
                     <TableCell
                       key={index}
@@ -112,11 +103,13 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
                           />
                         }
                         checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
+                        checked={field.value === column.value}
+                        onChange={e => form.setFieldValue(field.name, column.value)}
                       />
                     </TableCell>
                   ))}
-                </RadioGroup>
-                {(field.value === '4' || field.value === '2') && (
+                </TableRow>
+                {(field.value === 4 || field.value === 2) && (
                   <ExceededNotesCell
                     placeholder={`נמקו מדוע נתתם לקבוצה ציון ${
                       field.value === '2' ? 'מתפתחת' : 'מצטיינת'

@@ -10,7 +10,8 @@ export const localizedRoles: { [key in Role]: { name: string } } = {
   'pit-admin': { name: 'פיט אדמין' },
   referee: { name: 'שופט זירה' },
   scorekeeper: { name: 'סקורקיפר' },
-  'tournament-manager': { name: 'מנהל אירוע' }
+  'tournament-manager': { name: 'מנהל אירוע' },
+  mc: { name: 'מנחה' }
 };
 
 export const localizedRoleAssociations: { [key in RoleAssociationType]: { name: string } } = {

@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Typography, Paper } from '@mui/material';
 import { JUDGING_SESSION_LENGTH, JudgingSession, Team } from '@lems/types';
 import useCountdown from '../../hooks/use-countdown';
 import Countdown from '../general/countdown';
 import { localizeTeam } from '../../localization/teams';
+import { TimeSyncContext } from '../../lib/timesync';
 
 interface TimerProps {
   session: JudgingSession;
@@ -12,7 +13,10 @@ interface TimerProps {
 }
 
 const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
-  const sessionEnd = dayjs(session.startTime).add(JUDGING_SESSION_LENGTH, 'seconds');
+  const { offset } = useContext(TimeSyncContext);
+  const sessionEnd = dayjs(session.startTime)
+    .add(JUDGING_SESSION_LENGTH, 'seconds')
+    .subtract(offset, 'milliseconds');
   const [, , minutes, seconds] = useCountdown(sessionEnd.toDate());
 
   const secondsJudging: number = useMemo(() => {

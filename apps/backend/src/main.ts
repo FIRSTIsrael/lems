@@ -5,6 +5,7 @@ import cors from 'cors';
 import * as http from 'http';
 import * as path from 'path';
 import { Server } from 'socket.io';
+import timesyncServer from 'timesync/server';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
@@ -32,6 +33,8 @@ app.use(cors(corsOptions));
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));
+
+app.use('/timesync', timesyncServer.requestHandler);
 
 app.use(express.json());
 app.use('/', expressLogger);

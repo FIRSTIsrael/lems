@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import {
   Paper,
   Button,
@@ -20,12 +20,17 @@ import { enqueueSnackbar } from 'notistack';
 import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-const EventCreateForm: React.FC = () => {
-  const [name, setName] = useState<string>('');
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
-  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
-  const [color, setColor] = useState<DivisionColor>('red');
+const EventCreateForm = forwardRef((props, ref) => {
   const router = useRouter();
+  const [name, setName] = useState<string>('');
+  const [color, setColor] = useState<DivisionColor>('red');
+
+  const getDefaultDate = () => {
+    return dayjs().set('hours', 0).set('minutes', 0).set('seconds', 0);
+  };
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(getDefaultDate());
+  const [endDate, setEndDate] = useState<Dayjs | null>(getDefaultDate());
 
   const createEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,8 +39,8 @@ const EventCreateForm: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate?.toDate(),
-        endDate: endDate?.toDate(),
+        startDate: (startDate || getDefaultDate()).toDate(),
+        endDate: (endDate || getDefaultDate()).toDate(),
         color,
         hasState: false
       })
@@ -125,6 +130,8 @@ const EventCreateForm: React.FC = () => {
       </Stack>
     </Paper>
   );
-};
+});
+
+EventCreateForm.displayName = 'EventCreateForm';
 
 export default EventCreateForm;
