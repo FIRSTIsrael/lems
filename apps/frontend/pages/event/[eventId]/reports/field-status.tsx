@@ -12,7 +12,7 @@ import {
   EventState,
   RobotGameMatch,
   RoleTypes,
-  RobotGameTable
+  JudgingSession
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -125,8 +125,8 @@ interface Props {
   event: WithId<Event>;
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
-  tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
+  sessions: Array<WithId<JudgingSession>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -134,12 +134,13 @@ const Page: NextPage<Props> = ({
   event,
   eventState: initialEventState,
   teams: initialTeams,
-  tables,
-  matches: initialMatches
+  matches: initialMatches,
+  sessions: initialSessions
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const activeMatch = useMemo(
@@ -149,6 +150,10 @@ const Page: NextPage<Props> = ({
   const loadedMatch = useMemo(
     () => matches.find(m => m._id === eventState.loadedMatch),
     [matches, eventState.loadedMatch]
+  );
+  const activeSessions = useMemo(
+    () => sessions.filter(s => s.status === 'in-progress'),
+    [sessions]
   );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -175,9 +180,25 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    newEventState?: WithId<EventState>
+  ) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+
+    if (newEventState) setEventState(newEventState);
+  };
+
   const { connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['field', 'pit-admin'],
+    ['field', 'pit-admin', 'judging'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
@@ -185,7 +206,11 @@ const Page: NextPage<Props> = ({
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent }
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 
@@ -199,7 +224,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="md"
+        maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
@@ -220,6 +245,7 @@ const Page: NextPage<Props> = ({
           <ActiveMatch
             title="המקצה הבא"
             match={matches?.find(match => match._id === eventState.loadedMatch) || null}
+            sessions={activeSessions}
           />
         </Stack>
       </Layout>
@@ -236,8 +262,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         eventState: `/api/events/${user.eventId}/state`,
         teams: `/api/events/${user.eventId}/teams`,
-        tables: `/api/events/${user.eventId}/tables`,
-        matches: `/api/events/${user.eventId}/matches`
+        matches: `/api/events/${user.eventId}/matches`,
+        sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
     );
