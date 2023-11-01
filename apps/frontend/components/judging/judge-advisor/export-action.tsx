@@ -17,10 +17,11 @@ const ExportAction: React.FC<ExportActionProps> = ({ event, path, children, ...p
       startIcon={<DownloadIcon />}
       variant="contained"
       color="inherit"
-      href={`${getApiBase(true)}/api/admin/events/${event._id}/export${path}`}
+      href={`${getApiBase(true)}/api/events/${event._id}/export${path}`}
       target="_blank"
       download
       {...props}
+      sx={{ width: '100%' }}
     >
       {children}
     </Button>

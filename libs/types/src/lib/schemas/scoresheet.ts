@@ -30,7 +30,7 @@ export interface Scoresheet {
   data?: {
     missions: Array<Mission>;
     signature: string;
-    gp: { value: string; notes?: string };
+    gp: { value: number; notes?: string };
     score: number;
   };
 }

@@ -254,24 +254,23 @@ const Page: NextPage<Props> = ({
                     ניהול
                   </Typography>
                 </Box>
-                <Grid container>
-                  <Grid xs={4}>
+                <Grid container spacing={2}>
+                  <Grid xs={6}>
                     <ExportAction event={event} path="/rubrics/core-values" sx={{ m: 1 }}>
                       ייצוא מחווני ערכי הליבה
                     </ExportAction>
                   </Grid>
-
-                  <Grid xs={4}>
+                  <Grid xs={6}>
                     <ExportAction event={event} path="/rubrics/innovation-project" sx={{ m: 1 }}>
-                      ייצוא מחווני פרויקט חדשנות
+                      ייצוא מחווני פרויקט החדשנות
                     </ExportAction>
                   </Grid>
-                  <Grid xs={4}>
+                  <Grid xs={6}>
                     <ExportAction event={event} path="/rubrics/robot-design" sx={{ m: 1 }}>
                       ייצוא מחווני תכנון הרובוט
                     </ExportAction>
                   </Grid>
-                  <Grid xs={4}>
+                  <Grid xs={6}>
                     <ExportAction event={event} path="/scores" sx={{ m: 1 }}>
                       ייצוא תוצאות זירה
                     </ExportAction>
