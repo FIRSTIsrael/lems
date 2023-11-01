@@ -1,17 +1,23 @@
-import { Presentation, Slide, Appear } from '@lems/presentations';
+import { Deck, Slide, Appear } from '@lems/presentations';
 
 const AwardsPresentation: React.FC = () => {
   return (
-    <Presentation>
+    <Deck
+      initialState={{
+        slideIndex: 0,
+        stepIndex: 0
+      }}
+    >
       <Slide>
+        <p>slide1step1</p>
         <Appear>
-          <p>meep</p>
+          <p>slide1step2</p>
         </Appear>
       </Slide>
       <Slide>
-        <p>peem</p>
+        <p>slide2step1</p>
       </Slide>
-    </Presentation>
+    </Deck>
   );
 };
 
