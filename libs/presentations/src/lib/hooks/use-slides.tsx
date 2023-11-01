@@ -1,5 +1,5 @@
 import { useState, useEffect, useId } from 'react';
-import { SlideId } from '../components/presentation';
+import { SlideId } from '../components/deck';
 
 export const PLACEHOLDER_CLASS_NAME = 'lems-slide';
 
