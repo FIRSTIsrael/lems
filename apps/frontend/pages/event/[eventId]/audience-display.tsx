@@ -19,6 +19,7 @@ import HotspotReminder from '../../../components/audience-display/hotspot-remind
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import MatchPreview from '../../../components/audience-display/match-preview';
+import AwardsPresentation from '../../../components/audience-display/awards-presentation';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import useKeyboardShortcut from '../../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -163,7 +164,7 @@ const Page: NextPage<Props> = ({
             eventState={eventState}
           />
         )}
-        {/* {eventState.audienceDisplayState === 'awards' && <Presentation />} */}
+        {eventState.audienceDisplayState === 'awards' && <AwardsPresentation />}
       </Layout>
     </RoleAuthorizer>
   );
