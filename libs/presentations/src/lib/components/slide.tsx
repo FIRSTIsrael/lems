@@ -1,9 +1,39 @@
 import { createContext, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
+import { styled } from '@mui/system';
 import { SlideId, DeckContext } from './deck';
 import { useSlide } from '../hooks/use-slides';
 import { ActivationThresholds, useCollectSteps } from '../hooks/use-steps';
 import { GOTO_FINAL_STEP } from '../hooks/use-deck-state';
+
+const Div1 = styled('div')({
+  width: '100%',
+  height: '100%',
+  position: 'absolute'
+});
+const Div2 = styled('div')({
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+  overflow: 'hidden',
+  display: 'flex',
+  zIndex: 0,
+  '&::before': {
+    content: '" "',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: -1
+  }
+});
+const Div3 = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center'
+});
 
 export type SlideContextType = {
   slideId: SlideId;
@@ -158,9 +188,18 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
             <div
               ref={setStepContainer}
               className={className}
-              style={{ display: isActive ? 'unset' : 'none' }}
+              style={{
+                display: isActive ? 'unset' : 'none',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: '100%',
+                backgroundColor: '#333',
+                overflow: 'hidden'
+              }}
             >
-              {children}
+              <div style={{ position: 'relative' }}>{children}</div>
             </div>,
             slidePortalNode
           )}

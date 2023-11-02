@@ -22,7 +22,6 @@ const HotspotReminder: React.FC = () => {
           p: 8,
           textAlign: 'center',
           mx: '50px',
-          borderRadius: 8,
           border: '1rem solid #facc15'
         }}
       >
