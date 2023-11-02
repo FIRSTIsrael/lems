@@ -3,15 +3,15 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Typography } from '@mui/material';
 import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { TimeSyncContext } from '../../../../lib/timesync';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
-import { TimeSyncContext } from 'apps/frontend/lib/timesync';
 
 interface Props {
   user: WithId<SafeUser>;

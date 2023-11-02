@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { AudienceDisplayState } from '../constants';
 
-interface AwardsPresentationState {
-  enabled: false;
+export interface PresentationState {
+  enabled: boolean;
   activeView: {
     slideIndex: number;
     stepIndex: number;
@@ -20,5 +20,5 @@ export interface EventState {
   currentStage: 'practice' | 'ranking';
   currentSession: number;
   audienceDisplayState: AudienceDisplayState;
-  awardsPresentation: AwardsPresentationState;
+  presentations: { [key: string]: PresentationState };
 }

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { SlideId, DeckContext } from './deck';
 import { useSlide } from '../hooks/use-slides';
 import { ActivationThresholds, useCollectSteps } from '../hooks/use-steps';
+import { GOTO_FINAL_STEP } from '../hooks/use-deck-state';
 
 export type SlideContextType = {
   slideId: SlideId;
@@ -27,8 +28,19 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
 
   useEffect(() => console.log(finalStepIndex), [finalStepIndex]);
 
-  const { slideCount, slidePortalNode, slideIds, activeView, pendingView } =
-    useContext(DeckContext);
+  const {
+    slideCount,
+    slidePortalNode,
+    slideIds,
+    activeView,
+    pendingView,
+    advanceSlide,
+    regressSlide,
+    skipTo,
+    navigationDirection,
+    commitTransition,
+    cancelTransition
+  } = useContext(DeckContext);
 
   const isActive = activeView.slideId === slideId;
   const isPending = pendingView.slideId === slideId;
@@ -67,6 +79,68 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
   const infinityDirection = slideIndex < activeView.slideIndex ? Infinity : -Infinity;
   const internalStepIndex = isActive ? activeView.stepIndex : infinityDirection;
 
+  useEffect(() => {
+    if (!isActive) return;
+    if (!stepWillChange) return;
+    if (slideWillChange) return;
+
+    if (pendingView.stepIndex < 0) {
+      regressSlide();
+    } else if (pendingView.stepIndex > finalStepIndex) {
+      advanceSlide();
+    } else if (pendingView.stepIndex === GOTO_FINAL_STEP) {
+      commitTransition({
+        stepIndex: finalStepIndex
+      });
+    } else {
+      commitTransition();
+    }
+  }, [
+    activeView,
+    advanceSlide,
+    commitTransition,
+    finalStepIndex,
+    navigationDirection,
+    isActive,
+    pendingView,
+    regressSlide,
+    skipTo,
+    slideCount,
+    slideWillChange,
+    stepWillChange
+  ]);
+
+  // Bounds checking for slides in the presentation.
+  useEffect(() => {
+    if (!willExit) return;
+    if (pendingView.slideId === undefined) cancelTransition();
+  }, [willExit, cancelTransition, pendingView.slideId]);
+
+  useEffect(() => {
+    if (!willEnter) return;
+    if (finalStepIndex === undefined) return;
+
+    if (pendingView.stepIndex < 0) {
+      commitTransition({
+        stepIndex: 0
+      });
+    } else if (pendingView.stepIndex === GOTO_FINAL_STEP) {
+      // Because <Slide> elements enumerate their own steps, nobody else
+      // actually knows how many steps are in a slide. So other slides put a
+      // value of GOTO_FINAL_STEP in the step index to indicate that the slide
+      // should fill in the correct finalStepIndex before we commit the change.
+      commitTransition({
+        stepIndex: finalStepIndex
+      });
+    } else if (pendingView.stepIndex > finalStepIndex) {
+      commitTransition({
+        stepIndex: finalStepIndex
+      });
+    } else {
+      commitTransition();
+    }
+  }, [activeView, commitTransition, finalStepIndex, navigationDirection, pendingView, willEnter]);
+
   return (
     <>
       {placeholder}
@@ -84,10 +158,9 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
             <div
               ref={setStepContainer}
               className={className}
-              style={{ ...(isActive && { display: 'unset' }) }}
+              style={{ display: isActive ? 'unset' : 'none' }}
             >
-              {isActive && children}
-              {/* TODO: This was originally just children but it displayed ALL slides, i added the isActive */}
+              {children}
             </div>,
             slidePortalNode
           )}

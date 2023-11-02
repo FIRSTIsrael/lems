@@ -101,43 +101,48 @@ const Page: NextPage<Props> = ({
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    {
-      name: 'matchStarted',
-      handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
-          new Audio('/assets/sounds/field/field-start.wav').play();
-        handleMatchEvent(newMatch, newEventState);
-      }
-    },
-    {
-      name: 'matchAborted',
-      handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
-          new Audio('/assets/sounds/field/field-abort.wav').play();
-        handleMatchEvent(newMatch, newEventState);
-      }
-    },
-    {
-      name: 'matchEndgame',
-      handler: match => {
-        if (eventState.audienceDisplayState === 'scores')
-          new Audio('/assets/sounds/field/field-endgame.wav').play();
-      }
-    },
-    {
-      name: 'matchCompleted',
-      handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
-          new Audio('/assets/sounds/field/field-end.wav').play();
-        handleMatchEvent(newMatch, newEventState);
-      }
-    },
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
-    { name: 'audienceDisplayStateUpdated', handler: setEventState }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['field', 'audience-display'],
+    undefined,
+    [
+      {
+        name: 'matchStarted',
+        handler: (newMatch, newEventState) => {
+          if (eventState.audienceDisplayState === 'scores')
+            new Audio('/assets/sounds/field/field-start.wav').play();
+          handleMatchEvent(newMatch, newEventState);
+        }
+      },
+      {
+        name: 'matchAborted',
+        handler: (newMatch, newEventState) => {
+          if (eventState.audienceDisplayState === 'scores')
+            new Audio('/assets/sounds/field/field-abort.wav').play();
+          handleMatchEvent(newMatch, newEventState);
+        }
+      },
+      {
+        name: 'matchEndgame',
+        handler: () => {
+          if (eventState.audienceDisplayState === 'scores')
+            new Audio('/assets/sounds/field/field-endgame.wav').play();
+        }
+      },
+      {
+        name: 'matchCompleted',
+        handler: (newMatch, newEventState) => {
+          if (eventState.audienceDisplayState === 'scores')
+            new Audio('/assets/sounds/field/field-end.wav').play();
+          handleMatchEvent(newMatch, newEventState);
+        }
+      },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
+      { name: 'audienceDisplayStateUpdated', handler: setEventState }
+    ]
+  );
 
   return (
     <RoleAuthorizer

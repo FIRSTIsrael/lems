@@ -281,36 +281,3 @@ export const handleUpdateScoresheet = async (
   if (scoresheetData.status !== oldScoresheet.status)
     namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
 };
-
-export const handleUpdateAudienceDisplayState = async (
-  namespace,
-  eventId,
-  newDisplayState,
-  callback
-) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-
-  if (!eventState) {
-    callback({
-      ok: false,
-      error: `Could not find event state in event ${eventId}!`
-    });
-    return;
-  }
-
-  if (eventState.audienceDisplayState === newDisplayState) {
-    callback({
-      ok: false,
-      error: `Display state not updated!`
-    });
-    return;
-  }
-
-  await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
-    { audienceDisplayState: newDisplayState }
-  );
-
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('field').emit('audienceDisplayStateUpdated', eventState);
-};

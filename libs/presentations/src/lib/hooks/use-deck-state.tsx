@@ -133,12 +133,26 @@ export default function useDeckState(userProvidedInitialState: DeckView) {
     () => ({
       initializeTo: (payload: Partial<DeckView>) => dispatch({ type: 'INITIALIZE_TO', payload }),
       skipTo: (payload: Partial<DeckView>) => dispatch({ type: 'SKIP_TO', payload }),
-      stepForward: () => dispatch({ type: 'STEP_FORWARD' }),
-      stepBackward: () => dispatch({ type: 'STEP_BACKWARD' }),
-      advanceSlide: () => dispatch({ type: 'ADVANCE_SLIDE' }),
-      regressSlide: (payload?: Pick<DeckView, 'stepIndex'>) =>
-        dispatch({ type: 'REGRESS_SLIDE', payload }),
-      commitTransition: (payload?: DeckView) => dispatch({ type: 'COMMIT_TRANSITION', payload }),
+      stepForward: () => {
+        console.log('forward');
+        dispatch({ type: 'STEP_FORWARD' });
+      },
+      stepBackward: () => {
+        console.log('back');
+        dispatch({ type: 'STEP_BACKWARD' });
+      },
+      advanceSlide: () => {
+        console.log('slforward');
+        dispatch({ type: 'ADVANCE_SLIDE' });
+      },
+      regressSlide: (payload?: Pick<DeckView, 'stepIndex'>) => {
+        console.log('slback');
+        dispatch({ type: 'REGRESS_SLIDE', payload });
+      },
+      commitTransition: (payload?: DeckView) => {
+        console.log('transition');
+        dispatch({ type: 'COMMIT_TRANSITION', payload });
+      },
       cancelTransition: () => dispatch({ type: 'CANCEL_TRANSITION' })
     }),
     [dispatch]
