@@ -186,7 +186,7 @@ export interface WSClientEmittedEvents {
   updatePresentation: (
     eventId: string,
     presentationId: string,
-    newPresentationState: PresentationState,
+    newPresentationState: Partial<PresentationState>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }

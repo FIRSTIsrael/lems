@@ -33,7 +33,8 @@ export const DeckContext = createContext<DeckContextType>(null as any);
 export interface DeckProps {
   id?: string | number;
   initialState: DeckView;
-  callback?: (view: DeckView) => void;
+  enableReinitialize?: boolean;
+  onViewUpdate?: (newView: DeckView) => void;
   children?: React.ReactNode;
 }
 
@@ -45,7 +46,8 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
         slideIndex: 0,
         stepIndex: 0
       },
-      callback,
+      enableReinitialize = false,
+      onViewUpdate,
       children
     },
     ref
@@ -98,8 +100,15 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
 
     useEffect(() => {
       if (!initialized) return;
-      if (callback) callback(activeView);
-    }, [initialized, activeView, callback]);
+      if (onViewUpdate) onViewUpdate(activeView);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialized, activeView]);
+
+    useEffect(() => {
+      if (!initialized) return;
+      if (!enableReinitialize) return;
+      skipTo(initialDeckState);
+    }, [enableReinitialize, initialDeckState, initialized, skipTo]);
 
     useEffect(() => {
       initializeTo(initialDeckState);
@@ -120,7 +129,6 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
           slideCount: slideIds.length,
           slideIds,
           navigationDirection,
-          //TODO: fix
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           slidePortalNode: slidePortalNode!,
           initialized: fullyInitialized,

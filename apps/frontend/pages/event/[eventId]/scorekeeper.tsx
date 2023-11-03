@@ -15,7 +15,7 @@ import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
-import AwardsPresentation from '../../../components/audience-display/awards-presentation';
+import AwardsPresentation from '../../../components/presentations/awards-presentation';
 
 interface Props {
   user: WithId<SafeUser>;

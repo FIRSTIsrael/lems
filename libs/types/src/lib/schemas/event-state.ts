@@ -7,10 +7,6 @@ export interface PresentationState {
     slideIndex: number;
     stepIndex: number;
   };
-  pendingView: {
-    slideIndex: number;
-    stepIndex: number;
-  };
 }
 
 export interface EventState {

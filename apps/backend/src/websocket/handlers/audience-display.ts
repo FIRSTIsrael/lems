@@ -25,6 +25,8 @@ export const handleUpdateAudienceDisplayState = async (
     return;
   }
 
+  console.log(`🖊️ Updating audience display state in event ${eventId} to ${newDisplayState}!`);
+
   await db.updateEventState(
     { eventId: new ObjectId(eventId) },
     { audienceDisplayState: newDisplayState }
@@ -59,9 +61,16 @@ export const handleUpdatePresentation = async (
     return;
   }
 
+  console.log(`🖊️ Updating presentation ${presentationId} in event ${eventId}!`);
+
   await db.updateEventState(
     { eventId: new ObjectId(eventId) },
-    { presentations: { ...eventState.presentations, [presentationId]: newPresentationState } }
+    {
+      presentations: {
+        ...eventState.presentations,
+        [presentationId]: { ...eventState.presentations[presentationId], ...newPresentationState }
+      }
+    }
   );
 
   eventState = await db.getEventState({ eventId: new ObjectId(eventId) });

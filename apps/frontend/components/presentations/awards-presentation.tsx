@@ -9,7 +9,8 @@ interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
   awards: Array<WithId<Award>>;
   initialState?: DeckView;
-  callback?: (view: DeckView) => void;
+  onViewUpdate?: (activeView: DeckView) => void;
+  enableReinitialize?: boolean;
 }
 
 const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
@@ -21,7 +22,8 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
         slideIndex: 0,
         stepIndex: 0
       },
-      callback,
+      onViewUpdate,
+      enableReinitialize,
       ...props
     },
     ref
@@ -30,7 +32,12 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
 
     return (
       <Box {...props}>
-        <Deck initialState={initialState} callback={callback} ref={ref}>
+        <Deck
+          initialState={initialState}
+          onViewUpdate={onViewUpdate}
+          ref={ref}
+          enableReinitialize={enableReinitialize}
+        >
           <Slide>
             <TitleSlide primary="מצגת פרסים" secondary={event.name} />
           </Slide>
