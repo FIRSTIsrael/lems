@@ -8,7 +8,7 @@ import TitleSlide from './title-slide';
 interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
   awards: Array<WithId<Award>>;
-  callback: (view: DeckView) => void;
+  callback?: (view: DeckView) => void;
 }
 
 const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(

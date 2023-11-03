@@ -1,43 +1,60 @@
-import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
+import React, { ReactElement, useRef } from 'react';
+import { WithId } from 'mongodb';
+import { Socket } from 'socket.io-client';
+import { IconButton, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { DeckRef } from '@lems/presentations';
-import { useRef, useState } from 'react';
-import { DeckView } from '@lems/presentations';
-import AwardsPresentration from '../../audience-display/awards-presentation';
-import { WithId } from 'mongodb';
-import { Award, Event } from '@lems/types';
+import { DeckRef, DeckView } from '@lems/presentations';
+import { Event, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface PresentationControllerProps {
   event: WithId<Event>;
-  awards: Array<WithId<Award>>;
+  presentationId: string;
+  children: ReactElement;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const PresentationController: React.FC<PresentationControllerProps> = ({ event, awards }) => {
-  const [view, setView] = useState<DeckView>({
-    slideIndex: 0,
-    stepIndex: 0
-  });
-
+const PresentationController: React.FC<PresentationControllerProps> = ({
+  event,
+  presentationId,
+  children,
+  socket
+}) => {
   const deck = useRef<DeckRef>(null);
+
+  const sendSlideUpdate = (newView: DeckView) => {
+    const newState = {
+      enabled: true,
+      activeView: newView,
+      pendingView: {
+        slideIndex: 0,
+        stepIndex: 0
+      }
+    };
+
+    socket.emit('updatePresentation', event._id.toString(), presentationId, newState, response => {
+      // { ok : true }
+    });
+  };
+
+  const renderChildren = () => {
+    return React.Children.map(children, child => {
+      return React.cloneElement(child, {
+        callback: sendSlideUpdate,
+        ref: deck
+      });
+    });
+  };
 
   return (
     <Stack component={Paper} p={4} mt={2} justifyContent="center">
-      <AwardsPresentration
-        callback={setView}
-        ref={deck}
-        event={event}
-        awards={awards}
-        height={108 * 3}
-        width={192 * 3}
-        position="relative"
-      />
+      {renderChildren()}
       <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
         <IconButton onClick={deck.current?.stepForward}>
           <EastRoundedIcon fontSize="large" />
         </IconButton>
         <Typography>
-          {view.slideIndex + 1} / {deck.current?.numberOfSlides}
+          {deck.current?.activeView.slideIndex + 1} / {deck.current?.numberOfSlides}
         </Typography>
         <IconButton onClick={deck.current?.stepBackward}>
           <WestRoundedIcon fontSize="large" />

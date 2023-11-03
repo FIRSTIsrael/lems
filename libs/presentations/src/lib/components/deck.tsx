@@ -33,7 +33,7 @@ export const DeckContext = createContext<DeckContextType>(null as any);
 export interface DeckProps {
   id?: string | number;
   initialState: DeckView;
-  callback: (view: DeckView) => void;
+  callback?: (view: DeckView) => void;
   children?: React.ReactNode;
 }
 
@@ -98,7 +98,7 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
 
     useEffect(() => {
       if (!initialized) return;
-      callback(activeView);
+      if (callback) callback(activeView);
     }, [initialized, activeView, callback]);
 
     useEffect(() => {

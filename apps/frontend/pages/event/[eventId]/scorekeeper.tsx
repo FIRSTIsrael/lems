@@ -15,6 +15,7 @@ import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
+import AwardsPresentation from '../../../components/audience-display/awards-presentation';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -137,9 +138,16 @@ const Page: NextPage<Props> = ({
           <TabPanel value="2">
             <VideoSwitch eventState={eventState} socket={socket} />
             {eventState.audienceDisplayState === 'awards' && (
-              <PresentationController event={event} awards={awards} />
+              <PresentationController event={event} socket={socket} presentationId="awards">
+                <AwardsPresentation
+                  event={event}
+                  awards={awards}
+                  height={108 * 3}
+                  width={192 * 3}
+                  position="relative"
+                />
+              </PresentationController>
             )}
-            {/* TODO: make this support multiple presentations */}
           </TabPanel>
         </TabContext>
       </Layout>
