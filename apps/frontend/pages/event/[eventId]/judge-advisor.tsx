@@ -28,7 +28,8 @@ import {
   JudgingCategory,
   Rubric,
   Award,
-  CoreValuesForm
+  CoreValuesForm,
+  EventState
 } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -45,6 +46,7 @@ import AwardsPanel from '../../../components/judging/judge-advisor/awards-panel'
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -57,6 +59,7 @@ const Page: NextPage<Props> = ({
   user,
   event,
   rooms,
+  eventState: initialEventState,
   teams: initialTeams,
   sessions: initialSessions,
   rubrics: initialRubrics,
@@ -68,6 +71,7 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   awards.sort((a, b) => {
@@ -128,7 +132,7 @@ const Page: NextPage<Props> = ({
 
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['judging', 'pit-admin'],
+    ['judging', 'pit-admin', 'audience-display'],
     undefined,
     [
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
@@ -150,7 +154,8 @@ const Page: NextPage<Props> = ({
           handleCvFormUpdated(cvForm);
           enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
         }
-      }
+      },
+      { name: 'presentationUpdated', handler: setEventState }
     ]
   );
 
@@ -225,7 +230,13 @@ const Page: NextPage<Props> = ({
               ))}
             </TabPanel>
             <TabPanel value="2">
-              <AwardsPanel awards={awards} event={event} teams={teams} />
+              <AwardsPanel
+                awards={awards}
+                event={event}
+                readOnly={eventState.presentations['awards'].enabled}
+                teams={teams}
+                socket={socket}
+              />
             </TabPanel>
             <TabPanel value="3">
               <Grid container spacing={2}>

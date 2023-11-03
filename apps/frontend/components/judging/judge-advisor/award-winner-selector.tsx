@@ -16,9 +16,15 @@ interface AwardWinnerSelectorProps {
   award: WithId<Award>;
   awardIndex: number;
   teams: Array<WithId<Team>>;
+  readOnly: boolean;
 }
 
-const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, awardIndex, teams }) => {
+const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({
+  award,
+  awardIndex,
+  teams,
+  readOnly
+}) => {
   return (
     <Grid container key={award._id.toString()} component={Paper} p={2} alignItems="center">
       <Grid xs={4}>
@@ -44,6 +50,7 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, awardI
               )}
               value={field.value}
               onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
+              readOnly={readOnly}
             />
           )}
         </FastField>

@@ -25,7 +25,7 @@ router.put('/winners', async (req: Request, res: Response) => {
 
   newAwards.forEach(award => {
     award._id = new ObjectId(award._id);
-    if (typeof award.winner === 'string') return;
+    if (typeof award.winner === 'string' || !award.winner) return;
     award.winner._id = new ObjectId(award.winner?._id);
     award.winner.eventId = new ObjectId(award.winner?.eventId);
   });
