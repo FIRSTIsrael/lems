@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, SafeUser, RobotGameMatch, EventState } from '@lems/types';
+import { Event, SafeUser, RobotGameMatch, EventState, Award } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -14,22 +14,26 @@ import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
+import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
+import AwardsPresentation from '../../../components/presentations/awards-presentation';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   eventState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
   event,
   eventState: initialEventState,
-  matches: initialMatches
+  matches: initialMatches,
+  awards
 }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<EventState>(initialEventState);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
     matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id
@@ -83,14 +87,20 @@ const Page: NextPage<Props> = ({
     }
   };
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchStarted },
-    { name: 'matchAborted', handler: handleMatchAborted },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'audienceDisplayStateUpdated', handler: setEventState }
-  ]);
+  const { socket, connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['field', 'audience-display'],
+    undefined,
+    [
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchStarted },
+      { name: 'matchAborted', handler: handleMatchAborted },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'audienceDisplayStateUpdated', handler: setEventState },
+      { name: 'presentationUpdated', handler: setEventState }
+    ]
+  );
 
   return (
     <RoleAuthorizer
@@ -128,6 +138,24 @@ const Page: NextPage<Props> = ({
           </TabPanel>
           <TabPanel value="2">
             <VideoSwitch eventState={eventState} socket={socket} />
+            {eventState.audienceDisplayState === 'awards' &&
+              eventState.presentations['awards'].enabled && (
+                <PresentationController
+                  event={event}
+                  socket={socket}
+                  presentationId="awards"
+                  eventState={eventState}
+                >
+                  <AwardsPresentation
+                    event={event}
+                    awards={awards}
+                    height={108 * 2.5}
+                    width={192 * 2.5}
+                    position="relative"
+                    enableReinitialize={true}
+                  />
+                </PresentationController>
+              )}
           </TabPanel>
         </TabContext>
       </Layout>
@@ -143,7 +171,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         event: `/api/events/${user.eventId}`,
         eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`
+        matches: `/api/events/${user.eventId}/matches`,
+        awards: `/api/events/${user.eventId}/awards`
       },
       ctx
     );

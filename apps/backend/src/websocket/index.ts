@@ -21,9 +21,12 @@ import {
   handleStartMatch,
   handleStartTestMatch,
   handleUpdateScoresheet,
-  handleUpdateAudienceDisplayState,
   handleUpdateMatchTeams
 } from './handlers/field';
+import {
+  handleUpdateAudienceDisplayState,
+  handleUpdatePresentation
+} from './handlers/audience-display';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -77,6 +80,8 @@ const websocket = (
   socket.on('updateAudienceDisplayState', (...args) =>
     handleUpdateAudienceDisplayState(namespace, ...args)
   );
+
+  socket.on('updatePresentation', (...args) => handleUpdatePresentation(namespace, ...args));
 
   socket.on('disconnect', () => {
     console.log(`❌ WS: Disconnection from event ${eventId}`);

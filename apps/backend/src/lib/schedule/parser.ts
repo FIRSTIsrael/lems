@@ -257,6 +257,17 @@ export const parseSessionsAndMatches = (
 };
 
 export const getInitialEventState = (event: WithId<Event>): EventState => {
+  const supportedPresentations = ['awards'];
+  const presentations = Object.fromEntries(
+    supportedPresentations.map(presentaionId => [
+      presentaionId,
+      {
+        enabled: false,
+        activeView: { slideIndex: 0, stepIndex: 0 }
+      }
+    ])
+  );
+
   return {
     eventId: event._id,
     activeMatch: null,
@@ -264,10 +275,6 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
     currentStage: 'practice',
     currentSession: 0,
     audienceDisplayState: 'scores',
-    awardsPresentation: {
-      enabled: false,
-      slideIndex: 0,
-      stepIndex: 0
-    }
+    presentations
   };
 };

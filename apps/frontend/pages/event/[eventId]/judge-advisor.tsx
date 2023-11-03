@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Form, Formik } from 'formik';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -11,17 +10,14 @@ import {
   CardHeader,
   CardContent,
   Paper,
-  Stack,
   Tab,
   Tabs,
   Typography,
   IconButton
 } from '@mui/material';
-import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import ManageIcon from '@mui/icons-material/WidgetsRounded';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import {
   JudgingRoom,
@@ -32,7 +28,8 @@ import {
   JudgingCategory,
   Rubric,
   Award,
-  CoreValuesForm
+  CoreValuesForm,
+  EventState
 } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -41,15 +38,15 @@ import RubricStatusReferences from '../../../components/judging/rubric-status-re
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
-import ExportAction from '../../../components/judging/judge-advisor/export-action';
-import AwardWinnerSelector from '../../../components/judging/judge-advisor/award-winner-selector';
 import { localizedRoles } from '../../../localization/roles';
 import { localizedFormSubject } from '../../../localization/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import AwardsPanel from '../../../components/judging/judge-advisor/awards-panel';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -62,6 +59,7 @@ const Page: NextPage<Props> = ({
   user,
   event,
   rooms,
+  eventState: initialEventState,
   teams: initialTeams,
   sessions: initialSessions,
   rubrics: initialRubrics,
@@ -73,6 +71,7 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   awards.sort((a, b) => {
@@ -133,7 +132,7 @@ const Page: NextPage<Props> = ({
 
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['judging', 'pit-admin'],
+    ['judging', 'pit-admin', 'audience-display'],
     undefined,
     [
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
@@ -155,7 +154,8 @@ const Page: NextPage<Props> = ({
           handleCvFormUpdated(cvForm);
           enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
         }
-      }
+      },
+      { name: 'presentationUpdated', handler: setEventState }
     ]
   );
 
@@ -230,104 +230,13 @@ const Page: NextPage<Props> = ({
               ))}
             </TabPanel>
             <TabPanel value="2">
-              <Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    pb: 3
-                  }}
-                >
-                  <Avatar
-                    sx={{
-                      bgcolor: '#ccfbf1',
-                      color: '#2dd4bf',
-                      width: '2rem',
-                      height: '2rem',
-                      mr: 1
-                    }}
-                  >
-                    <ManageIcon sx={{ fontSize: '1rem' }} />
-                  </Avatar>
-                  <Typography variant="h2" fontSize="1.25rem">
-                    ניהול
-                  </Typography>
-                </Box>
-                <Grid container spacing={2}>
-                  <Grid xs={6}>
-                    <ExportAction event={event} path="/rubrics/core-values" sx={{ m: 1 }}>
-                      ייצוא מחווני ערכי הליבה
-                    </ExportAction>
-                  </Grid>
-                  <Grid xs={6}>
-                    <ExportAction event={event} path="/rubrics/innovation-project" sx={{ m: 1 }}>
-                      ייצוא מחווני פרויקט החדשנות
-                    </ExportAction>
-                  </Grid>
-                  <Grid xs={6}>
-                    <ExportAction event={event} path="/rubrics/robot-design" sx={{ m: 1 }}>
-                      ייצוא מחווני תכנון הרובוט
-                    </ExportAction>
-                  </Grid>
-                  <Grid xs={6}>
-                    <ExportAction event={event} path="/scores" sx={{ m: 1 }}>
-                      ייצוא תוצאות זירה
-                    </ExportAction>
-                  </Grid>
-                </Grid>
-              </Paper>
-              <Formik
-                initialValues={awards.map(a => {
-                  if (!a.winner) a.winner = '';
-                  return a;
-                })}
-                onSubmit={(values, actions) => {
-                  apiFetch(`/api/events/${event._id}/awards/winners`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(values)
-                  })
-                    .then(res => {
-                      if (res.ok) {
-                        enqueueSnackbar('זוכי הפרסים נשמרו בהצלחה!', { variant: 'success' });
-                      } else {
-                        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', {
-                          variant: 'error'
-                        });
-                      }
-                    })
-                    .then(() => actions.setSubmitting(false));
-                }}
-              >
-                {({ submitForm, isSubmitting }) => (
-                  <Form>
-                    <Stack spacing={2}>
-                      {awards.map((a, index) => (
-                        <AwardWinnerSelector
-                          key={a._id.toString()}
-                          award={a}
-                          awardIndex={index}
-                          teams={teams.filter(t => t.registered)}
-                        />
-                      ))}
-                    </Stack>
-                    {awards.length > 0 && (
-                      <Box display="flex" flexDirection="row" justifyContent="center" mt={2}>
-                        <LoadingButton
-                          startIcon={<SaveOutlinedIcon />}
-                          sx={{ minWidth: 250 }}
-                          variant="contained"
-                          onClick={submitForm}
-                          loading={isSubmitting}
-                        >
-                          <span>שמירה</span>
-                        </LoadingButton>
-                      </Box>
-                    )}
-                  </Form>
-                )}
-              </Formik>
+              <AwardsPanel
+                awards={awards}
+                event={event}
+                readOnly={eventState.presentations['awards'].enabled}
+                teams={teams}
+                socket={socket}
+              />
             </TabPanel>
             <TabPanel value="3">
               <Grid container spacing={2}>

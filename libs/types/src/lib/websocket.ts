@@ -5,12 +5,12 @@ import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
-import { EventState } from './schemas/event-state';
+import { EventState, PresentationState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './constants';
 
-export type WSRoomName = 'judging' | 'field' | 'pit-admin';
+export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
 interface EventsMap {
   [event: string]: any;
@@ -58,6 +58,8 @@ export interface WSServerEmittedEvents {
   scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
 
   audienceDisplayStateUpdated: (eventState: EventState) => void;
+
+  presentationUpdated: (eventState: EventState) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -178,6 +180,13 @@ export interface WSClientEmittedEvents {
   updateAudienceDisplayState: (
     eventId: string,
     newDisplayState: AudienceDisplayState,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updatePresentation: (
+    eventId: string,
+    presentationId: string,
+    newPresentationState: Partial<PresentationState>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 }
