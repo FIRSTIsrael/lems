@@ -27,7 +27,8 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
   const previewDeck = useRef<DeckRef>(null);
   const [showFinalSlide, setShowFinalSlide] = useState(true);
 
-  const endOfNextSlide = ({ slideIndex }: DeckView) => ({
+  //TODO: make this show 1 step ahead instead of 1 slide ahead
+  const endOfNextSlide = ({ slideIndex, stepIndex }: DeckView) => ({
     slideIndex: slideIndex + 1,
     stepIndex: GOTO_FINAL_STEP
   });
@@ -53,31 +54,38 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
 
   return (
     <Stack component={Paper} p={4} mt={2} justifyContent="center">
-      <Stack direction="row" spacing={2}>
-        {React.Children.map(children, child => {
-          return React.cloneElement(child, {
-            initialState: eventState.presentations[presentationId].activeView,
-            onViewUpdate: sendSlideUpdate,
-            ref: deck
-          });
-        })}
-        {showFinalSlide &&
-          React.Children.map(children, child => {
-            if (deck.current)
-              return React.cloneElement(child, {
-                initialState: endOfNextSlide(deck.current.activeView),
-                ref: previewDeck
-              });
+      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+        <Stack spacing={2}>
+          <Typography textAlign="center">שקף נוכחי</Typography>
+          {React.Children.map(children, child => {
+            return React.cloneElement(child, {
+              initialState: eventState.presentations[presentationId].activeView,
+              onViewUpdate: sendSlideUpdate,
+              ref: deck
+            });
           })}
+        </Stack>
+        {showFinalSlide && (
+          <Stack spacing={2}>
+            <Typography textAlign="center">שקף הבא</Typography>
+            {React.Children.map(children, child => {
+              if (deck.current)
+                return React.cloneElement(child, {
+                  initialState: endOfNextSlide(deck.current.activeView),
+                  ref: previewDeck
+                });
+            })}
+          </Stack>
+        )}
       </Stack>
       <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
-        <IconButton onClick={deck.current?.stepForward}>
+        <IconButton onClick={deck.current?.stepBackward}>
           <EastRoundedIcon fontSize="large" />
         </IconButton>
         <Typography>
-          {(deck.current?.activeView.slideIndex || 0) + 1} / {deck.current?.numberOfSlides}
+          {deck.current?.numberOfSlides} / {(deck.current?.activeView.slideIndex || 0) + 1}
         </Typography>
-        <IconButton onClick={deck.current?.stepBackward}>
+        <IconButton onClick={deck.current?.stepForward}>
           <WestRoundedIcon fontSize="large" />
         </IconButton>
       </Stack>

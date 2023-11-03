@@ -71,20 +71,23 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
             }
           })}
         >
-          {AudienceDisplayStateTypes.map(t => (
-            <ToggleButton
-              value={t}
-              key={t}
-              sx={{
-                minWidth: 150,
-                '&.Mui-selected': {
-                  color: theme => `${theme.palette.primary.main} !important`
-                }
-              }}
-            >
-              {localizedAudienceDisplayState[t]}
-            </ToggleButton>
-          ))}
+          {AudienceDisplayStateTypes.map(t => {
+            if (eventState.presentations[t]?.enabled === false) return;
+            return (
+              <ToggleButton
+                value={t}
+                key={t}
+                sx={{
+                  minWidth: 150,
+                  '&.Mui-selected': {
+                    color: theme => `${theme.palette.primary.main} !important`
+                  }
+                }}
+              >
+                {localizedAudienceDisplayState[t]}
+              </ToggleButton>
+            );
+          })}
         </ToggleButtonGroup>
       </Paper>
     </Paper>
