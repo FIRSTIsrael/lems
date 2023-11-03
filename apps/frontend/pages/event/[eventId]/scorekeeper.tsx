@@ -33,7 +33,7 @@ const Page: NextPage<Props> = ({
   awards
 }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<EventState>(initialEventState);
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
     matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id
@@ -97,7 +97,8 @@ const Page: NextPage<Props> = ({
       { name: 'matchAborted', handler: handleMatchAborted },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayStateUpdated', handler: setEventState }
+      { name: 'audienceDisplayStateUpdated', handler: setEventState },
+      { name: 'presentationUpdated', handler: setEventState }
     ]
   );
 
@@ -138,7 +139,12 @@ const Page: NextPage<Props> = ({
           <TabPanel value="2">
             <VideoSwitch eventState={eventState} socket={socket} />
             {eventState.audienceDisplayState === 'awards' && (
-              <PresentationController event={event} socket={socket} presentationId="awards">
+              <PresentationController
+                event={event}
+                socket={socket}
+                presentationId="awards"
+                eventState={eventState}
+              >
                 <AwardsPresentation
                   event={event}
                   awards={awards}

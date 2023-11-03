@@ -102,10 +102,8 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
     }, [initialized, activeView, callback]);
 
     useEffect(() => {
-      initializeTo({
-        slideIndex: 0,
-        stepIndex: 0
-      });
+      initializeTo(initialDeckState);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initializeTo]);
 
     const activeSlideId = slideIds[activeView.slideIndex];

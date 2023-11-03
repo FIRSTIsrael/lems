@@ -8,23 +8,29 @@ import TitleSlide from './title-slide';
 interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
   awards: Array<WithId<Award>>;
+  initialState?: DeckView;
   callback?: (view: DeckView) => void;
 }
 
 const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
-  ({ event, awards, callback, ...props }, ref) => {
+  (
+    {
+      event,
+      awards,
+      initialState = {
+        slideIndex: 0,
+        stepIndex: 0
+      },
+      callback,
+      ...props
+    },
+    ref
+  ) => {
     const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
 
     return (
       <Box {...props}>
-        <Deck
-          initialState={{
-            slideIndex: 0,
-            stepIndex: 0
-          }}
-          callback={callback}
-          ref={ref}
-        >
+        <Deck initialState={initialState} callback={callback} ref={ref}>
           <Slide>
             <TitleSlide primary="מצגת פרסים" secondary={event.name} />
           </Slide>

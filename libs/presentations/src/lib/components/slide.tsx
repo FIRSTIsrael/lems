@@ -56,8 +56,6 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
   const { setStepContainer, activationThresholds, finalStepIndex } = useCollectSteps();
   const immediate = false;
 
-  useEffect(() => console.log(finalStepIndex), [finalStepIndex]);
-
   const {
     slideCount,
     slidePortalNode,
