@@ -8,7 +8,7 @@ import {
 } from '../constants';
 
 export interface RubricValue {
-  value: string; //Radio buttons do not like numbers, so we use string :D
+  value: number;
   notes?: string;
 }
 

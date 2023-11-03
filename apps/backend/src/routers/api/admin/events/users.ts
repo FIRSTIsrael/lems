@@ -45,7 +45,28 @@ router.get('/export', async (req: Request, res: Response) => {
   res.set('Content-Disposition', `attachment; filename=event_${req.params.eventId}_passwords.csv`);
   res.set('Content-Type', 'text/csv');
 
-  return res.send(`\ufeff${new Parser().parse(credentials)}`);
+  const opts = {
+    fields: [
+      {
+        label: 'תפקיד',
+        value: 'role'
+      },
+      {
+        label: 'סוג שיוך',
+        value: 'associationType'
+      },
+      {
+        label: 'שיוך',
+        value: 'association'
+      },
+      {
+        label: 'סיסמא',
+        value: 'password'
+      }
+    ]
+  };
+  const parser = new Parser(opts);
+  return res.send(`\ufeff${parser.parse(credentials)}`);
 });
 
 router.get('/:userId', (req: Request, res: Response) => {

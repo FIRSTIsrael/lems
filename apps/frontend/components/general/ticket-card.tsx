@@ -38,7 +38,6 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         xs={5}
         key={ticket._id.toString()}
         p={2}
-        height={225}
         overflow="auto"
         position="relative"
         {...props}
@@ -47,9 +46,17 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
           {localizeTeam(team)}
         </Typography>
         <Typography fontSize="1rem">{localizedTicketTypes[ticket.type]}</Typography>
-        <Typography color="text.secondary">{ticket.content}</Typography>
+        <Typography
+          color="text.secondary"
+          maxHeight={225}
+          width="100%"
+          overflow={'auto'}
+          sx={{ mb: 1, wordWrap: 'break-word' }}
+        >
+          {ticket.content}
+        </Typography>
         {!ticket.closed && (
-          <Box display="flex" justifyContent="flex-end" position="absolute" bottom={10} right={10}>
+          <Box display="flex" justifyContent="flex-end">
             <IconButton onClick={() => setOpen(true)}>
               <TaskIcon />
             </IconButton>

@@ -12,12 +12,14 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
     fields: [
       {
         id: 'problem',
+        title: 'הגדרת הבעיה',
         label_1: 'הבעיה אינה מוגדרת באופן ברור',
         label_2: 'הגדרת הבעיה ברורה באופן חלקי',
         label_3: 'הגדרת הבעיה ברורה'
       },
       {
         id: 'research',
+        title: 'מחקר',
         label_1: 'מחקר מינימלי',
         label_2: 'מחקר חלקי, על סמך יותר ממקור מידע אחד',
         label_3: 'מחקר ברור ומפורט, על סמך מגוון מקורות מידע'
@@ -30,12 +32,14 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
     fields: [
       {
         id: 'selection',
+        title: 'רעיונות',
         label_1: 'עדות מינימלית לתהליך בחירה משותף',
         label_2: 'עדות חלקית לתהליך בחירה משותף',
         label_3: 'עדות ניכרת לתהליך בחירה משותף'
       },
       {
         id: 'plan',
+        title: 'תכנון תכליתי',
         label_1: 'עדות מינימלית לתוכנית עבודה תכליתית',
         label_2: 'עדות חלקית לתוכנית עבודה תכליתית',
         label_3: 'עדות ניכרת לתוכנית עבודה תכליתית'
@@ -49,12 +53,14 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
     fields: [
       {
         id: 'development',
+        title: 'פיתוח',
         label_1: 'פיתוח מינימלי של הפתרון החדשני',
         label_2: 'פיתוח חלקי של הפתרון החדשני',
         label_3: 'פיתוח ניכר של הפתרון החדשני'
       },
       {
         id: 'model',
+        title: 'דגם',
         label_1: 'דגם או סרטוט של הפתרון אינו ברור',
         label_2: 'דגם או סרטוט פשוט שעוזר לשתף את הפתרון',
         label_3: 'דגם או סרטוט מפורט שעוזר לשתף את הפתרון'
@@ -67,12 +73,14 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
     fields: [
       {
         id: 'sharing',
+        title: 'שיתוף',
         label_1: 'שיתוף מינימלי של הפתרון',
         label_2: 'שיתפו את הפתרון עם נציג קהל היעד **או** עם מומחה',
         label_3: 'שיתפו את הפתרון עם נציג קהל היעד **וגם** עם מומחה'
       },
       {
         id: 'improvements',
+        title: 'שיפורים',
         label_1: 'עדות מינימלית לשילוב שיפורים בפתרון',
         label_2: 'עדות חלקית לשילוב שיפורים בפתרון',
         label_3: 'עדות ניכרת לשילוב שיפורים בפתרון'
@@ -86,12 +94,14 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
     fields: [
       {
         id: 'presentation',
+        title: 'הצגה',
         label_1: 'הצגת הפרויקט שובה באופן מינימלי',
         label_2: 'הצגת הפרויקט שובה באופן חלקי',
         label_3: 'הצגת הפרויקט שובה'
       },
       {
         id: 'impact',
+        title: 'פתרון והשפעה',
         label_1: 'הפתרון והשפעתו האפשרית על אחרים אינם ברורים',
         label_2: 'הפתרון והשפעתו האפשרית על אחרים ברורים חלקית',
         label_3: 'הפתרון והשפעתו האפשרית על אחרים ברורים לחלוטין'

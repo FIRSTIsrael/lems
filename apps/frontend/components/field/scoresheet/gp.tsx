@@ -121,20 +121,31 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
               </TableBody>
             </Table>
 
-            {field.value && field.value !== '3' && (
+            {field.value && field.value !== 3 && (
               <Box justifyContent="center" display="flex" pt={2}>
                 <FormControlLabel
                   control={<Checkbox />}
                   value={checked}
                   onChange={() => setChecked(value => !value)}
                   label={`השופט הראשי ראה ואישר שנתתי לקבוצה ציון ${
-                    field.value === '2' ? 'מתפתחת' : 'מצטיינת'
+                    field.value === 2 ? 'מתפתחת' : 'מצטיינת'
                   }`}
                 />
               </Box>
             )}
 
             <Stack direction="row" mt={4} mb={2} justifyContent="center" spacing={3}>
+              <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                <Button
+                  variant="contained"
+                  sx={{ minWidth: 125 }}
+                  startIcon={<ChevronRightIcon />}
+                  onClick={onBack}
+                  disabled={form.isSubmitting}
+                >
+                  חזור
+                </Button>
+              </RoleAuthorizer>
               <Button
                 variant="contained"
                 sx={{ minWidth: 125 }}
@@ -147,17 +158,6 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
               >
                 שלח
               </Button>
-              <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-                <Button
-                  variant="contained"
-                  sx={{ minWidth: 125 }}
-                  endIcon={<ChevronRightIcon />}
-                  onClick={onBack}
-                  disabled={form.isSubmitting}
-                >
-                  חזור
-                </Button>
-              </RoleAuthorizer>
             </Stack>
           </>
         )}

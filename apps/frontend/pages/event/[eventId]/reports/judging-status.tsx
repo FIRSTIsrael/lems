@@ -15,8 +15,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography
 } from '@mui/material';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import {
   Event,
   Team,
@@ -25,7 +27,8 @@ import {
   SafeUser,
   EventState,
   RoleTypes,
-  JUDGING_SESSION_LENGTH
+  JUDGING_SESSION_LENGTH,
+  RobotGameMatch
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -141,6 +144,8 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
 interface JudgingStatusTableProps {
   currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
+  activeMatch?: WithId<RobotGameMatch>;
+  loadedMatch?: WithId<RobotGameMatch>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
 }
@@ -148,6 +153,8 @@ interface JudgingStatusTableProps {
 const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
   currentSessions,
   nextSessions,
+  activeMatch,
+  loadedMatch,
   rooms,
   teams
 }) => {
@@ -204,10 +211,25 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               {rooms.map(room => {
                 const session = nextSessions.find(s => s.roomId === room._id);
                 const team = teams.find(t => t._id === session?.teamId);
+                const teamMatch =
+                  activeMatch?.participants.find(p => p.teamId === team?._id) ||
+                  loadedMatch?.participants.find(p => p.teamId === team?._id);
                 return (
                   session && (
                     <TableCell key={session._id.toString()} align="center">
-                      {team && <StyledTeamTooltip team={team} />}
+                      <Stack
+                        spacing={2}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        {team && <StyledTeamTooltip team={team} />}
+                        {team?.registered && teamMatch && (
+                          <Tooltip title="הקבוצה נמצאת בזירה כרגע!" arrow>
+                            <WarningAmberRoundedIcon color="warning" />
+                          </Tooltip>
+                        )}
+                      </Stack>
                     </TableCell>
                   )
                 );
@@ -227,6 +249,7 @@ interface Props {
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
+  matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -235,12 +258,23 @@ const Page: NextPage<Props> = ({
   eventState: initialEventState,
   rooms,
   teams: initialTeams,
-  sessions: initialSessions
+  sessions: initialSessions,
+  matches: initialMatches
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+
+  const activeMatch = useMemo(
+    () => matches.find(m => m._id === eventState.activeMatch),
+    [matches, eventState.activeMatch]
+  );
+  const loadedMatch = useMemo(
+    () => matches.find(m => m._id === eventState.loadedMatch),
+    [matches, eventState.loadedMatch]
+  );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -269,16 +303,34 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
+  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
+        }
+        return m;
+      })
+    );
+
+    if (newEventState) setEventState(newEventState);
+  };
+
   const { connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['judging', 'pit-admin'],
+    ['judging', 'pit-admin', 'field'],
     undefined,
     [
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
-      { name: 'teamRegistered', handler: handleTeamRegistered }
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent }
     ]
   );
 
@@ -302,7 +354,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="md"
+        maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
@@ -317,6 +369,8 @@ const Page: NextPage<Props> = ({
         <JudgingStatusTable
           currentSessions={currentSessions}
           nextSessions={nextSessions}
+          activeMatch={activeMatch}
+          loadedMatch={loadedMatch}
           rooms={rooms}
           teams={teams}
         />
@@ -335,7 +389,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         eventState: `/api/events/${user.eventId}/state`,
         teams: `/api/events/${user.eventId}/teams`,
         rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`
+        sessions: `/api/events/${user.eventId}/sessions`,
+        matches: `/api/events/${user.eventId}/matches`
       },
       ctx
     );

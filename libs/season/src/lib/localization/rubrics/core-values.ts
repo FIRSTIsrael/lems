@@ -10,32 +10,32 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
   {
     title: 'גילוי',
     description: 'הקבוצה חקרה רעיונות ומיומנויות חדשים.',
-    fields: [{ id: 'discovery' }]
+    fields: [{ id: 'discovery', title: 'גילוי' }]
   },
   {
     title: 'חדשנות',
     description: 'הקבוצה השתמשה ביצירתיות והתמדה על מנת לפתור בעיות.',
-    fields: [{ id: 'innovation' }]
+    fields: [{ id: 'innovation', title: 'חדשנות' }]
   },
   {
     title: 'השפעה',
     description: 'הקבוצה יישמה את מה שלמדה כדי לשפר את העולם שלה.',
-    fields: [{ id: 'impact' }]
+    fields: [{ id: 'impact', title: 'השפעה' }]
   },
   {
     title: 'הכלה',
     description: 'הקבוצה הפגינה כבוד והכילה את השוני שבין חבריה.',
-    fields: [{ id: 'inclusion' }]
+    fields: [{ id: 'inclusion', title: 'הכלה' }]
   },
   {
     title: 'עבודת צוות',
     description: 'ניכר שהקבוצה עבדה כצוות לאורך כל המסע שלה.',
-    fields: [{ id: 'teamwork' }]
+    fields: [{ id: 'teamwork', title: 'עבודת צוות' }]
   },
   {
     title: 'הנאה',
     description: 'ניכר שהקבוצה נהנתה וחגגה את ההישגים שלה, כולם ביחד וכל אחד לחוד.',
-    fields: [{ id: 'fun' }]
+    fields: [{ id: 'fun', title: 'הנאה' }]
   }
 ];
 

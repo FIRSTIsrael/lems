@@ -29,11 +29,11 @@ router.post('/', (req: Request, res: Response) => {
 });
 
 router.put('/:eventId', (req: Request, res: Response) => {
-  const body: Event = { ...req.body };
+  const body: Partial<Event> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
-  body.startDate = new Date(body.startDate);
-  body.endDate = new Date(body.endDate);
+  if (body.startDate) body.startDate = new Date(body.startDate);
+  if (body.endDate) body.endDate = new Date(body.endDate);
 
   if (body.schedule)
     body.schedule = body.schedule.map(e => {

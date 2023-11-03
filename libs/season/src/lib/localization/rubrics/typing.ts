@@ -3,6 +3,7 @@ import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 export interface RubricSchemaField<T extends JudgingCategory> {
   id: RubricFields<T> | RubricInnerFields<T>;
+  title: string;
   label_1?: string;
   label_2?: string;
   label_3?: string;

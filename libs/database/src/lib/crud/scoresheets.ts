@@ -7,7 +7,11 @@ export const getScoresheet = (filter: Filter<Scoresheet>) => {
 };
 
 export const getTeamScoresheets = (teamId: ObjectId) => {
-  return db.collection<Scoresheet>('scoresheets').find({ teamId: teamId }).toArray();
+  return db.collection<Scoresheet>('scoresheets').find({ teamId }).toArray();
+};
+
+export const getEventScoresheets = (eventId: ObjectId) => {
+  return db.collection<Scoresheet>('scoresheets').find({ eventId }).toArray();
 };
 
 export const addScoresheet = (scoresheet: Scoresheet) => {
