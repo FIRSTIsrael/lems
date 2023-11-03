@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import { Box, BoxProps } from '@mui/material';
-import { useDimensions } from '../../hooks/use-dimensions';
+import { useDimensions } from '../hooks/use-dimensions';
 
-export interface PresentationScalerProps extends BoxProps {
+export interface SlideScalerProps extends BoxProps {
   children?: React.ReactNode;
 }
 
-export const PresentationScaler: React.FC<PresentationScalerProps> = ({ children, ...props }) => {
+export const SlideScaler: React.FC<SlideScalerProps> = ({ children, ...props }) => {
   const DEFAULT_WIDTH = 1920;
   const DEFAULT_HEIGHT = 1080;
 
@@ -20,9 +20,13 @@ export const PresentationScaler: React.FC<PresentationScalerProps> = ({ children
     <Box ref={ref} {...props}>
       <div
         style={{
-          width: DEFAULT_WIDTH,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           height: DEFAULT_HEIGHT,
-          transform: `scale(${Math.min(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT)})`
+          width: DEFAULT_WIDTH,
+          transform: `scale(${Math.min(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT)})`,
+          transformOrigin: 'top right'
         }}
       >
         {children}

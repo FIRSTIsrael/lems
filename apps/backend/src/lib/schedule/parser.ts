@@ -257,7 +257,7 @@ export const parseSessionsAndMatches = (
 };
 
 export const getInitialEventState = (event: WithId<Event>): EventState => {
-  const supportedPresentations = ['awards']; // TODO: option to not hardcode this
+  const supportedPresentations = ['awards'];
   const presentations = Object.fromEntries(
     supportedPresentations.map(presentaionId => [
       presentaionId,

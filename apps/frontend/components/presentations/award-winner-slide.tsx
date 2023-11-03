@@ -14,7 +14,7 @@ interface AwardWinnerSlideProps {
 const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner }) => {
   return (
     <Slide>
-      <Paper sx={{ mx: '50px', p: 8, textAlign: 'center' }}>
+      <Paper sx={{ mx: '2rem', p: 8, textAlign: 'center' }}>
         <Typography variant="h1" fontSize="6rem" gutterBottom>
           <ReactMarkdown>{name}</ReactMarkdown>
         </Typography>

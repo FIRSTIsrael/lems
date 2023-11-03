@@ -4,6 +4,7 @@ import { SlideId, DeckContext } from './deck';
 import { useSlide } from '../hooks/use-slides';
 import { ActivationThresholds, useCollectSteps } from '../hooks/use-steps';
 import { GOTO_FINAL_STEP } from '../hooks/use-deck-state';
+import { SlideScaler } from './slide-scaler';
 
 export type SlideContextType = {
   slideId: SlideId;
@@ -145,18 +146,7 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
                 overflow: 'hidden'
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  width: '100%',
-                  position: 'relative'
-                }}
-              >
-                {children}
-              </div>
+              <SlideScaler>{children}</SlideScaler>
             </div>,
             slidePortalNode
           )}

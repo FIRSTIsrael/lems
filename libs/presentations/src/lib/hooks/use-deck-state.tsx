@@ -50,7 +50,6 @@ function deckReducer(state: DeckState, { type, payload = {} }: ReducerActions) {
         initialized: true
       };
     case 'SKIP_TO':
-      // TODO: fix
       // eslint-disable-next-line no-case-declarations
       const navigationDirection = (() => {
         if ('slideIndex' in payload && payload.slideIndex) {
