@@ -76,7 +76,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              isEventDisabled={event => !event.hasState}
+              getEventDisabled={event => !event.hasState}
               onChange={selectEvent}
             />
           </Stack>

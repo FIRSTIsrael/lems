@@ -41,6 +41,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCat
           key={category}
           href={`/event/${event._id}/team/${team._id}/rubric/${category}`}
           passHref
+          legacyBehavior
         >
           <Button
             variant="contained"

@@ -9,10 +9,10 @@ import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors'
 interface EventSelectorProps {
   events: Array<WithId<Event>>;
   onChange: (eventId: string | ObjectId) => void;
-  isEventDisabled?: (event: WithId<Event>) => boolean;
+  getEventDisabled?: (event: WithId<Event>) => boolean;
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, isEventDisabled }) => {
+const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
   return (
     <Stack direction="column" spacing={2}>
       {events.map(event => {
@@ -20,7 +20,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, isEvent
           <ListItemButton
             key={event.name}
             onClick={() => onChange(event._id)}
-            disabled={isEventDisabled ? isEventDisabled(event) : false}
+            disabled={getEventDisabled?.(event)}
             sx={{ borderRadius: 2 }}
             component="a"
             dense
@@ -39,7 +39,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, isEvent
               primary={event.name}
               secondary={stringifyTwoDates(event.startDate, event.endDate)}
             />
-            {isEventDisabled && isEventDisabled(event) && <WarningAmberRoundedIcon />}
+            {getEventDisabled?.(event) && <WarningAmberRoundedIcon />}
           </ListItemButton>
         );
       })}

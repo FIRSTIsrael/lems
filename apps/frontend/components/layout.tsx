@@ -65,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({
           >
             <Toolbar sx={{ px: { xs: 2, md: 3, lg: 4 } }}>
               {back && (
-                <NextLink href={back} passHref>
+                <NextLink href={back} passHref legacyBehavior>
                   <IconButton
                     edge="start"
                     color="inherit"

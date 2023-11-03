@@ -79,7 +79,7 @@ interface WrapperProps {
 const Wrapper: React.FC<WrapperProps> = ({ active, href, children }) => {
   if (active && href) {
     return (
-      <NextLink href={href} passHref>
+      <NextLink href={href} passHref legacyBehavior>
         {children}
       </NextLink>
     );

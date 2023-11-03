@@ -60,6 +60,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
               key={scoresheet._id.toString()}
               href={`/event/${event._id}/team/${team._id}/scoresheet/${scoresheet._id}`}
               passHref
+              legacyBehavior
             >
               <Button
                 variant="contained"
