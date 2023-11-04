@@ -16,19 +16,17 @@ import wsValidateEvent from './middlewares/websocket/event-validator';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
-    credentials: true
-  }
-});
-
-app.use(cookies());
 
 const corsOptions = {
   origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
   credentials: true
 };
+
+const io = new Server(server, {
+  cors: corsOptions
+});
+
+app.use(cookies());
 app.use(cors(corsOptions));
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
