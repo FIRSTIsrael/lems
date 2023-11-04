@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, Paper, Stack, Tooltip, Typography } from '@mui/material';
@@ -7,7 +6,6 @@ import { green, red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { JudgingSession, MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import Countdown from '../../general/countdown';
-import { TimeSyncContext } from '../../../lib/timesync';
 
 interface ActiveMatchProps {
   title: React.ReactNode;
@@ -17,9 +15,8 @@ interface ActiveMatchProps {
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sessions }) => {
-  const { offset } = useContext(TimeSyncContext);
   const getCountdownTarget = (startTime: Date) =>
-    dayjs(startTime).add(MATCH_LENGTH, 'seconds').subtract(offset, 'milliseconds').toDate();
+    dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
 
   return (
     <Paper sx={{ p: 2, flex: 1 }}>

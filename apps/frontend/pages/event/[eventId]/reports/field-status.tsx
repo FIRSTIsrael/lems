@@ -1,7 +1,7 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
@@ -22,6 +22,7 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import { useTime } from '../../../../hooks/use-time';
 import { TimeSyncContext } from '../../../../lib/timesync';
 
 interface MatchStatusTimerProps {
@@ -31,22 +32,10 @@ interface MatchStatusTimerProps {
 }
 
 const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loadedMatch, teams }) => {
-  const { offset } = useContext(TimeSyncContext);
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
+  const currentTime = useTime({ interval: 1000 });
   const twoMinutes = 2 * 60;
 
-  const getCountdownTarget = (startTime: Date) =>
-    dayjs(startTime).subtract(offset, 'milliseconds').toDate();
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
-      1000
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  });
+  const getCountdownTarget = (startTime: Date) => dayjs(startTime).toDate();
 
   const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
     if (loadedMatch) {

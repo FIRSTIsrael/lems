@@ -1,7 +1,7 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -39,7 +39,7 @@ import StyledTeamTooltip from '../../../../components/general/styled-team-toolti
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { TimeSyncContext } from '../../../../lib/timesync';
+import { useTime } from '../../../../hooks/use-time';
 
 interface JudgingStatusTimerProps {
   currentSessions: Array<WithId<JudgingSession>>;
@@ -52,19 +52,8 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
   nextSessions,
   teams
 }) => {
-  const { offset } = useContext(TimeSyncContext);
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
+  const currentTime = useTime({ interval: 1000 });
   const fiveMinutes = 5 * 60;
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
-      1000
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  });
 
   const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
     if (nextSessions.length > 0) {
@@ -86,8 +75,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
     return 0;
   }, [currentTime, fiveMinutes, nextSessions]);
 
-  const getCountdownTarget = (startTime: Date) =>
-    dayjs(startTime).subtract(offset, 'milliseconds').toDate();
+  const getCountdownTarget = (startTime: Date) => dayjs(startTime).toDate();
 
   return (
     <>

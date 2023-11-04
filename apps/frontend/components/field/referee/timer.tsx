@@ -1,11 +1,10 @@
-import { useState, useMemo, useEffect, useContext } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
 import { LinearProgress, Paper, Typography } from '@mui/material';
 import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
-import { TimeSyncContext } from '../../../lib/timesync';
 
 interface TimerProps {
   participant: RobotGameMatchParticipant;
@@ -13,10 +12,7 @@ interface TimerProps {
 }
 
 const Timer: React.FC<TimerProps> = ({ participant, match }) => {
-  const { offset } = useContext(TimeSyncContext);
-  const matchEnd = dayjs(match.startTime)
-    .add(MATCH_LENGTH, 'seconds')
-    .subtract(offset, 'milliseconds');
+  const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
 
   useEffect(() => {
