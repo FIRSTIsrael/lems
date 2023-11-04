@@ -18,6 +18,7 @@ export const localizedMatchStatus: Record<RobotGameMatchStatus, string> = {
 };
 
 export const localizedAudienceDisplayState: Record<AudienceDisplayState, string> = {
+  blank: 'מסך ריק',
   scores: 'מסך הניקוד',
   awards: 'מצגת פרסים',
   sponsors: 'שותפים',

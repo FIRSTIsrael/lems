@@ -55,6 +55,7 @@ export const TicketTypes = ['general', 'schedule', 'utilities', 'incident'] as c
 export type TicketType = (typeof TicketTypes)[number];
 
 export const AudienceDisplayStateTypes = [
+  'blank',
   'scores',
   'match-preview',
   'awards',

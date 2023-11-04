@@ -15,6 +15,7 @@ import {
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
+import Blank from '../../../components/audience-display/blank';
 import FIRSTLogo from '../../../components/audience-display/first-logo';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
 import Sponsors from '../../../components/audience-display/sponsors';
@@ -158,6 +159,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
+        {eventState.audienceDisplayState === 'blank' && <Blank />}
         {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
         {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
         {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
