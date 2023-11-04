@@ -98,7 +98,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       <Button
         variant="contained"
         color={!loadedMatch?._id ? 'inherit' : matchShown ? 'warning' : 'success'}
-        disabled={!loadedMatch?._id || activeMatchId !== undefined}
+        disabled={!loadedMatch?._id || !!activeMatchId}
         size="large"
         onClick={() => {
           setMatchShown(true);
