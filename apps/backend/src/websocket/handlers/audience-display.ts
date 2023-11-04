@@ -18,10 +18,7 @@ export const handleUpdateAudienceDisplayState = async (
   }
 
   if (eventState.audienceDisplayState === newDisplayState) {
-    callback({
-      ok: false,
-      error: `Display state not updated!`
-    });
+    console.log(`🖊️ No change in audience display state in event ${eventId}.`);
     return;
   }
 
