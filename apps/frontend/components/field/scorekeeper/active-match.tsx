@@ -50,7 +50,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sess
             match.participants
               .filter(p => p.teamId)
               .map((participant, index) => {
-                const judgingSession = sessions?.find(s => s.teamId === participant.teamId);
+                const teamJudgingSession = sessions?.find(s => s.teamId === participant.teamId);
                 return (
                   <Grid key={index} xs={1}>
                     <Box
@@ -70,7 +70,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sess
                             {participant.tableName}
                           </Typography>
                         </Stack>
-                        {participant.team?.registered && judgingSession && (
+                        {participant.team?.registered && teamJudgingSession && (
                           <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
                             <WarningAmberRoundedIcon color="warning" />
                           </Tooltip>
