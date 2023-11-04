@@ -14,7 +14,6 @@ import {
   Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import Layout from '../../../components/layout';
 import Blank from '../../../components/audience-display/blank';
 import FIRSTLogo from '../../../components/audience-display/first-logo';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
@@ -23,8 +22,10 @@ import Scoreboard from '../../../components/audience-display/scoreboard/scoreboa
 import MatchPreview from '../../../components/audience-display/match-preview';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { useWindowSize } from '../../../hooks/use-window-size';
 import useKeyboardShortcut from '../../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { Box } from '@mui/material';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -46,9 +47,16 @@ const Page: NextPage<Props> = ({
   awards
 }) => {
   const router = useRouter();
+  const screenSize = useWindowSize();
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
+
+  const displayScale = useMemo(() => {
+    const widthScale = screenSize.width / 1920;
+    const heightScale = screenSize.height / 1080;
+    return Math.min(widthScale, heightScale);
+  }, [screenSize]);
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -158,34 +166,47 @@ const Page: NextPage<Props> = ({
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
-      <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
-        {eventState.audienceDisplayState === 'blank' && <Blank />}
-        {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
-        {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
-        {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
-        {eventState.audienceDisplayState === 'match-preview' && (
-          <MatchPreview event={event} match={loadedMatch} />
-        )}
-        {eventState.audienceDisplayState === 'scores' && (
-          <Scoreboard
-            activeMatch={activeMatch}
-            previousMatch={previousMatch}
-            scoresheets={scorehseets}
-            teams={teams}
-            eventState={eventState}
-          />
-        )}
-        {eventState.audienceDisplayState === 'awards' && (
-          <AwardsPresentation
-            initialState={eventState.presentations['awards'].activeView}
-            enableReinitialize={true}
-            height="100%"
-            width="100%"
-            event={event}
-            awards={awards}
-          />
-        )}
-      </Layout>
+      <Box sx={{ width: '100vw', height: '100vh', background: 'black' }}>
+        <Box
+          sx={{
+            width: 1920,
+            height: 1080,
+            position: 'absolute',
+            transformOrigin: 'top left',
+            transformStyle: 'preserve-3d',
+            transform: `scale(${displayScale}) translate(-50%,-50%)`,
+            left: '50%',
+            top: '50%'
+          }}
+        >
+          {eventState.audienceDisplayState === 'blank' && <Blank />}
+          {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
+          {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
+          {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
+          {eventState.audienceDisplayState === 'match-preview' && (
+            <MatchPreview event={event} match={loadedMatch} />
+          )}
+          {eventState.audienceDisplayState === 'scores' && (
+            <Scoreboard
+              activeMatch={activeMatch}
+              previousMatch={previousMatch}
+              scoresheets={scorehseets}
+              teams={teams}
+              eventState={eventState}
+            />
+          )}
+          {eventState.audienceDisplayState === 'awards' && (
+            <AwardsPresentation
+              initialState={eventState.presentations['awards'].activeView}
+              enableReinitialize={true}
+              height="100%"
+              width="100%"
+              event={event}
+              awards={awards}
+            />
+          )}
+        </Box>
+      </Box>
     </RoleAuthorizer>
   );
 };
