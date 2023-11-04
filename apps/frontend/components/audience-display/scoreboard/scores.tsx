@@ -56,6 +56,8 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
     <TableContainer
       component={Paper}
       sx={{
+        fontSize: '1.75rem',
+        fontWeight: 700,
         height: '100%',
         mt: 4,
         overflow: 'hidden'
@@ -64,19 +66,15 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }} />
-            <TableCell sx={{ fontSize: '1.5rem', fontWeight: 700 }}>קבוצה</TableCell>
+            <TableCell sx={{ font: 'inherit', textAlign: 'center' }}>דירוג</TableCell>
+            <TableCell sx={{ font: 'inherit' }}>קבוצה</TableCell>
             {eventState.currentStage !== 'practice' && (
-              <TableCell align="center" sx={{ fontSize: '1.5rem', fontWeight: 700 }}>
+              <TableCell align="center" sx={{ font: 'inherit' }}>
                 ניקוד גבוה ביותר
               </TableCell>
             )}
             {rounds.map(r => (
-              <TableCell
-                key={r.stage + r.round + 'name'}
-                align="center"
-                sx={{ fontSize: '1.5rem', fontWeight: 700 }}
-              >
+              <TableCell key={r.stage + r.round + 'name'} align="center" sx={{ font: 'inherit' }}>
                 {localizedMatchStage[r.stage]} #{r.round}
               </TableCell>
             ))}
@@ -119,13 +117,18 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
     <TableBody {...props}>
       {maxScores.map(({ team, score }, index) => {
         return (
-          <TableRow key={team._id.toString()}>
-            <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>{index + 1}</TableCell>
-            <TableCell sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
+          <TableRow
+            key={team._id.toString()}
+            sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}
+          >
+            <TableCell sx={{ font: 'inherit', textAlign: 'center', fontWeight: 400 }}>
+              {index + 1}
+            </TableCell>
+            <TableCell sx={{ font: 'inherit', fontWeight: 500 }}>
               {localizeTeam(team, false)}
             </TableCell>
             {currentStage !== 'practice' && (
-              <TableCell align="center" sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
+              <TableCell align="center" sx={{ font: 'inherit' }}>
                 {score || <RemoveIcon />}
               </TableCell>
             )}
@@ -137,7 +140,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
                 <TableCell
                   key={r.stage + r.round + 'points'}
                   align="center"
-                  sx={{ fontSize: '1.125rem', fontWeight: 700 }}
+                  sx={{ font: 'inherit' }}
                 >
                   {scoresheet?.data && scoresheet.status === 'ready' ? (
                     scoresheet.data.score
