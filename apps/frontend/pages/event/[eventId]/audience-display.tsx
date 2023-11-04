@@ -15,7 +15,6 @@ import {
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Blank from '../../../components/audience-display/blank';
-import FIRSTLogo from '../../../components/audience-display/first-logo';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
@@ -180,7 +179,6 @@ const Page: NextPage<Props> = ({
           }}
         >
           {eventState.audienceDisplayState === 'blank' && <Blank />}
-          {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
           {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
           {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
           {eventState.audienceDisplayState === 'match-preview' && (

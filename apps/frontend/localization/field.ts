@@ -22,7 +22,6 @@ export const localizedAudienceDisplayState: Record<AudienceDisplayState, string>
   scores: 'מסך הניקוד',
   awards: 'מצגת פרסים',
   sponsors: 'שותפים',
-  logo: 'לוגו',
   hotspot: 'תזכורת נקודות גישה',
   'match-preview': 'תצוגת מקצה'
 };

@@ -60,7 +60,6 @@ export const AudienceDisplayStateTypes = [
   'match-preview',
   'awards',
   'sponsors',
-  'logo',
   'hotspot'
 ];
 export type AudienceDisplayState = (typeof AudienceDisplayStateTypes)[number];
