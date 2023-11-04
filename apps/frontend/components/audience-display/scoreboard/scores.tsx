@@ -48,9 +48,10 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
     .sort((a, b) => b.score - a.score);
 
   const marquee = keyframes`
-  from {transform: translateY(0)}
-  to {transform: translateY(-100%)}
+    from {transform: translateY(0)}
+    to {transform: translateY(-100%)}
   `;
+  const marqueeAnimation = `${marquee} 10s linear infinite`;
 
   return (
     <TableContainer
@@ -63,7 +64,12 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         overflow: 'hidden'
       }}
     >
-      <Table stickyHeader>
+      <Table
+        stickyHeader
+        sx={{
+          '.MuiTableRow-root:nth-child(odd)': { backgroundColor: '#f9f9f9' }
+        }}
+      >
         <TableHead>
           <TableRow>
             <TableCell sx={{ font: 'inherit', textAlign: 'center' }}>דירוג</TableCell>
@@ -85,14 +91,14 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
           rounds={rounds}
           currentStage={eventState.currentStage}
           maxScores={maxScores}
-          sx={{ animation: `${marquee} 60s linear infinite` }}
+          sx={{ animation: marqueeAnimation }}
         />
         <ScoreboardScoresBody
           scoresheets={scoresheets}
           rounds={rounds}
           currentStage={eventState.currentStage}
           maxScores={maxScores}
-          sx={{ animation: `${marquee} 60s linear infinite` }}
+          sx={{ animation: marqueeAnimation }}
         />
       </Table>
     </TableContainer>
@@ -117,10 +123,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
     <TableBody {...props}>
       {maxScores.map(({ team, score }, index) => {
         return (
-          <TableRow
-            key={team._id.toString()}
-            sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}
-          >
+          <TableRow key={team._id.toString()}>
             <TableCell sx={{ font: 'inherit', textAlign: 'center', fontWeight: 400 }}>
               {index + 1}
             </TableCell>
@@ -153,6 +156,10 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
           </TableRow>
         );
       })}
+      {/* Separator */}
+      <TableRow sx={{ height: '4.5rem' }}>
+        <TableCell colSpan={(currentStage === 'practice' ? 2 : 3) + rounds.length} />
+      </TableRow>
     </TableBody>
   );
 };
