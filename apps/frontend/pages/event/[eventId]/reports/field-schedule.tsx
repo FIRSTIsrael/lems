@@ -21,10 +21,17 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, matches }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  teams: initialTeams,
+  tables,
+  matches: initialMatches
+}) => {
   const router = useRouter();
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const refereeGeneralSchedule =
     (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('referee'))) || [];
@@ -41,8 +48,20 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     );
   };
 
+  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
+        }
+        return m;
+      })
+    );
+  };
+
   const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
-    { name: 'teamRegistered', handler: handleTeamRegistered }
+    { name: 'teamRegistered', handler: handleTeamRegistered },
+    { name: 'matchUpdated', handler: handleMatchEvent }
   ]);
 
   const practiceMatches = matches.filter(m => m.stage === 'practice');

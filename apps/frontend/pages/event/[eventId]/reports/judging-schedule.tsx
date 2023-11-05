@@ -92,10 +92,17 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessions }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  teams: initialTeams,
+  rooms,
+  sessions: initialSessions
+}) => {
   const router = useRouter();
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
   const judgesGeneralSchedule = event.schedule?.filter(s => s.roles.includes('judge')) || [];
 
@@ -111,9 +118,26 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, rooms, sessio
     );
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
-    { name: 'teamRegistered', handler: handleTeamRegistered }
-  ]);
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+  };
+
+  const { connectionStatus } = useWebsocket(
+    event._id.toString(),
+    ['pit-admin', 'judging'],
+    undefined,
+    [
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+    ]
+  );
 
   return (
     <RoleAuthorizer
