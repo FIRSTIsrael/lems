@@ -154,7 +154,7 @@ const Page: NextPage<Props> = ({
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
           <Table>

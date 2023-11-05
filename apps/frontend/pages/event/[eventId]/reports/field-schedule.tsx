@@ -110,7 +110,7 @@ const Page: NextPage<Props> = ({
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <Grid container spacing={2} my={4}>
           {...roundSchedules}

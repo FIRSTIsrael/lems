@@ -89,7 +89,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <Paper
           sx={{
