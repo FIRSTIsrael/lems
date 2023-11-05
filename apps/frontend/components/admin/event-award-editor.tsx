@@ -93,8 +93,8 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                   min={1}
                   max={5}
                   value={field.value}
-                  onChange={(_e, value) => {
-                    _e.preventDefault();
+                  onChange={(e, value) => {
+                    e.preventDefault();
                     value !== undefined && form.setFieldValue(field.name, value);
                   }}
                 />
