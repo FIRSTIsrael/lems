@@ -1,19 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useTime } from './use-time';
 
 const useStopwatch = (startDate: Date) => {
-  const stopwatchDate = new Date(startDate).getTime();
-
-  const [stopwatch, setStopwatch] = useState(new Date().getTime() - stopwatchDate);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStopwatch(new Date().getTime() - stopwatchDate);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [stopwatchDate]);
-
-  return timestampBreakdown(stopwatch);
+  const currentTime = useTime({ interval: 1000 });
+  return timestampBreakdown(currentTime.diff(startDate));
 };
 
 const timestampBreakdown = (countDown: number) => {
