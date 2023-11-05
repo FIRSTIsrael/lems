@@ -5,18 +5,21 @@ import { Box, Paper, Stack, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { green, red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import { JudgingSession, MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { TimeSyncContext } from '../../../lib/timesync';
+import StyledTeamTooltip from '../../general/styled-team-tooltip';
 
 interface ActiveMatchProps {
   title: React.ReactNode;
   match: WithId<RobotGameMatch> | null;
   startTime?: Date;
-  sessions?: Array<WithId<JudgingSession>>;
+  activeSessions?: Array<WithId<JudgingSession>>;
 }
 
-const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sessions }) => {
+const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, activeSessions }) => {
   const { offset } = useContext(TimeSyncContext);
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').subtract(offset, 'milliseconds').toDate();
@@ -50,14 +53,14 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sess
             match.participants
               .filter(p => p.teamId)
               .map((participant, index) => {
-                const teamJudgingSession = sessions?.find(s => s.teamId === participant.teamId);
+                const teamJudgingSession = activeSessions?.find(
+                  s => s.teamId === participant.teamId
+                );
                 return (
                   <Grid key={index} xs={1}>
                     <Box
                       sx={{
-                        color: participant.ready ? green[800] : red[800],
-                        border: `1px solid ${participant.ready ? green[300] : red[300]}`,
-                        backgroundColor: participant.ready ? green[100] : red[100],
+                        border: `3px solid ${participant.ready ? green[300] : red[300]}`,
                         borderRadius: '0.5rem',
                         px: 1.5,
                         py: 0.5
@@ -65,14 +68,25 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, sess
                     >
                       <Stack direction="row" spacing={2} alignItems="center">
                         <Stack>
-                          <Typography fontWeight={500}>#{participant.team?.number}</Typography>
+                          <Stack direction="row">
+                            {teamJudgingSession && (
+                              <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
+                                <WarningAmberRoundedIcon color="warning" />
+                              </Tooltip>
+                            )}
+                            {participant.team && <StyledTeamTooltip team={participant.team} />}
+                          </Stack>
                           <Typography fontSize="0.875rem" color="text.secondary">
                             {participant.tableName}
                           </Typography>
                         </Stack>
-                        {participant.team?.registered && teamJudgingSession && (
-                          <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
-                            <WarningAmberRoundedIcon color="warning" />
+                        {participant.present === 'present' ? (
+                          <Tooltip title="הקבוצה על המגרש" arrow>
+                            <DoneRoundedIcon />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="הקבוצה חסרה" arrow>
+                            <RemoveRoundedIcon />
                           </Tooltip>
                         )}
                       </Stack>
