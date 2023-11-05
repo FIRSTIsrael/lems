@@ -217,7 +217,7 @@ const Page: NextPage<Props> = ({
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <MatchStatusTimer
           activeMatch={activeMatch || null}
@@ -233,7 +233,7 @@ const Page: NextPage<Props> = ({
           <ActiveMatch
             title="המקצה הבא"
             match={matches?.find(match => match._id === eventState.loadedMatch) || null}
-            sessions={activeSessions}
+            activeSessions={activeSessions}
           />
         </Stack>
       </Layout>

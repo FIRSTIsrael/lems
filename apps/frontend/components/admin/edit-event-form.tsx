@@ -108,9 +108,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
                     if (newDate) setStartDate(newDate);
                   }}
                   format="DD/MM/YYYY"
-                  slots={{
-                    textField: params => <TextField {...params} />
-                  }}
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>
@@ -123,9 +120,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
                     if (newDate) setEndDate(newDate);
                   }}
                   format="DD/MM/YYYY"
-                  slots={{
-                    textField: params => <TextField {...params} />
-                  }}
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>

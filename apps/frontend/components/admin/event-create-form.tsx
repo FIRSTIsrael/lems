@@ -90,18 +90,12 @@ const EventCreateForm = forwardRef((props, ref) => {
             value={startDate}
             onChange={newDate => setStartDate(newDate)}
             format="DD/MM/YYYY"
-            slots={{
-              textField: params => <TextField {...params} />
-            }}
           />
           <DatePicker
             label="תאריך סיום"
             value={endDate}
             onChange={newDate => setEndDate(newDate)}
             format="DD/MM/YYYY"
-            slots={{
-              textField: params => <TextField {...params} />
-            }}
           />
         </LocalizationProvider>
         <FormControl>

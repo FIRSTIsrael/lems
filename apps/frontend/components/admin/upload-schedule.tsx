@@ -76,10 +76,7 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
       >
         <DialogTitle> העלאת לוח זמנים</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            בחרו קובץ Scheduler בפורמט csv להעלאה. לוח הזמנים הנוכחי ימחק, אך נתוני מחווני השיפוט
-            יותרו ללא שינוי.
-          </DialogContentText>
+          <DialogContentText>בחרו קובץ Scheduler בפורמט csv להעלאה</DialogContentText>
           <Stack flexDirection="column" alignItems="center" mt={2} mb={1}>
             <label htmlFor="upload-schedule-button">
               <Input

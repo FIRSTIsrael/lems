@@ -29,6 +29,7 @@ import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 import { fullMatch } from '@lems/utils/objects';
+import { useRouter } from 'next/router';
 
 interface EventScheduleEditorProps extends ButtonProps {
   event: WithId<Event>;
@@ -36,6 +37,7 @@ interface EventScheduleEditorProps extends ButtonProps {
 
 const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...props }) => {
   const theme = useTheme();
+  const router = useRouter();
   const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
 
   const sortedSchedule = useMemo(
@@ -76,6 +78,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
       onSubmit={e => {
         e.preventDefault();
         updateEvent();
+        router.reload();
       }}
     >
       <Paper sx={{ p: 4 }}>

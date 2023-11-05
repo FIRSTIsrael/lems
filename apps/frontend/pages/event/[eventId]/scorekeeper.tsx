@@ -152,7 +152,6 @@ const Page: NextPage<Props> = ({
                     height={108 * 2.5}
                     width={192 * 2.5}
                     position="relative"
-                    enableReinitialize={true}
                   />
                 </PresentationController>
               )}
