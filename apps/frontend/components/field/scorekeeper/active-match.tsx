@@ -5,6 +5,7 @@ import { Box, Paper, Stack, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { green, red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import { JudgingSession, MATCH_LENGTH, RobotGameMatch } from '@lems/types';
@@ -60,7 +61,8 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, acti
                   <Grid key={index} xs={1}>
                     <Box
                       sx={{
-                        border: `3px solid ${participant.ready ? green[300] : red[300]}`,
+                        backgroundColor: participant.ready ? green[100] : red[100],
+                        border: `1px solid ${participant.ready ? green[300] : red[300]}`,
                         borderRadius: '0.5rem',
                         px: 1.5,
                         py: 0.5
@@ -68,14 +70,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, acti
                     >
                       <Stack direction="row" spacing={2} alignItems="center">
                         <Stack>
-                          <Stack direction="row">
-                            {teamJudgingSession && (
-                              <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
-                                <WarningAmberRoundedIcon color="warning" />
-                              </Tooltip>
-                            )}
-                            {participant.team && <StyledTeamTooltip team={participant.team} />}
-                          </Stack>
+                          <Typography fontWeight={500}>#{participant.team?.number}</Typography>
                           <Typography fontSize="0.875rem" color="text.secondary">
                             {participant.tableName}
                           </Typography>
@@ -83,6 +78,14 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, acti
                         {participant.present === 'present' ? (
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />
+                          </Tooltip>
+                        ) : !participant.team?.registered ? (
+                          <Tooltip title="הקבוצה טרם הגיעה לאירוע!" arrow>
+                            <CloseRoundedIcon />
+                          </Tooltip>
+                        ) : teamJudgingSession ? (
+                          <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
+                            <WarningAmberRoundedIcon />
                           </Tooltip>
                         ) : (
                           <Tooltip title="הקבוצה חסרה" arrow>
