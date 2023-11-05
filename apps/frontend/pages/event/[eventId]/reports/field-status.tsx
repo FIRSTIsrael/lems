@@ -23,7 +23,6 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { useTime } from '../../../../hooks/use-time';
-import { TimeSyncContext } from '../../../../lib/timesync';
 
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
