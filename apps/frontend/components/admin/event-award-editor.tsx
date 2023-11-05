@@ -93,9 +93,10 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                   min={1}
                   max={5}
                   value={field.value}
-                  onChange={(_e, value) =>
-                    value !== undefined && form.setFieldValue(field.name, value)
-                  }
+                  onChange={(_e, value) => {
+                    _e.preventDefault();
+                    value !== undefined && form.setFieldValue(field.name, value);
+                  }}
                 />
               </Grid>
             </Grid>
@@ -144,13 +145,10 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchem
   };
 
   const onDragEnd = (result: DropResult) => {
-    // Dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+    if (!result.destination) return; // Dropped outside the list
 
-    const items = reorder(awards, result.source.index, result.destination.index);
-    setAwards(items);
+    // The compiler thinks destination can be none despite the if statement above
+    setAwards(awards => reorder(awards, result.source.index, result.destination!.index));
   };
 
   return (
