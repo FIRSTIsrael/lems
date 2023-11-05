@@ -124,6 +124,7 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchem
       if (!awards.includes(a)) awards.push(a);
     });
 
+    awards.sort((a, b) => schema[a].index - schema[b].index);
     return awards;
   };
 
