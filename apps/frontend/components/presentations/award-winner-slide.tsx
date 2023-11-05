@@ -1,9 +1,8 @@
 import { WithId } from 'mongodb';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import { Paper, Typography } from '@mui/material';
-import { Slide, Appear } from '@lems/presentations';
+import { Box, Stack, Typography } from '@mui/material';
+import { Slide } from '@lems/presentations';
 import { Team } from '@lems/types';
-import { localizeTeam } from '../../localization/teams';
 
 interface AwardWinnerSlideProps {
   name: string;
@@ -12,25 +11,28 @@ interface AwardWinnerSlideProps {
 }
 
 const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner }) => {
+  const isTeamAward = typeof winner !== 'string';
+
   return (
     <Slide>
-      <Paper sx={{ mx: '2rem', p: 8, textAlign: 'center' }}>
+      <Stack px={20} textAlign="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
-          <ReactMarkdown>{name}</ReactMarkdown>
+          <ReactMarkdown>{place ? `${name}, מקום ${String(place)}` : name}</ReactMarkdown>
         </Typography>
-        {place && (
-          <Typography variant="h1" fontSize="3rem" color="text.secondary">
-            <ReactMarkdown>{`מקום ${String(place)}`}</ReactMarkdown>
+        <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 8, py: 6 }}>
+          <Typography fontSize="2.75rem" color="text.secondary">
+            {isTeamAward ? 'מוענק לקבוצה' : 'מוענק ל'}
           </Typography>
-        )}
-        <Appear>
-          <Typography variant="h3" fontSize="3rem" color="text.secondary">
-            <ReactMarkdown>
-              {typeof winner === 'string' ? String(winner) : localizeTeam(winner)}
-            </ReactMarkdown>
+          <Typography fontSize="4rem" fontWeight={700}>
+            {isTeamAward ? `#${winner.number}, ${winner.name}` : winner}
           </Typography>
-        </Appear>
-      </Paper>
+          {isTeamAward && (
+            <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
+              {winner.affiliation.name}, {winner.affiliation.city}
+            </Typography>
+          )}
+        </Box>
+      </Stack>
     </Slide>
   );
 };
