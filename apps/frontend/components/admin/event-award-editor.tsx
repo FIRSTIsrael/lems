@@ -47,63 +47,64 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
 
   return (
-    <FastField name={`${name}`}>
-      {({ field, form }: FieldProps) => (
-        <Draggable draggableId={name} index={index} {...field}>
-          {provided => (
-            <Grid
-              container
-              component={Paper}
-              px={2}
-              direction="row"
-              alignItems="center"
-              spacing={4}
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-            >
-              <Grid xs={1} display="flex" alignItems="center">
-                <DragIndicatorIcon color="disabled" />
-              </Grid>
-              <Grid xs={1} display="flex" alignItems="center">
-                {isMandatory ? (
-                  <Tooltip title="פרס חובה" arrow>
+    <Draggable draggableId={name} index={index}>
+      {provided => (
+        <Grid
+          container
+          component={Paper}
+          px={1}
+          direction="row"
+          alignItems="center"
+          spacing={4}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
+          <Grid xs={1} display="flex" alignItems="center" {...provided.dragHandleProps}>
+            <DragIndicatorIcon color="disabled" />
+          </Grid>
+          <FastField name={`${name}`}>
+            {({ field, form }: FieldProps) => (
+              <Grid xs={10} display="flex" alignItems="center" {...field}>
+                <Grid xs={2} display="flex" alignItems="center">
+                  {isMandatory ? (
+                    <Tooltip title="פרס חובה" arrow>
                     <span>
                       <IconButton disabled>
                         <LockOutlinedIcon />
                       </IconButton>
                     </span>
-                  </Tooltip>
-                ) : (
-                  <IconButton
-                    onClick={() => {
-                      form.setFieldValue(field.name, 0);
-                      onRemove();
+                    </Tooltip>
+                  ) : (
+                    <IconButton
+                      onClick={() => {
+                        form.setFieldValue(field.name, 0);
+                        onRemove();
+                      }}
+                    >
+                      <DeleteOutlineIcon />
+                    </IconButton>
+                  )}
+                </Grid>
+                <Grid xs={4}>
+                  <Typography>פרס {localizedAward[name].name || name}</Typography>
+                </Grid>
+                <Grid xs={4}>
+                  <CustomNumberInput
+                    min={1}
+                    max={5}
+                    value={field.value}
+                    onChange={(e, value) => {
+                      e.preventDefault();
+                      value !== undefined && form.setFieldValue(field.name, value);
                     }}
-                  >
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                )}
+                  />
+                </Grid>
               </Grid>
-              <Grid xs={3}>
-                <Typography>פרס {localizedAward[name].name || name}</Typography>
-              </Grid>
-              <Grid xs={3}>
-                <CustomNumberInput
-                  min={1}
-                  max={5}
-                  value={field.value}
-                  onChange={(e, value) => {
-                    e.preventDefault();
-                    value !== undefined && form.setFieldValue(field.name, value);
-                  }}
-                />
-              </Grid>
-            </Grid>
-          )}
-        </Draggable>
+            )}
+          </FastField>
+        </Grid>
       )}
-    </FastField>
+    </Draggable>
   );
 };
 
@@ -125,7 +126,7 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchem
       if (!awards.includes(a)) awards.push(a);
     });
 
-    awards.sort((a, b) => schema[a].index - schema[b].index);
+    awards.sort((a, b) => schema[a]?.index - schema[b]?.index);
     return awards;
   };
 
