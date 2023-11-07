@@ -53,9 +53,9 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           container
           component={Paper}
           px={1}
+          py={2}
           direction="row"
           alignItems="center"
-          spacing={4}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -68,11 +68,11 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                 <Grid xs={2} display="flex" alignItems="center">
                   {isMandatory ? (
                     <Tooltip title="פרס חובה" arrow>
-                    <span>
-                      <IconButton disabled>
-                        <LockOutlinedIcon />
-                      </IconButton>
-                    </span>
+                      <span>
+                        <IconButton disabled>
+                          <LockOutlinedIcon />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   ) : (
                     <IconButton
