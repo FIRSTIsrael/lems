@@ -62,7 +62,6 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
         errors[award.name] = 'לא ניתן לחלק פרס לקבוצה יותר מפעם אחת.';
     });
 
-    console.log(errors);
     return errors;
   };
 
