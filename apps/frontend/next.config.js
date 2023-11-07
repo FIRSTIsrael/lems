@@ -19,7 +19,7 @@ const nextConfig = {
   },
 
   images: {
-    domains: ['emojicdn.elk.sh']
+    domains: ['emojicdn.elk.sh', 'fi-file-storage.nyc3.digitaloceanspaces.com']
   }
 };
 

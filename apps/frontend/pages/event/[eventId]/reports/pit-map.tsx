@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Paper, Typography } from '@mui/material';
 import { Event, SafeUser, RoleTypes } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -10,6 +10,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import { grey } from '@mui/material/colors';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -18,6 +19,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event }) => {
   const router = useRouter();
+  const PIT_MAPS_URL = 'https://fi-file-storage.nyc3.digitaloceanspaces.com/lems/pit-maps';
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, []);
 
@@ -31,22 +33,28 @@ const Page: NextPage<Props> = ({ user, event }) => {
       }}
     >
       <Layout
-        maxWidth="md"
+        maxWidth="xl"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
       >
-        <Paper
-          sx={{
-            mt: 3,
-            minHeight: 200,
-            textAlign: 'center'
+        <Image
+          src={`${PIT_MAPS_URL}/${event._id}.png`}
+          alt={`מפת פיטים ל${event.name}`}
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{
+            marginTop: '40px',
+            width: '100%',
+            height: 'auto',
+            borderRadius: '1rem',
+            border: '1px solid',
+            borderColor: grey[200]
           }}
-        >
-          <Typography variant="h1">בקרוב!</Typography>
-        </Paper>
+        />
       </Layout>
     </RoleAuthorizer>
   );
