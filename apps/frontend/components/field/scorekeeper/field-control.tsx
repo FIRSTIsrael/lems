@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { Socket } from 'socket.io-client';
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Stack } from '@mui/material';
 import {
@@ -10,8 +12,6 @@ import {
 import ActiveMatch from './active-match';
 import Schedule from './schedule';
 import ControlActions from './control-actions';
-import { useMemo } from 'react';
-import { Socket } from 'socket.io-client';
 
 interface FieldControlProps {
   event: WithId<Event>;
