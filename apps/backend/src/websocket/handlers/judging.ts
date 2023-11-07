@@ -166,10 +166,8 @@ export const handleUpdateCvForm = async (namespace, eventId, cvFormId, content, 
   console.log(`🖊️ Updating core values form ${cvFormId} in event ${eventId}`);
 
   await db.updateCoreValuesForm(
-    {
-      _id: cvForm._id
-    },
-    content
+    { _id: cvForm._id },
+    { ...content, eventId: new ObjectId(eventId) }
   );
 
   callback({ ok: true });

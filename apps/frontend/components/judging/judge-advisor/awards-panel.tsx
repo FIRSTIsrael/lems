@@ -160,7 +160,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       <DialogActions>
                         <Button onClick={() => setOpen(false)}>ביטול</Button>
                         <Button
-                          onClick={() =>
+                          onClick={() => {
                             socket.emit(
                               'updatePresentation',
                               event._id.toString(),
@@ -173,8 +173,9 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                                   });
                                 }
                               }
-                            )
-                          }
+                            );
+                            setOpen(false);
+                          }}
                           autoFocus
                         >
                           אישור
