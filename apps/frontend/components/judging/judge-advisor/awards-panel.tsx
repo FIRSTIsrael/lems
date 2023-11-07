@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FormikValues } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
@@ -14,14 +14,24 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  Alert
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import ManageIcon from '@mui/icons-material/WidgetsRounded';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Award, Event, Team, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { localizedAward } from '@lems/season';
+import { fullMatch } from '@lems/utils/objects';
+import {
+  Award,
+  Event,
+  Team,
+  AwardNames,
+  WSServerEmittedEvents,
+  WSClientEmittedEvents
+} from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import AwardWinnerSelector from './award-winner-selector';
 import ExportAction from './export-action';
@@ -36,6 +46,25 @@ interface AwardsPanelProps {
 
 const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnly, socket }) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  const validateForm = (formValues: FormikValues) => {
+    const errors: any = {};
+
+    formValues.forEach((award: WithId<Award>) => {
+      if (typeof award.winner === 'string' || !award.winner || award.name === 'robotPerformance')
+        return;
+
+      if (
+        formValues.find(
+          (a: WithId<Award>) => fullMatch(a.winner, award.winner) && a.name !== 'robotPerformance'
+        )
+      )
+        errors[award.name] = 'לא ניתן לחלק פרס לקבוצה יותר מפעם אחת.';
+    });
+
+    console.log(errors);
+    return errors;
+  };
 
   return (
     <>
@@ -91,6 +120,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
           if (!a.winner) a.winner = '';
           return a;
         })}
+        validate={validateForm}
         onSubmit={(values, actions) => {
           apiFetch(`/api/events/${event._id}/awards/winners`, {
             method: 'PUT',
@@ -108,8 +138,9 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
             })
             .then(() => actions.setSubmitting(false));
         }}
+        validateOnMount
       >
-        {({ submitForm, isSubmitting, values }) => (
+        {({ submitForm, isSubmitting, isValid, values, errors }) => (
           <Form>
             <Stack spacing={2}>
               {awards.map((a, index) => (
@@ -122,6 +153,21 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                 />
               ))}
             </Stack>
+            {!isValid && (
+              <Alert
+                severity="error"
+                sx={{
+                  mt: 2,
+                  fontWeight: 500,
+                  border: '1px solid #ff2f00'
+                }}
+              >
+                הפרסים הבאים ניתנו לאותן קבוצות:{' '}
+                {Object.keys(errors)
+                  .map(award => localizedAward[award as AwardNames].name)
+                  .join(', ')}
+              </Alert>
+            )}
             <Stack direction="row" justifyContent="center" spacing={2} mt={2}>
               {awards.length > 0 &&
                 (!readOnly ? (
@@ -132,6 +178,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       variant="contained"
                       onClick={submitForm}
                       loading={isSubmitting}
+                      disabled={!isValid}
                     >
                       <span>שמירה</span>
                     </LoadingButton>
@@ -140,7 +187,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       sx={{ minWidth: 250 }}
                       variant="contained"
                       onClick={() => setOpen(true)}
-                      disabled={!values.every(x => x.winner)}
+                      disabled={!values.every(x => x.winner) || !isValid}
                     >
                       נעילת הפרסים
                     </Button>

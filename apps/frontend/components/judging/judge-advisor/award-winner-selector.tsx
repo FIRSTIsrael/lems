@@ -45,11 +45,15 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({
               }
               freeSolo
               autoSelect
+              blurOnSelect
               renderInput={(params: AutocompleteRenderInputParams) => (
                 <TextField {...params} label="זוכה" />
               )}
               value={field.value}
-              onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
+              onChange={(_e, newValue) => {
+                console.log(newValue);
+                form.setFieldValue(field.name, newValue);
+              }}
               readOnly={readOnly}
             />
           )}
