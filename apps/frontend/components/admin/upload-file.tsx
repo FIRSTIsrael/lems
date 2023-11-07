@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { WithId } from 'mongodb';
 import { useRouter } from 'next/router';
 import {
   Button,
@@ -16,15 +15,21 @@ import {
 } from '@mui/material';
 import ImportIcon from '@mui/icons-material/UploadRounded';
 import FileIcon from '@mui/icons-material/AttachFile';
-import { Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { useSnackbar } from 'notistack';
 
-interface UploadScheduleButtonProps extends ButtonProps {
-  event: WithId<Event>;
+interface UploadFileButtonProps extends ButtonProps {
+  urlPath: string;
+  displayName: string;
+  extension?: string;
 }
 
-const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...props }) => {
+const UploadFileButton: React.FC<UploadFileButtonProps> = ({
+  urlPath,
+  displayName,
+  extension,
+  ...props
+}) => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -38,13 +43,13 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
     setIsProcessing(true);
     const formData = new FormData();
     formData.append('file', file);
-    apiFetch(`/api/admin/events/${event._id}/schedule/parse`, {
+    apiFetch(urlPath, {
       method: 'POST',
       body: formData
     })
       .then(res => {
         if (res?.ok) {
-          enqueueSnackbar('לוח הזמנים עודכן בהצלחה.', { variant: 'success' });
+          enqueueSnackbar(`קובץ ${displayName} עודכן בהצלחה.`, { variant: 'success' });
           setDialogOpen(false);
           setFile(null);
           router.reload();
@@ -64,7 +69,7 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
         onClick={() => setDialogOpen(true)}
         {...props}
       >
-        העלאת לוח זמנים
+        {`העלאת ${displayName}`}
       </Button>
       <Dialog
         open={isDialogOpen}
@@ -74,17 +79,19 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
           }
         }}
       >
-        <DialogTitle> העלאת לוח זמנים</DialogTitle>
+        <DialogTitle>{`העלאת ${displayName}`}</DialogTitle>
         <DialogContent>
-          <DialogContentText>בחרו קובץ Scheduler בפורמט csv להעלאה</DialogContentText>
+          <DialogContentText>
+            בחרו קובץ {extension && `בפורמט ${extension}`} להעלאה
+          </DialogContentText>
           <Stack flexDirection="column" alignItems="center" mt={2} mb={1}>
             <label htmlFor="upload-schedule-button">
               <Input
                 id="upload-schedule-button"
                 type="file"
-                componentsProps={{
+                slotProps={{
                   input: {
-                    accept: '.csv',
+                    accept: extension,
                     multiple: true
                   }
                 }}
@@ -120,7 +127,7 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
                   {isProcessing
                     ? 'רק רגע, אנו מעבדים את הקובץ'
                     : isError
-                    ? 'אוי, אירעה שגיאה בעדכון לוח הזמנים.'
+                    ? `שגיאה בעדכון קובץ ${displayName}.`
                     : null}
                 </Typography>
               </Stack>
@@ -144,4 +151,4 @@ const UploadScheduleButton: React.FC<UploadScheduleButtonProps> = ({ event, ...p
   );
 };
 
-export default UploadScheduleButton;
+export default UploadFileButton;

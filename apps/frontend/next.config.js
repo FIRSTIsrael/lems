@@ -19,6 +19,12 @@ const nextConfig = {
   },
 
   images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.nyc3.digitaloceanspaces.com'
+      }
+    ],
     domains: ['emojicdn.elk.sh']
   }
 };

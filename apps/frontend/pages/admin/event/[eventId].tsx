@@ -7,12 +7,12 @@ import { Event, AwardSchema } from '@lems/types';
 import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
-import UploadScheduleButton from '../../../components/admin/upload-schedule';
 import EditEventForm from '../../../components/admin/edit-event-form';
 import EventAwardEditor from '../../../components/admin/event-award-editor';
 import DeleteEventData from '../../../components/admin/delete-event-data';
 import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
+import UploadFileButton from '../../../components/admin/upload-file';
 
 interface Props {
   event: WithId<Event>;
@@ -39,14 +39,25 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
         <TabPanel value="1">
           <Stack spacing={2}>
             <EditEventForm event={event} />
-
             <Paper sx={{ p: 4 }}>
               {event.hasState && <DeleteEventData event={event} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
-                <UploadScheduleButton event={event} disabled={event.hasState} />
+                <UploadFileButton
+                  urlPath={`/api/admin/events/${event._id}/schedule/parse`}
+                  displayName="לוח זמנים"
+                  extension=".csv"
+                  disabled={event.hasState}
+                />
                 <GenerateScheduleButton event={event} />
                 <DownloadUsersButton event={event} disabled={!event.hasState} />
               </Stack>
+            </Paper>
+            <Paper sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+              <UploadFileButton
+                urlPath={`/api/admin/events/${event._id}/pit-map`}
+                displayName="מפת פיטים"
+                extension=".png"
+              />
             </Paper>
           </Stack>
         </TabPanel>
