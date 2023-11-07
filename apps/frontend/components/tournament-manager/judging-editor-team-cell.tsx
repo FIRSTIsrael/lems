@@ -36,6 +36,7 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
         {({ field, form }: FieldProps) =>
           editable ? (
             <Autocomplete
+              blurOnSelect
               options={dropdownOptions.sort((a, b) => {
                 if (!a) return -1;
                 if (!b) return 1;

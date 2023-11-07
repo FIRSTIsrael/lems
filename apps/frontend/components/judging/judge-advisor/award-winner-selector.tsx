@@ -45,6 +45,7 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({
               }
               freeSolo
               autoSelect
+              blurOnSelect
               renderInput={(params: AutocompleteRenderInputParams) => (
                 <TextField {...params} label="זוכה" />
               )}
