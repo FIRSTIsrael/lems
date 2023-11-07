@@ -2,7 +2,7 @@ import { S3 } from '@aws-sdk/client-s3';
 
 const s3Client = new S3({
   forcePathStyle: false,
-  endpoint: process.env.DIGITALOCEAN_ENDPOINT,
+  endpoint: `https://${process.env.DIGITALOCEAN_ENDPOINT}`,
   region: 'us-east-1',
   credentials: {
     accessKeyId: process.env.DIGITALOCEAN_KEY,

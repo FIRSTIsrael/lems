@@ -9,7 +9,7 @@ router.post('/', fileUpload(), async (req: Request, res: Response) => {
   const pngData = (req.files.file as fileUpload.UploadedFile)?.data;
   const bucketParams = {
     ACL: 'public-read' as ObjectCannedACL,
-    Bucket: `https://${process.env.DIGITALOCEAN_SPACE}`,
+    Bucket: process.env.DIGITALOCEAN_SPACE,
     Key: `pit-maps/${req.params.eventId}.png`,
     Body: pngData
   };
