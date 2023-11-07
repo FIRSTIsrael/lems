@@ -153,7 +153,7 @@ const Page: NextPage<Props> = ({
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/event/${event._id}/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
