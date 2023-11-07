@@ -19,7 +19,13 @@ const nextConfig = {
   },
 
   images: {
-    domains: ['emojicdn.elk.sh', 'fi-file-storage.nyc3.digitaloceanspaces.com']
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.nyc3.digitaloceanspaces.com'
+      }
+    ],
+    domains: ['emojicdn.elk.sh']
   }
 };
 
