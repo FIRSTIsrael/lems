@@ -56,7 +56,10 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
 
       if (
         formValues.find(
-          (a: WithId<Award>) => fullMatch(a.winner, award.winner) && a.name !== 'robotPerformance'
+          (a: WithId<Award>) =>
+            !fullMatch(a, award) &&
+            fullMatch(a.winner, award.winner) &&
+            a.name !== 'robotPerformance'
         )
       )
         errors[award.name] = 'לא ניתן לחלק פרס לקבוצה יותר מפעם אחת.';

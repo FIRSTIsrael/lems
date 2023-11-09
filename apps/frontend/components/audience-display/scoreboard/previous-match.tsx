@@ -44,7 +44,7 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
     >
       <Typography fontSize="2rem">#{team.number}</Typography>
       <Typography fontWeight={700} fontSize="2rem" color="text.secondary">
-        {scoresheet.data?.score || '-'}
+        {scoresheet.status === 'waiting-for-head-ref' ? 'בבדיקה' : scoresheet.data?.score || '-'}
       </Typography>
     </Stack>
   );

@@ -80,7 +80,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
     const values: { [key in (typeof fieldKeys)[number]]: RubricValue } = {} as {
       [key in (typeof fieldKeys)[number]]: RubricValue;
     };
-    fields.map(field => (values[field] = { value: '' }));
+    fields.map(field => (values[field] = { value: 0 }));
 
     const feedback = { greatJob: '', thinkAbout: '' };
 
@@ -120,7 +120,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
     fields.forEach(field => {
       if (!formValues.values[field].value) {
         errors[field] = 'שדה חובה';
-      } else if (formValues.values[field].value === '4' && !formValues.values[field].notes) {
+      } else if (formValues.values[field].value === 4 && !formValues.values[field].notes) {
         errors[field] = 'נדרש הסבר לציון';
       }
     });

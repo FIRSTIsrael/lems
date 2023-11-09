@@ -103,7 +103,7 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     { _id: eventState._id },
     {
       activeMatch: match._id,
-      loadedMatch: null,
+      ...(match.stage !== 'test' && { loadedMatch: null }),
       ...(match.stage === 'ranking' &&
         eventState.currentStage === 'practice' && { currentStage: 'ranking' })
     }
