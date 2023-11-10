@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
   Event,
   EventState,
@@ -17,6 +17,7 @@ import {
   RobotGameMatch
 } from '@lems/types';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
 import EventPanel from '../../../components/tournament-manager/event-panel';
@@ -157,7 +158,12 @@ const Page: NextPage<Props> = ({
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>

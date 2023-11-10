@@ -3,11 +3,12 @@ import router from 'next/router';
 import { WithId } from 'mongodb';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-import { Tabs, Tab, Paper } from '@mui/material';
+import { Tabs, Tab, Paper, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Event, Team, Ticket, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketCreationPanel from '../../../components/pit-admin/ticket-creation-panel';
 import TeamRegistrationPanel from '../../../components/pit-admin/team-registration-panel';
@@ -80,7 +81,12 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 4 }}>

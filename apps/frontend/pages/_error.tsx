@@ -8,7 +8,7 @@ interface Props {
 
 const Error: NextPage<Props> = ({ statusCode }) => {
   return (
-    <Paper sx={{ p: 4, textAlign: 'center' }}>
+    <Paper sx={{ mt: 4, p: 4, textAlign: 'center' }}>
       <Image
         width={96}
         height={96}

@@ -13,7 +13,8 @@ import {
   Tab,
   Tabs,
   Typography,
-  IconButton
+  IconButton,
+  Stack
 } from '@mui/material';
 import { green } from '@mui/material/colors';
 import { TabContext, TabPanel } from '@mui/lab';
@@ -38,6 +39,7 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import { localizedRoles } from '../../../localization/roles';
 import { localizedFormSubject } from '../../../localization/cv-form';
@@ -163,7 +165,12 @@ const Page: NextPage<Props> = ({
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <>
           <TabContext value={activeTab}>

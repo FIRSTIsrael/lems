@@ -51,6 +51,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        back={user.role !== 'reports' ? `/event/${event._id}/${user.role}` : undefined}
       >
         <Grid container spacing={3} columns={6} direction="row" mt={4}>
           <GridPaperLink path="judging-status">

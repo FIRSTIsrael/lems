@@ -2,12 +2,13 @@ import { useState, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
-import { Paper, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Event, SafeUser, RobotGameMatch, EventState, Award } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
@@ -111,7 +112,12 @@ const Page: NextPage<Props> = ({
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
