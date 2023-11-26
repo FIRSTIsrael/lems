@@ -4,15 +4,15 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t backend`.
-FROM docker.io/node:lts-alpine
+FROM node:18-alpine
 
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=3333
 
 WORKDIR /app
 
-RUN addgroup --system backend && \
-          adduser --system -G backend backend
+RUN addgroup --system node && \
+    adduser --system -G node node
 
 COPY dist/apps/backend backend
 RUN chown -R backend:backend .
@@ -21,4 +21,4 @@ RUN chown -R backend:backend .
 # The bundled output will include external dependencies.
 RUN npm --prefix backend --omit=dev -f install
 
-CMD [ "node", "backend" ]
+CMD [ "node", "src/main.js" ]
