@@ -45,20 +45,6 @@
         "lintFilePatterns": ["apps/backend/**/*.ts"]
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "apps/backend/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
-    },
     "docker-build": {
       "dependsOn": ["build"],
       "command": "docker build -f apps/backend/Dockerfile . -t backend"

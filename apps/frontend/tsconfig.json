@@ -17,8 +17,8 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node", "@types/grecaptcha", "webpack-env"]
+    "types": ["node", "@types/grecaptcha", "webpack-env"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
-  "exclude": ["node_modules", "jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
+  "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
