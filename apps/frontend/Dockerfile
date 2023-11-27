@@ -16,6 +16,10 @@ RUN addgroup -S lems && adduser -S frontend -G lems
 COPY dist/apps/frontend frontend
 RUN chown -R frontend:lems .
 
+# TODO: use nextjs's output: standalone when they support it.
+# Currently it has a bug with NX that is unresolved.
+# The result is slimming the docker from 1.7GB to 300MB
+
 WORKDIR /app/frontend
 RUN npm i --omit=dev
 
