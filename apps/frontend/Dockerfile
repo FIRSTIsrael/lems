@@ -4,21 +4,21 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t frontend`.
-FROM docker.io/node:lts-alpine
+FROM node:18-alpine
 
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=4200
 
 WORKDIR /app
 
-RUN addgroup --system frontend && \
-          adduser --system -G frontend frontend
+RUN addgroup -S lems && adduser -S frontend -G lems
 
 COPY dist/apps/frontend frontend
-RUN chown -R frontend:frontend .
+RUN chown -R frontend:lems .
 
-# You can remove this install step if you build with `--bundle` option.
-# The bundled output will include external dependencies.
-RUN npm --prefix frontend --omit=dev -f install
+WORKDIR /app/frontend
+RUN npm i --omit=dev
 
-CMD [ "node", "frontend" ]
+EXPOSE 4200
+
+CMD [ "npm", "start" ]

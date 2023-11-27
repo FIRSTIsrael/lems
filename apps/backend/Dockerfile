@@ -11,14 +11,14 @@ ENV PORT=3333
 
 WORKDIR /app
 
-RUN addgroup --system node && \
-    adduser --system -G node node
+RUN addgroup -S lems && adduser -S backend -G lems
 
 COPY dist/apps/backend backend
-RUN chown -R backend:backend .
+RUN chown -R backend:lems .
 
-# You can remove this install step if you build with `--bundle` option.
-# The bundled output will include external dependencies.
-RUN npm --prefix backend --omit=dev -f install
+WORKDIR /app/backend
+RUN npm ci
 
-CMD [ "node", "src/main.js" ]
+EXPOSE 3333
+
+CMD [ "node", "main.js" ]
