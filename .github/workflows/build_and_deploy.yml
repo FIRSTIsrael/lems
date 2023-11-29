@@ -2,7 +2,7 @@ name: Deploy LEMS
 
 on:
   push:
-    branches: [main]
+    branches: [main, LEMS-52-third-times-a-charm]
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
