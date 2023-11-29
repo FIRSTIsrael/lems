@@ -2,19 +2,12 @@ name: Deploy LEMS
 
 on:
   push:
-    branches: [main]
-
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Image version'
-        required: true
+    branches: [main, LEMS-52-third-times-a-charm]
 
 env:
-  REGISTRY: 'your-digitalocean-registry-container-url'
-  IMAGE_NAME: 'your-docker-image-name'
+  REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  IMAGE_TAG: ${{ github.sha }}
 
-#3
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
@@ -22,8 +15,11 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v2
 
+      - name: LEMS Build
+        run: npm run build
+
       - name: Build container image
-        run: docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker compose build
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -33,34 +29,8 @@ jobs:
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
 
-      - name: Remove all old images
-        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+      # - name: Remove all old images
+      #   run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
 
       - name: Push image to DigitalOcean Container Registry
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build_and_push
-
-    steps:
-      - name: Deploy to Digital Ocean droplet via SSH action
-        uses: appleboy/ssh-action@v0.1.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
-          script: |
-            # Login to registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running container
-            docker stop $(echo $IMAGE_NAME)
-            # Remove old container
-            docker rm $(echo $IMAGE_NAME)
-            # Run a new container from a new image
-            docker run -d \
-            --restart always \
-            --name $(echo $IMAGE_NAME) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
