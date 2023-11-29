@@ -41,3 +41,23 @@ jobs:
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: REGISTRY,IMAGE_TAG,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com  
+            cd lems
+            git pull
+            docker compose down
+            docker compose rm
+            docker compose up
