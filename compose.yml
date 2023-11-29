@@ -4,14 +4,14 @@ services:
       dockerfile: apps/frontend/Dockerfile
       context: .
     ports:
-      - '3333:3333'
+      - '4200:4200'
 
   backend:
     build:
       dockerfile: apps/backend/Dockerfile
       context: .
     ports:
-      - '4200:4200'
+      - '3333:3333'
 
 networks:
   default:
