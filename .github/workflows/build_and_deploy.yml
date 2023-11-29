@@ -15,6 +15,9 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v2
 
+      - name: Install Node Modules
+        run: npm ci
+
       - name: LEMS Build
         run: npm run build
 
