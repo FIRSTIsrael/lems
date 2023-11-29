@@ -2,7 +2,7 @@ name: Deploy LEMS
 
 on:
   push:
-    branches: [main, LEMS-52-third-times-a-charm]
+    branches: [main]
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
@@ -41,11 +41,15 @@ jobs:
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
+
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push
 
     steps:
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -57,7 +61,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com  
             cd lems
-            git pull
             docker compose down
             docker compose rm
+            git pull
             docker compose up
