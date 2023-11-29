@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
-  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build_and_push:
@@ -21,6 +20,9 @@ jobs:
       - name: LEMS Build
         run: npm run build
 
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
       - name: Build container image
         run: docker compose build
 
@@ -32,8 +34,10 @@ jobs:
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
 
-      # - name: Remove all old images
-      #   run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+      - name: Remove all old images
+        run: |
+          doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "sha.*") --force
+          doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
