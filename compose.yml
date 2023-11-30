@@ -5,9 +5,13 @@ services:
       context: .
       args:
         RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
+        BASE_URL: ${BASE_URL}
+        WS_URL: ${WS_URL}
     image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
     ports:
       - '4200:4200'
+    env_file:
+      - apps/frontend/.env.production
 
   backend:
     build:
@@ -22,6 +26,8 @@ services:
     image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
     ports:
       - '3333:3333'
+    env_file:
+      - apps/backend/.env.production
 
 networks:
   default:
