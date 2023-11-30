@@ -45,3 +45,20 @@ Happy coding!
 ### Environment variables
 
 Environment variables and secrets are managed through Github.
+
+### Manual Configurations
+
+#### SSL
+
+DO Droplet uses its own certificate.
+MongoDB uses a self-signed certificate, which is managed gy Github secrets.
+Certbot manages the SSL connection cerificate
+
+#### Nginx
+
+We use nginx to map different paths to the services.
+
+#### Cleaning up images
+
+1. On the droplet: Remove images manually for now. Containers are removed automatically, images are not.
+2. On the registry: Periodically run DO's garbage collection to avoid running out of storage.
