@@ -60,7 +60,7 @@ namespace.use(wsValidateEvent);
 namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');
-const port = process.env.BACKEND_PORT || 3333;
+const port = 3333;
 server.listen(port, () => {
   console.log(`✅ Server started on port ${port}.`);
 });

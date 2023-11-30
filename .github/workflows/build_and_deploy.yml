@@ -15,6 +15,9 @@ env:
   RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
   BASE_URL: ${{ vars.BASE_URL }}
   WS_URL: ${{ vars.WS_URL }}
+  DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+  DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
+  RECAPTCHA: ${{ vars.RECAPTCHA }}
 
 jobs:
   build_and_push:

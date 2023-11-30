@@ -44,5 +44,4 @@ Happy coding!
 
 ### Environment variables
 
-Build-time environment variables and secrets are managed through Github.
-Variables are located in the .env.production files.
+Environment variables and secrets are managed through Github.
