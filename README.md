@@ -52,7 +52,8 @@ Environment variables and secrets are managed through Github.
 
 DO Droplet uses its own certificate.
 MongoDB uses a self-signed certificate, which is managed gy Github secrets.
-Certbot manages the SSL connection cerificate
+Certbot manages the SSL connection cerificate to the lems.firstisrael.org.il domain.
+DNS is managed through cloudwatch.
 
 #### Nginx
 
