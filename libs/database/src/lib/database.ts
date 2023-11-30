@@ -5,7 +5,9 @@ import { randomString } from '@lems/utils/random';
 const connectionString = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
 
 const initDbClient = async () => {
-  const client = new MongoClient(connectionString);
+  const client = new MongoClient(connectionString, {
+    tlsAllowInvalidCertificates: process.env.NODE_ENV === 'production'
+  });
 
   try {
     await client.connect();
