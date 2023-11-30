@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      dockerfile: apps/frontend/Dockerfile
+      context: .
+    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
+    ports:
+      - '4200:4200'
+
+  backend:
+    build:
+      dockerfile: apps/backend/Dockerfile
+      context: .
+    image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
+    ports:
+      - '3333:3333'
+
+networks:
+  default:
+    name: lems_network
+    driver: bridge

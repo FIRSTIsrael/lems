@@ -1,0 +1,73 @@
+name: Deploy LEMS
+
+on:
+  push:
+    branches: [main]
+
+env:
+  REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+  DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+
+      - name: Install Node Modules
+        run: npm ci
+
+      - name: LEMS Build
+        run: npm run build
+
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Build container image
+        run: docker compose build
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Remove all old images
+        run: |
+          doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "sha.*") --force
+          doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker compose push
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+
+    steps:
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: REGISTRY,IMAGE_TAG,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com  
+            cd lems
+            docker compose down
+            docker compose rm
+            git pull
+            docker compose up -d
