@@ -20,7 +20,7 @@ const corsOptions = {
   origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
   credentials: true
 };
-const io = new Server(server, { cors: corsOptions, transports: ['websocket'] });
+const io = new Server(server, { cors: corsOptions });
 
 app.use(cookies());
 app.use(cors(corsOptions));
