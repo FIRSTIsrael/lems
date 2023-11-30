@@ -29,8 +29,8 @@ RUN chown -R backend:lems .
 
 ARG MONGO_CA_CERTIFICATE
 ENV MONGO_CA_CERTIFICATE=$MONGO_CA_CERTIFICATE
-RUN echo $MONGO_CA_CERTIFICATE > /root/mongo_ca_certificate.crt
-RUN chown backend:lems /root/mongo_ca_certificate.crt
+RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
+RUN chown backend:lems /root/mongo-ca-certificate.crt
 
 WORKDIR /app/backend
 RUN npm ci
