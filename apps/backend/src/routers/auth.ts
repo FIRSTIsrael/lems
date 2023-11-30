@@ -16,7 +16,6 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
   if (process.env.RECAPTCHA === 'true') {
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
-    console.log(captcha); //TODO: remove this
     if (captcha.action != 'submit' || captcha.score < 0.5)
       return res.status(429).json({ error: 'Captcha Failure, please try again later' });
   }
