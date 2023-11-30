@@ -29,8 +29,6 @@ services:
       - '3333:3333'
     env_file:
       - apps/backend/.env.production
-    volumes:
-      - /root/mongo-ca-certificate.crt:/root/mongo-ca-certificate.crt
 
 networks:
   default:
