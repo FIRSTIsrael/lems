@@ -9,14 +9,7 @@ const getWsBase = (forceClient = false) => {
 const url = getWsBase();
 const manager = new Manager(url ? url : '', {
   autoConnect: false,
-  withCredentials: true,
-  transports: ['websocket'],
-  agent: false,
-  upgrade: false,
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
-  rejectUnauthorized: false
+  withCredentials: true
 });
 
 export const getSocket = (
