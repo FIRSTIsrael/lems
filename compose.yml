@@ -1,19 +1,4 @@
 services:
-  frontend:
-    build:
-      dockerfile: apps/frontend/Dockerfile
-      context: .
-      args:
-        RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
-        BASE_URL: ${BASE_URL}
-        WS_URL: ${WS_URL}
-        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
-        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
-        RECAPTCHA: ${RECAPTCHA}
-    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
-    ports:
-      - '4200:4200'
-
   backend:
     build:
       dockerfile: apps/backend/Dockerfile
@@ -31,8 +16,25 @@ services:
     image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
     ports:
       - '3333:3333'
+    networks:
+      - lems-network
+
+  frontend:
+    build:
+      dockerfile: apps/frontend/Dockerfile
+      context: .
+      args:
+        RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
+        BASE_URL: ${BASE_URL}
+        WS_URL: ${WS_URL}
+        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
+        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
+        RECAPTCHA: ${RECAPTCHA}
+    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
+    ports:
+      - '4200:4200'
+    networks:
+      - lems-network
 
 networks:
-  default:
-    name: lems_network
-    driver: bridge
+  lems-network:
