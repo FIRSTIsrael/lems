@@ -38,3 +38,4 @@ services:
 
 networks:
   lems-network:
+    driver: bridge
