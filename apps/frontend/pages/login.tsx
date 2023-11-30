@@ -29,7 +29,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   useEffect(() => {
     if (recaptchaRequired) {
       loadScriptByURL(
-        'recaptcha-key',
+        'recaptcha-script',
         `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
       );
     }

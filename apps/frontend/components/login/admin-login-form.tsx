@@ -31,6 +31,8 @@ const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
       .then(async res => {
         const data = await res.json();
         if (data && !data.error) {
+          document.getElementById('recaptcha-script')?.remove();
+          document.querySelector('.grecaptcha-badge')?.remove();
           router.push('/admin');
         } else if (data.error) {
           if (data.error === 'INVALID_CREDENTIALS') {
