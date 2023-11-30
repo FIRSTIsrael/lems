@@ -21,8 +21,8 @@ FIRST LEGO League Challenge: Local Event Management System
 
 ### Configure the app
 
-Currently, LEMS uses *FIRST* Israel's DigitalOcean file storage. Before running LEMS,
-make sure to reach out to a *FIRST* Israel contact with access for the key and secret.
+Currently, LEMS uses _FIRST_ Israel's DigitalOcean file storage. Before running LEMS,
+make sure to reach out to a _FIRST_ Israel contact with access for the key and secret.
 
 Update `.env.local` with keys in place of the comments.
 
@@ -35,10 +35,14 @@ Backend will be available at <http://localhost:3333/>.
 
 Happy coding!
 
-## Ready to deploy?
-
-Just run `nx build lems` to build the application. The build artifacts will be stored in the `dist/` directory, ready to be deployed.
-
 ## CI
 
-TBD
+### Building
+
+`npm run build` build the entire LEMS app and stores it in the /dist folder.
+`docker compose build` uses the /dist folder and builds docker images. This should only be run in CI with proper ENV vars configured.
+
+### Environment variables
+
+Build-time environment variables and secrets are managed through Github.
+Variables are located in the .env.production files.
