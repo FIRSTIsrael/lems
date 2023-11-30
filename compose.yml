@@ -3,6 +3,8 @@ services:
     build:
       dockerfile: apps/frontend/Dockerfile
       context: .
+      args:
+        RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
     image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
     ports:
       - '4200:4200'
@@ -11,6 +13,12 @@ services:
     build:
       dockerfile: apps/backend/Dockerfile
       context: .
+      args:
+        DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
+        DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
+        JWT_SECRET: ${JWT_SECRET}
+        MONGODB_URI: ${MONGODB_URI}
+        RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
     image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
     ports:
       - '3333:3333'
