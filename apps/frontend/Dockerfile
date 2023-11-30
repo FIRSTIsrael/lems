@@ -9,6 +9,8 @@ FROM node:18-alpine
 ENV HOST=0.0.0.0
 ENV PORT=4200
 
+ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
+
 WORKDIR /app
 
 RUN addgroup -S lems && adduser -S frontend -G lems

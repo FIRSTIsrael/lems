@@ -6,6 +6,12 @@ on:
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+  DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
 
 jobs:
   build_and_push:
