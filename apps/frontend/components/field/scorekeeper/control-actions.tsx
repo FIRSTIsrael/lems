@@ -97,14 +97,13 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       </Button>
       <Button
         variant="contained"
-        color={!loadedMatch?._id ? 'inherit' : matchShown ? 'warning' : 'success'}
-        disabled={!loadedMatch?._id || activeMatchId !== undefined}
+        color={!loadedMatch?._id ? 'inherit' : matchShown ? 'primary' : 'success'}
+        disabled={!loadedMatch?._id || !!activeMatchId}
         size="large"
         onClick={() => {
           setMatchShown(true);
           socket.emit('updateAudienceDisplayState', eventId, 'match-preview', response => {
-            if (!response.ok)
-              enqueueSnackbar('אופס, לא הצלחנו לשנות את תצוגת הקהל.', { variant: 'error' });
+            return; // This will be ok false if the state was already 'match-preview' but we dont care
           });
         }}
       >
@@ -113,12 +112,14 @@ const ControlActions: React.FC<ControlActionsProps> = ({
       {!activeMatchId ? (
         <Button
           variant="contained"
-          color={!loadedMatch?._id ? 'inherit' : 'success'}
-          disabled={
-            !loadedMatch?._id ||
-            activeMatchId ||
-            !!loadedMatch.participants.filter(p => p.teamId).find(p => !p.ready)
+          color={
+            !loadedMatch?._id
+              ? 'inherit'
+              : loadedMatch.participants.filter(p => p.teamId).find(p => !p.ready)
+              ? 'warning'
+              : 'success'
           }
+          disabled={!loadedMatch?._id}
           size="large"
           onClick={startMatch}
         >
