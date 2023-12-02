@@ -23,5 +23,6 @@ export const localizedAudienceDisplayState: Record<AudienceDisplayState, string>
   sponsors: 'שותפים',
   logo: 'לוגו',
   hotspot: 'תזכורת נקודות גישה',
-  'match-preview': 'תצוגת מקצה'
+  'match-preview': 'תצוגת מקצה',
+  message: 'הודעה'
 };

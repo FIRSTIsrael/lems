@@ -60,7 +60,8 @@ export const AudienceDisplayStateTypes = [
   'awards',
   'sponsors',
   'logo',
-  'hotspot'
+  'hotspot',
+  'message'
 ];
 export type AudienceDisplayState = (typeof AudienceDisplayStateTypes)[number];
 

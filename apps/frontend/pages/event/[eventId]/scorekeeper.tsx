@@ -17,6 +17,7 @@ import FieldControl from '../../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
+import MessageEditor from '../../../components/field/scorekeeper/message-editor';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -140,24 +141,29 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="2">
-            <VideoSwitch eventState={eventState} socket={socket} />
-            {eventState.audienceDisplayState === 'awards' &&
-              eventState.presentations['awards'].enabled && (
-                <PresentationController
-                  event={event}
-                  socket={socket}
-                  presentationId="awards"
-                  eventState={eventState}
-                >
-                  <AwardsPresentation
+            <Stack alignItems="center">
+              <VideoSwitch eventState={eventState} socket={socket} />
+              {eventState.audienceDisplayState === 'awards' &&
+                eventState.presentations['awards'].enabled && (
+                  <PresentationController
                     event={event}
-                    awards={awards}
-                    height={108 * 2.5}
-                    width={192 * 2.5}
-                    position="relative"
-                  />
-                </PresentationController>
+                    socket={socket}
+                    presentationId="awards"
+                    eventState={eventState}
+                  >
+                    <AwardsPresentation
+                      event={event}
+                      awards={awards}
+                      height={108 * 2.5}
+                      width={192 * 2.5}
+                      position="relative"
+                    />
+                  </PresentationController>
+                )}
+              {eventState.audienceDisplayState === 'message' && (
+                <MessageEditor eventState={eventState} socket={socket} />
               )}
+            </Stack>
           </TabPanel>
         </TabContext>
       </Layout>

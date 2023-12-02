@@ -16,5 +16,6 @@ export interface EventState {
   currentStage: 'practice' | 'ranking';
   currentSession: number;
   audienceDisplayState: AudienceDisplayState;
+  audienceDisplayMessage: string;
   presentations: { [key: string]: PresentationState };
 }
