@@ -1,36 +1,53 @@
 import { WithId } from 'mongodb';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import { Paper, Typography } from '@mui/material';
-import { Slide, Appear } from '@lems/presentations';
-import { Team } from '@lems/types';
-import { localizeTeam } from '../../localization/teams';
+import { Box, Stack, Typography } from '@mui/material';
+import { Appear, Slide } from '@lems/presentations';
+import { DivisionColor, Team } from '@lems/types';
+import { getDivisionColor } from '../../lib/utils/colors';
+import LogoStack from './logo-stack';
 
 interface AwardWinnerSlideProps {
   name: string;
   place?: number;
   winner: string | WithId<Team>;
+  color?: DivisionColor;
 }
 
-const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner }) => {
+const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner, color }) => {
+  const isTeamAward = typeof winner !== 'string';
+
   return (
     <Slide>
-      <Paper sx={{ mx: '2rem', p: 8, textAlign: 'center' }}>
+      <Stack px={20} textAlign="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
-          <ReactMarkdown>{name}</ReactMarkdown>
+          <ReactMarkdown>{place ? `${name}, מקום ${String(place)}` : name}</ReactMarkdown>
         </Typography>
-        {place && (
-          <Typography variant="h1" fontSize="3rem" color="text.secondary">
-            <ReactMarkdown>{`מקום ${String(place)}`}</ReactMarkdown>
+        <Box
+          sx={{
+            background: '#f7f8f9',
+            maxWidth: 'lg',
+            px: 8,
+            py: 6,
+            borderRadius: 4,
+            boxShadow: color && `-10px 10px 12px ${getDivisionColor(color)}74`
+          }}
+        >
+          <Typography fontSize="2.75rem" color="text.secondary">
+            {isTeamAward ? 'מוענק לקבוצה' : 'מוענק ל'}
           </Typography>
-        )}
-        <Appear>
-          <Typography variant="h3" fontSize="3rem" color="text.secondary">
-            <ReactMarkdown>
-              {typeof winner === 'string' ? String(winner) : localizeTeam(winner)}
-            </ReactMarkdown>
-          </Typography>
-        </Appear>
-      </Paper>
+          <Appear>
+            <Typography fontSize="4rem" fontWeight={700}>
+              {isTeamAward ? `#${winner.number}, ${winner.name}` : winner}
+            </Typography>
+            {isTeamAward && (
+              <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
+                {winner.affiliation.name}, {winner.affiliation.city}
+              </Typography>
+            )}
+          </Appear>
+        </Box>
+        <LogoStack />
+      </Stack>
     </Slide>
   );
 };

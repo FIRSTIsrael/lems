@@ -1,4 +1,4 @@
-import { AudienceDisplayState, RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
+import { AudienceDisplayScreen, RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
 
 export const localizedMatchStage = {
   practice: 'מקצה אימונים',
@@ -17,11 +17,13 @@ export const localizedMatchStatus: Record<RobotGameMatchStatus, string> = {
   completed: 'מקצה הושלם'
 };
 
-export const localizedAudienceDisplayState: Record<AudienceDisplayState, string> = {
+export const localizedAudienceDisplayScreen: Record<AudienceDisplayScreen, string> = {
+  blank: 'מסך ריק',
+  logo: 'לוגו',
   scores: 'מסך הניקוד',
   awards: 'מצגת פרסים',
   sponsors: 'שותפים',
-  logo: 'לוגו',
   hotspot: 'תזכורת נקודות גישה',
-  'match-preview': 'תצוגת מקצה'
+  'match-preview': 'תצוגת מקצה',
+  message: 'הודעה'
 };

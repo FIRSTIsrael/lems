@@ -1,12 +1,12 @@
 import { Fragment, forwardRef } from 'react';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
 import { Event, Award } from '@lems/types';
+import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
-import dayjs from 'dayjs';
 import ImageSlide from './image-slide';
-import { localizedAward } from '@lems/season';
 import AwardWinnerSlide from './award-winner-slide';
 
 interface AwardsPresentationProps extends BoxProps {
@@ -65,6 +65,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                       name={`פרס ${localized.name}`}
                       place={sortedAwards.length > 1 ? award.place : undefined}
                       winner={award.winner || ''}
+                      color={event.color}
                     />
                   );
                 })}

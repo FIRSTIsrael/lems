@@ -2,11 +2,7 @@ import { Container, Paper, Typography } from '@mui/material';
 import { NextPage } from 'next';
 import Image from 'next/image';
 
-interface Props {
-  statusCode?: number;
-}
-
-const Error: NextPage<Props> = ({ statusCode }) => {
+const Custom404: NextPage = () => {
   return (
     <Container
       maxWidth="md"
@@ -18,26 +14,16 @@ const Error: NextPage<Props> = ({ statusCode }) => {
       }}
     >
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Image
-          width={96}
-          height={96}
-          src="/assets/emojis/downcast-face-with-sweat.png"
-          alt="אימוג׳י עצוב"
-        />
+        <Image width={96} height={96} src="/assets/emojis/dizzy-face.png" alt="אימוג׳י עצוב" />
         <Typography variant="h1" gutterBottom>
-          שגיאה לא צפויה, אנא נסו שנית
+          הדף אליו נכנסתם לא נמצא
         </Typography>
         <Typography variant="h2" color="#666" fontSize="1.5rem">
-          קוד שגיאה: {statusCode}
+          שגיאה 404
         </Typography>
       </Paper>
     </Container>
   );
 };
 
-Error.getInitialProps = ({ res, err }) => {
-  const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
-  return { statusCode };
-};
-
-export default Error;
+export default Custom404;

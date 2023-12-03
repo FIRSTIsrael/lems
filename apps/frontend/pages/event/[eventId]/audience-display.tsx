@@ -14,13 +14,15 @@ import {
   Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import Layout from '../../../components/layout';
-import FIRSTLogo from '../../../components/audience-display/first-logo';
+import Blank from '../../../components/audience-display/blank';
 import HotspotReminder from '../../../components/audience-display/hotspot-reminder';
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import MatchPreview from '../../../components/audience-display/match-preview';
+import Message from '../../..//components/audience-display/message';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
+import FIRSTLogo from '../../../components/audience-display/first-logo';
+import AudienceDisplayContainer from '../../../components/audience-display/audience-display-container';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import useKeyboardShortcut from '../../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -104,49 +106,44 @@ const Page: NextPage<Props> = ({
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
-  const { connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field', 'audience-display'],
-    undefined,
-    [
-      {
-        name: 'matchStarted',
-        handler: (newMatch, newEventState) => {
-          if (eventState.audienceDisplayState === 'scores')
-            new Audio('/assets/sounds/field/field-start.wav').play();
-          handleMatchEvent(newMatch, newEventState);
-        }
-      },
-      {
-        name: 'matchAborted',
-        handler: (newMatch, newEventState) => {
-          if (eventState.audienceDisplayState === 'scores')
-            new Audio('/assets/sounds/field/field-abort.wav').play();
-          handleMatchEvent(newMatch, newEventState);
-        }
-      },
-      {
-        name: 'matchEndgame',
-        handler: () => {
-          if (eventState.audienceDisplayState === 'scores')
-            new Audio('/assets/sounds/field/field-endgame.wav').play();
-        }
-      },
-      {
-        name: 'matchCompleted',
-        handler: (newMatch, newEventState) => {
-          if (eventState.audienceDisplayState === 'scores')
-            new Audio('/assets/sounds/field/field-end.wav').play();
-          handleMatchEvent(newMatch, newEventState);
-        }
-      },
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
-      { name: 'audienceDisplayStateUpdated', handler: setEventState },
-      { name: 'presentationUpdated', handler: setEventState }
-    ]
-  );
+  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+    {
+      name: 'matchStarted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplay.screen === 'scores')
+          new Audio('/assets/sounds/field/field-start.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchAborted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplay.screen === 'scores')
+          new Audio('/assets/sounds/field/field-abort.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    {
+      name: 'matchEndgame',
+      handler: () => {
+        if (eventState.audienceDisplay.screen === 'scores')
+          new Audio('/assets/sounds/field/field-endgame.wav').play();
+      }
+    },
+    {
+      name: 'matchCompleted',
+      handler: (newMatch, newEventState) => {
+        if (eventState.audienceDisplay.screen === 'scores')
+          new Audio('/assets/sounds/field/field-end.wav').play();
+        handleMatchEvent(newMatch, newEventState);
+      }
+    },
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
+    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
+    { name: 'audienceDisplayUpdated', handler: setEventState },
+    { name: 'presentationUpdated', handler: setEventState }
+  ]);
 
   return (
     <RoleAuthorizer
@@ -157,14 +154,15 @@ const Page: NextPage<Props> = ({
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
-      <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
-        {eventState.audienceDisplayState === 'logo' && <FIRSTLogo />}
-        {eventState.audienceDisplayState === 'hotspot' && <HotspotReminder />}
-        {eventState.audienceDisplayState === 'sponsors' && <Sponsors />}
-        {eventState.audienceDisplayState === 'match-preview' && (
+      <AudienceDisplayContainer>
+        {eventState.audienceDisplay.screen === 'blank' && <Blank />}
+        {eventState.audienceDisplay.screen === 'logo' && <FIRSTLogo />}
+        {eventState.audienceDisplay.screen === 'hotspot' && <HotspotReminder />}
+        {eventState.audienceDisplay.screen === 'sponsors' && <Sponsors />}
+        {eventState.audienceDisplay.screen === 'match-preview' && (
           <MatchPreview event={event} match={loadedMatch} />
         )}
-        {eventState.audienceDisplayState === 'scores' && (
+        {eventState.audienceDisplay.screen === 'scores' && (
           <Scoreboard
             activeMatch={activeMatch}
             previousMatch={previousMatch}
@@ -173,7 +171,7 @@ const Page: NextPage<Props> = ({
             eventState={eventState}
           />
         )}
-        {eventState.audienceDisplayState === 'awards' && (
+        {eventState.audienceDisplay.screen === 'awards' && (
           <AwardsPresentation
             initialState={eventState.presentations['awards'].activeView}
             enableReinitialize={true}
@@ -183,7 +181,10 @@ const Page: NextPage<Props> = ({
             awards={awards}
           />
         )}
-      </Layout>
+        {eventState.audienceDisplay.screen === 'message' && (
+          <Message message={eventState.audienceDisplay.message} />
+        )}
+      </AudienceDisplayContainer>
     </RoleAuthorizer>
   );
 };

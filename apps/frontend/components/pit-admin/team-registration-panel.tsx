@@ -54,7 +54,7 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
             fullWidth
             onClick={registerTeam}
           >
-            רישום
+            הקבוצה הגיעה
           </Button>
         </Grid>
       </Grid>

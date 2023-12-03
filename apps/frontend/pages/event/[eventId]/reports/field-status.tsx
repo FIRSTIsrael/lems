@@ -81,12 +81,7 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
             )}
             <Typography variant="h4">
               {loadedMatch.participants.filter(p => p.teamId).filter(p => !!p.ready).length} מתוך{' '}
-              {
-                loadedMatch.participants
-                  .filter(p => p.teamId)
-                  .filter(p => teams.find(team => team._id === p.teamId)?.registered).length
-              }{' '}
-              שולחנות מוכנים
+              {loadedMatch.participants.filter(p => p.teamId).length} שולחנות מוכנים
             </Typography>
           </Stack>
         )}
