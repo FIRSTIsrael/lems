@@ -1,10 +1,8 @@
-# Lems
-
-FIRST LEGO League Challenge: Local Event Management System
+# _FIRST_ LEGO League Challenge: Local Event Management System
 
 ## DB Setup
 
-1. Download [docker desktop](https://www.docker.com/products/docker-desktop/)
+1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 2. Pull mongodb image with tag 7.0.x
    `docker pull mongo:7.0.0`
@@ -42,22 +40,21 @@ Happy coding!
 `npm run build` build the entire LEMS app and stores it in the /dist folder.
 `docker compose build` uses the /dist folder and builds docker images. This should only be run in CI with proper ENV vars configured.
 
-### Environment variables
+### Environment Variables
 
-Environment variables and secrets are managed through Github.
+Environment variables and secrets are managed through GitHub.
 
 ### Manual Configurations
 
 #### SSL
 
 DO Droplet uses its own certificate.
-MongoDB uses a self-signed certificate, which is managed gy Github secrets.
-Certbot manages the SSL connection cerificate to the lems.firstisrael.org.il domain.
-DNS is managed through cloudwatch.
+MongoDB uses a self-signed certificate, which is managed by GitHub Secrets.
+Certbot manages the SSL connection cerificate to the `lems.firstisrael.org.il` domain. DNS is managed through Cloudflare, with a security edge protection proxy.
 
 #### Nginx
 
-We use nginx to map different paths to the services.
+We use nginx to map different paths to the services and serve the HTTP app.
 
 #### Cleaning up images
 
