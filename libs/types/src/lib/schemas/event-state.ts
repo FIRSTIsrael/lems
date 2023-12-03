@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { AudienceDisplayState } from '../constants';
+import { AudienceDisplayScreen } from '../constants';
 
 export interface PresentationState {
   enabled: boolean;
@@ -9,13 +9,17 @@ export interface PresentationState {
   };
 }
 
+export interface AudienceDisplayState {
+  screen: AudienceDisplayScreen;
+  message: string;
+}
+
 export interface EventState {
   eventId: ObjectId;
   loadedMatch: ObjectId | null;
   activeMatch: ObjectId | null;
   currentStage: 'practice' | 'ranking';
   currentSession: number;
-  audienceDisplayState: AudienceDisplayState;
-  audienceDisplayMessage: string;
+  audienceDisplay: AudienceDisplayState;
   presentations: { [key: string]: PresentationState };
 }

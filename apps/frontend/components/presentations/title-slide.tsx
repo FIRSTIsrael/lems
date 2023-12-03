@@ -15,7 +15,7 @@ const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
           <ReactMarkdown>{primary}</ReactMarkdown>
         </Typography>
         {secondary && (
-          <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 4 }}>
+          <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 4, borderRadius: 4 }}>
             <Typography fontSize="2.75rem">
               <ReactMarkdown>{secondary}</ReactMarkdown>
             </Typography>

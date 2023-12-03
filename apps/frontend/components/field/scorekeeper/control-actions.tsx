@@ -43,30 +43,25 @@ const ControlActions: React.FC<ControlActionsProps> = ({
   const startMatch = useCallback(() => {
     if (!loadedMatch) return;
     socket.emit('startMatch', eventId, loadedMatch._id.toString(), response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
-      }
+      if (!response.ok) enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
     });
-    socket.emit('updateAudienceDisplayState', eventId, 'scores', response => {
-      return; // This will be ok false if the state was already 'scores' but we dont care
+
+    socket.emit('updateAudienceDisplay', eventId, { screen: 'scores' }, response => {
+      if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
     });
   }, [eventId, loadedMatch, socket]);
 
   const startTestMatch = useCallback(() => {
     if (activeMatchId) return;
     socket.emit('startTestMatch', eventId, response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
-      }
+      if (!response.ok) enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
     });
   }, [eventId, activeMatchId, socket]);
 
   const abortMatch = useCallback(() => {
     if (!activeMatchId) return;
     socket.emit('abortMatch', eventId, activeMatchId.toString(), response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
-      }
+      if (!response.ok) enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
     });
     setOpen(false);
   }, [activeMatchId, eventId, socket]);
@@ -102,8 +97,8 @@ const ControlActions: React.FC<ControlActionsProps> = ({
         size="large"
         onClick={() => {
           setMatchShown(true);
-          socket.emit('updateAudienceDisplayState', eventId, 'match-preview', response => {
-            return; // This will be ok false if the state was already 'match-preview' but we dont care
+          socket.emit('updateAudienceDisplay', eventId, { screen: 'match-preview' }, response => {
+            if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
           });
         }}
       >

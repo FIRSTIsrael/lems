@@ -51,7 +51,7 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
     from {transform: translateY(0)}
     to {transform: translateY(-100%)}
   `;
-  const marqueeAnimation = `${marquee} 10s linear infinite`;
+  const marqueeAnimation = `${marquee} 45s linear infinite`;
 
   return (
     <TableContainer

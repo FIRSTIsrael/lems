@@ -96,7 +96,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchAborted', handler: handleMatchAborted },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayStateUpdated', handler: setEventState },
+      { name: 'audienceDisplayUpdated', handler: setEventState },
       { name: 'presentationUpdated', handler: setEventState }
     ]
   );
@@ -143,7 +143,7 @@ const Page: NextPage<Props> = ({
           <TabPanel value="2">
             <Stack alignItems="center">
               <VideoSwitch eventState={eventState} socket={socket} />
-              {eventState.audienceDisplayState === 'awards' &&
+              {eventState.audienceDisplay.screen === 'awards' &&
                 eventState.presentations['awards'].enabled && (
                   <PresentationController
                     event={event}
@@ -160,7 +160,7 @@ const Page: NextPage<Props> = ({
                     />
                   </PresentationController>
                 )}
-              {eventState.audienceDisplayState === 'message' && (
+              {eventState.audienceDisplay.screen === 'message' && (
                 <MessageEditor eventState={eventState} socket={socket} />
               )}
             </Stack>
