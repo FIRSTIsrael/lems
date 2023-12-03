@@ -1,25 +1,26 @@
 name: Deploy LEMS
 
 on:
-  push:
-    branches: [main]
-
+  release:
+    types: [released]
+    
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  IMAGE_TAG: ${{ github.ref }}
   DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
   DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+  DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+  DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   MONGODB_URI: ${{ secrets.MONGODB_URI }}
   MONGO_CA_CERTIFICATE: ${{ secrets.MONGO_CA_CERTIFICATE }}
-  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
-  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
   BASE_URL: ${{ vars.BASE_URL }}
   NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
   WS_URL: ${{ vars.WS_URL }}
   NEXT_PUBLIC_WS_URL: ${{ vars.NEXT_PUBLIC_WS_URL }}
-  DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
-  DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
   RECAPTCHA: ${{ vars.RECAPTCHA }}
+  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
 
 jobs:
   build_and_push:
@@ -33,9 +34,6 @@ jobs:
 
       - name: LEMS Build
         run: npm run build
-
-      - name: Set Image Tag
-        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Build container image
         run: docker compose build
@@ -61,9 +59,6 @@ jobs:
     needs: build_and_push
 
     steps:
-      - name: Set Image Tag
-        run: echo "IMAGE_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v1.0.0
         with:
