@@ -4,6 +4,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { Appear, Slide } from '@lems/presentations';
 import { DivisionColor, Team } from '@lems/types';
 import { getDivisionColor } from '../../lib/utils/colors';
+import LogoStack from './logo-stack';
 
 interface AwardWinnerSlideProps {
   name: string;
@@ -45,6 +46,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
             )}
           </Appear>
         </Box>
+        <LogoStack />
       </Stack>
     </Slide>
   );

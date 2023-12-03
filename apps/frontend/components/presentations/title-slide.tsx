@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { Slide } from '@lems/presentations';
+import LogoStack from './logo-stack';
 
 interface TitleSlideProps {
   primary: string;
@@ -21,6 +22,7 @@ const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
             </Typography>
           </Box>
         )}
+        <LogoStack />
       </Stack>
     </Slide>
   );

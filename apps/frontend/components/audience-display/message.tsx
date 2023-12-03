@@ -1,6 +1,6 @@
 import { Paper, Typography, Box } from '@mui/material';
 import Image from 'next/image';
-import SeasonLogo from '../../public/assets/audience-display/season-logo.webp';
+import SeasonLogo from '../../public/assets/audience-display/season-logo.svg';
 
 interface MessageProps {
   message: string;
