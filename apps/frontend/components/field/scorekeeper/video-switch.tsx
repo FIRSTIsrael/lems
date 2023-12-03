@@ -1,11 +1,11 @@
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import {
-  AudienceDisplayStateTypes,
+  AudienceDisplayScreenTypes,
   EventState,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import { localizedAudienceDisplayState } from '../../../localization/field';
+import { localizedAudienceDisplayScreen } from '../../../localization/field';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 
@@ -15,11 +15,11 @@ interface VideoSwitchProps {
 }
 
 const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
-  const handleDisplayUpdate = (newDisplayState: string) => {
+  const handleDisplayUpdate = (newScreen: string) => {
     socket.emit(
-      'updateAudienceDisplayState',
+      'updateAudienceDisplay',
       eventState.eventId.toString(),
-      newDisplayState,
+      { screen: newScreen },
       response => {
         if (!response.ok)
           enqueueSnackbar('אופס, לא הצלחנו לשנות את תצוגת הקהל.', { variant: 'error' });
@@ -39,7 +39,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
       >
         <ToggleButtonGroup
           exclusive
-          value={eventState.audienceDisplayState}
+          value={eventState.audienceDisplay.screen}
           onChange={(_e, newValue) => {
             if (newValue !== null) handleDisplayUpdate(newValue);
           }}
@@ -71,7 +71,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
             }
           })}
         >
-          {AudienceDisplayStateTypes.map(t => {
+          {AudienceDisplayScreenTypes.map(t => {
             if (eventState.presentations[t]?.enabled === false) return;
             return (
               <ToggleButton
@@ -84,7 +84,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
                   }
                 }}
               >
-                {localizedAudienceDisplayState[t]}
+                {localizedAudienceDisplayScreen[t]}
               </ToggleButton>
             );
           })}

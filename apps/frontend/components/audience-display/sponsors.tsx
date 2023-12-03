@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import Images from '../../public/assets/audience-display/sponsors';
@@ -30,9 +30,11 @@ const Sponsors: React.FC = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <Typography variant="h1" fontSize="7rem" mb={20}>
-        תודה רבה לשותפים שלנו!
-      </Typography>
+      <Box px={8} py={2} bgcolor="#f7f8f9" borderRadius={4} mb={20}>
+        <Typography variant="h1" fontSize="7rem">
+          תודה רבה לשותפים שלנו!
+        </Typography>
+      </Box>
       <Image src={sponsorImage} style={{ height: '60%', width: '80%' }} alt="תמונת ספונסר" />
     </Stack>
   );

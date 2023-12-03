@@ -54,16 +54,17 @@ export type RubricStatus = (typeof RubricStatusTypes)[number];
 export const TicketTypes = ['general', 'schedule', 'utilities', 'incident'] as const;
 export type TicketType = (typeof TicketTypes)[number];
 
-export const AudienceDisplayStateTypes = [
+export const AudienceDisplayScreenTypes = [
+  'blank',
+  'logo',
   'scores',
   'match-preview',
   'awards',
   'sponsors',
-  'logo',
   'hotspot',
   'message'
 ];
-export type AudienceDisplayState = (typeof AudienceDisplayStateTypes)[number];
+export type AudienceDisplayScreen = (typeof AudienceDisplayScreenTypes)[number];
 
 export type RubricFields<T extends JudgingCategory> = T extends 'core-values'
   ? 'discovery' | 'innovation' | 'impact' | 'inclusion' | 'teamwork' | 'fun'

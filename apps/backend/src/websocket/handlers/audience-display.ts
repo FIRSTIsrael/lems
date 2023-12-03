@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
-export const handleUpdateAudienceDisplayState = async (
+export const handleUpdateAudienceDisplay = async (
   namespace,
   eventId,
   newDisplayState,
@@ -17,50 +17,15 @@ export const handleUpdateAudienceDisplayState = async (
     return;
   }
 
-  if (eventState.audienceDisplayState === newDisplayState) {
-    callback({
-      ok: false,
-      error: `Display state not updated!`
-    });
-    return;
-  }
-
-  console.log(`🖊️ Updating audience display state in event ${eventId} to ${newDisplayState}!`);
+  console.log(`🖊️ Updating audience display state in event ${eventId}`);
 
   await db.updateEventState(
     { eventId: new ObjectId(eventId) },
-    { audienceDisplayState: newDisplayState }
+    { audienceDisplay: { ...eventState.audienceDisplay, ...newDisplayState } }
   );
 
   eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('audience-display').emit('audienceDisplayStateUpdated', eventState);
-};
-
-export const handleUpdateAudienceDisplayMessage = async (
-  namespace,
-  eventId,
-  newMessage,
-  callback
-) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-
-  if (!eventState) {
-    callback({
-      ok: false,
-      error: `Could not find event state in event ${eventId}!`
-    });
-    return;
-  }
-
-  console.log(`🖊️ Updating audience display message in event ${eventId}`);
-
-  await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
-    { audienceDisplayMessage: newMessage }
-  );
-
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('audience-display').emit('audienceDisplayMessageUpdated', eventState);
+  namespace.to('audience-display').emit('audienceDisplayUpdated', eventState);
 };
 
 export const handleUpdatePresentation = async (

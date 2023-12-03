@@ -11,13 +11,13 @@ interface MessageEditorProps {
 }
 
 const MessageEditor: React.FC<MessageEditorProps> = ({ eventState, socket }) => {
-  const [message, setMessage] = useState<string>(eventState.audienceDisplayMessage);
+  const [message, setMessage] = useState<string>(eventState.audienceDisplay.message);
 
   const updateMessage = (newMessage: string) => {
     socket.emit(
-      'updateAudienceDisplayMessage',
+      'updateAudienceDisplay',
       eventState.eventId.toString(),
-      newMessage,
+      { message: newMessage },
       response => {
         if (!response.ok) enqueueSnackbar('אופס, עדכון ההודעה נכשל.', { variant: 'error' });
       }

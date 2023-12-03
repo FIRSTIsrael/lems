@@ -1,4 +1,6 @@
 import { Paper, Typography, Box } from '@mui/material';
+import Image from 'next/image';
+import SeasonLogo from '../../public/assets/audience-display/season-logo.svg';
 
 interface MessageProps {
   message: string;
@@ -21,7 +23,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
         backgroundSize: 'cover'
       }}
     >
-      {message && (
+      {message ? (
         <Paper
           sx={{
             p: 8,
@@ -36,6 +38,20 @@ const Message: React.FC<MessageProps> = ({ message }) => {
             {message}
           </Typography>
         </Paper>
+      ) : (
+        <Image
+          src={SeasonLogo}
+          width={0}
+          height={0}
+          sizes="100vw"
+          alt="לוגו עונתי"
+          style={{
+            padding: 200,
+            objectFit: 'cover',
+            width: '100%',
+            height: 'auto'
+          }}
+        />
       )}
     </Box>
   );

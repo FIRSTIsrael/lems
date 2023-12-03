@@ -1,6 +1,7 @@
-import { Paper, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { Slide } from '@lems/presentations';
+import LogoStack from './logo-stack';
 
 interface TitleSlideProps {
   primary: string;
@@ -10,16 +11,19 @@ interface TitleSlideProps {
 const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
   return (
     <Slide>
-      <Paper sx={{ mx: '50px', p: 8, textAlign: 'center' }}>
+      <Stack px={20} textAlign="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
           <ReactMarkdown>{primary}</ReactMarkdown>
         </Typography>
         {secondary && (
-          <Typography variant="h1" fontSize="3rem" color="text.secondary">
-            <ReactMarkdown>{secondary}</ReactMarkdown>
-          </Typography>
+          <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 4, borderRadius: 4 }}>
+            <Typography fontSize="2.75rem">
+              <ReactMarkdown>{secondary}</ReactMarkdown>
+            </Typography>
+          </Box>
         )}
-      </Paper>
+        <LogoStack />
+      </Stack>
     </Slide>
   );
 };

@@ -66,7 +66,7 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
+        if (eventState.audienceDisplay.screen === 'scores')
           new Audio('/assets/sounds/field/field-start.wav').play();
         handleMatchEvent(newMatch, newEventState);
       }
@@ -74,7 +74,7 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
+        if (eventState.audienceDisplay.screen === 'scores')
           new Audio('/assets/sounds/field/field-abort.wav').play();
         handleMatchEvent(newMatch, newEventState);
       }
@@ -82,14 +82,14 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchEndgame',
       handler: match => {
-        if (eventState.audienceDisplayState === 'scores')
+        if (eventState.audienceDisplay.screen === 'scores')
           new Audio('/assets/sounds/field/field-endgame.wav').play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplayState === 'scores')
+        if (eventState.audienceDisplay.screen === 'scores')
           new Audio('/assets/sounds/field/field-end.wav').play();
         handleMatchEvent(newMatch, newEventState);
       }
