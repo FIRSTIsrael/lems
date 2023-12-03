@@ -4,7 +4,7 @@ const Blank: React.FC = () => {
   return (
     <Box
       sx={{
-        background: 'url(/assets/audience-display/season-background.jpg) center / cover',
+        background: 'url(/assets/audience-display/blank-screen.webp) center / cover',
         width: '100%',
         height: '100%',
         position: 'fixed',
