@@ -22,20 +22,22 @@ const Message: React.FC<MessageProps> = ({ message, borderColor }) => {
         backgroundSize: 'cover'
       }}
     >
-      <Paper
-        sx={{
-          p: 8,
-          textAlign: 'center',
-          mx: '50px',
-          borderRadius: 8,
-          border: `1rem solid ${borderColor || '#000'}`,
-          minWidth: '30%'
-        }}
-      >
-        <Typography variant="h1" fontSize="3rem" fontWeight={400} gutterBottom>
-          {message}
-        </Typography>
-      </Paper>
+      {message && (
+        <Paper
+          sx={{
+            p: 8,
+            textAlign: 'center',
+            mx: '50px',
+            borderRadius: 8,
+            border: `1rem solid #d22e92`,
+            minWidth: '30%'
+          }}
+        >
+          <Typography variant="h1" fontSize="4.5rem">
+            {message}
+          </Typography>
+        </Paper>
+      )}
     </Box>
   );
 };
