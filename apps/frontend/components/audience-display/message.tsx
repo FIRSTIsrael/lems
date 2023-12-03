@@ -1,11 +1,10 @@
-import { Paper, Stack, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box } from '@mui/material';
 
 interface MessageProps {
   message: string;
-  borderColor?: string;
 }
 
-const Message: React.FC<MessageProps> = ({ message, borderColor }) => {
+const Message: React.FC<MessageProps> = ({ message }) => {
   return (
     <Box
       display="flex"
