@@ -13,8 +13,10 @@ import {
   Tab,
   Tabs,
   Typography,
-  IconButton
+  IconButton,
+  Stack
 } from '@mui/material';
+import { green } from '@mui/material/colors';
 import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
@@ -37,6 +39,7 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import { localizedRoles } from '../../../localization/roles';
 import { localizedFormSubject } from '../../../localization/cv-form';
@@ -83,9 +86,7 @@ const Page: NextPage<Props> = ({
   const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
-        if (s._id === session._id) {
-          return session;
-        }
+        if (s._id === session._id) return session;
         return s;
       })
     );
@@ -94,11 +95,8 @@ const Page: NextPage<Props> = ({
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
       teams.map(t => {
-        if (t._id == team._id) {
-          return team;
-        } else {
-          return t;
-        }
+        if (t._id == team._id) return team;
+        return t;
       })
     );
   };
@@ -106,9 +104,7 @@ const Page: NextPage<Props> = ({
   const updateRubric = (rubric: WithId<Rubric<JudgingCategory>>) => {
     setRubrics(rubrics =>
       rubrics.map(r => {
-        if (r._id === rubric._id) {
-          return rubric;
-        }
+        if (r._id === rubric._id) return rubric;
         return r;
       })
     );
@@ -121,11 +117,8 @@ const Page: NextPage<Props> = ({
   const handleCvFormUpdated = (cvForm: WithId<CoreValuesForm>) => {
     setCvForms(cvForms =>
       cvForms.map(f => {
-        if (f._id === cvForm._id) {
-          return cvForm;
-        } else {
-          return f;
-        }
+        if (f._id === cvForm._id) return cvForm;
+        return f;
       })
     );
   };
@@ -172,7 +165,12 @@ const Page: NextPage<Props> = ({
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <>
           <TabContext value={activeTab}>
@@ -242,7 +240,7 @@ const Page: NextPage<Props> = ({
               <Grid container spacing={2}>
                 {cvForms.map(form => (
                   <Grid xs={6} key={form._id.toString()}>
-                    <Card>
+                    <Card sx={{ ...(form.actionTaken && { backgroundColor: green[100] }) }}>
                       <CardHeader
                         avatar={
                           <Avatar

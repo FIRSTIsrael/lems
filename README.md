@@ -11,7 +11,7 @@ FIRST LEGO League Challenge: Local Event Management System
 
 3. Run the container with an exposed port
 
-`docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.0`
+   `docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.0`
 
 4. To stop the container, use either the CLI or docker desktop.
    When you stop the container without removing it, you will be unable to start a new container with the same name.
@@ -19,19 +19,47 @@ FIRST LEGO League Challenge: Local Event Management System
 
 ## Start the app
 
+### Configure the app
+
+Currently, LEMS uses _FIRST_ Israel's DigitalOcean file storage. Before running LEMS,
+make sure to reach out to a _FIRST_ Israel contact with access for the key and secret.
+
+Update `.env.local` with keys in place of the comments.
+
+### Running the app
+
 To start the development server run `npm run dev`.
 
-Frontend will be available at http://localhost:4200/.
-Backend will be available at http://localhost:3333/.
+Frontend will be available at <http://localhost:4200/>.
+Backend will be available at <http://localhost:3333/>.
 
 Happy coding!
 
-## Ready to deploy?
+## CI
 
-Just run `nx build lems` to build the application. The build artifacts will be stored in the `dist/` directory, ready to be deployed.
+### Building
 
-## Set up CI!
+`npm run build` build the entire LEMS app and stores it in the /dist folder.
+`docker compose build` uses the /dist folder and builds docker images. This should only be run in CI with proper ENV vars configured.
 
-Nx comes with local caching already built-in (check your `nx.json`). On CI you might want to go a step further.
+### Environment variables
 
-- [Learn more how to setup CI](https://nx.dev/recipes/ci)
+Environment variables and secrets are managed through Github.
+
+### Manual Configurations
+
+#### SSL
+
+DO Droplet uses its own certificate.
+MongoDB uses a self-signed certificate, which is managed gy Github secrets.
+Certbot manages the SSL connection cerificate to the lems.firstisrael.org.il domain.
+DNS is managed through cloudwatch.
+
+#### Nginx
+
+We use nginx to map different paths to the services.
+
+#### Cleaning up images
+
+1. On the droplet: Remove images manually for now. Containers are removed automatically, images are not.
+2. On the registry: Periodically run DO's garbage collection to avoid running out of storage.

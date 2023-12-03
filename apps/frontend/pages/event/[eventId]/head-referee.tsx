@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Paper } from '@mui/material';
+import { Paper, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
   Event,
@@ -16,6 +16,7 @@ import {
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
@@ -80,6 +81,12 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleScoresheetStatusChanged = (scoresheet: WithId<Scoresheet>) => {
+    updateScoresheet(scoresheet);
+    if (scoresheet.status === 'waiting-for-head-ref')
+      enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, { variant: 'warning' });
+  };
+
   const handleTeamRegistered = (team: WithId<Team>) => {
     setMatches(matches =>
       matches.map(m => {
@@ -106,7 +113,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'scoresheetStatusChanged', handler: updateScoresheet },
+      { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );
@@ -159,7 +166,12 @@ const Page: NextPage<Props> = ({
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <WelcomeHeader event={event} user={user} />
         <Paper sx={{ p: 2 }}>

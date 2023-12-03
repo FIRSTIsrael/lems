@@ -19,6 +19,7 @@ import HotspotReminder from '../../../components/audience-display/hotspot-remind
 import Sponsors from '../../../components/audience-display/sponsors';
 import Scoreboard from '../../../components/audience-display/scoreboard/scoreboard';
 import MatchPreview from '../../../components/audience-display/match-preview';
+import Message from '../../..//components/audience-display/message';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWindowSize } from '../../../hooks/use-window-size';
@@ -152,6 +153,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
       { name: 'audienceDisplayStateUpdated', handler: setEventState },
+      { name: 'audienceDisplayMessageUpdated', handler: setEventState },
       { name: 'presentationUpdated', handler: setEventState }
     ]
   );
@@ -204,6 +206,9 @@ const Page: NextPage<Props> = ({
             />
           )}
         </Box>
+        {eventState.audienceDisplayState === 'message' && (
+          <Message message={eventState.audienceDisplayMessage} />
+        )}
       </Box>
     </RoleAuthorizer>
   );

@@ -119,7 +119,7 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
-          backDisabled={connectionStatus !== 'connecting'}
+          backDisabled={connectionStatus === 'connecting'}
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">

@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
-import { Paper, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Event, SafeUser, RobotGameMatch, EventState, Award } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
@@ -16,6 +17,7 @@ import FieldControl from '../../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
+import MessageEditor from '../../../components/field/scorekeeper/message-editor';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -35,10 +37,27 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [nextMatchId, setNextMatchId] = useState<ObjectId | undefined>(
-    matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id
-  );
   const [activeTab, setActiveTab] = useState<string>('1');
+
+  const nextMatchId = useMemo<ObjectId | undefined>(
+    () => matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id,
+    [matches]
+  );
+
+  useEffect(() => {
+    if (
+      eventState.loadedMatch === null &&
+      !matches.some(m => m.stage === 'test' && m.status === 'in-progress')
+    ) {
+      if (nextMatchId)
+        socket.emit('loadMatch', event._id.toString(), nextMatchId.toString(), response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
+          }
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextMatchId]);
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -53,32 +72,12 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
-  const handleMatchStarted = (
-    newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
-  ) => {
-    handleMatchEvent(newMatch, newEventState);
-    const newNextMatchId = matches?.find(
-      match => match.status === 'not-started' && match._id != newMatch._id
-    )?._id;
-    if (newEventState.loadedMatch === null && newMatch.stage !== 'test') {
-      setNextMatchId(newNextMatchId);
-      if (newNextMatchId)
-        socket.emit('loadMatch', event._id.toString(), newNextMatchId.toString(), response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
-          }
-        });
-    }
-  };
-
   const handleMatchAborted = (
     newMatch: WithId<RobotGameMatch>,
     newEventState: WithId<EventState>
   ) => {
     handleMatchEvent(newMatch, newEventState);
     if (newMatch.stage !== 'test') {
-      setNextMatchId(newMatch._id);
       socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
@@ -93,7 +92,7 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchStarted },
+      { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchAborted },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
@@ -114,7 +113,12 @@ const Page: NextPage<Props> = ({
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -137,25 +141,29 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="2">
-            <VideoSwitch eventState={eventState} socket={socket} />
-            {eventState.audienceDisplayState === 'awards' &&
-              eventState.presentations['awards'].enabled && (
-                <PresentationController
-                  event={event}
-                  socket={socket}
-                  presentationId="awards"
-                  eventState={eventState}
-                >
-                  <AwardsPresentation
+            <Stack alignItems="center">
+              <VideoSwitch eventState={eventState} socket={socket} />
+              {eventState.audienceDisplayState === 'awards' &&
+                eventState.presentations['awards'].enabled && (
+                  <PresentationController
                     event={event}
-                    awards={awards}
-                    height={108 * 2.5}
-                    width={192 * 2.5}
-                    position="relative"
-                    enableReinitialize={true}
-                  />
-                </PresentationController>
+                    socket={socket}
+                    presentationId="awards"
+                    eventState={eventState}
+                  >
+                    <AwardsPresentation
+                      event={event}
+                      awards={awards}
+                      height={108 * 2.5}
+                      width={192 * 2.5}
+                      position="relative"
+                    />
+                  </PresentationController>
+                )}
+              {eventState.audienceDisplayState === 'message' && (
+                <MessageEditor eventState={eventState} socket={socket} />
               )}
+            </Stack>
           </TabPanel>
         </TabContext>
       </Layout>

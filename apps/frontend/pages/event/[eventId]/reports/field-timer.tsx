@@ -1,7 +1,7 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Typography } from '@mui/material';
@@ -10,8 +10,8 @@ import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { TimeSyncContext } from '../../../../lib/timesync';
 import { useWebsocket } from '../../../../hooks/use-websocket';
+import { useTime } from '../../../../hooks/use-time';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -27,20 +27,9 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const { offset } = useContext(TimeSyncContext);
+  const currentTime = useTime({ interval: 100 });
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
-      100
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  });
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -58,7 +47,7 @@ const Page: NextPage<Props> = ({
   );
 
   const getCountdownTarget = (startTime: Date) =>
-    dayjs(startTime).add(MATCH_LENGTH, 'seconds').subtract(offset, 'milliseconds').toDate();
+    dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>

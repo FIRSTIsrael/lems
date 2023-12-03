@@ -41,7 +41,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
     { label: 'שם', sort: 'name' },
     { label: 'מוסד', sort: 'institution' },
     { label: 'עיר', sort: 'city' },
-    { label: 'רישום', sort: 'registration' }
+    { label: 'הגעה', sort: 'registration' }
   ];
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -88,8 +88,8 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        back={`/event/${event._id}/${user.role}`}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <Paper
           sx={{

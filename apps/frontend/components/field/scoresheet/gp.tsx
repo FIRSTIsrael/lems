@@ -112,7 +112,7 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
                 {(field.value === 4 || field.value === 2) && (
                   <ExceededNotesCell
                     placeholder={`נמקו מדוע נתתם לקבוצה ציון ${
-                      field.value === '2' ? 'מתפתחת' : 'מצטיינת'
+                      field.value === 2 ? 'מתפתחת' : 'מצטיינת'
                     }`}
                     name={name}
                     disabled={disabled}
@@ -153,7 +153,7 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
                 onClick={onSubmit}
                 disabled={
                   !form.values.gp ||
-                  (form.values.gp.value !== '3' && (!form.values.gp.notes || !checked))
+                  (form.values.gp.value !== 3 && (!form.values.gp.notes || !checked))
                 }
               >
                 שלח

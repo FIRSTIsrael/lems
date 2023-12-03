@@ -13,9 +13,6 @@ export const SlideScaler: React.FC<SlideScalerProps> = ({ children, ...props }) 
   const ref = useRef(null);
   const { width, height } = useDimensions(ref);
 
-  console.log(width);
-  console.log(height);
-
   return (
     <Box ref={ref} {...props}>
       <div

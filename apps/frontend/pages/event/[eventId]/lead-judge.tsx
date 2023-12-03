@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Avatar, Box, Paper, Typography } from '@mui/material';
+import { Avatar, Box, Paper, Typography, Stack } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   Event,
@@ -19,6 +19,7 @@ import RubricStatusReferences from '../../../components/judging/rubric-status-re
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
@@ -108,7 +109,12 @@ const Page: NextPage<Props> = ({
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <>
           <WelcomeHeader event={event} user={user} />

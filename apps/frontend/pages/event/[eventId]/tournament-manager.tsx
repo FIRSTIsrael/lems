@@ -4,9 +4,10 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
   Event,
+  EventState,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -16,6 +17,7 @@ import {
   RobotGameMatch
 } from '@lems/types';
 import Layout from '../../../components/layout';
+import ReportLink from '../../../components/general/report-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
 import EventPanel from '../../../components/tournament-manager/event-panel';
@@ -30,6 +32,7 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -41,6 +44,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   event,
+  eventState: initialEventState,
   teams: initialTeams,
   tickets: initialTickets,
   rooms,
@@ -50,6 +54,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
+  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
@@ -94,15 +99,19 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+  const handleMatchEvent = (
+    newMatch: WithId<RobotGameMatch>,
+    newEventState?: WithId<EventState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
-        if (m._id === match._id) {
-          return match;
+        if (m._id === newMatch._id) {
+          return newMatch;
         }
         return m;
       })
     );
+    if (newEventState) setEventState(newEventState);
   };
 
   const { socket, connectionStatus } = useWebsocket(
@@ -149,7 +158,12 @@ const Page: NextPage<Props> = ({
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            <ReportLink event={event} />
+          </Stack>
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -180,6 +194,7 @@ const Page: NextPage<Props> = ({
           <TabPanel value="3">
             <FieldScheduleEditor
               event={event}
+              eventState={eventState}
               teams={teams}
               tables={tables}
               matches={matches}
@@ -211,6 +226,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
         teams: `/api/events/${user.eventId}/teams`,
         tickets: `/api/events/${user.eventId}/tickets`,
         rooms: `/api/events/${user.eventId}/rooms`,

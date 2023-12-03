@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      dockerfile: apps/backend/Dockerfile
+      context: .
+      args:
+        DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
+        DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
+        JWT_SECRET: ${JWT_SECRET}
+        MONGODB_URI: ${MONGODB_URI}
+        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
+        RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
+        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
+        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
+        RECAPTCHA: ${RECAPTCHA}
+    image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
+    ports:
+      - '3333:3333'
+    networks:
+      - lems-network
+
+  frontend:
+    build:
+      dockerfile: apps/frontend/Dockerfile
+      context: .
+      args:
+        RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
+        BASE_URL: ${BASE_URL}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+        WS_URL: ${WS_URL}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
+        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
+        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
+        RECAPTCHA: ${RECAPTCHA}
+    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
+    ports:
+      - '4200:4200'
+    networks:
+      - lems-network
+
+networks:
+  lems-network:
+    driver: bridge

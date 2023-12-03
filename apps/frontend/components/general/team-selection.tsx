@@ -19,7 +19,7 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
 }) => {
   return (
     <Autocomplete
-      freeSolo
+      blurOnSelect
       options={teams ? teams : []}
       getOptionLabel={team => (typeof team === 'string' ? team : localizeTeam(team))}
       inputMode="search"

@@ -21,10 +21,17 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, matches }) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  teams: initialTeams,
+  tables,
+  matches: initialMatches
+}) => {
   const router = useRouter();
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const refereeGeneralSchedule =
     (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('referee'))) || [];
@@ -41,8 +48,20 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
     );
   };
 
+  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+    setMatches(matches =>
+      matches.map(m => {
+        if (m._id === match._id) {
+          return match;
+        }
+        return m;
+      })
+    );
+  };
+
   const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
-    { name: 'teamRegistered', handler: handleTeamRegistered }
+    { name: 'teamRegistered', handler: handleTeamRegistered },
+    { name: 'matchUpdated', handler: handleMatchEvent }
   ]);
 
   const practiceMatches = matches.filter(m => m.stage === 'practice');
@@ -53,7 +72,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
       <Grid xs={12} xl={6} key={'practice' + r}>
         <ReportRoundSchedule
           eventSchedule={refereeGeneralSchedule}
-          roundStage={'practice'}
+          roundStage="practice"
           roundNumber={r}
           matches={practiceMatches.filter(m => m.round === r)}
           tables={tables}
@@ -66,7 +85,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
         <Grid xs={12} xl={6} key={'ranking' + r}>
           <ReportRoundSchedule
             eventSchedule={refereeGeneralSchedule}
-            roundStage={'ranking'}
+            roundStage="ranking"
             roundNumber={r}
             matches={rankingMatches.filter(m => m.round === r)}
             tables={tables}
@@ -86,12 +105,12 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tables, match
       }}
     >
       <Layout
-        maxWidth="xl"
+        maxWidth={1800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        back={`/event/${event._id}/${user.role}`}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <Grid container spacing={2} my={4}>
           {...roundSchedules}

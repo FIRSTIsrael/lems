@@ -16,6 +16,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
   Event,
+  EventState,
   Team,
   MATCH_LENGTH,
   RobotGameMatch,
@@ -33,12 +34,14 @@ import { Socket } from 'socket.io-client';
 import { LoadingButton } from '@mui/lab';
 
 interface RoundScheduleEditorRowProps {
+  eventState: WithId<EventState>;
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
 }
 
 const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
+  eventState,
   match,
   tables,
   teams
@@ -47,15 +50,19 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 
   return (
     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell>{startTime.format('HH:mm')}</TableCell>
-      <TableCell>{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
+      <TableCell align="center">{match.number}</TableCell>
+      <TableCell align="center">{startTime.format('HH:mm')}</TableCell>
+      <TableCell align="center">{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {tables.map(table => {
         return (
           <RoundEditorTeamCell
             key={table._id.toString()}
             teams={teams}
             name={`${match._id}.${table._id}`}
-            disabled={match.status !== 'not-started'}
+            disabled={
+              match.status !== 'not-started' ||
+              match._id.toString() === eventState.loadedMatch?.toString()
+            }
           />
         );
       })}
@@ -65,6 +72,7 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 
 interface RoundScheduleEditorProps {
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   roundStage: RobotGameMatchStage;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
@@ -75,6 +83,7 @@ interface RoundScheduleEditorProps {
 
 const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
   event,
+  eventState,
   roundStage,
   roundNumber,
   matches,
@@ -129,13 +138,14 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell colSpan={2 + tables.length} align="center">
+                  <TableCell colSpan={3 + tables.length} align="center">
                     {localizedMatchStage[roundStage]} #{roundNumber}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>התחלה</TableCell>
-                  <TableCell>סיום</TableCell>
+                  <TableCell align="center">מקצה</TableCell>
+                  <TableCell align="center">התחלה</TableCell>
+                  <TableCell align="center">סיום</TableCell>
                   {tables.map(table => (
                     <TableCell key={table._id.toString()} align="left">
                       {`שולחן ${table.name}`}
@@ -146,6 +156,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
               <TableBody>
                 {matches.map(m => (
                   <RoundScheduleEditorRow
+                    eventState={eventState}
                     match={m}
                     tables={tables}
                     teams={teams}

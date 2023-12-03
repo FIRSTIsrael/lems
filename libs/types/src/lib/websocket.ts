@@ -59,6 +59,8 @@ export interface WSServerEmittedEvents {
 
   audienceDisplayStateUpdated: (eventState: EventState) => void;
 
+  audienceDisplayMessageUpdated: (eventState: EventState) => void;
+
   presentationUpdated: (eventState: EventState) => void;
 }
 
@@ -178,6 +180,12 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   updateAudienceDisplayState: (
+    eventId: string,
+    newDisplayState: AudienceDisplayState,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateAudienceDisplayMessage: (
     eventId: string,
     newDisplayState: AudienceDisplayState,
     callback: (response: { ok: boolean; error?: string }) => void

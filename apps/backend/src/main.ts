@@ -16,15 +16,11 @@ import wsValidateEvent from './middlewares/websocket/event-validator';
 
 const app = express();
 const server = http.createServer(app);
-
 const corsOptions = {
   origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
   credentials: true
 };
-
-const io = new Server(server, {
-  cors: corsOptions
-});
+const io = new Server(server, { cors: corsOptions });
 
 app.use(cookies());
 app.use(cors(corsOptions));
@@ -58,7 +54,7 @@ namespace.use(wsValidateEvent);
 namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');
-const port = process.env.BACKEND_PORT || 3333;
+const port = 3333;
 server.listen(port, () => {
   console.log(`✅ Server started on port ${port}.`);
 });

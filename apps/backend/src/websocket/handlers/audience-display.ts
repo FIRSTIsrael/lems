@@ -33,6 +33,33 @@ export const handleUpdateAudienceDisplayState = async (
   namespace.to('audience-display').emit('audienceDisplayStateUpdated', eventState);
 };
 
+export const handleUpdateAudienceDisplayMessage = async (
+  namespace,
+  eventId,
+  newMessage,
+  callback
+) => {
+  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+
+  if (!eventState) {
+    callback({
+      ok: false,
+      error: `Could not find event state in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️ Updating audience display message in event ${eventId}`);
+
+  await db.updateEventState(
+    { eventId: new ObjectId(eventId) },
+    { audienceDisplayMessage: newMessage }
+  );
+
+  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+  namespace.to('audience-display').emit('audienceDisplayMessageUpdated', eventState);
+};
+
 export const handleUpdatePresentation = async (
   namespace,
   eventId,

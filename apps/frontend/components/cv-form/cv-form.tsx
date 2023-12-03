@@ -78,13 +78,11 @@ const CVForm: React.FC<CVFormProps> = ({
         }
       } as CVFormCategory;
     });
-    const details = '';
     const completedBy = {
       name: '',
       phone: '',
       affiliation: ''
     };
-    const actionTaken = '';
     return {
       eventId,
       observers,
@@ -92,9 +90,10 @@ const CVForm: React.FC<CVFormProps> = ({
       demonstrators,
       demonstratorAffiliation,
       data,
-      details,
+      details: '',
       completedBy,
-      actionTaken
+      actionTaken: '',
+      actionTakenBy: ''
     };
   };
 
@@ -268,6 +267,11 @@ const CVForm: React.FC<CVFormProps> = ({
                   name="actionTaken"
                   label="פעולות שננקטו"
                   {...(initialCvForm?.actionTaken ? {} : { color: 'warning', autoFocus: true })}
+                />
+                <FormikTextField
+                  name="actionTakenBy"
+                  label="טופל על ידי"
+                  {...(initialCvForm?.actionTakenBy ? {} : { color: 'warning' })}
                 />
               </RoleAuthorizer>
             </Stack>

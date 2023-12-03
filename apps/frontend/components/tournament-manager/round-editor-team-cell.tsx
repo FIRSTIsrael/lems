@@ -38,6 +38,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
         {({ field, form }: FieldProps) =>
           editable ? (
             <Autocomplete
+              blurOnSelect
               options={dropdownOptions.sort((a, b) => {
                 if (!a) return -1;
                 if (!b) return 1;

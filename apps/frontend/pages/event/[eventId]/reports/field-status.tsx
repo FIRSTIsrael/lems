@@ -1,7 +1,7 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
@@ -22,7 +22,7 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { TimeSyncContext } from '../../../../lib/timesync';
+import { useTime } from '../../../../hooks/use-time';
 
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
@@ -31,22 +31,10 @@ interface MatchStatusTimerProps {
 }
 
 const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loadedMatch, teams }) => {
-  const { offset } = useContext(TimeSyncContext);
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs().subtract(offset, 'milliseconds'));
+  const currentTime = useTime({ interval: 1000 });
   const twoMinutes = 2 * 60;
 
-  const getCountdownTarget = (startTime: Date) =>
-    dayjs(startTime).subtract(offset, 'milliseconds').toDate();
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentTime(dayjs().subtract(offset, 'milliseconds')),
-      1000
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  });
+  const getCountdownTarget = (startTime: Date) => dayjs(startTime).toDate();
 
   const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
     if (loadedMatch) {
@@ -93,12 +81,7 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
             )}
             <Typography variant="h4">
               {loadedMatch.participants.filter(p => p.teamId).filter(p => !!p.ready).length} מתוך{' '}
-              {
-                loadedMatch.participants
-                  .filter(p => p.teamId)
-                  .filter(p => teams.find(team => team._id === p.teamId)?.registered).length
-              }{' '}
-              שולחנות מוכנים
+              {loadedMatch.participants.filter(p => p.teamId).length} שולחנות מוכנים
             </Typography>
           </Stack>
         )}
@@ -228,8 +211,8 @@ const Page: NextPage<Props> = ({
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
-        backDisabled={connectionStatus !== 'connecting'}
+        back={`/event/${event._id}/${user.role}`}
+        backDisabled={connectionStatus === 'connecting'}
       >
         <MatchStatusTimer
           activeMatch={activeMatch || null}
@@ -245,7 +228,7 @@ const Page: NextPage<Props> = ({
           <ActiveMatch
             title="המקצה הבא"
             match={matches?.find(match => match._id === eventState.loadedMatch) || null}
-            sessions={activeSessions}
+            activeSessions={activeSessions}
           />
         </Stack>
       </Layout>

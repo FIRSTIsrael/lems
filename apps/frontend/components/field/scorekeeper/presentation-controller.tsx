@@ -52,6 +52,9 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
     );
   };
 
+  // Note that only one of these components can be used at a time without conflicts.
+  // This can be solved by using enableReinitialize=true on both decks
+  // However that leads to circular updates when a desync happens.
   return (
     <Stack component={Paper} p={4} mt={2} justifyContent="center">
       <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
@@ -71,6 +74,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
             {React.Children.map(children, child => {
               if (deck.current)
                 return React.cloneElement(child, {
+                  enableReinitialize: true,
                   initialState: endOfNextSlide(deck.current.activeView),
                   ref: previewDeck
                 });
