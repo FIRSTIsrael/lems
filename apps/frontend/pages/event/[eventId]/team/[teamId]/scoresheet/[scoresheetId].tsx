@@ -111,9 +111,9 @@ const Page: NextPage<Props> = ({
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
-  if (match.status !== 'completed') {
+  if (match.status === 'not-started') {
     router.push(`/event/${event._id}/${user.role}`);
-    enqueueSnackbar('המקצה טרם נגמר.', { variant: 'info' });
+    enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
     router.push(`/event/${event._id}/${user.role}`);
