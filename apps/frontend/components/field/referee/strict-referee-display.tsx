@@ -39,6 +39,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   const router = useRouter();
   const [displayState, setDisplayState] = useState<StrictRefereeDisplayState>(undefined);
   const [match, setMatch] = useState<WithId<RobotGameMatch> | undefined>(undefined);
+  const [prestartInspection, setPrestartInspection] = useState<boolean | null>(null);
 
   const participant = useMemo(
     () => match?.participants.filter(p => p.teamId).find(p => p.tableId === table._id),
@@ -66,15 +67,27 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
     [socket, match, participant]
   );
 
-  useEffect(() => {
-    const getScoresheet = (fromMatch: WithId<RobotGameMatch>) => {
+  const toScoresheet = useCallback(
+    (participant: RobotGameMatchParticipant, scoresheet: WithId<Scoresheet>) => {
+      let url = `/event/${event._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`;
+      if (prestartInspection !== null) url += `?inspection=${prestartInspection}`;
+      router.push(url);
+    },
+    [event._id, prestartInspection, router]
+  );
+
+  const getScoresheet = useCallback(
+    (fromMatch: WithId<RobotGameMatch>) => {
       const fromParticipant = fromMatch.participants.find(p => p.tableId === table._id);
 
       return apiFetch(
         `/api/events/${event._id}/teams/${fromParticipant?.teamId}/scoresheets/?stage=${fromMatch?.stage}&round=${fromMatch?.round}`
       ).then<WithId<Scoresheet>>(res => res.json());
-    };
+    },
+    [event._id, table._id]
+  );
 
+  useEffect(() => {
     const activeMatch = matches.find(m => m._id === eventState.activeMatch);
     const isActiveInTable = !!activeMatch?.participants
       .filter(p => p.teamId)
@@ -92,9 +105,6 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
         .filter(m => m.participants.some(p => p.tableId === table._id && p.teamId))
         .filter(m => m.status === 'completed');
       const lastCompletedMatch = completedMatches[completedMatches.length - 1];
-      const completedMatchParticipant = lastCompletedMatch?.participants
-        .filter(p => p.teamId)
-        .find(p => p.tableId === table._id);
 
       if (lastCompletedMatch) {
         // Check if no show
@@ -107,10 +117,12 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
         } else {
           // Check if we finished doing the scoresheet of the last completed match
           getScoresheet(lastCompletedMatch).then(scoresheet => {
-            if (scoresheet.status !== 'waiting-for-head-ref' && scoresheet.status !== 'ready') {
-              router.push(
-                `/event/${event._id}/team/${completedMatchParticipant?.team?._id}/scoresheet/${scoresheet._id}`
-              );
+            if (
+              lastCompletedMatchParticipant &&
+              scoresheet.status !== 'waiting-for-head-ref' &&
+              scoresheet.status !== 'ready'
+            ) {
+              toScoresheet(lastCompletedMatchParticipant, scoresheet);
             } else {
               setMatch(loadedMatch);
               setDisplayState(loadedMatchParticipant ? 'prestart' : 'no-match');
@@ -125,6 +137,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
         setDisplayState('no-match');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventState, matches, table._id, event._id, router, participant?.team?._id]);
 
   return (
@@ -143,10 +156,17 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
             participant={participant}
             match={match}
             updateMatchParticipant={updateMatchParticipant}
+            inspectionStatus={prestartInspection}
+            updateInspectionStatus={setPrestartInspection}
           />
         ))}
       {participant && match && displayState === 'timer' && (
-        <Timer participant={participant} match={match} />
+        <Timer
+          participant={participant}
+          match={match}
+          getScoresheet={getScoresheet}
+          toScoresheet={toScoresheet}
+        />
       )}
       {displayState === 'no-match' && <NoMatchCard />}
     </>
