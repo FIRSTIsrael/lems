@@ -80,6 +80,12 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         })
       };
     });
+
+    if (router.query.eib === 'true') {
+      const inspectionIndex = missions.findIndex(m => m.id === 'eib');
+      if (inspectionIndex !== -1) missions[inspectionIndex].clauses[0].value = true;
+    }
+
     return { missions: missions, signature: '', gp: null, score: 0 };
   };
 
