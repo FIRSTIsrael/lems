@@ -17,15 +17,15 @@ import {
 import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH, Scoresheet } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
-import { apiFetch } from '../../../lib/utils/fetch';
 
 interface TimerProps {
   participant: RobotGameMatchParticipant;
   match: WithId<RobotGameMatch>;
+  getScoresheet?: (fromMatch: WithId<RobotGameMatch>) => Promise<WithId<Scoresheet>>;
+  toScoresheet?: (participant: RobotGameMatchParticipant, scoresheet: WithId<Scoresheet>) => void;
 }
 
-const Timer: React.FC<TimerProps> = ({ participant, match }) => {
-  const router = useRouter();
+const Timer: React.FC<TimerProps> = ({ participant, match, getScoresheet, toScoresheet }) => {
   const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
   const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -43,15 +43,8 @@ const Timer: React.FC<TimerProps> = ({ participant, match }) => {
   );
 
   const handleEarlyScoring = () => {
-    return apiFetch(
-      `/api/events/${match.eventId}/teams/${participant.teamId}/scoresheets/?stage=${match.stage}&round=${match.round}`
-    )
-      .then<WithId<Scoresheet>>(res => res.json())
-      .then(scoresheet =>
-        router.push(
-          `/event/${match.eventId}/team/${participant.teamId}/scoresheet/${scoresheet._id}`
-        )
-      );
+    if (getScoresheet && toScoresheet)
+      getScoresheet(match).then(scoresheet => toScoresheet(participant, scoresheet));
   };
 
   return (
@@ -83,38 +76,46 @@ const Timer: React.FC<TimerProps> = ({ participant, match }) => {
           mt: -2
         }}
       />
-      <Stack alignItems="center" mt={6}>
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="contained"
-          color="error"
-          sx={{ py: 2, px: 6 }}
-          size="large"
-        >
-          התחלת הניקוד
-        </Button>
-      </Stack>
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        aria-labelledby="start-scoring-title"
-        aria-describedby="start-scoring-description"
-      >
-        <DialogTitle id="start-scoring-title">סיום המקצה והתחלת הניקוד</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="start-scoring-description">
-            אתם עומדים לסיים את המקצה של הקבוצה בטרם עת ולעבור לדף הניקוד. שימו לב כי לא תוכלו לבטל
-            פעולה זאת, וכי יש להמשיך רק אם חברי הקבוצה הודיעו לכם שהם סיימו להפעיל את הרובוט למקצה
-            זה.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsOpen(false)}>ביטול</Button>
-          <Button onClick={handleEarlyScoring} autoFocus>
-            אישור
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+      {participant.team?.registered &&
+        participant.present === 'present' &&
+        getScoresheet &&
+        toScoresheet && (
+          <>
+            <Stack alignItems="center" mt={6}>
+              <Button
+                onClick={() => setIsOpen(true)}
+                variant="contained"
+                color="error"
+                sx={{ py: 2, px: 6 }}
+                size="large"
+              >
+                התחלת הניקוד
+              </Button>
+            </Stack>
+            <Dialog
+              open={isOpen}
+              onClose={() => setIsOpen(false)}
+              aria-labelledby="start-scoring-title"
+              aria-describedby="start-scoring-description"
+            >
+              <DialogTitle id="start-scoring-title">סיום המקצה והתחלת הניקוד</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="start-scoring-description">
+                  אתם עומדים לסיים את המקצה של הקבוצה בטרם עת ולעבור לדף הניקוד. שימו לב כי לא תוכלו
+                  לבטל פעולה זאת, וכי יש להמשיך רק אם חברי הקבוצה הודיעו לכם שהם סיימו להפעיל את
+                  הרובוט למקצה זה.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setIsOpen(false)}>ביטול</Button>
+                <Button onClick={handleEarlyScoring} autoFocus>
+                  אישור
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
     </>
   );
 };

@@ -12,7 +12,9 @@ import {
   RobotGameTable,
   SafeUser,
   Scoresheet,
-  Team
+  Mission,
+  Team,
+  MissionClauseType
 } from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
@@ -132,6 +134,23 @@ const Page: NextPage<Props> = ({
     }
   ]);
 
+  const getScoresheetOverrides = () => {
+    const values: Array<Mission> = [];
+    if (router.query.inspection) {
+      const inspection = {
+        id: 'eib',
+        clauses: [
+          {
+            type: 'boolean' as MissionClauseType,
+            value: router.query.inspection === 'true'
+          }
+        ]
+      };
+      values.push(inspection);
+    }
+    return values;
+  };
+
   return (
     <RoleAuthorizer
       user={user}
@@ -175,6 +194,7 @@ const Page: NextPage<Props> = ({
               scoresheet={scoresheet}
               user={user}
               socket={socket}
+              emptyScoresheetValues={getScoresheetOverrides()}
             />
           )}
         </Layout>
