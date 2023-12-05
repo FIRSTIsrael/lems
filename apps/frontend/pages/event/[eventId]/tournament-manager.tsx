@@ -6,6 +6,7 @@ import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
+  CoreValuesForm,
   Event,
   EventState,
   JudgingRoom,
@@ -24,10 +25,10 @@ import EventPanel from '../../../components/tournament-manager/event-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import CVForm from '../../../components/cv-form/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import CVPanel from '../../../components/cv-form/cv-panel';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -39,6 +40,7 @@ interface Props {
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -50,7 +52,8 @@ const Page: NextPage<Props> = ({
   rooms,
   tables,
   matches: initialMatches,
-  sessions: initialSessions
+  sessions: initialSessions,
+  cvForms: initialCvForms
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
@@ -59,6 +62,7 @@ const Page: NextPage<Props> = ({
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -114,12 +118,48 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
+  const handleCvFormCreated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms => [...cvForms, cvForm]);
+  };
+
+  const handleCvFormUpdated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms =>
+      cvForms.map(f => {
+        if (f._id === cvForm._id) return cvForm;
+        return f;
+      })
+    );
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['pit-admin', 'field', 'judging'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      {
+        name: 'cvFormCreated',
+        handler: cvForm => {
+          handleCvFormCreated(cvForm);
+          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', { variant: 'warning' });
+        }
+      },
+      {
+        name: 'cvFormUpdated',
+        handler: cvForm => {
+          handleCvFormUpdated(cvForm);
+          enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
+        }
+      },
       {
         name: 'ticketCreated',
         handler: ticket => {
@@ -133,16 +173,7 @@ const Page: NextPage<Props> = ({
           handleTicketUpdated(ticket);
           enqueueSnackbar('עודכנה קריאה!', { variant: 'info' });
         }
-      },
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent }
+      }
     ]
   );
 
@@ -211,7 +242,7 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="5">
-            <CVForm user={user} event={event} socket={socket} />
+            <CVPanel user={user} cvForms={cvForms} event={event} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>
@@ -232,7 +263,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rooms: `/api/events/${user.eventId}/rooms`,
         tables: `/api/events/${user.eventId}/tables`,
         matches: `/api/events/${user.eventId}/matches`,
-        sessions: `/api/events/${user.eventId}/sessions`
+        sessions: `/api/events/${user.eventId}/sessions`,
+        cvForms: `/api/events/${user.eventId}/cv-forms`
       },
       ctx
     );

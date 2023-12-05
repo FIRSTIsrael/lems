@@ -41,6 +41,7 @@ interface CVFormProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;
+  onSubmit?: () => void;
 }
 
 const CVForm: React.FC<CVFormProps> = ({
@@ -48,7 +49,8 @@ const CVForm: React.FC<CVFormProps> = ({
   event,
   socket,
   cvForm: initialCvForm,
-  readOnly = false
+  readOnly = false,
+  onSubmit
 }) => {
   const router = useRouter();
   const getCvForm = (cvForm: WithId<CoreValuesForm>) => {
@@ -197,7 +199,6 @@ const CVForm: React.FC<CVFormProps> = ({
               }
             }
           );
-          router.reload();
         } else {
           socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
             if (response.ok) {
@@ -209,6 +210,7 @@ const CVForm: React.FC<CVFormProps> = ({
           });
         }
 
+        if (onSubmit) onSubmit();
         actions.setSubmitting(false);
       }}
       validateOnChange
