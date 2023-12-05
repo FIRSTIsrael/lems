@@ -18,6 +18,7 @@ services:
       - '3333:3333'
     networks:
       - lems-network
+    restart: on-failure
 
   frontend:
     build:
@@ -37,6 +38,7 @@ services:
       - '4200:4200'
     networks:
       - lems-network
+    restart: on-failure
 
 networks:
   lems-network:
