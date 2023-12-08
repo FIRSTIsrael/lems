@@ -10,17 +10,4 @@ router.get('/', (req: Request, res: Response) => {
   });
 });
 
-// router.get('/:teamId', (req: Request, res: Response) => {
-//   db.getTeam({
-//     _id: new ObjectId(req.params.teamId),
-//     eventId: new ObjectId(req.params.eventId)
-//   }).then(team => {
-//     res.json(team);
-//   });
-// });
-
-// router.use('/:teamId/rubrics', rubricsRouter);
-
-// router.use('/:teamId/scoresheets', scoresheetsRouter);
-
 export default router;
