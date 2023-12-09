@@ -1,27 +1,23 @@
 import express, { Request, Response } from 'express';
 import * as db from '@lems/database';
-import { JudgingCategoryTypes } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 
 router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
-  const category = req.query.category;
-
-  if (!JudgingCategoryTypes.some(c => category === c))
-    return res.status(400).json({ error: 'Invalid Category' });
-
   const pipeline = [
     {
-      $match: { category, status: { $ne: 'empty' } }
+      $match: { status: { $ne: 'empty' } }
     },
     {
       $project: {
+        category: true,
         teamId: true,
         scores: { $objectToArray: '$data.values' }
       }
     },
     {
       $project: {
+        category: true,
         teamId: true,
         unscored: {
           $sum: {
@@ -43,6 +39,20 @@ router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
     {
       $match: {
         unscored: { $gt: 0 }
+      }
+    },
+    {
+      $lookup: {
+        from: 'teams',
+        localField: 'teamId',
+        foreignField: '_id',
+        as: 'team'
+      }
+    },
+    {
+      $group: {
+        _id: '$category',
+        unscoredTeams: { $addToSet: '$team' }
       }
     }
   ];

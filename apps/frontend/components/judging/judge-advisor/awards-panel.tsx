@@ -4,9 +4,6 @@ import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import {
-  Paper,
-  Box,
-  Avatar,
   Typography,
   Stack,
   Button,
@@ -19,9 +16,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import ManageIcon from '@mui/icons-material/WidgetsRounded';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Grid from '@mui/material/Unstable_Grid2';
 import { localizedAward } from '@lems/season';
 import { fullMatch } from '@lems/utils/objects';
 import {
@@ -34,7 +29,7 @@ import {
 } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import AwardWinnerSelector from './award-winner-selector';
-import ExportAction from './export-action';
+import ResultExportPaper from './result-export-paper';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
@@ -70,53 +65,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
 
   return (
     <>
-      <Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            pb: 3
-          }}
-        >
-          <Avatar
-            sx={{
-              bgcolor: '#ccfbf1',
-              color: '#2dd4bf',
-              width: '2rem',
-              height: '2rem',
-              mr: 1
-            }}
-          >
-            <ManageIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-          <Typography variant="h2" fontSize="1.25rem">
-            ניהול
-          </Typography>
-        </Box>
-        <Grid container spacing={2}>
-          <Grid xs={6}>
-            <ExportAction event={event} path="/rubrics/core-values" sx={{ m: 1 }}>
-              ייצוא מחווני ערכי הליבה
-            </ExportAction>
-          </Grid>
-          <Grid xs={6}>
-            <ExportAction event={event} path="/rubrics/innovation-project" sx={{ m: 1 }}>
-              ייצוא מחווני פרויקט החדשנות
-            </ExportAction>
-          </Grid>
-          <Grid xs={6}>
-            <ExportAction event={event} path="/rubrics/robot-design" sx={{ m: 1 }}>
-              ייצוא מחווני תכנון הרובוט
-            </ExportAction>
-          </Grid>
-          <Grid xs={6}>
-            <ExportAction event={event} path="/scores" sx={{ m: 1 }}>
-              ייצוא תוצאות זירה
-            </ExportAction>
-          </Grid>
-        </Grid>
-      </Paper>
+      <ResultExportPaper event={event} />
       <Formik
         initialValues={awards.map(a => {
           if (!a.winner) a.winner = '';
