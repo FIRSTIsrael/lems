@@ -180,7 +180,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       variant="contained"
                       onClick={submitForm}
                       loading={isSubmitting}
-                      disabled={!isValid}
+                      disabled={!isValid || readOnly}
                     >
                       <span>שמירה</span>
                     </LoadingButton>
@@ -189,7 +189,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       sx={{ minWidth: 250 }}
                       variant="contained"
                       onClick={() => setOpen(true)}
-                      disabled={!values.every(x => x.winner) || !isValid}
+                      disabled={!values.every(x => x.winner) || !isValid || readOnly}
                     >
                       נעילת הפרסים
                     </Button>
