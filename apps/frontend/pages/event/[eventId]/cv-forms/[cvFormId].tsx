@@ -47,8 +47,15 @@ const Page: NextPage<Props> = ({ user, event, cvForm: initialCvForm }) => {
         back={`/event/${event._id}/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
       >
-        <Paper sx={{ p: 4, mt: 2 }}>
-          <CVForm user={user} event={event} socket={socket} cvForm={cvForm} readOnly={true} />
+        <Paper sx={{ p: 4, my: 2 }}>
+          <CVForm
+            user={user}
+            event={event}
+            socket={socket}
+            cvForm={cvForm}
+            readOnly={true}
+            onSubmit={() => router.push(`/event/${event._id}/${user.role}`)}
+          />
         </Paper>
       </Layout>
     </RoleAuthorizer>

@@ -14,6 +14,7 @@ import scoresheetRouter from './scoresheets';
 import ticketsRouter from './tickets';
 import cvFormsRouter from './cv-forms';
 import exportRouter from './export';
+import insightsRouter from './insights';
 
 const router = express.Router({ mergeParams: true });
 
@@ -55,5 +56,7 @@ router.use('/:eventId/tickets', ticketsRouter);
 router.use('/:eventId/cv-forms', cvFormsRouter);
 
 router.use('/:eventId/export', exportRouter);
+
+router.use('/:eventId/insights', insightsRouter);
 
 export default router;

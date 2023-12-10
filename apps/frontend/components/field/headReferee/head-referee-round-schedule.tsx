@@ -47,13 +47,14 @@ const HeadRefereeRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell colSpan={2 + tables.length} align="center">
+            <TableCell colSpan={3 + tables.length} align="center">
               {localizedMatchStage[roundStage]} #{roundNumber}
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>התחלה</TableCell>
-            <TableCell>סיום</TableCell>
+            <TableCell align="center">מקצה</TableCell>
+            <TableCell align="center">התחלה</TableCell>
+            <TableCell align="center">סיום</TableCell>
             {tables.map(table => (
               <TableCell key={table._id.toString()} align="center">
                 {`שולחן ${table.name}`}
@@ -82,8 +83,9 @@ const HeadRefereeRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
             })
             .map((c, index) => (
               <TableRow key={c.name + index}>
-                <TableCell>{dayjs(c.startTime).format('HH:mm')}</TableCell>
-                <TableCell>{dayjs(c.endTime).format('HH:mm')}</TableCell>
+                <TableCell />
+                <TableCell align="center">{dayjs(c.startTime).format('HH:mm')}</TableCell>
+                <TableCell align="center">{dayjs(c.endTime).format('HH:mm')}</TableCell>
                 <TableCell colSpan={tables.length} align="center">
                   {c.name}
                 </TableCell>

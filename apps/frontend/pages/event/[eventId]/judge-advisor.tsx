@@ -3,24 +3,10 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import {
-  Avatar,
-  Box,
-  Card,
-  CardHeader,
-  CardContent,
-  Paper,
-  Tab,
-  Tabs,
-  Typography,
-  IconButton,
-  Stack
-} from '@mui/material';
-import { green } from '@mui/material/colors';
+import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import {
   JudgingRoom,
   JudgingSession,
@@ -33,7 +19,6 @@ import {
   CoreValuesForm,
   EventState
 } from '@lems/types';
-import { cvFormSchema } from '@lems/season';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
@@ -42,9 +27,9 @@ import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import { localizedRoles } from '../../../localization/roles';
-import { localizedFormSubject } from '../../../localization/cv-form';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import AwardsPanel from '../../../components/judging/judge-advisor/awards-panel';
+import CVFormCard from 'apps/frontend/components/cv-form/cv-form-card';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -240,48 +225,7 @@ const Page: NextPage<Props> = ({
               <Grid container spacing={2}>
                 {cvForms.map(form => (
                   <Grid xs={6} key={form._id.toString()}>
-                    <Card sx={{ ...(form.actionTaken && { backgroundColor: green[100] }) }}>
-                      <CardHeader
-                        avatar={
-                          <Avatar
-                            alt="חומרת הטופס"
-                            src={`https://emojicdn.elk.sh/${
-                              cvFormSchema.categories.find(c => c.id === form.severity)?.emoji
-                            }`}
-                          />
-                        }
-                        action={
-                          <IconButton
-                            onClick={() => router.push(`/event/${event._id}/cv-forms/${form._id}`)}
-                          >
-                            <OpenInFullIcon />
-                          </IconButton>
-                        }
-                        title={`דיווח על ${form.demonstrators
-                          .map(d =>
-                            d === 'team'
-                              ? `קבוצה #${form.demonstratorAffiliation}`
-                              : localizedFormSubject[d]
-                          )
-                          .join(', ')}`}
-                        subheader={`נצפה על ידי ${form.observers
-                          .map(o =>
-                            o === 'team'
-                              ? `קבוצה #${form.observerAffiliation}`
-                              : localizedFormSubject[o]
-                          )
-                          .join(', ')}`}
-                      />
-                      <CardContent>
-                        <Typography fontSize="0.875rem">
-                          הוגש על ידי {form.completedBy.name} ({form.completedBy.affiliation}) טל.{' '}
-                          {form.completedBy.phone}
-                        </Typography>
-                        <Typography fontSize="0.875rem" color="text.secondary">
-                          {form.details}
-                        </Typography>
-                      </CardContent>
-                    </Card>
+                    <CVFormCard event={event} form={form} />
                   </Grid>
                 ))}
               </Grid>

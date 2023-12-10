@@ -85,6 +85,8 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
       .then(async res => {
         const data = await res.json();
         if (data && !data.error) {
+          document.getElementById('recaptcha-script')?.remove();
+          document.querySelector('.grecaptcha-badge')?.remove();
           const returnUrl = router.query.returnUrl || `/event/${event._id}`;
           router.push(returnUrl as string);
         } else if (data.error) {

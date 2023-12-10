@@ -30,8 +30,9 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
 }) => {
   return (
     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
-      <TableCell>
+      <TableCell align="center">{match.number}</TableCell>
+      <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
+      <TableCell align="center">
         {dayjs(match.scheduledTime).add(MATCH_LENGTH, 'seconds').format('HH:mm')}
       </TableCell>
       {tables.map(table => {

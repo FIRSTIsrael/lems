@@ -23,10 +23,7 @@ import {
   handleUpdateScoresheet,
   handleUpdateMatchTeams
 } from './handlers/field';
-import {
-  handleUpdateAudienceDisplayState,
-  handleUpdatePresentation
-} from './handlers/audience-display';
+import { handleUpdateAudienceDisplay, handleUpdatePresentation } from './handlers/audience-display';
 
 const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
@@ -77,9 +74,7 @@ const websocket = (
 
   socket.on('updateScoresheet', (...args) => handleUpdateScoresheet(namespace, ...args));
 
-  socket.on('updateAudienceDisplayState', (...args) =>
-    handleUpdateAudienceDisplayState(namespace, ...args)
-  );
+  socket.on('updateAudienceDisplay', (...args) => handleUpdateAudienceDisplay(namespace, ...args));
 
   socket.on('updatePresentation', (...args) => handleUpdatePresentation(namespace, ...args));
 

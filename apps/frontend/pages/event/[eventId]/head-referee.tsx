@@ -81,6 +81,12 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleScoresheetStatusChanged = (scoresheet: WithId<Scoresheet>) => {
+    updateScoresheet(scoresheet);
+    if (scoresheet.status === 'waiting-for-head-ref')
+      enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, { variant: 'warning' });
+  };
+
   const handleTeamRegistered = (team: WithId<Team>) => {
     setMatches(matches =>
       matches.map(m => {
@@ -107,7 +113,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'scoresheetStatusChanged', handler: updateScoresheet },
+      { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );

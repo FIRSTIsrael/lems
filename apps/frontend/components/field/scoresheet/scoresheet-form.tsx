@@ -48,6 +48,7 @@ interface ScoresheetFormProps {
   scoresheet: WithId<Scoresheet>;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  emptyScoresheetValues?: Array<Mission>;
 }
 
 const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
@@ -55,7 +56,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   team,
   scoresheet,
   user,
-  socket
+  socket,
+  emptyScoresheetValues
 }) => {
   const router = useRouter();
   const [missionErrors, setMissionErrors] = useState<
@@ -72,14 +74,17 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   }, [scoresheet]);
 
   const getDefaultScoresheet = () => {
-    const missions = SEASON_SCORESHEET.missions.map(m => {
+    const missions: Array<Mission> = SEASON_SCORESHEET.missions.map(mission => {
       return {
-        id: m.id,
-        clauses: m.clauses.map(c => {
-          return { type: c.type, value: ALLOW_SCORESHEET_DEFAULTS ? c.default : null };
+        id: mission.id,
+        clauses: mission.clauses.map((c, index) => {
+          let value = emptyScoresheetValues?.find(m => m.id === mission.id)?.clauses[index].value;
+          if (value === undefined) value = ALLOW_SCORESHEET_DEFAULTS ? c.default : null;
+          return { type: c.type, value };
         })
       };
     });
+
     return { missions: missions, signature: '', gp: null, score: 0 };
   };
 

@@ -50,8 +50,9 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 
   return (
     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell>{startTime.format('HH:mm')}</TableCell>
-      <TableCell>{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
+      <TableCell align="center">{match.number}</TableCell>
+      <TableCell align="center">{startTime.format('HH:mm')}</TableCell>
+      <TableCell align="center">{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {tables.map(table => {
         return (
           <RoundEditorTeamCell
@@ -137,13 +138,14 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell colSpan={2 + tables.length} align="center">
+                  <TableCell colSpan={3 + tables.length} align="center">
                     {localizedMatchStage[roundStage]} #{roundNumber}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>התחלה</TableCell>
-                  <TableCell>סיום</TableCell>
+                  <TableCell align="center">מקצה</TableCell>
+                  <TableCell align="center">התחלה</TableCell>
+                  <TableCell align="center">סיום</TableCell>
                   {tables.map(table => (
                     <TableCell key={table._id.toString()} align="left">
                       {`שולחן ${table.name}`}

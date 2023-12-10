@@ -12,7 +12,9 @@ import {
   RobotGameTable,
   SafeUser,
   Scoresheet,
-  Team
+  Mission,
+  Team,
+  MissionClauseType
 } from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
@@ -111,9 +113,9 @@ const Page: NextPage<Props> = ({
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
-  if (match.status !== 'completed') {
+  if (match.status === 'not-started') {
     router.push(`/event/${event._id}/${user.role}`);
-    enqueueSnackbar('המקצה טרם נגמר.', { variant: 'info' });
+    enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
     router.push(`/event/${event._id}/${user.role}`);
@@ -131,6 +133,23 @@ const Page: NextPage<Props> = ({
       }
     }
   ]);
+
+  const getScoresheetOverrides = () => {
+    const values: Array<Mission> = [];
+    if (router.query.inspection) {
+      const inspection = {
+        id: 'eib',
+        clauses: [
+          {
+            type: 'boolean' as MissionClauseType,
+            value: router.query.inspection === 'true'
+          }
+        ]
+      };
+      values.push(inspection);
+    }
+    return values;
+  };
 
   return (
     <RoleAuthorizer
@@ -175,6 +194,7 @@ const Page: NextPage<Props> = ({
               scoresheet={scoresheet}
               user={user}
               socket={socket}
+              emptyScoresheetValues={getScoresheetOverrides()}
             />
           )}
         </Layout>

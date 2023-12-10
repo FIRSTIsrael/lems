@@ -95,7 +95,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="רישום קבוצות" value="1" />
+              <Tab label="הגעת קבוצות" value="1" />
               <Tab label="פתיחת קריאות" value="2" />
               <Tab label="קריאות פתוחות" value="3" />
             </Tabs>
