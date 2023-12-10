@@ -69,7 +69,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
             <React.Fragment key={category}>
               <Grid xs={6}>
                 <ExportAction event={event} path={`/rubrics/${category}`} sx={{ m: 1 }}>
-                  {`ייצוא מחווני ${localizedJudgingCategory[category].name}`}
+                  ייצוא מחווני {localizedJudgingCategory[category].name}
                 </ExportAction>
               </Grid>
               <Grid xs={6}>
