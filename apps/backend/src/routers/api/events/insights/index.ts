@@ -50,6 +50,9 @@ router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
       }
     },
     {
+      $unwind: '$team'
+    },
+    {
       $group: {
         _id: '$category',
         unscoredTeams: { $addToSet: '$team' }
