@@ -26,9 +26,9 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
     team &&
       socket.emit('registerTeam', event._id.toString(), team?._id.toString(), response => {
         if (response.ok) {
+          enqueueSnackbar(`קבוצה #${team.number} נרשמה בהצלחה!`, { variant: 'success' });
           setTeam(null);
           setInputValue('');
-          enqueueSnackbar('הקבוצה נרשמה בהצלחה!', { variant: 'success' });
         }
       });
   };
