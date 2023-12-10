@@ -1,6 +1,6 @@
 {
   "name": "@lems/source",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "author": "FIRST Israel",
   "prettier": "@firstisrael/prettier-config",
