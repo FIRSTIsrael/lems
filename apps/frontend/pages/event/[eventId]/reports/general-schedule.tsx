@@ -55,7 +55,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${event.name}`}
-        back={`/event/${event._id}/${user.role}`}
+        back={`/event/${event._id}/reports`}
         backDisabled={false}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
