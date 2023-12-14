@@ -170,19 +170,6 @@ const Page: NextPage<Props> = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {showGeneralSchedule &&
-                judgesGeneralSchedule
-                  .filter(s => {
-                    const firstSession = Math.min(...sessions.flatMap(s => s.number));
-                    const firstSessionTime = dayjs(
-                      sessions.find(s => s.number === firstSession)?.scheduledTime
-                    );
-
-                    return dayjs(s.startTime).isBefore(firstSessionTime);
-                  })
-                  .map(rs => (
-                    <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
-                  ))}
               {[...new Set(sessions.flatMap(s => s.number))].map(row => {
                 const rowTime = dayjs(sessions.find(s => s.number === row)?.scheduledTime);
                 const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.scheduledTime);
