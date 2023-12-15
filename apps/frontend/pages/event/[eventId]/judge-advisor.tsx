@@ -29,7 +29,7 @@ import JudgingRoomSchedule from '../../../components/judging/judging-room-schedu
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import AwardsPanel from '../../../components/judging/judge-advisor/awards-panel';
-import CVFormCard from 'apps/frontend/components/cv-form/cv-form-card';
+import CVFormCard from '../../../components/cv-form/cv-form-card';
 
 interface Props {
   user: WithId<SafeUser>;
