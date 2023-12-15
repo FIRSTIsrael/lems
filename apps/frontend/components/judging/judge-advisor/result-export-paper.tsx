@@ -64,14 +64,15 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
       </Box>
       <Grid container spacing={2}>
         {JudgingCategoryTypes.map(category => {
-          const teams = unscoredTeams[category];
+          // const teams = unscoredTeams[category];
           return (
             <React.Fragment key={category}>
               <Grid xs={6}>
                 <ExportAction event={event} path={`/rubrics/${category}`} sx={{ m: 1 }}>
                   ייצוא מחווני {localizedJudgingCategory[category].name}
                 </ExportAction>
-              </Grid>
+              </Grid>{' '}
+              {/* 
               <Grid xs={6}>
                 <Box
                   sx={{
@@ -99,6 +100,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
                   </Typography>
                 </Box>
               </Grid>
+              */}
             </React.Fragment>
           );
         })}
