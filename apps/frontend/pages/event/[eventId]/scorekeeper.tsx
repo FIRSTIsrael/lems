@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
@@ -47,15 +47,11 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useState<string>('1');
 
-  const nextMatchId = useMemo<ObjectId | undefined>(
+  const nextMatch = useMemo<WithId<RobotGameMatch> | undefined>(
     () =>
       matches?.find(
-        match =>
-          match.status === 'not-started' &&
-          match.stage === eventState.currentStage &&
-          match.scheduledTime &&
-          dayjs(match.scheduledTime).isBefore(dayjs().add(MATCH_AUTOLOAD_THRESHOLD, 'minutes'))
-      )?._id,
+        match => match.status === 'not-started' && match.stage === eventState.currentStage
+      ),
     [matches, eventState.currentStage]
   );
 
@@ -64,15 +60,16 @@ const Page: NextPage<Props> = ({
       eventState.loadedMatch === null &&
       !matches.some(m => m.stage === 'test' && m.status === 'in-progress')
     ) {
-      if (nextMatchId)
-        socket.emit('loadMatch', event._id.toString(), nextMatchId.toString(), response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
-          }
+      if (
+        nextMatch?.scheduledTime &&
+        dayjs(nextMatch.scheduledTime).isBefore(dayjs().add(MATCH_AUTOLOAD_THRESHOLD, 'minutes'))
+      )
+        socket.emit('loadMatch', event._id.toString(), nextMatch._id.toString(), response => {
+          if (!response.ok) enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nextMatchId]);
+  }, [nextMatch]);
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -151,7 +148,7 @@ const Page: NextPage<Props> = ({
               event={event}
               eventState={eventState}
               matches={matches}
-              nextMatchId={nextMatchId || null}
+              nextMatchId={nextMatch?._id}
               socket={socket}
             />
           </TabPanel>

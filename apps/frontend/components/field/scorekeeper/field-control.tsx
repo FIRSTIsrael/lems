@@ -17,7 +17,7 @@ interface FieldControlProps {
   event: WithId<Event>;
   eventState: EventState;
   matches: Array<WithId<RobotGameMatch>>;
-  nextMatchId: ObjectId | null;
+  nextMatchId: ObjectId | undefined;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

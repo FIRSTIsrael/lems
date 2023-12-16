@@ -15,7 +15,7 @@ import { RobotGameMatch, WSClientEmittedEvents, WSServerEmittedEvents } from '@l
 
 interface ControlActionsProps {
   eventId: string;
-  nextMatchId: ObjectId | null;
+  nextMatchId: ObjectId | undefined;
   loadedMatch: WithId<RobotGameMatch> | null;
   activeMatchId: ObjectId | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
