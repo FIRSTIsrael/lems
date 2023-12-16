@@ -48,11 +48,8 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const nextMatch = useMemo<WithId<RobotGameMatch> | undefined>(
-    () =>
-      matches?.find(
-        match => match.status === 'not-started' && match.stage === eventState.currentStage
-      ),
-    [matches, eventState.currentStage]
+    () => matches?.find(match => match.status === 'not-started' && match.stage !== 'test'),
+    [matches]
   );
 
   useEffect(() => {
@@ -61,6 +58,7 @@ const Page: NextPage<Props> = ({
       !matches.some(m => m.stage === 'test' && m.status === 'in-progress')
     ) {
       if (
+        nextMatch?.stage === eventState.currentStage &&
         nextMatch?.scheduledTime &&
         dayjs(nextMatch.scheduledTime).isBefore(dayjs().add(MATCH_AUTOLOAD_THRESHOLD, 'minutes'))
       )
