@@ -40,8 +40,11 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const nextMatchId = useMemo<ObjectId | undefined>(
-    () => matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id,
-    [matches]
+    () =>
+      matches?.find(
+        match => match.status === 'not-started' && match.stage === eventState.currentStage
+      )?._id,
+    [matches, eventState.currentStage]
   );
 
   useEffect(() => {
