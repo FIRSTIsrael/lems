@@ -1,6 +1,5 @@
 import { Form, Formik, FormikValues } from 'formik';
 import { Socket } from 'socket.io-client';
-import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -52,7 +51,6 @@ const CVForm: React.FC<CVFormProps> = ({
   readOnly = false,
   onSubmit
 }) => {
-  const router = useRouter();
   const getCvForm = (cvForm: WithId<CoreValuesForm>) => {
     const { _id, severity, ...rest } = cvForm;
     return { ...rest };
@@ -261,21 +259,25 @@ const CVForm: React.FC<CVFormProps> = ({
                   InputProps={{ readOnly }}
                 />
               </Stack>
-              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
-                <Divider />
-                <FormikTextField
-                  minRows={3}
-                  multiline
-                  name="actionTaken"
-                  label="פעולות שננקטו"
-                  {...(initialCvForm?.actionTaken ? {} : { color: 'warning', autoFocus: true })}
-                />
-                <FormikTextField
-                  name="actionTakenBy"
-                  label="טופל על ידי"
-                  {...(initialCvForm?.actionTakenBy ? {} : { color: 'warning' })}
-                />
-              </RoleAuthorizer>
+              <Divider />
+              <FormikTextField
+                minRows={3}
+                multiline
+                name="actionTaken"
+                label="פעולות שננקטו"
+                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                {...(initialCvForm?.actionTaken || user.role === 'tournament-manager'
+                  ? {}
+                  : { color: 'warning', autoFocus: true })}
+              />
+              <FormikTextField
+                name="actionTakenBy"
+                label="טופל על ידי"
+                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                {...(initialCvForm?.actionTakenBy || user.role === 'tournament-manager'
+                  ? {}
+                  : { color: 'warning' })}
+              />
             </Stack>
           </Paper>
           <Box display="flex" justifyContent="center">
