@@ -387,9 +387,6 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 >
                   איפוס המחוון
                 </Button>
-              </RoleAuthorizer>
-
-              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
                 {rubric.status === 'waiting-for-review' && (
                   <Button
                     variant="contained"
@@ -402,7 +399,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     פתיחת גישה לשופטי החדר
                   </Button>
                 )}
+              </RoleAuthorizer>
 
+              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
                 {rubric.status === 'ready' && (
                   <Button
                     variant="contained"
