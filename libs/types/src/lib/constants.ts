@@ -92,6 +92,8 @@ export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const SEASON_NAME = 'MASTERPIECE℠';
 
+export const MATCH_AUTOLOAD_THRESHOLD = 10;
+
 // All these values will have no effect at V2.0
 // Support will be added in future versions
 export const ALLOW_MATCH_SELECTOR = false;

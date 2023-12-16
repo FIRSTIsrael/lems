@@ -1,10 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, SafeUser, RobotGameMatch, EventState, Award } from '@lems/types';
+import {
+  Event,
+  SafeUser,
+  RobotGameMatch,
+  EventState,
+  Award,
+  MATCH_AUTOLOAD_THRESHOLD
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -40,8 +48,15 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const nextMatchId = useMemo<ObjectId | undefined>(
-    () => matches?.find(match => match.status === 'not-started' && match.stage !== 'test')?._id,
-    [matches]
+    () =>
+      matches?.find(
+        match =>
+          match.status === 'not-started' &&
+          match.stage === eventState.currentStage &&
+          match.scheduledTime &&
+          dayjs(match.scheduledTime).isBefore(dayjs().add(MATCH_AUTOLOAD_THRESHOLD, 'minutes'))
+      )?._id,
+    [matches, eventState.currentStage]
   );
 
   useEffect(() => {
