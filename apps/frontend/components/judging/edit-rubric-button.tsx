@@ -39,7 +39,7 @@ const mapStatus: {
     }
   },
   'waiting-for-review': {
-    title: 'ממתין לשופט ראשי',
+    title: 'ממתין לשופט מוביל',
     sx: {
       color: '#fff',
       background: '#4338ca',
