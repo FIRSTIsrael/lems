@@ -351,16 +351,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                         router.push(`/event/${event._id}/${user.role}`)
                       );
                     }}
-                    sx={{
-                      minWidth: 120,
-                      fontSize: '1rem',
-                      fontWeight: 500,
-                      color: '#fff',
-                      backgroundColor: purple[500],
-                      '&:hover': {
-                        backgroundColor: purple[700]
-                      }
-                    }}
+                    sx={actionButtonStyle}
                     disabled={!isValid}
                   >
                     נעילה ושליחה לשופט מוביל
