@@ -41,7 +41,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               }}
             />
           ) : (
-            <Typography fontSize="1.125rem" fontWeight={700}>
+            <Typography fontSize="1.125rem" fontWeight={700} color="#f57c00">
               שימו לב: הקבוצה טרם הגיעה לאירוע
             </Typography>
           )}
@@ -76,7 +76,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               variant="contained"
               color="primary"
             >
-              אנחנו מוכנים!
+              {participant.team.registered ? 'אנחנו מוכנים!' : 'מוכנים ומאשרים שהקבוצה חסרה'}
             </Button>
           </Stack>
         </>
