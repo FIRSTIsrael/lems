@@ -225,7 +225,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         validateOnChange
         validateOnMount
       >
-        {({ values, isValid, setFieldValue, validateForm, setValues }) => (
+        {({ values, isValid, errors, validateForm, setValues }) => (
           <Form>
             {mode === 'scoring' ? (
               <>
@@ -287,7 +287,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       onEnd={() => validateForm()}
                     />
                   )}
-
                   {!isValid && (
                     <Alert
                       severity="warning"
@@ -299,7 +298,9 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         border: '1px solid #ff9800'
                       }}
                     >
-                      דף הניקוד אינו מלא.
+                      {Object.keys(errors).length === 1 && !!errors.signature
+                        ? 'הקבוצה טרם חתמה על דף הניקוד.'
+                        : 'דף הניקוד אינו מלא.'}
                     </Alert>
                   )}
                   {scoresheetErrors.map((e: { id: string; description: string }) => (
