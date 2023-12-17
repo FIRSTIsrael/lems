@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import dayjs, { Dayjs } from 'dayjs';
 import { WithId } from 'mongodb';
 import {
@@ -9,7 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress,
   Paper,
   Stack,
   Typography
@@ -17,6 +15,7 @@ import {
 import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH, Scoresheet } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
+import FlippedLinearProgress from '../../general/flipped-linear-progress';
 
 interface TimerProps {
   participant: RobotGameMatchParticipant;
@@ -65,7 +64,7 @@ const Timer: React.FC<TimerProps> = ({ participant, match, getScoresheet, toScor
           </Typography>
         )}
       </Paper>
-      <LinearProgress
+      <FlippedLinearProgress
         variant="determinate"
         value={percentLeft}
         color={percentLeft <= 20 ? 'error' : 'primary'}

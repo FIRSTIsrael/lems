@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
+import { Paper, Stack, Typography } from '@mui/material';
 import {
   Event,
   Team,
@@ -19,6 +19,7 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import Countdown from '../../../../components/general/countdown';
 import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
+import FlippedLinearProgress from '../../../../components/general/flipped-linear-progress';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
@@ -87,7 +88,7 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
         )}
       </Paper>
       {getStatus !== 'done' && (
-        <LinearProgress
+        <FlippedLinearProgress
           color={getStatus === 'ahead' ? 'success' : getStatus === 'close' ? 'warning' : 'error'}
           variant="determinate"
           value={progressToNextMatchStart}

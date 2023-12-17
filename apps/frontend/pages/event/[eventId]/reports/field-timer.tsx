@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { LinearProgress, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
+import FlippedLinearProgress from '../../../../components/general/flipped-linear-progress';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { useTime } from '../../../../hooks/use-time';
@@ -126,7 +127,7 @@ const Page: NextPage<Props> = ({
           )}
         </Paper>
         {activeMatch?.startTime && (
-          <LinearProgress
+          <FlippedLinearProgress
             variant="determinate"
             value={percentLeft}
             color={percentLeft <= 20 ? 'error' : 'primary'}

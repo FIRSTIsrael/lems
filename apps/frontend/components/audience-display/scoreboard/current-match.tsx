@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { Grid2Props, Paper, Typography, LinearProgress } from '@mui/material';
+import { Grid2Props, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { useTime } from '../../../hooks/use-time';
+import FlippedLinearProgress from '../../general/flipped-linear-progress';
 
 interface ScoreboardCurrentMatchProps extends Grid2Props {
   activeMatch: WithId<RobotGameMatch> | undefined;
@@ -81,7 +82,7 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
       <Grid container justifyContent="center">
         <Grid xs={6}>
           {activeMatch?.startTime && (
-            <LinearProgress
+            <FlippedLinearProgress
               variant="determinate"
               value={percentLeft}
               color={percentLeft <= 20 ? 'error' : 'primary'}

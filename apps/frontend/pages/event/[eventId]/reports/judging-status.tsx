@@ -6,7 +6,6 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
   Box,
-  LinearProgress,
   Paper,
   Stack,
   Table,
@@ -35,6 +34,7 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import StatusIcon from '../../../../components/general/status-icon';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
+import FlippedLinearProgress from '../../../../components/general/flipped-linear-progress';
 import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
@@ -113,7 +113,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
         </Stack>
       </Paper>
       {getStatus !== 'done' && (
-        <LinearProgress
+        <FlippedLinearProgress
           color={getStatus === 'ahead' ? 'success' : getStatus === 'close' ? 'warning' : 'error'}
           variant="determinate"
           value={progressToNextSessionStart}
