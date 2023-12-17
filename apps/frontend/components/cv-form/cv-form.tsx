@@ -32,7 +32,6 @@ import { cvFormSchema } from '@lems/season';
 import FormikTextField from '../general/forms/formik-text-field';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
-import { RoleAuthorizer } from '../role-authorizer';
 
 interface CVFormProps {
   user: WithId<SafeUser>;
@@ -127,7 +126,10 @@ const CVForm: React.FC<CVFormProps> = ({
             teamOrStudent: { fields: Array<boolean>; other?: string };
             anyoneElse: { fields: Array<boolean>; other?: string };
           };
-          return category.teamOrStudent.fields.concat(category.anyoneElse.fields);
+          return category.teamOrStudent.fields
+            .concat(category.anyoneElse.fields)
+            .concat([!!category.teamOrStudent.other])
+            .concat([!!category.anyoneElse.other]);
         })
         .some((x: boolean) => x)
     ) {
