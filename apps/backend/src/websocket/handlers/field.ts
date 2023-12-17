@@ -151,7 +151,8 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
     },
     {
       status: 'not-started',
-      startTime: undefined
+      startTime: undefined,
+      ['participants.$[].ready']: false
     }
   );
 
