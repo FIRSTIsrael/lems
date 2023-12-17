@@ -21,7 +21,7 @@ const PresentSwitch: React.FC<PresentSwitchProps> = ({ value, onChange, disabled
       <ToggleButtonGroup
         value={value}
         exclusive
-        onChange={(event, value) => onChange?.(value)}
+        onChange={(event, value) => value !== null && onChange?.(value)}
         disabled={disabled}
         sx={theme => ({
           '& .MuiToggleButtonGroup-grouped': {
