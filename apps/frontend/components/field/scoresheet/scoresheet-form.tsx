@@ -90,7 +90,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
   const calculateScore = (values: FormikValues) => {
     let score = 0;
-    const currentErrors: Array<{ id: string; description: string } | undefined> = [];
+    const scoringErrors: Array<{ id: string; description: string } | undefined> = [];
 
     SEASON_SCORESHEET.missions.forEach((mission, missionIndex) => {
       const clauses = values.missions[missionIndex].clauses;
@@ -100,11 +100,11 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         if (error instanceof ScoresheetError) {
           const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
           if (localizedErrors && localizedErrors.length > 0)
-            currentErrors.push(localizedErrors.find(e => e.id === error.id));
+            scoringErrors.push(localizedErrors.find(e => e.id === error.id));
         }
       }
     });
-    return { score, currentErrors };
+    return { score, scoringErrors };
   };
 
   const handleSync = async (
@@ -145,11 +145,10 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const validateScoresheet = (formValues: FormikValues) => {
     const errors: any = {};
 
-    const { score, currentErrors } = calculateScore(formValues);
-    setMissionErrors(currentErrors);
-
-    currentErrors.forEach(e => {
-      if (e) errors[e.id] = e.description;
+    const { score, scoringErrors } = calculateScore(formValues);
+    setMissionErrors(scoringErrors);
+    scoringErrors.forEach(e => {
+      if (e) errors.scoring[e.id] = e.description;
     });
 
     formValues.missions.forEach((m: Mission, missionIndex: number) => {
