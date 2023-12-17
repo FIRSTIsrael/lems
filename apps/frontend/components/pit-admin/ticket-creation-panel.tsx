@@ -33,7 +33,6 @@ interface TicketCreationPanelProps {
 
 const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event, teams }) => {
   const [team, setTeam] = useState<WithId<Team> | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [type, setType] = useState<TicketType>('general');
 
@@ -48,7 +47,6 @@ const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event
         response => {
           if (response.ok) {
             setTeam(null);
-            setInputValue('');
             setContent('');
             setType('general');
             enqueueSnackbar('הבקשה נשלחה בהצלחה!', { variant: 'success' });
@@ -61,12 +59,7 @@ const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event
     <Paper sx={{ p: 4 }}>
       {teams && (
         <Stack spacing={2}>
-          <TeamSelection
-            teams={teams}
-            setTeam={setTeam}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-          />
+          <TeamSelection teams={teams} value={team} setTeam={setTeam} />
           <TextField
             label="תוכן הבקשה"
             value={content}
