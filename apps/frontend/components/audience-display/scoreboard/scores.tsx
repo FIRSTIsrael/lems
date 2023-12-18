@@ -121,7 +121,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
 }) => {
   return (
     <TableBody {...props}>
-      {maxScores.map(({ team, score }, index) => {
+      {maxScores.map(({ team, score: maxScore }, index) => {
         return (
           <TableRow key={team._id.toString()}>
             <TableCell sx={{ font: 'inherit', textAlign: 'center', fontWeight: 400 }}>
@@ -138,7 +138,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
                 <TableCell
                   key={r.stage + r.round + 'points'}
                   align="center"
-                  sx={{ font: 'inherit' }}
+                  sx={{ font: 'inherit', fontWeight: 400 }}
                 >
                   {scoresheet?.data && scoresheet.status === 'ready' ? (
                     scoresheet.data.score
@@ -150,7 +150,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
             })}
             {currentStage !== 'practice' && (
               <TableCell align="center" sx={{ font: 'inherit' }}>
-                {score || <RemoveIcon />}
+                {maxScore || <RemoveIcon />}
               </TableCell>
             )}
           </TableRow>
