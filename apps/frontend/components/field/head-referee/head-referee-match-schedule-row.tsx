@@ -29,7 +29,12 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
   scoresheets
 }) => {
   return (
-    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <TableRow
+      sx={{
+        backgroundColor: match._id === eventState.activeMatch ? '#e6f7e7' : undefined,
+        '&:last-child td, &:last-child th': { border: 0 }
+      }}
+    >
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
       <TableCell align="center">

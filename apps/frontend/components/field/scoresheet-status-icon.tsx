@@ -2,9 +2,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/Remove';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import GradeIcon from '@mui/icons-material/Grade';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import { ScoresheetStatus, Status } from '@lems/types';
+import { ScoresheetStatus } from '@lems/types';
 
 interface ScoresheetStatusIconProps {
   status: ScoresheetStatus;
