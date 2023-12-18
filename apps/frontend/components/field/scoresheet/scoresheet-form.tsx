@@ -148,6 +148,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     const { score, scoringErrors } = calculateScore(formValues);
     setMissionErrors(scoringErrors);
     scoringErrors.forEach(e => {
+      if (!errors.scoring) errors['scoring'] = {};
       if (e) errors.scoring[e.id] = e.description;
     });
 
