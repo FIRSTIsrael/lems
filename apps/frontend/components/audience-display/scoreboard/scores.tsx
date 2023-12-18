@@ -127,7 +127,13 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
             <TableCell sx={{ font: 'inherit', textAlign: 'center', fontWeight: 400 }}>
               {index + 1}
             </TableCell>
-            <TableCell sx={{ font: 'inherit', fontWeight: 500 }}>
+            <TableCell
+              sx={{
+                font: 'inherit',
+                fontWeight: 500,
+                color: !team.registered ? '#aaa' : undefined
+              }}
+            >
               {localizeTeam(team, false)}
             </TableCell>
             {rounds.map(r => {
