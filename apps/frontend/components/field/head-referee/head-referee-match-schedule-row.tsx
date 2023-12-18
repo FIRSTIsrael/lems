@@ -11,7 +11,7 @@ import {
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 import BooleanIcon from '../../general/boolean-icon';
-import EditScoresheetButton from '.././headReferee/edit-scoresheet-button';
+import EditScoresheetButton from './edit-scoresheet-button';
 
 interface HeadRefereeMatchScheduleRowProps {
   event: WithId<Event>;
@@ -58,6 +58,8 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                     <EditScoresheetButton
                       active={!!participant.team?.registered}
                       status={scoresheet.status}
+                      score={scoresheet.data?.score}
+                      gp={scoresheet.data?.gp?.value}
                       href={`/event/${event._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
                     >
                       #{participant.team?.number}

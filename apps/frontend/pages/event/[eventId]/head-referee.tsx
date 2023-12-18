@@ -21,8 +21,8 @@ import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import HeadRefereeRoundSchedule from '../../../components/field/headReferee/head-referee-round-schedule';
-import ScoresheetStatusReferences from '../../../components/field/headReferee/scoresheet-status-references';
+import HeadRefereeRoundSchedule from '../../../components/field/head-referee/head-referee-round-schedule';
+import ScoresheetStatusReferences from '../../../components/field/head-referee/scoresheet-status-references';
 import { enqueueSnackbar } from 'notistack';
 
 interface Props {
