@@ -11,7 +11,7 @@ import {
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 import BooleanIcon from '../../general/boolean-icon';
-import EditScoresheetButton from '.././headReferee/edit-scoresheet-button';
+import EditScoresheetButton from './edit-scoresheet-button';
 
 interface HeadRefereeMatchScheduleRowProps {
   event: WithId<Event>;
