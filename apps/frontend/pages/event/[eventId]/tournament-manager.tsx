@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab, Stack, Badge } from '@mui/material';
+import { Paper, Tabs, Tab, Stack, Badge, Box } from '@mui/material';
 import {
   CoreValuesForm,
   Event,
@@ -212,8 +212,8 @@ const Page: NextPage<Props> = ({
             >
               <Tab
                 label={
-                  <Badge badgeContent={openTickets > 0 ? openTickets : undefined} color="primary">
-                    {'קריאות'}
+                  <Badge variant="dot" color="primary" invisible={openTickets === 0}>
+                    <Box px={1}>קריאות</Box>
                   </Badge>
                 }
                 value="1"
@@ -223,8 +223,8 @@ const Page: NextPage<Props> = ({
               <Tab label="שיפוט" value="4" />
               <Tab
                 label={
-                  <Badge badgeContent={openCVForms > 0 ? openCVForms : undefined} color="primary">
-                    {'טפסי CV'}
+                  <Badge variant="dot" color="primary" invisible={openCVForms === 0}>
+                    <Box px={1}>טפסי CV</Box>
                   </Badge>
                 }
                 value="5"

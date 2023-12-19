@@ -174,8 +174,8 @@ const Page: NextPage<Props> = ({
                 <Tab label="פרסים" value="2" />
                 <Tab
                   label={
-                    <Badge badgeContent={openCVForms > 0 ? openCVForms : undefined} color="primary">
-                      {'טפסי CV'}
+                    <Badge variant="dot" color="primary" invisible={openCVForms === 0}>
+                      <Box px={1}>טפסי CV</Box>
                     </Badge>
                   }
                   value="3"
