@@ -30,6 +30,7 @@ import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import AwardsPanel from '../../../components/judging/judge-advisor/awards-panel';
 import CVFormCard from '../../../components/cv-form/cv-form-card';
+import BadgeTab from '../../../components/general/badge-tab';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -172,14 +173,7 @@ const Page: NextPage<Props> = ({
               >
                 <Tab label="שיפוט" value="1" />
                 <Tab label="פרסים" value="2" />
-                <Tab
-                  label={
-                    <Badge variant="dot" color="primary" invisible={openCVForms === 0}>
-                      <Box px={1}>טפסי CV</Box>
-                    </Badge>
-                  }
-                  value="3"
-                />
+                <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="3" />
               </Tabs>
             </Paper>
             <TabPanel value="1">

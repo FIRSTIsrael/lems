@@ -25,10 +25,11 @@ import EventPanel from '../../../components/tournament-manager/event-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
+import CVPanel from '../../../components/cv-form/cv-panel';
+import BadgeTab from '../../../components/general/badge-tab';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import CVPanel from '../../../components/cv-form/cv-panel';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -210,25 +211,11 @@ const Page: NextPage<Props> = ({
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab
-                label={
-                  <Badge variant="dot" color="primary" invisible={openTickets === 0}>
-                    <Box px={1}>קריאות</Box>
-                  </Badge>
-                }
-                value="1"
-              />
+              <BadgeTab label="קריאות" showBadge={openTickets > 0} value="1" />
               <Tab label="אירוע" value="2" />
               <Tab label="זירה" value="3" />
               <Tab label="שיפוט" value="4" />
-              <Tab
-                label={
-                  <Badge variant="dot" color="primary" invisible={openCVForms === 0}>
-                    <Box px={1}>טפסי CV</Box>
-                  </Badge>
-                }
-                value="5"
-              />
+              <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="5" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
