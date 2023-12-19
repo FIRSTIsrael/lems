@@ -178,7 +178,7 @@ const theme = createTheme({
     MuiLinearProgress: {
       styleOverrides: {
         root: {
-          direction: 'ltr'
+          transform: 'rotateY(180deg)'
         }
       }
     }

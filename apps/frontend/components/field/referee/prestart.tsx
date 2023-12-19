@@ -57,30 +57,13 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
           {updateInspectionStatus &&
             participant.team.registered &&
             participant.present === 'present' && (
-              <ThemeProvider
-                theme={outerTheme => ({
-                  ...outerTheme,
-                  MuiToggleButton: {
-                    styleOverrides: {
-                      root: {
-                        '&.Mui-selected': {
-                          '&:hover': {
-                            color: '#fff',
-                            backgroundColor: '#81c784'
-                          },
-                          color: '#fff',
-                          backgroundColor: '#388e3c'
-                        }
-                      }
-                    }
-                  }
-                })}
-              >
+              <>
                 <Typography fontSize="1rem" sx={{ mt: 4 }}>
                   <b>ביקורת ציוד:</b> הרובוט וכל הציוד שלכם נכנסים לחלוטין לתוך אחד מאזורי השיגור
                   והגובה שלהם הוא מתחת ל-305 מ״מ (12 אינץ׳) בזמן ביקורת הציוד שלפני המקצה:{' '}
                 </Typography>
                 <ToggleButtonGroup
+                  color="primary"
                   sx={{ mt: 2 }}
                   exclusive
                   value={inspectionStatus}
@@ -93,7 +76,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
                     כן
                   </ToggleButton>
                 </ToggleButtonGroup>
-              </ThemeProvider>
+              </>
             )}
 
           <Stack alignItems="center" mt={6}>

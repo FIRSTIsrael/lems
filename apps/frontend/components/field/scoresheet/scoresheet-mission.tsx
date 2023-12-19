@@ -29,16 +29,18 @@ const MissionClause: React.FC<MissionClauseProps> = ({
     <ThemeProvider
       theme={outerTheme => ({
         ...outerTheme,
-        MuiToggleButton: {
-          styleOverrides: {
-            root: {
-              '&.Mui-selected': {
-                '&:hover': {
+        components: {
+          MuiToggleButton: {
+            styleOverrides: {
+              root: {
+                '&.Mui-selected': {
+                  '&:hover': {
+                    color: '#fff',
+                    backgroundColor: '#81c784'
+                  },
                   color: '#fff',
-                  backgroundColor: '#81c784'
-                },
-                color: '#fff',
-                backgroundColor: '#388e3c'
+                  backgroundColor: '#388e3c'
+                }
               }
             }
           }
