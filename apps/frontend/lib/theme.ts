@@ -175,20 +175,6 @@ const theme = createTheme({
         }
       }
     },
-    MuiToggleButton: {
-      styleOverrides: {
-        root: {
-          '&.Mui-selected': {
-            '&:hover': {
-              color: '#fff',
-              backgroundColor: '#81c784'
-            },
-            color: '#fff',
-            backgroundColor: '#388e3c'
-          }
-        }
-      }
-    },
     MuiLinearProgress: {
       styleOverrides: {
         root: {
