@@ -188,6 +188,13 @@ const theme = createTheme({
           }
         }
       }
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          direction: 'ltr'
+        }
+      }
     }
   }
 });
