@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab, Stack } from '@mui/material';
+import { Paper, Tabs, Tab, Stack, Badge } from '@mui/material';
 import {
   CoreValuesForm,
   Event,
@@ -63,6 +63,13 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
+
+  const openCVForms = useMemo(
+    () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
+    [cvForms]
+  );
+
+  const openTickets = useMemo(() => tickets.filter(t => !t.closed).length, [tickets]);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -203,11 +210,25 @@ const Page: NextPage<Props> = ({
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="קריאות" value="1" />
+              <Tab
+                label={
+                  <Badge badgeContent={openTickets > 0 ? openTickets : undefined} color="primary">
+                    {'קריאות'}
+                  </Badge>
+                }
+                value="1"
+              />
               <Tab label="אירוע" value="2" />
               <Tab label="זירה" value="3" />
               <Tab label="שיפוט" value="4" />
-              <Tab label="טפסי CV" value="5" />
+              <Tab
+                label={
+                  <Badge badgeContent={openCVForms > 0 ? openCVForms : undefined} color="primary">
+                    {'טפסי CV'}
+                  </Badge>
+                }
+                value="5"
+              />
             </Tabs>
           </Paper>
           <TabPanel value="1">

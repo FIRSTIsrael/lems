@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack } from '@mui/material';
+import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack, Badge } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
@@ -61,6 +61,11 @@ const Page: NextPage<Props> = ({
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [activeTab, setActiveTab] = useState<string>('1');
+
+  const openCVForms = useMemo(
+    () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
+    [cvForms]
+  );
 
   awards.sort((a, b) => {
     const diff = a.index - b.index;
@@ -167,7 +172,14 @@ const Page: NextPage<Props> = ({
               >
                 <Tab label="שיפוט" value="1" />
                 <Tab label="פרסים" value="2" />
-                <Tab label="טפסי CV" value="3" />
+                <Tab
+                  label={
+                    <Badge badgeContent={openCVForms > 0 ? openCVForms : undefined} color="primary">
+                      {'טפסי CV'}
+                    </Badge>
+                  }
+                  value="3"
+                />
               </Tabs>
             </Paper>
             <TabPanel value="1">
