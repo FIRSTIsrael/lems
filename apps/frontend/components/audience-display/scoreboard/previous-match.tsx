@@ -61,12 +61,12 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
   return (
     <Grid container component={Paper} {...props} alignItems="center">
       <Grid xs={3}>
-        <Typography fontWeight={700} fontSize="3rem">
+        <Typography component="h2" fontSize="1.75rem" fontWeight={500}>
           {previousMatch?.number
-            ? `מקצה #${previousMatch?.number}`
+            ? `מקצה קודם (#${previousMatch?.number})`
             : previousMatch?.stage === 'test'
             ? 'מקצה בדיקה'
-            : '-'}
+            : 'מקצה קודם (-)'}
         </Typography>
         <Typography fontWeight={400} fontSize="1.5rem" color="text.secondary">
           הניקוד אינו סופי ויכול להשתנות בכל רגע.
