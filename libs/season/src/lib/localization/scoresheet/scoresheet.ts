@@ -125,7 +125,12 @@ export const localizedScoresheet: LocalizedScoresheet = {
     {
       id: 'm10',
       title: 'מיקסר צלילים',
-      clauses: [{ description: 'מספר הכפתורים המורמים של מיקסר הצלילים:' }],
+      clauses: [
+        {
+          description: 'מספר הכפתורים המורמים של מיקסר הצלילים:',
+          labels: ['0', '1', '2', '3']
+        }
+      ],
       remarks: [
         'כדי לזכות בניקוד, אסור לציוד של הקבוצה לגעת במיקסר הצלילים או בכפתורים בסיום המקצה.'
       ]
@@ -162,8 +167,14 @@ export const localizedScoresheet: LocalizedScoresheet = {
       id: 'm14',
       title: 'הבאת קהל',
       clauses: [
-        { description: 'מספר חברי הקהל הנמצאים לחלוטין בתוך יעד מטרה:' },
-        { description: 'מספר יעדי המטרה בהם יש לפחות חבר קהל אחד לחלוטין בפנים:' }
+        {
+          description: 'מספר חברי הקהל הנמצאים לחלוטין בתוך יעד מטרה:',
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7']
+        },
+        {
+          description: 'מספר יעדי המטרה בהם יש לפחות חבר קהל אחד לחלוטין בפנים:',
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7']
+        }
       ],
       errors: [
         { id: 'm14-e1', description: 'מספר היעדים לא יכול להיות גבוה ממספר חברי הקהל.' },
@@ -173,13 +184,23 @@ export const localizedScoresheet: LocalizedScoresheet = {
     {
       id: 'm15',
       title: 'הבאת מומחים',
-      clauses: [{ description: 'מספר המומחים שנמצאים לפחות חלקית בתוך יעד המטרה שלהם:' }],
+      clauses: [
+        {
+          description: 'מספר המומחים שנמצאים לפחות חלקית בתוך יעד המטרה שלהם:',
+          labels: ['0', '1', '2', '3', '4', '5']
+        }
+      ],
       remarks: ['כל מומחה כולל את הטבעת והבסיס.']
     },
     {
       id: 'pt',
       title: 'אסימוני דיוק',
-      clauses: [{ description: 'מספר אסימוני הדיוק הנותרים הוא:' }]
+      clauses: [
+        {
+          description: 'מספר אסימוני הדיוק הנותרים הוא:',
+          labels: ['0', '1', '2', '3', '4', '5', '6']
+        }
+      ]
     }
   ],
   errors: []

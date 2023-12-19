@@ -106,7 +106,7 @@ export const scoresheet: Scoresheet = {
     },
     {
       id: 'm10',
-      clauses: [{ type: 'number', min: 0, max: 3, default: 0 }],
+      clauses: [{ type: 'enum', options: ['0', '1', '2', '3'], default: '0' }],
       calculation: clause1 => Number(clause1) * 10
     },
     {
@@ -161,8 +161,8 @@ export const scoresheet: Scoresheet = {
     {
       id: 'm14',
       clauses: [
-        { type: 'number', min: 0, max: 7, default: 0 },
-        { type: 'number', min: 0, max: 7, default: 0 }
+        { type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6', '7'], default: '0' },
+        { type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6', '7'], default: '0' }
       ],
       calculation: (clause1, clause2) => {
         let points = 0;
@@ -177,12 +177,12 @@ export const scoresheet: Scoresheet = {
     },
     {
       id: 'm15',
-      clauses: [{ type: 'number', min: 0, max: 5, default: 0 }],
+      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5'], default: '0' }],
       calculation: clause1 => Number(clause1) * 10
     },
     {
       id: 'pt',
-      clauses: [{ type: 'number', min: 0, max: 6, default: 6 }],
+      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6'], default: '6' }],
       calculation: clause1 => {
         switch (Number(clause1)) {
           case 0:
