@@ -1,6 +1,14 @@
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
-import { Paper, Stack, Typography, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import {
+  Paper,
+  Stack,
+  Typography,
+  Button,
+  ToggleButtonGroup,
+  ToggleButton,
+  ThemeProvider
+} from '@mui/material';
 import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
 import PresentSwitch from './present-switch';
@@ -55,6 +63,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
                   והגובה שלהם הוא מתחת ל-305 מ״מ (12 אינץ׳) בזמן ביקורת הציוד שלפני המקצה:{' '}
                 </Typography>
                 <ToggleButtonGroup
+                  color="primary"
                   sx={{ mt: 2 }}
                   exclusive
                   value={inspectionStatus}

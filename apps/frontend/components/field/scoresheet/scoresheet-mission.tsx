@@ -1,5 +1,12 @@
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
-import { Box, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+  Box,
+  Paper,
+  ThemeProvider,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
@@ -19,7 +26,27 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   localizedMission
 }) => {
   return (
-    <>
+    <ThemeProvider
+      theme={outerTheme => ({
+        ...outerTheme,
+        components: {
+          MuiToggleButton: {
+            styleOverrides: {
+              root: {
+                '&.Mui-selected': {
+                  '&:hover': {
+                    color: '#fff',
+                    backgroundColor: '#81c784'
+                  },
+                  color: '#fff',
+                  backgroundColor: '#388e3c'
+                }
+              }
+            }
+          }
+        }
+      })}
+    >
       <Grid xs={10} mt={2} ml={3}>
         <ReactMarkdown>{localizedMission.clauses[clauseIndex].description}</ReactMarkdown>
       </Grid>
@@ -75,7 +102,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           </FastField>
         )}
       </Grid>
-    </>
+    </ThemeProvider>
   );
 };
 
