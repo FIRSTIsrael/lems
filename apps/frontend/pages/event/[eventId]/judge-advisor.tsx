@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack, Badge } from '@mui/material';
+import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Unstable_Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';

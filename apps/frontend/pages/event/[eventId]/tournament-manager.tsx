@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab, Stack, Badge, Box } from '@mui/material';
+import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
   CoreValuesForm,
   Event,
