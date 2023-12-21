@@ -219,13 +219,7 @@ const Page: NextPage<Props> = ({
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <TicketPanel
-              event={event}
-              teams={teams}
-              tickets={tickets}
-              showClosed={true}
-              socket={socket}
-            />
+            <TicketPanel event={event} teams={teams} tickets={tickets} socket={socket} />
           </TabPanel>
           <TabPanel value="2">
             <EventPanel />
