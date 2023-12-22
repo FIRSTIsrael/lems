@@ -53,10 +53,9 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
       );
     }, 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [session.scheduledTime, team.registered]);
 
-  const startSession = (eventId: string, roomId: string, sessionId: string) => {
+  const startSession = (eventId: string, roomId: string, sessionId: string): void => {
     socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
