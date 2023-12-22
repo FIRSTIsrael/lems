@@ -17,13 +17,15 @@ interface MissionClauseProps {
   clauseIndex: number;
   clause: MissionClause;
   localizedMission: LocalizedMission;
+  readOnly: boolean;
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
   missionIndex,
   clauseIndex,
   clause,
-  localizedMission
+  localizedMission,
+  readOnly
 }) => {
   return (
     <ThemeProvider
@@ -58,6 +60,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 exclusive
                 value={field.value}
                 onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                disabled={readOnly}
               >
                 <ToggleButton value={false} sx={{ minWidth: '80px' }}>
                   לא
@@ -78,6 +81,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                   exclusive
                   value={field.value}
                   onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                  disabled={readOnly}
                 >
                   {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
                     <ToggleButton
@@ -101,6 +105,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 {...field}
                 value={field.value}
                 onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                disabled={readOnly}
               />
             )}
           </FastField>
@@ -115,13 +120,15 @@ interface ScoresheetMissionProps {
   mission: Mission;
   src: string;
   errors: Array<{ id: string; description: string } | undefined>;
+  readOnly: boolean;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   missionIndex,
   mission,
   src,
-  errors
+  errors,
+  readOnly
 }) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
@@ -155,6 +162,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               clauseIndex={index}
               clause={clause}
               localizedMission={localizedMission}
+              readOnly={readOnly}
             />
           ))}
           <Grid xs={12} mt={2}>
