@@ -225,7 +225,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         validateOnChange
         validateOnMount
       >
-        {({ values, isValid, errors, validateForm, setValues }) => (
+        {({ values, isValid, errors, validateForm }) => (
           <Form>
             {mode === 'scoring' ? (
               <>
@@ -365,10 +365,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           minWidth: 200
                         }}
                         disabled={values === getDefaultScoresheet()}
-                        onClick={() => {
-                          handleSync(true, getDefaultScoresheet(), 'empty');
-                          setValues(getDefaultScoresheet());
-                        }}
+                        onClick={() => handleSync(true, getDefaultScoresheet(), 'empty')}
                       >
                         איפוס דף הניקוד
                       </Button>
