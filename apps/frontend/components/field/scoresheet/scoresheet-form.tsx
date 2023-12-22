@@ -13,10 +13,13 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  IconButton
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
@@ -60,6 +63,10 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   emptyScoresheetValues
 }) => {
   const router = useRouter();
+  const [readOnly, setReadOnly] = useState<boolean>(
+    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
+  );
+
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
   >([]);
@@ -229,27 +236,29 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
           <Form>
             {mode === 'scoring' ? (
               <>
-                <Stack
-                  spacing={2}
-                  sx={{
-                    maxWidth: '20rem',
-                    mx: 'auto',
-                    my: 4
-                  }}
-                ></Stack>
-
                 <Paper
                   sx={{
                     p: 4,
-                    mb: 2,
+                    my: 2,
                     position: 'sticky',
                     top: '4rem',
                     zIndex: 1
                   }}
                 >
-                  <Typography fontSize="1.5rem" fontWeight={600} align="center">
-                    {values.score} נקודות
-                  </Typography>
+                  <Stack direction="row" spacing={2} justifyContent="center">
+                    <Typography fontSize="1.5rem" fontWeight={600} align="center">
+                      {values.score} נקודות
+                    </Typography>
+                    <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                      <IconButton
+                        onClick={() => setReadOnly(prev => !prev)}
+                        size="small"
+                        sx={{ color: '#000000de' }}
+                      >
+                        {readOnly ? <ModeEditIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </RoleAuthorizer>
+                  </Stack>
                 </Paper>
 
                 <Stack spacing={4}>
@@ -260,14 +269,15 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       src={`/assets/scoresheet/missions/${mission.id}.webp`}
                       mission={mission}
                       errors={missionErrors.filter(e => e?.id.startsWith(mission.id))}
+                      readOnly={readOnly}
                     />
                   ))}
                 </Stack>
 
                 <Stack spacing={2} alignItems="center" my={6}>
-                  {values.signature && values.signature.length > 0 ? (
+                  {readOnly || (values.signature && values.signature.length > 0) ? (
                     <Image
-                      src={values.signature}
+                      src={values.signature || '/assets/scoresheet/blank-signature.svg'}
                       alt={`חתימת קבוצה #${team.number}`}
                       width={400}
                       height={200}
