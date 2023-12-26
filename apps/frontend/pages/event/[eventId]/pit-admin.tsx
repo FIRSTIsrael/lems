@@ -111,7 +111,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
               event={event}
               tickets={tickets}
               teams={teams}
-              showClosed={false}
+              showClosed={true}
               socket={socket}
             />
           </TabPanel>
