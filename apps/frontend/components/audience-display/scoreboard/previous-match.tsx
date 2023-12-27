@@ -13,25 +13,23 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
   return (
     <Stack
       sx={{
-        color:
-          scoresheet.status === 'in-progress'
-            ? yellow[800]
-            : scoresheet.status === 'empty'
-            ? grey[800]
-            : green[800],
+        color: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
+          ? yellow[800]
+          : scoresheet.status === 'empty'
+          ? grey[800]
+          : green[800],
         border: `1px solid ${
-          scoresheet.status === 'in-progress'
+          ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
             ? yellow[300]
             : scoresheet.status === 'empty'
             ? grey[300]
             : green[300]
         }`,
-        backgroundColor:
-          scoresheet.status === 'in-progress'
-            ? yellow[100]
-            : scoresheet.status === 'empty'
-            ? grey[100]
-            : green[100],
+        backgroundColor: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
+          ? yellow[100]
+          : scoresheet.status === 'empty'
+          ? grey[100]
+          : green[100],
         borderRadius: '0.5rem',
         px: 1.5,
         py: 0.5
@@ -63,12 +61,12 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
   return (
     <Grid container component={Paper} {...props} alignItems="center">
       <Grid xs={3}>
-        <Typography fontWeight={700} fontSize="3rem">
+        <Typography component="h2" fontSize="1.75rem" fontWeight={500}>
           {previousMatch?.number
-            ? `מקצה #${previousMatch?.number}`
+            ? `מקצה קודם (#${previousMatch?.number})`
             : previousMatch?.stage === 'test'
             ? 'מקצה בדיקה'
-            : '-'}
+            : 'מקצה קודם (-)'}
         </Typography>
         <Typography fontWeight={400} fontSize="1.5rem" color="text.secondary">
           הניקוד אינו סופי ויכול להשתנות בכל רגע.

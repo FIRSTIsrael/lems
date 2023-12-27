@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
@@ -25,10 +25,11 @@ import EventPanel from '../../../components/tournament-manager/event-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
+import CVPanel from '../../../components/cv-form/cv-panel';
+import BadgeTab from '../../../components/general/badge-tab';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizedRoles } from '../../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import CVPanel from '../../../components/cv-form/cv-panel';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -63,6 +64,13 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
+
+  const openCVForms = useMemo(
+    () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
+    [cvForms]
+  );
+
+  const openTickets = useMemo(() => tickets.filter(t => !t.closed).length, [tickets]);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -203,21 +211,15 @@ const Page: NextPage<Props> = ({
               onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
-              <Tab label="קריאות" value="1" />
+              <BadgeTab label="קריאות" showBadge={openTickets > 0} value="1" />
               <Tab label="אירוע" value="2" />
               <Tab label="זירה" value="3" />
               <Tab label="שיפוט" value="4" />
-              <Tab label="טפסי CV" value="5" />
+              <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="5" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <TicketPanel
-              event={event}
-              teams={teams}
-              tickets={tickets}
-              showClosed={true}
-              socket={socket}
-            />
+            <TicketPanel event={event} teams={teams} tickets={tickets} socket={socket} />
           </TabPanel>
           <TabPanel value="2">
             <EventPanel />

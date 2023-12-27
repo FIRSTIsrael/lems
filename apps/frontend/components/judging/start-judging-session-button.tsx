@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Socket } from 'socket.io-client';
@@ -41,7 +42,20 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
   socket,
   ...props
 }) => {
-  const startSession = (eventId: string, roomId: string, sessionId: string) => {
+  const [isDisabled, setIsDisabled] = useState<boolean>(
+    dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsDisabled(
+        dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered
+      );
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [session.scheduledTime, team.registered]);
+
+  const startSession = (eventId: string, roomId: string, sessionId: string): void => {
     socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
@@ -59,7 +73,7 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
           ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
           : undefined
       }
-      disabled={dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered}
+      disabled={isDisabled}
       sx={{
         color: getButtonColor(session.status),
         ...(session.status !== 'not-started' && {

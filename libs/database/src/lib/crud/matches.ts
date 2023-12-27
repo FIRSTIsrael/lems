@@ -1,4 +1,4 @@
-import { Filter, ObjectId, WithId, AggregationCursor } from 'mongodb';
+import { UpdateFilter, Filter, ObjectId, WithId, AggregationCursor } from 'mongodb';
 import { RobotGameMatch } from '@lems/types';
 import db from '../database';
 
@@ -70,7 +70,7 @@ export const addMatches = (matches: Array<RobotGameMatch>) => {
 
 export const updateMatch = (
   filter: Filter<RobotGameMatch>,
-  newMatch: Partial<RobotGameMatch>,
+  newMatch: Partial<RobotGameMatch> | UpdateFilter<RobotGameMatch>,
   upsert = false
 ) => {
   return db.collection<RobotGameMatch>('matches').updateOne(filter, { $set: newMatch }, { upsert });

@@ -15,10 +15,9 @@ interface TeamRegistrationPanelProps {
 
 const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, event, teams }) => {
   const [team, setTeam] = useState<WithId<Team> | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
 
   const unregisteredTeams = useMemo(
-    () => (teams ? teams.filter((team: WithId<Team>) => !team.registered) : undefined),
+    () => (teams ? teams.filter((team: WithId<Team>) => !team.registered) : []),
     [teams]
   );
 
@@ -28,7 +27,6 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
         if (response.ok) {
           enqueueSnackbar(`קבוצה #${team.number} נרשמה בהצלחה!`, { variant: 'success' });
           setTeam(null);
-          setInputValue('');
         }
       });
   };
@@ -37,14 +35,7 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
     <Paper sx={{ p: 4 }}>
       <Grid container direction="row" alignItems="center" spacing={4}>
         <Grid xs={9}>
-          {unregisteredTeams && (
-            <TeamSelection
-              teams={unregisteredTeams}
-              setTeam={setTeam}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-            />
-          )}
+          <TeamSelection teams={unregisteredTeams} value={team} setTeam={setTeam} />
         </Grid>
         <Grid xs={3}>
           <Button
