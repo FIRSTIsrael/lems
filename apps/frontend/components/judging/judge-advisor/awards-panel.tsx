@@ -159,6 +159,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                         <Button onClick={() => setOpen(false)}>ביטול</Button>
                         <Button
                           onClick={() => {
+                            submitForm();
                             socket.emit(
                               'updatePresentation',
                               event._id.toString(),

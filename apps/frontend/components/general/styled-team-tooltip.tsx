@@ -9,7 +9,7 @@ interface StyledTeamTooltipProps {
 
 const StyledTeamTooltip: React.FC<StyledTeamTooltipProps> = ({ team }) => {
   return (
-    <Tooltip title={(!team.registered && '🚫 ') + localizeTeam(team)} arrow>
+    <Tooltip title={(!team.registered ? '🚫 ' : '') + localizeTeam(team)} arrow>
       <span style={{ color: !team.registered ? '#f57c00' : '' }}>#{team.number}</span>
     </Tooltip>
   );

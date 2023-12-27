@@ -66,8 +66,8 @@ const Page: NextPage<Props> = ({
       matches
         .slice()
         .reverse()
-        .find(m => m.status === 'completed' && m.stage !== 'test'),
-    [matches]
+        .find(m => m.status === 'completed' && m.stage === eventState.currentStage),
+    [matches, eventState.currentStage]
   );
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {

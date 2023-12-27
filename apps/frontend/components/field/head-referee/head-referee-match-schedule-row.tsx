@@ -11,7 +11,7 @@ import {
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 import BooleanIcon from '../../general/boolean-icon';
-import EditScoresheetButton from '.././headReferee/edit-scoresheet-button';
+import EditScoresheetButton from './edit-scoresheet-button';
 
 interface HeadRefereeMatchScheduleRowProps {
   event: WithId<Event>;
@@ -29,7 +29,12 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
   scoresheets
 }) => {
   return (
-    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <TableRow
+      sx={{
+        backgroundColor: match._id === eventState.activeMatch ? '#e6f7e7' : undefined,
+        '&:last-child td, &:last-child th': { border: 0 }
+      }}
+    >
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
       <TableCell align="center">
@@ -58,6 +63,8 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                     <EditScoresheetButton
                       active={!!participant.team?.registered}
                       status={scoresheet.status}
+                      score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
+                      gp={scoresheet.data?.gp?.value}
                       href={`/event/${event._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
                     >
                       #{participant.team?.number}

@@ -351,16 +351,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                         router.push(`/event/${event._id}/${user.role}`)
                       );
                     }}
-                    sx={{
-                      minWidth: 120,
-                      fontSize: '1rem',
-                      fontWeight: 500,
-                      color: '#fff',
-                      backgroundColor: purple[500],
-                      '&:hover': {
-                        backgroundColor: purple[700]
-                      }
-                    }}
+                    sx={actionButtonStyle}
                     disabled={!isValid}
                   >
                     נעילה ושליחה לשופט מוביל
@@ -396,9 +387,6 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 >
                   איפוס המחוון
                 </Button>
-              </RoleAuthorizer>
-
-              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
                 {rubric.status === 'waiting-for-review' && (
                   <Button
                     variant="contained"
@@ -411,7 +399,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     פתיחת גישה לשופטי החדר
                   </Button>
                 )}
+              </RoleAuthorizer>
 
+              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
                 {rubric.status === 'ready' && (
                   <Button
                     variant="contained"
