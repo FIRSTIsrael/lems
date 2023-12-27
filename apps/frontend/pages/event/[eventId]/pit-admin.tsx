@@ -107,13 +107,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
             <TicketCreationPanel socket={socket} event={event} teams={teams} />
           </TabPanel>
           <TabPanel value="3">
-            <TicketPanel
-              event={event}
-              tickets={tickets}
-              teams={teams}
-              showClosed={true}
-              socket={socket}
-            />
+            <TicketPanel event={event} tickets={tickets} teams={teams} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>

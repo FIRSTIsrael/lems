@@ -144,14 +144,15 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
 
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
-  await db.updateMatches(
+  await db.updateMatch(
     {
       eventId: new ObjectId(eventId),
       _id: new ObjectId(matchId)
     },
     {
       status: 'not-started',
-      startTime: undefined
+      startTime: undefined,
+      ['participants.$[].ready']: false
     }
   );
 

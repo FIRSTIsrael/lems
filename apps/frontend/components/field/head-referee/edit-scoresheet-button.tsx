@@ -1,4 +1,4 @@
-import { Button, SxProps, Theme, Tooltip } from '@mui/material';
+import { Badge, Button, SxProps, Theme, Tooltip } from '@mui/material';
 import NextLink from 'next/link';
 
 const mapStatus: {
@@ -92,11 +92,13 @@ interface EditScoresheetButtonProps {
   href?: string;
   status: string;
   active: boolean;
+  score?: number;
+  gp?: number;
   children: React.ReactNode;
 }
 
 const EditScoresheetButton: React.FC<EditScoresheetButtonProps> = ({ ...props }) => {
-  const { href, status, active, children } = props;
+  const { href, status, active, score, gp, children } = props;
   const { title, sx } = mapStatus[status];
   return (
     <Wrapper href={href} {...props}>
@@ -113,9 +115,16 @@ const EditScoresheetButton: React.FC<EditScoresheetButtonProps> = ({ ...props })
         }}
       >
         <span>
-          <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
-            {children}
-          </Button>
+          <Badge
+            color={gp === 4 ? 'primary' : gp === 2 ? 'warning' : undefined}
+            sx={{ '& .MuiBadge-badge': { backgroundColor: gp !== 4 && gp !== 2 ? '#ccc' : '' } }}
+            badgeContent={score}
+            max={1000}
+          >
+            <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
+              {children}
+            </Button>
+          </Badge>
         </span>
       </Tooltip>
     </Wrapper>

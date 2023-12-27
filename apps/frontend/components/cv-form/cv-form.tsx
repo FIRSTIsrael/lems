@@ -1,6 +1,5 @@
 import { Form, Formik, FormikValues } from 'formik';
 import { Socket } from 'socket.io-client';
-import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -33,7 +32,6 @@ import { cvFormSchema } from '@lems/season';
 import FormikTextField from '../general/forms/formik-text-field';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
-import { RoleAuthorizer } from '../role-authorizer';
 
 interface CVFormProps {
   user: WithId<SafeUser>;
@@ -52,7 +50,6 @@ const CVForm: React.FC<CVFormProps> = ({
   readOnly = false,
   onSubmit
 }) => {
-  const router = useRouter();
   const getCvForm = (cvForm: WithId<CoreValuesForm>) => {
     const { _id, severity, ...rest } = cvForm;
     return { ...rest };
@@ -129,7 +126,10 @@ const CVForm: React.FC<CVFormProps> = ({
             teamOrStudent: { fields: Array<boolean>; other?: string };
             anyoneElse: { fields: Array<boolean>; other?: string };
           };
-          return category.teamOrStudent.fields.concat(category.anyoneElse.fields);
+          return category.teamOrStudent.fields
+            .concat(category.anyoneElse.fields)
+            .concat([!!category.teamOrStudent.other])
+            .concat([!!category.anyoneElse.other]);
         })
         .some((x: boolean) => x)
     ) {
@@ -261,21 +261,25 @@ const CVForm: React.FC<CVFormProps> = ({
                   InputProps={{ readOnly }}
                 />
               </Stack>
-              <RoleAuthorizer user={user} allowedRoles={['judge-advisor']}>
-                <Divider />
-                <FormikTextField
-                  minRows={3}
-                  multiline
-                  name="actionTaken"
-                  label="פעולות שננקטו"
-                  {...(initialCvForm?.actionTaken ? {} : { color: 'warning', autoFocus: true })}
-                />
-                <FormikTextField
-                  name="actionTakenBy"
-                  label="טופל על ידי"
-                  {...(initialCvForm?.actionTakenBy ? {} : { color: 'warning' })}
-                />
-              </RoleAuthorizer>
+              <Divider />
+              <FormikTextField
+                minRows={3}
+                multiline
+                name="actionTaken"
+                label="פעולות שננקטו"
+                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                {...(initialCvForm?.actionTaken || user.role === 'tournament-manager'
+                  ? {}
+                  : { color: 'warning', autoFocus: true })}
+              />
+              <FormikTextField
+                name="actionTakenBy"
+                label="טופל על ידי"
+                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                {...(initialCvForm?.actionTakenBy || user.role === 'tournament-manager'
+                  ? {}
+                  : { color: 'warning' })}
+              />
             </Stack>
           </Paper>
           <Box display="flex" justifyContent="center">

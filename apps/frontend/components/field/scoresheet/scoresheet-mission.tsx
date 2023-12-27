@@ -1,5 +1,12 @@
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
-import { Box, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+  Box,
+  Paper,
+  ThemeProvider,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
@@ -10,16 +17,38 @@ interface MissionClauseProps {
   clauseIndex: number;
   clause: MissionClause;
   localizedMission: LocalizedMission;
+  readOnly: boolean;
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
   missionIndex,
   clauseIndex,
   clause,
-  localizedMission
+  localizedMission,
+  readOnly
 }) => {
   return (
-    <>
+    <ThemeProvider
+      theme={outerTheme => ({
+        ...outerTheme,
+        components: {
+          MuiToggleButton: {
+            styleOverrides: {
+              root: {
+                '&.Mui-selected': {
+                  '&:hover': {
+                    color: '#fff',
+                    backgroundColor: '#81c784'
+                  },
+                  color: '#fff',
+                  backgroundColor: '#388e3c'
+                }
+              }
+            }
+          }
+        }
+      })}
+    >
       <Grid xs={10} mt={2} ml={3}>
         <ReactMarkdown>{localizedMission.clauses[clauseIndex].description}</ReactMarkdown>
       </Grid>
@@ -31,6 +60,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 exclusive
                 value={field.value}
                 onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                disabled={readOnly}
               >
                 <ToggleButton value={false} sx={{ minWidth: '80px' }}>
                   לא
@@ -43,23 +73,28 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           </Field>
         ) : clause.type === 'enum' ? (
           <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
-            {({ field, form }: FieldProps) => (
-              <ToggleButtonGroup
-                exclusive
-                value={field.value}
-                onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
-              >
-                {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
-                  <ToggleButton
-                    key={label}
-                    value={clause.options ? clause.options[index] : ''}
-                    sx={{ minWidth: '80px' }}
-                  >
-                    {label}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            )}
+            {({ field, form }: FieldProps) => {
+              const memberCount = localizedMission.clauses[clauseIndex].labels?.length || 0;
+              const buttonMinWidth = `${Math.min(80, 550 / memberCount)}px`;
+              return (
+                <ToggleButtonGroup
+                  exclusive
+                  value={field.value}
+                  onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                  disabled={readOnly}
+                >
+                  {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
+                    <ToggleButton
+                      key={label}
+                      value={clause.options ? clause.options[index] : ''}
+                      sx={{ minWidth: buttonMinWidth }}
+                    >
+                      {label}
+                    </ToggleButton>
+                  ))}
+                </ToggleButtonGroup>
+              );
+            }}
           </Field>
         ) : (
           <FastField name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
@@ -70,12 +105,13 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 {...field}
                 value={field.value}
                 onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                disabled={readOnly}
               />
             )}
           </FastField>
         )}
       </Grid>
-    </>
+    </ThemeProvider>
   );
 };
 
@@ -84,13 +120,15 @@ interface ScoresheetMissionProps {
   mission: Mission;
   src: string;
   errors: Array<{ id: string; description: string } | undefined>;
+  readOnly: boolean;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   missionIndex,
   mission,
   src,
-  errors
+  errors,
+  readOnly
 }) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
@@ -124,6 +162,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               clauseIndex={index}
               clause={clause}
               localizedMission={localizedMission}
+              readOnly={readOnly}
             />
           ))}
           <Grid xs={12} mt={2}>

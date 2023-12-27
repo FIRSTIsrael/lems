@@ -6,26 +6,19 @@ import { localizeTeam } from '../../localization/teams';
 
 interface TeamSelectionProps {
   teams: WithId<Team>[] | undefined;
+  value: WithId<Team> | null;
   setTeam: (team: WithId<Team> | null) => void;
-  inputValue: string;
-  setInputValue: (newValue: string) => void;
 }
 
-const TeamSelection: React.FC<TeamSelectionProps> = ({
-  teams,
-  setTeam,
-  inputValue,
-  setInputValue
-}) => {
+const TeamSelection: React.FC<TeamSelectionProps> = ({ teams, value, setTeam }) => {
   return (
     <Autocomplete
       blurOnSelect
       options={teams ? teams : []}
-      getOptionLabel={team => (typeof team === 'string' ? team : localizeTeam(team))}
+      getOptionLabel={team => (team ? localizeTeam(team) : '')}
       inputMode="search"
-      inputValue={inputValue}
-      onInputChange={(_e, newInputValue) => setInputValue(newInputValue)}
-      onChange={(_e, value) => typeof value !== 'string' && setTeam(value)}
+      value={value}
+      onChange={(_e, value) => setTeam(typeof value !== 'string' ? value : null)}
       renderInput={params => <TextField {...params} label="קבוצה" />}
     />
   );

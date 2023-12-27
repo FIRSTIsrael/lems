@@ -37,7 +37,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
           </Typography>
           <Appear>
             <Typography fontSize="4rem" fontWeight={700}>
-              {isTeamAward ? `#${winner.number}, ${winner.name}` : winner}
+              {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
             </Typography>
             {isTeamAward && (
               <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
