@@ -7,4 +7,4 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    target-branch: 'staging'
+    target-branch: 'main'
