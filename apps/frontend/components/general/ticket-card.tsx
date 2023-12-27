@@ -31,7 +31,7 @@ interface TicketCardProps extends PaperProps {
 
 const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [reasonForClose, setReasonForClose] = useState<string | undefined>(undefined);
+  const [reasonForClose, setReasonForClose] = useState<string | undefined>(ticket.reasonForClose);
 
   return (
     <>
