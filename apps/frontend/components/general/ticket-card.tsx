@@ -31,7 +31,7 @@ interface TicketCardProps extends PaperProps {
 
 const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [reasonForClose, setReasonForClose] = useState<string>('');
+  const [reasonForClose, setReasonForClose] = useState<string | undefined>(undefined);
 
   return (
     <>
@@ -57,12 +57,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         >
           {ticket.content}
         </Typography>
-        {(ticket.closed && ticket.reasonForClose) && (
+        {ticket.closed ? (ticket.reasonForClose && (
           <Typography color="text.secondary" fontSize="0.8rem">
             <b>סיבת הסגירה:</b> {ticket.reasonForClose}
           </Typography>
-        )}
-        {!ticket.closed && (
+        )) : (
           <Box display="flex" justifyContent="flex-end">
             <IconButton onClick={() => setOpen(true)}>
               <TaskIcon />
@@ -81,7 +80,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
           <DialogContentText id="alert-dialog-description">
             שימו לב! סגירת קריאה היא סופית ולא ניתן לבטל פעולה זו. האם אתם בטוחים?
           </DialogContentText>
-          <TextField sx={{mt: 2}} label="סיבת סגירה" fullWidth onChange={e => setReasonForClose(e.target.value)} value={reasonForClose} />
+          <TextField sx={{mt: 2}} label="סיבת הסגירה" fullWidth onChange={e => setReasonForClose(e.target.value)} value={reasonForClose} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
