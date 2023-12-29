@@ -6,6 +6,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import theme from '../lib/theme';
 import { createEmotionCache } from '../lib/emotion-cache';
 import { RouteAuthorizer } from '../components/route-authorizer';
+import SnackbarCloseButton from '../components/general/snackbar-close-button';
 import { TimeSyncProvider } from '../lib/timesync';
 
 const clientSideEmotionCache = createEmotionCache();
@@ -24,7 +25,11 @@ function CustomApp({
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <SnackbarProvider maxSnack={3} TransitionComponent={Grow}>
+        <SnackbarProvider
+          maxSnack={3}
+          TransitionComponent={Grow}
+          action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
+        >
           <TimeSyncProvider>
             <main className="app">
               <RouteAuthorizer>
