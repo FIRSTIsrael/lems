@@ -23,8 +23,6 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
     'robot-design': []
   });
 
-  useEffect(() => console.log(unscoredTeams), [unscoredTeams]);
-
   useEffect(() => {
     apiFetch(`/api/events/${event._id}/insights/validate-csv-readiness`).then(res =>
       res.json().then(data => {
