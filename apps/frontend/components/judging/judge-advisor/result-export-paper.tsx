@@ -23,6 +23,8 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
     'robot-design': []
   });
 
+  useEffect(() => console.log(unscoredTeams), [unscoredTeams]);
+
   useEffect(() => {
     apiFetch(`/api/events/${event._id}/insights/validate-csv-readiness`).then(res =>
       res.json().then(data => {
@@ -72,7 +74,6 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
                   ייצוא מחווני {localizedJudgingCategory[category].name}
                 </ExportAction>
               </Grid>{' '}
-              {/* 
               <Grid xs={6}>
                 <Box
                   sx={{
@@ -95,12 +96,15 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
                   </Avatar>
                   <Typography variant="h2" fontSize="1.25rem">
                     <Typography>
-                      {teams.length > 5 ? 'יותר מ-5 קבוצות' : teams.map(t => t.number).join(', ')}
+                      {unscoredTeams[category]
+                        ? unscoredTeams[category].length > 5
+                          ? 'יותר מ-5 קבוצות'
+                          : unscoredTeams[category]?.map(t => t.number).join(', ')
+                        : 'כל המחוונים מוכנים'}
                     </Typography>
                   </Typography>
                 </Box>
               </Grid>
-              */}
             </React.Fragment>
           );
         })}
