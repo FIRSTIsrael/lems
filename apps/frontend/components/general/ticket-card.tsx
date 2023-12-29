@@ -12,7 +12,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  TextField
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import TaskIcon from '@mui/icons-material/Task';
@@ -30,6 +31,7 @@ interface TicketCardProps extends PaperProps {
 
 const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [reasonForClose, setReasonForClose] = useState<string | undefined>(ticket.reasonForClose);
 
   return (
     <>
@@ -55,7 +57,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         >
           {ticket.content}
         </Typography>
-        {!ticket.closed && (
+        {ticket.closed ? (ticket.reasonForClose && (
+          <Typography color="text.secondary" fontSize="0.8rem">
+            <b>סיבת הסגירה:</b> {ticket.reasonForClose}
+          </Typography>
+        )) : (
           <Box display="flex" justifyContent="flex-end">
             <IconButton onClick={() => setOpen(true)}>
               <TaskIcon />
@@ -74,6 +80,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
           <DialogContentText id="alert-dialog-description">
             שימו לב! סגירת קריאה היא סופית ולא ניתן לבטל פעולה זו. האם אתם בטוחים?
           </DialogContentText>
+          <TextField sx={{mt: 2}} label="סיבת הסגירה" fullWidth onChange={e => setReasonForClose(e.target.value)} value={reasonForClose} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
@@ -86,7 +93,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
                 event._id.toString(),
                 team._id.toString(),
                 ticket._id.toString(),
-                { closed: new Date() },
+                { closed: new Date(), reasonForClose },
                 response => {
                   if (response.ok) {
                     enqueueSnackbar('הקריאה נסגרה בהצלחה!', { variant: 'success' });
