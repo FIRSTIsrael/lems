@@ -129,7 +129,11 @@ const Page: NextPage<Props> = ({
         name: 'cvFormCreated',
         handler: cvForm => {
           handleCvFormCreated(cvForm);
-          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', { variant: 'warning' });
+          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', {
+            variant: 'warning',
+            persist: true,
+            preventDuplicate: true
+          });
         }
       },
       {
