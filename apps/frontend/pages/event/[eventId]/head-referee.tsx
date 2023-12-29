@@ -84,7 +84,11 @@ const Page: NextPage<Props> = ({
   const handleScoresheetStatusChanged = (scoresheet: WithId<Scoresheet>) => {
     updateScoresheet(scoresheet);
     if (scoresheet.status === 'waiting-for-head-ref')
-      enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, { variant: 'warning' });
+      enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, {
+        variant: 'warning',
+        persist: true,
+        preventDuplicate: true
+      });
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {

@@ -158,7 +158,11 @@ const Page: NextPage<Props> = ({
         name: 'cvFormCreated',
         handler: cvForm => {
           handleCvFormCreated(cvForm);
-          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', { variant: 'warning' });
+          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', {
+            variant: 'warning',
+            persist: true,
+            preventDuplicate: true
+          });
         }
       },
       {
@@ -172,7 +176,11 @@ const Page: NextPage<Props> = ({
         name: 'ticketCreated',
         handler: ticket => {
           handleTicketCreated(ticket);
-          enqueueSnackbar('נוצרה קריאה חדשה!', { variant: 'warning' });
+          enqueueSnackbar('נוצרה קריאה חדשה!', {
+            variant: 'warning',
+            persist: true,
+            preventDuplicate: true
+          });
         }
       },
       {
