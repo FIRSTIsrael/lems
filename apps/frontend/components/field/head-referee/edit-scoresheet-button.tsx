@@ -92,28 +92,18 @@ interface EditScoresheetButtonProps {
   href?: string;
   status: string;
   active: boolean;
+  tooltip?: string;
   score?: number;
   gp?: number;
   children: React.ReactNode;
 }
 
 const EditScoresheetButton: React.FC<EditScoresheetButtonProps> = ({ ...props }) => {
-  const { href, status, active, score, gp, children } = props;
+  const { href, status, active, tooltip, score, gp, children } = props;
   const { title, sx } = mapStatus[status];
   return (
     <Wrapper href={href} {...props}>
-      <Tooltip
-        title={active ? title : 'הקבוצה טרם הגיעה לאירוע'}
-        arrow
-        enterDelay={1000}
-        componentsProps={{
-          tooltip: {
-            sx: {
-              fontSize: '0.75rem'
-            }
-          }
-        }}
-      >
+      <Tooltip title={tooltip ? tooltip : title} arrow enterDelay={1000}>
         <span>
           <Badge
             color={gp === 4 ? 'primary' : gp === 2 ? 'warning' : undefined}

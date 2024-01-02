@@ -12,6 +12,7 @@ import {
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 import BooleanIcon from '../../general/boolean-icon';
 import EditScoresheetButton from './edit-scoresheet-button';
+import { localizeTeam } from '../../../localization/teams';
 
 interface HeadRefereeMatchScheduleRowProps {
   event: WithId<Event>;
@@ -66,6 +67,12 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                       score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
                       gp={scoresheet.data?.gp?.value}
                       href={`/event/${event._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
+                      tooltip={
+                        participant.team
+                          ? (participant.team.registered ? '' : '🚫') +
+                            localizeTeam(participant.team)
+                          : undefined
+                      }
                     >
                       #{participant.team?.number}
                     </EditScoresheetButton>
