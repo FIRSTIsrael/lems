@@ -2,15 +2,17 @@ import { Fragment, forwardRef } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
-import { Event, Award } from '@lems/types';
+import { Event, Award, Team } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerSlide from './award-winner-slide';
+import AdvancingTeamsSlide from './advancing-teams-slide';
 
 interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
+  teams: Array<WithId<Team>>;
   awards: Array<WithId<Award>>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
@@ -21,6 +23,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
   (
     {
       event,
+      teams,
       awards,
       initialState = {
         slideIndex: 0,
@@ -33,6 +36,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     ref
   ) => {
     const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
+    const advancingTeams = teams.filter(t => t.advancing);
 
     return (
       <Box {...props}>
@@ -72,6 +76,9 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
               </Fragment>
             );
           })}
+          {advancingTeams.length > 0 && (
+            <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
+          )}
           <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בתחרות הארצית!" />
         </Deck>
       </Box>
