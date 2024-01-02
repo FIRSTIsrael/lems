@@ -10,10 +10,12 @@ import { useTime } from '../../../hooks/use-time';
 
 interface ScoreboardCurrentMatchProps extends Grid2Props {
   activeMatch: WithId<RobotGameMatch> | undefined;
+  showTimer?: boolean;
 }
 
 const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
   activeMatch,
+  showTimer = true,
   ...props
 }) => {
   const currentTime = useTime({ interval: 100 });
@@ -44,11 +46,20 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
           alignItems="center"
           direction="row"
         >
-          <Grid xs={3}>
-            <Typography component="h2" fontSize="1.75rem" fontWeight={500}>
+          <Grid xs={showTimer ? 3 : 12}>
+            <Typography
+              component="h2"
+              fontSize="1.75rem"
+              fontWeight={500}
+              textAlign={showTimer ? 'left' : 'center'}
+            >
               מקצה נוכחי
             </Typography>
-            <Typography fontSize="2.5rem" fontWeight={700}>
+            <Typography
+              fontSize="2.5rem"
+              fontWeight={700}
+              textAlign={showTimer ? 'left' : 'center'}
+            >
               {activeMatch?.number
                 ? `מקצה #${activeMatch?.number}`
                 : activeMatch?.stage === 'test'
@@ -56,18 +67,20 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
                 : '-'}
             </Typography>
           </Grid>
-          <Grid xs={9} display="flex" justifyContent="center">
-            {activeMatch?.startTime && (
-              <Countdown
-                targetDate={matchEnd.toDate()}
-                expiredText="00:00"
-                fontFamily={'Roboto Mono'}
-                fontSize="4rem"
-                fontWeight={700}
-                alignSelf="center"
-              />
-            )}
-          </Grid>
+          {showTimer && (
+            <Grid xs={9} display="flex" justifyContent="center">
+              {activeMatch?.startTime && (
+                <Countdown
+                  targetDate={matchEnd.toDate()}
+                  expiredText="00:00"
+                  fontFamily={'Roboto Mono'}
+                  fontSize="4rem"
+                  fontWeight={700}
+                  alignSelf="center"
+                />
+              )}
+            </Grid>
+          )}
         </Grid>
         <Grid xs={3} position="relative">
           <Image
@@ -78,23 +91,25 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
           />
         </Grid>
       </Grid>
-      <Grid container justifyContent="center">
-        <Grid xs={6}>
-          {activeMatch?.startTime && (
-            <LinearProgress
-              variant="determinate"
-              value={percentLeft}
-              color={percentLeft <= 20 ? 'error' : 'primary'}
-              sx={{
-                height: 16,
-                borderBottomLeftRadius: 8,
-                borderBottomRightRadius: 8,
-                mt: -3
-              }}
-            />
-          )}
+      {showTimer && (
+        <Grid container justifyContent="center">
+          <Grid xs={6}>
+            {activeMatch?.startTime && (
+              <LinearProgress
+                variant="determinate"
+                value={percentLeft}
+                color={percentLeft <= 20 ? 'error' : 'primary'}
+                sx={{
+                  height: 16,
+                  borderBottomLeftRadius: 8,
+                  borderBottomRightRadius: 8,
+                  mt: -3
+                }}
+              />
+            )}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 };

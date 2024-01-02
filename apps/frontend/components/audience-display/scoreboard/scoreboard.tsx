@@ -23,6 +23,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   eventState
 }) => {
   const showCurrentMatch = true;
+  const showCurrentMatchTimer = true;
   const showSponsorsRow = false;
   const showPreviousMatch = true;
 
@@ -41,7 +42,9 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         backgroundSize: 'cover'
       }}
     >
-      {showCurrentMatch && <ScoreboardCurrentMatch activeMatch={activeMatch} />}
+      {showCurrentMatch && (
+        <ScoreboardCurrentMatch activeMatch={activeMatch} showTimer={showCurrentMatchTimer} />
+      )}
       {showSponsorsRow && <ScoreboardSponsorsRow />}
       {showPreviousMatch && (
         <ScoreboardPreviousMatch
