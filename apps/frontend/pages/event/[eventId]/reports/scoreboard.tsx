@@ -86,43 +86,41 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
       >
-        <TableContainer
-          component={Paper}
+        <Paper
           sx={{
-            fontWeight: 700,
+            py: 4,
+            px: 2,
+            textAlign: 'center',
             mt: 4,
           }}
         >
-          <Table
-            stickyHeader
-            sx={{
-              '.MuiTableRow-root:nth-child(odd)': { backgroundColor: '#f9f9f9' }
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ font: 'inherit', textAlign: 'center' }}>דירוג</TableCell>
-                <TableCell sx={{ font: 'inherit' }}>קבוצה</TableCell>
-                {rounds.map(r => (
-                  <TableCell key={r.stage + r.round + 'name'} align="center" sx={{ font: 'inherit' }}>
-                    {localizedMatchStage[r.stage]} #{r.round}
-                  </TableCell>
-                ))}
-                {eventState.currentStage !== 'practice' && (
-                  <TableCell align="center" sx={{ font: 'inherit' }}>
-                    ניקוד גבוה ביותר
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <ScoreboardScoresBody
-              scoresheets={scoresheets}
-              rounds={rounds}
-              currentStage={eventState.currentStage}
-              maxScores={maxScores}
-            />
-          </Table>
-        </TableContainer>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>דירוג</TableCell>
+                  <TableCell>קבוצה</TableCell>
+                  {rounds.map(r => (
+                    <TableCell key={r.stage + r.round + 'name'}>
+                      {localizedMatchStage[r.stage]} #{r.round}
+                    </TableCell>
+                  ))}
+                  {eventState.currentStage !== 'practice' && (
+                    <TableCell>
+                      ניקוד גבוה ביותר
+                    </TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <ScoreboardScoresBody
+                scoresheets={scoresheets}
+                rounds={rounds}
+                currentStage={eventState.currentStage}
+                maxScores={maxScores}
+              />
+            </Table>
+          </TableContainer>
+        </Paper>
       </Layout>
     </RoleAuthorizer>
   );
@@ -147,15 +145,10 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
       {maxScores.map(({ team, score: maxScore }, index) => {
         return (
           <TableRow key={team._id.toString()}>
-            <TableCell sx={{ font: 'inherit', textAlign: 'center' }}>
+            <TableCell>
               {index + 1}
             </TableCell>
-            <TableCell
-              sx={{
-                font: 'inherit',
-                color: !team.registered ? '#aaa' : undefined
-              }}
-            >
+            <TableCell>
               {localizeTeam(team, false)}
             </TableCell>
             {rounds.map(r => {
@@ -165,8 +158,6 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
               return (
                 <TableCell
                   key={r.stage + r.round + 'points'}
-                  align="center"
-                  sx={{ font: 'inherit', fontWeight: 400 }}
                 >
                   {scoresheet?.data && scoresheet.status === 'ready' ? (
                     scoresheet.data.score
@@ -177,7 +168,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
               );
             })}
             {currentStage !== 'practice' && (
-              <TableCell align="center" sx={{ font: 'inherit' }}>
+              <TableCell>
                 {maxScore || <RemoveIcon />}
               </TableCell>
             )}
