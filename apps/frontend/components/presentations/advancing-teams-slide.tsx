@@ -30,7 +30,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
         >
           {teams.map(team => (
             <Appear key={team._id.toString()}>
-              <Typography fontSize="4rem" fontWeight={700}>
+              <Typography fontSize="2.25rem" fontWeight={500}>
                 {localizeTeam(team)}
               </Typography>
             </Appear>
