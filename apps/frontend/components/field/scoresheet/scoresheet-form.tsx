@@ -66,7 +66,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [readOnly, setReadOnly] = useState<boolean>(
     user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
   );
-
   const [missionErrors, setMissionErrors] = useState<
     Array<{ id: string; description: string } | undefined>
   >([]);
@@ -103,6 +102,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       const clauses = values.missions[missionIndex].clauses;
       try {
         score += mission.calculation(...clauses.map((clause: MissionClause) => clause.value));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error instanceof ScoresheetError) {
           const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
@@ -150,6 +150,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   };
 
   const validateScoresheet = (formValues: FormikValues) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const errors: any = {};
 
     const { score, scoringErrors } = calculateScore(formValues);
@@ -159,11 +160,11 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       if (e) errors.scoring[e.id] = e.description;
     });
 
-    formValues.missions.forEach((m: Mission, missionIndex: number) => {
-      m.clauses.forEach((c: MissionClause, clauseIndex: number) => {
+    formValues.missions.forEach((m: Mission) => {
+      m.clauses.forEach((c: MissionClause) => {
         if (c.value === null) {
-          if (!errors[missionIndex]) errors[missionIndex] = { clauses: [] };
-          errors[missionIndex].clauses[clauseIndex] = 'שדה חובה';
+          if (!errors['incomplete']) errors['incomplete'] = new Set<string>();
+          errors.incomplete.add(m.id);
         }
       });
     });
@@ -179,6 +180,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     SEASON_SCORESHEET.validators.forEach(validator => {
       try {
         validator(toValidate);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error instanceof ScoresheetError) {
           const description =
@@ -232,191 +234,202 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         validateOnChange
         validateOnMount
       >
-        {({ values, isValid, errors, validateForm }) => (
-          <Form>
-            {mode === 'scoring' ? (
-              <>
-                <Paper
-                  sx={{
-                    p: 4,
-                    my: 2,
-                    position: 'sticky',
-                    top: '4rem',
-                    zIndex: 1
-                  }}
-                >
-                  <Stack direction="row" spacing={2} justifyContent="center">
-                    <Typography fontSize="1.5rem" fontWeight={600} align="center">
-                      {values.score} נקודות
-                    </Typography>
-                    <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-                      <IconButton
-                        onClick={() => setReadOnly(prev => !prev)}
-                        size="small"
-                        sx={{ color: '#000000de' }}
-                      >
-                        {readOnly ? <ModeEditIcon /> : <VisibilityIcon />}
-                      </IconButton>
-                    </RoleAuthorizer>
+        {({ values, isValid, validateForm, ...formikProps }) => {
+          const errors = formikProps.errors as any;
+          console.log(errors);
+
+          return (
+            <Form>
+              {mode === 'scoring' ? (
+                <>
+                  <Paper
+                    sx={{
+                      p: 4,
+                      my: 2,
+                      position: 'sticky',
+                      top: '4rem',
+                      zIndex: 1
+                    }}
+                  >
+                    <Stack direction="row" spacing={2} justifyContent="center">
+                      <Typography fontSize="1.5rem" fontWeight={600} align="center">
+                        {values.score} נקודות
+                      </Typography>
+                      <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                        <IconButton
+                          onClick={() => setReadOnly(prev => !prev)}
+                          size="small"
+                          sx={{ color: '#000000de' }}
+                        >
+                          {readOnly ? <ModeEditIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </RoleAuthorizer>
+                    </Stack>
+                  </Paper>
+
+                  <Stack spacing={4}>
+                    {SEASON_SCORESHEET.missions.map((mission, index) => (
+                      <ScoresheetMission
+                        key={mission.id}
+                        missionIndex={index}
+                        src={`/assets/scoresheet/missions/${mission.id}.webp`}
+                        mission={mission}
+                        errors={missionErrors.filter(e => e?.id.startsWith(mission.id))}
+                        readOnly={readOnly}
+                      />
+                    ))}
                   </Stack>
-                </Paper>
 
-                <Stack spacing={4}>
-                  {SEASON_SCORESHEET.missions.map((mission, index) => (
-                    <ScoresheetMission
-                      key={mission.id}
-                      missionIndex={index}
-                      src={`/assets/scoresheet/missions/${mission.id}.webp`}
-                      mission={mission}
-                      errors={missionErrors.filter(e => e?.id.startsWith(mission.id))}
-                      readOnly={readOnly}
-                    />
-                  ))}
-                </Stack>
-
-                <Stack spacing={2} alignItems="center" my={6}>
-                  {readOnly || (values.signature && values.signature.length > 0) ? (
-                    <Image
-                      src={values.signature || '/assets/scoresheet/blank-signature.svg'}
-                      alt={`חתימת קבוצה #${team.number}`}
-                      width={400}
-                      height={200}
-                      style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
-                    />
-                  ) : (
-                    <SignatureCanvas
-                      canvasProps={{
-                        width: 400,
-                        height: 200,
-                        style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
-                      }}
-                      backgroundColor="#fff"
-                      ref={ref => {
-                        signatureRef.current = ref;
-                      }}
-                      onEnd={() => validateForm()}
-                    />
-                  )}
-                  {!isValid && (
-                    <Alert
-                      severity="warning"
-                      sx={{
-                        fontWeight: 500,
-                        mb: 4,
-                        maxWidth: '20rem',
-                        mx: 'auto',
-                        border: '1px solid #ff9800',
-                        transition: theme =>
-                          theme.transitions.create(['background-color'], {
-                            duration: theme.transitions.duration.standard
-                          }),
-                        '&:hover': {
-                          cursor: 'pointer',
-                          backgroundColor: '#ffe3a6'
+                  <Stack spacing={2} alignItems="center" my={6}>
+                    {readOnly || (values.signature && values.signature.length > 0) ? (
+                      <Image
+                        src={values.signature || '/assets/scoresheet/blank-signature.svg'}
+                        alt={`חתימת קבוצה #${team.number}`}
+                        width={400}
+                        height={200}
+                        style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
+                      />
+                    ) : (
+                      <SignatureCanvas
+                        canvasProps={{
+                          width: 400,
+                          height: 200,
+                          style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
+                        }}
+                        backgroundColor="#fff"
+                        ref={ref => {
+                          signatureRef.current = ref;
+                        }}
+                        onEnd={() => validateForm()}
+                      />
+                    )}
+                    {!isValid && (
+                      <Alert
+                        severity="warning"
+                        sx={{
+                          fontWeight: 500,
+                          mb: 4,
+                          maxWidth: '20rem',
+                          mx: 'auto',
+                          border: '1px solid #ff9800',
+                          transition: theme =>
+                            theme.transitions.create(['background-color'], {
+                              duration: theme.transitions.duration.standard
+                            }),
+                          '&:hover': {
+                            cursor: 'pointer',
+                            backgroundColor: '#ffe3a6'
+                          }
+                        }}
+                        onClick={
+                          errors.incomplete
+                            ? e => {
+                                e.preventDefault();
+                                window.location.href = `#${[...errors.incomplete][0]}`;
+                              }
+                            : undefined
                         }
-                      }}
-                      onClick={e => {
-                        e.preventDefault();
-                        window.location.href = `#${parseInt(Object.keys(errors)[0]) - 1}`;
-                      }}
-                    >
-                      {Object.keys(errors).length === 1 && !!errors.signature
-                        ? 'הקבוצה טרם חתמה על דף הניקוד.'
-                        : 'דף הניקוד אינו מלא.'}
-                    </Alert>
-                  )}
-                  {scoresheetErrors.map((e: { id: string; description: string }) => (
-                    <Alert
-                      severity="error"
-                      key={e.id}
-                      sx={{
-                        fontWeight: 500,
-                        mb: 4,
-                        maxWidth: '20rem',
-                        mx: 'auto',
-                        border: '1px solid #ff2f00'
-                      }}
-                    >
-                      {e.description}
-                    </Alert>
-                  ))}
+                      >
+                        {Object.keys(errors).length === 1 && !!errors.signature
+                          ? 'הקבוצה טרם חתמה על דף הניקוד.'
+                          : 'דף הניקוד אינו מלא.'}
+                      </Alert>
+                    )}
+                    {scoresheetErrors.map((e: { id: string; description: string }) => (
+                      <Alert
+                        severity="error"
+                        key={e.id}
+                        sx={{
+                          fontWeight: 500,
+                          mb: 4,
+                          maxWidth: '20rem',
+                          mx: 'auto',
+                          border: '1px solid #ff2f00'
+                        }}
+                      >
+                        {e.description}
+                      </Alert>
+                    ))}
 
-                  <Stack direction="row" spacing={2}>
-                    <RoleAuthorizer user={user} allowedRoles={['referee']}>
+                    <Stack direction="row" spacing={2}>
+                      <RoleAuthorizer user={user} allowedRoles={['referee']}>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            minWidth: 200
+                          }}
+                          endIcon={<SportsScoreIcon />}
+                          onClick={() => {
+                            setHeadRefDialogue(true);
+                          }}
+                        >
+                          העברת דף הניקוד לשופט ראשי
+                        </Button>
+                        <Dialog
+                          open={headRefDialogue}
+                          onClose={() => setHeadRefDialogue(false)}
+                          aria-labelledby="headref-dialog-title"
+                          aria-describedby="headref-dialog-description"
+                        >
+                          <DialogTitle id="headref-dialog-title">
+                            העברת דף הניקוד לשופט הראשי
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="headref-dialog-description">
+                              העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר אותך למקצה
+                              הבא. לא תוכלו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
+                              ביטול
+                            </Button>
+                            <Button
+                              onClick={() => handleSync(true, values, 'waiting-for-head-ref')}
+                            >
+                              אישור
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </RoleAuthorizer>
+                      <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            minWidth: 200
+                          }}
+                          disabled={values === getDefaultScoresheet()}
+                          onClick={() => handleSync(true, getDefaultScoresheet(), 'empty')}
+                        >
+                          איפוס דף הניקוד
+                        </Button>
+                      </RoleAuthorizer>
                       <Button
                         variant="contained"
-                        sx={{
-                          minWidth: 200
-                        }}
-                        endIcon={<SportsScoreIcon />}
-                        onClick={() => {
-                          setHeadRefDialogue(true);
-                        }}
+                        sx={{ minWidth: 200 }}
+                        endIcon={<ChevronLeftIcon />}
+                        disabled={!isValid}
+                        onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
                       >
-                        העברת דף הניקוד לשופט ראשי
+                        המשך
                       </Button>
-                      <Dialog
-                        open={headRefDialogue}
-                        onClose={() => setHeadRefDialogue(false)}
-                        aria-labelledby="headref-dialog-title"
-                        aria-describedby="headref-dialog-description"
-                      >
-                        <DialogTitle id="headref-dialog-title">
-                          העברת דף הניקוד לשופט הראשי
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="headref-dialog-description">
-                            העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר אותך למקצה הבא.
-                            לא תוכלו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button onClick={() => handleSync(true, values, 'waiting-for-head-ref')}>
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </RoleAuthorizer>
-                    <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          minWidth: 200
-                        }}
-                        disabled={values === getDefaultScoresheet()}
-                        onClick={() => handleSync(true, getDefaultScoresheet(), 'empty')}
-                      >
-                        איפוס דף הניקוד
-                      </Button>
-                    </RoleAuthorizer>
-                    <Button
-                      variant="contained"
-                      sx={{ minWidth: 200 }}
-                      endIcon={<ChevronLeftIcon />}
-                      disabled={!isValid}
-                      onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
-                    >
-                      המשך
-                    </Button>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </>
-            ) : (
-              <GpSelector
-                user={user}
-                onBack={() => handleSync(false, values, 'completed')}
-                onSubmit={() => {
-                  handleSync(true, values, 'ready').then(() =>
-                    router.push(`/event/${event._id}/${user.role}`)
-                  );
-                }}
-              />
-            )}
-          </Form>
-        )}
+                </>
+              ) : (
+                <GpSelector
+                  user={user}
+                  onBack={() => handleSync(false, values, 'completed')}
+                  onSubmit={() => {
+                    handleSync(true, values, 'ready').then(() =>
+                      router.push(`/event/${event._id}/${user.role}`)
+                    );
+                  }}
+                />
+              )}
+            </Form>
+          );
+        }}
       </Formik>
     </>
   );
