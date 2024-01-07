@@ -305,7 +305,19 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         mb: 4,
                         maxWidth: '20rem',
                         mx: 'auto',
-                        border: '1px solid #ff9800'
+                        border: '1px solid #ff9800',
+                        transition: theme =>
+                          theme.transitions.create(['background-color'], {
+                            duration: theme.transitions.duration.standard
+                          }),
+                        '&:hover': {
+                          cursor: 'pointer',
+                          backgroundColor: '#ffe3a6'
+                        }
+                      }}
+                      onClick={e => {
+                        e.preventDefault();
+                        window.location.href = `#${parseInt(Object.keys(errors)[0]) - 1}`;
                       }}
                     >
                       {Object.keys(errors).length === 1 && !!errors.signature

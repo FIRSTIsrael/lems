@@ -133,7 +133,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
     localizedMission && (
-      <Grid component={Paper} container spacing={0} pb={2}>
+      <Grid component={Paper} container spacing={0} pb={2} id={missionIndex.toString()}>
         <Grid container xs={8} spacing={0}>
           <Grid
             py={1}
