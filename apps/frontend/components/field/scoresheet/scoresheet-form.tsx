@@ -77,11 +77,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     incomplete?: boolean;
     errors?: Array<ErrorWithMessage>;
   }
-  const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>(
-    SEASON_SCORESHEET.missions.map(m => {
-      return { id: m.id };
-    })
-  );
+  const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>([]);
   const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
   const [headRefDialogue, setHeadRefDialogue] = useState<boolean>(false);
@@ -89,15 +85,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const mode = useMemo(() => {
     return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
   }, [scoresheet]);
-
-  const updateMissionInfo = (newInfo: MissionInfo) => {
-    setMissionInfo(missionInfo =>
-      missionInfo.map(mi => {
-        if (mi.id == newInfo.id) return newInfo;
-        return mi;
-      })
-    );
-  };
 
   const getDefaultScoresheet = () => {
     const missions: Array<Mission> = SEASON_SCORESHEET.missions.map(mission => {
@@ -172,37 +159,35 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
   const validateScoresheet = (formValues: FormikValues) => {
     const errors: any = {};
-
-    setMissionInfo(
-      SEASON_SCORESHEET.missions.map(m => {
-        return { id: m.id };
-      })
-    );
+    const newMissionInfo: Array<MissionInfo> = SEASON_SCORESHEET.missions.map(m => {
+      return { id: m.id };
+    });
 
     const { score, missionErrors } = calculateScore(formValues);
     if (missionErrors.length > 0) errors['score'] = 'דף הניקוד אינו תקין';
 
     missionErrors.forEach(e => {
       const missionId = e.id.slice(0, 3);
-      let existingInfo = missionInfo.find(mi => mi.id === e.id);
-      if (!existingInfo) existingInfo = { id: missionId };
-      if (!existingInfo.errors) existingInfo.errors = [];
-      existingInfo.errors.push(e);
-      updateMissionInfo(existingInfo);
+      const index = newMissionInfo.findIndex(mi => mi.id === missionId);
+      if (index > -1) {
+        if (!newMissionInfo[index].errors) newMissionInfo[index].errors = [];
+        newMissionInfo[index].errors!.push(e);
+      }
     });
 
     formValues.missions.forEach((mission: Mission) => {
       mission.clauses.forEach((clause: MissionClause) => {
         if (clause.value === null) {
           errors['missions'] = 'דף הניקוד אינו מלא';
-          const existingInfo = missionInfo.find(mi => mi.id === mission.id);
-          if (existingInfo) {
-            existingInfo['incomplete'] = true;
-            updateMissionInfo(existingInfo);
+          const index = newMissionInfo.findIndex(mi => mi.id === mission.id);
+          if (index > -1) {
+            newMissionInfo[index]['incomplete'] = true;
           }
         }
       });
     });
+
+    setMissionInfo(newMissionInfo);
 
     const validatorErrors: Array<ErrorWithMessage> = [];
     const toValidate = Object.fromEntries(
