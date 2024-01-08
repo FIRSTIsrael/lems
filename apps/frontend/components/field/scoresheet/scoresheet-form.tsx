@@ -67,18 +67,37 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
   );
 
-  const [missionErrors, setMissionErrors] = useState<
-    Array<{ id: string; description: string } | undefined>
-  >([]);
-  const [scoresheetErrors, setScoresheetErrors] = useState<
-    Array<{ id: string; description: string }>
-  >([]);
+  interface ErrorWithMessage {
+    id: string;
+    description: string;
+  }
+
+  interface MissionInfo {
+    id: string;
+    incomplete?: boolean;
+    errors?: Array<ErrorWithMessage>;
+  }
+  const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>(
+    SEASON_SCORESHEET.missions.map(m => {
+      return { id: m.id };
+    })
+  );
+  const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
   const [headRefDialogue, setHeadRefDialogue] = useState<boolean>(false);
 
   const mode = useMemo(() => {
     return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
   }, [scoresheet]);
+
+  const updateMissionInfo = (newInfo: MissionInfo) => {
+    setMissionInfo(missionInfo =>
+      missionInfo.map(mi => {
+        if (mi.id == newInfo.id) return newInfo;
+        return mi;
+      })
+    );
+  };
 
   const getDefaultScoresheet = () => {
     const missions: Array<Mission> = SEASON_SCORESHEET.missions.map(mission => {
@@ -97,7 +116,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
   const calculateScore = (values: FormikValues) => {
     let score = 0;
-    const scoringErrors: Array<{ id: string; description: string } | undefined> = [];
+    const missionErrors: Array<ErrorWithMessage> = [];
 
     SEASON_SCORESHEET.missions.forEach((mission, missionIndex) => {
       const clauses = values.missions[missionIndex].clauses;
@@ -106,12 +125,14 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       } catch (error: any) {
         if (error instanceof ScoresheetError) {
           const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
-          if (localizedErrors && localizedErrors.length > 0)
-            scoringErrors.push(localizedErrors.find(e => e.id === error.id));
+          if (localizedErrors && localizedErrors.length > 0) {
+            const localizedError = localizedErrors.find(e => e.id === error.id);
+            if (localizedError) missionErrors.push(localizedError);
+          }
         }
       }
     });
-    return { score, scoringErrors };
+    return { score, missionErrors };
   };
 
   const handleSync = async (
@@ -152,27 +173,38 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const validateScoresheet = (formValues: FormikValues) => {
     const errors: any = {};
 
-    const { score, scoringErrors } = calculateScore(formValues);
-    setMissionErrors(scoringErrors);
-    scoringErrors.forEach(e => {
-      if (!errors.scoring) errors['scoring'] = {};
-      if (e) errors.scoring[e.id] = e.description;
+    setMissionInfo(
+      SEASON_SCORESHEET.missions.map(m => {
+        return { id: m.id };
+      })
+    );
+
+    const { score, missionErrors } = calculateScore(formValues);
+    if (missionErrors.length > 0) errors['score'] = 'דף הניקוד אינו תקין';
+
+    missionErrors.forEach(e => {
+      const missionId = e.id.slice(0, 3);
+      let existingInfo = missionInfo.find(mi => mi.id === e.id);
+      if (!existingInfo) existingInfo = { id: missionId };
+      if (!existingInfo.errors) existingInfo.errors = [];
+      existingInfo.errors.push(e);
+      updateMissionInfo(existingInfo);
     });
 
-    formValues.missions.forEach((m: Mission, missionIndex: number) => {
-      m.clauses.forEach((c: MissionClause, clauseIndex: number) => {
-        if (c.value === null) {
-          if (!errors[missionIndex]) errors[missionIndex] = { clauses: [] };
-          errors[missionIndex].clauses[clauseIndex] = 'שדה חובה';
+    formValues.missions.forEach((mission: Mission) => {
+      mission.clauses.forEach((clause: MissionClause) => {
+        if (clause.value === null) {
+          errors['missions'] = 'דף הניקוד אינו מלא';
+          const existingInfo = missionInfo.find(mi => mi.id === mission.id);
+          if (existingInfo) {
+            existingInfo['incomplete'] = true;
+            updateMissionInfo(existingInfo);
+          }
         }
       });
     });
 
-    if (signatureRef.current?.isEmpty() && formValues.signature?.length === 0) {
-      errors.signature = 'הקבוצה טרם חתמה על דף הניקוד';
-    }
-
-    const validatorErrors: Array<{ id: string; description: string }> = [];
+    const validatorErrors: Array<ErrorWithMessage> = [];
     const toValidate = Object.fromEntries(
       formValues.missions.map((m: Mission) => [m.id, m.clauses.map((c: MissionClause) => c.value)])
     );
@@ -188,7 +220,11 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
         }
       }
     });
-    setScoresheetErrors(validatorErrors);
+    setValidatorErrors(validatorErrors);
+
+    if (signatureRef.current?.isEmpty() && formValues.signature?.length === 0) {
+      errors.signature = 'הקבוצה טרם חתמה על דף הניקוד';
+    }
 
     if (mode === 'gp') {
       if (formValues.gp?.value !== '3' && !formValues.gp?.notes)
@@ -268,7 +304,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       missionIndex={index}
                       src={`/assets/scoresheet/missions/${mission.id}.webp`}
                       mission={mission}
-                      errors={missionErrors.filter(e => e?.id.startsWith(mission.id))}
+                      errors={missionInfo.find(e => e?.id == mission.id)?.errors}
                       readOnly={readOnly}
                     />
                   ))}
@@ -313,7 +349,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         : 'דף הניקוד אינו מלא.'}
                     </Alert>
                   )}
-                  {scoresheetErrors.map((e: { id: string; description: string }) => (
+                  {validatorErrors.map((e: { id: string; description: string }) => (
                     <Alert
                       severity="error"
                       key={e.id}
