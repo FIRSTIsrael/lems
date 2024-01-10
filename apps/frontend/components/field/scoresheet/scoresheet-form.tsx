@@ -334,7 +334,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         : 'דף הניקוד אינו מלא.'}
                     </Alert>
                   )}
-                  {validatorErrors.map((e: { id: string; description: string }) => (
+                  {validatorErrors.map((e: ErrorWithMessage) => (
                     <Alert
                       severity="error"
                       key={e.id}
