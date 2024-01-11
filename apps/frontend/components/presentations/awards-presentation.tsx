@@ -38,6 +38,39 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
     const advancingTeams = teams.filter(t => t.advancing);
 
+    const awardSlides = awardIndices.map(index => {
+      const sortedAwards = awards.filter(a => a.index === index).sort((a, b) => b.place - a.place);
+      const { name: awardName } = sortedAwards[0];
+      const localized = localizedAward[awardName];
+
+      return (
+        <Fragment key={awardName}>
+          <TitleSlide primary={`פרס ${localized.name}`} />
+          <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
+          {sortedAwards.map(award => {
+            return (
+              <AwardWinnerSlide
+                key={award.place}
+                name={`פרס ${localized.name}`}
+                place={sortedAwards.length > 1 ? award.place : undefined}
+                winner={award.winner || ''}
+                color={event.color}
+              />
+            );
+          })}
+        </Fragment>
+      );
+    });
+
+    if (advancingTeams.length > 0) {
+      const advancingSlide = (
+        <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
+      );
+      // Place advancement slide directly before champions award
+      const advancingSlideIndex = awardSlides.findIndex(s => s.key === 'champions');
+      awardSlides.splice(advancingSlideIndex, 0, advancingSlide);
+    }
+
     return (
       <Box {...props}>
         <Deck
@@ -51,34 +84,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             primary={`טקס סיום - ${event.name}`}
             secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
           />
-          {awardIndices.map(index => {
-            const sortedAwards = awards
-              .filter(a => a.index === index)
-              .sort((a, b) => b.place - a.place);
-            const { name: awardName } = sortedAwards[0];
-            const localized = localizedAward[awardName];
-
-            return (
-              <Fragment key={awardName}>
-                <TitleSlide primary={`פרס ${localized.name}`} />
-                <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
-                {sortedAwards.map(award => {
-                  return (
-                    <AwardWinnerSlide
-                      key={award.place}
-                      name={`פרס ${localized.name}`}
-                      place={sortedAwards.length > 1 ? award.place : undefined}
-                      winner={award.winner || ''}
-                      color={event.color}
-                    />
-                  );
-                })}
-              </Fragment>
-            );
-          })}
-          {advancingTeams.length > 0 && (
-            <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
-          )}
+          {awardSlides}
           <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בתחרות הארצית!" />
         </Deck>
       </Box>
