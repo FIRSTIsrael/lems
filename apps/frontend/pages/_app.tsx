@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
 import { CacheProvider, EmotionCache } from '@emotion/react';
+import '../lib/utils/dayjs';
 import theme from '../lib/theme';
 import { createEmotionCache } from '../lib/emotion-cache';
 import { RouteAuthorizer } from '../components/route-authorizer';
