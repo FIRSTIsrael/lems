@@ -47,7 +47,8 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       event,
       dbTeams,
       dbTables,
-      dbRooms
+      dbRooms,
+      timezone
     );
 
     if (!(await db.addSessions(sessions)).acknowledged)

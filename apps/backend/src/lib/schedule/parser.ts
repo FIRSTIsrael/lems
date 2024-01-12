@@ -137,18 +137,19 @@ const extractMatchesFromMatchBlock = (
   matchBlock.forEach(line => {
     const round = parseInt(line[1]);
     const [hour, minute] = line[2].split(':');
+    const startTime = dayjs(event.startDate)
+      .tz(timezone, true)
+      .set('hour', parseInt(hour))
+      .set('minute', parseInt(minute))
+      .set('second', 0);
+
     const match: RobotGameMatch = {
       eventId: event._id,
       round,
       number: parseInt(line[0]),
       stage,
       status: 'not-started',
-      scheduledTime: dayjs(event.startDate)
-        .tz(timezone, true)
-        .set('hour', parseInt(hour))
-        .set('minute', parseInt(minute))
-        .set('second', 0)
-        .toDate(),
+      scheduledTime: startTime.toDate(),
       participants: []
     };
 
