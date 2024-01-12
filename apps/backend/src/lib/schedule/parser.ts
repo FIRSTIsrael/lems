@@ -125,7 +125,8 @@ const extractMatchesFromMatchBlock = (
   stage: RobotGameMatchStage,
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
-  tables: Array<WithId<RobotGameTable>>
+  tables: Array<WithId<RobotGameTable>>,
+  timezone: string
 ): Array<RobotGameMatch> => {
   const LINES_TO_SKIP = 4;
   matchBlock = (matchBlock || []).splice(LINES_TO_SKIP);
@@ -143,6 +144,7 @@ const extractMatchesFromMatchBlock = (
       stage,
       status: 'not-started',
       scheduledTime: dayjs(event.startDate)
+        .tz(timezone, true)
         .set('hour', parseInt(hour))
         .set('minute', parseInt(minute))
         .set('second', 0)
@@ -177,7 +179,8 @@ const extractSessionsFromJudgingBlock = (
   judgingBlock: Line[],
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
-  rooms: Array<WithId<JudgingRoom>>
+  rooms: Array<WithId<JudgingRoom>>,
+  timezone: string
 ): Array<JudgingSession> => {
   const LINES_TO_SKIP = 4;
   judgingBlock = (judgingBlock || []).splice(LINES_TO_SKIP);
@@ -189,6 +192,7 @@ const extractSessionsFromJudgingBlock = (
     const number = parseInt(line[0]);
     const [hour, minute] = line[1].split(':');
     const startTime = dayjs(event.startDate)
+      .tz(timezone, true)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
       .set('second', 0);
@@ -222,7 +226,8 @@ export const parseSessionsAndMatches = (
   event: WithId<Event>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
-  rooms: Array<WithId<JudgingRoom>>
+  rooms: Array<WithId<JudgingRoom>>,
+  timezone: string = 'UTC'
 ): { matches: Array<RobotGameMatch>; sessions: Array<JudgingSession> } => {
   const file = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); //Version number: 2nd cell of 1st row.
@@ -234,14 +239,16 @@ export const parseSessionsAndMatches = (
     'practice',
     event,
     teams,
-    tables
+    tables,
+    timezone
   );
   const rankingMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
     event,
     teams,
-    tables
+    tables,
+    timezone
   );
   const matches = practiceMatches.concat(rankingMatches);
   matches.push(getTestMatch(event._id));
@@ -250,7 +257,8 @@ export const parseSessionsAndMatches = (
     getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID),
     event,
     teams,
-    rooms
+    rooms,
+    timezone
   );
 
   return { matches, sessions };
