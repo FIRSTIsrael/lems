@@ -14,8 +14,8 @@ interface AdvancingTeamsSlideProps {
 const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color }) => {
   return (
     <Slide>
-      <Stack px={20} textAlign="center">
-        <Typography variant="h1" fontSize="6rem" gutterBottom>
+      <Stack px={20} height="calc(100% - 100px)">
+        <Typography variant="h1" fontSize="6rem" textAlign="center" gutterBottom>
           קבוצות המעפילות שלב
         </Typography>
         <Box
@@ -30,14 +30,14 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
         >
           {teams.map(team => (
             <Appear key={team._id.toString()}>
-              <Typography fontSize="2.25rem" fontWeight={500}>
+              <Typography fontSize="1.75rem" fontWeight={500}>
                 {localizeTeam(team)}
               </Typography>
             </Appear>
           ))}
         </Box>
-        <LogoStack />
       </Stack>
+      <LogoStack />
     </Slide>
   );
 };
