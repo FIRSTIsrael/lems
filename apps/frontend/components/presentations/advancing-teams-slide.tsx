@@ -25,7 +25,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
             px: 8,
             py: 6,
             borderRadius: 4,
-            boxShadow: color && `-10px 10px 12px ${getDivisionColor(color)}74`
+            boxShadow: color && `-20px 20px 24px ${getDivisionColor(color)}74`
           }}
         >
           {teams.map(team => (
