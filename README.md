@@ -5,7 +5,7 @@
 1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 2. Pull mongodb image with tag 7.0.x
-   `docker pull mongo:7.0.0`
+   `docker pull mongo:7.0.5`
 
 3. Run the container with an exposed port
 
