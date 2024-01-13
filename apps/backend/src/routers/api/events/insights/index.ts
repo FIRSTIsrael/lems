@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import judgingInsightsRouter from './judging';
 import fieldInsightsRouter from './field';
@@ -6,10 +7,11 @@ import generalInsightsRouter from './general';
 
 const router = express.Router({ mergeParams: true });
 
+// TODO: Move to another router, maybe genral or judging
 router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
   const pipeline = [
     {
-      $match: { status: { $ne: 'empty' } }
+      $match: { eventId: new ObjectId(req.params.eventId), status: { $ne: 'empty' } }
     },
     {
       $project: {

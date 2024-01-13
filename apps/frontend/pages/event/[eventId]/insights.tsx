@@ -3,18 +3,13 @@ import router from 'next/router';
 import { WithId } from 'mongodb';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-import { Tabs, Tab, Paper, Stack, Typography } from '@mui/material';
+import { Tabs, Tab, Paper, Typography } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Event, EventState, SafeUser } from '@lems/types';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import ReportLink from '../../../components/general/report-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import TicketCreationPanel from '../../../components/pit-admin/ticket-creation-panel';
-import TeamRegistrationPanel from '../../../components/pit-admin/team-registration-panel';
+import FieldInsightsDashboard from '../../../components/insights/dashboards/field';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { localizedRoles } from '../../../localization/roles';
-import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -43,14 +38,16 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
                 onChange={(_e, newValue: string) => setActiveTab(newValue)}
                 centered
               >
-                <Tab label="שיפוט" value="1" />
+                <Tab label="כללי" value="1" />
                 <Tab label="זירה" value="2" />
-                <Tab label="כללי" value="3" />
+                <Tab label="שיפוט" value="3" />
               </Tabs>
             </Paper>
             <TabPanel value="1"></TabPanel>
-            <TabPanel value="2"></TabPanel>
-            <TabPanel value="3">\ </TabPanel>
+            <TabPanel value="2">
+              <FieldInsightsDashboard event={event} />
+            </TabPanel>
+            <TabPanel value="3"></TabPanel>
           </TabContext>
         ) : (
           //TODO: normal incomplete page, maybe redirect
