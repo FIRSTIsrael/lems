@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express';
 import * as db from '@lems/database';
+import judgingInsightsRouter from './judging';
+import fieldInsightsRouter from './field';
+import generalInsightsRouter from './general';
 
 const router = express.Router({ mergeParams: true });
 
@@ -63,5 +66,9 @@ router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
   const report = await db.db.collection('rubrics').aggregate(pipeline).toArray();
   res.json(report);
 });
+
+router.use('/judging', judgingInsightsRouter);
+router.use('/field', fieldInsightsRouter);
+router.use('/general', generalInsightsRouter);
 
 export default router;
