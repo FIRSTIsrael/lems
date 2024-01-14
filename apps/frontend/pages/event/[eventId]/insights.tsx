@@ -51,7 +51,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
           </TabContext>
         ) : (
           //TODO: normal incomplete page, maybe redirect
-          <Typography>Event not yet compelted</Typography>
+          <Typography>Event not yet completed</Typography>
         )}
       </Layout>
     </RoleAuthorizer>

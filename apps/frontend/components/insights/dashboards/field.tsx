@@ -3,6 +3,7 @@ import { green } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Event } from '@lems/types';
 import Stat from '../stat';
+import CycleTimeReport from '../cycle-time-report';
 import AverageMedianCard from '../average-median-card';
 import MissionSuccessRateChart from '../charts/mission-success-rate-chart';
 import InspectionBonusChart from '../charts/inspection-bonus-chart';
@@ -43,6 +44,18 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       </Grid>
       <Grid xs={12}>
         <PrecisionTokensChart event={event} />
+      </Grid>
+      <Grid xs={6}>
+        <CycleTimeReport
+          title="סייקלים: דירוג"
+          url={`/api/events/${event._id}/insights/field/cycle-time?stage=ranking`}
+        />
+      </Grid>
+      <Grid xs={6}>
+        <CycleTimeReport
+          title="סייקלים: אימונים"
+          url={`/api/events/${event._id}/insights/field/cycle-time?stage=practice`}
+        />
       </Grid>
     </Grid>
   );
