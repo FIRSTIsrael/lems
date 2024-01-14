@@ -54,7 +54,19 @@ const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, 
             <Grid container spacing={1}>
               {field.value.map((team: WithId<Team>, index: number) => (
                 <Grid xs={6} key={index}>
-                  <Chip label={localizeTeam(team)} sx={{ width: '100%' }} />
+                  <Chip
+                    label={localizeTeam(team)}
+                    sx={{ width: '100%' }}
+                    onDelete={e => {
+                      e.preventDefault();
+                      const teamIndex = field.value.findIndex(
+                        (t: WithId<Team>) => t._id === team._id
+                      );
+                      const currentValue = [...field.value];
+                      currentValue.splice(teamIndex, 1);
+                      form.setFieldValue(field.name, currentValue);
+                    }}
+                  />
                 </Grid>
               ))}
             </Grid>
