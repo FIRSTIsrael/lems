@@ -49,6 +49,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
         <ActiveMatch
           title="המקצה הבא"
           match={matches.find(match => match._id === eventState.loadedMatch) || null}
+          showDelay={true}
         />
       </Stack>
 

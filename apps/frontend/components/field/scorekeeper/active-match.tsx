@@ -15,18 +15,35 @@ interface ActiveMatchProps {
   match: WithId<RobotGameMatch> | null;
   startTime?: Date;
   activeSessions?: Array<WithId<JudgingSession>>;
+  showDelay?: boolean;
 }
 
-
-const ActiveMatch: React.FC<ActiveMatchProps> = ({ title, match, startTime, activeSessions }) => {
+const ActiveMatch: React.FC<ActiveMatchProps> = ({
+  title,
+  match,
+  startTime,
+  activeSessions,
+  showDelay = false
+}) => {
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
 
   return (
     <Paper sx={{ p: 2, flex: 1 }}>
-      <Typography component="h2" fontSize="1.125rem" fontWeight={500}>
-        {title}
-      </Typography>
+      <Box display="flex" justifyContent="space-between">
+        <Typography component="h2" fontSize="1.125rem" fontWeight={500}>
+          {title}
+        </Typography>
+        {showDelay && match?.status == 'not-started' && match?.scheduledTime && (
+          <Countdown
+            targetDate={match.scheduledTime}
+            allowNegativeValues={true}
+            fontSize="1.1rem"
+            fontWeight={500}
+            dir="ltr"
+          />
+        )}
+      </Box>
       <Typography fontSize="1.75rem" fontWeight={700}>
         {match?.number ? `מקצה #${match?.number}` : match?.stage === 'test' ? 'מקצה בדיקה' : '-'}
       </Typography>
