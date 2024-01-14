@@ -22,12 +22,14 @@ interface UploadFileButtonProps extends ButtonProps {
   urlPath: string;
   displayName: string;
   extension?: string;
+  requestData?: object;
 }
 
 const UploadFileButton: React.FC<UploadFileButtonProps> = ({
   urlPath,
   displayName,
   extension,
+  requestData,
   ...props
 }) => {
   const router = useRouter();
@@ -42,6 +44,11 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
     setIsError(false);
     setIsProcessing(true);
     const formData = new FormData();
+    if (requestData) {
+      Object.entries(requestData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
     formData.append('file', file);
     apiFetch(urlPath, {
       method: 'POST',

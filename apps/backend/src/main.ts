@@ -6,6 +6,7 @@ import * as http from 'http';
 import * as path from 'path';
 import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
+import './lib/dayjs';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
@@ -47,6 +48,7 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
                   displayName="לוח זמנים"
                   extension=".csv"
                   disabled={event.hasState}
+                  requestData={{ timezone: dayjs.tz.guess() }}
                 />
                 <GenerateScheduleButton event={event} />
                 <DownloadUsersButton event={event} disabled={!event.hasState} />
