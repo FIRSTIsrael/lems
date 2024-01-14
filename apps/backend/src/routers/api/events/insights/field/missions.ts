@@ -109,6 +109,52 @@ router.get('/precision-tokens', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+    },
+    {
+      $project: {
+        _id: false,
+        score: '$data.score',
+        tokens: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: '$data.missions',
+                as: 'mission',
+                cond: { $eq: ['$$mission.id', 'pt'] },
+                limit: 1
+              }
+            },
+            0
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        score: true,
+        tokens: { $arrayElemAt: ['$tokens.clauses', 0] }
+      }
+    },
+    {
+      $project: {
+        score: true,
+        tokens: '$tokens.value'
+      }
+    },
+    {
+      $group: {
+        _id: '$tokens',
+        count: { $sum: 1 },
+        averageScore: { $avg: '$score' }
+      }
+    },
+    {
+      $project: {
+        _id: false,
+        tokens: '$_id',
+        averageScore: true,
+        count: true
+      }
     }
   ];
 
