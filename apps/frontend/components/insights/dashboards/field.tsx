@@ -4,6 +4,7 @@ import { Event } from '@lems/types';
 import Stat from '../stat';
 import AverageMedianCard from '../average-median-card';
 import MissionSuccessRateChart from '../charts/mission-success-rate-chart';
+import InspectionBonusChart from '../charts/inspection-bonus-chart';
 interface FieldInsightsDashboardProps {
   event: WithId<Event>;
 }
@@ -34,6 +35,9 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       </Grid>
       <Grid xs={12}>
         <MissionSuccessRateChart event={event} />
+      </Grid>
+      <Grid xs={12}>
+        <InspectionBonusChart event={event} />
       </Grid>
     </Grid>
   );

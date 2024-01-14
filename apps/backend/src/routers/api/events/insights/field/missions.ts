@@ -77,16 +77,32 @@ router.get('/inspection-bonus', async (req: Request, res: Response) => {
       }
     },
     {
+      $lookup: {
+        from: 'teams',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'team'
+      }
+    },
+    { $unwind: '$team' },
+    {
       $project: {
         _id: false,
-        teamId: '$_id',
+        id: '$_id',
+        teamNumber: '$team.number',
+        teamName: '$team.name',
+        teamAffiliation: '$team.affiliation',
         count: true
       }
     }
   ];
 
   const report = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
-  res.json(report);
+  const totalTeams = (await db.getEventTeams(new ObjectId(req.params.eventId))).length;
+  const successfulTeams = totalTeams - report.length;
+  const successRate = (successfulTeams / totalTeams) * 100;
+
+  res.json({ successRate, rows: report });
 });
 
 router.get('/precision-tokens', async (req: Request, res: Response) => {

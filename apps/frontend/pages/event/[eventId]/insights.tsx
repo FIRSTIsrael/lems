@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper, Typography } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, EventState, SafeUser } from '@lems/types';
+import { Event, EventState, SafeUser, Team } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import FieldInsightsDashboard from '../../../components/insights/dashboards/field';
@@ -35,7 +35,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
             <Paper sx={{ mt: 4 }}>
               <Tabs
                 value={activeTab}
-                onChange={(_e, newValue: string) => setActiveTab(newValue)}
+                onChange={(_e: any, newValue: string) => setActiveTab(newValue)}
                 centered
               >
                 <Tab label="כללי" value="1" />
@@ -51,7 +51,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
           </TabContext>
         ) : (
           //TODO: normal incomplete page, maybe redirect
-          <Typography>Event not yes compelted</Typography>
+          <Typography>Event not yet compelted</Typography>
         )}
       </Layout>
     </RoleAuthorizer>
