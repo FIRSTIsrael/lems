@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
+import dayjs, { Dayjs } from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
 import {
   Box,
   Button,
@@ -16,11 +18,8 @@ import {
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Grid from '@mui/material/Unstable_Grid2';
-import 'dayjs/locale/he';
-import dayjs, { Dayjs } from 'dayjs';
 import { DivisionColor, Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
-import { enqueueSnackbar } from 'notistack';
 
 interface EditEventFormProps extends ButtonProps {
   event: WithId<Event>;

@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
-import { EventState } from '@lems/types';
 import * as db from '@lems/database';
 import { getEventUsers } from '../../../../lib/schedule/event-users';
 import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
@@ -17,13 +16,13 @@ const router = express.Router({ mergeParams: true });
 
 router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
-
   const eventState = await db.getEventState({ eventId: event._id });
   if (eventState)
     return res.status(400).json({ error: 'Could not parse schedule: Event has data' });
 
   try {
     console.log('👓 Parsing file...');
+    const timezone = req.body.timezone;
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
 
     const { teams, tables, rooms } = parseEventData(event, csvData);
@@ -48,7 +47,8 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
       event,
       dbTeams,
       dbTables,
-      dbRooms
+      dbRooms,
+      timezone
     );
 
     if (!(await db.addSessions(sessions)).acknowledged)
