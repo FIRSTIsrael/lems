@@ -51,7 +51,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
         return;
 
       if (
-        formValues.find(
+        formValues.awards.find(
           (a: WithId<Award>) =>
             !fullMatch(a, award) &&
             fullMatch(a.winner, award.winner) &&
@@ -73,7 +73,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
             if (!a.winner) a.winner = '';
             return a;
           }),
-          advancingTeams: []
+          advancingTeams: undefined
         }}
         validate={validateForm}
         onSubmit={(values, actions) => {

@@ -1,13 +1,6 @@
 import { WithId } from 'mongodb';
 import { FastField, FieldProps } from 'formik';
-import {
-  AutocompleteRenderInputParams,
-  Paper,
-  TextField,
-  Typography,
-  Autocomplete,
-  Stack
-} from '@mui/material';
+import { Paper, TextField, Typography, Autocomplete, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Team } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
@@ -18,7 +11,6 @@ interface AdvancingTeamsSelectorProps {
 }
 
 const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, readOnly }) => {
-  console.log(teams);
   return (
     <Grid container component={Paper} p={2} alignItems="center">
       <Grid xs={4}>
@@ -32,19 +24,19 @@ const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, 
             return (
               <Stack spacing={2}>
                 <Autocomplete
+                  blurOnSelect
                   options={teams}
-                  getOptionLabel={(team: Team) => {
-                    console.log(team);
-                    return '';
-                  }}
-                  renderInput={params => <TextField {...params} />}
+                  getOptionLabel={team => (team ? localizeTeam(team) : '')}
+                  inputMode="search"
                   value={field.value}
-                  onChange={(_e, newValue) => form.setFieldValue(field.name, newValue)}
-                  readOnly={readOnly}
+                  onChange={(_e, value) =>
+                    form.setFieldValue(field.name, typeof value !== 'string' ? value : null)
+                  }
+                  renderInput={params => <TextField {...params} />}
                 />
-                <Typography>
+                {/* <Typography>
                   {field.value.map((team: Team) => localizeTeam(team)).join(', ')}
-                </Typography>
+                </Typography> */}
               </Stack>
             );
           }}
