@@ -38,13 +38,13 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
         <Stat title="מדד זמני" value={100} sx={{ p: 2, width: '100%', height: '100%' }} />
       </Grid>
       <Grid xs={12}>
-        <MissionSuccessRateChart event={event} />
-      </Grid>
-      <Grid xs={12}>
         <ScoresPerTableChart event={event} />
       </Grid>
       <Grid xs={12}>
         <InspectionBonusChart event={event} />
+      </Grid>
+      <Grid xs={12}>
+        <MissionSuccessRateChart event={event} />
       </Grid>
       <Grid xs={12}>
         <PrecisionTokensChart event={event} />
