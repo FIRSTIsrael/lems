@@ -47,13 +47,13 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       </Grid>
       <Grid xs={6}>
         <CycleTimeReport
-          title="סייקלים: דירוג"
+          title="סייקלים - דירוג"
           url={`/api/events/${event._id}/insights/field/cycle-time?stage=ranking`}
         />
       </Grid>
       <Grid xs={6}>
         <CycleTimeReport
-          title="סייקלים: אימונים"
+          title="סייקלים - אימונים"
           url={`/api/events/${event._id}/insights/field/cycle-time?stage=practice`}
         />
       </Grid>

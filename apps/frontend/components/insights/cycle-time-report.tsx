@@ -23,7 +23,10 @@ const CycleTimeReport: React.FC<CycleTimeReportProps> = ({ title, url }) => {
     apiFetch(url).then(res => res.json().then(data => setData(data)));
   }, [url]);
 
-  const formatSeconds = (seconds: number) => dayjs.duration({ seconds }).format('m:ss');
+  const formatSeconds = (seconds: number | undefined) => {
+    if (seconds) return dayjs.duration(seconds, 'seconds').format('mm:ss');
+    return '00:00';
+  };
 
   return (
     <Paper sx={{ pt: 2 }}>
@@ -34,23 +37,23 @@ const CycleTimeReport: React.FC<CycleTimeReportProps> = ({ title, url }) => {
         <TableBody>
           <TableRow>
             <TableCell>ממוצע</TableCell>
-            <TableCell>{data?.average}</TableCell>
+            <TableCell>{formatSeconds(data?.average)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>חציון</TableCell>
-            <TableCell>{data?.median}</TableCell>
+            <TableCell>{formatSeconds(data?.median)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>נמוך ביותר</TableCell>
-            <TableCell>{data?.lowest}</TableCell>
+            <TableCell>{formatSeconds(data?.lowest)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>גבוה ביותר</TableCell>
-            <TableCell>{data?.highest}</TableCell>
+            <TableCell>{formatSeconds(data?.highest)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>אחוזון 95</TableCell>
-            <TableCell>{data?.percentile95}</TableCell>
+            <TableCell>{formatSeconds(data?.percentile95)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
