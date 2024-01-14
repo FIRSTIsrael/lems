@@ -129,18 +129,8 @@ router.get('/precision-tokens', async (req: Request, res: Response) => {
         }
       }
     },
-    {
-      $project: {
-        score: true,
-        tokens: { $arrayElemAt: ['$tokens.clauses', 0] }
-      }
-    },
-    {
-      $project: {
-        score: true,
-        tokens: '$tokens.value'
-      }
-    },
+    { $addFields: { tokens: { $arrayElemAt: ['$tokens.clauses', 0] } } },
+    { $addFields: { tokens: '$tokens.value' } },
     {
       $group: {
         _id: '$tokens',

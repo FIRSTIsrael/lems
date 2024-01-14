@@ -63,4 +63,104 @@ router.get('/top', async (req: Request, res: Response) => {
   res.json(report);
 });
 
+router.get('/per-table', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+    },
+    {
+      $lookup: {
+        from: 'matches',
+        let: {
+          stage: '$stage',
+          round: '$round',
+          teamId: '$teamId'
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$stage', '$$stage']
+                  },
+                  {
+                    $eq: ['$round', '$$round']
+                  },
+                  {
+                    $in: ['$$teamId', '$participants.teamId']
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'match'
+      }
+    },
+    {
+      $project: {
+        _id: false
+      }
+    },
+    {
+      $addFields: {
+        match: { $arrayElemAt: ['$match', 0] },
+        score: '$data.score',
+        tokens: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: '$data.missions',
+                as: 'mission',
+                cond: { $eq: ['$$mission.id', 'pt'] },
+                limit: 1
+              }
+            },
+            0
+          ]
+        }
+      }
+    },
+    { $addFields: { tokens: { $arrayElemAt: ['$tokens.clauses', 0] } } },
+    { $addFields: { tokens: '$tokens.value' } },
+    { $unwind: '$match.participants' },
+    { $match: { $expr: { $eq: ['$match.participants.teamId', '$teamId'] } } },
+    {
+      $project: {
+        score: true,
+        tokens: true,
+        tableId: '$match.participants.tableId'
+      }
+    },
+    {
+      $group: {
+        _id: '$tableId',
+        averageScore: { $avg: '$score' },
+        averageTokens: { $avg: '$tokens' }
+      }
+    },
+    {
+      $lookup: {
+        from: 'tables',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'table'
+      }
+    },
+    {
+      $project: {
+        _id: false,
+        averageScore: true,
+        averageTokens: true,
+        table: { $arrayElemAt: ['$table.name', 0] }
+      }
+    }
+  ];
+
+  const report = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
+  report.sort((a, b) => a.table.localeCompare(b.table));
+  res.json(report);
+});
+
 export default router;

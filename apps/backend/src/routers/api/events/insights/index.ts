@@ -21,9 +21,7 @@ router.get('/validate-csv-readiness', async (req: Request, res: Response) => {
       }
     },
     {
-      $project: {
-        category: true,
-        teamId: true,
+      $addFields: {
         unscored: {
           $sum: {
             $map: {
