@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Card, Typography, SxProps, Theme, Paper, Skeleton } from '@mui/material';
+import { Typography, Paper, Skeleton } from '@mui/material';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
@@ -39,15 +39,18 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) =>
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.teamAffiliation.name}, ${params.row.teamAffiliation.city}`
     },
-    { field: 'count', headerName: 'אי הצלחות', width: 90 }
+    { field: 'count', headerName: 'אי הצלחות', width: 150 }
   ];
 
   return (
     <Paper>
       {data ? (
         <>
-          <Typography fontSize="1.5rem" fontWeight={500} textAlign="center" p={1}>
+          <Typography fontSize="1.5rem" fontWeight={500} textAlign="center" pt={1}>
             בונוס ביקורת הציוד
+          </Typography>
+          <Typography textAlign="center" color="#666">
+            {Number(data.successRate.toFixed(2)) + '%'} הצלחה
           </Typography>
           <DataGrid
             rows={data.rows}

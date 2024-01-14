@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
+import { green } from '@mui/material/colors';
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
@@ -50,8 +51,8 @@ const MissionSuccessRateChart: React.FC<MissionSuccessRateChartProps> = ({ event
             <Bar
               name="אחוז הצלחה"
               dataKey="successRate"
-              fill="#8884d8"
-              activeBar={<Rectangle fill="pink" stroke="blue" />}
+              fill={green[600]}
+              activeBar={<Rectangle fill={green[300]} />}
             />
           </BarChart>
         ) : (

@@ -1,4 +1,5 @@
 import { WithId } from 'mongodb';
+import { green } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Event } from '@lems/types';
 import Stat from '../stat';
@@ -15,7 +16,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       <Grid xs={4}>
         <AverageMedianCard
           title="ניקוד משחק הרובוט"
-          color="#388e3c"
+          color={green[600]}
           url={`/api/events/${event._id}/insights/field/scores/all`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
@@ -24,7 +25,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       <Grid xs={4}>
         <AverageMedianCard
           title="ניקוד גבוה ביותר"
-          color="#388e3c"
+          color={green[600]}
           url={`/api/events/${event._id}/insights/field/scores/top`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
