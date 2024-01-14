@@ -29,7 +29,7 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
-      <Layout maxWidth="md" title={`ממשק תובנות | ${event.name}`}>
+      <Layout maxWidth="md" title={`ממשק ניתוח תחרות | ${event.name}`}>
         {eventState.completed ? (
           <TabContext value={activeTab}>
             <Paper sx={{ mt: 4 }}>
