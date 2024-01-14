@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import judgingInsightsRouter from './judging';
-import fieldInsightsRouter from './field';
+import fieldInsightsRouter from './field/index';
 import generalInsightsRouter from './general';
 
 const router = express.Router({ mergeParams: true });

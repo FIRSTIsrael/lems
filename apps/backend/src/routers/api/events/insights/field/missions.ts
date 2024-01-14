@@ -6,66 +6,7 @@ import { SEASON_SCORESHEET } from '@lems/season';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/scores/all', async (req: Request, res: Response) => {
-  const pipeline = [
-    {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
-    },
-    {
-      $group: {
-        _id: null,
-        average: { $avg: '$data.score' },
-        median: {
-          $median: {
-            input: '$data.score',
-            method: 'approximate'
-          }
-        }
-      }
-    }
-  ];
-
-  const report = await db.db.collection('scoresheets').aggregate(pipeline).next();
-  res.json(report);
-});
-
-router.get('/scores/top', async (req: Request, res: Response) => {
-  const pipeline = [
-    {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready', stage: 'ranking' }
-    },
-    {
-      $group: {
-        _id: '$teamId',
-        maxScore: { $max: '$data.score' }
-      }
-    },
-    {
-      $project: {
-        _id: false,
-        teamId: '$_id',
-        maxScore: true
-      }
-    },
-    {
-      $group: {
-        _id: null,
-        average: { $avg: '$maxScore' },
-        median: {
-          $median: {
-            input: '$maxScore',
-            method: 'approximate'
-          }
-        }
-      }
-    }
-  ];
-
-  const report = await db.db.collection('scoresheets').aggregate(pipeline).next();
-  res.json(report);
-});
-
-router.get('/missions/success-rate', async (req: Request, res: Response) => {
+router.get('/success-rate', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
@@ -109,7 +50,7 @@ router.get('/missions/success-rate', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/missions/inspection-bonus', async (req: Request, res: Response) => {
+router.get('/inspection-bonus', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
@@ -148,7 +89,7 @@ router.get('/missions/inspection-bonus', async (req: Request, res: Response) => 
   res.json(report);
 });
 
-router.get('/missions/precision-token', async (req: Request, res: Response) => {
+router.get('/precision-tokens', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
