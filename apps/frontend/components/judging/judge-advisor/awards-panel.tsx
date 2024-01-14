@@ -73,7 +73,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
             if (!a.winner) a.winner = '';
             return a;
           }),
-          advancingTeams: undefined
+          advancingTeams: []
         }}
         validate={validateForm}
         onSubmit={(values, actions) => {
