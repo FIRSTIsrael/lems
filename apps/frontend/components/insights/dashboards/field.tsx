@@ -35,7 +35,11 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
         />
       </Grid>
       <Grid xs={4}>
-        <Stat title="מדד זמני" value={100} sx={{ p: 2, width: '100%', height: '100%' }} />
+        <Stat
+          title="שיא ניקוד"
+          url={`/api/events/${event._id}/insights/field/scores/record`}
+          sx={{ p: 2, width: '100%', height: '100%' }}
+        />
       </Grid>
       <Grid xs={12}>
         <ScoresPerTableChart event={event} />

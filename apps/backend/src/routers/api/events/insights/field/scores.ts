@@ -163,4 +163,27 @@ router.get('/per-table', async (req: Request, res: Response) => {
   res.json(report);
 });
 
+router.get('/record', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready', stage: 'ranking' }
+    },
+    {
+      $group: {
+        _id: null,
+        result: { $max: '$data.score' }
+      }
+    },
+    {
+      $project: {
+        _id: false,
+        result: true
+      }
+    }
+  ];
+
+  const report = await db.db.collection('scoresheets').aggregate(pipeline).next();
+  res.json(report);
+});
+
 export default router;
