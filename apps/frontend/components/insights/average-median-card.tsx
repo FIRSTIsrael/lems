@@ -1,4 +1,4 @@
-import { Box, Card, Divider, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Card, Divider, Skeleton, Stack, Typography, SxProps, Theme } from '@mui/material';
 import { apiFetch } from 'apps/frontend/lib/utils/fetch';
 import { useEffect, useState } from 'react';
 
@@ -7,11 +7,18 @@ interface AverageMedianCardProps {
   color: string;
   url: string;
   precision?: number;
+  sx?: SxProps<Theme>;
 }
 
 type AverageMedianStats = { average: string | number; median: string | number };
 
-const AverageMedianCard: React.FC<AverageMedianCardProps> = ({ title, color, url, precision }) => {
+const AverageMedianCard: React.FC<AverageMedianCardProps> = ({
+  title,
+  color,
+  url,
+  precision,
+  sx
+}) => {
   const [stats, setStats] = useState<AverageMedianStats | null>(null);
 
   useEffect(() => {
@@ -19,7 +26,7 @@ const AverageMedianCard: React.FC<AverageMedianCardProps> = ({ title, color, url
   }, [url]);
 
   return stats ? (
-    <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
+    <Card variant="outlined" sx={sx}>
       <Box p={1} textAlign="center" sx={{ backgroundColor: color }}>
         <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
           {title}

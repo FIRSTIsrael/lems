@@ -38,6 +38,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
           color="#388e3c"
           url={`/api/events/${event._id}/insights/field/scores/all`}
           precision={2}
+          sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={4}>
@@ -46,10 +47,11 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
           color="#388e3c"
           url={`/api/events/${event._id}/insights/field/scores/top`}
           precision={2}
+          sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={4}>
-        <Stat title="ציון ממוצע" value={100} />
+        <Stat title="ציון ממוצע" value={100} sx={{ p: 2, width: '100%', height: '100%' }} />
       </Grid>
       <Grid xs={12}>
         <BarChart

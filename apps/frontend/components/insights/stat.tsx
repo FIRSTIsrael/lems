@@ -1,14 +1,15 @@
-import { Card, Typography } from '@mui/material';
+import { Card, Typography, SxProps, Theme } from '@mui/material';
 
 interface StatProps {
   title: string;
   value: string | number;
   unit?: string;
+  sx?: SxProps<Theme>;
 }
 
-const Stat: React.FC<StatProps> = ({ title, value, unit }) => {
+const Stat: React.FC<StatProps> = ({ title, value, unit, sx }) => {
   return (
-    <Card sx={{ p: 2, width: '100%', height: '100%' }} variant="outlined">
+    <Card sx={sx} variant="outlined">
       <Typography fontSize="1rem" fontWeight={500} textAlign="center">
         {title}
       </Typography>
