@@ -8,7 +8,7 @@ interface StatProps {
 
 const Stat: React.FC<StatProps> = ({ title, value, unit }) => {
   return (
-    <Card sx={{ p: 2 }} variant="outlined">
+    <Card sx={{ p: 2, width: '100%', height: '100%' }} variant="outlined">
       <Typography fontSize="1rem" fontWeight={500} textAlign="center">
         {title}
       </Typography>

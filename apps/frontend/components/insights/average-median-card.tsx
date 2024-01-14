@@ -19,7 +19,7 @@ const AverageMedianCard: React.FC<AverageMedianCardProps> = ({ title, color, url
   }, [url]);
 
   return stats ? (
-    <Card variant="outlined">
+    <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
       <Box p={1} textAlign="center" sx={{ backgroundColor: color }}>
         <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
           {title}
