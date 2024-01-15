@@ -77,7 +77,7 @@
     "@types/react-beautiful-dnd": "^13.1.5",
     "@types/react-dom": "18.2.9",
     "@types/react-signature-canvas": "^1.0.2",
-    "@types/serve-favicon": "^2.5.4",
+    "@types/serve-favicon": "^2.5.7",
     "@types/webpack-env": "^1.18.2",
     "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "6.9.1",
