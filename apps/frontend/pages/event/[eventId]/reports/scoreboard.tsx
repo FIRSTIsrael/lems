@@ -26,7 +26,6 @@ interface Props {
 const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: initialScoresheets}) => {
   const router = useRouter();
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, []);
 
   const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
@@ -39,7 +38,7 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
     );
   };
 
-  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
   ]);
 
