@@ -9,6 +9,7 @@ import { Event, EventState, SafeUser, Team } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import FieldInsightsDashboard from '../../../components/insights/dashboards/field';
+import JudgingInsightsDashboard from 'apps/frontend/components/insights/dashboards/judging';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 
 interface Props {
@@ -47,7 +48,9 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
             <TabPanel value="2">
               <FieldInsightsDashboard event={event} />
             </TabPanel>
-            <TabPanel value="3"></TabPanel>
+            <TabPanel value="3">
+              <JudgingInsightsDashboard event={event} />
+            </TabPanel>
           </TabContext>
         ) : (
           //TODO: normal incomplete page, maybe redirect

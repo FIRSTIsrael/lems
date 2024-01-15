@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-import judgingInsightsRouter from './judging';
+import judgingInsightsRouter from './judging/index';
 import fieldInsightsRouter from './field/index';
 import generalInsightsRouter from './general';
 

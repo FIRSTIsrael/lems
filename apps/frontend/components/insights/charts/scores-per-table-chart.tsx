@@ -54,7 +54,13 @@ const ScoresPerTableChart: React.FC<ScoresPerTableChartProps> = ({ event }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="table" />
             <YAxis textAnchor="left" yAxisId="left" />
-            <YAxis dx={18} textAnchor="right" yAxisId="right" orientation="right" />
+            <YAxis
+              dx={10}
+              textAnchor="right"
+              yAxisId="right"
+              orientation="right"
+              label={{ value: 'אסימוני דיוק שנותרו', angle: -90, position: 'outsideCenter' }}
+            />
             <Legend />
             <Tooltip formatter={(value, name, props) => Number(Number(value).toFixed(2))} />
             <Bar

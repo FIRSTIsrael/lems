@@ -46,10 +46,10 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
         <ScoresPerTableChart event={event} />
       </Grid>
       <Grid xs={12}>
-        <InspectionBonusChart event={event} />
+        <MissionSuccessRateChart event={event} />
       </Grid>
       <Grid xs={12}>
-        <MissionSuccessRateChart event={event} />
+        <InspectionBonusChart event={event} />
       </Grid>
       <Grid xs={12}>
         <PrecisionTokensChart event={event} />

@@ -52,10 +52,13 @@ const PrecisionTokensChart: React.FC<PrecisionTokensChartProps> = ({ event }) =>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="tokens" />
+            <XAxis
+              dataKey="tokens"
+              label={{ value: 'אסימוני דיוק שנותרו', position: 'outsideCenter', dy: 14 }}
+            />
             <YAxis textAnchor="left" yAxisId="left" />
             <YAxis dx={18} textAnchor="right" yAxisId="right" orientation="right" />
-            <Legend />
+            <Legend wrapperStyle={{ bottom: -5 }} />
             <Tooltip formatter={(value, name, props) => Number(Number(value).toFixed(2))} />
             <Bar name="מספר הופעות" dataKey="count" fill={blue[400]} barSize={20} yAxisId="right" />
             <Area
