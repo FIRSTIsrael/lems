@@ -186,4 +186,60 @@ router.get('/record', async (req: Request, res: Response) => {
   res.json(report);
 });
 
+router.get('/consistency', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+    },
+    {
+      $group: {
+        _id: '$teamId',
+        scores: { $push: '$data.score' }
+      }
+    },
+    {
+      $addFields: {
+        stdDev: { $stdDevPop: '$scores' },
+        averageScore: { $avg: '$scores' }
+      }
+    },
+    {
+      $addFields: {
+        relStdDev: { $divide: [{ $multiply: ['$stdDev', 100] }, '$averageScore'] }
+      }
+    },
+    {
+      $lookup: {
+        from: 'teams',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'team'
+      }
+    },
+    { $unwind: '$team' },
+    {
+      $project: {
+        _id: false,
+        id: '$_id',
+        teamNumber: '$team.number',
+        teamName: '$team.name',
+        teamAffiliation: '$team.affiliation',
+        averageScore: true,
+        stdDev: true,
+        relStdDev: true
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        rows: { $push: '$$ROOT' },
+        avgRelStdDev: { $avg: '$relStdDev' }
+      }
+    }
+  ];
+
+  const report = await db.db.collection('scoresheets').aggregate(pipeline).next();
+  res.json(report);
+});
+
 export default router;

@@ -9,6 +9,7 @@ import MissionSuccessRateChart from '../charts/mission-success-rate-chart';
 import InspectionBonusChart from '../charts/inspection-bonus-chart';
 import PrecisionTokensChart from '../charts/precision-tokens-chart';
 import ScoresPerTableChart from '../charts/scores-per-table-chart';
+import RobotConsistencyChart from '../charts/robot-consistency-chart';
 interface FieldInsightsDashboardProps {
   event: WithId<Event>;
 }
@@ -64,6 +65,9 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
           title="סייקלים - אימונים"
           url={`/api/events/${event._id}/insights/field/cycle-time?stage=practice`}
         />
+      </Grid>
+      <Grid xs={12}>
+        <RobotConsistencyChart event={event} />
       </Grid>
     </Grid>
   );
