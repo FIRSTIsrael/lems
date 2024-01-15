@@ -201,6 +201,7 @@ const extractSessionsFromJudgingBlock = (
     for (let i = 3; i < roomNames.length + 3; i++) {
       const room = rooms.find(table => table.name === roomNames[i - 3]);
       const session: JudgingSession = {
+        eventId: event._id,
         number,
         scheduledTime: startTime.toDate(),
         roomId: room._id,

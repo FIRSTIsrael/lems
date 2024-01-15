@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { RubricStatus, Status } from '../constants';
 
 export interface JudgingSession {
+  eventId: ObjectId;
   number: number;
   teamId: ObjectId | null;
   roomId: ObjectId;
