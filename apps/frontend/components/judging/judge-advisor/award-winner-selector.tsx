@@ -36,7 +36,7 @@ const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({
         </Typography>
       </Grid>
       <Grid xs={8}>
-        <FastField name={`${awardIndex}.winner`}>
+        <FastField name={`awards.${awardIndex}.winner`}>
           {({ field, form }: FieldProps) => (
             <Autocomplete
               options={teams}

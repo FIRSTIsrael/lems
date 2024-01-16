@@ -11,6 +11,7 @@ import {
   RobotGameMatch,
   EventState,
   Award,
+  Team,
   MATCH_AUTOLOAD_THRESHOLD
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -31,6 +32,7 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   eventState: WithId<EventState>;
+  teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   awards: Array<WithId<Award>>;
 }
@@ -39,10 +41,12 @@ const Page: NextPage<Props> = ({
   user,
   event,
   eventState: initialEventState,
+  teams: initialTeams,
   matches: initialMatches,
   awards
 }) => {
   const router = useRouter();
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useState<string>('1');
@@ -82,6 +86,17 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        }
+        return t;
+      })
+    );
+  };
+
   const handleMatchAborted = (
     newMatch: WithId<RobotGameMatch>,
     newEventState: WithId<EventState>
@@ -107,7 +122,8 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'audienceDisplayUpdated', handler: setEventState },
-      { name: 'presentationUpdated', handler: setEventState }
+      { name: 'presentationUpdated', handler: setEventState },
+      { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );
 
@@ -163,6 +179,7 @@ const Page: NextPage<Props> = ({
                   >
                     <AwardsPresentation
                       event={event}
+                      teams={teams}
                       awards={awards}
                       height={108 * 2.5}
                       width={192 * 2.5}
@@ -188,6 +205,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.eventId}`,
+        teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
         matches: `/api/events/${user.eventId}/matches`,
         awards: `/api/events/${user.eventId}/awards`
