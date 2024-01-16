@@ -14,6 +14,7 @@ interface CycleTimeReportData {
   highest: number;
   lowest: number;
   percentile95: number;
+  averageDelay: number;
 }
 
 const CycleTimeReport: React.FC<CycleTimeReportProps> = ({ title, url }) => {
@@ -24,8 +25,9 @@ const CycleTimeReport: React.FC<CycleTimeReportProps> = ({ title, url }) => {
   }, [url]);
 
   const formatSeconds = (seconds: number | undefined) => {
-    if (seconds) return dayjs.duration(seconds, 'seconds').format('mm:ss');
-    return '00:00';
+    if (!seconds) return '00:00';
+    const prefix = seconds < 0 ? '-' : '';
+    return prefix + dayjs.duration(Math.abs(seconds), 'seconds').format('mm:ss');
   };
 
   return (
@@ -37,23 +39,39 @@ const CycleTimeReport: React.FC<CycleTimeReportProps> = ({ title, url }) => {
         <TableBody>
           <TableRow>
             <TableCell>ממוצע</TableCell>
-            <TableCell>{formatSeconds(data?.average)}</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.average)}</Typography>
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>חציון</TableCell>
-            <TableCell>{formatSeconds(data?.median)}</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.median)}</Typography>
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>נמוך ביותר</TableCell>
-            <TableCell>{formatSeconds(data?.lowest)}</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.lowest)}</Typography>
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>גבוה ביותר</TableCell>
-            <TableCell>{formatSeconds(data?.highest)}</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.highest)}</Typography>
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>אחוזון 95</TableCell>
-            <TableCell>{formatSeconds(data?.percentile95)}</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.percentile95)}</Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>עיכוב ממוצע</TableCell>
+            <TableCell>
+              <Typography dir="ltr">{formatSeconds(data?.averageDelay)}</Typography>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

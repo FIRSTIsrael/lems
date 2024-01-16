@@ -21,7 +21,14 @@ router.get('/cycle-time', async (req: Request, res: Response) => {
         round: true,
         number: true,
         scheduledTime: true,
-        startTime: true
+        startTime: true,
+        delay: {
+          $dateDiff: {
+            startDate: '$scheduledTime',
+            endDate: '$startTime',
+            unit: 'second'
+          }
+        }
       }
     },
     {
@@ -65,6 +72,7 @@ router.get('/cycle-time', async (req: Request, res: Response) => {
     {
       $project: {
         _id: false,
+        delay: true,
         cycleTime: {
           $dateDiff: {
             startDate: '$previousMatchStart',
@@ -77,7 +85,8 @@ router.get('/cycle-time', async (req: Request, res: Response) => {
     {
       $group: {
         _id: null,
-        cycleTimes: { $push: '$cycleTime' }
+        cycleTimes: { $push: '$cycleTime' },
+        averageDelay: { $avg: '$delay' }
       }
     },
     {
@@ -102,7 +111,8 @@ router.get('/cycle-time', async (req: Request, res: Response) => {
             },
             0
           ]
-        }
+        },
+        averageDelay: true
       }
     }
   ];
