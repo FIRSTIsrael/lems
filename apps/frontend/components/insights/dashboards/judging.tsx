@@ -34,7 +34,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
       <Grid xs={4}>
         <Stat
           title="קבוצות שהועמדו לפרסי רשות"
-          url={`/api/events/${event._id}/insights/judging/scores/optional-award-nominations`}
+          url={`/api/events/${event._id}/insights/judging/optional-award-nominations`}
           sx={{ p: 2, width: '100%', height: '100%' }}
         />
       </Grid>

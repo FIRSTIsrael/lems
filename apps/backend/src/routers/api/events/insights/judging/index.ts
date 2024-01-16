@@ -96,6 +96,50 @@ router.get('/delay', async (req: Request, res: Response) => {
   res.json(report);
 });
 
+router.get('/optional-award-nominations', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $match: {
+        eventId: new ObjectId(req.params.eventId),
+        category: 'core-values',
+        status: 'ready'
+      }
+    },
+    {
+      $project: {
+        category: true,
+        teamId: true,
+        awards: { $objectToArray: '$data.awards' }
+      }
+    },
+    {
+      $group: {
+        _id: '$_id',
+        nominations: {
+          $sum: {
+            $size: {
+              $filter: {
+                input: '$awards.v',
+                cond: '$$this'
+              }
+            }
+          }
+        }
+      }
+    },
+    { $match: { nominations: { $gt: 0 } } },
+    {
+      $group: {
+        _id: null,
+        result: { $sum: 1 }
+      }
+    }
+  ];
+
+  const report = await db.db.collection('rubrics').aggregate(pipeline).next();
+  res.json(report);
+});
+
 router.use('/scores', scoresRouter);
 
 export default router;
