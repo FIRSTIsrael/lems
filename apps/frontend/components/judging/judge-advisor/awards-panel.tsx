@@ -73,7 +73,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
             if (!a.winner) a.winner = '';
             return a;
           }),
-          advancingTeams: []
+          advancingTeams: teams.filter(t => t.advancing)
         }}
         validate={validateForm}
         onSubmit={(values, actions) => {
@@ -128,7 +128,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
               {awards.length > 0 &&
                 (!readOnly ? (
                   <>
-                    <LoadingButton
+                    {/* <LoadingButton
                       startIcon={<SaveOutlinedIcon />}
                       sx={{ minWidth: 250 }}
                       variant="contained"
@@ -137,7 +137,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       disabled={!isValid || readOnly}
                     >
                       <span>שמירה</span>
-                    </LoadingButton>
+                    </LoadingButton> */}
                     <Button
                       startIcon={<LockOutlinedIcon />}
                       sx={{ minWidth: 250 }}

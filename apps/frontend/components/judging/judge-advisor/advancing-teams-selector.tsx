@@ -33,9 +33,10 @@ const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, 
                   )}
                   value={team}
                   setTeam={setTeam}
+                  readOnly={readOnly}
                 />
               </Grid>
-              <Grid xs={2} textAlign={'center'}>
+              <Grid xs={2} textAlign="center">
                 <Button
                   variant="contained"
                   onClick={e => {
@@ -43,9 +44,9 @@ const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, 
                       e.preventDefault();
                       form.setFieldValue(field.name, field.value ? [...field.value, team] : [team]);
                       setTeam(null);
-                      console.log(field.value);
                     }
                   }}
+                  disabled={readOnly}
                 >
                   הוסף
                 </Button>
@@ -56,16 +57,25 @@ const AdvancingTeamsSelector: React.FC<AdvancingTeamsSelectorProps> = ({ teams, 
                 <Grid xs={6} key={index}>
                   <Chip
                     label={localizeTeam(team)}
-                    sx={{ width: '100%' }}
-                    onDelete={e => {
-                      e.preventDefault();
-                      const teamIndex = field.value.findIndex(
-                        (t: WithId<Team>) => t._id === team._id
-                      );
-                      const currentValue = [...field.value];
-                      currentValue.splice(teamIndex, 1);
-                      form.setFieldValue(field.name, currentValue);
+                    sx={{
+                      width: '100%',
+                      textAlign: 'left',
+                      justifyContent: 'space-between',
+                      '&. MuiChip-deleteIcon': { justifySelf: 'flex-end' }
                     }}
+                    onDelete={
+                      !readOnly
+                        ? e => {
+                            e.preventDefault();
+                            const teamIndex = field.value.findIndex(
+                              (t: WithId<Team>) => t._id === team._id
+                            );
+                            const currentValue = [...field.value];
+                            currentValue.splice(teamIndex, 1);
+                            form.setFieldValue(field.name, currentValue);
+                          }
+                        : () => {}
+                    }
                   />
                 </Grid>
               ))}
