@@ -149,4 +149,104 @@ router.get('/optional-award-nominations', async (req: Request, res: Response) =>
   res.json(report);
 });
 
+router.get('/per-room', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+    },
+    {
+      $addFields: {
+        scores: { $objectToArray: '$data.values' }
+      }
+    },
+    {
+      $project: {
+        teamId: true,
+        category: true,
+        averageScore: { $avg: '$scores.v.value' }
+      }
+    },
+    {
+      $lookup: {
+        from: 'sessions',
+        let: { teamId: '$teamId' },
+        pipeline: [{ $match: { $expr: { $eq: ['$teamId', '$$teamId'] } } }],
+        as: 'session'
+      }
+    },
+    {
+      $project: {
+        _id: false
+      }
+    },
+    {
+      $addFields: {
+        session: { $arrayElemAt: ['$session', 0] }
+      }
+    },
+    {
+      $project: {
+        teamId: true,
+        category: true,
+        averageScore: true,
+        roomId: '$session.roomId'
+      }
+    },
+    {
+      $group: {
+        _id: {
+          _id: '$roomId',
+          category: '$category'
+        },
+        averageScore: { $avg: '$averageScore' }
+      }
+    },
+    {
+      $group: {
+        _id: '$_id._id',
+        scores: {
+          $push: {
+            k: '$_id.category',
+            v: '$averageScore'
+          }
+        }
+      }
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [{ _id: '$_id' }, { $arrayToObject: '$scores' }]
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: 'rooms',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'room'
+      }
+    },
+    {
+      $addFields: {
+        room: { $arrayElemAt: ['$room.name', 0] }
+      }
+    },
+    {
+      $project: {
+        _id: false,
+        'innovation-project': true,
+        'core-values': true,
+        'robot-design': true,
+        average: { $avg: ['$innovation-project', '$core-values', '$robot-design'] },
+        room: true
+      }
+    }
+  ];
+
+  const report = await db.db.collection('rubrics').aggregate(pipeline).toArray();
+  // report.sort((a, b) => a.table.localeCompare(b.table));
+  res.json(report);
+});
+
 export default router;
