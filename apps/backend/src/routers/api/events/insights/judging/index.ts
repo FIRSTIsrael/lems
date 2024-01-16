@@ -140,6 +140,106 @@ router.get('/optional-award-nominations', async (req: Request, res: Response) =>
   res.json(report);
 });
 
+router.get('/robot-correlation', async (req: Request, res: Response) => {
+  const pipeline = [
+    {
+      $lookup: {
+        from: 'rubrics',
+        let: { teamId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$teamId', '$$teamId']
+                  },
+                  {
+                    $eq: ['$status', 'ready']
+                  },
+                  {
+                    $eq: ['$category', 'robot-design']
+                  }
+                ]
+              }
+            }
+          },
+          {
+            $project: {
+              scores: { $objectToArray: '$data.values' }
+            }
+          },
+          {
+            $project: {
+              _id: false,
+              averageRobotDesignScore: { $avg: '$scores.v.value' }
+            }
+          }
+        ],
+        as: 'rubric'
+      }
+    },
+    {
+      $lookup: {
+        from: 'scoresheets',
+        let: { teamId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$teamId', '$$teamId']
+                  },
+                  {
+                    $eq: ['$stage', 'ranking']
+                  },
+                  {
+                    $eq: ['$status', 'ready']
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'scoresheets'
+      }
+    },
+    {
+      $match: {
+        $expr: {
+          $and: [
+            {
+              $eq: [{ $size: '$rubric' }, 1]
+            },
+            {
+              $gt: [{ $size: '$scoresheets' }, 0]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        rubric: { $arrayElemAt: ['$rubric', 0] },
+        topRobotGameScore: {
+          $max: '$scoresheets.data.score'
+        }
+      }
+    },
+    {
+      $project: {
+        _id: false,
+        averageRobotDesignScore: '$rubric.averageRobotDesignScore',
+        topRobotGameScore: true
+      }
+    }
+  ];
+
+  const report = await db.db.collection('teams').aggregate(pipeline).toArray();
+  res.json(report);
+});
+
 router.use('/scores', scoresRouter);
 
 export default router;
