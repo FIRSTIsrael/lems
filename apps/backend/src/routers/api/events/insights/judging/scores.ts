@@ -245,7 +245,7 @@ router.get('/per-room', async (req: Request, res: Response) => {
   ];
 
   const report = await db.db.collection('rubrics').aggregate(pipeline).toArray();
-  // report.sort((a, b) => a.table.localeCompare(b.table));
+  report.sort((a, b) => a.room.localeCompare(b.room));
   res.json(report);
 });
 

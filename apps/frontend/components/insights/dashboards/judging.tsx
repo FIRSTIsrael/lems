@@ -6,6 +6,7 @@ import Stat from '../stat';
 import AverageMedianCard from '../average-median-card';
 import CategoryScoresChart from '../charts/category-scores-chart';
 import JudgingRoomDelayChart from '../charts/judging-room-delay-chart';
+import ScoresPerRoomChart from '../charts/scores-per-room-chart';
 
 interface JudgingInsightsDashboardProps {
   event: WithId<Event>;
@@ -42,6 +43,9 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
       </Grid>
       <Grid xs={6}>
         <JudgingRoomDelayChart event={event} />
+      </Grid>
+      <Grid xs={12}>
+        <ScoresPerRoomChart event={event} />
       </Grid>
     </Grid>
   );
