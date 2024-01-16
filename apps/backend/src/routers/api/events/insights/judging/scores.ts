@@ -131,17 +131,13 @@ router.get('/per-room', async (req: Request, res: Response) => {
       }
     },
     {
-      $project: {
-        _id: false
-      }
-    },
-    {
       $addFields: {
         session: { $arrayElemAt: ['$session', 0] }
       }
     },
     {
       $project: {
+        _id: false,
         teamId: true,
         category: true,
         averageScore: true,
