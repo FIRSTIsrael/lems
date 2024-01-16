@@ -39,7 +39,7 @@ const CategoryScoresChart: React.FC<CategoryScoresChartProps> = ({ event }) => {
     <Card variant="outlined">
       <Box p={1} textAlign="center" sx={{ backgroundColor: red[600] }}>
         <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
-          {'ציוני תחומים'}
+          ציוני תחומים
         </Typography>
       </Box>
       <Table>

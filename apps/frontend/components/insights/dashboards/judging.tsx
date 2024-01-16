@@ -40,8 +40,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
       <Grid xs={6}>
         <CategoryScoresChart event={event} />
       </Grid>
-      <Grid xs={6}></Grid>
-      <Grid xs={12}>
+      <Grid xs={6}>
         <JudgingRoomDelayChart event={event} />
       </Grid>
     </Grid>

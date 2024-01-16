@@ -1,28 +1,24 @@
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
-import { red, purple } from '@mui/material/colors';
-import { Paper, Skeleton, Typography } from '@mui/material';
+import { red } from '@mui/material/colors';
+import { Box, Card, Stack, Divider, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
-import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
 
 interface JudgingRoomDelayChartProps {
   event: WithId<Event>;
 }
 
-type JudgingRoomDelayChartData = Array<{ room: string; average: number; range: Array<number> }>;
+interface JudgingRoomDelayChartData {
+  best: { room: string; average: number };
+  worst: { room: string; average: number };
+  average: number;
+}
 
 const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) => {
-  const [data, setData] = useState<JudgingRoomDelayChartData>([]);
+  const [data, setData] = useState<JudgingRoomDelayChartData | null>(null);
 
   useEffect(() => {
     apiFetch(`/api/events/${event._id}/insights/judging/delay`).then(res =>
@@ -30,34 +26,54 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
     );
   }, [event._id]);
 
+  const getDuration = (seconds: number | undefined): string => {
+    if (!seconds) return '00:00';
+    const prefix = seconds < 0 ? '-' : '';
+    const _seconds = Math.abs(seconds);
+    return prefix + dayjs.duration(_seconds, 'seconds').format('mm:ss');
+  };
+
   return (
-    <Paper sx={{ p: 2, width: '100%', height: '100%' }}>
-      <Typography textAlign="center" fontSize="1.25rem" component="h2">
-        עיכוב חדרי שיפוט
-      </Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        {data.length > 0 ? (
-          <ComposedChart
-            data={data}
-            margin={{
-              top: 5,
-              right: 20,
-              left: 20,
-              bottom: 5
-            }}
+    <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
+      <Box p={1} textAlign="center" sx={{ backgroundColor: red[600] }}>
+        <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
+          עיכוב
+        </Typography>
+      </Box>
+      <Grid container>
+        <Grid xs={12} sx={{ pt: 2 }}>
+          <Typography fontWeight={500} fontSize="1.125rem" textAlign="center">
+            עיכוב ממוצע
+          </Typography>
+          <Typography fontSize="1.75rem" dir="ltr" textAlign="center">
+            {getDuration(data?.average)}
+          </Typography>
+        </Grid>
+        <Grid xs={12} mt={2} pt={2} borderTop={0.5} borderColor="#aaa">
+          <Stack
+            direction="row"
+            divider={<Divider orientation="vertical" flexItem />}
+            justifyContent="space-evenly"
+            p={1}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="room" />
-            <YAxis unit="s" textAnchor="left" />
-            <Tooltip />
-            <Bar name="טווח עיכוב" dataKey="range" fill={purple[100]} />
-            <Line name="עיכוב ממוצע" dataKey="average" stroke={red[600]} />
-          </ComposedChart>
-        ) : (
-          <Skeleton width="100%" height="100%" />
-        )}
-      </ResponsiveContainer>
-    </Paper>
+            <Stack spacing={0} textAlign="center">
+              <Typography color="text.secondary">מצטיין</Typography>
+              <Typography dir="ltr" fontWeight={600}>
+                {getDuration(data?.best.average)}
+              </Typography>
+              <Typography color="text.secondary">{data?.best.room}</Typography>
+            </Stack>
+            <Stack spacing={0} textAlign="center">
+              <Typography color="text.secondary">טעון שיפור</Typography>
+              <Typography dir="ltr" fontWeight={600}>
+                {getDuration(data?.worst.average)}
+              </Typography>
+              <Typography color="text.secondary">{data?.worst.room}</Typography>
+            </Stack>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Card>
   );
 };
 

@@ -55,14 +55,44 @@ router.get('/delay', async (req: Request, res: Response) => {
       $project: {
         _id: false,
         room: '$room.name',
-        average: { $avg: '$roomSessions.delay' },
-        range: [{ $min: '$roomSessions.delay' }, { $max: '$roomSessions.delay' }]
+        average: { $avg: '$roomSessions.delay' }
+      }
+    },
+    {
+      $facet: {
+        bestRoom: [
+          { $addFields: { absAverage: { $abs: '$average' } } },
+          { $sort: { absAverage: 1 } },
+          { $limit: 1 },
+          { $unset: 'absAverage' }
+        ],
+        worstRoom: [{ $sort: { average: -1 } }, { $limit: 1 }],
+        average: [
+          {
+            $group: {
+              _id: null,
+              average: { $avg: '$average' }
+            }
+          },
+          { $project: { _id: false, average: true } }
+        ]
+      }
+    },
+    {
+      $project: {
+        best: { $arrayElemAt: ['$bestRoom', 0] },
+        worst: { $arrayElemAt: ['$worstRoom', 0] },
+        average: { $arrayElemAt: ['$average', 0] }
+      }
+    },
+    {
+      $addFields: {
+        average: '$average.average'
       }
     }
   ];
 
-  const report = await db.db.collection('sessions').aggregate(pipeline).toArray();
-  report.sort((a, b) => a.room.localeCompare(b.room));
+  const report = await db.db.collection('sessions').aggregate(pipeline).next();
   res.json(report);
 });
 
