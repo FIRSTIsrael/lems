@@ -30,14 +30,14 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
           title="ציון ממוצע גבוה ביותר"
           url={`/api/events/${event._id}/insights/judging/scores/record`}
           precision={2}
-          sx={{ p: 2, width: '100%', height: '100%' }}
+          sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={4}>
         <Stat
           title="קבוצות שהועמדו לפרסי רשות"
           url={`/api/events/${event._id}/insights/judging/optional-award-nominations`}
-          sx={{ p: 2, width: '100%', height: '100%' }}
+          sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={6}>

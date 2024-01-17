@@ -30,7 +30,7 @@ const Stat: React.FC<StatProps> = ({
   const getHeader = () => {
     if (variant === 'plain') {
       return (
-        <Typography fontSize="1rem" fontWeight={500} textAlign="center">
+        <Typography fontSize="1rem" fontWeight={500} textAlign="center" sx={{ pt: 2 }}>
           {title}
         </Typography>
       );
@@ -38,7 +38,7 @@ const Stat: React.FC<StatProps> = ({
 
     if (variant === 'header') {
       return (
-        <Box p={1} mb={1} textAlign="center" sx={{ backgroundColor: color }}>
+        <Box p={1} textAlign="center" sx={{ backgroundColor: color }}>
           <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
             {title}
           </Typography>
@@ -50,7 +50,7 @@ const Stat: React.FC<StatProps> = ({
   return (
     <Card sx={sx} variant="outlined">
       {getHeader()}
-      <Typography fontSize="2rem" textAlign="center" dir="ltr">
+      <Typography fontSize="2rem" textAlign="center" dir="ltr" sx={{ py: 1 }}>
         {precision && typeof data?.result === 'number'
           ? Number(data?.result.toFixed(precision))
           : data?.result || 0}
