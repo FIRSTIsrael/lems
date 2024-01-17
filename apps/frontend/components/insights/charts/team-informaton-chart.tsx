@@ -38,47 +38,45 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
   return (
     <>
       {team && data ? (
-        <>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>ניקוד גבוה ביותר</TableCell>
-                <TableCell>{Number(data.robotPerformance.maxScore.toFixed(2))}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>סטיית תקן יחסית</TableCell>
-                <TableCell>{Number(data.robotPerformance.relStdDev.toFixed(2)) + '%'}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>פרסים</TableCell>
-                <TableCell>
-                  {data.awards.length > 0
-                    ? data.awards
-                        .map(award => `${localizedAward[award.name].name}, מקום ${award.place}`)
-                        .join(', ')
-                    : 'אין'}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>טפסי CV</TableCell>
-                <TableCell>
-                  {data.cvForms.length > 0
-                    ? data.cvForms.map((cvForm, index) => (
-                        <Avatar
-                          key={index}
-                          sx={{ height: '30px', width: '30px' }}
-                          alt="חומרת הטופס"
-                          src={`https://emojicdn.elk.sh/${
-                            cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
-                          }`}
-                        />
-                      ))
-                    : 'אין'}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell>ניקוד גבוה ביותר</TableCell>
+              <TableCell>{Number(data.robotPerformance.maxScore.toFixed(2))}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>סטיית תקן יחסית</TableCell>
+              <TableCell>{Number(data.robotPerformance.relStdDev.toFixed(2)) + '%'}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>פרסים</TableCell>
+              <TableCell>
+                {data.awards.length > 0
+                  ? data.awards
+                      .map(award => `${localizedAward[award.name].name}, מקום ${award.place}`)
+                      .join(', ')
+                  : 'אין'}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>טפסי CV</TableCell>
+              <TableCell>
+                {data.cvForms.length > 0
+                  ? data.cvForms.map((cvForm, index) => (
+                      <Avatar
+                        key={index}
+                        sx={{ height: '30px', width: '30px' }}
+                        alt="חומרת הטופס"
+                        src={`https://emojicdn.elk.sh/${
+                          cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
+                        }`}
+                      />
+                    ))
+                  : 'אין'}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       ) : (
         <Skeleton width="100%" height={320} />
       )}
