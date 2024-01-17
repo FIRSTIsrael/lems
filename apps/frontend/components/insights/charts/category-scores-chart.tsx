@@ -11,7 +11,7 @@ import {
   TableRow,
   TableCell
 } from '@mui/material';
-import { apiFetch } from 'apps/frontend/lib/utils/fetch';
+import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 import { Event, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';

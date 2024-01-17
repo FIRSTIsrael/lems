@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Paper, Skeleton, Typography } from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
+import { red, green, blue } from '@mui/material/colors';
 import { Event, JudgingCategory, Team } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
@@ -19,8 +20,15 @@ interface TeamProfileChartProps {
   team: WithId<Team> | null;
 }
 
+type TeamProfileChartData = Array<{
+  _id: JudgingCategory;
+  category: JudgingCategory;
+  average: number;
+  fullMark: number;
+}>;
+
 const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ event, team }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<TeamProfileChartData>([]);
 
   useEffect(() => {
     if (team)
@@ -39,24 +47,26 @@ const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ event, team }) => {
     );
   };
 
+  const color: string = useMemo(() => {
+    const colors = {
+      'innovation-project': blue[200],
+      'core-values': red[200],
+      'robot-design': green[200]
+    };
+    const sorted = structuredClone(data).sort((a, b) => b.average - a.average);
+    if (sorted[0] === sorted[1]) return '#aaa';
+    return colors[sorted[0].category];
+  }, [data]);
+
   return (
     <>
-      <Typography textAlign="center" fontSize="1.25rem" component="h2">
-        פרופיל שיפוט
-      </Typography>
       <ResponsiveContainer width="100%" height={320}>
         {team && data.length > 0 ? (
           <RadarChart outerRadius={120} data={data}>
             <PolarGrid />
             <PolarAngleAxis dataKey="category" tick={props => renderPolarAngleAxis(props)} />
             <PolarRadiusAxis angle={90} domain={[0, 4]} type="number" />
-            <Radar
-              name="team"
-              dataKey="average"
-              stroke="#82ca9d"
-              fill="#82ca9d"
-              fillOpacity={0.6}
-            />
+            <Radar name="team" dataKey="average" stroke={color} fill={color} fillOpacity={0.6} />
           </RadarChart>
         ) : (
           <Skeleton width="100%" height="100%" />
