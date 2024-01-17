@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
-import { Paper, Typography } from '@mui/material';
+import { Paper, Skeleton, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Event, Team } from '@lems/types';
 import TeamSelection from '../../general/team-selection';
+import TeamProfileChart from '../charts/team-profile-chart';
 
 interface TeamInsightsDashboardProps {
   event: WithId<Event>;
@@ -25,6 +26,10 @@ const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ event, te
           <TeamSelection teams={teams} value={team} setTeam={setTeam} />
         </Grid>
       </Grid>
+      <Grid xs={6}>
+        <TeamProfileChart event={event} team={team} />
+      </Grid>
+      <Grid xs={6}></Grid>
     </Paper>
   );
 };
