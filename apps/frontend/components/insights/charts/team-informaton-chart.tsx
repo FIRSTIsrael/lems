@@ -1,9 +1,8 @@
 import { WithId } from 'mongodb';
-import { green } from '@mui/material/colors';
-import { Box, Typography, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
+import { Avatar, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
-import { AwardNames, CVFormCategory, CVFormCategoryNames, Event, Team } from '@lems/types';
+import { AwardNames, CVFormCategoryNames, Event, Team } from '@lems/types';
 import { cvFormSchema, localizedAward } from '@lems/season';
 
 interface TeamInformationChartProps {
@@ -67,12 +66,16 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
                 <TableCell>טפסי CV</TableCell>
                 <TableCell>
                   {data.cvForms.length > 0
-                    ? data.cvForms
-                        .map(
-                          cvForm =>
+                    ? data.cvForms.map((cvForm, index) => (
+                        <Avatar
+                          key={index}
+                          sx={{ height: '30px', width: '30px' }}
+                          alt="חומרת הטופס"
+                          src={`https://emojicdn.elk.sh/${
                             cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
-                        )
-                        .join(', ')
+                          }`}
+                        />
+                      ))
                     : 'אין'}
                 </TableCell>
               </TableRow>
