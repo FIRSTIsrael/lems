@@ -11,14 +11,16 @@ import { RoleAuthorizer } from '../../../components/role-authorizer';
 import FieldInsightsDashboard from '../../../components/insights/dashboards/field';
 import JudgingInsightsDashboard from 'apps/frontend/components/insights/dashboards/judging';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import GeneralInsightsDashboard from 'apps/frontend/components/insights/dashboards/general';
 
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   eventState: WithId<EventState>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, eventState }) => {
+const Page: NextPage<Props> = ({ user, event, eventState, teams }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   return (
@@ -44,7 +46,9 @@ const Page: NextPage<Props> = ({ user, event, eventState }) => {
                 <Tab label="שיפוט" value="3" />
               </Tabs>
             </Paper>
-            <TabPanel value="1"></TabPanel>
+            <TabPanel value="1">
+              <GeneralInsightsDashboard event={event} teams={teams} />
+            </TabPanel>
             <TabPanel value="2">
               <FieldInsightsDashboard event={event} />
             </TabPanel>
@@ -68,7 +72,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`
+        eventState: `/api/events/${user.eventId}/state`,
+        teams: `/api/events/${user.eventId}/teams`
       },
       ctx
     );

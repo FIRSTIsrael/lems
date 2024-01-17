@@ -21,7 +21,7 @@ const Stat: React.FC<StatProps> = ({ title, url, unit, sx }) => {
       <Typography fontSize="1rem" fontWeight={500} textAlign="center">
         {title}
       </Typography>
-      <Typography fontSize="2rem" textAlign="center">
+      <Typography fontSize="2rem" textAlign="center" dir="ltr">
         {data?.result || 0}
         {unit}
       </Typography>
