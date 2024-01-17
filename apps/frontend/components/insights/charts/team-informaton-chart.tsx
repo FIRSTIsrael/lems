@@ -33,8 +33,6 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
       );
   }, [event._id, team]);
 
-  console.log(data);
-
   return (
     <>
       {team && data ? (
