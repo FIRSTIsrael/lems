@@ -1,4 +1,5 @@
 import { WithId } from 'mongodb';
+import { blue } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Event, Team } from '@lems/types';
 import Stat from '../stat';
@@ -15,8 +16,10 @@ const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ eve
       <Grid xs={4}>
         <Stat
           title="קבוצות באירוע"
+          variant="header"
+          color={blue[500]}
           url={`/api/events/${event._id}/insights/general/total-teams`}
-          sx={{ p: 2, width: '100%', height: '100%' }}
+          sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={4}></Grid>
