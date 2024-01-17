@@ -19,6 +19,7 @@ import {
 } from '@lems/types';
 import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
+import InsightsLink from '../../../components/general/insights-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
 import EventPanel from '../../../components/tournament-manager/event-panel';
@@ -208,7 +209,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
       >
@@ -230,7 +231,7 @@ const Page: NextPage<Props> = ({
             <TicketPanel event={event} teams={teams} tickets={tickets} socket={socket} />
           </TabPanel>
           <TabPanel value="2">
-            <EventPanel />
+            <EventPanel event={event} eventState={eventState} />
           </TabPanel>
           <TabPanel value="3">
             <FieldScheduleEditor
