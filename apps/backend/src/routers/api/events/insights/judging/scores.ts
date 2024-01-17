@@ -89,8 +89,14 @@ router.get('/record', async (req: Request, res: Response) => {
       }
     },
     {
-      $project: {
+      $addFields: {
         averageScore: { $avg: '$scores.v.value' }
+      }
+    },
+    {
+      $group: {
+        _id: '$teamId',
+        averageScore: { $avg: '$averageScore' }
       }
     },
     {

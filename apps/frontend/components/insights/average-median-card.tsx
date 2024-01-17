@@ -1,5 +1,5 @@
 import { Box, Card, Divider, Skeleton, Stack, Typography, SxProps, Theme } from '@mui/material';
-import { apiFetch } from 'apps/frontend/lib/utils/fetch';
+import { apiFetch } from '../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 
 interface AverageMedianCardProps {

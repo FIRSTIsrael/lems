@@ -29,6 +29,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
         <Stat
           title="ציון ממוצע גבוה ביותר"
           url={`/api/events/${event._id}/insights/judging/scores/record`}
+          precision={2}
           sx={{ p: 2, width: '100%', height: '100%' }}
         />
       </Grid>
