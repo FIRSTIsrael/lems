@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, forwardRef } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   Paper,
   Button,
@@ -14,8 +15,6 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import 'dayjs/locale/he';
-import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
@@ -39,8 +38,8 @@ const EventCreateForm = forwardRef((props, ref) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: (startDate || getDefaultDate()).toDate(),
-        endDate: (endDate || getDefaultDate()).toDate(),
+        startDate: (startDate || getDefaultDate()).tz('utc', true).toDate(),
+        endDate: (endDate || getDefaultDate()).tz('utc', true).toDate(),
         color,
         hasState: false
       })
@@ -88,7 +87,10 @@ const EventCreateForm = forwardRef((props, ref) => {
           <DatePicker
             label="תאריך התחלה"
             value={startDate}
-            onChange={newDate => setStartDate(newDate)}
+            onChange={newDate => {
+              setStartDate(newDate);
+              setEndDate(newDate);
+            }}
             format="DD/MM/YYYY"
           />
           <DatePicker
@@ -96,6 +98,7 @@ const EventCreateForm = forwardRef((props, ref) => {
             value={endDate}
             onChange={newDate => setEndDate(newDate)}
             format="DD/MM/YYYY"
+            readOnly
           />
         </LocalizationProvider>
         <FormControl>

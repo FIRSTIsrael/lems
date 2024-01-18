@@ -43,3 +43,5 @@ Thumbs.db
 
 # Backend log
 http-log.log
+
+.nx/cache

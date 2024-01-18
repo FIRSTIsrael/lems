@@ -6,6 +6,7 @@ export interface Ticket {
   eventId: ObjectId;
   created: Date;
   closed?: Date;
+  reasonForClose?: string;
   content: string;
   type: TicketType;
 }

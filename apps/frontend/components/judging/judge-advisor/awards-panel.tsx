@@ -30,6 +30,7 @@ import {
 import { apiFetch } from '../../../lib/utils/fetch';
 import AwardWinnerSelector from './award-winner-selector';
 import ResultExportPaper from './result-export-paper';
+import AdvancingTeamsSelector from './advancing-teams-selector';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
@@ -45,12 +46,12 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
   const validateForm = (formValues: FormikValues) => {
     const errors: any = {};
 
-    formValues.forEach((award: WithId<Award>) => {
+    formValues.awards.forEach((award: WithId<Award>) => {
       if (typeof award.winner === 'string' || !award.winner || award.name === 'robotPerformance')
         return;
 
       if (
-        formValues.find(
+        formValues.awards.find(
           (a: WithId<Award>) =>
             !fullMatch(a, award) &&
             fullMatch(a.winner, award.winner) &&
@@ -67,10 +68,13 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
     <>
       <ResultExportPaper event={event} />
       <Formik
-        initialValues={awards.map(a => {
-          if (!a.winner) a.winner = '';
-          return a;
-        })}
+        initialValues={{
+          awards: awards.map(a => {
+            if (!a.winner) a.winner = '';
+            return a;
+          }),
+          advancingTeams: teams.filter(t => t.advancing)
+        }}
         validate={validateForm}
         onSubmit={(values, actions) => {
           apiFetch(`/api/events/${event._id}/awards/winners`, {
@@ -103,6 +107,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                   readOnly={readOnly}
                 />
               ))}
+              <AdvancingTeamsSelector teams={teams.filter(t => t.registered)} readOnly={readOnly} />
             </Stack>
             {!isValid && (
               <Alert
@@ -138,7 +143,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       sx={{ minWidth: 250 }}
                       variant="contained"
                       onClick={() => setOpen(true)}
-                      disabled={!values.every(x => x.winner) || !isValid || readOnly}
+                      disabled={!values.awards.every(x => x.winner) || !isValid || readOnly}
                     >
                       נעילת הפרסים
                     </Button>

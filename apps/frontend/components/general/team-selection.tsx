@@ -8,9 +8,15 @@ interface TeamSelectionProps {
   teams: WithId<Team>[] | undefined;
   value: WithId<Team> | null;
   setTeam: (team: WithId<Team> | null) => void;
+  readOnly?: boolean;
 }
 
-const TeamSelection: React.FC<TeamSelectionProps> = ({ teams, value, setTeam }) => {
+const TeamSelection: React.FC<TeamSelectionProps> = ({
+  teams,
+  value,
+  setTeam,
+  readOnly = false
+}) => {
   return (
     <Autocomplete
       blurOnSelect
@@ -20,6 +26,7 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({ teams, value, setTeam }) 
       value={value}
       onChange={(_e, value) => setTeam(typeof value !== 'string' ? value : null)}
       renderInput={params => <TextField {...params} label="קבוצה" />}
+      readOnly={readOnly}
     />
   );
 };

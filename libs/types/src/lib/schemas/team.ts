@@ -10,4 +10,5 @@ export interface Team {
     city: string;
   };
   profileDocument?: { id: string; link: string };
+  advancing?: boolean;
 }

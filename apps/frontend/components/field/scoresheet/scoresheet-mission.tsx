@@ -119,7 +119,7 @@ interface ScoresheetMissionProps {
   missionIndex: number;
   mission: Mission;
   src: string;
-  errors: Array<{ id: string; description: string } | undefined>;
+  errors?: Array<{ id: string; description: string }>;
   readOnly: boolean;
 }
 
@@ -127,13 +127,20 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   missionIndex,
   mission,
   src,
-  errors,
+  errors = [],
   readOnly
 }) => {
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
     localizedMission && (
-      <Grid component={Paper} container spacing={0} pb={2}>
+      <Grid
+        component={Paper}
+        container
+        spacing={0}
+        pb={2}
+        id={mission.id}
+        sx={{ scrollMarginTop: 300 }}
+      >
         <Grid container xs={8} spacing={0}>
           <Grid
             py={1}
