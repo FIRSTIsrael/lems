@@ -87,7 +87,10 @@ const EventCreateForm = forwardRef((props, ref) => {
           <DatePicker
             label="תאריך התחלה"
             value={startDate}
-            onChange={newDate => setStartDate(newDate)}
+            onChange={newDate => {
+              setStartDate(newDate);
+              setEndDate(newDate);
+            }}
             format="DD/MM/YYYY"
           />
           <DatePicker
@@ -95,6 +98,7 @@ const EventCreateForm = forwardRef((props, ref) => {
             value={endDate}
             onChange={newDate => setEndDate(newDate)}
             format="DD/MM/YYYY"
+            readOnly
           />
         </LocalizationProvider>
         <FormControl>
