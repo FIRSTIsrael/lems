@@ -1,11 +1,11 @@
-import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { Paper, Table, TableBody, TableBodyProps, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { useState } from 'react';
+import { Paper, Table, TableBody, TableBodyProps, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -38,7 +38,7 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
     );
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
   ]);
 
@@ -55,18 +55,20 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
       )
   ];
 
-  const maxScores = teams
+  const teamsWithMaxScores = useMemo(() => {
+    return teams
     .map(t => {
       return {
         team: t,
-        score: Math.max(
+        maxScore: Math.max(
           ...scoresheets
             .filter(s => s.teamId === t._id && s.stage === eventState.currentStage)
             .map(s => s.data?.score || 0)
         )
       };
     })
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.maxScore - a.maxScore)
+  }, [eventState.currentStage, scoresheets, teams])
 
   return (
     <RoleAuthorizer
@@ -78,7 +80,7 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
       }}
     >
       <Layout
-        maxWidth="xl"
+        maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
@@ -89,8 +91,8 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
           sx={{
             py: 4,
             px: 2,
+            my: 4,
             textAlign: 'center',
-            mt: 4,
           }}
         >
           <TableContainer>
@@ -111,11 +113,11 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
                   )}
                 </TableRow>
               </TableHead>
-              <ScoreboardScoresBody
+              <ScoreboardReportBody
                 scoresheets={scoresheets}
                 rounds={rounds}
                 currentStage={eventState.currentStage}
-                maxScores={maxScores}
+                scores={teamsWithMaxScores}
               />
             </Table>
           </TableContainer>
@@ -125,23 +127,23 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
   );
 };
 
-interface ScoreboardScoresBodyProps extends TableBodyProps {
+interface ScoreboardReportBodyProps extends TableBodyProps {
   scoresheets: Array<WithId<Scoresheet>>;
   rounds: Array<{ stage: string; round: number }>;
   currentStage: 'practice' | 'ranking';
-  maxScores: Array<{ team: WithId<Team>; score: number }>;
+  scores: Array<{ team: WithId<Team>; maxScore: number }>;
 }
 
-const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
+const ScoreboardReportBody: React.FC<ScoreboardReportBodyProps> = ({
   scoresheets,
   rounds,
   currentStage,
-  maxScores,
+  scores,
   ...props
 }) => {
   return (
     <TableBody {...props}>
-      {maxScores.map(({ team, score: maxScore }, index) => {
+      {scores.map(({ team, maxScore }, index) => {
         return (
           <TableRow key={team._id.toString()}>
             <TableCell>
@@ -174,10 +176,6 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
           </TableRow>
         );
       })}
-      {/* Separator */}
-      <TableRow sx={{ height: '4.5rem' }}>
-        <TableCell colSpan={(currentStage === 'practice' ? 2 : 3) + rounds.length} />
-      </TableRow>
     </TableBody>
   );
 };
