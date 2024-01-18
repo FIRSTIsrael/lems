@@ -10,6 +10,7 @@ import InspectionBonusChart from '../charts/inspection-bonus-chart';
 import PrecisionTokensChart from '../charts/precision-tokens-chart';
 import ScoresPerTableChart from '../charts/scores-per-table-chart';
 import RobotConsistencyChart from '../charts/robot-consistency-chart';
+
 interface FieldInsightsDashboardProps {
   event: WithId<Event>;
 }
