@@ -13,7 +13,7 @@ interface TeamInsightsDashboardProps {
 }
 
 const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ event, teams }) => {
-  const [team, setTeam] = useState<WithId<Team> | null>(null);
+  const [team, setTeam] = useState<WithId<Team> | null>(teams.filter(t => t.registered)[0]);
 
   return (
     <Paper sx={{ p: 2 }}>
