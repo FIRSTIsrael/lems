@@ -22,7 +22,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
         <AverageMedianCard
           title="ניקוד משחק הרובוט"
           color={green[600]}
-          url={`/api/events/${event._id}/insights/field/average-median`}
+          url={`/api/events/${event._id}/insights/field/scores/average-median`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
         />
@@ -31,7 +31,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
         <AverageMedianCard
           title="ניקוד גבוה ביותר"
           color={green[600]}
-          url={`/api/events/${event._id}/insights/field/scores/top`}
+          url={`/api/events/${event._id}/insights/field/scores/average-median/top-scores`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
         />

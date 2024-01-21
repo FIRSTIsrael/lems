@@ -27,7 +27,7 @@ router.get('/average-median', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/top', async (req: Request, res: Response) => {
+router.get('/average-median/top-scores', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready', stage: 'ranking' }
