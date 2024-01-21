@@ -29,8 +29,8 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
   const getDuration = (seconds: number | undefined): string => {
     if (!seconds) return '00:00';
     const prefix = seconds < 0 ? '-' : '';
-    const _seconds = Math.abs(seconds);
-    return prefix + dayjs.duration(_seconds, 'seconds').format('mm:ss');
+    const absoluteSeconds = Math.abs(seconds);
+    return prefix + dayjs.duration(absoluteSeconds, 'seconds').format('mm:ss');
   };
 
   return (
