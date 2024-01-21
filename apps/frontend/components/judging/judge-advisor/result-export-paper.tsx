@@ -24,7 +24,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
   });
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/validate-csv-readiness`).then(res =>
+    apiFetch(`/api/events/${event._id}/insights/judging/validate-csv-readiness`).then(res =>
       res.json().then(data => {
         const newUnscoredTeams: UnscoredTeamsType = {} as UnscoredTeamsType;
         data.map(
