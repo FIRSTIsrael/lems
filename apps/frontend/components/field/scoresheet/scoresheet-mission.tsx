@@ -105,7 +105,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 {...field}
                 value={field.value}
                 onChange={(e, value) => {
-                  if(value !== null) {
+                  if (value !== null) {
                     e.preventDefault();
                     form.setFieldValue(field.name, value);
                   }

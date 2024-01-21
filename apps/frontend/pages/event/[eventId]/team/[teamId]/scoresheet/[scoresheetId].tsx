@@ -68,19 +68,36 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                 variant="contained"
                 color="inherit"
                 sx={{
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
                   backgroundColor:
                     matchScoresheet._id === scoresheet._id ? purple[700] : 'transparent',
-                  color: matchScoresheet._id === scoresheet._id ? '#fff' : purple[700],
                   borderRadius: '2rem',
                   '&:hover': {
                     backgroundColor:
                       matchScoresheet._id == scoresheet._id ? purple[700] : purple[700] + '1f'
-                  }
+                  },
+                  display: 'block',
+                  textAlign: 'center',
+                  minWidth: 150,
+                  minHeight: 60
                 }}
               >
-                {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
+                <Typography 
+                  fontSize='1rem' 
+                  fontWeight={500} 
+                  color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
+                  gutterBottom
+                >
+                  {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
+                </Typography>
+                {scoresheet.data && 
+                  <Typography 
+                    fontSize='0.75rem' 
+                    fontWeight={500} 
+                    color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
+                  >
+                    {scoresheet.data.score} נק', GP - {scoresheet.data.gp.value}
+                  </Typography>
+                }
               </Button>
             </NextLink>
           );
@@ -167,9 +184,8 @@ const Page: NextPage<Props> = ({
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
-            team.name
-          } | ${event.name}`}
+          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${team.name
+            } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
