@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { MissionClause } from '@lems/types';
-import { SEASON_SCORESHEET } from '@lems/season';
+import { SEASON_SCORESHEET, ScoresheetError } from '@lems/season';
 
 const router = express.Router({ mergeParams: true });
 
@@ -35,8 +35,10 @@ router.get('/success-rate', async (req: Request, res: Response) => {
         try {
           const score = calculation(...clauses.map((clause: MissionClause) => clause.value));
           if (score > 0) successfulAttempts += 1;
-        } catch {
-          /* empty */
+        } catch (error) {
+          if (!(error instanceof ScoresheetError)) {
+            throw error;
+          }
         }
       });
 
