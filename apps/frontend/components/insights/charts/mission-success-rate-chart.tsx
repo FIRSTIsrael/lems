@@ -31,7 +31,7 @@ const MissionSuccessRateChart: React.FC<MissionSuccessRateChartProps> = ({ event
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>
       <Typography textAlign="center" fontSize="1.25rem" component="h2">
-        אחוז הצלחת משימות*
+        אחוז הצלחת משימות<sup>*</sup>
       </Typography>
       <ResponsiveContainer width="100%" height={300}>
         {data.length > 0 ? (
