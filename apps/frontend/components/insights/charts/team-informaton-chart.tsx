@@ -28,7 +28,7 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
 
   useEffect(() => {
     if (team)
-      apiFetch(`/api/events/${event._id}/insights/team/${team._id}/information`).then(res =>
+      apiFetch(`/api/events/${event._id}/insights/team/${team._id}/team-stats-summary`).then(res =>
         res.json().then(data => setData(data))
       );
   }, [event._id, team]);

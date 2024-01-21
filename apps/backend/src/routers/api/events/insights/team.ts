@@ -36,7 +36,7 @@ router.get('/judging-profile', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/information', async (req: Request, res: Response) => {
+router.get('/team-stats-summary', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { _id: new ObjectId(req.params.teamId), eventId: new ObjectId(req.params.eventId) }
