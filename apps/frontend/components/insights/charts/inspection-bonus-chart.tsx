@@ -50,7 +50,7 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) =>
             בונוס ביקורת הציוד
           </Typography>
           <Typography textAlign="center" color="#666">
-            {Number(data.successRate.toFixed(2)) + '%'} הצלחה
+            {Number(data.successRate.toFixed(2))}% הצלחה
           </Typography>
           <DataGrid
             rows={data.rows}

@@ -72,7 +72,7 @@ const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ event }) 
             עקביות הרובוטים
           </Typography>
           <Typography textAlign="center" color="#666">
-            {Number(data.avgRelStdDev.toFixed(2)) + '%'} סטיית תקן ממוצעת
+            {Number(data.avgRelStdDev.toFixed(2))}% סטיית תקן ממוצעת
           </Typography>
           <DataGrid
             rows={data.rows}
