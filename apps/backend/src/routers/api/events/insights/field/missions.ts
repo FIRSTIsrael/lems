@@ -16,7 +16,9 @@ router.get('/success-rate', async (req: Request, res: Response) => {
     },
     {
       $group: {
-        //TODO: Concatenate repeated results into [object: ..., count: n]
+        // If performance is degraded additional pipeline steps
+        // can be added to group each clause array and eliminate duplicate values.
+        // e.g. [object: <clause details> count: n]
         _id: '$data.missions.id',
         allClauses: { $push: '$data.missions.clauses' }
       }
@@ -24,6 +26,7 @@ router.get('/success-rate', async (req: Request, res: Response) => {
   ];
 
   const query = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
+  return res.json(query);
 
   const report = query
     .filter(missionData => missionData._id.startsWith('m'))
