@@ -140,7 +140,7 @@ router.get('/optional-award-nominations', async (req: Request, res: Response) =>
   res.json(report);
 });
 
-router.get('/robot-correlation', async (req: Request, res: Response) => {
+router.get('/robot-room-correlation-to-robot-game', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $lookup: {

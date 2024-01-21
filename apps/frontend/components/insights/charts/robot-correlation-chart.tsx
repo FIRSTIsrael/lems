@@ -22,7 +22,7 @@ const RobotCorrelationChart: React.FC<RobotCorrelationChartProps> = ({ event }) 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/robot-correlation`).then(res =>
+    apiFetch(`/api/events/${event._id}/insights/judging/robot-room-correlation-to-robot-game`).then(res =>
       res.json().then(data => setData(data))
     );
   }, [event._id]);
