@@ -4,7 +4,7 @@ import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/all', async (req: Request, res: Response) => {
+router.get('/average-median', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
