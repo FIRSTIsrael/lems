@@ -78,10 +78,11 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
                 value={t}
                 key={t}
                 sx={{
-                  minWidth: 150,
+                  width: 125,
                   '&.Mui-selected': {
                     color: theme => `${theme.palette.primary.main} !important`
-                  }
+                  },
+                  fontSize: '1rem'
                 }}
               >
                 {localizedAudienceDisplayScreen[t]}
