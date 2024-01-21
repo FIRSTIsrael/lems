@@ -20,6 +20,7 @@ import JudgingRoomSchedule from '../../../components/judging/judging-room-schedu
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
+import InsightsLink from '../../../components/general/insights-link';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
@@ -29,6 +30,7 @@ import { enqueueSnackbar } from 'notistack';
 interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
+  eventState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -38,6 +40,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   event,
+  eventState,
   rooms,
   teams: initialTeams,
   sessions: initialSessions,
@@ -112,7 +115,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
       >
@@ -171,6 +174,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         event: `/api/events/${user.eventId}`,
+        eventState: `/api/events/${user.eventId}/state`,
         teams: `/api/events/${user.eventId}/teams`,
         rooms: `/api/events/${user.eventId}/rooms`,
         sessions: `/api/events/${user.eventId}/sessions`,

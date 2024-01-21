@@ -1,23 +1,13 @@
 import db from '../database';
-import { Filter, ObjectId, WithId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 import { JudgingSession } from '@lems/types';
-import { getEventRooms } from './rooms';
 
 export const getSession = (filter: Filter<JudgingSession>) => {
   return db.collection<JudgingSession>('sessions').findOne(filter);
 };
 
 export const getEventSessions = (eventId: ObjectId) => {
-  return getEventRooms(eventId).then(async rooms => {
-    let sessions: Array<WithId<JudgingSession>> = [];
-    await Promise.all(
-      rooms.map(async room => {
-        const roomSessions = await getRoomSessions(room._id);
-        sessions = sessions.concat(roomSessions);
-      })
-    );
-    return sessions;
-  });
+  return db.collection<JudgingSession>('sessions').find({ eventId }).toArray();
 };
 
 export const getRoomSessions = (roomId: ObjectId) => {

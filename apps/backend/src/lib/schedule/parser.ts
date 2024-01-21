@@ -201,6 +201,7 @@ const extractSessionsFromJudgingBlock = (
     for (let i = 3; i < roomNames.length + 3; i++) {
       const room = rooms.find(table => table.name === roomNames[i - 3]);
       const session: JudgingSession = {
+        eventId: event._id,
         number,
         scheduledTime: startTime.toDate(),
         roomId: room._id,
@@ -284,6 +285,7 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
     currentStage: 'practice',
     currentSession: 0,
     audienceDisplay: { screen: 'scores', message: '' },
-    presentations
+    presentations,
+    completed: false
   };
 };

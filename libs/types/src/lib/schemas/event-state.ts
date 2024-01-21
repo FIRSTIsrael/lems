@@ -22,4 +22,5 @@ export interface EventState {
   currentSession: number;
   audienceDisplay: AudienceDisplayState;
   presentations: { [key: string]: PresentationState };
+  completed: boolean;
 }

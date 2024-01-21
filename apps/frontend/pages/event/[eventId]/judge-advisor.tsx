@@ -25,6 +25,7 @@ import RubricStatusReferences from '../../../components/judging/rubric-status-re
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
+import InsightsLink from '../../../components/general/insights-link';
 import JudgingRoomSchedule from '../../../components/judging/judging-room-schedule';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -163,7 +164,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
       >

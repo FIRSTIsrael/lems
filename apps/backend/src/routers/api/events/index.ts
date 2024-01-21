@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { EventState } from '@lems/types';
 import * as db from '@lems/database';
 import eventValidator from '../../../middlewares/event-validator';
 import sessionsRouter from './sessions';
@@ -31,6 +32,22 @@ router.get('/:eventId/state', (req: Request, res: Response) => {
   db.getEventState({ eventId: new ObjectId(req.params.eventId) }).then(eventState =>
     res.json(eventState)
   );
+});
+
+router.put('/:eventId/state', (req: Request, res: Response) => {
+  const body: Partial<EventState> = { ...req.body };
+  if (!body) return res.status(400).json({ ok: false });
+
+  console.log(`⏬ Updating Event state for event ${req.params.eventId}`);
+  db.updateEventState({ eventId: new ObjectId(req.params.eventId) }, body).then(task => {
+    if (task.acknowledged) {
+      console.log('✅ Event state updated!');
+      return res.json({ ok: true, id: task.upsertedId });
+    } else {
+      console.log('❌ Could not update Event state');
+      return res.status(500).json({ ok: false });
+    }
+  });
 });
 
 router.use('/:eventId/awards', awardsRouter);

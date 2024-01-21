@@ -17,6 +17,7 @@ import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
+import InsightsLink from '../../../components/general/insights-link';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
@@ -173,7 +174,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
       >
