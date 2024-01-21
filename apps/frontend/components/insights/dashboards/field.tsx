@@ -39,7 +39,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }
       <Grid xs={4}>
         <Stat
           title="שיא ניקוד"
-          url={`/api/events/${event._id}/insights/field/scores/record`}
+          url={`/api/events/${event._id}/insights/field/scores/highest-score`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>

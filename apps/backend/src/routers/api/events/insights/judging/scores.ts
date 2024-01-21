@@ -76,7 +76,7 @@ router.get('/categories', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/record', async (req: Request, res: Response) => {
+router.get('/highest-average-score', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
