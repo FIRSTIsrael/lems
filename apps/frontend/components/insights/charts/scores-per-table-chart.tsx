@@ -24,7 +24,7 @@ const ScoresPerTableChart: React.FC<ScoresPerTableChartProps> = ({ event }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/scores/per-table`).then(res =>
+    apiFetch(`/api/events/${event._id}/insights/field/scores/tables`).then(res =>
       res.json().then(data => setData(data))
     );
   }, [event._id]);

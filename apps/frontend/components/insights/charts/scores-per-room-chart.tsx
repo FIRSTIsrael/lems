@@ -24,7 +24,7 @@ const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ event }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/scores/per-room`).then(res =>
+    apiFetch(`/api/events/${event._id}/insights/judging/scores/rooms`).then(res =>
       res.json().then(data => setData(data))
     );
   }, [event._id]);

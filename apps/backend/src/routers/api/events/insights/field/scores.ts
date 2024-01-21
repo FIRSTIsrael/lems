@@ -63,7 +63,7 @@ router.get('/top', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/per-table', async (req: Request, res: Response) => {
+router.get('/tables', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }

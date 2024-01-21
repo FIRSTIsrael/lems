@@ -111,7 +111,7 @@ router.get('/highest-average-score', async (req: Request, res: Response) => {
   res.json(report);
 });
 
-router.get('/per-room', async (req: Request, res: Response) => {
+router.get('/rooms', async (req: Request, res: Response) => {
   const pipeline = [
     {
       $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
