@@ -104,7 +104,12 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 max={clause.max}
                 {...field}
                 value={field.value}
-                onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                onChange={(e, value) => {
+                  if(value !== null) {
+                    e.preventDefault();
+                    form.setFieldValue(field.name, value);
+                  }
+                }}
                 disabled={readOnly}
               />
             )}
