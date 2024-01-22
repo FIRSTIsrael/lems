@@ -70,7 +70,7 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
       cancelTransition
     } = useDeckState(initialDeckState);
 
-    const [setPlaceholderContainer, slideIds, slideIdsInitialized] = useCollectSlides();
+    const [setPlaceholderContainer, slideIds, slideIdsInitialized] = useCollectSlides(children);
 
     useImperativeHandle(
       ref,

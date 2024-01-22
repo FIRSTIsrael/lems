@@ -7,7 +7,7 @@ export const PLACEHOLDER_CLASS_NAME = 'lems-slide';
 // <Slide> elements rendered lower in the tree. Slides decide on an ID for
 // themselves and communicate via the `data-slide-id` element on their
 // placeholder.
-export function useCollectSlides() {
+export function useCollectSlides(children: React.ReactNode) {
   const [initialized, setInitialized] = useState(false);
   const [slideContainer, setSlideContainer] = useState<HTMLElement | null>();
   const [slideIds, setSlideIds] = useState<SlideId[]>([]);
@@ -27,7 +27,7 @@ export function useCollectSlides() {
     }
     setSlideIds(nextSlideIds);
     setInitialized(true);
-  }, [slideContainer]);
+  }, [slideContainer, children]);
 
   return [setSlideContainer, slideIds, initialized] as const;
 }
