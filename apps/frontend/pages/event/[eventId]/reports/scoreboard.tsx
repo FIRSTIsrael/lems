@@ -3,8 +3,8 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Table, TableBody, TableBodyProps, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { Paper } from '@mui/material';
+import { DataGrid, GridColDef, GridValueFormatterParams } from '@mui/x-data-grid';
 import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -23,7 +23,13 @@ interface Props {
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: initialScoresheets}) => {
+const Page: NextPage<Props> = ({
+  user,
+  event,
+  teams,
+  eventState,
+  scoresheets: initialScoresheets
+}) => {
   const router = useRouter();
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
 
@@ -39,36 +45,86 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
   };
 
   const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
-    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
+    { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
   ]);
 
+  const rounds = useMemo(
+    () => [
+      ...new Set([
+        ...scoresheets
+          .filter(s => s.stage === eventState.currentStage)
+          .map(s => {
+            return s.round;
+          })
+          .sort((a, b) => a - b)
+      ])
+    ],
+    [eventState.currentStage, scoresheets]
+  );
 
-  const rounds = [
-    ...scoresheets
-      .filter(s => s.stage === eventState.currentStage)
-      .map(s => {
-        return { stage: s.stage, round: s.round };
-      })
-      .filter(
-        (value, index, self) =>
-          index === self.findIndex(r => r.round === value.round && r.stage === value.stage)
-      )
+  const columns: GridColDef[] = [
+    {
+      field: 'rank',
+      headerName: 'דירוג',
+      width: 80
+    },
+    {
+      field: 'team',
+      headerName: 'קבוצה',
+      width: 350,
+      valueFormatter: (params: GridValueFormatterParams) => localizeTeam(params.value),
+      sortable: false
+    },
+    ...rounds.map(r => ({
+      field: `round-${r}`,
+      headerName: `${localizedMatchStage[eventState.currentStage]} #${r}`,
+      width: 125
+    })),
+    {
+      field: 'max',
+      headerName: 'ניקוד גבוה ביותר',
+      width: 150
+    }
   ];
 
-  const teamsWithMaxScores = useMemo(() => {
-    return teams
-    .map(t => {
+  const rows = useMemo(() => {
+    const teamsWithScores = teams.map(team => {
       return {
-        team: t,
-        maxScore: Math.max(
-          ...scoresheets
-            .filter(s => s.teamId === t._id && s.stage === eventState.currentStage)
-            .map(s => s.data?.score || 0)
+        id: team._id,
+        team,
+        scores: rounds.map(
+          roundNumber =>
+            scoresheets
+              .filter(s => s.teamId === team._id && s.stage === eventState.currentStage)
+              .find(s => s.round === roundNumber)?.data?.score
         )
       };
-    })
-    .sort((a, b) => b.maxScore - a.maxScore)
-  }, [eventState.currentStage, scoresheets, teams])
+    });
+
+    const teamsWithRoundScores = teamsWithScores.map(row => {
+      const roundScores: { [key: string]: number } = {};
+      row.scores.forEach((score, index) => (roundScores[`round-${index + 1}`] = score || 0));
+
+      return {
+        ...row,
+        ...roundScores
+      };
+    });
+
+    const teamsWithMaxScores = teamsWithRoundScores.map(row => ({
+      ...row,
+      max: Math.max(...row.scores.map(score => score || 0))
+    }));
+
+    teamsWithMaxScores.sort((a, b) => b.max - a.max);
+
+    const dataGridRows = teamsWithMaxScores.map((row, index) => ({
+      rank: index + 1,
+      ...row
+    }));
+
+    return dataGridRows;
+  }, [eventState.currentStage, rounds, scoresheets, teams]);
 
   return (
     <RoleAuthorizer
@@ -89,94 +145,28 @@ const Page: NextPage<Props> = ({ user, event, teams, eventState, scoresheets: in
       >
         <Paper
           sx={{
-            py: 4,
-            px: 2,
             my: 4,
-            textAlign: 'center',
+            textAlign: 'center'
           }}
         >
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>דירוג</TableCell>
-                  <TableCell>קבוצה</TableCell>
-                  {rounds.map(r => (
-                    <TableCell key={r.stage + r.round + 'name'}>
-                      {localizedMatchStage[r.stage]} #{r.round}
-                    </TableCell>
-                  ))}
-                  {eventState.currentStage !== 'practice' && (
-                    <TableCell>
-                      ניקוד גבוה ביותר
-                    </TableCell>
-                  )}
-                </TableRow>
-              </TableHead>
-              <ScoreboardReportBody
-                scoresheets={scoresheets}
-                rounds={rounds}
-                currentStage={eventState.currentStage}
-                scores={teamsWithMaxScores}
-              />
-            </Table>
-          </TableContainer>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 100
+                }
+              }
+            }}
+            hideFooter
+            disableColumnMenu
+            disableColumnFilter
+            disableColumnSelector
+          />
         </Paper>
       </Layout>
     </RoleAuthorizer>
-  );
-};
-
-interface ScoreboardReportBodyProps extends TableBodyProps {
-  scoresheets: Array<WithId<Scoresheet>>;
-  rounds: Array<{ stage: string; round: number }>;
-  currentStage: 'practice' | 'ranking';
-  scores: Array<{ team: WithId<Team>; maxScore: number }>;
-}
-
-const ScoreboardReportBody: React.FC<ScoreboardReportBodyProps> = ({
-  scoresheets,
-  rounds,
-  currentStage,
-  scores,
-  ...props
-}) => {
-  return (
-    <TableBody {...props}>
-      {scores.map(({ team, maxScore }, index) => {
-        return (
-          <TableRow key={team._id.toString()}>
-            <TableCell>
-              {index + 1}
-            </TableCell>
-            <TableCell>
-              {localizeTeam(team, false)}
-            </TableCell>
-            {rounds.map(r => {
-              const scoresheet = scoresheets.find(
-                s => s.teamId === team._id && s.stage === r.stage && s.round === r.round
-              );
-              return (
-                <TableCell
-                  key={r.stage + r.round + 'points'}
-                >
-                  {scoresheet?.data && scoresheet.status === 'ready' ? (
-                    scoresheet.data.score
-                  ) : (
-                    <RemoveIcon />
-                  )}
-                </TableCell>
-              );
-            })}
-            {currentStage !== 'practice' && (
-              <TableCell>
-                {maxScore || <RemoveIcon />}
-              </TableCell>
-            )}
-          </TableRow>
-        );
-      })}
-    </TableBody>
   );
 };
 
@@ -189,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
-        scoresheets: `/api/events/${user.eventId}/scoresheets`,
+        scoresheets: `/api/events/${user.eventId}/scoresheets`
       },
       ctx
     );
