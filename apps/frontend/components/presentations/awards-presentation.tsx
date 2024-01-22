@@ -1,4 +1,4 @@
-import { Fragment, forwardRef } from 'react';
+import { Fragment, forwardRef, useMemo, useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
@@ -24,7 +24,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     {
       event,
       teams,
-      awards,
+      awards: tempAwards,
       initialState = {
         slideIndex: 0,
         stepIndex: 0
@@ -35,41 +35,52 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     },
     ref
   ) => {
-    const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
-    const advancingTeams = teams.filter(t => t.advancing);
+    // TODO: if we use the awards from props, it works.
+    // The moment we use them from state - it renders blank and does not detect the slides.
+    const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
+    useEffect(() => setAwards(tempAwards), [tempAwards]);
 
-    const awardSlides = awardIndices.map(index => {
-      const sortedAwards = awards.filter(a => a.index === index).sort((a, b) => b.place - a.place);
-      const { name: awardName } = sortedAwards[0];
-      const localized = localizedAward[awardName];
+    const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
+    const awardSlides = useMemo(() => {
+      const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
 
-      return (
-        <Fragment key={awardName}>
-          <TitleSlide primary={`פרס ${localized.name}`} />
-          <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
-          {sortedAwards.map(award => {
-            return (
-              <AwardWinnerSlide
-                key={award.place}
-                name={`פרס ${localized.name}`}
-                place={sortedAwards.length > 1 ? award.place : undefined}
-                winner={award.winner || ''}
-                color={event.color}
-              />
-            );
-          })}
-        </Fragment>
-      );
-    });
+      const slides = awardIndices.map(index => {
+        const sortedAwards = awards
+          .filter(a => a.index === index)
+          .sort((a, b) => b.place - a.place);
+        const { name: awardName } = sortedAwards[0];
+        const localized = localizedAward[awardName];
 
-    if (advancingTeams.length > 0) {
-      const advancingSlide = (
-        <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
-      );
-      // Place advancement slide directly before champions award
-      const advancingSlideIndex = awardSlides.findIndex(s => s.key === 'champions');
-      awardSlides.splice(advancingSlideIndex, 0, advancingSlide);
-    }
+        return (
+          <Fragment key={awardName}>
+            <TitleSlide primary={`פרס ${localized.name}`} />
+            <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
+            {sortedAwards.map(award => {
+              return (
+                <AwardWinnerSlide
+                  key={award.place}
+                  name={`פרס ${localized.name}`}
+                  place={sortedAwards.length > 1 ? award.place : undefined}
+                  winner={award.winner || ''}
+                  color={event.color}
+                />
+              );
+            })}
+          </Fragment>
+        );
+      });
+
+      if (advancingTeams.length > 0) {
+        const advancingSlide = (
+          <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
+        );
+        // Place advancement slide directly before champions award
+        const advancingSlideIndex = slides.findIndex(s => s.key === 'champions');
+        slides.splice(advancingSlideIndex, 0, advancingSlide);
+      }
+
+      return slides;
+    }, [advancingTeams, awards, event.color]);
 
     return (
       <Box {...props}>

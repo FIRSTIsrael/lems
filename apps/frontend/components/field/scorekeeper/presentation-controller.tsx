@@ -27,7 +27,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
   const previewDeck = useRef<DeckRef>(null);
   const [showFinalSlide, setShowFinalSlide] = useState(true);
 
-  //TODO: make this show 1 step ahead instead of 1 slide ahead
+  // Consider making this show 1 step ahead instead of 1 slide ahead
   const endOfNextSlide = ({ slideIndex, stepIndex }: DeckView) => ({
     slideIndex: slideIndex + 1,
     stepIndex: GOTO_FINAL_STEP
