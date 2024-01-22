@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 import { purple } from '@mui/material/colors';
@@ -24,7 +25,6 @@ import { useWebsocket } from '../../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../../localization/teams';
 import { localizedMatchStage } from '../../../../../../localization/field';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
-import { enqueueSnackbar } from 'notistack';
 
 interface ScoresheetSelectorProps {
   event: WithId<Event>;
@@ -81,23 +81,23 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                   minHeight: 60
                 }}
               >
-                <Typography 
-                  fontSize='1rem' 
-                  fontWeight={500} 
+                <Typography
+                  fontSize="1rem"
+                  fontWeight={500}
                   color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
                   gutterBottom
                 >
                   {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
                 </Typography>
-                {scoresheet.data && 
-                  <Typography 
-                    fontSize='0.75rem' 
-                    fontWeight={500} 
+                {scoresheet.data && (
+                  <Typography
+                    fontSize="0.75rem"
+                    fontWeight={500}
                     color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
                   >
-                    {scoresheet.data.score} נק', GP - {scoresheet.data.gp.value}
+                    {scoresheet.data.score} נק&apos;, GP - {scoresheet.data.gp.value}
                   </Typography>
-                }
+                )}
               </Button>
             </NextLink>
           );
@@ -184,8 +184,9 @@ const Page: NextPage<Props> = ({
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${team.name
-            } | ${event.name}`}
+          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
+            team.name
+          } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/event/${event._id}/${user.role}`}
