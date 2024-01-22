@@ -86,6 +86,9 @@ const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ event }) 
             }}
             sx={{ border: 'none' }}
             disableRowSelectionOnClick
+            disableColumnMenu
+            disableColumnFilter
+            disableColumnSelector
           />
         </>
       ) : (
