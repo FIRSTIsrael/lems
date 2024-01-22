@@ -135,8 +135,12 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
-    router.push(`/event/${event._id}/${user.role}`);
-    enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
+    if (user.role === 'head-referee' && match.status === 'completed') {
+      console.log('This should enable the headref to do something'); //TODO: add logic
+    } else {
+      router.push(`/event/${event._id}/${user.role}`);
+      enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
+    }
   }
 
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
