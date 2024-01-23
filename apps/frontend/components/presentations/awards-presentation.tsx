@@ -39,7 +39,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
       apiFetch(`/api/events/${event._id}/awards`).then(res =>
         res.json().then(data => setAwards(data))
       );
-    });
+    }, [event._id]);
 
     const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
     const awardSlides = useMemo(() => {
