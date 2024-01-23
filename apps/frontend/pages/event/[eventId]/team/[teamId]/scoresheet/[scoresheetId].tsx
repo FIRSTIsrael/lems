@@ -1,9 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
-import { Button, Paper, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Paper,
+  Stack,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
@@ -15,7 +25,8 @@ import {
   Scoresheet,
   Mission,
   Team,
-  MissionClauseType
+  MissionClauseType,
+  RobotGameMatchPresent
 } from '@lems/types';
 import Layout from '../../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
@@ -125,6 +136,11 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(initialScoresheet);
+  const [noShowDialogOpen, setNoShowDialogOpen] = useState(
+    user.role === 'head-referee' &&
+      match.status === 'completed' &&
+      match.participants.find(p => p.teamId === team._id)?.present === 'no-show'
+  );
 
   if (!team.registered) {
     router.push(`/event/${event._id}/${user.role}`);
@@ -135,9 +151,7 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
-    if (user.role === 'head-referee' && match.status === 'completed') {
-      console.log('This should enable the headref to do something'); //TODO: add logic
-    } else {
+    if (user.role !== 'head-referee' || match.status !== 'completed') {
       router.push(`/event/${event._id}/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
@@ -171,6 +185,26 @@ const Page: NextPage<Props> = ({
     }
     return values;
   };
+
+  const updateTeamPresentStatus = useCallback(
+    (presentStatus: RobotGameMatchPresent) => {
+      socket.emit(
+        'prestartMatchParticipant',
+        match.eventId.toString(),
+        match._id.toString(),
+        {
+          teamId: team._id.toString(),
+          present: presentStatus
+        },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון סטטוס הקבוצה נכשל.', { variant: 'error' });
+          }
+        }
+      );
+    },
+    [socket, match.eventId, match._id, team._id]
+  );
 
   return (
     <RoleAuthorizer
@@ -218,6 +252,43 @@ const Page: NextPage<Props> = ({
               emptyScoresheetValues={getScoresheetOverrides()}
             />
           )}
+          <Dialog
+            open={noShowDialogOpen}
+            onClose={(event, reason) => {
+              if (reason && reason === 'backdropClick') return;
+              setNoShowDialogOpen(false);
+            }}
+            aria-labelledby="update-present-title"
+            aria-describedby="update-present-description"
+          >
+            <DialogTitle id="update-present-title">רגע!</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="delete-data-description">
+                {`שופט הזירה סימן שהקבוצה לא נכחה במקצה. 
+                האם אתם בטוחים שברצונכם לתת ניקוד לקבוצה ${localizeTeam(team)} 
+                ניקוד על ${
+                  scoresheet && localizedMatchStage[scoresheet.stage]
+                } ${scoresheet?.round}?`}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                onClick={() => router.push(`/event/${event._id}/${user.role}`)}
+              >
+                ביטול
+              </Button>
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  updateTeamPresentStatus('present');
+                  setNoShowDialogOpen(false);
+                }}
+              >
+                אישור
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Layout>
       )}
     </RoleAuthorizer>
@@ -259,9 +330,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     } else {
       tableId = match.participants
         .filter((p: RobotGameMatchParticipant) => p.teamId)
-        .find(
-          (p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId
-        )?.tableId;
+        .find((p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId)
+        ?.tableId;
     }
 
     const table = await apiFetch(
