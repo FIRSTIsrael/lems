@@ -9,11 +9,11 @@ import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerSlide from './award-winner-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
+import { apiFetch } from '../../lib/utils/fetch';
 
 interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
   teams: Array<WithId<Team>>;
-  awards: Array<WithId<Award>>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;
@@ -24,7 +24,6 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     {
       event,
       teams,
-      awards: tempAwards,
       initialState = {
         slideIndex: 0,
         stepIndex: 0
@@ -35,10 +34,12 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     },
     ref
   ) => {
-    // TODO: if we use the awards from props, it works.
-    // The moment we use them from state - it renders blank and does not detect the slides.
     const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
-    useEffect(() => setAwards(tempAwards), [tempAwards]);
+    useEffect(() => {
+      apiFetch(`/api/events/${event._id}/awards`).then(res =>
+        res.json().then(data => setAwards(data))
+      );
+    });
 
     const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
     const awardSlides = useMemo(() => {

@@ -10,8 +10,7 @@ import {
   RoleTypes,
   EventState,
   RobotGameMatch,
-  Scoresheet,
-  Award
+  Scoresheet
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Blank from '../../../components/audience-display/blank';
@@ -34,7 +33,6 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
-  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -43,8 +41,7 @@ const Page: NextPage<Props> = ({
   teams,
   eventState: initialEventState,
   matches: initialMatches,
-  scoresheets: initialScoresheets,
-  awards
+  scoresheets: initialScoresheets
 }) => {
   const router = useRouter();
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
@@ -179,7 +176,6 @@ const Page: NextPage<Props> = ({
             width="100%"
             event={event}
             teams={teams}
-            awards={awards}
           />
         )}
         {eventState.audienceDisplay.screen === 'message' && (
@@ -200,8 +196,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
         matches: `/api/events/${user.eventId}/matches`,
-        scoresheets: `/api/events/${user.eventId}/scoresheets`,
-        awards: `/api/events/${user.eventId}/awards`
+        scoresheets: `/api/events/${user.eventId}/scoresheets`
       },
       ctx
     );

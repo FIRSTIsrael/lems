@@ -10,7 +10,6 @@ import {
   SafeUser,
   RobotGameMatch,
   EventState,
-  Award,
   Team,
   MATCH_AUTOLOAD_THRESHOLD
 } from '@lems/types';
@@ -34,7 +33,6 @@ interface Props {
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
-  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -42,8 +40,7 @@ const Page: NextPage<Props> = ({
   event,
   eventState: initialEventState,
   teams: initialTeams,
-  matches: initialMatches,
-  awards
+  matches: initialMatches
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -180,7 +177,6 @@ const Page: NextPage<Props> = ({
                     <AwardsPresentation
                       event={event}
                       teams={teams}
-                      awards={awards}
                       height={108 * 2.5}
                       width={192 * 2.5}
                       position="relative"
@@ -207,8 +203,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`,
-        awards: `/api/events/${user.eventId}/awards`
+        matches: `/api/events/${user.eventId}/matches`
       },
       ctx
     );
