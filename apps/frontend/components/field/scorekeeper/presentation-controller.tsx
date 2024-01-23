@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
@@ -27,7 +27,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
   const previewDeck = useRef<DeckRef>(null);
   const [showFinalSlide, setShowFinalSlide] = useState(true);
 
-  //TODO: make this show 1 step ahead instead of 1 slide ahead
+  // Consider making this show 1 step ahead instead of 1 slide ahead
   const endOfNextSlide = ({ slideIndex, stepIndex }: DeckView) => ({
     slideIndex: slideIndex + 1,
     stepIndex: GOTO_FINAL_STEP
