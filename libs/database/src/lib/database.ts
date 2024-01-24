@@ -11,10 +11,10 @@ const initDbClient = async () => {
 
   try {
     await client.connect();
+    console.log('🚀 MongoDB Client connected.');
   } catch (err) {
     console.error('❌ Unable to connect to mongodb: ', err);
   }
-  console.log('🚀 MongoDB Client connected.');
 
   return client;
 };
