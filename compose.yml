@@ -41,6 +41,8 @@ services:
     restart: always
 
 networks:
+  # This network was created externally for Mongo 7 support.
+  # Remove the network from prod before deploying with external Mongo again.
   lems-network:
     # Removed to allow connection to local MongoDB for Mongo 7 support:
     # driver: bridge
