@@ -1,11 +1,3 @@
-networks:
-  # lems-network:
-  #   driver: bridge
-  # This network was created externally for Mongo 7 support.
-  # Remove the network from prod and this file before deploying with external Mongo again.
-  mongonet:
-    external: true
-
 services:
   backend:
     build:
@@ -25,8 +17,8 @@ services:
     ports:
       - '3333:3333'
     networks:
+      - lems-network
       - mongonet # Remove when mongo goes back to external
-      # - lems-network
     restart: always
 
   frontend:
@@ -46,6 +38,13 @@ services:
     ports:
       - '4200:4200'
     networks:
-      - mongonet # Remove when mongo goes back to external
-      # - lems-network
+      - lems-network
     restart: always
+
+networks:
+  lems-network:
+    driver: bridge
+  # This network was created externally for Mongo 7 support.
+  # Remove the network from prod and this file before deploying with external Mongo again.
+  mongonet:
+    external: true
