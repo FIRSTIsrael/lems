@@ -75,5 +75,6 @@ jobs:
             cd lems
             docker compose down
             docker compose rm
-            git pull
+            git reset --hard origin/main
+            git pull origin main
             docker compose up -d
