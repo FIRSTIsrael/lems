@@ -7,7 +7,7 @@ services:
         DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
-        MONGODB_URI: ${MONGODB_URI}
+        MONGODB_URI: ${MONGODB_URI} # Currently set to localhost for Mongo 7 support. Will need changing
         MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
         RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
         DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
@@ -42,4 +42,7 @@ services:
 
 networks:
   lems-network:
-    driver: bridge
+    # Removed to allow connection to local MongoDB for Mongo 7 support:
+    # driver: bridge
+    name: lems-network
+    external: true
