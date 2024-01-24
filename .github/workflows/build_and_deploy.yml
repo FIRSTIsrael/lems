@@ -3,7 +3,7 @@ name: Deploy LEMS
 on:
   release:
     types: [released]
-    
+
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
   IMAGE_TAG: ${{ github.ref_name }}
@@ -48,9 +48,12 @@ jobs:
 
       - name: Remove all old images
         run: |
-          doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "sha.*") --force
-          doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
-
+          if doctl registry repository list-tags lems-frontend | grep -o "sha.*"; then
+            doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "sha.*") --force
+          fi
+          if doctl registry repository list-tags lems-backend | grep -o "sha.*"; then
+            doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
+          fi
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
 
