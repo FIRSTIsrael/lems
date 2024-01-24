@@ -10,6 +10,7 @@ const initDbClient = async () => {
   });
 
   try {
+    console.log(`🔗 Connecting to MongoDB server at ${connectionString}`);
     await client.connect();
     console.log('🚀 MongoDB Client connected.');
   } catch (err) {
