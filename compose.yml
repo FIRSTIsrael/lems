@@ -46,4 +46,5 @@ networks:
   lems-network:
     # Removed to allow connection to local MongoDB for Mongo 7 support:
     # driver: bridge
+    name: lems-network
     external: true
