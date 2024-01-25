@@ -26,7 +26,6 @@ router.get('/success-rate', async (req: Request, res: Response) => {
   ];
 
   const query = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
-  return res.json(query);
 
   const report = query
     .filter(missionData => missionData._id.startsWith('m'))
