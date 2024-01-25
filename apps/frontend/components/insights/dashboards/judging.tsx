@@ -20,7 +20,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ eve
         <AverageMedianCard
           title="ציוני מחוונים"
           color={red[600]}
-          url={`/api/events/${event._id}/insights/judging/average-median`}
+          url={`/api/events/${event._id}/insights/judging/scores/average-median`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
         />
