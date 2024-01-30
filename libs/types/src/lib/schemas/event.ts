@@ -6,6 +6,7 @@ export interface EventScheduleEntry {
   endTime: Date;
   name: string;
   roles: Array<Role>;
+  showOnDashboard?: boolean;
 }
 
 export interface Event {
@@ -14,5 +15,6 @@ export interface Event {
   endDate: Date;
   color: DivisionColor;
   hasState: boolean;
+  salesforceId?: string;
   schedule?: Array<EventScheduleEntry>;
 }
