@@ -63,7 +63,7 @@
     "@nx/eslint-plugin": "17.2.8",
     "@nx/express": "17.2.8",
     "@nx/js": "17.2.8",
-    "@nx/node": "17.2.8",
+    "@nx/node": "17.3.0",
     "@nx/react": "17.2.8",
     "@nx/webpack": "17.2.8",
     "@nx/workspace": "17.2.8",
