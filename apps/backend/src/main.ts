@@ -11,6 +11,7 @@ import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import publicRouter from './routers/public/index';
+import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
 import wsValidateEvent from './middlewares/websocket/event-validator';
@@ -37,6 +38,7 @@ app.use('/', expressLogger);
 app.use('/auth', authRouter);
 app.use('/public', publicRouter);
 app.use('/api', apiRouter);
+app.use('/dashboard', dashboardRouter)
 
 app.get('/status', (req, res) => {
   return res.status(200).json({ ok: true });
