@@ -39,7 +39,7 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell>ניקוד גבוה ביותר</TableCell>
+              <TableCell>ניקוד גבוה ביותר (רובוט)</TableCell>
               <TableCell>{Number(data.robotPerformance.maxScore.toFixed(2))}</TableCell>
             </TableRow>
             <TableRow>

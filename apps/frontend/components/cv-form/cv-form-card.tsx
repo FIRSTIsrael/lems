@@ -20,9 +20,9 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ event, form }) => {
         avatar={
           <Avatar
             alt="חומרת הטופס"
-            src={`https://emojicdn.elk.sh/${
-              cvFormSchema.categories.find(c => c.id === form.severity)?.emoji
-            }`}
+            src={`https://emojicdn.elk.sh/${cvFormSchema.categories.find(
+              c => c.id === form.severity
+            )?.emoji}`}
           />
         }
         action={
@@ -35,7 +35,7 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ event, form }) => {
             d === 'team' ? `קבוצה #${form.demonstratorAffiliation}` : localizedFormSubject[d]
           )
           .join(', ')}`}
-        subheader={`נצפה על ידי ${form.observers
+        subheader={`האירוע נצפה על ידי ${form.observers
           .map(o => (o === 'team' ? `קבוצה #${form.observerAffiliation}` : localizedFormSubject[o]))
           .join(', ')}`}
       />
