@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Avatar, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
+import { Avatar, Stack, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 import { AwardNames, CVFormCategoryNames, Event, Team } from '@lems/types';
@@ -59,18 +59,22 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
             <TableRow>
               <TableCell>טפסי CV</TableCell>
               <TableCell>
-                {data.cvForms.length > 0
-                  ? data.cvForms.map((cvForm, index) => (
+                {data.cvForms.length > 0 ? (
+                  <Stack direction="row">
+                    {data.cvForms.map((cvForm, index) => (
                       <Avatar
                         key={index}
                         sx={{ height: '30px', width: '30px' }}
                         alt="חומרת הטופס"
-                        src={`https://emojicdn.elk.sh/${
-                          cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
-                        }`}
+                        src={`https://emojicdn.elk.sh/${cvFormSchema.categories.find(
+                          c => c.id === cvForm.severity
+                        )?.emoji}`}
                       />
-                    ))
-                  : 'אין'}
+                    ))}
+                  </Stack>
+                ) : (
+                  'אין'
+                )}
               </TableCell>
             </TableRow>
           </TableBody>
