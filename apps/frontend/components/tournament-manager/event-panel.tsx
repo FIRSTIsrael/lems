@@ -5,13 +5,13 @@ import { enqueueSnackbar } from 'notistack';
 import {
   Button,
   Paper,
-  Stack,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DownloadIcon from '@mui/icons-material/Download';
 import PublishIcon from '@mui/icons-material/Publish';
@@ -45,26 +45,32 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
 
   return (
     <>
-      <Stack component={Paper} p={2} justifyContent="center" direction="row" spacing={4}>
-        <Button
-          variant="contained"
-          sx={{ minWidth: 200 }}
-          startIcon={<DoneAllIcon />}
-          disabled={eventState.completed}
-          onClick={e => {
-            e.preventDefault();
-            setEndEventDialogOpen(true);
-          }}
-        >
-          סיום האירוע
-        </Button>
-        <Button variant="contained" sx={{ minWidth: 200 }} startIcon={<DownloadIcon />} disabled>
-          הורדת תוצאות האירוע
-        </Button>
-        <Button variant="contained" sx={{ minWidth: 200 }} startIcon={<PublishIcon />} disabled>
-          פרסום המחוונים ב-Dashboard
-        </Button>
-      </Stack>
+      <Grid container component={Paper} p={2} alignItems="center" spacing={4}>
+        <Grid lg={4} md={6} xs={12}>
+          <Button
+            variant="contained"
+            startIcon={<DoneAllIcon />}
+            disabled={eventState.completed}
+            onClick={e => {
+              e.preventDefault();
+              setEndEventDialogOpen(true);
+            }}
+            fullWidth
+          >
+            סיום האירוע
+          </Button>
+        </Grid>
+        <Grid lg={4} md={6} xs={12}>
+          <Button variant="contained" startIcon={<DownloadIcon />} fullWidth disabled>
+            הורדת תוצאות האירוע
+          </Button>
+        </Grid>
+        <Grid lg={4} md={6} xs={12}>
+          <Button variant="contained" startIcon={<PublishIcon />} fullWidth disabled>
+            פרסום המחוונים ב-Dashboard
+          </Button>
+        </Grid>
+      </Grid>
       <Dialog
         open={endEventDialogOpen}
         onClose={() => setEndEventDialogOpen(false)}
