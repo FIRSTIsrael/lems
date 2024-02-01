@@ -68,7 +68,9 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
                 borderRadius: '0.75rem'
               },
               transition: '100ms ease-in-out'
-            }
+            },
+            flexWrap: 'wrap',
+            justifyContent: 'center'
           })}
         >
           {AudienceDisplayScreenTypes.map(t => {
