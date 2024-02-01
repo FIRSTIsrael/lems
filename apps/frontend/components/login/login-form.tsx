@@ -167,7 +167,12 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
       />
 
       <Box justifyContent="flex-end" display="flex" pt={4}>
-        <Button endIcon={<ChevronLeftIcon />} type="submit" variant="contained">
+        <Button
+          endIcon={<ChevronLeftIcon />}
+          disabled={!role || !password || (!!associationType && !association)}
+          type="submit"
+          variant="contained"
+        >
           התחבר
         </Button>
       </Box>
