@@ -60,15 +60,16 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
               <TableCell>טפסי CV</TableCell>
               <TableCell>
                 {data.cvForms.length > 0 ? (
-                  <Stack direction="row">
+                  <Stack direction="row" spacing={1}>
+                    {' '}
                     {data.cvForms.map((cvForm, index) => (
                       <Avatar
                         key={index}
                         sx={{ height: '30px', width: '30px' }}
                         alt="חומרת הטופס"
-                        src={`https://emojicdn.elk.sh/${cvFormSchema.categories.find(
-                          c => c.id === cvForm.severity
-                        )?.emoji}`}
+                        src={`https://emojicdn.elk.sh/${
+                          cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
+                        }`}
                       />
                     ))}
                   </Stack>
