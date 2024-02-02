@@ -102,7 +102,9 @@ router.get('/optional-award-nominations', async (req: Request, res: Response) =>
       $match: {
         eventId: new ObjectId(req.params.eventId),
         category: 'core-values',
-        status: 'ready'
+        status: {
+          $in: ['ready', 'waiting-for-review']
+        }
       }
     },
     {
@@ -155,7 +157,7 @@ router.get('/robot-room-correlation-to-robot-game', async (req: Request, res: Re
                     $eq: ['$teamId', '$$teamId']
                   },
                   {
-                    $eq: ['$status', 'ready']
+                    $in: ['$status', ['ready', 'waiting-for-review']]
                   },
                   {
                     $eq: ['$category', 'robot-design']
