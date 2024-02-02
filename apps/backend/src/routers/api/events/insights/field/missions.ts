@@ -135,6 +135,7 @@ router.get('/precision-tokens', async (req: Request, res: Response) => {
     },
     { $addFields: { tokens: { $arrayElemAt: ['$tokens.clauses', 0] } } },
     { $addFields: { tokens: '$tokens.value' } },
+    { $addFields: { tokens: { $toInt: '$tokens' } } },
     {
       $group: {
         _id: '$tokens',
