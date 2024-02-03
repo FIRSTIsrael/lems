@@ -147,7 +147,7 @@ router.get('/robot-room-correlation-to-robot-game', async (req: Request, res: Re
     {
       $lookup: {
         from: 'rubrics',
-        let: { teamId: '$_id' },
+        let: { teamId: '$_id', eventId: new ObjectId(req.params.eventId) },
         pipeline: [
           {
             $match: {
@@ -155,6 +155,9 @@ router.get('/robot-room-correlation-to-robot-game', async (req: Request, res: Re
                 $and: [
                   {
                     $eq: ['$teamId', '$$teamId']
+                  },
+                  {
+                    $eq: ['$eventId', '$$eventId']
                   },
                   {
                     $in: ['$status', ['ready', 'waiting-for-review', 'completed']]
