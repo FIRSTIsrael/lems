@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 
-const eventValidator = async (req: Request, res: Response, next: NextFunction) => {
+const eventValidator = (req: Request, res: Response, next: NextFunction) => {
   if (!ObjectId.isValid(req.params.eventId))
     return res.status(400).json({ error: 'Invalid event' });
 

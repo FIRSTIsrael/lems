@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import asyncHandler from 'express-async-handler';
 import { Event } from '@lems/types';
 import * as db from '@lems/database';
 import eventScheduleRouter from './schedule';
@@ -53,19 +54,23 @@ router.put('/:eventId', (req: Request, res: Response) => {
   });
 });
 
-router.delete('/:eventId/data', async (req: Request, res: Response) => {
-  const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
+router.delete(
+  '/:eventId/data',
+  asyncHandler(async (req: Request, res: Response) => {
+    const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
 
-  console.log(`🚮 Deleting data from event ${req.params.eventId}`);
-  try {
-    await cleanEventData(event);
-    await db.updateEvent({ _id: event._id }, { hasState: false });
-  } catch (error) {
-    return res.status(500).json(error.message);
-  }
-  console.log('✅ Deleted event data!');
-  return res.status(200).json({ ok: true });
-});
+    console.log(`🚮 Deleting data from event ${req.params.eventId}`);
+    try {
+      await cleanEventData(event);
+      await db.updateEvent({ _id: event._id }, { hasState: false });
+    } catch (error) {
+      res.status(500).json(error.message);
+      return;
+    }
+    console.log('✅ Deleted event data!');
+    res.status(200).json({ ok: true });
+  })
+);
 
 router.use('/:eventId/schedule', eventScheduleRouter);
 router.use('/:eventId/pit-map', eventPitMapRouter);
