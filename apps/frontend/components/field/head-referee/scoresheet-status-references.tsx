@@ -6,6 +6,9 @@ import EditScoresheetButton from './edit-scoresheet-button';
 const ScoresheetStatusReferences = () => {
   return (
     <Stack direction="row" justifyContent="center">
+      <EditScoresheetButton key="unregistered" status="empty" active={false}>
+        לא הגיעו לאירוע
+      </EditScoresheetButton>
       {ScoresheetStatusTypes.map(status => {
         return (
           <EditScoresheetButton key={status} status={status} active={true}>
