@@ -57,18 +57,18 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
             p={1}
           >
             <Stack spacing={0} textAlign="center">
-              <Typography color="text.secondary">מצטיין</Typography>
+              <Typography color="text.secondary">עיכוב מינימלי</Typography>
               <Typography dir="ltr" fontWeight={600}>
                 {getDuration(data?.best.average)}
               </Typography>
-              <Typography color="text.secondary">{data?.best.room}</Typography>
+              <Typography color="text.secondary">חדר {data?.best.room}</Typography>
             </Stack>
             <Stack spacing={0} textAlign="center">
-              <Typography color="text.secondary">טעון שיפור</Typography>
+              <Typography color="text.secondary">עיכוב מקסימלי</Typography>
               <Typography dir="ltr" fontWeight={600}>
                 {getDuration(data?.worst.average)}
               </Typography>
-              <Typography color="text.secondary">{data?.worst.room}</Typography>
+              <Typography color="text.secondary">חדר {data?.worst.room}</Typography>
             </Stack>
           </Stack>
         </Grid>
