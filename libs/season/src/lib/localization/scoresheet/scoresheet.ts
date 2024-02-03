@@ -27,7 +27,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       clauses: [
         {
           description: 'הדגל האדום של התיאטרון שלכם מופנה כלפי מטה, וצבע התפאורה הפעילה הוא:',
-          labels: ['אף צבע', 'כחול', 'ורוד', 'כתום']
+          labels: ['לא', 'כחול', 'ורוד', 'כתום']
         },
         {
           description: '**בונוס:** התפאורות של שתי הקבוצות תואמות:'
