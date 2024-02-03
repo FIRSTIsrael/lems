@@ -10,7 +10,7 @@ router.get('/average-median', async (req: Request, res: Response) => {
       $match: {
         eventId: new ObjectId(req.params.eventId),
         status: {
-          $in: ['ready', 'waiting-for-review']
+          $in: ['ready', 'waiting-for-review', 'completed']
         }
       }
     },
@@ -50,7 +50,7 @@ router.get('/categories', async (req: Request, res: Response) => {
       $match: {
         eventId: new ObjectId(req.params.eventId),
         status: {
-          $in: ['ready', 'waiting-for-review']
+          $in: ['ready', 'waiting-for-review', 'completed']
         }
       }
     },
@@ -92,7 +92,7 @@ router.get('/highest-average-score', async (req: Request, res: Response) => {
       $match: {
         eventId: new ObjectId(req.params.eventId),
         status: {
-          $in: ['ready', 'waiting-for-review']
+          $in: ['ready', 'waiting-for-review', 'completed']
         }
       }
     },
@@ -132,7 +132,7 @@ router.get('/rooms', async (req: Request, res: Response) => {
       $match: {
         eventId: new ObjectId(req.params.eventId),
         status: {
-          $in: ['ready', 'waiting-for-review']
+          $in: ['ready', 'waiting-for-review', 'completed']
         }
       }
     },
