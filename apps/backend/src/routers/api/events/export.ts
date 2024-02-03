@@ -28,7 +28,7 @@ router.get(
       Object.fromEntries(
         scoresheets
           .filter(scoresheet => scoresheet.teamId.toString() === teamId.toString())
-          .map(scoresheet => [`gp-${scoresheet.round}`, scoresheet.data?.gp.value])
+          .map(scoresheet => [`gp-${scoresheet.round}`, scoresheet.data?.gp?.value])
       );
 
     const csvData = rubrics.map(rubric => {

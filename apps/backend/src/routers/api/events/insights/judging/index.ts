@@ -153,6 +153,7 @@ router.get(
   '/robot-room-correlation-to-robot-game',
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
+      { $match: { eventId: new ObjectId(req.params.eventId) } },
       {
         $lookup: {
           from: 'rubrics',
