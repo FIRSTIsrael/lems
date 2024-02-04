@@ -106,7 +106,8 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                     fontWeight={500}
                     color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
                   >
-                    {scoresheet.data.score} נק&apos;, GP - {scoresheet.data.gp.value}
+                    {scoresheet.data.score} נק&apos;,{' '}
+                    {scoresheet.data.gp?.value && `GP - ${scoresheet.data.gp.value}`}
                   </Typography>
                 )}
               </Button>
@@ -330,8 +331,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     } else {
       tableId = match.participants
         .filter((p: RobotGameMatchParticipant) => p.teamId)
-        .find((p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId)
-        ?.tableId;
+        .find(
+          (p: RobotGameMatchParticipant) => p.teamId?.toString() === ctx.params?.teamId
+        )?.tableId;
     }
 
     const table = await apiFetch(

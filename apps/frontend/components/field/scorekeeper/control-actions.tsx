@@ -131,7 +131,7 @@ const ControlActions: React.FC<ControlActionsProps> = ({
             aria-labelledby="abort-dialog-title"
             aria-describedby="abort-dialog-description"
           >
-            <DialogTitle id="abort-dialog-title">הפסקת המקצה</DialogTitle>
+            <DialogTitle id="abort-dialog-title">ביטול המקצה</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 האם אתם בטוחים שאתם רוצים להפסיק את המקצה?

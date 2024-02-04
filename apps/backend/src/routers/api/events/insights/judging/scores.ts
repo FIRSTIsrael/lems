@@ -7,7 +7,12 @@ const router = express.Router({ mergeParams: true });
 router.get('/average-median', async (req: Request, res: Response) => {
   const pipeline = [
     {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+      $match: {
+        eventId: new ObjectId(req.params.eventId),
+        status: {
+          $in: ['ready', 'waiting-for-review', 'completed']
+        }
+      }
     },
     {
       $project: {
@@ -42,7 +47,12 @@ router.get('/average-median', async (req: Request, res: Response) => {
 router.get('/categories', async (req: Request, res: Response) => {
   const pipeline = [
     {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+      $match: {
+        eventId: new ObjectId(req.params.eventId),
+        status: {
+          $in: ['ready', 'waiting-for-review', 'completed']
+        }
+      }
     },
     {
       $project: {
@@ -79,7 +89,12 @@ router.get('/categories', async (req: Request, res: Response) => {
 router.get('/highest-average-score', async (req: Request, res: Response) => {
   const pipeline = [
     {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+      $match: {
+        eventId: new ObjectId(req.params.eventId),
+        status: {
+          $in: ['ready', 'waiting-for-review', 'completed']
+        }
+      }
     },
     {
       $project: {
@@ -114,7 +129,12 @@ router.get('/highest-average-score', async (req: Request, res: Response) => {
 router.get('/rooms', async (req: Request, res: Response) => {
   const pipeline = [
     {
-      $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+      $match: {
+        eventId: new ObjectId(req.params.eventId),
+        status: {
+          $in: ['ready', 'waiting-for-review', 'completed']
+        }
+      }
     },
     {
       $addFields: {

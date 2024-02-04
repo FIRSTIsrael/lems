@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import ReactMarkdown from 'react-markdown';
 import { Slide } from '@lems/presentations';
 import LogoStack from './logo-stack';
 

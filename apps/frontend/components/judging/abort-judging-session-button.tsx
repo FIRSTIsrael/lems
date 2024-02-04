@@ -41,7 +41,7 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
       if (response.ok) {
         enqueueSnackbar('מפגש השיפוט הופסק בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, הפסקת מפגש השיפוט נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, ביטול מפגש השיפוט נכשל.', { variant: 'error' });
       }
     });
   };
@@ -56,7 +56,7 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
         variant="contained"
         {...props}
       >
-        הפסקת מפגש השיפוט
+        ביטול מפגש השיפוט
       </Button>
       <Dialog
         open={open}
@@ -64,10 +64,10 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
         aria-labelledby="abort-dialog-title"
         aria-describedby="abort-dialog-description"
       >
-        <DialogTitle id="abort-dialog-title">הפסקת מפגש שיפוט</DialogTitle>
+        <DialogTitle id="abort-dialog-title">ביטול מפגש שיפוט</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            שימו לב! הפסקת מפגש השיפוט יתריע על כך למערכות האירוע ויחייב אתכם לקיים את מפגש השיפוט
+            שימו לב! ביטול מפגש השיפוט יתריע על כך למערכות האירוע ויחייב אתכם לקיים את מפגש השיפוט
             במלואו עם הקבוצה לפני מילוי המחוונים. האם אתם בטוחים?
           </DialogContentText>
         </DialogContent>

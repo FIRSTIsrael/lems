@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { Box, Stack, Typography } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
 import { Appear, Slide } from '@lems/presentations';
 import { DivisionColor, Team } from '@lems/types';
 import { getDivisionColor } from '../../lib/utils/colors';

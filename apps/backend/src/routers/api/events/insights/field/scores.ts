@@ -129,7 +129,7 @@ router.get('/tables', async (req: Request, res: Response) => {
     {
       $project: {
         score: true,
-        tokens: true,
+        tokens: { $toInt: '$tokens' },
         tableId: '$match.participants.tableId'
       }
     },

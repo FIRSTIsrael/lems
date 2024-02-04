@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Avatar, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
+import { Avatar, Stack, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 import { AwardNames, CVFormCategoryNames, Event, Team } from '@lems/types';
@@ -39,7 +39,7 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell>ניקוד גבוה ביותר</TableCell>
+              <TableCell>ניקוד גבוה ביותר (רובוט)</TableCell>
               <TableCell>{Number(data.robotPerformance.maxScore.toFixed(2))}</TableCell>
             </TableRow>
             <TableRow>
@@ -59,8 +59,10 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
             <TableRow>
               <TableCell>טפסי CV</TableCell>
               <TableCell>
-                {data.cvForms.length > 0
-                  ? data.cvForms.map((cvForm, index) => (
+                {data.cvForms.length > 0 ? (
+                  <Stack direction="row" spacing={1}>
+                    {' '}
+                    {data.cvForms.map((cvForm, index) => (
                       <Avatar
                         key={index}
                         sx={{ height: '30px', width: '30px' }}
@@ -69,8 +71,11 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team
                           cvFormSchema.categories.find(c => c.id === cvForm.severity)?.emoji
                         }`}
                       />
-                    ))
-                  : 'אין'}
+                    ))}
+                  </Stack>
+                ) : (
+                  'אין'
+                )}
               </TableCell>
             </TableRow>
           </TableBody>
