@@ -396,7 +396,12 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
                             ביטול
                           </Button>
-                          <Button onClick={() => handleSync(true, values, 'waiting-for-head-ref')}>
+                          <Button
+                            onClick={() => {
+                              handleSync(true, values, 'waiting-for-head-ref');
+                              setHeadRefDialogue(false);
+                            }}
+                          >
                             אישור
                           </Button>
                         </DialogActions>
