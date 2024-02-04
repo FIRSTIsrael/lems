@@ -115,7 +115,7 @@ const Page: NextPage<Props> = ({
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
-  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+  useWebsocket(event._id.toString(), ['pit-admin', 'field', 'audience-display'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
