@@ -451,6 +451,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
             ) : (
               <GpSelector
                 user={user}
+                scoresheetStatus={scoresheet.status}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
                   handleSync(true, values, 'ready').then(() =>
