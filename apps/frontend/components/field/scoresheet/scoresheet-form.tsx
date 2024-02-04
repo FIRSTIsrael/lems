@@ -8,6 +8,7 @@ import {
   Button,
   Alert,
   Stack,
+  Box,
   Paper,
   Dialog,
   DialogActions,
@@ -20,6 +21,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
@@ -305,18 +307,33 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
                     />
                   ) : (
-                    <SignatureCanvas
-                      canvasProps={{
-                        width: 400,
-                        height: 200,
-                        style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
-                      }}
-                      backgroundColor="#fff"
-                      ref={ref => {
-                        signatureRef.current = ref;
-                      }}
-                      onEnd={() => validateForm()}
-                    />
+                    <Stack direction="row" spacing={2}>
+                      {signatureRef.current &&
+                        !['ready', 'waiting-for-gp'].includes(scoresheet.status) && (
+                          <Box display="flex" alignItems="center">
+                            <IconButton
+                              onClick={() => {
+                                signatureRef.current?.clear();
+                                validateForm();
+                              }}
+                            >
+                              <RestartAltRoundedIcon />
+                            </IconButton>
+                          </Box>
+                        )}
+                      <SignatureCanvas
+                        canvasProps={{
+                          width: 400,
+                          height: 200,
+                          style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
+                        }}
+                        backgroundColor="#fff"
+                        ref={ref => {
+                          signatureRef.current = ref;
+                        }}
+                        onEnd={() => validateForm()}
+                      />
+                    </Stack>
                   )}
                   {!isValid && (
                     <Alert
@@ -396,7 +413,12 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
                             ביטול
                           </Button>
-                          <Button onClick={() => handleSync(true, values, 'waiting-for-head-ref')}>
+                          <Button
+                            onClick={() => {
+                              handleSync(true, values, 'waiting-for-head-ref');
+                              setHeadRefDialogue(false);
+                            }}
+                          >
                             אישור
                           </Button>
                         </DialogActions>
@@ -429,6 +451,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
             ) : (
               <GpSelector
                 user={user}
+                scoresheetStatus={scoresheet.status}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
                   handleSync(true, values, 'ready').then(() =>

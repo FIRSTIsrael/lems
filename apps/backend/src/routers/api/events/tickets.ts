@@ -1,11 +1,15 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: Request, res: Response) => {
-  res.json(await db.getEventTickets(new ObjectId(req.params.eventId)));
-});
+router.get(
+  '/',
+  asyncHandler(async (req: Request, res: Response) => {
+    res.json(await db.getEventTickets(new ObjectId(req.params.eventId)));
+  })
+);
 
 export default router;

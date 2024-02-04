@@ -38,7 +38,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   event,
-  teams,
+  teams: initialTeams,
   eventState: initialEventState,
   matches: initialMatches,
   scoresheets: initialScoresheets
@@ -47,6 +47,7 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -97,13 +98,24 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id === team._id) {
+          return team;
+        }
+        return t;
+      })
+    );
+  };
+
   console.log('Ctrl + Shift + L to logout.');
   useKeyboardShortcut(
     () => apiFetch('/auth/logout', { method: 'POST' }).then(() => router.push('/')),
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
-  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+  useWebsocket(event._id.toString(), ['pit-admin', 'field', 'audience-display'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
@@ -139,7 +151,8 @@ const Page: NextPage<Props> = ({
     { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
     { name: 'audienceDisplayUpdated', handler: setEventState },
-    { name: 'presentationUpdated', handler: setEventState }
+    { name: 'presentationUpdated', handler: setEventState },
+    { name: 'teamRegistered', handler: handleTeamRegistered }
   ]);
 
   return (
