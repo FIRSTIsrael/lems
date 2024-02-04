@@ -40,7 +40,7 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         team: t,
         score: Math.max(
           ...scoresheets
-            .filter(s => s.teamId === t._id && s.stage === eventState.currentStage)
+            .filter(s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready')
             .map(s => s.data?.score || 0)
         )
       };
