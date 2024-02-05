@@ -77,6 +77,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
               const maxWidth = 520;
               const memberCount = localizedMission.clauses[clauseIndex].labels?.length || 0;
               const buttonMinWidth = `${Math.min(80, maxWidth / memberCount)}px`;
+
               return (
                 <ToggleButtonGroup
                   exclusive
