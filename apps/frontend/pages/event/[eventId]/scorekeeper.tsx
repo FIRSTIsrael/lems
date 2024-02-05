@@ -26,6 +26,7 @@ import VideoSwitch from '../../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../../components/field/scorekeeper/presentation-controller';
 import AwardsPresentation from '../../../components/presentations/awards-presentation';
 import MessageEditor from '../../../components/field/scorekeeper/message-editor';
+import ScoreboardConfigurator from '../../../components/field/scorekeeper/scoreboard-configurator';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -185,6 +186,9 @@ const Page: NextPage<Props> = ({
                 )}
               {eventState.audienceDisplay.screen === 'message' && (
                 <MessageEditor eventState={eventState} socket={socket} />
+              )}
+              {eventState.audienceDisplay.screen === 'scores' && (
+                <ScoreboardConfigurator eventState={eventState} socket={socket} />
               )}
             </Stack>
           </TabPanel>

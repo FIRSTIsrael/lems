@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Stack } from '@mui/material';
 import { EventState, RobotGameMatch, Scoresheet, Team } from '@lems/types';
@@ -22,10 +22,17 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   teams,
   eventState
 }) => {
-  const showCurrentMatch = true;
-  const showCurrentMatchTimer = true;
-  const showSponsorsRow = false;
-  const showPreviousMatch = true;
+  const settings = useMemo(() => {
+    const { showCurrentMatch, showPreviousMatch, showSponsors } =
+      eventState.audienceDisplay.scoreboard;
+
+    return {
+      currentMatch: !!showCurrentMatch,
+      currentMatchTimer: showCurrentMatch === 'timer',
+      previousMatch: showPreviousMatch,
+      sponsors: showSponsors
+    };
+  }, [eventState.audienceDisplay.scoreboard]);
 
   return (
     <Stack
@@ -42,11 +49,10 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         backgroundSize: 'cover'
       }}
     >
-      {showCurrentMatch && (
-        <ScoreboardCurrentMatch activeMatch={activeMatch} showTimer={showCurrentMatchTimer} />
+      {settings.currentMatch && (
+        <ScoreboardCurrentMatch activeMatch={activeMatch} showTimer={settings.currentMatchTimer} />
       )}
-      {showSponsorsRow && <ScoreboardSponsorsRow />}
-      {showPreviousMatch && (
+      {settings.previousMatch && (
         <ScoreboardPreviousMatch
           previousMatch={previousMatch}
           previousScoresheets={scoresheets.filter(
@@ -61,6 +67,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         />
       )}
       <ScoreboardScores scoresheets={scoresheets} teams={teams} eventState={eventState} />
+      {settings.sponsors && <ScoreboardSponsorsRow />}
     </Stack>
   );
 };
