@@ -26,7 +26,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
       {participant.team && (
         <>
           <Typography fontSize="1.5rem" fontWeight={700}>
-            הכנה למקצה {localizedMatchStage[match.stage]} {match.number} (
+            הכנה למקצה #{match.number} סבב {localizedMatchStage[match.stage]} {match.round} (
             {dayjs(match.scheduledTime).format('HH:mm')})
           </Typography>
 
