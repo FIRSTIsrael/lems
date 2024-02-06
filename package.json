@@ -20,7 +20,7 @@
     "@mui/lab": "^5.0.0-alpha.163",
     "@mui/material": "^5.15.6",
     "@mui/x-data-grid": "^6.18.7",
-    "@mui/x-date-pickers": "^6.19.2",
+    "@mui/x-date-pickers": "^6.19.3",
     "@nx/next": "17.2.8",
     "@types/grecaptcha": "^3.0.7",
     "axios": "^1.0.0",
