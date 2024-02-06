@@ -1,16 +1,9 @@
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
-import {
-  Paper,
-  Stack,
-  Typography,
-  Button,
-  ToggleButtonGroup,
-  ToggleButton,
-  ThemeProvider
-} from '@mui/material';
+import { Paper, Stack, Typography, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
+import { localizedMatchStage } from '../../../localization/field';
 import PresentSwitch from './present-switch';
 
 interface MatchPrestartProps {
@@ -33,7 +26,8 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
       {participant.team && (
         <>
           <Typography fontSize="1.5rem" fontWeight={700}>
-            הכנה למקצה {match.number} ({dayjs(match.scheduledTime).format('HH:mm')})
+            הכנה למקצה {localizedMatchStage[match.stage]} {match.number} (
+            {dayjs(match.scheduledTime).format('HH:mm')})
           </Typography>
 
           <Typography color="textSecondary" fontSize="1.125rem" mb={4}>
