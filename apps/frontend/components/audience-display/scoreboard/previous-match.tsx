@@ -3,6 +3,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { yellow, grey, green } from '@mui/material/colors';
 import { WithId } from 'mongodb';
 import { Team, Scoresheet, RobotGameMatch } from '@lems/types';
+import { localizedMatchStage } from '../../../localization/field';
 
 interface TeamScoreBoxProps {
   team: WithId<Team>;
@@ -16,20 +17,20 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
         color: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
           ? yellow[800]
           : scoresheet.status === 'empty'
-          ? grey[800]
-          : green[800],
+            ? grey[800]
+            : green[800],
         border: `1px solid ${
           ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
             ? yellow[300]
             : scoresheet.status === 'empty'
-            ? grey[300]
-            : green[300]
+              ? grey[300]
+              : green[300]
         }`,
         backgroundColor: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
           ? yellow[100]
           : scoresheet.status === 'empty'
-          ? grey[100]
-          : green[100],
+            ? grey[100]
+            : green[100],
         borderRadius: '0.5rem',
         px: 1.5,
         py: 0.5
@@ -63,10 +64,10 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
       <Grid xs={3}>
         <Typography component="h2" fontSize="1.75rem" fontWeight={500}>
           {previousMatch?.number
-            ? `מקצה קודם (#${previousMatch?.number})`
+            ? `מקצה קודם (מקצה ${previousMatch && localizedMatchStage[previousMatch.stage]} #${previousMatch?.number})`
             : previousMatch?.stage === 'test'
-            ? 'מקצה בדיקה'
-            : 'מקצה קודם (-)'}
+              ? 'מקצה בדיקה'
+              : 'מקצה קודם (-)'}
         </Typography>
         <Typography fontWeight={400} fontSize="1.5rem" color="text.secondary">
           הניקוד אינו סופי ויכול להשתנות בכל רגע.

@@ -48,7 +48,7 @@ const HeadRefereeRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
         <TableHead>
           <TableRow>
             <TableCell colSpan={3 + tables.length} align="center">
-              {localizedMatchStage[roundStage]} #{roundNumber}
+              סבב {localizedMatchStage[roundStage]} #{roundNumber}
             </TableCell>
           </TableRow>
           <TableRow>
