@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Form, Formik, FormikValues } from 'formik';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import {
   Typography,
   Button,
@@ -197,10 +197,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
               <Grid container spacing={6} sx={{ mb: 4 }}>
                 {!hideDescription && (
                   <Grid xs={12} md={(schema.awards?.length || 0) > 0 ? 5 : 9}>
-                    <Typography color="text.secondary" fontSize="0.875rem">
-                      <ReactMarkdown skipHtml components={{ p: React.Fragment }}>
-                        {schema.description}
-                      </ReactMarkdown>
+                    <Typography color="text.secondary" fontSize="0.875rem" component="span">
+                      <Markdown skipHtml>{schema.description}</Markdown>
                     </Typography>
                   </Grid>
                 )}
