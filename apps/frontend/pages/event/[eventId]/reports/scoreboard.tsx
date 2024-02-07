@@ -77,7 +77,7 @@ const Page: NextPage<Props> = ({
     },
     ...rounds.map(r => ({
       field: `round-${r}`,
-      headerName: `${localizedMatchStage[eventState.currentStage]} #${r}`,
+      headerName: `סבב ${localizedMatchStage[eventState.currentStage]} #${r}`,
       width: 125
     })),
     {
