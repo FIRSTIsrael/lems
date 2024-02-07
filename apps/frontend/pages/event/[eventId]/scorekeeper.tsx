@@ -176,7 +176,6 @@ const Page: NextPage<Props> = ({
                   >
                     <AwardsPresentation
                       event={event}
-                      teams={teams}
                       height={108 * 2.5}
                       width={192 * 2.5}
                       position="relative"

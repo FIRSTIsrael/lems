@@ -188,7 +188,6 @@ const Page: NextPage<Props> = ({
             height="100%"
             width="100%"
             event={event}
-            teams={teams}
           />
         )}
         {eventState.audienceDisplay.screen === 'message' && (
