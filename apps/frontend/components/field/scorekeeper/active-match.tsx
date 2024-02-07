@@ -61,7 +61,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
         <Grid
           container
           columns={match?.participants.filter(p => p.teamId).length}
-          spacing={1}
+          columnSpacing={3}
           mt={2}
         >
           {match &&
@@ -73,22 +73,25 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                 );
                 return (
                   <Grid key={index} xs={1}>
-                    <Box
+                    <Grid
+                      container
+                      spacing={2}
+                      xs={2}
                       sx={{
                         backgroundColor: participant.ready ? green[100] : red[100],
                         border: `1px solid ${participant.ready ? green[300] : red[300]}`,
                         borderRadius: '0.5rem',
-                        px: 1.5,
-                        py: 0.5
+                        height: '100%',
+                        pb: 2
                       }}
                     >
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Stack>
-                          <Typography fontWeight={500}>#{participant.team?.number}</Typography>
-                          <Typography fontSize="0.875rem" color="text.secondary">
-                            {participant.tableName}
-                          </Typography>
-                        </Stack>
+                      <Grid xs={1}>
+                        <Typography fontWeight={500}>#{participant.team?.number}</Typography>
+                        <Typography fontSize="0.875rem" color="text.secondary">
+                          {participant.tableName}
+                        </Typography>
+                      </Grid>
+                      <Grid xs={1} sx={{ alignItems: 'center', display: 'flex' }}>
                         {participant.present === 'present' ? (
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />
@@ -106,8 +109,8 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                             <RemoveRoundedIcon />
                           </Tooltip>
                         )}
-                      </Stack>
-                    </Box>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 );
               })}
