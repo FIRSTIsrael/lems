@@ -23,7 +23,7 @@
     "@mui/x-date-pickers": "^6.19.3",
     "@nx/next": "17.2.8",
     "@types/grecaptcha": "^3.0.7",
-    "axios": "^1.0.0",
+    "axios": "^1.6.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csv-parse": "^5.5.3",
