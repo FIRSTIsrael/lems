@@ -74,8 +74,10 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         ) : clause.type === 'enum' ? (
           <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
             {({ field, form }: FieldProps) => {
+              const maxWidth = 520;
               const memberCount = localizedMission.clauses[clauseIndex].labels?.length || 0;
-              const buttonMinWidth = `${Math.min(80, 550 / memberCount)}px`;
+              const buttonMinWidth = `${Math.min(80, maxWidth / memberCount)}px`;
+
               return (
                 <ToggleButtonGroup
                   exclusive

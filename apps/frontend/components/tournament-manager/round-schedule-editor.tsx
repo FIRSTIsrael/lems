@@ -139,7 +139,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
               <TableHead>
                 <TableRow>
                   <TableCell colSpan={3 + tables.length} align="center">
-                    {localizedMatchStage[roundStage]} #{roundNumber}
+                    סבב {localizedMatchStage[roundStage]} #{roundNumber}
                   </TableCell>
                 </TableRow>
                 <TableRow>

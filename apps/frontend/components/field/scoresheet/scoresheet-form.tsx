@@ -46,6 +46,8 @@ import { enqueueSnackbar } from 'notistack';
 import ScoresheetMission from './scoresheet-mission';
 import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
+import { localizeTeam } from '../../../localization/teams';
+import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetFormProps {
   event: WithId<Event>;
@@ -82,7 +84,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>([]);
   const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
-  const [headRefDialogue, setHeadRefDialogue] = useState<boolean>(false);
+  const [headRefDialog, setHeadRefDialog] = useState<boolean>(false);
+  const [resetDialog, setResetDialog] = useState<boolean>(false);
 
   const mode = useMemo(() => {
     return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
@@ -389,14 +392,14 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         }}
                         endIcon={<SportsScoreIcon />}
                         onClick={() => {
-                          setHeadRefDialogue(true);
+                          setHeadRefDialog(true);
                         }}
                       >
                         העברת דף הניקוד לשופט ראשי
                       </Button>
                       <Dialog
-                        open={headRefDialogue}
-                        onClose={() => setHeadRefDialogue(false)}
+                        open={headRefDialog}
+                        onClose={() => setHeadRefDialog(false)}
                         aria-labelledby="headref-dialog-title"
                         aria-describedby="headref-dialog-description"
                       >
@@ -410,13 +413,13 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                          <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
+                          <Button onClick={() => setHeadRefDialog(false)} autoFocus>
                             ביטול
                           </Button>
                           <Button
                             onClick={() => {
                               handleSync(true, values, 'waiting-for-head-ref');
-                              setHeadRefDialogue(false);
+                              setHeadRefDialog(false);
                             }}
                           >
                             אישור
@@ -427,14 +430,40 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                     <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
                       <Button
                         variant="contained"
-                        sx={{
-                          minWidth: 200
-                        }}
-                        disabled={values === getDefaultScoresheet()}
-                        onClick={() => handleSync(true, getDefaultScoresheet(), 'empty')}
+                        sx={{ minWidth: 200 }}
+                        disabled={scoresheet.status === 'empty'}
+                        onClick={() => setResetDialog(true)}
                       >
                         איפוס דף הניקוד
                       </Button>
+                      <Dialog
+                        open={resetDialog}
+                        onClose={() => setResetDialog(false)}
+                        aria-labelledby="reset-dialog-title"
+                        aria-describedby="reset-dialog-description"
+                      >
+                        <DialogTitle id="reset-dialog-title">איפוס דף הניקוד</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="reset-dialog-description">
+                            {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
+                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
+                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={() => setResetDialog(false)} autoFocus>
+                            ביטול
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              handleSync(true, getDefaultScoresheet(), 'empty');
+                              setResetDialog(false);
+                            }}
+                          >
+                            אישור
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </RoleAuthorizer>
                     <Button
                       variant="contained"

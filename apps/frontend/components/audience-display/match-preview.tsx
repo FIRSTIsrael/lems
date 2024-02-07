@@ -33,7 +33,7 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
         <Grid container component={Paper} width="80%" height="80%" p={8} textAlign="center">
           <Grid xs={12}>
             <Typography fontSize="7.5rem" fontWeight={700}>
-              {localizedMatchStage[match.stage]} #{match.number}
+              מקצה {localizedMatchStage[match.stage]} #{match.number}
             </Typography>
           </Grid>
           <Grid xs={12}>
