@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { Slide } from '@lems/presentations';
 import LogoStack from './logo-stack';
 
@@ -13,12 +13,12 @@ const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
     <Slide>
       <Stack px={20} textAlign="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
-          <ReactMarkdown>{primary}</ReactMarkdown>
+          <Markdown>{primary}</Markdown>
         </Typography>
         {secondary && (
           <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 4, borderRadius: 4 }}>
             <Typography fontSize="2.75rem">
-              <ReactMarkdown>{secondary}</ReactMarkdown>
+              <Markdown>{secondary}</Markdown>
             </Typography>
           </Box>
         )}

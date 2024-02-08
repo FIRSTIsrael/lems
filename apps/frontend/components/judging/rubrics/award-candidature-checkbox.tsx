@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { FastField, FieldProps } from 'formik';
 import {
   Checkbox,
@@ -57,9 +57,9 @@ const AwardCandidatureCheckbox: React.FC<AwardCandidatureCheckboxProps> = ({
                 </Typography>
               }
               secondary={
-                <ReactMarkdown skipHtml components={{ p: React.Fragment }}>
-                  {description}
-                </ReactMarkdown>
+                <Typography component="span">
+                  <Markdown skipHtml>{description}</Markdown>
+                </Typography>
               }
             />
           </ListItemButton>

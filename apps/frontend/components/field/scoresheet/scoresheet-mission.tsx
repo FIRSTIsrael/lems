@@ -10,7 +10,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2/';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import CustomNumberInput from './number-input';
 interface MissionClauseProps {
   missionIndex: number;
@@ -50,7 +50,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
       })}
     >
       <Grid xs={10} mt={2} ml={3}>
-        <ReactMarkdown>{localizedMission.clauses[clauseIndex].description}</ReactMarkdown>
+        <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
       </Grid>
       <Grid xs={12} ml={3}>
         {clause.type === 'boolean' ? (

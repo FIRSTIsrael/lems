@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { Box, TableCell, TableRow, Typography } from '@mui/material';
 import { JudgingCategory } from '@lems/types';
 
@@ -37,9 +37,7 @@ const TitleRow = ({ title, description, category: type }: Props) => {
             {title}
           </Typography>
           <Box sx={{ whiteSpace: 'pre' }}> - </Box>
-          <ReactMarkdown skipHtml components={{ p: React.Fragment }}>
-            {description}
-          </ReactMarkdown>
+          <Markdown skipHtml>{description}</Markdown>
         </Box>
       </TableCell>
     </TableRow>
