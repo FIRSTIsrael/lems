@@ -13,7 +13,6 @@ import { apiFetch } from '../../lib/utils/fetch';
 
 interface AwardsPresentationProps extends BoxProps {
   event: WithId<Event>;
-  teams: Array<WithId<Team>>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;
@@ -23,7 +22,6 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
   (
     {
       event,
-      teams,
       initialState = {
         slideIndex: 0,
         stepIndex: 0
@@ -34,10 +32,15 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     },
     ref
   ) => {
+    const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
     const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
+
     useEffect(() => {
       apiFetch(`/api/events/${event._id}/awards`).then(res =>
         res.json().then(data => setAwards(data))
+      );
+      apiFetch(`/api/events/${event._id}/teams`).then(res =>
+        res.json().then(data => setTeams(data))
       );
     }, [event._id]);
 
