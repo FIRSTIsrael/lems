@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { DataGrid, GridColDef, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueFormatterParams, GridComparatorFn } from '@mui/x-data-grid';
 import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -32,6 +32,8 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
+
+  const teamNumberComparator: GridComparatorFn<Team> = (v1, v2) => v1.number - v2.number;
 
   const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
@@ -73,7 +75,7 @@ const Page: NextPage<Props> = ({
       headerName: 'קבוצה',
       width: 350,
       valueFormatter: (params: GridValueFormatterParams) => localizeTeam(params.value),
-      sortable: false
+      sortComparator: teamNumberComparator
     },
     ...rounds.map(r => ({
       field: `round-${r}`,
