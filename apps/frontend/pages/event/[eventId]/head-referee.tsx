@@ -118,6 +118,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'scoresheetUpdated', handler: updateScoresheet },
       { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
