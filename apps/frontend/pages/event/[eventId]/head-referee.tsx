@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Paper, Stack } from '@mui/material';
+import { Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
   Event,
@@ -181,6 +181,12 @@ const Page: NextPage<Props> = ({
         <WelcomeHeader event={event} user={user} />
         <Paper sx={{ p: 2 }}>
           <ScoresheetStatusReferences />
+          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }}>
+            <em>
+              הניקוד במקצה יופיע מעל הפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
+              הקבוצה.
+            </em>
+          </Typography>
         </Paper>
         <Grid container spacing={2} my={4}>
           {...roundSchedules}
