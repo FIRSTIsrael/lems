@@ -301,7 +301,10 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 </Stack>
 
                 <Stack spacing={2} alignItems="center" my={6}>
-                  {readOnly || (values.signature && values.signature.length > 0) ? (
+                  {readOnly ||
+                  validatorErrors.length > 0 ||
+                  missionInfo.find(mi => mi.incomplete || !!mi.errors) ||
+                  (values.signature && values.signature.length > 0) ? (
                     <Image
                       src={values.signature || '/assets/scoresheet/blank-signature.svg'}
                       alt={`חתימת קבוצה #${team.number}`}
@@ -382,7 +385,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       {e.description}
                     </Alert>
                   ))}
-
                   <Stack direction="row" spacing={2}>
                     <RoleAuthorizer user={user} allowedRoles={['referee']}>
                       <Button
