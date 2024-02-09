@@ -128,18 +128,20 @@ const GpSelector: React.FC<GpSelectorProps> = ({
               </TableBody>
             </Table>
 
-            {field.value && field.value !== 3 && (
-              <Box justifyContent="center" display="flex" pt={2}>
-                <FormControlLabel
-                  control={<Checkbox />}
-                  value={checked}
-                  onChange={() => setChecked(value => !value)}
-                  label={`השופט הראשי ראה ואישר שנתתי לקבוצה ציון ${
-                    field.value === 2 ? 'מתפתחת' : 'מצטיינת'
-                  }`}
-                />
-              </Box>
-            )}
+            <RoleAuthorizer user={user} allowedRoles={['referee']}>
+              {field.value && field.value !== 3 && (
+                <Box justifyContent="center" display="flex" pt={2}>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    value={checked}
+                    onChange={() => setChecked(value => !value)}
+                    label={`השופט הראשי ראה ואישר שנתתי לקבוצה ציון ${
+                      field.value === 2 ? 'מתפתחת' : 'מצטיינת'
+                    }`}
+                  />
+                </Box>
+              )}
+            </RoleAuthorizer>
 
             <Stack direction="row" mt={4} mb={2} justifyContent="center" spacing={3}>
               <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
