@@ -146,7 +146,8 @@ const Page: NextPage<Props> = ({
         <Paper
           sx={{
             my: 4,
-            textAlign: 'center'
+            textAlign: 'center',
+            height: '85vh'
           }}
         >
           <DataGrid
