@@ -10,6 +10,7 @@ export const localizedRoles: { [key in Role]: { name: string } } = {
   'pit-admin': { name: 'פיט אדמין' },
   referee: { name: 'שופט זירה' },
   scorekeeper: { name: 'סקורקיפר' },
+  queuer: { name: 'קיואר' },
   'tournament-manager': { name: 'מנהל אירוע' },
   mc: { name: 'מנחה' }
 };

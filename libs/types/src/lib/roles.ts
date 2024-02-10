@@ -8,6 +8,7 @@ export const RoleTypes = [
   'referee',
   'head-referee',
   'scorekeeper',
+  'queuer',
   'pit-admin',
   'audience-display',
   'tournament-manager',
