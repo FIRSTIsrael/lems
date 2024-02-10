@@ -152,7 +152,7 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
-    if (user.role !== 'head-referee' || match.status !== 'completed') {
+    if (user.role !== 'head-referee') {
       router.push(`/event/${event._id}/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
