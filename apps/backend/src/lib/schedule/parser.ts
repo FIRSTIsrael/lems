@@ -206,10 +206,7 @@ const extractSessionsFromJudgingBlock = (
         scheduledTime: startTime.toDate(),
         roomId: room._id,
         teamId: null,
-        status: 'not-started',
-        coreValues: 'empty',
-        innovationProject: 'empty',
-        robotDesign: 'empty'
+        status: 'not-started'
       };
 
       if (line[i]) {
@@ -229,7 +226,7 @@ export const parseSessionsAndMatches = (
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>,
-  timezone: string = 'UTC'
+  timezone = 'UTC'
 ): { matches: Array<RobotGameMatch>; sessions: Array<JudgingSession> } => {
   const file = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); //Version number: 2nd cell of 1st row.
