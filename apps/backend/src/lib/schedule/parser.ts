@@ -206,10 +206,7 @@ const extractSessionsFromJudgingBlock = (
         scheduledTime: startTime.toDate(),
         roomId: room._id,
         teamId: null,
-        status: 'not-started',
-        coreValues: 'empty',
-        innovationProject: 'empty',
-        robotDesign: 'empty'
+        status: 'not-started'
       };
 
       if (line[i]) {
