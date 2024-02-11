@@ -37,8 +37,8 @@ app.use('/', expressLogger);
 
 app.use('/auth', authRouter);
 app.use('/public', publicRouter);
+app.use('/dashboard', dashboardRouter);
 app.use('/api', apiRouter);
-app.use('/dashboard', dashboardRouter)
 
 app.get('/status', (req, res) => {
   return res.status(200).json({ ok: true });
