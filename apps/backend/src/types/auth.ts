@@ -6,6 +6,7 @@ export interface JwtTokenData extends JwtPayload {
 }
 
 export interface DashboardTokenData extends JwtPayload {
+  eventSalesforceId: string;
   teamNumber: number;
 }
 

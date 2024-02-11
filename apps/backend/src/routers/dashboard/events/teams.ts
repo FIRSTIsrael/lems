@@ -1,9 +1,12 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
-import { getEventIdBySalesforceIdAndTeamNumber } from '../../../lib/salesforce-helpers';
+import dashboardTeamValidator from '../../../middlewares/dashboard/team-validator';
+import { getEventBySalesforceIdAndTeamNumber } from '../../../lib/salesforce-helpers';
 
 const router = express.Router({ mergeParams: true });
+
+router.use('/:teamNumber', dashboardTeamValidator);
 
 router.get(
   '/:teamNumber/schedule',
@@ -13,10 +16,10 @@ router.get(
       res.status(400).json({ error: 'INVALID_TEAM_NUMBER' });
       return;
     }
-    const eventId = await getEventIdBySalesforceIdAndTeamNumber(
+    const eventId = await getEventBySalesforceIdAndTeamNumber(
       req.params.eventSalesforceId,
       teamNumber
-    );
+    ).then(event => event._id);
 
     const pipeline = [
       { $match: { _id: eventId } },
