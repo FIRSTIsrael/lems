@@ -5,6 +5,10 @@ export interface JwtTokenData extends JwtPayload {
   userId: ObjectId;
 }
 
+export interface DashboardTokenData extends JwtPayload {
+  teamNumber: number;
+}
+
 export interface RecaptchaResponse {
   success: boolean;
   score: number;

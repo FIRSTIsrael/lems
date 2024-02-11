@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware from '../../middlewares/auth';
+import { authMiddleware } from '../../middlewares/auth';
 import eventsRouter from './events/index';
 import adminRouter from './admin/index';
 
