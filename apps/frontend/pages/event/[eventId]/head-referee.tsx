@@ -181,11 +181,9 @@ const Page: NextPage<Props> = ({
         <WelcomeHeader event={event} user={user} />
         <Paper sx={{ p: 2 }}>
           <ScoresheetStatusReferences />
-          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }}>
-            <em>
-              הניקוד במקצה יופיע מעל הפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
-              הקבוצה.
-            </em>
+          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }} color="text.secondary">
+            הניקוד במקצה יופיע מעל הכפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
+            הקבוצה.
           </Typography>
         </Paper>
         <Grid container spacing={2} my={4}>
