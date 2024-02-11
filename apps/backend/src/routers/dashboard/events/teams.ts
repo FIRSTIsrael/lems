@@ -9,6 +9,11 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const teamNumber = Number(req.params.teamNumber);
 
+    if (isNaN(teamNumber)) {
+      res.status(400).json({ error: 'INVALID_TEAM_NUMBER' });
+      return;
+    }
+
     const pipeline = [
       { $match: { salesforceId: req.params.eventSalesforceId } },
       {
