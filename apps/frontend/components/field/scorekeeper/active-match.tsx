@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
-import { Box, Paper, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Paper, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { green, red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
@@ -91,7 +91,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                           {participant.tableName}
                         </Typography>
                       </Grid>
-                      <Grid xs={1} sx={{ alignItems: 'center', display: 'flex' }}>
+                      <Grid xs={1} alignItems="center" display="flex">
                         {participant.present === 'present' ? (
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />
