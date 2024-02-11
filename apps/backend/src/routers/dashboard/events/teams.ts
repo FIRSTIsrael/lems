@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
+import { getEventIdBySalesforceIdAndTeamNumber } from '../../../lib/salesforce-helpers';
 
 const router = express.Router({ mergeParams: true });
 
@@ -8,14 +9,17 @@ router.get(
   '/:teamNumber/schedule',
   asyncHandler(async (req: Request, res: Response) => {
     const teamNumber = Number(req.params.teamNumber);
-
     if (isNaN(teamNumber)) {
       res.status(400).json({ error: 'INVALID_TEAM_NUMBER' });
       return;
     }
+    const eventId = await getEventIdBySalesforceIdAndTeamNumber(
+      req.params.eventSalesforceId,
+      teamNumber
+    );
 
     const pipeline = [
-      { $match: { salesforceId: req.params.eventSalesforceId } },
+      { $match: { _id: eventId } },
       {
         $lookup: {
           from: 'teams',
