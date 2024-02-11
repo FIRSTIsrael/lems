@@ -1,9 +1,9 @@
 import { AudienceDisplayScreen, RobotGameMatchPresent, RobotGameMatchStatus } from '@lems/types';
 
 export const localizedMatchStage = {
-  practice: 'מקצה אימונים',
-  ranking: 'מקצה רשמי',
-  test: 'מקצה בדיקה'
+  practice: 'אימונים',
+  ranking: 'דירוג',
+  test: 'בדיקה'
 };
 
 export const localizedMatchPresent: Record<RobotGameMatchPresent, string> = {

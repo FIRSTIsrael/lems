@@ -10,7 +10,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2/';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import CustomNumberInput from './number-input';
 interface MissionClauseProps {
   missionIndex: number;
@@ -50,7 +50,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
       })}
     >
       <Grid xs={10} mt={2} ml={3}>
-        <ReactMarkdown>{localizedMission.clauses[clauseIndex].description}</ReactMarkdown>
+        <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
       </Grid>
       <Grid xs={12} ml={3}>
         {clause.type === 'boolean' ? (
@@ -74,8 +74,10 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         ) : clause.type === 'enum' ? (
           <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
             {({ field, form }: FieldProps) => {
+              const maxWidth = 520;
               const memberCount = localizedMission.clauses[clauseIndex].labels?.length || 0;
-              const buttonMinWidth = `${Math.min(80, 550 / memberCount)}px`;
+              const buttonMinWidth = `${Math.min(80, maxWidth / memberCount)}px`;
+
               return (
                 <ToggleButtonGroup
                   exclusive

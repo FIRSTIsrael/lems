@@ -98,7 +98,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                   color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
                   gutterBottom
                 >
-                  {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
+                  מקצה {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
                 </Typography>
                 {scoresheet.data && (
                   <Typography
@@ -152,7 +152,7 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
-    if (user.role !== 'head-referee' || match.status !== 'completed') {
+    if (user.role !== 'head-referee') {
       router.push(`/event/${event._id}/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
@@ -223,7 +223,7 @@ const Page: NextPage<Props> = ({
       {team && (
         <Layout
           maxWidth="md"
-          title={`${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
+          title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
             team.name
           } | ${event.name}`}
           error={connectionStatus === 'disconnected'}
@@ -267,9 +267,9 @@ const Page: NextPage<Props> = ({
               <DialogContentText id="delete-data-description">
                 {`שופט הזירה סימן שהקבוצה לא נכחה במקצה. 
                 האם אתם בטוחים שברצונכם לתת ניקוד לקבוצה ${localizeTeam(team)} 
-                ניקוד על ${
+                ניקוד על מקצה ${
                   scoresheet && localizedMatchStage[scoresheet.stage]
-                } ${scoresheet?.round}?`}
+                } #${scoresheet?.round}?`}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

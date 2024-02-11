@@ -40,7 +40,9 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         team: t,
         score: Math.max(
           ...scoresheets
-            .filter(s => s.teamId === t._id && s.stage === eventState.currentStage)
+            .filter(
+              s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready'
+            )
             .map(s => s.data?.score || 0)
         )
       };
@@ -76,7 +78,7 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
             <TableCell sx={{ font: 'inherit' }}>קבוצה</TableCell>
             {rounds.map(r => (
               <TableCell key={r.stage + r.round + 'name'} align="center" sx={{ font: 'inherit' }}>
-                {localizedMatchStage[r.stage]} #{r.round}
+                סבב {localizedMatchStage[r.stage]} #{r.round}
               </TableCell>
             ))}
             {eventState.currentStage !== 'practice' && (

@@ -55,7 +55,10 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
               <TableCell align="center" key={scoresheet._id.toString()}>
                 {match._id === eventState.loadedMatch ? (
                   <>
-                    <BooleanIcon condition={participant.ready} />
+                    <BooleanIcon
+                      condition={participant.ready}
+                      tooltip={{ true: 'השולחן מוכן', false: 'השולחן לא מוכן' }}
+                    />
                     <br />
                     {participant.team && <StyledTeamTooltip team={participant.team} />}
                   </>

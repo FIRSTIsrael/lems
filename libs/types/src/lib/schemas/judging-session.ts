@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { RubricStatus, Status } from '../constants';
+import { Status } from '../constants';
 
 export interface JudgingSession {
   eventId: ObjectId;
@@ -9,7 +9,4 @@ export interface JudgingSession {
   status: Status;
   scheduledTime: Date;
   startTime?: Date;
-  coreValues: RubricStatus;
-  innovationProject: RubricStatus;
-  robotDesign: RubricStatus;
 }

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Form, Formik, FormikValues } from 'formik';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import {
   Typography,
   Button,
@@ -12,6 +12,11 @@ import {
   Stack,
   TableHead,
   TableBody,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   SxProps,
   Theme
 } from '@mui/material';
@@ -28,7 +33,7 @@ import {
   RubricValue
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
-import { RubricsSchema } from '@lems/season';
+import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
 import FormikTextField from '../../general/forms/formik-text-field';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
@@ -36,6 +41,7 @@ import HeaderRow from './header-row';
 import TitleRow from './title-row';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
+import { localizeTeam } from '../../../localization/teams';
 
 interface RubricFormProps {
   event: WithId<Event>;
@@ -59,6 +65,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
   hideDescription = false
 }) => {
   const router = useRouter();
+  const [resetDialog, setResetDialog] = useState<boolean>(false);
+
   const fields = schema.sections.flatMap(section => section.fields.map(field => field.id));
   const awardCandidates = schema.awards?.map(award => award.id) || [];
 
@@ -178,7 +186,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
         enableReinitialize
         validateOnMount
       >
-        {({ values, isValid, resetForm }) => (
+        {({ values, isValid, resetForm, validateForm }) => (
           <Form>
             {!hideTitle && (
               <Typography variant="h2" sx={{ mb: 2 }}>
@@ -189,10 +197,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
               <Grid container spacing={6} sx={{ mb: 4 }}>
                 {!hideDescription && (
                   <Grid xs={12} md={(schema.awards?.length || 0) > 0 ? 5 : 9}>
-                    <Typography color="text.secondary" fontSize="0.875rem">
-                      <ReactMarkdown skipHtml components={{ p: React.Fragment }}>
-                        {schema.description}
-                      </ReactMarkdown>
+                    <Typography color="text.secondary" fontSize="0.875rem" component="span">
+                      <Markdown skipHtml>{schema.description}</Markdown>
                     </Typography>
                   </Grid>
                 )}
@@ -377,16 +383,43 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 <Button
                   variant="contained"
                   color="inherit"
-                  onClick={() => {
-                    resetForm({
-                      values: getEmptyRubric()
-                    });
-                    handleSync(false, getEmptyRubric(), 'empty');
-                  }}
+                  onClick={() => setResetDialog(true)}
+                  disabled={rubric.status === 'empty'}
                   sx={actionButtonStyle}
                 >
                   איפוס המחוון
                 </Button>
+                <Dialog
+                  open={resetDialog}
+                  onClose={() => setResetDialog(false)}
+                  aria-labelledby="reset-dialog-title"
+                  aria-describedby="reset-dialog-description"
+                >
+                  <DialogTitle id="reset-dialog-title">איפוס המוון</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="reset-dialog-description">
+                      {`איפוס המחוון ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
+                        בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
+                        של קבוצה ${localizeTeam(team)}?`}
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setResetDialog(false)} autoFocus>
+                      ביטול
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleSync(true, getEmptyRubric(), 'empty');
+                        resetForm({ values: getEmptyRubric() });
+                        validateForm();
+                        setResetDialog(false);
+                      }}
+                    >
+                      אישור
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+
                 {rubric.status === 'waiting-for-review' && (
                   <Button
                     variant="contained"

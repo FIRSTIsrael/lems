@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { Box, Stack, Typography } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { Appear, Slide } from '@lems/presentations';
 import { DivisionColor, Team } from '@lems/types';
 import { getDivisionColor } from '../../lib/utils/colors';
@@ -20,7 +20,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
     <Slide>
       <Stack px={20} textAlign="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
-          <ReactMarkdown>{place ? `${name}, מקום ${String(place)}` : name}</ReactMarkdown>
+          <Markdown>{place ? `${name}, מקום ${String(place)}` : name}</Markdown>
         </Typography>
         <Box
           sx={{

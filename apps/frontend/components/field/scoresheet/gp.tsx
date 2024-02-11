@@ -20,11 +20,12 @@ import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExceededNotesCell from '../../judging/rubrics/exceeded-notes-cell';
-import { SafeUser } from '@lems/types';
+import { SafeUser, ScoresheetStatus } from '@lems/types';
 import { RoleAuthorizer } from '../../role-authorizer';
 
 interface GpSelectorProps {
   user: SafeUser;
+  scoresheetStatus: ScoresheetStatus;
   onBack: () => void;
   onSubmit: () => void;
   disabled?: boolean;
@@ -36,8 +37,14 @@ const columns = [
   { name: '4', title: 'מצטיינת', color: '#E4928B', value: 4 }
 ];
 
-const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disabled, ...props }) => {
-  const [checked, setChecked] = useState<boolean>(false);
+const GpSelector: React.FC<GpSelectorProps> = ({
+  user,
+  scoresheetStatus,
+  onBack,
+  onSubmit,
+  disabled
+}) => {
+  const [checked, setChecked] = useState<boolean>(scoresheetStatus === 'ready');
   const name = 'gp';
   return (
     <Paper sx={{ p: 4, mt: 2 }}>
@@ -104,7 +111,7 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
                         }
                         checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
                         checked={field.value === column.value}
-                        onChange={e => form.setFieldValue(field.name, column.value)}
+                        onChange={() => form.setFieldValue(field.name, column.value)}
                       />
                     </TableCell>
                   ))}
@@ -121,18 +128,20 @@ const GpSelector: React.FC<GpSelectorProps> = ({ user, onBack, onSubmit, disable
               </TableBody>
             </Table>
 
-            {field.value && field.value !== 3 && (
-              <Box justifyContent="center" display="flex" pt={2}>
-                <FormControlLabel
-                  control={<Checkbox />}
-                  value={checked}
-                  onChange={() => setChecked(value => !value)}
-                  label={`השופט הראשי ראה ואישר שנתתי לקבוצה ציון ${
-                    field.value === 2 ? 'מתפתחת' : 'מצטיינת'
-                  }`}
-                />
-              </Box>
-            )}
+            <RoleAuthorizer user={user} allowedRoles={['referee']}>
+              {field.value && field.value !== 3 && (
+                <Box justifyContent="center" display="flex" pt={2}>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    value={checked}
+                    onChange={() => setChecked(value => !value)}
+                    label={`השופט הראשי ראה ואישר שנתתי לקבוצה ציון ${
+                      field.value === 2 ? 'מתפתחת' : 'מצטיינת'
+                    }`}
+                  />
+                </Box>
+              )}
+            </RoleAuthorizer>
 
             <Stack direction="row" mt={4} mb={2} justifyContent="center" spacing={3}>
               <RoleAuthorizer user={user} allowedRoles={['head-referee']}>

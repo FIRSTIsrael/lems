@@ -1,5 +1,10 @@
 # _FIRST_ LEGO League Challenge: Local Event Management System
 
+## Prerequisites
+
+- Node 20 LTS
+- Docker
+
 ## DB Setup
 
 1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop/)

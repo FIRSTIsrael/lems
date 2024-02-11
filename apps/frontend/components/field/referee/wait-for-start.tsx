@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Button, Box } from '@mui/material';
 import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
-import { localizedMatchPresent } from '../../../localization/field';
+import { localizedMatchPresent, localizedMatchStage } from '../../../localization/field';
 
 interface WaitForMatchStartProps {
   match: WithId<RobotGameMatch>;
@@ -19,7 +19,8 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
       <Typography fontSize="1.5rem" fontWeight={700}>
-        המתינו להתחלת מקצה {match.number} ({dayjs(match.scheduledTime).format('HH:mm')})
+        המתינו להתחלת מקצה #{match.number} סבב {localizedMatchStage[match.stage]} {match.round} (
+        {dayjs(match.scheduledTime).format('HH:mm')})
       </Typography>
       {participant.team && (
         <Typography color="textSecondary" fontSize="1.125rem" mb={4}>

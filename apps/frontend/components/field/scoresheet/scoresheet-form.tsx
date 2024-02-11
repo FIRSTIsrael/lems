@@ -8,6 +8,7 @@ import {
   Button,
   Alert,
   Stack,
+  Box,
   Paper,
   Dialog,
   DialogActions,
@@ -20,6 +21,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
@@ -44,6 +46,8 @@ import { enqueueSnackbar } from 'notistack';
 import ScoresheetMission from './scoresheet-mission';
 import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
+import { localizeTeam } from '../../../localization/teams';
+import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetFormProps {
   event: WithId<Event>;
@@ -80,7 +84,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>([]);
   const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
   const signatureRef = useRef<SignatureCanvas | null>(null);
-  const [headRefDialogue, setHeadRefDialogue] = useState<boolean>(false);
+  const [headRefDialog, setHeadRefDialog] = useState<boolean>(false);
+  const [resetDialog, setResetDialog] = useState<boolean>(false);
 
   const mode = useMemo(() => {
     return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
@@ -296,7 +301,10 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 </Stack>
 
                 <Stack spacing={2} alignItems="center" my={6}>
-                  {readOnly || (values.signature && values.signature.length > 0) ? (
+                  {readOnly ||
+                  validatorErrors.length > 0 ||
+                  missionInfo.find(mi => mi.incomplete || !!mi.errors) ||
+                  (values.signature && values.signature.length > 0) ? (
                     <Image
                       src={values.signature || '/assets/scoresheet/blank-signature.svg'}
                       alt={`חתימת קבוצה #${team.number}`}
@@ -305,18 +313,33 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
                     />
                   ) : (
-                    <SignatureCanvas
-                      canvasProps={{
-                        width: 400,
-                        height: 200,
-                        style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
-                      }}
-                      backgroundColor="#fff"
-                      ref={ref => {
-                        signatureRef.current = ref;
-                      }}
-                      onEnd={() => validateForm()}
-                    />
+                    <Stack direction="row" spacing={2}>
+                      {signatureRef.current &&
+                        !['ready', 'waiting-for-gp'].includes(scoresheet.status) && (
+                          <Box display="flex" alignItems="center">
+                            <IconButton
+                              onClick={() => {
+                                signatureRef.current?.clear();
+                                validateForm();
+                              }}
+                            >
+                              <RestartAltRoundedIcon />
+                            </IconButton>
+                          </Box>
+                        )}
+                      <SignatureCanvas
+                        canvasProps={{
+                          width: 400,
+                          height: 200,
+                          style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
+                        }}
+                        backgroundColor="#fff"
+                        ref={ref => {
+                          signatureRef.current = ref;
+                        }}
+                        onEnd={() => validateForm()}
+                      />
+                    </Stack>
                   )}
                   {!isValid && (
                     <Alert
@@ -362,7 +385,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       {e.description}
                     </Alert>
                   ))}
-
                   <Stack direction="row" spacing={2}>
                     <RoleAuthorizer user={user} allowedRoles={['referee']}>
                       <Button
@@ -372,14 +394,14 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         }}
                         endIcon={<SportsScoreIcon />}
                         onClick={() => {
-                          setHeadRefDialogue(true);
+                          setHeadRefDialog(true);
                         }}
                       >
                         העברת דף הניקוד לשופט ראשי
                       </Button>
                       <Dialog
-                        open={headRefDialogue}
-                        onClose={() => setHeadRefDialogue(false)}
+                        open={headRefDialog}
+                        onClose={() => setHeadRefDialog(false)}
                         aria-labelledby="headref-dialog-title"
                         aria-describedby="headref-dialog-description"
                       >
@@ -393,10 +415,15 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                           </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                          <Button onClick={() => setHeadRefDialogue(false)} autoFocus>
+                          <Button onClick={() => setHeadRefDialog(false)} autoFocus>
                             ביטול
                           </Button>
-                          <Button onClick={() => handleSync(true, values, 'waiting-for-head-ref')}>
+                          <Button
+                            onClick={() => {
+                              handleSync(true, values, 'waiting-for-head-ref');
+                              setHeadRefDialog(false);
+                            }}
+                          >
                             אישור
                           </Button>
                         </DialogActions>
@@ -405,14 +432,40 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                     <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
                       <Button
                         variant="contained"
-                        sx={{
-                          minWidth: 200
-                        }}
-                        disabled={values === getDefaultScoresheet()}
-                        onClick={() => handleSync(true, getDefaultScoresheet(), 'empty')}
+                        sx={{ minWidth: 200 }}
+                        disabled={scoresheet.status === 'empty'}
+                        onClick={() => setResetDialog(true)}
                       >
                         איפוס דף הניקוד
                       </Button>
+                      <Dialog
+                        open={resetDialog}
+                        onClose={() => setResetDialog(false)}
+                        aria-labelledby="reset-dialog-title"
+                        aria-describedby="reset-dialog-description"
+                      >
+                        <DialogTitle id="reset-dialog-title">איפוס דף הניקוד</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText id="reset-dialog-description">
+                            {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
+                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
+                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={() => setResetDialog(false)} autoFocus>
+                            ביטול
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              handleSync(true, getDefaultScoresheet(), 'empty');
+                              setResetDialog(false);
+                            }}
+                          >
+                            אישור
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </RoleAuthorizer>
                     <Button
                       variant="contained"
@@ -429,6 +482,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
             ) : (
               <GpSelector
                 user={user}
+                scoresheetStatus={scoresheet.status}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
                   handleSync(true, values, 'ready').then(() =>

@@ -23,9 +23,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**.nyc3.digitaloceanspaces.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'emojicdn.elk.sh'
       }
-    ],
-    domains: ['emojicdn.elk.sh']
+    ]
   }
 };
 

@@ -79,7 +79,7 @@ const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({
             }}
             onClick={() => setActiveRound(r)}
           >
-            {localizedMatchStage[r.stage]} #{r.number}
+            סבב {localizedMatchStage[r.stage]} #{r.number}
           </Button>
         ))}
       </Stack>

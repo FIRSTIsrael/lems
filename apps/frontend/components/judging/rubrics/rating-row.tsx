@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableCell, FormControlLabel, Radio, TableRow, Typography } from '@mui/material';
 import { Field, FieldProps } from 'formik';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import ExceededNotesCell from './exceeded-notes-cell';
@@ -70,9 +70,7 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                         fontSize="0.875em"
                         fontWeight={field.value === String(index + 1) ? 700 : undefined}
                       >
-                        <ReactMarkdown skipHtml components={{ p: React.Fragment }}>
-                          {label || ''}
-                        </ReactMarkdown>
+                        <Markdown skipHtml>{label || ''}</Markdown>
                       </Typography>
                     }
                     sx={{ mx: 0 }}

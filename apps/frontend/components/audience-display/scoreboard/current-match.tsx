@@ -7,6 +7,7 @@ import { WithId } from 'mongodb';
 import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { useTime } from '../../../hooks/use-time';
+import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoreboardCurrentMatchProps extends Grid2Props {
   activeMatch: WithId<RobotGameMatch> | undefined;
@@ -61,10 +62,10 @@ const ScoreboardCurrentMatch: React.FC<ScoreboardCurrentMatchProps> = ({
               textAlign={showTimer ? 'left' : 'center'}
             >
               {activeMatch?.number
-                ? `מקצה #${activeMatch?.number}`
+                ? `מקצה ${activeMatch && localizedMatchStage[activeMatch.stage]} #${activeMatch?.number}`
                 : activeMatch?.stage === 'test'
-                ? 'מקצה בדיקה'
-                : '-'}
+                  ? 'מקצה בדיקה'
+                  : '-'}
             </Typography>
           </Grid>
           {showTimer && (
