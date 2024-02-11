@@ -106,7 +106,7 @@ const EditScoresheetButton: React.FC<EditScoresheetButtonProps> = ({ ...props })
       <Tooltip title={tooltip ? tooltip : title} arrow enterDelay={1000}>
         <span>
           <Badge
-            color={gp === 4 ? 'primary' : gp === 2 ? 'warning' : undefined}
+            color={gp === 4 ? 'primary' : gp === 2 ? 'error' : undefined}
             sx={{ '& .MuiBadge-badge': { backgroundColor: gp !== 4 && gp !== 2 ? '#ccc' : '' } }}
             badgeContent={score}
             max={1000}
