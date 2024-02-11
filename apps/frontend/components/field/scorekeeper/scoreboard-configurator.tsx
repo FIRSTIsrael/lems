@@ -2,15 +2,8 @@ import React, { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
-import {
-  Button,
-  Paper,
-  Stack,
-  ToggleButtonGroup,
-  ToggleButton,
-  Typography,
-  Box
-} from '@mui/material';
+import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
   EventState,
   WSServerEmittedEvents,
@@ -52,57 +45,76 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
   };
 
   return (
-    <Stack
-      component={Paper}
-      p={4}
-      mt={2}
-      justifyContent="center"
-      spacing={2}
-      maxWidth="75%"
-      minWidth={450}
+    <Paper
+      sx={{
+        p: 4,
+        mt: 2,
+        display: 'flex',
+        justifyContent: 'center',
+        minWidth: 350,
+        maxWidth: '75%'
+      }}
     >
-      <Stack justifyContent="center" spacing={2}>
-        <Stack direction="row" spacing={2}>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Typography>הצג מקצה נוכחי</Typography>
-            <ToggleButtonGroup
-              value={showCurrentMatch}
-              exclusive
-              onChange={(event, value) => value !== null && setShowCurrentMatch(value)}
-            >
-              <ToggleButton value={false}>לא</ToggleButton>
-              <ToggleButton value="timer">כן</ToggleButton>
-              <ToggleButton value="no-timer">ללא טיימר</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Typography>הצג מקצה קודם</Typography>
-            <ToggleButtonGroup
-              value={showPreviousMatch}
-              exclusive
-              onChange={(event, value) => value !== null && setShowPreviousMatch(value)}
-            >
-              <ToggleButton value={false}>לא</ToggleButton>
-              <ToggleButton value={true}>כן</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Typography>הצג נותני חסות</Typography>
-            <ToggleButtonGroup
-              value={showSponsors}
-              exclusive
-              onChange={(event, value) => value !== null && setShowSponsors(value)}
-            >
-              <ToggleButton value={false}>לא</ToggleButton>
-              <ToggleButton value={true}>כן</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-        </Stack>
-        <Button variant="contained" onClick={() => updateScoreboardSettings()}>
-          שמור
-        </Button>
-      </Stack>
-    </Stack>
+      <Grid container spacing={2}>
+        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+          <Typography gutterBottom>הצגת מקצה נוכחי</Typography>
+          <ToggleButtonGroup
+            value={showCurrentMatch}
+            exclusive
+            onChange={(event, value) => value !== null && setShowCurrentMatch(value)}
+          >
+            <ToggleButton sx={{ minWidth: 50 }} value={false}>
+              לא
+            </ToggleButton>
+            <ToggleButton sx={{ minWidth: 50 }} value="timer">
+              כן
+            </ToggleButton>
+            <ToggleButton sx={{ minWidth: 50 }} value="no-timer">
+              ללא טיימר
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+          <Typography gutterBottom>הצגת מקצה קודם</Typography>
+          <ToggleButtonGroup
+            value={showPreviousMatch}
+            exclusive
+            onChange={(event, value) => value !== null && setShowPreviousMatch(value)}
+          >
+            <ToggleButton sx={{ minWidth: 50 }} value={false}>
+              לא
+            </ToggleButton>
+            <ToggleButton sx={{ minWidth: 50 }} value={true}>
+              כן
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+          <Typography gutterBottom>הצגת נותני חסות</Typography>
+          <ToggleButtonGroup
+            value={showSponsors}
+            exclusive
+            onChange={(event, value) => value !== null && setShowSponsors(value)}
+          >
+            <ToggleButton sx={{ minWidth: 50 }} value={false}>
+              לא
+            </ToggleButton>
+            <ToggleButton sx={{ minWidth: 50 }} value={true}>
+              כן
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
+          <Button
+            sx={{ minWidth: 200 }}
+            variant="contained"
+            onClick={() => updateScoreboardSettings()}
+          >
+            שמור
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 };
 
