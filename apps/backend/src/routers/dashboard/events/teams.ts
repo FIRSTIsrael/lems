@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
 import dashboardTeamValidator from '../../../middlewares/dashboard/team-validator';
-import { getEventBySalesforceIdAndTeamNumber } from '../../../lib/salesforce-helpers';
 
 const router = express.Router({ mergeParams: true });
 
@@ -11,15 +10,12 @@ router.use('/:teamNumber', dashboardTeamValidator);
 router.get(
   '/:teamNumber/schedule',
   asyncHandler(async (req: Request, res: Response) => {
-    const teamNumber = Number(req.params.teamNumber);
+    const teamNumber = req.teamNumber;
     if (isNaN(teamNumber)) {
       res.status(400).json({ error: 'INVALID_TEAM_NUMBER' });
       return;
     }
-    const eventId = await getEventBySalesforceIdAndTeamNumber(
-      req.params.eventSalesforceId,
-      teamNumber
-    ).then(event => event._id);
+    const eventId = req.event._id;
 
     const pipeline = [
       { $match: { _id: eventId } },
