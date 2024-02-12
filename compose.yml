@@ -7,6 +7,7 @@ services:
         DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
+        DASHBOARD_JWT_SECRET: ${DASHBOARD_JWT_SECRET}
         MONGODB_URI: ${MONGODB_URI} # Change in GitHub when mongo goes back to external
         # MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE} # Add when mongo goes back to external
         RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}

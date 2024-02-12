@@ -3,20 +3,13 @@ import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as db from '@lems/database';
 import { JwtTokenData } from '../types/auth';
+import { extractToken } from '../lib/auth';
 
 const jwtSecret = process.env.JWT_SECRET;
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  let token = '';
-
-  const authHeader = req.headers.authorization as string;
-  if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-    token = authHeader.split('Bearer ')[1];
-  } else {
-    token = req.cookies?.['auth-token'];
-  }
-
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const token = extractToken(req);
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
     const user = await db.getUserWithCredentials({ _id: new ObjectId(tokenData.userId) });
 
@@ -26,11 +19,9 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
       req.user = user;
       return next();
     }
-  } catch (err) {
+  } catch {
     //Invalid token
   }
 
   return res.status(401).json({ error: 'UNAUTHORIZED' });
 };
-
-export default authMiddleware;
