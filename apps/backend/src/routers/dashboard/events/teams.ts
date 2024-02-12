@@ -11,10 +11,6 @@ router.get(
   '/:teamNumber/schedule',
   asyncHandler(async (req: Request, res: Response) => {
     const teamNumber = req.teamNumber;
-    if (isNaN(teamNumber)) {
-      res.status(400).json({ error: 'INVALID_TEAM_NUMBER' });
-      return;
-    }
     const eventId = req.event._id;
 
     const pipeline = [
