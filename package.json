@@ -65,7 +65,7 @@
     "@nx/express": "18.0.3",
     "@nx/js": "18.0.3",
     "@nx/node": "18.0.3",
-    "@nx/react": "18.0.3",
+    "@nx/react": "18.0.4",
     "@nx/webpack": "18.0.3",
     "@nx/workspace": "18.0.3",
     "@swc-node/register": "1.8.0",
