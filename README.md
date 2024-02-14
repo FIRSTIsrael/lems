@@ -14,7 +14,7 @@
 
 3. Run the container with an exposed port
 
-   `docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.0`
+   `docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.5`
 
 4. To stop the container, use either the CLI or docker desktop.
    When you stop the container without removing it, you will be unable to start a new container with the same name.
