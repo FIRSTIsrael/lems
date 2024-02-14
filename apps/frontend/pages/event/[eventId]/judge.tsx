@@ -22,6 +22,7 @@ import Layout from '../../../components/layout';
 import WelcomeHeader from '../../../components/general/welcome-header';
 import JudgingTimer from '../../../components/judging/judging-timer';
 import AbortJudgingSessionButton from '../../../components/judging/abort-judging-session-button';
+import AssistanceButton from '../../../components/judging/assistance-button';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -176,6 +177,12 @@ const Page: NextPage<Props> = ({
                 socket={socket}
               />
             </Paper>
+            <AssistanceButton
+              event={event}
+              room={room}
+              socket={socket}
+              sx={{ position: 'absolute', bottom: 20, left: 20 }}
+            />
           </>
         )}
       </Layout>

@@ -11,7 +11,8 @@ import {
   handleUpdateSessionTeam,
   handleUpdateRubric,
   handleCreateCvForm,
-  handleUpdateCvForm
+  handleUpdateCvForm,
+  handleCallLeadJudge
 } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
@@ -45,6 +46,8 @@ const websocket = (
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));
 
   socket.on('updateJudgingSessionTeam', (...args) => handleUpdateSessionTeam(namespace, ...args));
+
+  socket.on('callLeadJudge', (...args) => handleCallLeadJudge(namespace, ...args));
 
   socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
 

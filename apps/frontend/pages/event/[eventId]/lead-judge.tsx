@@ -85,6 +85,13 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleLeadJudgeCalled = (room: JudgingRoom) => {
+    enqueueSnackbar(`חדר ${room.name} צריך עזרה!`, {
+      variant: 'warning',
+      persist: true
+    });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin'],
@@ -95,7 +102,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'rubricStatusChanged', handler: updateRubric }
+      { name: 'rubricStatusChanged', handler: updateRubric },
+      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
     ]
   );
 
