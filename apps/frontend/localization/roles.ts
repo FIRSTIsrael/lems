@@ -11,6 +11,7 @@ export const localizedRoles: { [key in Role]: { name: string } } = {
   referee: { name: 'שופט זירה' },
   scorekeeper: { name: 'סקורקיפר' },
   queuer: { name: 'קיואר' },
+  'head-queuer': { name: 'קיואר ראשי' },
   'tournament-manager': { name: 'מנהל אירוע' },
   mc: { name: 'מנחה' }
 };
@@ -18,5 +19,6 @@ export const localizedRoles: { [key in Role]: { name: string } } = {
 export const localizedRoleAssociations: { [key in RoleAssociationType]: { name: string } } = {
   room: { name: 'חדר' },
   table: { name: 'שולחן' },
-  category: { name: 'תחום' }
+  category: { name: 'תחום' },
+  section: { name: 'מתחם' }
 };
