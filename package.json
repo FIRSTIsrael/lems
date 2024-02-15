@@ -64,7 +64,7 @@
     "@nx/eslint-plugin": "18.0.3",
     "@nx/express": "18.0.3",
     "@nx/js": "18.0.3",
-    "@nx/node": "18.0.3",
+    "@nx/node": "18.0.4",
     "@nx/react": "18.0.3",
     "@nx/webpack": "18.0.3",
     "@nx/workspace": "18.0.3",
