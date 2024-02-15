@@ -1,4 +1,4 @@
-import { Role, RoleAssociationType } from '@lems/types';
+import { Role, RoleAssociationType, EventSection } from '@lems/types';
 
 export const localizedRoles: { [key in Role]: { name: string } } = {
   'audience-display': { name: 'תצוגת קהל' },
@@ -21,4 +21,11 @@ export const localizedRoleAssociations: { [key in RoleAssociationType]: { name: 
   table: { name: 'שולחן' },
   category: { name: 'תחום' },
   section: { name: 'מתחם' }
+};
+
+export const localizedEventSection: {
+  [key in EventSection]: { name: string };
+} = {
+  field: { name: 'זירה' },
+  judging: { name: 'שיפוט' }
 };
