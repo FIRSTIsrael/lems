@@ -6,6 +6,8 @@ export interface JudgingSession {
   number: number;
   teamId: ObjectId | null;
   roomId: ObjectId;
+  called: boolean;
+  queued: boolean;
   status: Status;
   scheduledTime: Date;
   startTime?: Date;

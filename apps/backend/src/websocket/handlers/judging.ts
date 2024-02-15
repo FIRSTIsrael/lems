@@ -89,8 +89,9 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
   namespace.to('judging').emit('judgingSessionAborted', session);
 };
 
-export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, teamId, callback) => {
+export const handleUpdateSession = async (namespace, eventId, sessionId, data, callback) => {
   let session = await db.getSession({ _id: new ObjectId(sessionId) });
+  if (data.teamId !== null) data.teamId = new ObjectId(data.teamId);
 
   if (!session) {
     callback({ ok: false, error: `Could not find session ${sessionId}!` });
@@ -103,7 +104,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
 
   console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
 
-  await db.updateSession({ _id: session._id }, { teamId: teamId ? new ObjectId(teamId) : null });
+  await db.updateSession({ _id: session._id }, { ...data });
 
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });

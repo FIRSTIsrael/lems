@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import dayjs from 'dayjs';
-import { MATCH_LENGTH, RobotGameMatchParticipant } from '@lems/types';
+import { MATCH_LENGTH, RobotGameMatchParticipant, RobotGameMatchBrief } from '@lems/types';
 
 export const handleLoadMatch = async (namespace, eventId: string, matchId: string, callback) => {
   let match = await db.getMatch({
@@ -206,7 +206,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
   namespace.to('field').emit('matchUpdated', match);
 };
 
-export const handlePrestartMatchParticipant = async (
+export const handleupdateMatchParticipant = async (
   namespace,
   eventId: string,
   matchId: string,
@@ -242,6 +242,41 @@ export const handlePrestartMatchParticipant = async (
     Object.fromEntries(
       Object.entries(data).map(([key, value]) => [`participants.$.${key}` as string, value])
     )
+  );
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  namespace.to('field').emit('matchUpdated', match);
+};
+
+export const handleupdateMatchBrief = async (
+  namespace,
+  eventId: string,
+  matchId: string,
+  newBrief: Partial<Pick<RobotGameMatchBrief, 'called'>>,
+  callback
+) => {
+  let match = await db.getMatch({
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
+  });
+
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find match ${matchId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️ Updating match data of match ${matchId} at event ${eventId}`);
+
+  await db.updateMatch(
+    {
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId)
+    },
+    { ...newBrief }
   );
 
   callback({ ok: true });

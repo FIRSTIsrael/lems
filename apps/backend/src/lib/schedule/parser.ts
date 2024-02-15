@@ -148,6 +148,7 @@ const extractMatchesFromMatchBlock = (
       round,
       number: parseInt(line[0]),
       stage,
+      called: false,
       status: 'not-started',
       scheduledTime: startTime.toDate(),
       participants: []
@@ -165,6 +166,7 @@ const extractMatchesFromMatchBlock = (
         teamId: team?._id || null,
         tableId: table._id,
         tableName: table.name,
+        queued: false,
         ready: false,
         present: 'no-show'
       });
@@ -206,6 +208,8 @@ const extractSessionsFromJudgingBlock = (
         scheduledTime: startTime.toDate(),
         roomId: room._id,
         teamId: null,
+        called: false,
+        queued: false,
         status: 'not-started'
       };
 

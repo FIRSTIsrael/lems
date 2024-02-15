@@ -190,7 +190,7 @@ const Page: NextPage<Props> = ({
   const updateTeamPresentStatus = useCallback(
     (presentStatus: RobotGameMatchPresent) => {
       socket.emit(
-        'prestartMatchParticipant',
+        'updateMatchParticipant',
         match.eventId.toString(),
         match._id.toString(),
         {
