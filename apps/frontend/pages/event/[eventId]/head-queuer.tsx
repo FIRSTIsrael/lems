@@ -51,11 +51,6 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
-  const loadedMatch = useMemo(
-    () => matches.find(match => match._id === eventState.loadedMatch) || null,
-    [eventState.loadedMatch, matches]
-  );
-
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
       matches.map(m => {
@@ -125,6 +120,7 @@ const Page: NextPage<Props> = ({
         <Paper>
           <QueueSchedule
             eventId={event._id}
+            eventState={eventState}
             tables={tables}
             matches={matches.filter(m => m.stage !== 'test') || []}
             socket={socket}

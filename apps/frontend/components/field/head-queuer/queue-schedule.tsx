@@ -1,4 +1,5 @@
 import {
+  EventState,
   RobotGameMatch,
   RobotGameTable,
   WSClientEmittedEvents,
@@ -24,12 +25,19 @@ import StyledTeamTooltip from '../../general/styled-team-tooltip';
 
 interface QueueScheduleProps {
   eventId: ObjectId;
+  eventState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const QueueSchedule: React.FC<QueueScheduleProps> = ({ eventId, matches, tables, socket }) => {
+const QueueSchedule: React.FC<QueueScheduleProps> = ({
+  eventId,
+  eventState,
+  matches,
+  tables,
+  socket
+}) => {
   const callMatch = useCallback(
     (matchId: ObjectId, called: boolean) => {
       socket.emit(
@@ -47,9 +55,25 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({ eventId, matches, tables,
     [eventId, socket]
   );
 
-  //TODO: styling
-  //TODO: checkbox updates queue status
-  //TODO: filter matches by <15 mins so no super early matches can be called, auto update to release lock
+  const updateParticipantQueueStatus = useCallback(
+    (match: WithId<RobotGameMatch>, teamId: ObjectId, newQueueStatus: boolean) => {
+      socket.emit(
+        'updateMatchParticipant',
+        eventId.toString(),
+        match._id.toString(),
+        {
+          teamId: teamId.toString(),
+          queued: newQueueStatus
+        },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+          }
+        }
+      );
+    },
+    [socket, eventId]
+  );
 
   return (
     <TableContainer>
@@ -66,7 +90,7 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({ eventId, matches, tables,
         </TableHead>
         <TableBody>
           {matches
-            .filter(m => m.status === 'not-started')
+            .filter(m => m.status === 'not-started') // TODO: I think we should filter this out by <15min start time like judge start button
             .map(match => (
               <TableRow
                 key={match.number}
@@ -80,7 +104,14 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({ eventId, matches, tables,
                   <TableCell key={tableName}>
                     {team ? <StyledTeamTooltip team={team} /> : '-'}
                     {team && match.called && (
-                      <Checkbox value={queued} disabled={!team.registered} />
+                      <Checkbox
+                        checked={queued}
+                        disabled={!team.registered}
+                        onClick={e => {
+                          e.preventDefault();
+                          updateParticipantQueueStatus(match, team._id, !queued);
+                        }}
+                      />
                     )}
                   </TableCell>
                 ))}
