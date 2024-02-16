@@ -60,7 +60,7 @@
     "@babel/core": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
     "@firstisrael/prettier-config": "^1.1.0",
-    "@nx/eslint": "18.0.3",
+    "@nx/eslint": "18.0.4",
     "@nx/eslint-plugin": "18.0.3",
     "@nx/express": "18.0.3",
     "@nx/js": "18.0.3",
