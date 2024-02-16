@@ -98,14 +98,16 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
   );
 
   const match = await db.getMatch({ _id: new ObjectId(matchId) });
+  const switchToRanking = match.stage === 'ranking' && eventState.currentStage === 'practice';
+  const advanceRound = switchToRanking || match.round > eventState.currentRound;
 
   await db.updateEventState(
     { _id: eventState._id },
     {
       activeMatch: match._id,
       ...(match.stage !== 'test' && { loadedMatch: null }),
-      ...(match.stage === 'ranking' &&
-        eventState.currentStage === 'practice' && { currentStage: 'ranking' })
+      ...(switchToRanking && { currentStage: 'ranking' }),
+      ...(advanceRound && { currentRound: match.round })
     }
   );
 

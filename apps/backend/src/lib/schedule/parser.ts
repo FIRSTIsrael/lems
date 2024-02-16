@@ -284,6 +284,7 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
     activeMatch: null,
     loadedMatch: null,
     currentStage: 'practice',
+    currentRound: 1,
     currentSession: 0,
     audienceDisplay: { screen: 'scores', message: '' },
     presentations,
