@@ -47,6 +47,10 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({ eventId, matches, tables,
     [eventId, socket]
   );
 
+  //TODO: styling
+  //TODO: checkbox updates queue status
+  //TODO: filter matches by <15 mins so no super early matches can be called, auto update to release lock
+
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
