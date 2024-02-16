@@ -25,7 +25,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   }
 
   if (loginDetails.eventId) loginDetails.eventId = new ObjectId(loginDetails.eventId);
-  if (loginDetails.roleAssociation && loginDetails.roleAssociation.type != 'category')
+  if (loginDetails.roleAssociation && ['room', 'table'].includes(loginDetails.roleAssociation.type))
     loginDetails.roleAssociation.value = new ObjectId(loginDetails.roleAssociation.value);
 
   try {

@@ -26,7 +26,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={['head-queuer']}
+      allowedRoles={['queuer']}
       onFail={() => {
         router.push(`/event/${event._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
