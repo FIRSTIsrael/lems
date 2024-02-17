@@ -11,7 +11,7 @@ import ReportLink from '../../../../components/general/report-link';
 import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import HeadQueueSchedule from '../../../../components/field/queueing/head-queue-schedule';
+import HeadQueueSchedule from '../../../../components/queueing/field/head-queue-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 
