@@ -127,11 +127,11 @@ const Page: NextPage<Props> = ({
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const activeMatch = useMemo(
-    () => matches.find(m => m._id === eventState.activeMatch),
+    () => matches.find(m => m._id === eventState.activeMatch) || null,
     [matches, eventState.activeMatch]
   );
   const loadedMatch = useMemo(
-    () => matches.find(m => m._id === eventState.loadedMatch),
+    () => matches.find(m => m._id === eventState.loadedMatch) || null,
     [matches, eventState.loadedMatch]
   );
   const activeSessions = useMemo(
@@ -214,22 +214,10 @@ const Page: NextPage<Props> = ({
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
       >
-        <MatchStatusTimer
-          activeMatch={activeMatch || null}
-          loadedMatch={loadedMatch || null}
-          teams={teams}
-        />
+        <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
         <Stack direction="row" spacing={2} my={4}>
-          <ActiveMatch
-            title="מקצה רץ"
-            match={matches?.find(match => match._id === eventState.activeMatch) || null}
-            startTime={matches?.find(match => match._id === eventState.activeMatch)?.startTime}
-          />
-          <ActiveMatch
-            title="המקצה הבא"
-            match={matches?.find(match => match._id === eventState.loadedMatch) || null}
-            activeSessions={activeSessions}
-          />
+          <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
+          <ActiveMatch title="המקצה הבא" match={loadedMatch} activeSessions={activeSessions} />
         </Stack>
       </Layout>
     </RoleAuthorizer>
