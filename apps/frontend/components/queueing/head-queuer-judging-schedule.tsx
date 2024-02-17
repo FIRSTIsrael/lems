@@ -27,6 +27,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
+import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerFieldScheduleProps {
   eventId: ObjectId;
@@ -47,6 +48,8 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   loadedMatch,
   socket
 }) => {
+  const currentTime = useTime({ interval: 1000 * 30 });
+
   const updateSession = useCallback(
     (sessionId: ObjectId, sessionData: Partial<Pick<JudgingSession, 'called' | 'queued'>>) => {
       socket.emit(
@@ -112,7 +115,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
             const firstSession = group[0];
             if (
               firstSession.status !== 'not-started' ||
-              dayjs() <= dayjs(firstSession.scheduledTime).subtract(20, 'minutes')
+              currentTime <= dayjs(firstSession.scheduledTime).subtract(20, 'minutes')
             )
               return <></>;
 

@@ -26,6 +26,7 @@ import {
 } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
+import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerFieldScheduleProps {
   eventId: ObjectId;
@@ -44,6 +45,8 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   activeSessions,
   socket
 }) => {
+  const currentTime = useTime({ interval: 1000 * 30 });
+
   const callMatch = useCallback(
     (matchId: ObjectId, called: boolean) => {
       socket.emit(
@@ -101,7 +104,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
             .filter(
               m =>
                 m.status === 'not-started' &&
-                dayjs() >= dayjs(m.scheduledTime).subtract(15, 'minutes')
+                currentTime >= dayjs(m.scheduledTime).subtract(15, 'minutes')
             )
             .slice(0, 5)
             .map(match => (

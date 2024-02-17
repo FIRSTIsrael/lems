@@ -19,6 +19,7 @@ import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { useTime } from '../../../hooks/use-time';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../../components/field/scorekeeper/field-control';
@@ -49,6 +50,8 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useState<string>('1');
 
+  const currentTime = useTime({ interval: 1000 });
+
   const nextMatch = useMemo<WithId<RobotGameMatch> | undefined>(
     () => matches?.find(match => match.status === 'not-started' && match.stage !== 'test'),
     [matches]
@@ -62,7 +65,9 @@ const Page: NextPage<Props> = ({
       if (
         nextMatch?.stage === eventState.currentStage &&
         nextMatch?.scheduledTime &&
-        dayjs(nextMatch.scheduledTime).isBefore(dayjs().add(MATCH_AUTOLOAD_THRESHOLD, 'minutes'))
+        dayjs(nextMatch.scheduledTime).isBefore(
+          currentTime.add(MATCH_AUTOLOAD_THRESHOLD, 'minutes')
+        )
       )
         socket.emit('loadMatch', event._id.toString(), nextMatch._id.toString(), response => {
           if (!response.ok) enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });

@@ -17,6 +17,7 @@ import {
 import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH, Scoresheet } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
+import { useTime } from '../../../hooks/use-time';
 
 interface TimerProps {
   participant: RobotGameMatchParticipant;
@@ -27,15 +28,8 @@ interface TimerProps {
 
 const Timer: React.FC<TimerProps> = ({ participant, match, getScoresheet, toScoresheet }) => {
   const matchEnd = dayjs(match.startTime).add(MATCH_LENGTH, 'seconds');
-  const [currentTime, setCurrentTime] = useState<Dayjs>(dayjs());
+  const currentTime = useTime({ interval: 100 });
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(dayjs()), 100);
-    return () => {
-      clearInterval(interval);
-    };
-  });
 
   const percentLeft = useMemo(
     () => matchEnd.diff(currentTime) / (10 * MATCH_LENGTH),

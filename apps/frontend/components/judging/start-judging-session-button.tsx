@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Socket } from 'socket.io-client';
@@ -13,6 +13,7 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents
 } from '@lems/types';
+import { useTime } from '../../hooks/use-time';
 import { enqueueSnackbar } from 'notistack';
 
 const getButtonColor = (status: Status) => {
@@ -42,18 +43,11 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
   socket,
   ...props
 }) => {
-  const [isDisabled, setIsDisabled] = useState<boolean>(
-    dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered
+  const currentTime = useTime({ interval: 10 * 1000 });
+  const isDisabled = useMemo(
+    () => currentTime <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered,
+    [currentTime, session.scheduledTime, team.registered]
   );
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsDisabled(
-        dayjs() <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered
-      );
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [session.scheduledTime, team.registered]);
 
   const startSession = (eventId: string, roomId: string, sessionId: string): void => {
     socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
