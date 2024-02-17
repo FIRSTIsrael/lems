@@ -133,7 +133,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                           match.called &&
                           (teamInJudging ? (
                             <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
-                              <WarningAmberRoundedIcon />
+                              <WarningAmberRoundedIcon color="warning" />
                             </Tooltip>
                           ) : (
                             <Checkbox
