@@ -12,6 +12,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import QueuerTeamDisplay from '../../../../components/queueing/field/queuer-team-display';
+import QueuerPitMap from '../../../../components/queueing/queuer-pit-map';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 
@@ -22,6 +23,7 @@ interface Props {
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
+  pitMapUrl: string;
 }
 
 const Page: NextPage<Props> = ({
@@ -30,7 +32,8 @@ const Page: NextPage<Props> = ({
   eventState: initialEventState,
   teams: initialTeams,
   tables,
-  matches: initialMatches
+  matches: initialMatches,
+  pitMapUrl
 }) => {
   const router = useRouter();
   const [activeView, setActiveView] = useState(0);
@@ -88,6 +91,7 @@ const Page: NextPage<Props> = ({
         {activeView === 0 && (
           <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
         )}
+        {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
         <BottomNavigation
           showLabels
           value={activeView}
@@ -120,7 +124,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     );
 
-    return { props: { user, ...data } };
+    const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
+
+    return { props: { user, pitMapUrl, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }

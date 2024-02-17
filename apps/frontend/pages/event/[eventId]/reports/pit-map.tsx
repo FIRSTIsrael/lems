@@ -60,7 +60,7 @@ const Page: NextPage<Props> = ({ user, event, pitMapUrl }) => {
             onError={() => setError(true)}
           />
         ) : (
-          <Stack spacing={2} component={Paper} alignItems="center" p={4} mt={8}>
+          <Stack spacing={2} component={Paper} textAlign="center" alignItems="center" p={4} mt={8}>
             <Image width={64} height={64} src="https://emojicdn.elk.sh/😢" alt="אימוג'י בוכה" />
             <Typography fontSize="2.25rem" fontWeight={600}>
               אופס, לא נמצאה מפת פיטים לאירוע
