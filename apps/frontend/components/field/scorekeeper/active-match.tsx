@@ -7,7 +7,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
-import StartRoundedIcon from '@mui/icons-material/StartRounded';
+import AlarmRoundedIcon from '@mui/icons-material/AlarmRounded';
 import { JudgingSession, MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import Countdown from '../../general/countdown';
 
@@ -105,7 +105,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                           </Tooltip>
                         ) : participant.queued ? (
                           <Tooltip title="הקבוצה בקיו" arrow>
-                            <StartRoundedIcon />
+                            <AlarmRoundedIcon />
                           </Tooltip>
                         ) : !participant.team?.registered ? (
                           <Tooltip title="הקבוצה טרם הגיעה לאירוע!" arrow>
