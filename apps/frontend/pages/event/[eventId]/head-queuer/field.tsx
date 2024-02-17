@@ -4,7 +4,15 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Stack } from '@mui/material';
-import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import {
+  Event,
+  EventState,
+  SafeUser,
+  Team,
+  RobotGameMatch,
+  RobotGameTable,
+  JudgingSession
+} from '@lems/types';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import ReportLink from '../../../../components/general/report-link';
@@ -19,6 +27,7 @@ interface Props {
   user: WithId<SafeUser>;
   event: WithId<Event>;
   eventState: WithId<EventState>;
+  sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -28,6 +37,7 @@ const Page: NextPage<Props> = ({
   user,
   event,
   eventState: initialEventState,
+  sessions: initialSessions,
   teams: initialTeams,
   tables,
   matches: initialMatches
@@ -36,6 +46,7 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
   const activeMatch = useMemo(
     () => matches.find(match => match._id === eventState.activeMatch) || null,
@@ -44,6 +55,10 @@ const Page: NextPage<Props> = ({
   const loadedMatch = useMemo(
     () => matches.find(match => match._id === eventState.loadedMatch) || null,
     [eventState.loadedMatch, matches]
+  );
+  const activeSessions = useMemo(
+    () => sessions.filter(s => s.status === 'in-progress'),
+    [sessions]
   );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
@@ -70,18 +85,36 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    newEventState?: WithId<EventState>
+  ) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+
+    if (newEventState) setEventState(newEventState);
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
-    ['field', 'audience-display'],
+    ['field', 'pit-admin', 'judging'],
     undefined,
     [
       { name: 'matchLoaded', handler: handleMatchEvent },
       { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayUpdated', handler: setEventState },
-      { name: 'presentationUpdated', handler: setEventState },
-      { name: 'teamRegistered', handler: handleTeamRegistered }
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 
@@ -106,7 +139,12 @@ const Page: NextPage<Props> = ({
       >
         <Stack direction="row" spacing={2} my={2}>
           <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-          <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
+          <ActiveMatch
+            title="המקצה הבא"
+            match={loadedMatch}
+            showDelay={true}
+            activeSessions={activeSessions}
+          />
         </Stack>
         <HeadQueueSchedule
           eventId={event._id}
@@ -130,6 +168,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
+        sessions: `/api/events/${user.eventId}/sessions`,
         tables: `/api/events/${user.eventId}/tables`,
         matches: `/api/events/${user.eventId}/matches`
       },
