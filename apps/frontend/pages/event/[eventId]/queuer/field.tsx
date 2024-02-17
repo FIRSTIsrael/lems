@@ -8,20 +8,12 @@ import { Paper, BottomNavigation, BottomNavigationAction, Typography } from '@mu
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
-import {
-  Event,
-  EventState,
-  SafeUser,
-  Team,
-  RobotGameMatch,
-  getAssociationType,
-  RobotGameTable
-} from '@lems/types';
-import { useWebsocket } from '../../../hooks/use-websocket';
-import Layout from '../../../components/layout';
-import { RoleAuthorizer } from '../../../components/role-authorizer';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { localizedRoles, localizedEventSection } from '../../../localization/roles';
+import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import { useWebsocket } from '../../../../hooks/use-websocket';
+import Layout from '../../../../components/layout';
+import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { localizedRoles } from '../../../../localization/roles';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -41,14 +33,7 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const section: string | undefined = useMemo(() => {
-    if (user.role && getAssociationType(user.role) === 'section') {
-      return user.roleAssociation?.value as string;
-    }
-  }, [user]);
-
-  const [value, setValue] = useState(0);
-
+  const [activeView, setActiveView] = useState(0);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
@@ -78,20 +63,15 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
-    ['field', 'audience-display'],
-    undefined,
-    [
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayUpdated', handler: setEventState },
-      { name: 'presentationUpdated', handler: setEventState },
-      { name: 'teamRegistered', handler: handleTeamRegistered }
-    ]
-  );
+  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
+    { name: 'audienceDisplayUpdated', handler: setEventState },
+    { name: 'presentationUpdated', handler: setEventState },
+    { name: 'teamRegistered', handler: handleTeamRegistered }
+  ]);
 
   return (
     <RoleAuthorizer
@@ -104,7 +84,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${section && localizedEventSection[section].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
       >
         {calledMatches.map(m =>
           m.participants
@@ -130,9 +110,9 @@ const Page: NextPage<Props> = ({
         )}
         <BottomNavigation
           showLabels
-          value={value}
+          value={activeView}
           onChange={(event, newValue) => {
-            setValue(newValue);
+            setActiveView(newValue);
           }}
           sx={{ position: 'absolute', bottom: 0, width: '100%' }}
         >

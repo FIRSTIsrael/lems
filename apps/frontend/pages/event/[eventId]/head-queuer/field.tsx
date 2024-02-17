@@ -1,27 +1,19 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Stack, Paper } from '@mui/material';
-import {
-  Event,
-  EventState,
-  SafeUser,
-  Team,
-  RobotGameMatch,
-  getAssociationType,
-  RobotGameTable
-} from '@lems/types';
-import { useWebsocket } from '../../../hooks/use-websocket';
-import ConnectionIndicator from '../../../components/connection-indicator';
-import ReportLink from '../../../components/general/report-link';
-import ActiveMatch from '../../../components/field/scorekeeper/active-match';
-import Layout from '../../../components/layout';
-import { RoleAuthorizer } from '../../../components/role-authorizer';
-import QueueSchedule from '../../../components/field/head-queuer/queue-schedule';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { localizedRoles, localizedEventSection } from '../../../localization/roles';
+import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import { useWebsocket } from '../../../../hooks/use-websocket';
+import ConnectionIndicator from '../../../../components/connection-indicator';
+import ReportLink from '../../../../components/general/report-link';
+import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
+import Layout from '../../../../components/layout';
+import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import QueueSchedule from '../../../../components/field/head-queuer/queue-schedule';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { localizedRoles } from '../../../../localization/roles';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -41,12 +33,6 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const section: string | undefined = useMemo(() => {
-    if (user.role && getAssociationType(user.role) === 'section') {
-      return user.roleAssociation?.value as string;
-    }
-  }, [user]);
-
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
@@ -101,7 +87,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${section && localizedEventSection[section].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
