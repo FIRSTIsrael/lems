@@ -13,6 +13,7 @@ import { EventState, PresentationState } from './schemas/event-state';
 import { JudgingSession } from './schemas/judging-session';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './schemas/event-state';
+import { JudgingRoom } from './schemas/judging-room';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
@@ -30,6 +31,8 @@ export interface WSServerEmittedEvents {
   judgingSessionAborted: (session: JudgingSession) => void;
 
   judgingSessionUpdated: (session: JudgingSession) => void;
+
+  leadJudgeCalled: (room: JudgingRoom) => void;
 
   rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;
 
@@ -92,6 +95,12 @@ export interface WSClientEmittedEvents {
     eventId: string,
     sessionId: string,
     data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  callLeadJudge: (
+    eventId: string,
+    roomName: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
