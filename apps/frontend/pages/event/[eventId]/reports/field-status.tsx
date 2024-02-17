@@ -134,10 +134,6 @@ const Page: NextPage<Props> = ({
     () => matches.find(m => m._id === eventState.loadedMatch) || null,
     [matches, eventState.loadedMatch]
   );
-  const activeSessions = useMemo(
-    () => sessions.filter(s => s.status === 'in-progress'),
-    [sessions]
-  );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -217,7 +213,7 @@ const Page: NextPage<Props> = ({
         <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
         <Stack direction="row" spacing={2} my={4}>
           <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-          <ActiveMatch title="המקצה הבא" match={loadedMatch} activeSessions={activeSessions} />
+          <ActiveMatch title="המקצה הבא" match={loadedMatch} sessions={sessions} />
         </Stack>
       </Layout>
     </RoleAuthorizer>

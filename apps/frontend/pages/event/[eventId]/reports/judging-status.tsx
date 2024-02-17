@@ -42,6 +42,7 @@ interface JudgingStatusTableProps {
   nextSessions: Array<WithId<JudgingSession>>;
   activeMatch?: WithId<RobotGameMatch>;
   loadedMatch?: WithId<RobotGameMatch>;
+  matches?: Array<WithId<RobotGameMatch>>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
 }
@@ -51,6 +52,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
   nextSessions,
   activeMatch,
   loadedMatch,
+  matches = [],
   rooms,
   teams
 }) => {
@@ -107,9 +109,12 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               {rooms.map(room => {
                 const session = nextSessions.find(s => s.roomId === room._id);
                 const team = teams.find(t => t._id === session?.teamId);
-                const teamMatch =
-                  activeMatch?.participants.find(p => p.teamId === team?._id) ||
-                  loadedMatch?.participants.find(p => p.teamId === team?._id);
+                const teamOnField =
+                  !!activeMatch?.participants.find(p => p.teamId === team?._id) ||
+                  !!loadedMatch?.participants.find(p => p.teamId === team?._id) ||
+                  !!matches
+                    .filter(m => m.called && m.status === 'not-started')
+                    .some(m => m.participants.some(p => p.teamId === team?._id && p.queued));
                 return (
                   session && (
                     <TableCell key={session._id.toString()} align="center">
@@ -120,7 +125,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                         justifyContent="center"
                       >
                         {team && <StyledTeamTooltip team={team} />}
-                        {team?.registered && teamMatch && (
+                        {team?.registered && teamOnField && (
                           <Tooltip title="הקבוצה נמצאת בזירה כרגע!" arrow>
                             <WarningAmberRoundedIcon color="warning" />
                           </Tooltip>
@@ -267,6 +272,7 @@ const Page: NextPage<Props> = ({
           nextSessions={nextSessions}
           activeMatch={activeMatch}
           loadedMatch={loadedMatch}
+          matches={matches}
           rooms={rooms}
           teams={teams}
         />
