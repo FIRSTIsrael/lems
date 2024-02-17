@@ -174,3 +174,16 @@ export const handleUpdateCvForm = async (namespace, eventId, cvFormId, content, 
   cvForm = await db.getCoreValuesForm({ _id: new ObjectId(cvFormId) });
   namespace.to('judging').emit('cvFormUpdated', cvForm);
 };
+
+export const handleCallLeadJudge = async (namespace, eventId, roomId, callback) => {
+  const room = await db.getRoom({ _id: new ObjectId(roomId) });
+
+  if (!room) {
+    callback({ ok: false, error: `Could not find room ${roomId}!` });
+    return;
+  }
+
+  console.log(`💁‍♂️ Lead judge called to room ${roomId} in event ${eventId}`);
+  callback({ ok: true });
+  namespace.to('judging').emit('leadJudgeCalled', room);
+};
