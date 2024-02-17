@@ -208,7 +208,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
   namespace.to('field').emit('matchUpdated', match);
 };
 
-export const handleupdateMatchParticipant = async (
+export const handleUpdateMatchParticipant = async (
   namespace,
   eventId: string,
   matchId: string,
@@ -251,7 +251,7 @@ export const handleupdateMatchParticipant = async (
   namespace.to('field').emit('matchUpdated', match);
 };
 
-export const handleupdateMatchBrief = async (
+export const handleUpdateMatchBrief = async (
   namespace,
   eventId: string,
   matchId: string,

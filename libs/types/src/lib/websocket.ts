@@ -81,10 +81,17 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  updateJudgingSessionTeam: (
+    eventId: string,
+    sessionId: string,
+    teamId: string | null,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   updateJudgingSession: (
     eventId: string,
     sessionId: string,
-    data: Partial<Pick<JudgingSession, 'teamId' | 'called' | 'queued'>>,
+    data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

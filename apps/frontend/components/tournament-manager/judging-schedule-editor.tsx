@@ -95,10 +95,10 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
         return new Promise((resolve, reject) => {
           if (!socket) reject('No socket connection.');
           socket.emit(
-            'updateJudgingSession',
+            'updateJudgingSessionTeam',
             event._id.toString(),
             sessionId,
-            { teamId: values[sessionId]?._id.toString() || null },
+            values[sessionId]?._id.toString() || null,
             response => {
               response.ok ? resolve(response) : reject(response);
             }
