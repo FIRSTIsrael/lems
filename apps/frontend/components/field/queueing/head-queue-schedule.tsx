@@ -24,7 +24,7 @@ import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 
-interface QueueScheduleProps {
+interface HeadQueueScheduleProps {
   eventId: ObjectId;
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
@@ -33,7 +33,7 @@ interface QueueScheduleProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const QueueSchedule: React.FC<QueueScheduleProps> = ({
+const HeadQueueSchedule: React.FC<HeadQueueScheduleProps> = ({
   eventId,
   eventState,
   teams,
@@ -142,4 +142,4 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({
   );
 };
 
-export default QueueSchedule;
+export default HeadQueueSchedule;

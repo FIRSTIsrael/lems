@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -11,9 +11,9 @@ import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } fro
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import QueuerTeamDisplay from '../../../../components/field/queueing/queuer-team-display';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
-import TeamQueueCard from 'apps/frontend/components/general/team-queue-card';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -37,7 +37,6 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const calledMatches = useMemo(() => matches.filter(m => m.called), [matches]);
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -86,21 +85,8 @@ const Page: NextPage<Props> = ({
         maxWidth="sm"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
       >
-        {calledMatches.map(m =>
-          m.participants
-            .filter(p => p.teamId && !p.queued)
-            .map(({ teamId }, index) => {
-              const team = teams.find(t => t._id == teamId);
-              return (
-                team && (
-                  <TeamQueueCard
-                    key={index}
-                    team={team}
-                    urgent={eventState.loadedMatch === m._id}
-                  />
-                )
-              );
-            })
+        {activeView === 0 && (
+          <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
         )}
         <BottomNavigation
           showLabels
@@ -108,7 +94,7 @@ const Page: NextPage<Props> = ({
           onChange={(event, newValue) => {
             setActiveView(newValue);
           }}
-          sx={{ position: 'absolute', bottom: 0, width: '100%' }}
+          sx={{ position: 'fixed', bottom: 0, right: 0, width: '100vw' }}
         >
           <BottomNavigationAction label="בית" icon={<HomeRoundedIcon />} />
           <BottomNavigationAction label="מפת פיטים" icon={<MapRoundedIcon />} />
