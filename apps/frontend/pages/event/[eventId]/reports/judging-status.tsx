@@ -17,7 +17,7 @@ import {
   Tooltip
 } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import AlarmRoundedIcon from '@mui/icons-material/AlarmRounded';
+import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import {
   Event,
   Team,
@@ -133,7 +133,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                         )}
                         {session.status === 'not-started' && session.queued && (
                           <Tooltip title="הקבוצה בקיו" arrow>
-                            <AlarmRoundedIcon />
+                            <PeopleAltRoundedIcon />
                           </Tooltip>
                         )}
                       </Stack>
