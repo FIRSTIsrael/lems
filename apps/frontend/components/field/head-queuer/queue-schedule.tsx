@@ -93,7 +93,8 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({
         </TableHead>
         <TableBody>
           {matches
-            .filter(m => m.status === 'not-started') // TODO: I think we should filter this out by <15min start time like judge start button
+            .filter(m => m.status === 'not-started') // Perhaps filter this out by <15min start time like judge start button
+            .slice(0, 5) // Alternatively - since the matches are sorted by time we can always allow only N matches that are not started
             .map(match => (
               <TableRow
                 key={match.number}
@@ -104,10 +105,7 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({
                 </TableCell>
                 <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
                 {match.participants.map(({ teamId, tableName, queued }) => {
-                  // We fetch the team from the teams list since registration status
-                  // is not always updated directly within the match's team property.
                   const team = teamId ? teams.find(t => t._id == teamId) : undefined;
-
                   return (
                     <TableCell key={tableName}>
                       {team ? <StyledTeamTooltip team={team} /> : '-'}
