@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Event, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
-import ReportRoundSchedule from '../../field/report-round-schedule';
+import ReportRoundSchedule from '../field/report-round-schedule';
 
 interface QueuerFieldScheduleProps {
   event: WithId<Event>;

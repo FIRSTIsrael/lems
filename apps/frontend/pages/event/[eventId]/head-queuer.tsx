@@ -19,7 +19,7 @@ import ReportLink from '../../../components/general/report-link';
 import ActiveMatch from '../../../components/field/scorekeeper/active-match';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import HeadQueueSchedule from '../../../components/queueing/field/head-queue-schedule';
+import HeadQueuerFieldSchedule from '../../../components/queueing/head-queuer-field-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedEventSection, localizedRoles } from '../../../localization/roles';
 
@@ -148,7 +148,7 @@ const Page: NextPage<Props> = ({
                 activeSessions={activeSessions}
               />
             </Stack>
-            <HeadQueueSchedule
+            <HeadQueuerFieldSchedule
               eventId={event._id}
               eventState={eventState}
               teams={teams}

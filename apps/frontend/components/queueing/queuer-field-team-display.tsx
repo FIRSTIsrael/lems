@@ -1,15 +1,19 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Team, EventState, RobotGameMatch } from '@lems/types';
-import TeamQueueCard from '../team-queue-card';
+import TeamQueueCard from './team-queue-card';
 
-interface QueuerTeamDisplayProps {
+interface QueuerFieldTeamDisplayProps {
   teams: Array<WithId<Team>>;
   eventState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
-const QueuerTeamDisplay: React.FC<QueuerTeamDisplayProps> = ({ teams, eventState, matches }) => {
+const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
+  teams,
+  eventState,
+  matches
+}) => {
   const calledMatches = useMemo(() => matches.filter(m => m.called), [matches]);
 
   return calledMatches.map(match =>
@@ -32,4 +36,4 @@ const QueuerTeamDisplay: React.FC<QueuerTeamDisplayProps> = ({ teams, eventState
   );
 };
 
-export default QueuerTeamDisplay;
+export default QueuerFieldTeamDisplay;

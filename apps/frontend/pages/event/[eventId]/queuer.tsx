@@ -11,8 +11,8 @@ import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } fro
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import QueuerTeamDisplay from '../../../components/queueing/field/queuer-team-display';
-import QueuerFieldSchedule from '../../../components/queueing/field/queuer-field-schedule';
+import QueuerFieldTeamDisplay from '../../../components/queueing/queuer-field-team-display';
+import QueuerFieldSchedule from '../../../components/queueing/queuer-field-schedule';
 import QueuerPitMap from '../../../components/queueing/queuer-pit-map';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles, localizedEventSection } from '../../../localization/roles';
@@ -95,7 +95,7 @@ const Page: NextPage<Props> = ({
           {activeView === 0 && (
             <>
               {user.roleAssociation?.value === 'field' && (
-                <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
+                <QueuerFieldTeamDisplay eventState={eventState} teams={teams} matches={matches} />
               )}
               {user.roleAssociation?.value === 'judging' && <></>}
             </>

@@ -22,9 +22,9 @@ import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
-import StyledTeamTooltip from '../../general/styled-team-tooltip';
+import StyledTeamTooltip from '../general/styled-team-tooltip';
 
-interface HeadQueueScheduleProps {
+interface HeadQueuerFieldScheduleProps {
   eventId: ObjectId;
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
@@ -33,7 +33,7 @@ interface HeadQueueScheduleProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const HeadQueueSchedule: React.FC<HeadQueueScheduleProps> = ({
+const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   eventId,
   eventState,
   teams,
@@ -147,4 +147,4 @@ const HeadQueueSchedule: React.FC<HeadQueueScheduleProps> = ({
   );
 };
 
-export default HeadQueueSchedule;
+export default HeadQueuerFieldSchedule;
