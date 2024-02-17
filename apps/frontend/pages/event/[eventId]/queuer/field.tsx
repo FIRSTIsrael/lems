@@ -3,8 +3,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { red } from '@mui/material/colors';
-import { Paper, BottomNavigation, BottomNavigationAction, Typography } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
@@ -14,6 +13,7 @@ import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
+import TeamQueueCard from 'apps/frontend/components/general/team-queue-card';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -93,17 +93,11 @@ const Page: NextPage<Props> = ({
               const team = teams.find(t => t._id == teamId);
               return (
                 team && (
-                  <Paper
+                  <TeamQueueCard
                     key={index}
-                    sx={{
-                      px: 1,
-                      py: 2,
-                      mb: 1,
-                      ...(eventState.loadedMatch === m._id && { backgroundColor: red[200] })
-                    }}
-                  >
-                    <Typography>{team.number}</Typography>
-                  </Paper>
+                    team={team}
+                    urgent={eventState.loadedMatch === m._id}
+                  />
                 )
               );
             })
