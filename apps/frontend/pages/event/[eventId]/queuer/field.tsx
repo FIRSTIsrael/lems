@@ -83,12 +83,12 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="md"
+        maxWidth="sm"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
       >
         {calledMatches.map(m =>
           m.participants
-            .filter(p => p.teamId)
+            .filter(p => p.teamId && !p.queued)
             .map(({ teamId }, index) => {
               const team = teams.find(t => t._id == teamId);
               return (
