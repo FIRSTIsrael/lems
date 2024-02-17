@@ -29,12 +29,14 @@ const ScoreboardSponsorsRow: React.FC = () => {
               style={{
                 objectFit: 'contain',
                 marginRight: '10rem',
+                marginTop: '-0.5rem',
                 width: 'auto',
-                height: '100%',
+                height: '75%',
                 display: 'inline-block'
               }}
               src={image}
               alt="לוגו"
+              priority
             />
           ))}
         </Box>
@@ -45,12 +47,14 @@ const ScoreboardSponsorsRow: React.FC = () => {
               style={{
                 objectFit: 'contain',
                 marginRight: '10rem',
+                marginTop: '-0.5rem',
                 width: 'auto',
-                height: '100%',
+                height: '75%',
                 display: 'inline-block'
               }}
               src={image}
               alt="לוגו"
+              priority
             />
           ))}
         </Box>

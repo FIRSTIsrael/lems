@@ -4,7 +4,7 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t backend`.
-FROM node:18-alpine
+FROM node:20-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=3333
@@ -20,6 +20,8 @@ ARG DIGITALOCEAN_SPACE
 ENV DIGITALOCEAN_SPACE=$DIGITALOCEAN_SPACE
 ARG JWT_SECRET
 ENV JWT_SECRET=$JWT_SECRET
+ARG DASHBOARD_JWT_SECRET
+ENV DASHBOARD_JWT_SECRET=$DASHBOARD_JWT_SECRET
 ARG MONGODB_URI
 ENV MONGODB_URI=$MONGODB_URI
 ARG RECAPTCHA

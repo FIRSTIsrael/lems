@@ -2,11 +2,11 @@ import { useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
 import {
   Paper,
-  ButtonProps,
   Stack,
   Typography,
   Button,
   IconButton,
+  Checkbox,
   Box,
   TextField,
   FormControl,
@@ -17,7 +17,8 @@ import {
   Select,
   Theme,
   useTheme,
-  SelectChangeEvent
+  SelectChangeEvent,
+  FormControlLabel
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -31,11 +32,11 @@ import { enqueueSnackbar } from 'notistack';
 import { fullMatch } from '@lems/utils/objects';
 import { useRouter } from 'next/router';
 
-interface EventScheduleEditorProps extends ButtonProps {
+interface EventScheduleEditorProps {
   event: WithId<Event>;
 }
 
-const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...props }) => {
+const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
   const theme = useTheme();
   const router = useRouter();
   const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
@@ -159,6 +160,24 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
                     views={['minutes', 'hours']}
                   />
                 </LocalizationProvider>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={schedule[index].showOnDashboard}
+                      onChange={e =>
+                        setSchedule(schedule => {
+                          const newSchedule = [...schedule];
+                          newSchedule[index] = {
+                            ...entry,
+                            showOnDashboard: e.target.checked
+                          };
+                          return newSchedule;
+                        })
+                      }
+                    />
+                  }
+                  label={<Typography fontSize="0.85rem">הצגה ב-Dashboard</Typography>}
+                />
               </Stack>
               <FormControl fullWidth>
                 <InputLabel id="role-chip-label">תפקידים</InputLabel>
@@ -236,7 +255,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event, ...pro
           variant="contained"
           sx={{ minWidth: 100 }}
           disabled={fullMatch(schedule, sortedSchedule)}
-          onClick={e => setSchedule(sortedSchedule)}
+          onClick={() => setSchedule(sortedSchedule)}
         >
           מיון
         </Button>

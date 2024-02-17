@@ -9,9 +9,16 @@ export interface PresentationState {
   };
 }
 
+export interface ScoreboardState {
+  showCurrentMatch: false | 'timer' | 'no-timer';
+  showPreviousMatch: boolean;
+  showSponsors: boolean;
+}
+
 export interface AudienceDisplayState {
   screen: AudienceDisplayScreen;
   message: string;
+  scoreboard: ScoreboardState;
 }
 
 export interface EventState {

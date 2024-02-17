@@ -22,6 +22,7 @@ import { apiFetch } from '../../lib/utils/fetch';
 const EventCreateForm = forwardRef((props, ref) => {
   const router = useRouter();
   const [name, setName] = useState<string>('');
+  const [salesforceId, setSalesforceId] = useState<string>('');
   const [color, setColor] = useState<DivisionColor>('red');
 
   const getDefaultDate = () => {
@@ -38,6 +39,7 @@ const EventCreateForm = forwardRef((props, ref) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
+        salesforceId,
         startDate: (startDate || getDefaultDate()).tz('utc', true).toDate(),
         endDate: (endDate || getDefaultDate()).tz('utc', true).toDate(),
         color,
@@ -81,6 +83,14 @@ const EventCreateForm = forwardRef((props, ref) => {
           value={name}
           onChange={e => setName(e.target.value)}
           label="שם אירוע"
+          fullWidth
+        />
+        <TextField
+          variant="outlined"
+          type="text"
+          value={salesforceId}
+          onChange={e => setSalesforceId(e.target.value)}
+          label="מזהה Salesforce"
           fullWidth
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>

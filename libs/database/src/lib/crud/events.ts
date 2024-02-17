@@ -6,6 +6,10 @@ export const getEvent = (filter: Filter<Event>) => {
   return db.collection<Event>('events').findOne(filter);
 };
 
+export const getEvents = (filter: Filter<Event>) => {
+  return db.collection<Event>('events').find(filter).toArray();
+};
+
 export const getAllEvents = () => {
   return db.collection<Event>('events').find({}).toArray();
 };

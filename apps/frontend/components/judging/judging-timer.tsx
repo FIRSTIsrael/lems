@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Typography, Paper } from '@mui/material';
+import { Typography, Paper, LinearProgress, LinearProgressProps } from '@mui/material';
 import { JUDGING_SESSION_LENGTH, JudgingSession, Team } from '@lems/types';
 import useCountdown from '../../hooks/use-countdown';
 import Countdown from '../general/countdown';
@@ -42,24 +42,27 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
     return 'נגמר הזמן!';
   }, [secondsJudging]);
 
-  const barColor = useMemo(() => {
+  const { barColor, barProgress } = useMemo(() => {
     let currentSeconds = secondsJudging;
 
     const stages = [
-      { duration: 60, color: '#ffffff' },
-      { duration: 10 * 60, color: '#005BA8' },
-      { duration: 10 * 60, color: '#007632' },
-      { duration: 6 * 60, color: '#E3000A' }
+      { duration: 60, color: 'inherit' },
+      { duration: 10 * 60, color: 'primary' },
+      { duration: 10 * 60, color: 'success' },
+      { duration: 6 * 60, color: 'error' }
     ];
 
     for (const stage of stages) {
       if (currentSeconds <= stage.duration) {
-        return stage.color;
+        return {
+          barColor: stage.color,
+          barProgress: 100 - (currentSeconds / stage.duration) * 100
+        };
       }
       currentSeconds -= stage.duration;
     }
 
-    return '#ffffff';
+    return { barColor: 'inherit', barProgress: 100 };
   }, [secondsJudging]);
 
   useEffect(() => {
@@ -69,7 +72,7 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
   }, [secondsJudging]);
 
   useEffect(() => {
-    if (barColor !== '#ffffff') new Audio('/assets/sounds/judging/judging-change.wav').play();
+    if (barColor !== 'inherit') new Audio('/assets/sounds/judging/judging-change.wav').play();
   }, [barColor]);
 
   return (
@@ -80,10 +83,19 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
         textAlign: 'center',
         mt: 4
       }}
-      style={{
-        background: barColor ? `linear-gradient(to bottom, ${barColor} 5%, #fff 5%)` : '#fff'
-      }}
     >
+      <LinearProgress
+        variant="determinate"
+        value={barProgress}
+        color={barColor as LinearProgressProps['color']}
+        sx={{
+          height: 16,
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          mx: -2,
+          mt: -4
+        }}
+      />
       <Countdown
         targetDate={sessionEnd.toDate()}
         expiredText="00:00"
