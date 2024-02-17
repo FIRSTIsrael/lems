@@ -18,7 +18,7 @@ const QueuerTeamDisplay: React.FC<QueuerTeamDisplayProps> = ({ teams, eventState
       .map(({ teamId }, index) => {
         const team = teams.find(t => t._id == teamId);
         return (
-          team && (
+          team?.registered && (
             <TeamQueueCard key={index} team={team} urgent={eventState.loadedMatch === m._id} />
           )
         );

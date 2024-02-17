@@ -7,6 +7,7 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import {
+  Paper,
   TableContainer,
   Table,
   TableHead,
@@ -16,7 +17,6 @@ import {
   Button,
   Checkbox
 } from '@mui/material';
-import { red, grey } from '@mui/material/colors';
 import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
@@ -79,36 +79,42 @@ const HeadQueueSchedule: React.FC<HeadQueueScheduleProps> = ({
   );
 
   return (
-    <TableContainer>
+    <TableContainer component={Paper} sx={{ py: 1 }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>מקצה</TableCell>
+            <TableCell align="center">מקצה</TableCell>
             <TableCell>זמן</TableCell>
             {tables.map(t => (
-              <TableCell key={t._id.toString()}>{t.name}</TableCell>
+              <TableCell key={t._id.toString()} align="center">
+                {t.name}
+              </TableCell>
             ))}
             <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>
           {matches
-            .filter(m => m.status === 'not-started') // Perhaps filter this out by <15min start time like judge start button
-            .slice(0, 5) // Alternatively - since the matches are sorted by time we can always allow only N matches that are not started
+            .filter(
+              m =>
+                m.status === 'not-started' &&
+                dayjs() >= dayjs(m.scheduledTime).subtract(15, 'minutes')
+            )
+            .slice(0, 5)
             .map(match => (
               <TableRow
                 key={match.number}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" align="center">
                   {match.number}
                 </TableCell>
-                <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
+                <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
                 {match.participants.map(({ teamId, tableName, queued }) => {
                   const team = teamId ? teams.find(t => t._id == teamId) : undefined;
                   return (
-                    <TableCell key={tableName}>
-                      {team ? <StyledTeamTooltip team={team} /> : '-'}
+                    <TableCell key={tableName} align="center">
+                      {team && <StyledTeamTooltip team={team} />}
                       {team && match.called && (
                         <Checkbox
                           checked={queued}
@@ -122,12 +128,11 @@ const HeadQueueSchedule: React.FC<HeadQueueScheduleProps> = ({
                     </TableCell>
                   );
                 })}
-
-                <TableCell sx={{ p: 0 }}>
+                <TableCell sx={{ pl: 1 }}>
                   <Button
                     variant="contained"
                     size="small"
-                    sx={{ backgroundColor: match.called ? red[200] : grey[400] }}
+                    color={match.called ? 'error' : 'primary'}
                     onClick={() => callMatch(match._id, !match.called)}
                     disabled={match.status === 'completed'}
                   >

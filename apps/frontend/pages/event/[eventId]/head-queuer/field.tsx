@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Stack, Paper } from '@mui/material';
+import { Stack } from '@mui/material';
 import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import ReportLink from '../../../../components/general/report-link';
-import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
+import MatchStatusStack from '../../../../components/field/match-status-stack';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import HeadQueueSchedule from '../../../../components/queueing/field/head-queue-schedule';
@@ -96,23 +96,15 @@ const Page: NextPage<Props> = ({
           </Stack>
         }
       >
-        <Stack direction="row" spacing={2} my={2}>
-          <ActiveMatch
-            title="המקצה הבא"
-            match={matches.find(match => match._id === eventState.loadedMatch) || null}
-            showDelay={true}
-          />
-        </Stack>
-        <Paper>
-          <HeadQueueSchedule
-            eventId={event._id}
-            eventState={eventState}
-            teams={teams}
-            tables={tables}
-            matches={matches.filter(m => m.stage !== 'test') || []}
-            socket={socket}
-          />
-        </Paper>
+        <MatchStatusStack eventState={eventState} matches={matches} sx={{ mt: 2 }} />
+        <HeadQueueSchedule
+          eventId={event._id}
+          eventState={eventState}
+          teams={teams}
+          tables={tables}
+          matches={matches.filter(m => m.stage !== 'test') || []}
+          socket={socket}
+        />
       </Layout>
     </RoleAuthorizer>
   );
