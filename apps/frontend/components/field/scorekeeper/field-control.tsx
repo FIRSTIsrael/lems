@@ -9,9 +9,9 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
+import ActiveMatch from './active-match';
 import Schedule from './schedule';
 import ControlActions from './control-actions';
-import MatchStatusStack from '../match-status-stack';
 
 interface FieldControlProps {
   event: WithId<Event>;
@@ -44,7 +44,11 @@ const FieldControl: React.FC<FieldControlProps> = ({
         overflow: 'hidden'
       }}
     >
-      <MatchStatusStack eventState={eventState} matches={matches} />
+      <Stack direction="row" spacing={2} mb={2}>
+        <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
+        <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
+      </Stack>
+
       <ControlActions
         eventId={event._id.toString()}
         nextMatchId={nextMatchId}
@@ -52,6 +56,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
         activeMatchId={activeMatch?._id || null}
         socket={socket}
       />
+
       <Paper sx={{ px: 4, py: 1, mt: 2, overflowY: 'scroll' }}>
         <Schedule
           eventId={event._id.toString()}

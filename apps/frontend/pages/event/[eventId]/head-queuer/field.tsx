@@ -8,7 +8,7 @@ import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } fro
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import ReportLink from '../../../../components/general/report-link';
-import MatchStatusStack from '../../../../components/field/match-status-stack';
+import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import HeadQueueSchedule from '../../../../components/queueing/field/head-queue-schedule';
@@ -36,6 +36,15 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+
+  const activeMatch = useMemo(
+    () => matches.find(match => match._id === eventState.activeMatch) || null,
+    [eventState.activeMatch, matches]
+  );
+  const loadedMatch = useMemo(
+    () => matches.find(match => match._id === eventState.loadedMatch) || null,
+    [eventState.loadedMatch, matches]
+  );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -86,7 +95,6 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
         error={connectionStatus === 'disconnected'}
         action={
@@ -96,7 +104,10 @@ const Page: NextPage<Props> = ({
           </Stack>
         }
       >
-        <MatchStatusStack eventState={eventState} matches={matches} sx={{ mt: 2 }} />
+        <Stack direction="row" spacing={2} my={2}>
+          <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
+          <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
+        </Stack>
         <HeadQueueSchedule
           eventId={event._id}
           eventState={eventState}
