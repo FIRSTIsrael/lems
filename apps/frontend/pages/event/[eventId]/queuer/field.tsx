@@ -11,7 +11,7 @@ import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } fro
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import QueuerTeamDisplay from '../../../../components/field/queueing/queuer-team-display';
+import QueuerTeamDisplay from '../../../../components/queueing/field/queuer-team-display';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 

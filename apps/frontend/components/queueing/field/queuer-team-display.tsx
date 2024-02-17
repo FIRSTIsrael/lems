@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Team, EventState, RobotGameMatch } from '@lems/types';
-import TeamQueueCard from '../../general/team-queue-card';
+import TeamQueueCard from '../team-queue-card';
 
 interface QueuerTeamDisplayProps {
   teams: Array<WithId<Team>>;
