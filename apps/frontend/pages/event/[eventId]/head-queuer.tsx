@@ -22,9 +22,9 @@ import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import HeadQueuerFieldSchedule from '../../../components/queueing/head-queuer-field-schedule';
 import HeadQueuerJudgingSchedule from '../../../components/queueing/head-queuer-judging-schedule';
+import JudgingStatusTimer from '../../../components/judging/judging-status-timer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedEventSection, localizedRoles } from '../../../localization/roles';
-import JudgingStatusTimer from 'apps/frontend/components/judging/judging-status-timer';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -68,10 +68,6 @@ const Page: NextPage<Props> = ({
   const nextSessions = useMemo(
     () => sessions.filter(session => session.number === eventState.currentSession + 1),
     [sessions, eventState]
-  );
-  const activeSessions = useMemo(
-    () => sessions.filter(s => s.status === 'in-progress'),
-    [sessions]
   );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
@@ -161,7 +157,7 @@ const Page: NextPage<Props> = ({
               teams={teams}
               tables={tables}
               matches={matches.filter(m => m.stage !== 'test') || []}
-              activeSessions={activeSessions}
+              sessions={sessions}
               socket={socket}
             />
           </>
@@ -178,6 +174,7 @@ const Page: NextPage<Props> = ({
               rooms={rooms}
               activeMatch={activeMatch}
               loadedMatch={loadedMatch}
+              matches={matches}
               sessions={sessions}
               socket={socket}
               teams={teams}

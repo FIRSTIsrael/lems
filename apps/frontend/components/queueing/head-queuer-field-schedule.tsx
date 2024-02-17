@@ -33,7 +33,7 @@ interface HeadQueuerFieldScheduleProps {
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
-  activeSessions: Array<WithId<JudgingSession>>;
+  sessions: Array<WithId<JudgingSession>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
@@ -42,7 +42,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   teams,
   matches,
   tables,
-  activeSessions,
+  sessions,
   socket
 }) => {
   const currentTime = useTime({ interval: 1000 * 30 });
@@ -118,14 +118,20 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                 <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
                 {match.participants.map(({ teamId, tableName, queued }) => {
                   const team = teamId ? teams.find(t => t._id == teamId) : undefined;
-                  const teamJudgingSession = activeSessions?.find(s => s.teamId === teamId);
+                  const teamInJudging = sessions
+                    .filter(
+                      s =>
+                        s.status === 'in-progress' ||
+                        (s.status === 'not-started' && s.called && s.queued)
+                    )
+                    .find(s => s.teamId === teamId);
                   return (
                     <TableCell key={tableName} align="center">
                       <Stack spacing={1} alignItems="center" justifyContent="center">
                         {team && <StyledTeamTooltip team={team} />}
                         {team &&
                           match.called &&
-                          (teamJudgingSession ? (
+                          (teamInJudging ? (
                             <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
                               <WarningAmberRoundedIcon />
                             </Tooltip>

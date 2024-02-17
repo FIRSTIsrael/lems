@@ -34,6 +34,7 @@ interface HeadQueuerFieldScheduleProps {
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
+  matches: Array<WithId<RobotGameMatch>>;
   activeMatch: WithId<RobotGameMatch> | null;
   loadedMatch: WithId<RobotGameMatch> | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
@@ -44,6 +45,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   teams,
   sessions,
   rooms,
+  matches,
   activeMatch,
   loadedMatch,
   socket
@@ -132,16 +134,19 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                     ? teams.find(t => t._id === session.teamId)
                     : undefined;
                   const room = rooms.find(r => r._id === session.roomId);
-                  const teamMatch =
-                    activeMatch?.participants.find(p => p.teamId === team?._id) ||
-                    loadedMatch?.participants.find(p => p.teamId === team?._id);
+                  const teamOnField =
+                    !!activeMatch?.participants.find(p => p.teamId === team?._id) ||
+                    !!loadedMatch?.participants.find(p => p.teamId === team?._id) ||
+                    !!matches
+                      .filter(m => m.called && m.status === 'not-started')
+                      .some(m => m.participants.some(p => p.teamId === team?._id));
                   return (
                     <TableCell key={room?.name || ''}>
                       <Stack spacing={1} alignItems="center" justifyContent="center">
                         {team && <StyledTeamTooltip team={team} />}
                         {team &&
                           session.called &&
-                          (teamMatch ? (
+                          (teamOnField ? (
                             <Tooltip title="הקבוצה נמצאת בזירה כרגע!" arrow>
                               <WarningAmberRoundedIcon color="warning" />
                             </Tooltip>
