@@ -6,7 +6,6 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
   Box,
-  LinearProgress,
   Paper,
   Stack,
   Table,
@@ -15,8 +14,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
-  Typography
+  Tooltip
 } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import {
@@ -33,102 +31,12 @@ import {
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import StatusIcon from '../../../../components/general/status-icon';
-import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
 import StyledTeamTooltip from '../../../../components/general/styled-team-tooltip';
+import JudgingStatusTimer from '../../../../components/judging/judging-status-timer';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { useTime } from '../../../../hooks/use-time';
-
-interface JudgingStatusTimerProps {
-  currentSessions: Array<WithId<JudgingSession>>;
-  nextSessions: Array<WithId<JudgingSession>>;
-  teams: Array<WithId<Team>>;
-}
-
-const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
-  currentSessions,
-  nextSessions,
-  teams
-}) => {
-  const currentTime = useTime({ interval: 1000 });
-  const fiveMinutes = 5 * 60;
-
-  const getStatus = useMemo<'ahead' | 'close' | 'behind' | 'done'>(() => {
-    if (nextSessions.length > 0) {
-      if (dayjs(nextSessions[0].scheduledTime) > currentTime) {
-        return dayjs(nextSessions[0].scheduledTime).diff(currentTime, 'seconds') > fiveMinutes
-          ? 'ahead'
-          : 'close';
-      }
-      return 'behind';
-    }
-    return 'done';
-  }, [currentTime, fiveMinutes, nextSessions]);
-
-  const progressToNextSessionStart = useMemo(() => {
-    if (nextSessions.length > 0) {
-      const diff = dayjs(nextSessions[0].scheduledTime).diff(currentTime, 'seconds');
-      return (Math.abs(Math.min(fiveMinutes, diff)) / fiveMinutes) * 100;
-    }
-    return 0;
-  }, [currentTime, fiveMinutes, nextSessions]);
-
-  const getCountdownTarget = (startTime: Date) => dayjs(startTime).toDate();
-
-  return (
-    <>
-      <Paper
-        sx={{
-          py: 4,
-          px: 2,
-          textAlign: 'center',
-          mt: 4
-        }}
-      >
-        <Stack spacing={2}>
-          {nextSessions.length > 0 && (
-            <Countdown
-              allowNegativeValues={true}
-              targetDate={getCountdownTarget(nextSessions[0].scheduledTime)}
-              variant="h1"
-              fontFamily={'Roboto Mono'}
-              fontSize="10rem"
-              fontWeight={700}
-              dir="ltr"
-            />
-          )}
-          {currentSessions.filter(s => s.status === 'in-progress').length > 0 && (
-            <Typography variant="h4">
-              {currentSessions.filter(session => !!session.startTime).length} מתוך{' '}
-              {
-                currentSessions.filter(
-                  session => teams.find(team => team._id === session.teamId)?.registered
-                ).length
-              }{' '}
-              קבוצות בחדר השיפוט
-            </Typography>
-          )}
-        </Stack>
-      </Paper>
-      {getStatus !== 'done' && (
-        <LinearProgress
-          color={getStatus === 'ahead' ? 'success' : getStatus === 'close' ? 'warning' : 'error'}
-          variant="determinate"
-          value={progressToNextSessionStart}
-          sx={{
-            height: 16,
-            borderBottomLeftRadius: 8,
-            borderBottomRightRadius: 8,
-            mt: -2
-          }}
-        />
-      )}
-    </>
-  );
-};
-
 interface JudgingStatusTableProps {
   currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;

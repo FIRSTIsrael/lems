@@ -29,6 +29,7 @@ const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
               location={tableName}
               scheduledTime={match.scheduledTime}
               urgent={eventState.loadedMatch === match._id}
+              urgencyThresholdMinutes={7}
             />
           )
         );

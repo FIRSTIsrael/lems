@@ -91,7 +91,7 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
 
 export const handleUpdateSession = async (namespace, eventId, sessionId, data, callback) => {
   let session = await db.getSession({ _id: new ObjectId(sessionId) });
-  if (data.teamId !== null) data.teamId = new ObjectId(data.teamId);
+  if (data.teamId) data.teamId = new ObjectId(data.teamId);
 
   if (!session) {
     callback({ ok: false, error: `Could not find session ${sessionId}!` });
@@ -102,7 +102,7 @@ export const handleUpdateSession = async (namespace, eventId, sessionId, data, c
     return;
   }
 
-  console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
+  console.log(`🖊️ Updating session ${sessionId} in event ${eventId}`);
 
   await db.updateSession({ _id: session._id }, { ...data });
 

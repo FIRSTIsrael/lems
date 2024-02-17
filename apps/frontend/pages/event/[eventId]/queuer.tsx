@@ -7,15 +7,26 @@ import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
-import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import {
+  Event,
+  EventState,
+  SafeUser,
+  Team,
+  RobotGameMatch,
+  RobotGameTable,
+  JudgingSession,
+  JudgingRoom
+} from '@lems/types';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import QueuerFieldTeamDisplay from '../../../components/queueing/queuer-field-team-display';
 import QueuerFieldSchedule from '../../../components/queueing/queuer-field-schedule';
 import QueuerPitMap from '../../../components/queueing/queuer-pit-map';
+import QueuerJudgingSchedule from '../../../components/queueing/queuer-judging-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles, localizedEventSection } from '../../../localization/roles';
+import QueuerJudgingTeamDisplay from '../../../components/queueing/queuer-judging-team-display';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -23,7 +34,9 @@ interface Props {
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
+  rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
+  sessions: Array<WithId<JudgingSession>>;
   pitMapUrl: string;
 }
 
@@ -33,7 +46,9 @@ const Page: NextPage<Props> = ({
   eventState: initialEventState,
   teams: initialTeams,
   tables,
+  rooms,
   matches: initialMatches,
+  sessions: initialSessions,
   pitMapUrl
 }) => {
   const NAVIGATION_HEIGHT = 60;
@@ -43,6 +58,7 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
     setMatches(matches =>
@@ -68,14 +84,32 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  useWebsocket(event._id.toString(), ['field', 'audience-display'], undefined, [
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    newEventState?: WithId<EventState>
+  ) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+
+    if (newEventState) setEventState(newEventState);
+  };
+
+  useWebsocket(event._id.toString(), ['field', 'pit-admin', 'judging'], undefined, [
     { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'matchStarted', handler: handleMatchEvent },
     { name: 'matchCompleted', handler: handleMatchEvent },
     { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'audienceDisplayUpdated', handler: setEventState },
-    { name: 'presentationUpdated', handler: setEventState },
-    { name: 'teamRegistered', handler: handleTeamRegistered }
+    { name: 'teamRegistered', handler: handleTeamRegistered },
+    { name: 'judgingSessionStarted', handler: handleSessionEvent },
+    { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+    { name: 'judgingSessionAborted', handler: handleSessionEvent },
+    { name: 'judgingSessionUpdated', handler: handleSessionEvent }
   ]);
 
   return (
@@ -97,7 +131,9 @@ const Page: NextPage<Props> = ({
               {user.roleAssociation?.value === 'field' && (
                 <QueuerFieldTeamDisplay eventState={eventState} teams={teams} matches={matches} />
               )}
-              {user.roleAssociation?.value === 'judging' && <></>}
+              {user.roleAssociation?.value === 'judging' && (
+                <QueuerJudgingTeamDisplay teams={teams} sessions={sessions} rooms={rooms} />
+              )}
             </>
           )}
           {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
@@ -111,7 +147,14 @@ const Page: NextPage<Props> = ({
                   tables={tables}
                 />
               )}
-              {user.roleAssociation?.value === 'judging' && <></>}
+              {user.roleAssociation?.value === 'judging' && (
+                <QueuerJudgingSchedule
+                  event={event}
+                  rooms={rooms}
+                  sessions={sessions}
+                  teams={teams}
+                />
+              )}
             </>
           )}
         </Box>
@@ -142,6 +185,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
         tables: `/api/events/${user.eventId}/tables`,
+        rooms: `/api/events/${user.eventId}/rooms`,
+        sessions: `/api/events/${user.eventId}/sessions`,
         matches: `/api/events/${user.eventId}/matches`
       },
       ctx

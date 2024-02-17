@@ -1,10 +1,15 @@
+import dayjs from 'dayjs';
+import { ObjectId, WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
+import { useCallback } from 'react';
+import { Socket } from 'socket.io-client';
 import {
   Team,
-  EventState,
   RobotGameMatch,
   RobotGameTable,
   WSClientEmittedEvents,
-  WSServerEmittedEvents
+  WSServerEmittedEvents,
+  JudgingSession
 } from '@lems/types';
 import {
   Paper,
@@ -15,30 +20,28 @@ import {
   TableCell,
   TableBody,
   Button,
-  Checkbox
+  Checkbox,
+  Tooltip,
+  Stack
 } from '@mui/material';
-import dayjs from 'dayjs';
-import { ObjectId, WithId } from 'mongodb';
-import { enqueueSnackbar } from 'notistack';
-import { useCallback } from 'react';
-import { Socket } from 'socket.io-client';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 
 interface HeadQueuerFieldScheduleProps {
   eventId: ObjectId;
-  eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
+  activeSessions: Array<WithId<JudgingSession>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
   eventId,
-  eventState,
   teams,
   matches,
   tables,
+  activeSessions,
   socket
 }) => {
   const callMatch = useCallback(
@@ -112,19 +115,28 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                 <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
                 {match.participants.map(({ teamId, tableName, queued }) => {
                   const team = teamId ? teams.find(t => t._id == teamId) : undefined;
+                  const teamJudgingSession = activeSessions?.find(s => s.teamId === teamId);
                   return (
                     <TableCell key={tableName} align="center">
-                      {team && <StyledTeamTooltip team={team} />}
-                      {team && match.called && (
-                        <Checkbox
-                          checked={queued}
-                          disabled={!team.registered}
-                          onClick={e => {
-                            e.preventDefault();
-                            updateParticipantQueueStatus(match, team._id, !queued);
-                          }}
-                        />
-                      )}
+                      <Stack spacing={1} alignItems="center" justifyContent="center">
+                        {team && <StyledTeamTooltip team={team} />}
+                        {team &&
+                          match.called &&
+                          (teamJudgingSession ? (
+                            <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
+                              <WarningAmberRoundedIcon />
+                            </Tooltip>
+                          ) : (
+                            <Checkbox
+                              checked={queued}
+                              disabled={!team.registered}
+                              onClick={e => {
+                                e.preventDefault();
+                                updateParticipantQueueStatus(match, team._id, !queued);
+                              }}
+                            />
+                          ))}
+                      </Stack>
                     </TableCell>
                   );
                 })}
@@ -134,7 +146,6 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                     size="small"
                     color={match.called ? 'error' : 'primary'}
                     onClick={() => callMatch(match._id, !match.called)}
-                    disabled={match.status === 'completed'}
                   >
                     {match.called ? 'ביטול' : 'קריאה'}
                   </Button>

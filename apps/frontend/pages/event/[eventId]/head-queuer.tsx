@@ -11,7 +11,8 @@ import {
   Team,
   RobotGameMatch,
   RobotGameTable,
-  JudgingSession
+  JudgingSession,
+  JudgingRoom
 } from '@lems/types';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -20,8 +21,10 @@ import ActiveMatch from '../../../components/field/scorekeeper/active-match';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import HeadQueuerFieldSchedule from '../../../components/queueing/head-queuer-field-schedule';
+import HeadQueuerJudgingSchedule from '../../../components/queueing/head-queuer-judging-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedEventSection, localizedRoles } from '../../../localization/roles';
+import JudgingStatusTimer from 'apps/frontend/components/judging/judging-status-timer';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,6 +33,7 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
+  rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
@@ -40,6 +44,7 @@ const Page: NextPage<Props> = ({
   sessions: initialSessions,
   teams: initialTeams,
   tables,
+  rooms,
   matches: initialMatches
 }) => {
   const router = useRouter();
@@ -55,6 +60,14 @@ const Page: NextPage<Props> = ({
   const loadedMatch = useMemo(
     () => matches.find(match => match._id === eventState.loadedMatch) || null,
     [eventState.loadedMatch, matches]
+  );
+  const currentSessions = useMemo(
+    () => sessions.filter(session => session.number === eventState.currentSession),
+    [sessions, eventState]
+  );
+  const nextSessions = useMemo(
+    () => sessions.filter(session => session.number === eventState.currentSession + 1),
+    [sessions, eventState]
   );
   const activeSessions = useMemo(
     () => sessions.filter(s => s.status === 'in-progress'),
@@ -141,24 +154,36 @@ const Page: NextPage<Props> = ({
           <>
             <Stack direction="row" spacing={2} my={2}>
               <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-              <ActiveMatch
-                title="המקצה הבא"
-                match={loadedMatch}
-                showDelay={true}
-                activeSessions={activeSessions}
-              />
+              <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
             </Stack>
             <HeadQueuerFieldSchedule
               eventId={event._id}
-              eventState={eventState}
               teams={teams}
               tables={tables}
               matches={matches.filter(m => m.stage !== 'test') || []}
+              activeSessions={activeSessions}
               socket={socket}
             />
           </>
         )}
-        {user.roleAssociation?.value === 'judging' && <></>}
+        {user.roleAssociation?.value === 'judging' && (
+          <>
+            <JudgingStatusTimer
+              teams={teams}
+              currentSessions={currentSessions}
+              nextSessions={nextSessions}
+            />
+            <HeadQueuerJudgingSchedule
+              eventId={event._id}
+              rooms={rooms}
+              activeMatch={activeMatch}
+              loadedMatch={loadedMatch}
+              sessions={sessions}
+              socket={socket}
+              teams={teams}
+            />
+          </>
+        )}
       </Layout>
     </RoleAuthorizer>
   );
@@ -173,6 +198,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
+        rooms: `/api/events/${user.eventId}/rooms`,
         sessions: `/api/events/${user.eventId}/sessions`,
         tables: `/api/events/${user.eventId}/tables`,
         matches: `/api/events/${user.eventId}/matches`

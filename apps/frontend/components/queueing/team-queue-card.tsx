@@ -12,13 +12,15 @@ interface TeamQueueCardProps {
   location?: string;
   scheduledTime?: Date;
   urgent?: boolean;
+  urgencyThresholdMinutes?: number;
 }
 
 const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
   team,
   location,
   scheduledTime,
-  urgent = false
+  urgent = false,
+  urgencyThresholdMinutes = -Infinity
 }) => {
   const [days, hours, minutes] = useCountdown(scheduledTime ? scheduledTime : new Date());
   const [upDays, upHours, upMinutes] = useStopwatch(scheduledTime ? scheduledTime : new Date());
@@ -26,6 +28,10 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
   const totalUpMinutes = useMemo(
     () => upDays * 60 * 24 + upHours * 60 + upMinutes,
     [upDays, upHours, upMinutes]
+  );
+  const isUrgent = useMemo(
+    () => urgent || totalMinutes < urgencyThresholdMinutes,
+    [totalMinutes, urgencyThresholdMinutes, urgent]
   );
 
   return (
@@ -37,7 +43,7 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
       px={2}
       mt={1}
       sx={{
-        ...(urgent && { backgroundColor: red[100], border: `1px solid ${red[400]}` })
+        ...(isUrgent && { backgroundColor: red[100], border: `1px solid ${red[400]}` })
       }}
     >
       <Grid xs={1}>
