@@ -8,14 +8,14 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import { Event, EventState, SafeUser, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
-import { useWebsocket } from '../../../../hooks/use-websocket';
-import Layout from '../../../../components/layout';
-import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import QueuerTeamDisplay from '../../../../components/queueing/field/queuer-team-display';
-import QueuerFieldSchedule from '../../../../components/queueing/field/queuer-field-schedule';
-import QueuerPitMap from '../../../../components/queueing/queuer-pit-map';
-import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { localizedRoles } from '../../../../localization/roles';
+import { useWebsocket } from '../../../hooks/use-websocket';
+import Layout from '../../../components/layout';
+import { RoleAuthorizer } from '../../../components/role-authorizer';
+import QueuerTeamDisplay from '../../../components/queueing/field/queuer-team-display';
+import QueuerFieldSchedule from '../../../components/queueing/field/queuer-field-schedule';
+import QueuerPitMap from '../../../components/queueing/queuer-pit-map';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { localizedRoles, localizedEventSection } from '../../../localization/roles';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -89,15 +89,30 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedEventSection[user.roleAssociation?.value as string].name}`}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
           {activeView === 0 && (
-            <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
+            <>
+              {user.roleAssociation?.value === 'field' && (
+                <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
+              )}
+              {user.roleAssociation?.value === 'judging' && <></>}
+            </>
           )}
           {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
           {activeView === 2 && (
-            <QueuerFieldSchedule event={event} matches={matches} teams={teams} tables={tables} />
+            <>
+              {user.roleAssociation?.value === 'field' && (
+                <QueuerFieldSchedule
+                  event={event}
+                  matches={matches}
+                  teams={teams}
+                  tables={tables}
+                />
+              )}
+              {user.roleAssociation?.value === 'judging' && <></>}
+            </>
           )}
         </Box>
         <BottomNavigation

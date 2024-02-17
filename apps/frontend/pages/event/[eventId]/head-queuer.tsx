@@ -13,15 +13,15 @@ import {
   RobotGameTable,
   JudgingSession
 } from '@lems/types';
-import { useWebsocket } from '../../../../hooks/use-websocket';
-import ConnectionIndicator from '../../../../components/connection-indicator';
-import ReportLink from '../../../../components/general/report-link';
-import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
-import Layout from '../../../../components/layout';
-import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import HeadQueueSchedule from '../../../../components/queueing/field/head-queue-schedule';
-import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { localizedRoles } from '../../../../localization/roles';
+import { useWebsocket } from '../../../hooks/use-websocket';
+import ConnectionIndicator from '../../../components/connection-indicator';
+import ReportLink from '../../../components/general/report-link';
+import ActiveMatch from '../../../components/field/scorekeeper/active-match';
+import Layout from '../../../components/layout';
+import { RoleAuthorizer } from '../../../components/role-authorizer';
+import HeadQueueSchedule from '../../../components/queueing/field/head-queue-schedule';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { localizedEventSection, localizedRoles } from '../../../localization/roles';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -128,7 +128,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedEventSection[user.roleAssociation?.value as string].name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -137,23 +137,28 @@ const Page: NextPage<Props> = ({
           </Stack>
         }
       >
-        <Stack direction="row" spacing={2} my={2}>
-          <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-          <ActiveMatch
-            title="המקצה הבא"
-            match={loadedMatch}
-            showDelay={true}
-            activeSessions={activeSessions}
-          />
-        </Stack>
-        <HeadQueueSchedule
-          eventId={event._id}
-          eventState={eventState}
-          teams={teams}
-          tables={tables}
-          matches={matches.filter(m => m.stage !== 'test') || []}
-          socket={socket}
-        />
+        {user.roleAssociation?.value === 'field' && (
+          <>
+            <Stack direction="row" spacing={2} my={2}>
+              <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
+              <ActiveMatch
+                title="המקצה הבא"
+                match={loadedMatch}
+                showDelay={true}
+                activeSessions={activeSessions}
+              />
+            </Stack>
+            <HeadQueueSchedule
+              eventId={event._id}
+              eventState={eventState}
+              teams={teams}
+              tables={tables}
+              matches={matches.filter(m => m.stage !== 'test') || []}
+              socket={socket}
+            />
+          </>
+        )}
+        {user.roleAssociation?.value === 'judging' && <></>}
       </Layout>
     </RoleAuthorizer>
   );
