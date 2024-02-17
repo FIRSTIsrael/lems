@@ -139,7 +139,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                     !!loadedMatch?.participants.find(p => p.teamId === team?._id) ||
                     !!matches
                       .filter(m => m.called && m.status === 'not-started')
-                      .some(m => m.participants.some(p => p.teamId === team?._id));
+                      .some(m => m.participants.some(p => p.teamId === team?._id && p.queued));
                   return (
                     <TableCell key={room?.name || ''}>
                       <Stack spacing={1} alignItems="center" justifyContent="center">
