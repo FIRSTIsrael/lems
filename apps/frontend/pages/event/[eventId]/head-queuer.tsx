@@ -121,6 +121,7 @@ const Page: NextPage<Props> = ({
           <QueueSchedule
             eventId={event._id}
             eventState={eventState}
+            teams={teams}
             tables={tables}
             matches={matches.filter(m => m.stage !== 'test') || []}
             socket={socket}

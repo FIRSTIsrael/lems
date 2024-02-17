@@ -1,4 +1,5 @@
 import {
+  Team,
   EventState,
   RobotGameMatch,
   RobotGameTable,
@@ -26,6 +27,7 @@ import StyledTeamTooltip from '../../general/styled-team-tooltip';
 interface QueueScheduleProps {
   eventId: ObjectId;
   eventState: WithId<EventState>;
+  teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
@@ -34,6 +36,7 @@ interface QueueScheduleProps {
 const QueueSchedule: React.FC<QueueScheduleProps> = ({
   eventId,
   eventState,
+  teams,
   matches,
   tables,
   socket
@@ -100,21 +103,27 @@ const QueueSchedule: React.FC<QueueScheduleProps> = ({
                   {match.number}
                 </TableCell>
                 <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
-                {match.participants.map(({ team, tableName, queued }) => (
-                  <TableCell key={tableName}>
-                    {team ? <StyledTeamTooltip team={team} /> : '-'}
-                    {team && match.called && (
-                      <Checkbox
-                        checked={queued}
-                        disabled={!team.registered}
-                        onClick={e => {
-                          e.preventDefault();
-                          updateParticipantQueueStatus(match, team._id, !queued);
-                        }}
-                      />
-                    )}
-                  </TableCell>
-                ))}
+                {match.participants.map(({ teamId, tableName, queued }) => {
+                  // We fetch the team from the teams list since registration status
+                  // is not always updated directly within the match's team property.
+                  const team = teamId ? teams.find(t => t._id == teamId) : undefined;
+
+                  return (
+                    <TableCell key={tableName}>
+                      {team ? <StyledTeamTooltip team={team} /> : '-'}
+                      {team && match.called && (
+                        <Checkbox
+                          checked={queued}
+                          disabled={!team.registered}
+                          onClick={e => {
+                            e.preventDefault();
+                            updateParticipantQueueStatus(match, team._id, !queued);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                  );
+                })}
 
                 <TableCell sx={{ p: 0 }}>
                   <Button
