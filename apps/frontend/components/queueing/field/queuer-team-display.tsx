@@ -12,14 +12,20 @@ interface QueuerTeamDisplayProps {
 const QueuerTeamDisplay: React.FC<QueuerTeamDisplayProps> = ({ teams, eventState, matches }) => {
   const calledMatches = useMemo(() => matches.filter(m => m.called), [matches]);
 
-  return calledMatches.map(m =>
-    m.participants
+  return calledMatches.map(match =>
+    match.participants
       .filter(p => p.teamId && !p.queued)
-      .map(({ teamId }, index) => {
+      .map(({ teamId, tableName }, index) => {
         const team = teams.find(t => t._id == teamId);
         return (
           team?.registered && (
-            <TeamQueueCard key={index} team={team} urgent={eventState.loadedMatch === m._id} />
+            <TeamQueueCard
+              key={index}
+              team={team}
+              location={tableName}
+              scheduledTime={match.scheduledTime}
+              urgent={eventState.loadedMatch === match._id}
+            />
           )
         );
       })

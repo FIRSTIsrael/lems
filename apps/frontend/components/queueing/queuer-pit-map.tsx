@@ -21,7 +21,7 @@ const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ event, pitMapUrl }) => {
       height={0}
       sizes="100vw"
       style={{
-        marginTop: '40px',
+        marginTop: '10px',
         width: '100%',
         height: 'auto',
         borderRadius: '1rem',

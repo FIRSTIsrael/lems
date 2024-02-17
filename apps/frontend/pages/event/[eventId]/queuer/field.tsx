@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
@@ -12,6 +12,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import QueuerTeamDisplay from '../../../../components/queueing/field/queuer-team-display';
+import QueuerFieldSchedule from '../../../../components/queueing/field/queuer-field-schedule';
 import QueuerPitMap from '../../../../components/queueing/queuer-pit-map';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
@@ -35,6 +36,8 @@ const Page: NextPage<Props> = ({
   matches: initialMatches,
   pitMapUrl
 }) => {
+  const NAVIGATION_HEIGHT = 60;
+  const NAVIGATION_PADDING = 10;
   const router = useRouter();
   const [activeView, setActiveView] = useState(0);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -85,24 +88,29 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="sm"
+        maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם זירה`}
       >
-        {activeView === 0 && (
-          <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
-        )}
-        {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
+        <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
+          {activeView === 0 && (
+            <QueuerTeamDisplay eventState={eventState} teams={teams} matches={matches} />
+          )}
+          {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
+          {activeView === 2 && (
+            <QueuerFieldSchedule event={event} matches={matches} teams={teams} tables={tables} />
+          )}
+        </Box>
         <BottomNavigation
           showLabels
           value={activeView}
           onChange={(event, newValue) => {
             setActiveView(newValue);
           }}
-          sx={{ position: 'fixed', bottom: 0, right: 0, width: '100vw' }}
+          sx={{ position: 'fixed', bottom: 0, right: 0, height: NAVIGATION_HEIGHT, width: '100vw' }}
         >
           <BottomNavigationAction label="בית" icon={<HomeRoundedIcon />} />
           <BottomNavigationAction label="מפת פיטים" icon={<MapRoundedIcon />} />
-          <BottomNavigationAction label='לו"ז' icon={<EventNoteRoundedIcon />} />
+          <BottomNavigationAction label="לוח זמנים" icon={<EventNoteRoundedIcon />} />
         </BottomNavigation>
       </Layout>
     </RoleAuthorizer>
