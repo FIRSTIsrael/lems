@@ -8,6 +8,8 @@ export const RoleTypes = [
   'referee',
   'head-referee',
   'scorekeeper',
+  'queuer',
+  'head-queuer',
   'pit-admin',
   'audience-display',
   'tournament-manager',
@@ -15,7 +17,7 @@ export const RoleTypes = [
 ] as const;
 export type Role = (typeof RoleTypes)[number];
 
-export const RoleAssociationTypes = ['room', 'table', 'category'] as const;
+export const RoleAssociationTypes = ['room', 'table', 'category', 'section'] as const;
 export type RoleAssociationType = (typeof RoleAssociationTypes)[number];
 
 export const getAssociationType = (role: Role): RoleAssociationType | undefined => {
@@ -26,6 +28,10 @@ export const getAssociationType = (role: Role): RoleAssociationType | undefined 
       return 'room';
     case 'referee':
       return 'table';
+    case 'queuer':
+      return 'section';
+    case 'head-queuer':
+      return 'section';
   }
   return undefined;
 };

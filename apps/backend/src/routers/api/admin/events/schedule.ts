@@ -23,7 +23,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   try {
     console.log('👓 Parsing file...');
     const timezone = req.body.timezone;
-    const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString('utf8');
+    const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
 
     const { teams, tables, rooms } = parseEventData(event, csvData);
 

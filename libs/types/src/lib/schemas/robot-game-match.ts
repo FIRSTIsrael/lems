@@ -8,6 +8,7 @@ export interface RobotGameMatchBrief {
   number: number;
   stage: RobotGameMatchStage;
   status: RobotGameMatchStatus;
+  called: boolean;
   scheduledTime?: Date;
   startTime?: Date;
 }
@@ -17,6 +18,7 @@ export interface RobotGameMatchParticipant {
   team?: WithId<Team>;
   tableId: ObjectId;
   tableName?: string;
+  queued: boolean;
   present: RobotGameMatchPresent;
   ready: boolean;
 }

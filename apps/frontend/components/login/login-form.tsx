@@ -13,13 +13,15 @@ import {
   RoleTypes,
   Role,
   RoleAssociationType,
-  getAssociationType
+  getAssociationType,
+  EventSectionTypes
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
 import { createRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
+import { localizedEventSection } from '../../localization/roles';
 
 interface Props {
   recaptchaRequired: boolean;
@@ -58,6 +60,10 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
       case 'category':
         return JudgingCategoryTypes.map(category => {
           return { id: category, name: localizedJudgingCategory[category].name };
+        });
+      case 'section':
+        return EventSectionTypes.map(section => {
+          return { id: section, name: localizedEventSection[section].name };
         });
     }
   };

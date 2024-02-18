@@ -7,6 +7,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import { JudgingSession, MATCH_LENGTH, RobotGameMatch } from '@lems/types';
 import Countdown from '../../general/countdown';
 
@@ -14,16 +15,18 @@ interface ActiveMatchProps {
   title: React.ReactNode;
   match: WithId<RobotGameMatch> | null;
   startTime?: Date;
-  activeSessions?: Array<WithId<JudgingSession>>;
+  sessions?: Array<WithId<JudgingSession>>;
   showDelay?: boolean;
+  showQueueStatus?: boolean;
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({
   title,
   match,
   startTime,
-  activeSessions,
-  showDelay = false
+  sessions = [],
+  showDelay = false,
+  showQueueStatus = false
 }) => {
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
@@ -68,9 +71,13 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
             match.participants
               .filter(p => p.teamId)
               .map((participant, index) => {
-                const teamJudgingSession = activeSessions?.find(
-                  s => s.teamId === participant.teamId
-                );
+                const teamInJudging = sessions
+                  .filter(
+                    s =>
+                      s.status === 'in-progress' ||
+                      (s.status === 'not-started' && s.called && s.queued)
+                  )
+                  .find(s => s.teamId === participant.teamId);
                 return (
                   <Grid key={index} xs={1}>
                     <Grid
@@ -96,11 +103,15 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />
                           </Tooltip>
+                        ) : participant.queued ? (
+                          <Tooltip title="הקבוצה בקיו" arrow>
+                            <PeopleAltRoundedIcon />
+                          </Tooltip>
                         ) : !participant.team?.registered ? (
                           <Tooltip title="הקבוצה טרם הגיעה לאירוע!" arrow>
                             <CloseRoundedIcon />
                           </Tooltip>
-                        ) : teamJudgingSession ? (
+                        ) : teamInJudging ? (
                           <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
                             <WarningAmberRoundedIcon />
                           </Tooltip>

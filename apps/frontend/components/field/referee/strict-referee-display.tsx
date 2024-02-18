@@ -50,7 +50,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
     (updatedMatchParticipant: Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>) => {
       if (!match || !participant || !participant.teamId) return;
       socket.emit(
-        'prestartMatchParticipant',
+        'updateMatchParticipant',
         match.eventId.toString(),
         match._id.toString(),
         {

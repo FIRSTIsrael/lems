@@ -8,6 +8,7 @@ import {
 import {
   handleStartSession,
   handleAbortSession,
+  handleUpdateSession,
   handleUpdateSessionTeam,
   handleUpdateRubric,
   handleCreateCvForm,
@@ -18,7 +19,8 @@ import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './ha
 import {
   handleAbortMatch,
   handleLoadMatch,
-  handlePrestartMatchParticipant,
+  handleUpdateMatchParticipant,
+  handleUpdateMatchBrief,
   handleStartMatch,
   handleStartTestMatch,
   handleUpdateScoresheet,
@@ -47,6 +49,8 @@ const websocket = (
 
   socket.on('updateJudgingSessionTeam', (...args) => handleUpdateSessionTeam(namespace, ...args));
 
+  socket.on('updateJudgingSession', (...args) => handleUpdateSession(namespace, ...args));
+
   socket.on('callLeadJudge', (...args) => handleCallLeadJudge(namespace, ...args));
 
   socket.on('updateRubric', (...args) => handleUpdateRubric(namespace, ...args));
@@ -71,9 +75,11 @@ const websocket = (
 
   socket.on('updateMatchTeams', (...args) => handleUpdateMatchTeams(namespace, ...args));
 
-  socket.on('prestartMatchParticipant', (...args) =>
-    handlePrestartMatchParticipant(namespace, ...args)
+  socket.on('updateMatchParticipant', (...args) =>
+    handleUpdateMatchParticipant(namespace, ...args)
   );
+
+  socket.on('updateMatchBrief', (...args) => handleUpdateMatchBrief(namespace, ...args));
 
   socket.on('updateScoresheet', (...args) => handleUpdateScoresheet(namespace, ...args));
 

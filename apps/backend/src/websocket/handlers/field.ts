@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import dayjs from 'dayjs';
-import { MATCH_LENGTH, RobotGameMatchParticipant } from '@lems/types';
+import { MATCH_LENGTH, RobotGameMatchParticipant, RobotGameMatchBrief } from '@lems/types';
 
 export const handleLoadMatch = async (namespace, eventId: string, matchId: string, callback) => {
   let match = await db.getMatch({
@@ -98,14 +98,16 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
   );
 
   const match = await db.getMatch({ _id: new ObjectId(matchId) });
+  const switchToRanking = match.stage === 'ranking' && eventState.currentStage === 'practice';
+  const advanceRound = switchToRanking || match.round > eventState.currentRound;
 
   await db.updateEventState(
     { _id: eventState._id },
     {
       activeMatch: match._id,
       ...(match.stage !== 'test' && { loadedMatch: null }),
-      ...(match.stage === 'ranking' &&
-        eventState.currentStage === 'practice' && { currentStage: 'ranking' })
+      ...(switchToRanking && { currentStage: 'ranking' }),
+      ...(advanceRound && { currentRound: match.round })
     }
   );
 
@@ -206,7 +208,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
   namespace.to('field').emit('matchUpdated', match);
 };
 
-export const handlePrestartMatchParticipant = async (
+export const handleUpdateMatchParticipant = async (
   namespace,
   eventId: string,
   matchId: string,
@@ -242,6 +244,41 @@ export const handlePrestartMatchParticipant = async (
     Object.fromEntries(
       Object.entries(data).map(([key, value]) => [`participants.$.${key}` as string, value])
     )
+  );
+
+  callback({ ok: true });
+  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  namespace.to('field').emit('matchUpdated', match);
+};
+
+export const handleUpdateMatchBrief = async (
+  namespace,
+  eventId: string,
+  matchId: string,
+  newBrief: Partial<Pick<RobotGameMatchBrief, 'called'>>,
+  callback
+) => {
+  let match = await db.getMatch({
+    _id: new ObjectId(matchId),
+    eventId: new ObjectId(eventId)
+  });
+
+  if (!match) {
+    callback({
+      ok: false,
+      error: `Could not find match ${matchId} in event ${eventId}!`
+    });
+    return;
+  }
+
+  console.log(`🖊️ Updating match data of match ${matchId} at event ${eventId}`);
+
+  await db.updateMatch(
+    {
+      _id: new ObjectId(matchId),
+      eventId: new ObjectId(eventId)
+    },
+    { ...newBrief }
   );
 
   callback({ ok: true });

@@ -1,6 +1,10 @@
 import { WithId } from 'mongodb';
 import { JudgingCategory, TicketType } from './constants';
-import { RobotGameMatch, RobotGameMatchParticipant } from './schemas/robot-game-match';
+import {
+  RobotGameMatch,
+  RobotGameMatchBrief,
+  RobotGameMatchParticipant
+} from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
@@ -87,6 +91,13 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  updateJudgingSession: (
+    eventId: string,
+    sessionId: string,
+    data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   callLeadJudge: (
     eventId: string,
     roomName: string,
@@ -164,6 +175,13 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  updateMatchBrief: (
+    eventId: string,
+    matchId: string,
+    newBrief: Partial<Pick<RobotGameMatchBrief, 'called'>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   updateMatchTeams: (
     eventId: string,
     matchId: string,
@@ -171,10 +189,12 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
-  prestartMatchParticipant: (
+  updateMatchParticipant: (
     eventId: string,
     matchId: string,
-    data: { teamId: string } & Partial<Pick<RobotGameMatchParticipant, 'present' | 'ready'>>,
+    data: { teamId: string } & Partial<
+      Pick<RobotGameMatchParticipant, 'present' | 'ready' | 'queued'>
+    >,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

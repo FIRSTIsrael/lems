@@ -46,11 +46,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
     >
       <Stack direction="row" spacing={2} mb={2}>
         <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
-        <ActiveMatch
-          title="המקצה הבא"
-          match={matches.find(match => match._id === eventState.loadedMatch) || null}
-          showDelay={true}
-        />
+        <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
       </Stack>
 
       <ControlActions

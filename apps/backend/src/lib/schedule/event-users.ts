@@ -8,7 +8,8 @@ import {
   RoleTypes,
   getAssociationType,
   JudgingCategoryTypes,
-  Role
+  Role,
+  EventSectionTypes
 } from '@lems/types';
 
 export const getEventUsers = (
@@ -56,19 +57,14 @@ const getAssociationValues = (
 ) => {
   const associationType = getAssociationType(role);
   if (!associationType) return null;
-
-  let associationValues;
   switch (associationType) {
     case 'room':
-      associationValues = rooms;
-      break;
+      return rooms;
     case 'table':
-      associationValues = tables;
-      break;
+      return tables;
     case 'category':
-      associationValues = JudgingCategoryTypes;
-      break;
+      return JudgingCategoryTypes;
+    case 'section':
+      return EventSectionTypes;
   }
-
-  return associationValues;
 };

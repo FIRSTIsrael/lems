@@ -26,6 +26,7 @@ export interface EventState {
   loadedMatch: ObjectId | null;
   activeMatch: ObjectId | null;
   currentStage: 'practice' | 'ranking';
+  currentRound: number;
   currentSession: number;
   audienceDisplay: AudienceDisplayState;
   presentations: { [key: string]: PresentationState };
