@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
+import rubrics from './rubrics';
 import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });

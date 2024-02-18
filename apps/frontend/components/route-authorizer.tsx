@@ -28,9 +28,13 @@ export const RouteAuthorizer: React.FC<RouteAuthorizerProps> = ({ children }) =>
   const authCheck = (url: string) => {
     const publicPaths = ['/login'];
     const adminPaths = ['/admin'];
+    const exportPaths = ['/export'];
     const path = url.split('?')[0];
 
     apiFetch('/api/me').then(response => {
+      if (exportPaths.includes(path)) {
+        setAuthorized(true);
+      }
       if (!response.ok && !publicPaths.includes(path)) {
         apiFetch('/auth/logout', { method: 'POST' }).then(response => {
           setAuthorized(false);
