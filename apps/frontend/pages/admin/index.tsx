@@ -6,7 +6,7 @@ import { WithId } from 'mongodb';
 import { Event, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import EventSelector from '../../components/login/event-selector';
+import EventSelector from '../../components/general/event-selector';
 import EventCreateForm from '../../components/admin/event-create-form';
 
 interface Props {

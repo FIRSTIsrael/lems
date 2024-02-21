@@ -25,8 +25,11 @@ const EventCreateForm = forwardRef((props, ref) => {
   const [salesforceId, setSalesforceId] = useState<string>('');
   const [color, setColor] = useState<DivisionColor>('red');
 
+  const resetTimePart = (date: Dayjs): Dayjs =>
+    date.set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0);
+
   const getDefaultDate = () => {
-    return dayjs().set('hours', 0).set('minutes', 0).set('seconds', 0);
+    return dayjs();
   };
 
   const [startDate, setStartDate] = useState<Dayjs | null>(getDefaultDate());
@@ -40,8 +43,12 @@ const EventCreateForm = forwardRef((props, ref) => {
       body: JSON.stringify({
         name,
         salesforceId,
-        startDate: (startDate || getDefaultDate()).tz('utc', true).toDate(),
-        endDate: (endDate || getDefaultDate()).tz('utc', true).toDate(),
+        startDate: resetTimePart(startDate || getDefaultDate())
+          .tz('utc', true)
+          .toDate(),
+        endDate: resetTimePart(endDate || getDefaultDate())
+          .tz('utc', true)
+          .toDate(),
         color,
         hasState: false
       })

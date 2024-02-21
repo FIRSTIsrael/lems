@@ -1,5 +1,8 @@
-import { useState, useMemo } from 'react';
-import { WithId } from 'mongodb';
+import { useState, useEffect, useMemo } from 'react';
+import { WithId, ObjectId } from 'mongodb';
+import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
 import {
   Paper,
   Stack,
@@ -18,19 +21,18 @@ import {
   Theme,
   useTheme,
   SelectChangeEvent,
-  FormControlLabel
+  FormControlLabel,
+  Modal
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import dayjs from 'dayjs';
 import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
+import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import { enqueueSnackbar } from 'notistack';
-import { fullMatch } from '@lems/utils/objects';
-import { useRouter } from 'next/router';
+import EventSelector from '../general/event-selector';
 
 interface EventScheduleEditorProps {
   event: WithId<Event>;
@@ -40,6 +42,14 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
   const theme = useTheme();
   const router = useRouter();
   const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
+  const [copyModal, setCopyModal] = useState(false);
+  const [events, setEvents] = useState<Array<WithId<Event>>>([]);
+
+  useEffect(() => {
+    apiFetch(`/public/events`).then(res => {
+      res.json().then(data => setEvents(data));
+    });
+  }, []);
 
   const sortedSchedule = useMemo(
     () =>
@@ -48,6 +58,34 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
       ),
     [schedule]
   );
+
+  const copyScheduleFrom = (eventId: string | ObjectId) => {
+    apiFetch(`/api/events/${eventId}?withSchedule=true`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.schedule?.length > 0) {
+          const getNewDate = (date: Date): Date => {
+            const hour = dayjs(date).get('hours');
+            const minute = dayjs(date).get('minutes');
+            return dayjs(event.startDate).set('hours', hour).set('minutes', minute).toDate();
+          };
+
+          const newSchedule = data.schedule.map((entry: EventScheduleEntry) => {
+            return {
+              ...entry,
+              startTime: getNewDate(entry.startTime),
+              endTime: getNewDate(entry.endTime)
+            };
+          });
+
+          setSchedule(newSchedule);
+          enqueueSnackbar('הלו"ז בכללי הועתק בהצלחה!', { variant: 'success' });
+          setCopyModal(false);
+        } else {
+          enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
+        }
+      });
+  };
 
   const updateEvent = () => {
     setSchedule(sortedSchedule);
@@ -247,10 +285,6 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
         >
           <AddIcon />
         </IconButton>
-        <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
-          שמירה
-        </Button>
-
         <Button
           variant="contained"
           sx={{ minWidth: 100 }}
@@ -259,7 +293,45 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
         >
           מיון
         </Button>
+        <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
+          שמירה
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          onClick={() => setCopyModal(true)}
+          disabled={schedule.length > 0}
+        >
+          העתקה מאירוע אחר
+        </Button>
       </Stack>
+      <Modal
+        open={copyModal}
+        onClose={() => setCopyModal(false)}
+        aria-labelledby="copy-schedule-modal"
+      >
+        <Paper
+          elevation={0}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 2
+          }}
+        >
+          <Typography variant="h2" pb={2} textAlign={'center'}>
+            {'העתקת לו"ז כללי'}
+          </Typography>
+          <EventSelector
+            events={events.filter(e => e._id.toString() !== event._id.toString())}
+            onChange={eventId => copyScheduleFrom(eventId)}
+          />
+        </Paper>
+      </Modal>
     </Box>
   );
 };
