@@ -15,8 +15,9 @@ import {
   Alert
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { localizedAward } from '@lems/season';
 import { fullMatch } from '@lems/utils/objects';
 import {
@@ -31,6 +32,7 @@ import { apiFetch } from '../../../lib/utils/fetch';
 import AwardWinnerSelector from './award-winner-selector';
 import ResultExportPaper from './result-export-paper';
 import AdvancingTeamsSelector from './advancing-teams-selector';
+import UploadFileButton from '../../general/upload-file';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
@@ -95,7 +97,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
         }}
         validateOnMount
       >
-        {({ submitForm, isSubmitting, isValid, values, errors }) => (
+        {({ submitForm, isSubmitting, isValid, values, errors, setValues }) => (
           <Form>
             <Stack spacing={2}>
               {awards.map((a, index) => (
@@ -128,9 +130,29 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
               {awards.length > 0 &&
                 (!readOnly ? (
                   <>
+                    <Button
+                      startIcon={<ClearRoundedIcon />}
+                      variant="contained"
+                      disabled={!values.awards.some(a => a.winner)}
+                      onClick={() =>
+                        setValues({
+                          ...values,
+                          advancingTeams: [],
+                          awards: values.awards.map(a => {
+                            return { ...a, winner: undefined };
+                          })
+                        })
+                      }
+                    >
+                      איפוס
+                    </Button>
+                    <UploadFileButton
+                      displayName="קובץ פרסים"
+                      urlPath={`/api/events/${event._id}/awards/winners/parse`}
+                      extension=".csv"
+                    />
                     <LoadingButton
-                      startIcon={<SaveOutlinedIcon />}
-                      sx={{ minWidth: 250 }}
+                      startIcon={<SaveRoundedIcon />}
                       variant="contained"
                       onClick={submitForm}
                       loading={isSubmitting}
@@ -139,8 +161,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       <span>שמירה</span>
                     </LoadingButton>
                     <Button
-                      startIcon={<LockOutlinedIcon />}
-                      sx={{ minWidth: 250 }}
+                      startIcon={<LockRoundedIcon />}
                       variant="contained"
                       onClick={() => setOpen(true)}
                       disabled={!values.awards.every(x => x.winner) || !isValid || readOnly}

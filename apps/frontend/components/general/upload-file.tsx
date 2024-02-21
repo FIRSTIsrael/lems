@@ -134,8 +134,8 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
                   {isProcessing
                     ? 'רק רגע, אנו מעבדים את הקובץ'
                     : isError
-                    ? `שגיאה בעדכון קובץ ${displayName}.`
-                    : null}
+                      ? `שגיאה בעדכון קובץ ${displayName}.`
+                      : null}
                 </Typography>
               </Stack>
             )}
