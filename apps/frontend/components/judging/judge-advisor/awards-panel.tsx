@@ -150,6 +150,10 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                       displayName="קובץ פרסים"
                       urlPath={`/api/events/${event._id}/awards/winners/parse`}
                       extension=".csv"
+                      disabled={
+                        values.awards.some(a => a.winner && !(typeof a.winner === 'string')) ||
+                        values.advancingTeams.length > 0
+                      }
                     />
                     <LoadingButton
                       startIcon={<SaveRoundedIcon />}
