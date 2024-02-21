@@ -11,10 +11,7 @@ import {
   JudgingSession,
   RobotGameMatchStage
 } from '@lems/types';
-
-type CSVLine = Record<string, string>;
-type Line = string[];
-type Block = { id: number; lines: Line[] };
+import { Line, getBlock, extractBlocksFromFile } from '../csv';
 
 const TEAMS_BLOCK_ID = 1;
 const PRACTICE_MATCHES_BLOCK_ID = 4;
@@ -29,33 +26,6 @@ const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
     status: 'not-started',
     participants: []
   } as RobotGameMatch;
-};
-
-const getBlock = (blocks: Array<Block>, blockId: number) => {
-  const block = blocks.find(b => b.id === blockId)?.lines;
-  return structuredClone(block);
-};
-
-const extractBlocksFromFile = (file: CSVLine[]): Array<Block> => {
-  const blocks = [];
-  for (let fileLine = 0; fileLine < file.length; fileLine++) {
-    if (file[fileLine][0] === 'Block Format') {
-      const blockId = parseInt(file[fileLine][1]);
-      const blockLines = [];
-
-      for (let blockLine = fileLine + 1; blockLine < file.length; blockLine++) {
-        if (file[blockLine][0] !== 'Block Format') {
-          blockLines.push(Object.values(file[blockLine]));
-        } else {
-          fileLine = blockLine - 1;
-          break;
-        }
-      }
-
-      blocks.push({ id: blockId, lines: blockLines });
-    }
-  }
-  return blocks;
 };
 
 const extractTeamsFromBlock = (teamBlock: Line[], event: WithId<Event>): Array<Team> => {

@@ -13,7 +13,7 @@ import EventAwardEditor from '../../../components/admin/event-award-editor';
 import DeleteEventData from '../../../components/admin/delete-event-data';
 import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
-import UploadFileButton from '../../../components/admin/upload-file';
+import UploadFileButton from '../../../components/general/upload-file';
 
 interface Props {
   event: WithId<Event>;
