@@ -133,7 +133,9 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                     <Button
                       startIcon={<ClearRoundedIcon />}
                       variant="contained"
-                      disabled={!values.awards.some(a => a.winner)}
+                      disabled={
+                        !values.awards.some(a => a.winner) && !(values.advancingTeams.length > 0)
+                      }
                       onClick={() =>
                         setValues({
                           ...values,
