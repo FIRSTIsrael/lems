@@ -22,7 +22,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
       <Stack
         height="calc(100% - 100)"
         width={splitTeamsIntoColumns ? '100%' : '70%'}
-        alignItems={'center'}
+        alignItems="center"
         sx={{ position: 'absolute', top: 15 }}
       >
         <Typography variant="h1" fontSize="6rem" textAlign="center" gutterBottom>
