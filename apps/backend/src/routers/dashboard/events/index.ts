@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import dashboardTeamsRouter from './teams';
+import dashboardTeamsRouter from './teams/index';
 import dashboardEventValidator from '../../../middlewares/dashboard/event-validator';
 
 const router = express.Router({ mergeParams: true });
