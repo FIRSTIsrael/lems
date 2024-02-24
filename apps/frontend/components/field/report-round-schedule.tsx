@@ -52,9 +52,15 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
             {team &&
               (extendedTeamInfo ? (
                 <Stack>
-                  <Typography>{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
-                  <Typography>{team.affiliation.name}</Typography>
-                  <Typography>{team.affiliation.city}</Typography>
+                  <Typography
+                    fontWeight={500}
+                  >{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
+                  <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+                    {team.affiliation.name}
+                  </Typography>
+                  <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+                    {team.affiliation.city}
+                  </Typography>
                 </Stack>
               ) : (
                 <StyledTeamTooltip team={team} />

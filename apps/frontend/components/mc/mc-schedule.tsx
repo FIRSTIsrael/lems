@@ -19,8 +19,8 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
     [matches, eventState.loadedMatch]
   );
 
-  const practiceMatches = matches.filter(m => m.stage === 'practice');
-  const rankingMatches = matches.filter(m => m.stage === 'ranking');
+  const practiceMatches = matches.filter(m => m.status !== 'completed' && m.stage === 'practice');
+  const rankingMatches = matches.filter(m => m.status !== 'completed' && m.stage === 'ranking');
 
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
@@ -54,14 +54,13 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
     <>
       <Stack spacing={2}>
         <Paper sx={{ p: 2 }}>
-          <Typography component="h2" fontSize="1.5rem" fontWeight={500}>
-            {`מקצה נוכחי -  ${
-              loadedMatch?.number
-                ? `מקצה ${localizedMatchStage[loadedMatch?.stage]} #${loadedMatch?.number}`
-                : loadedMatch?.stage === 'test'
-                  ? 'מקצה בדיקה'
-                  : 'אין מקצה טעון כרגע'
-            }`}
+          <Typography fontSize="1.75rem" fontWeight={700} textAlign="center" mb={2}>
+            מקצה נוכחי -{' '}
+            {loadedMatch?.number
+              ? `מקצה ${localizedMatchStage[loadedMatch?.stage]} #${loadedMatch?.number}`
+              : loadedMatch?.stage === 'test'
+                ? 'מקצה בדיקה'
+                : 'אין מקצה טעון כרגע'}
           </Typography>
           {loadedMatch &&
             loadedMatch.participants
@@ -70,11 +69,12 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
                 const registered = teams.find(
                   t => t._id.toString() === participant.teamId?.toString()
                 )?.registered;
-                if (!registered || participant.present === 'no-show') return;
+                if (!registered) return;
 
                 return (
-                  <Typography fontSize="1.25rem" gutterBottom key={participant.teamId?.toString()}>
-                    {`שולחן ${participant.tableName} - ${participant.team && localizeTeam(participant.team)}`}
+                  <Typography fontSize="1.125rem" gutterBottom key={participant.teamId?.toString()}>
+                    <b>שולחן {participant.tableName}:</b>{' '}
+                    {participant.team && localizeTeam(participant.team)}
                   </Typography>
                 );
               })}

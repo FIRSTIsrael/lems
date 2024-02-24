@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { WithId } from 'mongodb';
-import { Paper, Typography } from '@mui/material';
+import { Box, Divider, Paper, Stack, Typography } from '@mui/material';
 import { Event, Team, Award } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { localizedAward } from '@lems/season';
@@ -33,25 +33,28 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
 
       return (
         <Fragment key={awardName}>
-          <Typography fontSize="1.5rem" fontWeight={500}>
-            <Markdown>{`פרס ${localized.name}`}</Markdown>
-          </Typography>
-          <Typography fontSize="1.25rem">
-            <Markdown>{localized.description}</Markdown>
-          </Typography>
+          <Box>
+            <Typography fontSize="1.5rem" fontWeight={700}>
+              פרס {localized.name}
+            </Typography>
+            <Typography fontSize="1.25rem">
+              <Markdown>{localized.description}</Markdown>
+            </Typography>
 
-          {sortedAwards.map(award => {
-            return (
-              <Typography fontSize="1.25rem" key={award.name} gutterBottom>
-                {sortedAwards.length > 1 && 'במקום ה-' + award.place + ': '}
-                {award.winner
-                  ? typeof award.winner === 'string'
-                    ? award.winner
-                    : localizeTeam(award.winner)
-                  : ''}
-              </Typography>
-            );
-          })}
+            {sortedAwards.map(award => {
+              return (
+                <Typography fontSize="1.25rem" key={award.name + award.place} gutterBottom>
+                  {sortedAwards.length > 1 && 'במקום ה-' + award.place + ': '}
+                  {award.winner
+                    ? typeof award.winner === 'string'
+                      ? award.winner
+                      : localizeTeam(award.winner)
+                    : ''}
+                </Typography>
+              );
+            })}
+          </Box>
+          <Divider />
         </Fragment>
       );
     });
@@ -59,23 +62,23 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
     if (advancingTeams.length > 0) {
       const advancingTeamsText = (
         <>
-          <Typography fontSize="1.5rem" fontWeight={500} sx={{ pt: 2 }}>
+          <Typography fontSize="1.5rem" fontWeight={700} sx={{ pt: 2 }}>
             קבוצות המעפילות לתחרות האליפות
           </Typography>
           <Typography fontSize="1.25rem">
-            <Markdown>
-              {`רגע לפני שנכריז מי הן הקבוצות הזוכות בפרס האליפות, ישנן ${advancingTeams.length} קבוצות נוספות בתחרות אשר
-              יזכו להעפיל לתחרות האליפות. אנחנו שמחים להכריז שהקבוצות הבאות, ללא סדר מסוים, זכאיות גם הן לעלות שלב:`}
-            </Markdown>
+            רגע לפני שנכריז מי הן הקבוצות הזוכות בפרס האליפות, ישנן {advancingTeams.length} קבוצות
+            נוספות בתחרות אשר יזכו להעפיל לתחרות האליפות. אנחנו שמחים להכריז שהקבוצות הבאות, ללא סדר
+            מסוים, זכאיות גם הן לעלות שלב:
           </Typography>
           {advancingTeams.map(team => (
             <Typography key={team._id.toString()} fontSize="1.25rem" gutterBottom>
               {localizeTeam(team)}
             </Typography>
           ))}
+          <Divider />
         </>
       );
-      // Place advancement slide directly before champions award
+      // Place advancement script directly before champions award
       const advancingTeamsIndex = awardScripts.findIndex(script => script.key === 'champions');
       awardScripts.splice(advancingTeamsIndex, 0, advancingTeamsText);
     }
@@ -84,12 +87,12 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
   }, [advancingTeams, awards]);
 
   return (
-    <Paper sx={{ width: '100%', p: 2 }}>
-      <Typography component="h1" fontSize="2rem" fontWeight={600} align="center">
+    <Stack component={Paper} width="100%" p={2} spacing={2}>
+      <Typography fontSize="2rem" fontWeight={700} align="center">
         {event.name} | פרסים
       </Typography>
       {lineup}
-    </Paper>
+    </Stack>
   );
 };
 
