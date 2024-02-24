@@ -26,7 +26,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
         sx={{ position: 'absolute', top: 15 }}
       >
         <Typography variant="h1" fontSize="6rem" textAlign="center" gutterBottom>
-          קבוצות המעפילות שלב
+          קבוצות המעפילות לתחרות האליפות
         </Typography>
         <Box
           sx={{
