@@ -5,12 +5,13 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, EventState, RobotGameMatch, SafeUser, Team } from '@lems/types';
+import { Event, EventState, RobotGameMatch, RobotGameTable, SafeUser, Team } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import McSchedule from '../../../components/mc/mc-schedule';
 import AwardsLineup from '../../../components/mc/awards-lineup';
 import AwardsNotReadyCard from '../../../components/mc/awards-not-ready-card';
+import ReportLink from '../../../components/general/report-link';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -21,6 +22,7 @@ interface Props {
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
+  tables: Array<WithId<RobotGameTable>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -28,7 +30,8 @@ const Page: NextPage<Props> = ({
   event,
   eventState: initialEventState,
   teams: initialTeams,
-  matches: initialMatches
+  matches: initialMatches,
+  tables
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
@@ -83,6 +86,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        action={<ReportLink event={event} />}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -96,7 +100,7 @@ const Page: NextPage<Props> = ({
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <McSchedule eventState={eventState} teams={teams} matches={matches} />
+            <McSchedule eventState={eventState} teams={teams} matches={matches} tables={tables} />
           </TabPanel>
           <TabPanel value="2">
             {eventState.presentations['awards']?.enabled ? (
@@ -120,7 +124,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         event: `/api/events/${user.eventId}`,
         teams: `/api/events/${user.eventId}/teams`,
         eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`
+        matches: `/api/events/${user.eventId}/matches`,
+        tables: `/api/events/${user.eventId}/tables`
       },
       ctx
     );

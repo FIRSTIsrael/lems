@@ -17,7 +17,6 @@ interface ActiveMatchProps {
   startTime?: Date;
   sessions?: Array<WithId<JudgingSession>>;
   showDelay?: boolean;
-  showQueueStatus?: boolean;
 }
 
 const ActiveMatch: React.FC<ActiveMatchProps> = ({
@@ -25,8 +24,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
   match,
   startTime,
   sessions = [],
-  showDelay = false,
-  showQueueStatus = false
+  showDelay = false
 }) => {
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();

@@ -7,7 +7,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Stack,
+  Typography
 } from '@mui/material';
 import {
   Team,
@@ -24,12 +26,14 @@ interface ReportMatchScheduleRowProps {
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
+  extendedTeamInfo?: boolean;
 }
 
 const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
   match,
   tables,
-  teams
+  teams,
+  extendedTeamInfo = false
 }) => {
   const startTime = dayjs(match.scheduledTime);
 
@@ -45,7 +49,16 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
 
         return (
           <TableCell key={table._id.toString()} align="center">
-            {team && <StyledTeamTooltip team={team} />}
+            {team &&
+              (extendedTeamInfo ? (
+                <Stack>
+                  <Typography>{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
+                  <Typography>{team.affiliation.name}</Typography>
+                  <Typography>{team.affiliation.city}</Typography>
+                </Stack>
+              ) : (
+                <StyledTeamTooltip team={team} />
+              ))}
           </TableCell>
         );
       })}
@@ -60,6 +73,7 @@ interface ReportRoundScheduleProps {
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
   eventSchedule: Array<EventScheduleEntry>;
+  extendedTeamInfo?: boolean;
 }
 
 const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
@@ -68,7 +82,8 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
   matches,
   tables,
   teams,
-  eventSchedule
+  eventSchedule,
+  extendedTeamInfo = false
 }) => {
   return (
     <TableContainer component={Paper}>
@@ -92,7 +107,13 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
         </TableHead>
         <TableBody>
           {matches.map(m => (
-            <ReportMatchScheduleRow match={m} tables={tables} teams={teams} key={m.number} />
+            <ReportMatchScheduleRow
+              match={m}
+              tables={tables}
+              teams={teams}
+              extendedTeamInfo={extendedTeamInfo}
+              key={m.number}
+            />
           ))}
           {eventSchedule
             .filter(c => {
