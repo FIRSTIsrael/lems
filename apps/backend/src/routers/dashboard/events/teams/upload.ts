@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import fileUpload from 'express-fileupload';
 import { uploadFile } from '../../../../lib/upload';
+import * as db from '@lems/database';
+import { ObjectId } from 'mongodb';
 
 const router = express.Router({ mergeParams: true });
 
@@ -9,12 +11,21 @@ router.post(
   '/team-info',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
+    const team = await db.getTeam({
+      eventId: new ObjectId(req.event._id),
+      number: Number(req.params.teamNumber)
+    });
     const pdfData = (req.files.file as fileUpload.UploadedFile)?.data;
-    const path = await uploadFile(
-      pdfData,
-      `${req.params.eventId}/teams/${req.teamNumber}/team-info.pdf`
-    );
+    if (!team || !pdfData) {
+      res.status(400).json({ error: 'BAD_REQUEST' });
+      return;
+    }
+
+    const key = `${req.params.eventId}/teams/${req.teamNumber}/team-info.pdf`;
+    const path = await uploadFile(pdfData, key);
+    const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
+    await db.updateTeam(team, { ...team, profileDocumentUrl: url });
     res.json({ ok: true });
   })
 );
@@ -23,12 +34,21 @@ router.get(
   '/robot-design-notebook',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
+    const team = await db.getTeam({
+      eventId: new ObjectId(req.event._id),
+      number: Number(req.params.teamNumber)
+    });
     const pdfData = (req.files.file as fileUpload.UploadedFile)?.data;
-    const path = await uploadFile(
-      pdfData,
-      `${req.params.eventId}/teams/${req.teamNumber}/robot-design-notebook.pdf`
-    );
+    if (!team || !pdfData) {
+      res.status(400).json({ error: 'BAD_REQUEST' });
+      return;
+    }
+
+    const key = `${req.params.eventId}/teams/${req.teamNumber}/robot-design-document.pdf`;
+    const path = await uploadFile(pdfData, key);
+    const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
+    await db.updateTeam(team, { ...team, robotDesignDocumentUrl: url });
     res.json({ ok: true });
   })
 );
