@@ -1,8 +1,6 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import fileUpload from 'express-fileupload';
-import { ObjectCannedACL, PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client } from '../../../../lib/s3-client';
 import { uploadFile } from '../../../../lib/upload';
 
 const router = express.Router({ mergeParams: true });
