@@ -13,7 +13,7 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
       eventId: new ObjectId(req.event._id),
-      number: Number(req.params.teamNumber)
+      number: Number(req.teamNumber)
     });
     const pdfData = (req.files.file as fileUpload.UploadedFile)?.data;
     if (!team || !pdfData) {
@@ -21,7 +21,7 @@ router.post(
       return;
     }
 
-    const key = `${req.params.eventId}/teams/${req.teamNumber}/team-info.pdf`;
+    const key = `${req.event._id}/teams/${req.teamNumber}/team-info.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
@@ -30,13 +30,13 @@ router.post(
   })
 );
 
-router.get(
+router.post(
   '/robot-design-notebook',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
       eventId: new ObjectId(req.event._id),
-      number: Number(req.params.teamNumber)
+      number: Number(req.teamNumber)
     });
     const pdfData = (req.files.file as fileUpload.UploadedFile)?.data;
     if (!team || !pdfData) {
@@ -44,7 +44,7 @@ router.get(
       return;
     }
 
-    const key = `${req.params.eventId}/teams/${req.teamNumber}/robot-design-document.pdf`;
+    const key = `${req.event._id}/teams/${req.teamNumber}/robot-design-notebook.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
