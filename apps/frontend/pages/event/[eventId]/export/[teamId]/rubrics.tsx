@@ -52,6 +52,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
           </Stack>
         </Grid>
         <Grid xs={2}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="לוגו של תוכניות FIRST LEGO League Challenge"
             src="/assets/audience-display/sponsors/fllc-horizontal.svg"
@@ -132,13 +133,15 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
                 />
                 {section.fields.map(field => {
                   const labels = [field.label_1, field.label_2, field.label_3, field.label_4];
+                  const rubricValues = rubric.data?.values as any;
 
                   return (
                     <>
                       <TableRow>
                         {labels.map((label, index) => {
                           const cellValue = index + 1;
-                          const selectedCell = rubric.data?.values?.[field.id]?.value === cellValue;
+
+                          const isCellSelected = rubricValues?.[field.id]?.value === cellValue;
                           return (
                             <TableCell
                               key={label ? label + index : index}
@@ -167,15 +170,15 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
                                     checkedIcon={
                                       <CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />
                                     }
-                                    checked={selectedCell}
+                                    checked={isCellSelected}
                                   />
                                 }
-                                disabled={!selectedCell}
+                                disabled={!isCellSelected}
                                 label={
                                   <Typography
                                     fontSize="0.75em"
-                                    fontWeight={selectedCell ? 700 : undefined}
-                                    color={!selectedCell ? 'text.secondary' : ''}
+                                    fontWeight={isCellSelected ? 700 : undefined}
+                                    color={!isCellSelected ? 'text.secondary' : ''}
                                   >
                                     <Markdown skipHtml>{label || ''}</Markdown>
                                   </Typography>
@@ -186,7 +189,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
                           );
                         })}
                       </TableRow>
-                      {rubric.data?.values?.[field.id].value === 4 && (
+                      {rubricValues?.[field.id].value === 4 && (
                         <TableRow>
                           <TableCell
                             colSpan={4}
@@ -208,7 +211,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
                                 נימוק:
                               </Typography>
                               <Typography fontSize="0.875rem">
-                                {rubric.data?.values?.[field.id].notes}
+                                {rubricValues?.[field.id].notes}
                               </Typography>
                             </Box>
                           </TableCell>

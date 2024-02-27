@@ -216,6 +216,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team
           </Stack>
         </Grid>
         <Grid xs={2}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="לוגו של תוכניות FIRST LEGO League Challenge"
             src="/assets/audience-display/sponsors/fllc-horizontal.svg"
