@@ -76,23 +76,6 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
             </IconButton>
           </span>
         </Tooltip>
-        <Tooltip
-          title={
-            team.robotDesignDocumentUrl ? 'צפייה במסמך תכנון הרובוט' : 'לא הועלה מסמך תכנון רובוט'
-          }
-          arrow
-        >
-          <span>
-            <IconButton
-              href={team.robotDesignDocumentUrl ? team.robotDesignDocumentUrl : ''}
-              target="_blank"
-              disabled={!team.robotDesignDocumentUrl}
-              color="primary"
-            >
-              <PageIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
       </TableCell>
       <TableCell align="center" sx={{ py: 0 }}>
         {JudgingCategoryTypes.map(judgingCategory => {
