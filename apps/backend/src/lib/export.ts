@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 
-export const saveWebpageAsPdf = async (path: string) => {
+export const getWebpageAsPdf = async (path: string) => {
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
