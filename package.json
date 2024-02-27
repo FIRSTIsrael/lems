@@ -40,6 +40,7 @@
     "node-schedule": "^2.1.1",
     "notistack": "^3.0.1",
     "promise": "^8.3.0",
+    "puppeteer": "^22.3.0",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
@@ -75,8 +76,8 @@
     "@types/express-fileupload": "^1.4.4",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mongodb": "^4.0.7",
-    "@types/react": "18.2.58",
     "@types/node": "^20.11.20",
+    "@types/react": "18.2.58",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "18.2.19",
     "@types/react-signature-canvas": "^1.0.5",
@@ -98,4 +99,3 @@
     "typescript": "~5.3.3"
   }
 }
-
