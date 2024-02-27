@@ -17,7 +17,7 @@
     "@json2csv/plainjs": "^7.0.6",
     "@mui/base": "^5.0.0-beta.37",
     "@mui/icons-material": "^5.15.11",
-    "@mui/lab": "^5.0.0-alpha.165",
+    "@mui/lab": "^5.0.0-alpha.166",
     "@mui/material": "^5.15.10",
     "@mui/x-data-grid": "^6.19.5",
     "@mui/x-date-pickers": "^6.19.5",
