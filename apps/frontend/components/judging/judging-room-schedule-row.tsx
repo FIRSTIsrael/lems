@@ -62,14 +62,31 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
       </RoleAuthorizer>
       <TableCell align="center">
         <Tooltip
-          title={team.profileDocument ? 'צפייה בדף המידע הקבוצתי' : 'לא הועלה דף מידע קבוצתי'}
+          title={team.profileDocumentUrl ? 'צפייה בדף המידע הקבוצתי' : 'לא הועלה דף מידע קבוצתי'}
           arrow
         >
           <span>
             <IconButton
-              href={team.profileDocument ? team.profileDocument.link : ''}
+              href={team.profileDocumentUrl ? team.profileDocumentUrl : ''}
               target="_blank"
-              disabled={!team.profileDocument}
+              disabled={!team.profileDocumentUrl}
+              color="primary"
+            >
+              <PageIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip
+          title={
+            team.robotDesignDocumentUrl ? 'צפייה במסמך תכנון הרובוט' : 'לא הועלה מסמך תכנון רובוט'
+          }
+          arrow
+        >
+          <span>
+            <IconButton
+              href={team.robotDesignDocumentUrl ? team.robotDesignDocumentUrl : ''}
+              target="_blank"
+              disabled={!team.robotDesignDocumentUrl}
               color="primary"
             >
               <PageIcon />

@@ -19,7 +19,7 @@ import wsValidateEvent from './middlewares/websocket/event-validator';
 const app = express();
 const server = http.createServer(app);
 const corsOptions = {
-  origin: ['http://localhost:4200', /\.firstisrael\.org.il$/],
+  origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],
   credentials: true
 };
 const io = new Server(server, { cors: corsOptions });

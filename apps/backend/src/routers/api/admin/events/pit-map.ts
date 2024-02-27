@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import fileUpload from 'express-fileupload';
-import { ObjectCannedACL, PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client } from '../../../../lib/s3-client';
+import { uploadFile } from '../../../../lib/upload';
 
 const router = express.Router({ mergeParams: true });
 
@@ -11,21 +10,9 @@ router.post(
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
     const pngData = (req.files.file as fileUpload.UploadedFile)?.data;
-    const bucketParams = {
-      ACL: 'public-read' as ObjectCannedACL,
-      Bucket: process.env.DIGITALOCEAN_SPACE,
-      Key: `pit-maps/${req.params.eventId}.png`,
-      Body: pngData
-    };
-
-    try {
-      await s3Client.send(new PutObjectCommand(bucketParams));
-      console.log('Successfully uploaded object: ' + bucketParams.Bucket + '/' + bucketParams.Key);
-      res.json({ ok: true });
-    } catch (err) {
-      console.log('Failed to upload object: ' + err);
-      res.status(500).json({ error: err });
-    }
+    const path = await uploadFile(pngData, `pit-maps/${req.params.eventId}.png`);
+    console.log('Successfully uploaded object: ' + path);
+    res.json({ ok: true });
   })
 );
 

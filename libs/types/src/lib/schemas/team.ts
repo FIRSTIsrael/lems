@@ -9,6 +9,7 @@ export interface Team {
     name: string;
     city: string;
   };
-  profileDocument?: { id: string; link: string };
+  profileDocumentUrl?: string;
+  robotDesignDocumentUrl?: string;
   advancing?: boolean;
 }

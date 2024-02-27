@@ -5,6 +5,7 @@ import dashboardTeamValidator from '../../../../middlewares/dashboard/team-valid
 import scheduleRouter from './schedule';
 import exportRouter from './export';
 import uploadRouter from './upload';
+import { ObjectId } from 'mongodb';
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,6 +18,17 @@ router.get(
 );
 
 router.use('/:teamNumber', dashboardTeamValidator);
+
+router.get(
+  '/:teamNumber',
+  asyncHandler(async (req: Request, res: Response) => {
+    const team = await db.getTeam({
+      eventId: new ObjectId(req.event._id),
+      number: Number(req.params.teamNumber)
+    });
+    res.json(team);
+  })
+);
 
 router.use('/:teamNumber/schedule', scheduleRouter);
 
