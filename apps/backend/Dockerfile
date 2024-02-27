@@ -45,7 +45,7 @@ RUN chown -R backend:lems .
 # RUN chown backend:lems /root/mongo-ca-certificate.crt
 
 WORKDIR /app/backend
-RUN npm ci
+RUN npm i --omit=dev
 
 EXPOSE 3333
 
