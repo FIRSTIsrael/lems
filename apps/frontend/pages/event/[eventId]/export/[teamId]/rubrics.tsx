@@ -1,5 +1,4 @@
 import { GetServerSideProps, NextPage } from 'next';
-import Image from 'next/image';
 import { WithId } from 'mongodb';
 import { Event, JudgingCategory, Rubric, SEASON_NAME, Team } from '@lems/types';
 import { serverSideGetRequests } from '../../../../../lib/utils/fetch';
@@ -20,7 +19,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography
 } from '@mui/material';
 import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
@@ -30,13 +28,13 @@ import Markdown from 'react-markdown';
 import HeaderRow from '../../../../../components/judging/rubrics/header-row';
 import TitleRow from '../../../../../components/judging/rubrics/title-row';
 
-interface ExportRubricProps {
+interface ExportRubricPageProps {
   event: WithId<Event>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
 }
 
-const ExportRubricPage: NextPage<ExportRubricProps> = ({ event, team, rubric }) => {
+const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric }) => {
   const schema = rubricsSchemas[rubric.category];
   const isCoreValues = rubric.category === 'core-values';
   return (
@@ -45,7 +43,7 @@ const ExportRubricPage: NextPage<ExportRubricProps> = ({ event, team, rubric }) 
         <Grid xs={10}>
           <Stack justifyContent="space-between" height="100%">
             <Typography fontSize="0.75rem" color="text.secondary">
-              הופק מתוך מערכת השיפוט של <em>FIRST</em> ישראל ({rubric._id.toString()}) |{' '}
+              הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({rubric._id.toString()}) |{' '}
               {event.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
             <Typography fontSize="1.75rem" fontWeight={700}>
@@ -225,7 +223,7 @@ const ExportRubricPage: NextPage<ExportRubricProps> = ({ event, team, rubric }) 
         </Grid>
         <Grid xs={5.5}>
           <Stack spacing={1} textAlign="center">
-            <Typography fontWeight={700}>{schema.feedback[0].title}</Typography>
+            <Typography fontWeight={700}>{schema.feedback?.[0].title}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.greatJob}</Typography>
           </Stack>
         </Grid>
@@ -234,7 +232,7 @@ const ExportRubricPage: NextPage<ExportRubricProps> = ({ event, team, rubric }) 
         </Grid>
         <Grid xs={5.5}>
           <Stack spacing={1} textAlign="center">
-            <Typography fontWeight={700}>{schema.feedback[1].title}</Typography>
+            <Typography fontWeight={700}>{schema.feedback?.[1].title}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.thinkAbout}</Typography>
           </Stack>
         </Grid>
