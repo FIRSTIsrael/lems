@@ -242,7 +242,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team
             style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
           />
           <Typography fontSize="2rem" fontWeight={700}>
-            {scoresheet.data?.score} נקודות!
+            {scoresheet.data?.score} נקודות
           </Typography>
         </Stack>
       </Stack>
