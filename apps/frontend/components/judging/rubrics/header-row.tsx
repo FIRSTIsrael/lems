@@ -34,8 +34,8 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
             px: '0.5em',
             top: theme => theme.mixins.toolbar.minHeight,
             '@media print': {
-              position: 'inherit',
-              top: 'unset'
+              py: '0.5em',
+              px: '0.25em'
             }
           }}
         >

@@ -21,6 +21,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
   } catch {
     //Invalid token
+    console.log(req.headers);
   }
 
   return res.status(401).json({ error: 'UNAUTHORIZED' });

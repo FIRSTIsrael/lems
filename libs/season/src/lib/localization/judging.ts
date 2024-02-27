@@ -5,7 +5,7 @@ export const localizedJudgingCategory: {
 } = {
   'innovation-project': { name: 'פרויקט החדשנות' },
   'robot-design': { name: 'תכנון הרובוט' },
-  'core-values': { name: 'ערכי ליבה' }
+  'core-values': { name: 'ערכי הליבה' }
 };
 
 export const localizedAward: {

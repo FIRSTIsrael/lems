@@ -21,14 +21,17 @@ const TitleRow = ({ title, description, category: type }: Props) => {
       <TableCell
         align="center"
         sx={{
-          border: '1px solid #000',
-          borderTop: '2px solid #000',
+          border: '2px solid #000',
           bgcolor: colors[type],
           py: '1em',
           px: '1.5em',
           textAlign: 'start',
           fontSize: '0.875em',
-          fontWeight: 500
+          fontWeight: 500,
+          '@media print': {
+            py: 0,
+            px: '0.25em'
+          }
         }}
         colSpan={4}
       >
