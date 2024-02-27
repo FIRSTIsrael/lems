@@ -67,7 +67,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
         >
           <span>
             <IconButton
-              href={team.profileDocumentUrl ? 'https://' + team.profileDocumentUrl : ''}
+              href={team.profileDocumentUrl ? team.profileDocumentUrl : ''}
               target="_blank"
               disabled={!team.profileDocumentUrl}
               color="primary"
@@ -84,7 +84,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
         >
           <span>
             <IconButton
-              href={team.robotDesignDocumentUrl ? 'https://' + team.robotDesignDocumentUrl : ''}
+              href={team.robotDesignDocumentUrl ? team.robotDesignDocumentUrl : ''}
               target="_blank"
               disabled={!team.robotDesignDocumentUrl}
               color="primary"

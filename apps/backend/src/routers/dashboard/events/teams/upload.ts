@@ -23,7 +23,7 @@ router.post(
 
     const key = `${req.event._id}/teams/${req.teamNumber}/team-info.pdf`;
     const path = await uploadFile(pdfData, key);
-    const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
+    const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
     await db.updateTeam(team, { ...team, profileDocumentUrl: url });
     res.json({ ok: true });
@@ -46,7 +46,7 @@ router.post(
 
     const key = `${req.event._id}/teams/${req.teamNumber}/robot-design-notebook.pdf`;
     const path = await uploadFile(pdfData, key);
-    const url = `${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
+    const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
     await db.updateTeam(team, { ...team, robotDesignDocumentUrl: url });
     res.json({ ok: true });
