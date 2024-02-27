@@ -19,8 +19,6 @@ export const getWebpageAsPdf = async (path: string) => {
     }
   );
 
-  // Debug this while it's live.
-  // If it doesn't work, domain needs to be dynamic
   await page.setCookie({
     domain: 'localhost',
     path: '/',
