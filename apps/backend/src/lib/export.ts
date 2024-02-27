@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 
 export const getWebpageAsPdf = async (path: string) => {
+  const domain = process.env.DOMAIN;
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -20,7 +21,7 @@ export const getWebpageAsPdf = async (path: string) => {
   );
 
   await page.setCookie({
-    domain: 'localhost',
+    domain,
     path: '/',
     name: 'auth-token',
     value: token,
