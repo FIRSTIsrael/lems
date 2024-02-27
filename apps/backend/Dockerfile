@@ -46,6 +46,7 @@ RUN chown -R backend:lems .
 # RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
 # RUN chown backend:lems /root/mongo-ca-certificate.crt
 
+# See here: https://pptr.dev/troubleshooting#running-on-alpine
 # Installs latest Chromium (100) package.
 RUN apk add --no-cache \
       chromium \
