@@ -18,7 +18,7 @@
     "@mui/base": "^5.0.0-beta.37",
     "@mui/icons-material": "^5.15.11",
     "@mui/lab": "^5.0.0-alpha.166",
-    "@mui/material": "^5.15.10",
+    "@mui/material": "^5.15.11",
     "@mui/x-data-grid": "^6.19.5",
     "@mui/x-date-pickers": "^6.19.5",
     "@nx/next": "18.0.3",
