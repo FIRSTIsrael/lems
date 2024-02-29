@@ -64,6 +64,12 @@ RUN npm i --omit=dev
 
 EXPOSE 3333
 
+# Add user so we don't need --no-sandbox.
+RUN mkdir -p /home/backend/Downloads /app \
+  && chown -R backend:lems /home/backend \
+  && chown -R backend:lems /app
+
+
 USER backend
 
 CMD [ "node", "main.js" ]
