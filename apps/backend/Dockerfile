@@ -60,7 +60,7 @@ RUN apk add --no-cache \
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app/backend
-RUN npm i --omit=dev
+RUN npm ci
 
 EXPOSE 3333
 
