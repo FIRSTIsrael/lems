@@ -2,8 +2,8 @@ import puppeteer from 'puppeteer';
 import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 
-export const getWebpageAsPdf = async (path: string) => {
-  const domain = process.env.DOMAIN;
+export const getLemsWebpageAsPdf = async (url: string) => {
+  const domain = new URL(url).hostname;
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
@@ -29,7 +29,7 @@ export const getWebpageAsPdf = async (path: string) => {
     httpOnly: true
   });
 
-  await page.goto(path, { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] });
+  await page.goto(url, { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] });
   const data = await page.pdf({
     format: 'A4',
     margin: { top: '0.18in', bottom: '0.18in', right: '0.18in', left: '0.18in' },

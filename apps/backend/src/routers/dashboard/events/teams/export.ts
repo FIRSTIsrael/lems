@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
-import { getWebpageAsPdf } from '../../../../lib/export';
+import { getLemsWebpageAsPdf } from '../../../../lib/export';
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,7 +18,7 @@ router.get(
       return;
     }
 
-    const pdf = await getWebpageAsPdf(
+    const pdf = await getLemsWebpageAsPdf(
       `${process.env.FRONTEND_LOCAL_BASE_URL}/event/${team.eventId}/export/${team._id}/rubrics`
     );
 
@@ -39,7 +39,7 @@ router.get(
       return;
     }
 
-    const pdf = await getWebpageAsPdf(
+    const pdf = await getLemsWebpageAsPdf(
       `${process.env.FRONTEND_LOCAL_BASE_URL}/event/${team.eventId}/export/${team._id}/scoresheets`
     );
 
