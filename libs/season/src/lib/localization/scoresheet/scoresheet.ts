@@ -80,7 +80,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
           description: 'הידית הכתומה של התאורה מסובבת לחלוטין כלפי מטה:'
         },
         {
-          description: 'הידית הכתומה של התאורה מסובבת לחלוטין שמאלה:'
+          description: 'הידית הכתומה של ההגברה מסובבת לחלוטין שמאלה:'
         }
       ]
     },
