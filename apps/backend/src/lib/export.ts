@@ -5,7 +5,7 @@ import * as db from '@lems/database';
 export const getWebpageAsPdf = async (path: string) => {
   const domain = process.env.DOMAIN;
   const user = await db.getUser({ username: 'admin' });
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
 
   const jwtSecret = process.env.JWT_SECRET;
