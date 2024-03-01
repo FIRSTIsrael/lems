@@ -19,8 +19,12 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
       req.user = user;
       return next();
     }
-  } catch {
+  } catch (err) {
     //Invalid token
+    console.log(err);
+
+    console.log(req.headers);
+    console.log(req.cookies);
   }
 
   return res.status(401).json({ error: 'UNAUTHORIZED' });
