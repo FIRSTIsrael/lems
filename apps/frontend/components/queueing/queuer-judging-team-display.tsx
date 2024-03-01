@@ -17,7 +17,7 @@ const QueuerJudgingTeamDisplay: React.FC<QueuerJudgingTeamDisplayProps> = ({
   const calledSessions = useMemo(() => sessions.filter(m => m.called), [sessions]);
 
   return calledSessions
-    .filter(s => !s.queued)
+    .filter(s => !s.queued && s.status === 'not-started')
     .map(session => {
       const team = teams.find(t => t._id === session.teamId);
       const room = rooms.find(r => r._id === session.roomId);
