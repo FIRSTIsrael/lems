@@ -13,10 +13,11 @@ export const apiFetch = (
   let headers = { ...init?.headers };
   if (ctx) {
     let token: string | undefined = undefined;
-    if (ctx.req.cookies['auth-token']) {
-      token = ctx.req.cookies['auth-token'];
+    const authHeader = ctx.req.headers.authorization as string;
+    if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split('Bearer ')[1];
     } else {
-      token = ctx.req.headers.authorization;
+      token = ctx.req.cookies?.['auth-token'];
     }
     headers = { Authorization: `Bearer ${token}`, ...init?.headers };
   }
