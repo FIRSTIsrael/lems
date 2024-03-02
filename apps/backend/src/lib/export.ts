@@ -4,7 +4,6 @@ import * as db from '@lems/database';
 
 export const getLemsWebpageAsPdf = async (path: string) => {
   const url = process.env.FRONTEND_LOCAL_BASE_URL + path;
-  console.log(url);
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
