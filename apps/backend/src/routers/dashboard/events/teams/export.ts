@@ -18,9 +18,7 @@ router.get(
       return;
     }
 
-    const pdf = await getLemsWebpageAsPdf(
-      `${process.env.FRONTEND_LOCAL_BASE_URL}/event/${team.eventId}/export/${team._id}/rubrics`
-    );
+    const pdf = await getLemsWebpageAsPdf(`/event/${team.eventId}/export/${team._id}/rubrics`);
 
     res.contentType('application/pdf');
     res.send(pdf);
@@ -39,9 +37,7 @@ router.get(
       return;
     }
 
-    const pdf = await getLemsWebpageAsPdf(
-      `${process.env.FRONTEND_LOCAL_BASE_URL}/event/${team.eventId}/export/${team._id}/scoresheets`
-    );
+    const pdf = await getLemsWebpageAsPdf(`/event/${team.eventId}/export/${team._id}/scoresheets`);
 
     res.contentType('application/pdf');
     res.send(pdf);
