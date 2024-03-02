@@ -78,6 +78,7 @@ jobs:
             cd lems
             docker compose down
             docker compose rm
+            docker rmi $(docker images | grep 'lems-')
             git reset --hard origin/main
             git pull origin main
             docker compose up -d
