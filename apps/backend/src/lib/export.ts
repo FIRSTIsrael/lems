@@ -31,7 +31,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
   });
 
   await page.goto(url, {
-    waitUntil: ['load', 'domcontentloaded', 'networkidle0']
+    waitUntil: ['load', 'domcontentloaded']
   });
 
   await page.waitForNetworkIdle({ concurrency: 0, idleTime: 1500, timeout: 30000 });
