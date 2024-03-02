@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Event, JudgingCategory, Rubric, SEASON_NAME, Team } from '@lems/types';
+import { Event, JudgingCategory, Rubric, SEASON_NAME, SafeUser, Team } from '@lems/types';
 import { serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
@@ -27,6 +27,7 @@ import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import Markdown from 'react-markdown';
 import HeaderRow from '../../../../../components/judging/rubrics/header-row';
 import TitleRow from '../../../../../components/judging/rubrics/title-row';
+import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 
 interface ExportRubricPageProps {
   event: WithId<Event>;
@@ -254,20 +255,26 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
 };
 
 interface Props {
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   team: WithId<Team>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }
 
-const Page: NextPage<Props> = ({ event, team, rubrics }) => {
-  return rubrics.map(rubric => (
-    <ExportRubricPage key={rubric._id.toString()} event={event} team={team} rubric={rubric} />
-  ));
+const Page: NextPage<Props> = ({ user, event, team, rubrics }) => {
+  return (
+    <RoleAuthorizer user={user} allowedRoles={[]}>
+      {rubrics.map(rubric => (
+        <ExportRubricPage key={rubric._id.toString()} event={event} team={team} rubric={rubric} />
+      ))}
+    </RoleAuthorizer>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
+      user: '/api/me',
       event: `/api/events/${ctx.params?.eventId}`,
       team: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}`,
       rubrics: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}/rubrics`
