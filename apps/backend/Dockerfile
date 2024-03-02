@@ -57,7 +57,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/backend
-RUN npm i --omit=dev
+RUN npm i --omit=dev && npx puppeteer browsers install chrome
 
 EXPOSE 3333
 
