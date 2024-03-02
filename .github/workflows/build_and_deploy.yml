@@ -57,8 +57,12 @@ jobs:
           if doctl registry repository list-tags lems-backend | grep -o "sha.*"; then
             doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
           fi
+
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
+
+      - name: Run garbage collection
+        run: doctl registry garbage-collection start
 
   deploy:
     runs-on: ubuntu-latest
@@ -78,6 +82,7 @@ jobs:
             cd lems
             docker compose down
             docker compose rm
+            docker rmi $(docker images | grep 'lems-')
             git reset --hard origin/main
             git pull origin main
             docker compose up -d
