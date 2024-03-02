@@ -22,7 +22,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
 
   await page.setExtraHTTPHeaders({ Authorization: `Bearer ${token}` });
   await page.setCookie({
-    url: 'https://lems.firstisrael.org.il' + path,
+    url,
     path: '/',
     name: 'auth-token',
     value: token,
@@ -30,7 +30,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
     httpOnly: true
   });
 
-  await page.goto(url, {
+  await page.goto('https://lems.firstisrael.org.il' + path, {
     waitUntil: ['load', 'domcontentloaded']
   });
 
