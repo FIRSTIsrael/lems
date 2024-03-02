@@ -12,7 +12,12 @@ export const apiFetch = (
 ): Promise<Response> => {
   let headers = { ...init?.headers };
   if (ctx) {
-    const token = ctx.req.cookies['auth-token'];
+    let token: string | undefined = undefined;
+    if (ctx.req.cookies['auth-token']) {
+      token = ctx.req.cookies['auth-token'];
+    } else {
+      token = ctx.req.headers.authorization;
+    }
     headers = { Authorization: `Bearer ${token}`, ...init?.headers };
   }
 
