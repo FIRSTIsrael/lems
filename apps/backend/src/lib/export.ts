@@ -2,7 +2,9 @@ import puppeteer from 'puppeteer';
 import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 
-export const getLemsWebpageAsPdf = async (url: string) => {
+export const getLemsWebpageAsPdf = async (path: string) => {
+  const url = process.env.FRONTEND_LOCAL_BASE_URL + path;
+  console.log(url);
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
@@ -19,6 +21,7 @@ export const getLemsWebpageAsPdf = async (url: string) => {
     }
   );
 
+  await page.setExtraHTTPHeaders({ Authorization: `Bearer ${token}` });
   await page.setCookie({
     url,
     path: '/',
@@ -28,7 +31,9 @@ export const getLemsWebpageAsPdf = async (url: string) => {
     httpOnly: true
   });
 
-  await page.goto(url, { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] });
+  await page.goto(url, {
+    waitUntil: ['load', 'domcontentloaded', 'networkidle0']
+  });
   const data = await page.pdf({
     format: 'A4',
     margin: { top: '0.18in', bottom: '0.18in', right: '0.18in', left: '0.18in' },
