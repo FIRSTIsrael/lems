@@ -62,7 +62,7 @@ jobs:
         run: docker compose push
 
       - name: Run garbage collection
-        run: doctl registry garbage-collection start
+        run: doctl registry garbage-collection start --force
 
   deploy:
     runs-on: ubuntu-latest
