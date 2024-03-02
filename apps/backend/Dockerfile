@@ -56,6 +56,9 @@ RUN apt-get update \
       --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=google-chrome-stable
+
 WORKDIR /app/backend
 RUN npm i --omit=dev
 
