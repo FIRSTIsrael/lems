@@ -30,7 +30,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
     httpOnly: true
   });
 
-  await page.goto('https://google.com', {
+  await page.goto(url, {
     waitUntil: ['load', 'domcontentloaded']
   });
 
