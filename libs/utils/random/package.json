@@ -1,6 +1,6 @@
 {
   "name": "@lems/utils/random",
-  "version": "2024.1.8",
+  "version": "2024.1.9",
   "dependencies": {
     "tslib": "^2.3.0"
   },
