@@ -1,6 +1,6 @@
 {
   "name": "@lems/types",
-  "version": "2024.1.9",
+  "version": "2024.1.10",
   "dependencies": {
     "tslib": "^2.3.0"
   },
