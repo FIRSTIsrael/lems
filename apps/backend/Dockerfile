@@ -33,7 +33,7 @@ ENV RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY
 
 WORKDIR /app
 
-RUN addgroup -S lems && adduser -S backend -G lems
+RUN groupadd -r lems && useradd -r -g lems -G audio,video backend
 
 COPY dist/apps/backend backend
 RUN chown -R backend:lems .
