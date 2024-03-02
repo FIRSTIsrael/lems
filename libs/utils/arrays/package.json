@@ -1,6 +1,6 @@
 {
   "name": "@lems/utils/arrays",
-  "version": "1.3.3",
+  "version": "2024.1.3",
   "dependencies": {
     "tslib": "^2.3.0"
   },
