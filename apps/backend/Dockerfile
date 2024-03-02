@@ -57,7 +57,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/backend
-RUN npm ci
+RUN npm i --omit=dev
 
 EXPOSE 3333
 
