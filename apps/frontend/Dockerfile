@@ -4,7 +4,7 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t frontend`.
-FROM node:20-alpine
+FROM node:20.11.1-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=4200
@@ -38,7 +38,7 @@ RUN chown -R frontend:lems .
 # The result is slimming the docker from 1.7GB to 300MB
 
 WORKDIR /app/frontend
-RUN npm i --omit=dev
+RUN npm ci
 
 EXPOSE 4200
 
