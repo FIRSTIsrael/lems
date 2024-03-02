@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 
 export const getLemsWebpageAsPdf = async (path: string) => {
-  const url = process.env.FRONTEND_LOCAL_BASE_URL + path;
+  const url = process.env.LEMS_DOMAIN + path;
   const user = await db.getUser({ username: 'admin' });
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
@@ -30,7 +30,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
     httpOnly: true
   });
 
-  await page.goto('https://lems.firstisrael.org.il' + path, {
+  await page.goto(url, {
     waitUntil: ['load', 'domcontentloaded']
   });
 
