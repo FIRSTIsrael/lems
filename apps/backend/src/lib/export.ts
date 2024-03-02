@@ -34,7 +34,7 @@ export const getLemsWebpageAsPdf = async (path: string) => {
     waitUntil: ['load', 'domcontentloaded']
   });
 
-  await page.waitForNetworkIdle({ concurrency: 0, idleTime: 1500, timeout: 30000 });
+  await page.waitForNetworkIdle({ concurrency: 0, idleTime: 2000, timeout: 30000 });
 
   const data = await page.pdf({
     format: 'A4',
