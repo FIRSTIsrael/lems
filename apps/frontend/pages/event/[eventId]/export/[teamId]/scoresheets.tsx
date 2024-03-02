@@ -175,20 +175,6 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
             ))}
           </Grid>
         </Grid>
-        <Grid component={Box} borderRadius={8} p={2} xs={4}>
-          <Image
-            src={src}
-            width={0}
-            height={0}
-            sizes="100vw"
-            alt={`תמונה של משימה ${mission.id}`}
-            style={{
-              objectFit: 'cover',
-              width: '100%',
-              height: 'auto'
-            }}
-          />
-        </Grid>
       </Grid>
     )
   );
