@@ -103,7 +103,7 @@ const EditRubricButton: React.FC<EditRubricButtonProps> = ({ ...props }) => {
         }}
       >
         <span>
-          <Button size="small" sx={{ mx: 0.5, px: 1, ...sx }} disabled={!active}>
+          <Button size="small" sx={{ mx: 0.5, px: 1, height: '100%', ...sx }} disabled={!active}>
             {children}
           </Button>
         </span>
