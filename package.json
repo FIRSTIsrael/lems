@@ -68,7 +68,7 @@
     "@nx/node": "18.0.3",
     "@nx/react": "18.0.3",
     "@nx/webpack": "18.0.3",
-    "@nx/workspace": "18.0.3",
+    "@nx/workspace": "18.0.6",
     "@swc-node/register": "1.8.0",
     "@swc/core": "^1.4.2",
     "@swc/plugin-emotion": "^2.5.120",
