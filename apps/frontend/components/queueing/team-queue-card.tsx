@@ -51,6 +51,9 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
           #{team.number}
         </Typography>
         <Typography fontSize="1rem" color="text.secondary">
+          {team.name}
+        </Typography>
+        <Typography fontSize="1rem" color="text.secondary">
           {team.affiliation.name}, {team.affiliation.city}
         </Typography>
       </Grid>
