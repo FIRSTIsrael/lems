@@ -4,14 +4,14 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t backend`.
-FROM node:20-slim
+FROM node:20.11.1-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=3333
 ENV NODE_ENV=production
 
-ARG FRONTEND_LOCAL_BASE_URL
-ENV FRONTEND_LOCAL_BASE_URL=$FRONTEND_LOCAL_BASE_URL
+ARG LEMS_DOMAIN
+ENV LEMS_DOMAIN=$LEMS_DOMAIN
 ARG DIGITALOCEAN_KEY
 ENV DIGITALOCEAN_KEY=$DIGITALOCEAN_KEY
 ARG DIGITALOCEAN_SECRET
@@ -33,7 +33,7 @@ ENV RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY
 
 WORKDIR /app
 
-RUN groupadd -r lems && useradd -r -g lems -G audio,video backend
+RUN addgroup -S lems && adduser -S backend -G lems
 
 COPY dist/apps/backend backend
 RUN chown -R backend:lems .
@@ -44,24 +44,25 @@ RUN chown -R backend:lems .
 # RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
 # RUN chown backend:lems /root/mongo-ca-certificate.crt
 
-# See here: https://pptr.dev/troubleshooting#running-puppeteer-in-docker
-# Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
-# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer installs, work.
-RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-    
+# See here: https://pptr.dev/troubleshooting#running-on-alpine
+# Installs latest Chromium (100) package.
+RUN apk add --no-cache \
+  chromium \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 WORKDIR /app/backend
-RUN npm i --omit=dev
+RUN npm i --omit=dev && npx puppeteer browsers install chrome
 
 EXPOSE 3333
 
-# Add user so we don't need --no-sandbox.
+# Puppeteer setup
 RUN mkdir -p /home/backend/Downloads /app \
   && chown -R backend:lems /home/backend \
   && chown -R backend:lems /app

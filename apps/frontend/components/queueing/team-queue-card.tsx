@@ -6,7 +6,7 @@ import { red } from '@mui/material/colors';
 import { Team } from '@lems/types';
 import dayjs from 'dayjs';
 import useCountdown from '../../hooks/use-countdown';
-import useStopwatch from 'apps/frontend/hooks/use-stopwatch';
+import useStopwatch from '../../hooks/use-stopwatch';
 interface TeamQueueCardProps {
   team: WithId<Team>;
   location?: string;
@@ -49,6 +49,9 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
       <Grid xs={1}>
         <Typography fontWeight={500} fontSize="1.25rem">
           #{team.number}
+        </Typography>
+        <Typography fontSize="1rem" color="text.secondary">
+          {team.name}
         </Typography>
         <Typography fontSize="1rem" color="text.secondary">
           {team.affiliation.name}, {team.affiliation.city}

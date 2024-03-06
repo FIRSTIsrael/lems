@@ -1,4 +1,4 @@
-import { Team, Scoresheet, SEASON_NAME } from '@lems/types';
+import { Team, Scoresheet, SEASON_NAME, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import { WithId } from 'mongodb';
 import { NextPage, GetServerSideProps } from 'next';
@@ -23,6 +23,7 @@ import {
 import { Event } from '@lems/types';
 import Markdown from 'react-markdown';
 import CustomNumberInput from '../../../../../components/field/scoresheet/number-input';
+import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 
 interface ExportMissionClauseProps {
   scoresheet: WithId<Scoresheet>;
@@ -175,20 +176,6 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
             ))}
           </Grid>
         </Grid>
-        <Grid component={Box} borderRadius={8} p={2} xs={4}>
-          <Image
-            src={src}
-            width={0}
-            height={0}
-            sizes="100vw"
-            alt={`תמונה של משימה ${mission.id}`}
-            style={{
-              objectFit: 'cover',
-              width: '100%',
-              height: 'auto'
-            }}
-          />
-        </Grid>
       </Grid>
     )
   );
@@ -259,25 +246,31 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team
 };
 
 interface Props {
+  user: WithId<SafeUser>;
   event: WithId<Event>;
   team: WithId<Team>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
-const Page: NextPage<Props> = ({ event, team, scoresheets }) => {
-  return scoresheets.map(scoresheet => (
-    <ExportScoresheetPage
-      key={scoresheet._id.toString()}
-      event={event}
-      team={team}
-      scoresheet={scoresheet}
-    />
-  ));
+const Page: NextPage<Props> = ({ user, event, team, scoresheets }) => {
+  return (
+    <RoleAuthorizer user={user} allowedRoles={[]}>
+      {scoresheets.map(scoresheet => (
+        <ExportScoresheetPage
+          key={scoresheet._id.toString()}
+          event={event}
+          team={team}
+          scoresheet={scoresheet}
+        />
+      ))}
+    </RoleAuthorizer>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
+      user: '/api/me',
       event: `/api/events/${ctx.params?.eventId}`,
       team: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}`,
       scoresheets: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}/scoresheets`

@@ -181,7 +181,7 @@ const Page: NextPage<Props> = ({
               event={event}
               room={room}
               socket={socket}
-              sx={{ position: 'absolute', bottom: 20, left: 20 }}
+              sx={{ position: 'fixed', bottom: 20, left: 20 }}
             />
           </>
         )}

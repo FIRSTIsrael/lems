@@ -32,7 +32,7 @@ export const RoleAuthorizer: React.FC<RoleAuthorizerProps> = ({
   const [roleMatch, setRoleMatch] = useState(false);
 
   useEffect(() => {
-    if (user.role && allowedRoleArray.includes(user.role)) {
+    if ((user.role && allowedRoleArray.includes(user.role)) || user.isAdmin) {
       setRoleMatch(true);
     } else if (user.role && conditions && conditionalRoleArray.includes(user.role)) {
       if (partialMatch(conditions, user)) {

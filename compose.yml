@@ -4,7 +4,7 @@ services:
       dockerfile: apps/backend/Dockerfile
       context: .
       args:
-        FRONTEND_LOCAL_BASE_URL: ${FRONTEND_LOCAL_BASE_URL}
+        LEMS_DOMAIN: ${LEMS_DOMAIN}
         DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
