@@ -107,7 +107,10 @@ const EditScoresheetButton: React.FC<EditScoresheetButtonProps> = ({ ...props })
         <span>
           <Badge
             color={gp === 4 ? 'primary' : gp === 2 ? 'error' : undefined}
-            sx={{ '& .MuiBadge-badge': { backgroundColor: gp !== 4 && gp !== 2 ? '#ccc' : '' } }}
+            sx={{
+              '& .MuiBadge-badge': { backgroundColor: gp !== 4 && gp !== 2 ? '#ccc' : '' },
+              height: '100%'
+            }}
             badgeContent={score}
             max={1000}
           >
