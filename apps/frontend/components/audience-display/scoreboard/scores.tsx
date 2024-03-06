@@ -43,7 +43,8 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
             .filter(
               s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready'
             )
-            .map(s => s.data?.score || 0)
+            .map(s => s.data?.score || 0),
+          0
         )
       };
     })

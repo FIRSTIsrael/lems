@@ -6,7 +6,7 @@ import { red } from '@mui/material/colors';
 import { Team } from '@lems/types';
 import dayjs from 'dayjs';
 import useCountdown from '../../hooks/use-countdown';
-import useStopwatch from 'apps/frontend/hooks/use-stopwatch';
+import useStopwatch from '../../hooks/use-stopwatch';
 interface TeamQueueCardProps {
   team: WithId<Team>;
   location?: string;
