@@ -28,7 +28,7 @@
     "cors": "^2.8.5",
     "csv-parse": "^5.5.3",
     "dayjs": "^1.11.10",
-    "express": "^4.18.2",
+    "express": "^4.18.3",
     "express-async-handler": "^1.2.0",
     "express-fileupload": "^1.4.3",
     "express-winston": "^4.2.0",
