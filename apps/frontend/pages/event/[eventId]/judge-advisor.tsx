@@ -115,6 +115,13 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleLeadJudgeCalled = (room: JudgingRoom) => {
+    enqueueSnackbar(`חדר ${room.name} צריך עזרה!`, {
+      variant: 'warning',
+      persist: true
+    });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     event._id.toString(),
     ['judging', 'pit-admin', 'audience-display'],
@@ -144,7 +151,8 @@ const Page: NextPage<Props> = ({
           enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
         }
       },
-      { name: 'presentationUpdated', handler: setEventState }
+      { name: 'presentationUpdated', handler: setEventState },
+      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
     ]
   );
 
