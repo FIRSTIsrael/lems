@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
 import {
   Box,
@@ -18,6 +19,7 @@ interface MissionClauseProps {
   clause: MissionClause;
   localizedMission: LocalizedMission;
   readOnly: boolean;
+  maxWidth?: number;
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
@@ -25,7 +27,8 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   clauseIndex,
   clause,
   localizedMission,
-  readOnly
+  readOnly,
+  maxWidth = 550
 }) => {
   return (
     <ThemeProvider
@@ -74,7 +77,6 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         ) : clause.type === 'enum' ? (
           <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
             {({ field, form }: FieldProps) => {
-              const maxWidth = 520;
               const memberCount = localizedMission.clauses[clauseIndex].labels?.length || 0;
               const buttonMinWidth = `${Math.min(80, maxWidth / memberCount)}px`;
 
@@ -137,6 +139,13 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   errors = [],
   readOnly
 }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [missionWidth, setMissionWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    setMissionWidth(ref.current?.offsetWidth || 0);
+  }, []);
+
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
     localizedMission && (
@@ -148,7 +157,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
         id={mission.id}
         sx={{ scrollMarginTop: 300 }}
       >
-        <Grid container xs={8} spacing={0}>
+        <Grid container xs={8} spacing={0} ref={ref}>
           <Grid
             py={1}
             xs={2}
@@ -177,6 +186,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               clause={clause}
               localizedMission={localizedMission}
               readOnly={readOnly}
+              maxWidth={missionWidth * 0.9}
             />
           ))}
           <Grid xs={12} mt={2}>
