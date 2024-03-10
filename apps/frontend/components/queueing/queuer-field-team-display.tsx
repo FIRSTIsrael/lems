@@ -14,7 +14,10 @@ const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
   eventState,
   matches
 }) => {
-  const calledMatches = useMemo(() => matches.filter(m => m.called), [matches]);
+  const calledMatches = useMemo(
+    () => matches.filter(m => m.called && m.status === 'not-started'),
+    [matches]
+  );
 
   return calledMatches.map(match =>
     match.participants
