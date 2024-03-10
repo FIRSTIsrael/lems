@@ -17,13 +17,23 @@ interface EventSelectorProps {
 const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
   const sortedEvents = useMemo(
     () =>
-      events.sort((a, b) => dayjs().diff(dayjs(a.startDate)) - dayjs().diff(dayjs(b.startDate))),
+      events.sort((a, b) => {
+        const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
+        const diffB = dayjs().diff(dayjs(b.startDate), 'days', true);
+
+        if (diffB > 1 && diffA <= 1) return -1;
+        if (diffA > 1 && diffB <= 1) return 1;
+        if (diffA > 1 && diffB > 1) return diffA - diffB;
+        return diffB - diffA;
+      }),
     [events]
   );
 
   return (
     <Stack direction="column" spacing={2}>
       {sortedEvents.map(event => {
+        console.log(event.name);
+        console.log(dayjs().diff(dayjs(event.startDate), 'days', true));
         return (
           <ListItemButton
             key={event.name}
