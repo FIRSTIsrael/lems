@@ -32,8 +32,6 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
   return (
     <Stack direction="column" spacing={2}>
       {sortedEvents.map(event => {
-        console.log(event.name);
-        console.log(dayjs().diff(dayjs(event.startDate), 'days', true));
         return (
           <ListItemButton
             key={event.name}
