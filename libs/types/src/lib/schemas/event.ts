@@ -15,7 +15,6 @@ export interface Event {
   endDate: Date;
   color: DivisionColor;
   hasState: boolean;
-  allowTeamExports: boolean;
   salesforceId?: string;
   schedule?: Array<EventScheduleEntry>;
 }

@@ -50,8 +50,7 @@ const EventCreateForm = forwardRef((props, ref) => {
           .tz('utc', true)
           .toDate(),
         color,
-        hasState: false,
-        allowTeamExports: false
+        hasState: false
       })
     })
       .then(res => {
