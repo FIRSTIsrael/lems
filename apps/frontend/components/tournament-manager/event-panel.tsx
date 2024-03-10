@@ -121,11 +121,11 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
         aria-labelledby="allow-exports-title"
         aria-describedby="allow-exports-description"
       >
-        <DialogTitle id="allow-exports-title">סיום האירוע</DialogTitle>
+        <DialogTitle id="allow-exports-title">פרסום תוצאות</DialogTitle>
         <DialogContent>
           <DialogContentText id="allow-exports-description">
-            פעולה זו תסמן שהאירוע הסתיים ותפתח את מסכי ניתוח האירוע. לא ניתן לחזור אחורה לאחר ביצוע
-            הפעולה. האם אתם בטוחים שברצונכם לסיים את האירוע?{' '}
+            פעולה זו תאפשר לקבוצות שהתחרו באירוע להוריד את המחוונים ודפי הניקוד שלהן. לא ניתן לחזור
+            אחורה לאחר ביצוע הפעולה. האם אתם בטוחים שברצונכם לאפשר את פרסום התוצאות?{' '}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
