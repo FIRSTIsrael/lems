@@ -27,6 +27,7 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
   const router = useRouter();
   const [eventState, setEventState] = useState(initialEventState);
   const [endEventDialogOpen, setEndEventDialogOpen] = useState(false);
+  const [allowExportsDialogOpen, setAllowExportsDialogOpen] = useState(false);
 
   const endEvent = () => {
     apiFetch(`/api/events/${event._id}/state`, {
@@ -40,6 +41,20 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
       });
       enqueueSnackbar('האירוע הסתיים בהצלחה', { variant: 'success' });
       router.reload();
+    });
+  };
+
+  const allowExports = () => {
+    apiFetch(`/api/events/${event._id}/state`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ allowTeamExports: true })
+    }).then(() => {
+      setAllowExportsDialogOpen(false);
+      setEventState(eventState => {
+        return { ...eventState, allowTeamExports: true };
+      });
+      enqueueSnackbar('קבוצות יכולות כעת להוריד את תוצאות האירוע.', { variant: 'success' });
     });
   };
 
@@ -66,8 +81,17 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
           </Button>
         </Grid>
         <Grid lg={4} md={6} xs={12}>
-          <Button variant="contained" startIcon={<PublishIcon />} fullWidth disabled>
-            פרסום המחוונים ב-Dashboard
+          <Button
+            variant="contained"
+            startIcon={<PublishIcon />}
+            fullWidth
+            onClick={e => {
+              e.preventDefault();
+              setAllowExportsDialogOpen(true);
+            }}
+            disabled={!eventState.completed || eventState.allowTeamExports}
+          >
+            פרסום התוצאות ב-Dashboard
           </Button>
         </Grid>
       </Grid>
@@ -87,6 +111,26 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
         <DialogActions>
           <Button onClick={() => setEndEventDialogOpen(false)}>ביטול</Button>
           <Button onClick={endEvent} autoFocus>
+            אישור
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={allowExportsDialogOpen}
+        onClose={() => setAllowExportsDialogOpen(false)}
+        aria-labelledby="allow-exports-title"
+        aria-describedby="allow-exports-description"
+      >
+        <DialogTitle id="allow-exports-title">פרסום תוצאות</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="allow-exports-description">
+            פעולה זו תאפשר לקבוצות שהתחרו באירוע להוריד את המחוונים ודפי הניקוד שלהן. לא ניתן לחזור
+            אחורה לאחר ביצוע הפעולה. האם אתם בטוחים שברצונכם לאפשר את פרסום התוצאות?{' '}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAllowExportsDialogOpen(false)}>ביטול</Button>
+          <Button onClick={allowExports} autoFocus>
             אישור
           </Button>
         </DialogActions>
