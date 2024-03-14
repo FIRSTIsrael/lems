@@ -60,8 +60,3 @@ Certbot manages the SSL connection cerificate to the `lems.firstisrael.org.il` d
 #### Nginx
 
 We use nginx to map different paths to the services and serve the HTTP app.
-
-#### Cleaning up images
-
-1. On the droplet: Remove images manually for now. Containers are removed automatically, images are not.
-2. On the registry: Periodically run DO's garbage collection to avoid running out of storage.
