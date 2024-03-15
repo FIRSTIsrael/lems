@@ -15,7 +15,7 @@
     "@emotion/server": "11.11.0",
     "@emotion/styled": "^11.11.0",
     "@json2csv/plainjs": "^7.0.6",
-    "@mui/base": "^5.0.0-beta.37",
+    "@mui/base": "^5.0.0-beta.39",
     "@mui/icons-material": "^5.15.11",
     "@mui/lab": "^5.0.0-alpha.167",
     "@mui/material": "^5.15.10",
