@@ -21,7 +21,7 @@
     "@mui/material": "^5.15.10",
     "@mui/x-data-grid": "^6.19.6",
     "@mui/x-date-pickers": "^6.19.6",
-    "@nx/next": "18.0.7",
+    "@nx/next": "18.1.1",
     "@types/grecaptcha": "^3.0.8",
     "axios": "^1.6.7",
     "cookie-parser": "^1.4.6",
