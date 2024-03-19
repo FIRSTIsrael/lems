@@ -6,11 +6,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
   db.getEventUsers(new ObjectId(req.params.eventId)).then(users => {
-    return Promise.all(
-      users.map(user => {
-        return res.json(user);
-      })
-    );
+    return res.json(users);
   });
 });
 
