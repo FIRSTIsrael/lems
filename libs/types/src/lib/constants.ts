@@ -23,7 +23,6 @@ export const EventSectionTypes = ['field', 'judging'];
 export type EventSection = (typeof EventSectionTypes)[number];
 
 export const OptionalAwardTypes = [
-  'leadMentor',
   'impact',
   'volunteerOfTheYear',
   'excellenceInEngineering',
@@ -32,6 +31,7 @@ export const OptionalAwardTypes = [
 export type OptionalAwards = (typeof CoreValuesAwardsTypes)[number];
 
 export const MandatoryAwardTypes = [
+  'leadMentor',
   'coreValues',
   'innovationProject',
   'robotDesign',
