@@ -1,5 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { LocalizedMission, Mission, MissionClause, localizedScoresheet } from '@lems/season';
+import {
+  LocalizedMission,
+  MissionSchema,
+  MissionClauseSchema,
+  localizedScoresheet
+} from '@lems/season';
 import {
   Box,
   Paper,
@@ -16,7 +21,7 @@ import CustomNumberInput from './number-input';
 interface MissionClauseProps {
   missionIndex: number;
   clauseIndex: number;
-  clause: MissionClause;
+  clause: MissionClauseSchema;
   localizedMission: LocalizedMission;
   readOnly: boolean;
   maxWidth?: number;
@@ -126,7 +131,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
 
 interface ScoresheetMissionProps {
   missionIndex: number;
-  mission: Mission;
+  mission: MissionSchema;
   src: string;
   errors?: Array<{ id: string; description: string }>;
   readOnly: boolean;

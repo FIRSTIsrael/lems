@@ -1,6 +1,6 @@
 import { MissionClauseType } from '@lems/types';
 
-export interface MissionClause {
+export interface MissionClauseSchema {
   type: MissionClauseType;
   default: boolean | string | number;
   options?: Array<string>;
@@ -8,15 +8,15 @@ export interface MissionClause {
   max?: number;
 }
 
-export interface Mission {
+export interface MissionSchema {
   id: string;
-  clauses: Array<MissionClause>;
+  clauses: Array<MissionClauseSchema>;
   calculation: (...args: Array<boolean | string | number>) => number;
 }
 
-export interface Scoresheet {
+export interface ScoresheetSchema {
   season: string;
-  missions: Array<Mission>;
+  missions: Array<MissionSchema>;
   validators: Array<(missions: { [key: string]: Array<boolean | string | number> }) => void>;
 }
 
