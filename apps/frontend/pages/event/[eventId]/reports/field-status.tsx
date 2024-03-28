@@ -12,11 +12,13 @@ import {
   EventState,
   RobotGameMatch,
   RoleTypes,
-  JudgingSession
+  JudgingSession,
+  RobotGameTable
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Countdown from '../../../../components/general/countdown';
+import FieldQueueReport from '../../../../components/queueing/field-queue-report';
 import ActiveMatch from '../../../../components/field/scorekeeper/active-match';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
@@ -109,6 +111,7 @@ interface Props {
   eventState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
+  tables: Array<WithId<RobotGameTable>>;
   sessions: Array<WithId<JudgingSession>>;
 }
 
@@ -118,6 +121,7 @@ const Page: NextPage<Props> = ({
   eventState: initialEventState,
   teams: initialTeams,
   matches: initialMatches,
+  tables,
   sessions: initialSessions
 }) => {
   const router = useRouter();
@@ -215,6 +219,13 @@ const Page: NextPage<Props> = ({
           <ActiveMatch title="מקצה רץ" match={activeMatch} startTime={activeMatch?.startTime} />
           <ActiveMatch title="המקצה הבא" match={loadedMatch} sessions={sessions} />
         </Stack>
+        <FieldQueueReport
+          eventId={event._id}
+          matches={matches.filter(m => m._id.toString() !== loadedMatch?._id.toString())}
+          sessions={sessions}
+          tables={tables}
+          teams={teams}
+        />
       </Layout>
     </RoleAuthorizer>
   );
@@ -230,6 +241,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         eventState: `/api/events/${user.eventId}/state`,
         teams: `/api/events/${user.eventId}/teams`,
         matches: `/api/events/${user.eventId}/matches`,
+        tables: `/api/events/${user.eventId}/tables`,
         sessions: `/api/events/${user.eventId}/sessions`
       },
       ctx
