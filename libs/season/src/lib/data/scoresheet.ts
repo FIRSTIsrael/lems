@@ -1,6 +1,6 @@
-import { Scoresheet, ScoresheetError } from './scoresheet-types';
+import { ScoresheetSchema, ScoresheetError } from './scoresheet-types';
 
-export const scoresheet: Scoresheet = {
+export const scoresheet: ScoresheetSchema = {
   season: 'MASTERPIECE℠',
   missions: [
     {

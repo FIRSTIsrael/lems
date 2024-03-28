@@ -15,8 +15,8 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Image from 'next/image';
 import {
   LocalizedMission,
-  Mission,
-  MissionClause,
+  MissionSchema,
+  MissionClauseSchema,
   SEASON_SCORESHEET,
   localizedScoresheet
 } from '@lems/season';
@@ -29,7 +29,7 @@ interface ExportMissionClauseProps {
   scoresheet: WithId<Scoresheet>;
   missionIndex: number;
   clauseIndex: number;
-  clause: MissionClause;
+  clause: MissionClauseSchema;
   localizedMission: LocalizedMission;
 }
 
@@ -110,7 +110,7 @@ const MissionClause: React.FC<ExportMissionClauseProps> = ({
 interface ExportScoresheetMissionProps {
   scoresheet: WithId<Scoresheet>;
   missionIndex: number;
-  mission: Mission;
+  mission: MissionSchema;
   src: string;
 }
 
