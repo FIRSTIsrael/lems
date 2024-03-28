@@ -6,6 +6,13 @@ import { getLemsWebpageAsPdf } from '../../../../lib/export';
 
 const router = express.Router({ mergeParams: true });
 
+router.use((req, res, next) => {
+  db.getEventState({ eventId: req.event._id }).then(eventState => {
+    if (!eventState.allowTeamExports) return res.status(403).json('OPERATION_NOT_ALLOWED');
+    next();
+  });
+});
+
 router.get(
   '/rubrics',
   asyncHandler(async (req: Request, res: Response) => {

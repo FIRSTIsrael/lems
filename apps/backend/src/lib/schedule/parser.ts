@@ -266,6 +266,7 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
       }
     },
     presentations,
-    completed: false
+    completed: false,
+    allowTeamExports: false
   };
 };

@@ -31,4 +31,5 @@ export interface EventState {
   audienceDisplay: AudienceDisplayState;
   presentations: { [key: string]: PresentationState };
   completed: boolean;
+  allowTeamExports: boolean;
 }

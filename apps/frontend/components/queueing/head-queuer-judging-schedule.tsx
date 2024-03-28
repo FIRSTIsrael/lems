@@ -29,7 +29,7 @@ import { Socket } from 'socket.io-client';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { useTime } from '../../hooks/use-time';
 
-interface HeadQueuerFieldScheduleProps {
+interface HeadQueuerJudgingScheduleProps {
   eventId: ObjectId;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -40,7 +40,7 @@ interface HeadQueuerFieldScheduleProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
+const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
   eventId,
   teams,
   sessions,

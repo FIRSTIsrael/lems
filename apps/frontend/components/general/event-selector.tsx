@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import dayjs from 'dayjs';
 import { Event } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
 import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
@@ -13,9 +15,23 @@ interface EventSelectorProps {
 }
 
 const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
+  const sortedEvents = useMemo(
+    () =>
+      events.sort((a, b) => {
+        const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
+        const diffB = dayjs().diff(dayjs(b.startDate), 'days', true);
+
+        if (diffB > 1 && diffA <= 1) return -1;
+        if (diffA > 1 && diffB <= 1) return 1;
+        if (diffA > 1 && diffB > 1) return diffA - diffB;
+        return diffB - diffA;
+      }),
+    [events]
+  );
+
   return (
     <Stack direction="column" spacing={2}>
-      {events.map(event => {
+      {sortedEvents.map(event => {
         return (
           <ListItemButton
             key={event.name}

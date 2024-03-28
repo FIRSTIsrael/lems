@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, useMemo, useState, useEffect } from 'react';
+import React, { Fragment, forwardRef, useMemo, useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
@@ -8,6 +8,7 @@ import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerSlide from './award-winner-slide';
+import AwardWinnerChromaSlide from './award-winner-chroma-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
 
@@ -61,13 +62,20 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
             {sortedAwards.map(award => {
               return (
-                <AwardWinnerSlide
-                  key={award.place}
-                  name={`פרס ${localized.name}`}
-                  place={sortedAwards.length > 1 ? award.place : undefined}
-                  winner={award.winner || ''}
-                  color={event.color}
-                />
+                <React.Fragment key={award.place}>
+                  <AwardWinnerSlide
+                    name={`פרס ${localized.name}`}
+                    place={sortedAwards.length > 1 ? award.place : undefined}
+                    winner={award.winner || ''}
+                    color={event.color}
+                  />
+                  <AwardWinnerChromaSlide
+                    name={`פרס ${localized.name}`}
+                    place={sortedAwards.length > 1 ? award.place : undefined}
+                    winner={award.winner || ''}
+                    color={event.color}
+                  />
+                </React.Fragment>
               );
             })}
           </Fragment>
