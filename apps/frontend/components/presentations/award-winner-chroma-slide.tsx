@@ -32,12 +32,12 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({
           textAlign: 'center',
           position: 'absolute',
           bottom: 60,
-          boxShadow: color && `-10px 10px 12px ${getDivisionColor(color)}74`
+          borderWidth: '0 0 10px 10px',
+          borderStyle: 'solid',
+          borderColor: color && getDivisionColor(color)
         }}
       >
-        <Typography fontSize="3.75rem">
-          {place ? `${name}, מקום ${String(place)}` : name}
-        </Typography>
+        <Typography fontSize="2.5rem">{place ? `${name}, מקום ${String(place)}` : name}</Typography>
         <Typography fontSize="4rem" fontWeight={700} gutterBottom>
           {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
         </Typography>
