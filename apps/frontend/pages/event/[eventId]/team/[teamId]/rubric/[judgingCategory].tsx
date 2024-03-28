@@ -76,11 +76,11 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initialRubric }) => {
   const router = useRouter();
-  if (!team.registered) {
+  if (!team.registered && initialRubric.category !== 'robot-design') {
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
-  if (session.status !== 'completed') {
+  if (session.status !== 'completed' && initialRubric.category !== 'robot-design') {
     router.push(`/event/${event._id}/${user.role}`);
     enqueueSnackbar('מפגש השיפוט טרם נגמר.', { variant: 'info' });
   }

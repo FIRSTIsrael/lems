@@ -10,5 +10,6 @@ export interface Team {
     city: string;
   };
   profileDocumentUrl?: string;
+  robotDesignDocumentUrl?: string;
   advancing?: boolean;
 }
