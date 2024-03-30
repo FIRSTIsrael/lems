@@ -40,20 +40,23 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
     return 'נגמר הזמן!';
   }, [secondsJudging]);
 
-  const { barColor, barProgress } = useMemo(() => {
+  const { barColor, barProgress, soundId } = useMemo(() => {
     let currentSeconds = secondsJudging;
 
     const stages = [
-      { duration: 60, color: 'inherit' },
-      { duration: 10 * 60, color: 'primary' },
-      { duration: 9 * 60, color: 'error' }
+      { duration: 60, color: 'inherit', id: 1 },
+      { duration: 5 * 60, color: 'primary', id: 2 },
+      { duration: 5 * 60, color: 'primary', id: 3 },
+      { duration: 4 * 60, color: 'error', id: 4 },
+      { duration: 5 * 60, color: 'error', id: 5 }
     ];
 
     for (const stage of stages) {
       if (currentSeconds <= stage.duration) {
         return {
           barColor: stage.color,
-          barProgress: 100 - (currentSeconds / stage.duration) * 100
+          barProgress: 100 - (currentSeconds / stage.duration) * 100,
+          soundId: stage.id
         };
       }
       currentSeconds -= stage.duration;
@@ -69,8 +72,8 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
   }, [secondsJudging]);
 
   useEffect(() => {
-    if (barColor !== 'inherit') new Audio('/assets/sounds/judging/judging-change.wav').play();
-  }, [barColor]);
+    if (soundId !== 1) new Audio('/assets/sounds/judging/judging-change.wav').play();
+  }, [soundId]);
 
   return (
     <Paper
