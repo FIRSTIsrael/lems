@@ -26,10 +26,8 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
       { duration: 60, text: 'דקת התארגנות' },
       { duration: 5 * 60, text: 'הצגה - פרויקט החדשנות' },
       { duration: 5 * 60, text: 'שאלות - פרויקט החדשנות' },
-      { duration: 5 * 60, text: 'הצגה - תכנון הרובוט' },
-      { duration: 5 * 60, text: 'שאלות - תכנון הרובוט' },
-      { duration: 3 * 60, text: 'שיקוף - ערכי הליבה' },
-      { duration: 3 * 60, text: 'שאלות - ערכי הליבה' }
+      { duration: 4 * 60, text: 'שיקוף - ערכי הליבה' },
+      { duration: 5 * 60, text: 'שאלות - ערכי הליבה' }
     ];
 
     for (const stage of stages) {
@@ -49,10 +47,8 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
       { duration: 60, color: 'inherit', id: 1 },
       { duration: 5 * 60, color: 'primary', id: 2 },
       { duration: 5 * 60, color: 'primary', id: 3 },
-      { duration: 5 * 60, color: 'success', id: 4 },
-      { duration: 5 * 60, color: 'success', id: 5 },
-      { duration: 3 * 60, color: 'error', id: 6 },
-      { duration: 3 * 60, color: 'error', id: 7 }
+      { duration: 4 * 60, color: 'error', id: 4 },
+      { duration: 5 * 60, color: 'error', id: 5 }
     ];
 
     for (const stage of stages) {

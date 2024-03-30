@@ -76,6 +76,23 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
             </IconButton>
           </span>
         </Tooltip>
+        <Tooltip
+          title={
+            team.robotDesignDocumentUrl ? 'צפייה במסמך תכנון הרובוט' : 'לא הועלה מסמך תכנון רובוט'
+          }
+          arrow
+        >
+          <span>
+            <IconButton
+              href={team.robotDesignDocumentUrl ? team.robotDesignDocumentUrl : ''}
+              target="_blank"
+              disabled={!team.robotDesignDocumentUrl}
+              color="primary"
+            >
+              <PageIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
       </TableCell>
       <TableCell align="center" sx={{ py: 0 }}>
         {JudgingCategoryTypes.map(judgingCategory => {
@@ -88,7 +105,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
               conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
             >
               <EditRubricButton
-                active={session.status === 'completed'}
+                active={judgingCategory === 'robot-design' || session.status === 'completed'}
                 href={`/event/${user.eventId}/team/${team._id}/rubric/${judgingCategory}`}
                 status={
                   rubrics.find(
