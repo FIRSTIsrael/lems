@@ -4,6 +4,7 @@ import fileUpload from 'express-fileupload';
 import { uploadFile } from '../../../../lib/upload';
 import * as db from '@lems/database';
 import { ObjectId } from 'mongodb';
+import { randomAlphanumericString } from '@lems/utils/random';
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,7 +22,7 @@ router.post(
       return;
     }
 
-    const key = `${req.event._id}/teams/${req.teamNumber}/team-info.pdf`;
+    const key = `${req.event._id}/teams/${req.teamNumber}/${randomAlphanumericString(12)}.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
