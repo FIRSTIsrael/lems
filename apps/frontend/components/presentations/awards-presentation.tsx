@@ -63,12 +63,6 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             {sortedAwards.map(award => {
               return (
                 <React.Fragment key={award.place}>
-                  <AwardWinnerSlide
-                    name={`פרס ${localized.name}`}
-                    place={sortedAwards.length > 1 ? award.place : undefined}
-                    winner={award.winner || ''}
-                    color={event.color}
-                  />
                   <AwardWinnerChromaSlide
                     name={`פרס ${localized.name}`}
                     place={sortedAwards.length > 1 ? award.place : undefined}
