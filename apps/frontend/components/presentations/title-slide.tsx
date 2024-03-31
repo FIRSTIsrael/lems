@@ -1,14 +1,16 @@
 import { Box, Stack, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import { Slide } from '@lems/presentations';
+import { DivisionColor } from '@lems/types';
 import LogoStack from './logo-stack';
 
 interface TitleSlideProps {
   primary: string;
   secondary?: string;
+  color?: DivisionColor;
 }
 
-const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
+const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, color }) => {
   return (
     <Slide>
       <Stack px={20} textAlign="center">
@@ -22,7 +24,7 @@ const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
             </Typography>
           </Box>
         )}
-        <LogoStack />
+        <LogoStack color={color} />
       </Stack>
     </Slide>
   );
