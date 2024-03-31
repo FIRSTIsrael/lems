@@ -125,8 +125,8 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
         });
       })
     )
-      .then(() => enqueueSnackbar('מפגשי השיפוט עודכנו בהצלחה!', { variant: 'success' }))
-      .catch(() => enqueueSnackbar('אופס, עדכון אחד ממפגשי השיפוט נכשל.', { variant: 'error' }))
+      .then(() => enqueueSnackbar('המקצים עודכנו בהצלחה!', { variant: 'success' }))
+      .catch(() => enqueueSnackbar('אופס, עדכון אחד המקצים נכשל.', { variant: 'error' }))
       .finally(() => actions.setSubmitting(false));
   };
 
