@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Box, Typography } from '@mui/material';
-import { Slide } from '@lems/presentations';
+import { Slide, Appear } from '@lems/presentations';
 import { DivisionColor, Team } from '@lems/types';
 import { getDivisionColor } from '../../lib/utils/colors';
 
@@ -38,15 +38,17 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({
         }}
       >
         <Typography fontSize="2.5rem">{place ? `${name}, מקום ${String(place)}` : name}</Typography>
-        <Typography fontSize="4rem" fontWeight={700} gutterBottom>
-          {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
-        </Typography>
-        {isTeamAward && (
-          <Typography
-            fontSize="2.5rem"
-            color="text.secondary"
-          >{`${winner.affiliation.name}, ${winner.affiliation.city}`}</Typography>
-        )}
+        <Appear>
+          <Typography fontSize="4rem" fontWeight={700} gutterBottom>
+            {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
+          </Typography>
+          {isTeamAward && (
+            <Typography
+              fontSize="2.5rem"
+              color="text.secondary"
+            >{`${winner.affiliation.name}, ${winner.affiliation.city}`}</Typography>
+          )}
+        </Appear>
         <Image
           src="/assets/audience-display/sponsors/first-israel-horizontal.svg"
           alt="תמונת ספונסר"
