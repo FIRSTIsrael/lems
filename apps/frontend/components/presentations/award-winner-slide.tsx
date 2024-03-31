@@ -46,7 +46,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
             )}
           </Appear>
         </Box>
-        <LogoStack />
+        <LogoStack color={color} />
       </Stack>
     </Slide>
   );

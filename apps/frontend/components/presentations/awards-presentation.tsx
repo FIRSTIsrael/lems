@@ -7,7 +7,6 @@ import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
-import AwardWinnerSlide from './award-winner-slide';
 import AwardWinnerChromaSlide from './award-winner-chroma-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
@@ -58,17 +57,15 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
 
         return (
           <Fragment key={awardName}>
-            <TitleSlide primary={`פרס ${localized.name}`} />
-            <TitleSlide primary={`פרס ${localized.name}`} secondary={localized.description} />
+            <TitleSlide primary={`פרס ${localized.name}`} color={event.color} />
+            <TitleSlide
+              primary={`פרס ${localized.name}`}
+              secondary={localized.description}
+              color={event.color}
+            />
             {sortedAwards.map(award => {
               return (
                 <React.Fragment key={award.place}>
-                  <AwardWinnerSlide
-                    name={`פרס ${localized.name}`}
-                    place={sortedAwards.length > 1 ? award.place : undefined}
-                    winner={award.winner || ''}
-                    color={event.color}
-                  />
                   <AwardWinnerChromaSlide
                     name={`פרס ${localized.name}`}
                     place={sortedAwards.length > 1 ? award.place : undefined}
@@ -108,7 +105,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
           />
           {awardSlides}
-          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בתחרות האליפות!" />
+          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בעונות הבאות!" />
         </Deck>
       </Box>
     );

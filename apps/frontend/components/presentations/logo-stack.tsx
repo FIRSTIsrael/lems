@@ -1,7 +1,14 @@
 import Image from 'next/image';
 import { Stack } from '@mui/material';
+import { DivisionColor } from '@lems/types';
 
-const LogoStack: React.FC = () => {
+import { getDivisionColor } from '../../lib/utils/colors';
+
+interface LogoStackProps {
+  color?: DivisionColor;
+}
+
+const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
   return (
     <Stack
       direction="row"
@@ -12,6 +19,11 @@ const LogoStack: React.FC = () => {
       width="100%"
       bgcolor="#f7f8f9"
       height={100}
+      sx={{
+        borderWidth: '10px 0 0 0',
+        borderStyle: 'solid',
+        borderColor: color && getDivisionColor(color)
+      }}
     >
       <Image
         src="/assets/audience-display/sponsors/first-israel-horizontal.svg"

@@ -54,7 +54,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
           </Grid>
         </Box>
       </Stack>
-      <LogoStack />
+      <LogoStack color={color} />
     </Slide>
   );
 };
