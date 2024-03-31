@@ -108,7 +108,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
           />
           {awardSlides}
-          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בתחרות האליפות!" />
+          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בעונות הבאות!" />
         </Deck>
       </Box>
     );
