@@ -103,9 +103,14 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           <TitleSlide
             primary={`טקס סיום - ${event.name}`}
             secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
+            color={event.color}
           />
           {awardSlides}
-          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בעונות הבאות!" />
+          <TitleSlide
+            primary="כל הכבוד לקבוצות!"
+            secondary="להתראות בעונות הבאות!"
+            color={event.color}
+          />
         </Deck>
       </Box>
     );
