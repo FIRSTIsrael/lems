@@ -44,7 +44,9 @@ const GpSelector: React.FC<GpSelectorProps> = ({
   onSubmit,
   disabled
 }) => {
-  const [checked, setChecked] = useState<boolean>(scoresheetStatus === 'ready');
+  const [checked, setChecked] = useState<boolean>(
+    scoresheetStatus === 'ready' || user.role === 'head-referee'
+  );
   const name = 'gp';
   return (
     <Paper sx={{ p: 4, mt: 2 }}>
