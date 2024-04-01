@@ -8,6 +8,7 @@ import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerChromaSlide from './award-winner-chroma-slide';
+import AwardWinnerSlide from './award-winner-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
 
@@ -72,6 +73,12 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                     winner={award.winner || ''}
                     color={event.color}
                   />
+                  <AwardWinnerSlide
+                    name={`פרס ${localized.name}`}
+                    place={sortedAwards.length > 1 ? award.place : undefined}
+                    winner={award.winner || ''}
+                    color={event.color}
+                  />
                 </React.Fragment>
               );
             })}
@@ -103,9 +110,14 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           <TitleSlide
             primary={`טקס סיום - ${event.name}`}
             secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
+            color={event.color}
           />
           {awardSlides}
-          <TitleSlide primary="כל הכבוד לקבוצות!" secondary="להתראות בעונות הבאות!" />
+          <TitleSlide
+            primary="כל הכבוד לקבוצות!"
+            secondary="להתראות בעונות הבאות!"
+            color={event.color}
+          />
         </Deck>
       </Box>
     );

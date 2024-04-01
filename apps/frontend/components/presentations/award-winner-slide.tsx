@@ -35,16 +35,16 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
           <Typography fontSize="2.75rem" color="text.secondary">
             {isTeamAward ? 'מוענק לקבוצה' : 'מוענק ל'}
           </Typography>
-          <Appear>
-            <Typography fontSize="4rem" fontWeight={700}>
-              {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
+          {/* <Appear> */}
+          <Typography fontSize="4rem" fontWeight={700}>
+            {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
+          </Typography>
+          {isTeamAward && (
+            <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
+              {winner.affiliation.name}, {winner.affiliation.city}
             </Typography>
-            {isTeamAward && (
-              <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
-                {winner.affiliation.name}, {winner.affiliation.city}
-              </Typography>
-            )}
-          </Appear>
+          )}
+          {/* </Appear> */}
         </Box>
         <LogoStack color={color} />
       </Stack>

@@ -13,12 +13,12 @@ interface TitleSlideProps {
 const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, color }) => {
   return (
     <Slide>
-      <Stack px={20} textAlign="center">
+      <Stack px={20} textAlign="center" alignItems="center">
         <Typography variant="h1" fontSize="6rem" gutterBottom>
           <Markdown>{primary}</Markdown>
         </Typography>
         {secondary && (
-          <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 4, borderRadius: 4 }}>
+          <Box sx={{ background: '#f7f8f9', maxWidth: 'lg', px: 15, borderRadius: 4 }}>
             <Typography fontSize="2.75rem">
               <Markdown>{secondary}</Markdown>
             </Typography>
