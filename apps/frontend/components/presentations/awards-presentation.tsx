@@ -8,6 +8,7 @@ import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerChromaSlide from './award-winner-chroma-slide';
+import AwardWinnerSlide from './award-winner-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
 
@@ -67,6 +68,12 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
               return (
                 <React.Fragment key={award.place}>
                   <AwardWinnerChromaSlide
+                    name={`פרס ${localized.name}`}
+                    place={sortedAwards.length > 1 ? award.place : undefined}
+                    winner={award.winner || ''}
+                    color={event.color}
+                  />
+                  <AwardWinnerSlide
                     name={`פרס ${localized.name}`}
                     place={sortedAwards.length > 1 ? award.place : undefined}
                     winner={award.winner || ''}
