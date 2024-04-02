@@ -22,7 +22,7 @@ router.post(
       return;
     }
 
-    const fileName = team.profileDocumentUrl || randomAlphanumericString(12);
+    const fileName = team.profileDocumentUrl || `${req.teamNumber}-${randomAlphanumericString(12)}`;
     const key = `${req.event._id}/teams/${req.teamNumber}/${fileName}.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
