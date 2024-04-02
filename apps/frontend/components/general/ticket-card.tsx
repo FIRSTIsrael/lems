@@ -25,7 +25,7 @@ import { useState } from 'react';
 interface TicketCardProps extends PaperProps {
   event: WithId<Event>;
   ticket: WithId<Ticket>;
-  team: WithId<Team>;
+  team: WithId<Team> | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
@@ -45,7 +45,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         {...props}
       >
         <Typography fontSize="1rem" fontWeight={700} gutterBottom>
-          {localizeTeam(team)}
+          {team ? localizeTeam(team) : 'קריאה כללית'}
         </Typography>
         <Typography fontSize="1rem">{localizedTicketTypes[ticket.type]}</Typography>
         <Typography
@@ -57,11 +57,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         >
           {ticket.content}
         </Typography>
-        {ticket.closed ? (ticket.reasonForClose && (
-          <Typography color="text.secondary" fontSize="0.8rem">
-            <b>סיבת הסגירה:</b> {ticket.reasonForClose}
-          </Typography>
-        )) : (
+        {ticket.closed ? (
+          ticket.reasonForClose && (
+            <Typography color="text.secondary" fontSize="0.8rem">
+              <b>סיבת הסגירה:</b> {ticket.reasonForClose}
+            </Typography>
+          )
+        ) : (
           <Box display="flex" justifyContent="flex-end">
             <IconButton onClick={() => setOpen(true)}>
               <TaskIcon />
@@ -80,7 +82,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
           <DialogContentText id="alert-dialog-description">
             שימו לב! סגירת קריאה היא סופית ולא ניתן לבטל פעולה זו. האם אתם בטוחים?
           </DialogContentText>
-          <TextField sx={{mt: 2}} label="סיבת הסגירה" fullWidth onChange={e => setReasonForClose(e.target.value)} value={reasonForClose} />
+          <TextField
+            sx={{ mt: 2 }}
+            label="סיבת הסגירה"
+            fullWidth
+            onChange={e => setReasonForClose(e.target.value)}
+            value={reasonForClose}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
@@ -91,7 +99,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
               socket.emit(
                 'updateTicket',
                 event._id.toString(),
-                team._id.toString(),
+                team ? team._id.toString() : null,
                 ticket._id.toString(),
                 { closed: new Date(), reasonForClose },
                 response => {

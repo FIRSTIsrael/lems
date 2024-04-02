@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { TicketType } from '../constants';
 
 export interface Ticket {
-  teamId: ObjectId;
+  teamId: ObjectId | null;
   eventId: ObjectId;
   created: Date;
   closed?: Date;
