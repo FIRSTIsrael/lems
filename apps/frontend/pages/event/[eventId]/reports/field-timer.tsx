@@ -1,17 +1,17 @@
-import { useMemo, useState } from 'react';
-import { GetServerSideProps, NextPage } from 'next';
-import { useRouter } from 'next/router';
+import {useMemo, useRef, useState} from 'react';
+import {GetServerSideProps, NextPage} from 'next';
+import {useRouter} from 'next/router';
 import dayjs from 'dayjs';
-import { WithId } from 'mongodb';
-import { enqueueSnackbar } from 'notistack';
-import { LinearProgress, Paper, Typography } from '@mui/material';
-import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
-import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import {WithId} from 'mongodb';
+import {enqueueSnackbar} from 'notistack';
+import {LinearProgress, Paper, Typography} from '@mui/material';
+import {Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH} from '@lems/types';
+import {RoleAuthorizer} from '../../../../components/role-authorizer';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { useWebsocket } from '../../../../hooks/use-websocket';
-import { useTime } from '../../../../hooks/use-time';
+import {apiFetch, serverSideGetRequests} from '../../../../lib/utils/fetch';
+import {useWebsocket} from '../../../../hooks/use-websocket';
+import {useTime} from '../../../../hooks/use-time';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -21,15 +21,22 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({
-  user,
-  event,
-  eventState: initialEventState,
-  matches: initialMatches
-}) => {
+                                 user,
+                                 event,
+                                 eventState: initialEventState,
+                                 matches: initialMatches
+                               }) => {
   const router = useRouter();
-  const currentTime = useTime({ interval: 100 });
+  const currentTime = useTime({interval: 100});
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+
+  const sounds = useRef({
+    start: new Audio('/assets/sounds/field/field-start.wav'),
+    abort: new Audio('/assets/sounds/field/field-abort.wav'),
+    endgame: new Audio('/assets/sounds/field/field-endgame.wav'),
+    end: new Audio('/assets/sounds/field/field-end.wav')
+  })
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -62,12 +69,12 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+  const {connectionStatus} = useWebsocket(event._id.toString(), ['field'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
         if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-start.wav').play();
+         sounds.current.start.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
@@ -75,7 +82,7 @@ const Page: NextPage<Props> = ({
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
         if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-abort.wav').play();
+          sounds.current.abort.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
@@ -83,14 +90,14 @@ const Page: NextPage<Props> = ({
       name: 'matchEndgame',
       handler: match => {
         if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-endgame.wav').play();
+          sounds.current.endgame.play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
         if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-end.wav').play();
+          sounds.current.end.play();
         handleMatchEvent(newMatch, newEventState);
       }
     }
@@ -102,11 +109,11 @@ const Page: NextPage<Props> = ({
       allowedRoles={[...RoleTypes]}
       onFail={() => {
         router.push(`/event/${event._id}/${user.role}`);
-        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', {variant: 'error'});
       }}
     >
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
-        <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
+        <Paper sx={{p: 2, mt: 'calc(50vh - 302px)'}}>
           <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
             {activeMatch?.number
               ? `מקצה #${activeMatch?.number}`
@@ -158,10 +165,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     );
 
-    return { props: { user, ...data } };
+    return {props: {user, ...data}};
   } catch (err) {
     console.log(err);
-    return { redirect: { destination: '/login', permanent: false } };
+    return {redirect: {destination: '/login', permanent: false}};
   }
 };
 
