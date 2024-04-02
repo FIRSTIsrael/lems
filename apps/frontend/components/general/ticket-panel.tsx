@@ -31,7 +31,7 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, socket
         {tickets
           .filter(ticket => !ticket.closed)
           .map(ticket => {
-            const team = teams.find(t => t._id === ticket.teamId) || ({} as WithId<Team>);
+            const team = teams.find(t => t._id === ticket.teamId) || null;
             return (
               <TicketCard
                 key={ticket._id.toString()}
@@ -65,7 +65,7 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, socket
           {tickets
             .filter(ticket => ticket.closed)
             .map(ticket => {
-              const team = teams.find(t => t._id === ticket.teamId) || ({} as WithId<Team>);
+              const team = teams.find(t => t._id === ticket.teamId) || null;
               return (
                 <TicketCard
                   key={ticket._id.toString()}

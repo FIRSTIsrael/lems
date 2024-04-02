@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
@@ -12,6 +12,8 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { useTime } from '../../../../hooks/use-time';
+import Grid from '@mui/material/Unstable_Grid2';
+import Image from 'next/image';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,6 +32,13 @@ const Page: NextPage<Props> = ({
   const currentTime = useTime({ interval: 100 });
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+
+  const sounds = useRef({
+    start: new Audio('/assets/sounds/field/field-start.wav'),
+    abort: new Audio('/assets/sounds/field/field-abort.wav'),
+    endgame: new Audio('/assets/sounds/field/field-endgame.wav'),
+    end: new Audio('/assets/sounds/field/field-end.wav')
+  });
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -66,31 +75,27 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-start.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.start.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-abort.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchEndgame',
       handler: match => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-endgame.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-end.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.end.play();
         handleMatchEvent(newMatch, newEventState);
       }
     }
@@ -107,23 +112,43 @@ const Page: NextPage<Props> = ({
     >
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
         <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
-          <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
-            {activeMatch?.number
-              ? `מקצה #${activeMatch?.number}`
-              : activeMatch?.stage === 'test'
-              ? 'מקצה בדיקה'
-              : '-'}
-          </Typography>
-          {activeMatch?.startTime && (
-            <Countdown
-              targetDate={getCountdownTarget(activeMatch?.startTime)}
-              expiredText="00:00"
-              fontFamily="Roboto Mono"
-              fontSize="15rem"
-              fontWeight={700}
-              textAlign="center"
-            />
-          )}
+          <Grid container direction="row">
+            <Grid xs={2} position="relative">
+              <Image
+                fill
+                style={{ objectFit: 'contain', padding: 16 }}
+                src="/assets/audience-display/first-israel-horizontal.svg"
+                alt="לוגו של FIRST ישראל"
+              />
+            </Grid>
+            <Grid xs={8}>
+              <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
+                {activeMatch?.number
+                  ? `מקצה #${activeMatch?.number}`
+                  : activeMatch?.stage === 'test'
+                    ? 'מקצה בדיקה'
+                    : 'אין מקצה פעיל'}
+              </Typography>
+            </Grid>
+            <Grid xs={2} position="relative">
+              <Image
+                fill
+                style={{ objectFit: 'contain', padding: 8 }}
+                src="/assets/audience-display/technion-horizontal.svg"
+                alt="לוגו של הטכניון"
+              />
+            </Grid>
+          </Grid>
+          <Countdown
+            targetDate={
+              activeMatch?.startTime ? getCountdownTarget(activeMatch?.startTime) : new Date(0)
+            }
+            expiredText="00:00"
+            fontFamily="Roboto Mono"
+            fontSize="15rem"
+            fontWeight={700}
+            textAlign="center"
+          />
         </Paper>
         {activeMatch?.startTime && (
           <LinearProgress

@@ -122,6 +122,7 @@ const Page: NextPage<Props> = ({
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
+        color={event.color}
       >
         {currentSession && activeTeam ? (
           <>

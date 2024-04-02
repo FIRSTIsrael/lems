@@ -116,7 +116,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
             if (group.length === 0) return <></>;
             const firstSession = group[0];
             if (
-              firstSession.status !== 'not-started' ||
+              group.some(session => session.status !== 'not-started') ||
               currentTime <= dayjs(firstSession.scheduledTime).subtract(20, 'minutes')
             )
               return <></>;

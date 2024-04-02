@@ -111,6 +111,7 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         <Grid container spacing={2} my={4}>
           {...roundSchedules}

@@ -124,6 +124,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedEventSection[user.roleAssociation?.value as string].name}`}
+        color={event.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
           {activeView === 0 && (

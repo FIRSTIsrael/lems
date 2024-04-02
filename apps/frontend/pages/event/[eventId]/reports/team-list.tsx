@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -36,13 +36,19 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  const headCells = [
-    { label: 'מספר', sort: 'number' },
-    { label: 'שם', sort: 'name' },
-    { label: 'מוסד', sort: 'institution' },
-    { label: 'עיר', sort: 'city' },
-    { label: 'הגעה', sort: 'registration' }
-  ];
+  const headCells = useMemo(
+    () => [
+      { label: 'מספר', sort: 'number' },
+      { label: 'שם', sort: 'name' },
+      { label: 'מוסד', sort: 'institution' },
+      { label: 'עיר', sort: 'city' },
+      {
+        label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
+        sort: 'registration'
+      }
+    ],
+    [teams]
+  );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -90,6 +96,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         <Paper
           sx={{

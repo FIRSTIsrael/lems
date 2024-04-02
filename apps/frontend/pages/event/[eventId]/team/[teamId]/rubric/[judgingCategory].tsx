@@ -118,8 +118,9 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
           } של קבוצה #${team.number}, ${team.name} | ${event.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/event/${event._id}/${user.role}`}
+          back={`/event/${event._id}/${user.role}#${team.number.toString()}`}
           backDisabled={connectionStatus === 'connecting'}
+          color={event.color}
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">

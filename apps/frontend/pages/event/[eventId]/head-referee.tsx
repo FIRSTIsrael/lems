@@ -178,6 +178,7 @@ const Page: NextPage<Props> = ({
             {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
+        color={event.color}
       >
         <WelcomeHeader event={event} user={user} />
         <Paper sx={{ p: 2 }}>

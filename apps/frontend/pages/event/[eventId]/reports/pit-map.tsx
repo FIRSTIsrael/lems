@@ -41,6 +41,7 @@ const Page: NextPage<Props> = ({ user, event, pitMapUrl }) => {
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         {!error ? (
           <Image

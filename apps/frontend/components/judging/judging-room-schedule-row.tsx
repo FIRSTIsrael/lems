@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
@@ -33,10 +34,22 @@ interface Props {
 }
 
 const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, socket }: Props) => {
+  useEffect(() => {
+    const href = window.location.href;
+    if (href.includes('#')) {
+      const id = href.substring(href.indexOf('#') + 1);
+      if (id === team.number.toString()) {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <TableRow
+      id={team.number.toString()}
       key={room.name + session.scheduledTime}
-      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 }, scrollMarginTop: 60 }}
     >
       <TableCell component="th" scope="row" align="center">
         {dayjs(session.scheduledTime).format('HH:mm')}

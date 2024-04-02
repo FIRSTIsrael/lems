@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -48,6 +48,13 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+
+  const sounds = useRef({
+    start: new Audio('/assets/sounds/field/field-start.wav'),
+    abort: new Audio('/assets/sounds/field/field-abort.wav'),
+    endgame: new Audio('/assets/sounds/field/field-endgame.wav'),
+    end: new Audio('/assets/sounds/field/field-end.wav')
+  });
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === eventState.activeMatch),
@@ -119,31 +126,27 @@ const Page: NextPage<Props> = ({
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-start.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.start.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-abort.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchEndgame',
       handler: () => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-endgame.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores')
-          new Audio('/assets/sounds/field/field-end.wav').play();
+        if (eventState.audienceDisplay.screen === 'scores') sounds.current.end.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },

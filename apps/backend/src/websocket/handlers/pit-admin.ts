@@ -25,21 +25,25 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
 };
 
 export const handleCreateTicket = async (namespace, eventId, teamId, content, type, callback) => {
-  const team = await db.getTeam({
-    eventId: new ObjectId(eventId),
-    _id: new ObjectId(teamId)
-  });
-  if (!team) {
-    callback({ ok: false, error: `Could not find team ${teamId} in event ${eventId}!` });
-    return;
-  }
+  if (teamId) {
+    const team = await db.getTeam({
+      eventId: new ObjectId(eventId),
+      _id: new ObjectId(teamId)
+    });
+    if (!team) {
+      callback({ ok: false, error: `Could not find team ${teamId} in event ${eventId}!` });
+      return;
+    }
 
-  console.log(`🎫 Creating ticket for team ${teamId} in event ${eventId}`);
+    console.log(`🎫 Creating ticket for team ${teamId} in event ${eventId}`);
+  } else {
+    console.log(`🎫 Creating general ticket in event ${eventId}`);
+  }
 
   const ticketId = await db
     .addTicket({
       eventId: new ObjectId(eventId),
-      teamId: new ObjectId(teamId),
+      teamId: teamId ? new ObjectId(teamId) : null,
       created: new Date(),
       content: content,
       type: type
@@ -62,18 +66,18 @@ export const handleUpdateTicket = async (
 ) => {
   let ticket = await db.getTicket({
     eventId: new ObjectId(eventId),
-    teamId: new ObjectId(teamId),
+    teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(ticketId)
   });
   if (!ticket) {
     callback({
       ok: false,
-      error: `Could not find ticket ${ticketId} for team ${teamId} in event ${eventId}!`
+      error: `Could not find ticket ${ticketId} in event ${eventId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating ticket ${ticketId} for team ${teamId} in event ${eventId}`);
+  console.log(`🖊️ Updating ticket ${ticketId} in event ${eventId}`);
 
   await db.updateTicket(
     {

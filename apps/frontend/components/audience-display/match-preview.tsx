@@ -5,6 +5,7 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
 import Grid from '@mui/material/Unstable_Grid2';
 import { blue, red } from '@mui/material/colors';
+import Image from 'next/image';
 
 interface MatchPreviewProps {
   event: WithId<Event>;
@@ -30,11 +31,27 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
       justifyContent="center"
     >
       {match && (
-        <Grid container component={Paper} width="80%" height="80%" p={8} textAlign="center">
-          <Grid xs={12}>
-            <Typography fontSize="7.5rem" fontWeight={700}>
+        <Grid container component={Paper} width="80%" height="80%" pb={4} px={6} textAlign="center">
+          <Grid xs={3} position="relative">
+            <Image
+              fill
+              style={{ objectFit: 'contain', padding: 24 }}
+              src="/assets/audience-display/first-israel-horizontal.svg"
+              alt="לוגו של FIRST ישראל"
+            />
+          </Grid>
+          <Grid xs={6} display="flex" alignItems="center" justifyContent="center">
+            <Typography fontSize="6rem" fontWeight={700}>
               מקצה {localizedMatchStage[match.stage]} #{match.number}
             </Typography>
+          </Grid>
+          <Grid xs={3} position="relative">
+            <Image
+              fill
+              style={{ objectFit: 'contain', padding: 16 }}
+              src="/assets/audience-display/technion-horizontal.svg"
+              alt="לוגו של הטכניון"
+            />
           </Grid>
           <Grid xs={12}>
             <Typography fontSize="5rem" fontWeight={700} color="text.secondary">
