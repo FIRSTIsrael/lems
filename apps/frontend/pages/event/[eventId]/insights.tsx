@@ -41,6 +41,7 @@ const Page: NextPage<Props> = ({ user, event, eventState, teams }) => {
         maxWidth="md"
         title={`ממשק ניתוח תחרות | ${event.name}`}
         back={`/event/${event._id}/${user.role}`}
+        color={event.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 4 }}>

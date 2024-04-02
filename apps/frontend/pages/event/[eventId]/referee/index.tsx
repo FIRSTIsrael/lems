@@ -102,6 +102,7 @@ const Page: NextPage<Props> = ({
         title={`שולחן ${table.name} | ${event.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
+        color={event.color}
       >
         {ALLOW_MATCH_SELECTOR ? (
           <MatchSelector event={event} eventState={eventState} table={table} matches={matches} />

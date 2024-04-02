@@ -148,6 +148,7 @@ const Page: NextPage<Props> = ({
             <ReportLink event={event} />
           </Stack>
         }
+        color={event.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>

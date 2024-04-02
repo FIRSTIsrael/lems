@@ -57,6 +57,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${event.name}`}
         back={`/event/${event._id}/reports`}
         backDisabled={false}
+        color={event.color}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
           <Table>

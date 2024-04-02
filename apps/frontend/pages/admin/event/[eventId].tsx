@@ -24,7 +24,7 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   return (
-    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
+    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin" color={event.color}>
       <TabContext value={activeTab}>
         <Paper sx={{ mt: 2 }}>
           <Tabs

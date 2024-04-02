@@ -46,6 +46,7 @@ const Page: NextPage<Props> = ({ user, event, cvForm: initialCvForm }) => {
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         <Paper sx={{ p: 4, my: 2 }}>
           <CVForm

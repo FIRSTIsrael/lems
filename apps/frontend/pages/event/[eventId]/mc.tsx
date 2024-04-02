@@ -87,6 +87,7 @@ const Page: NextPage<Props> = ({
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
         action={<ReportLink event={event} />}
+        color={event.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>

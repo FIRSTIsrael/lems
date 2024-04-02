@@ -145,6 +145,7 @@ const Page: NextPage<Props> = ({
             <ReportLink event={event} />
           </Stack>
         }
+        color={event.color}
       >
         {user.roleAssociation?.value === 'field' && (
           <>
