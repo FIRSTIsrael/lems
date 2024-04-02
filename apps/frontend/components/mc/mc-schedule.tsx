@@ -55,7 +55,7 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
       <Stack spacing={2}>
         <Paper sx={{ p: 2 }}>
           <Typography fontSize="1.75rem" fontWeight={700} textAlign="center" mb={2}>
-            מקצה נוכחי -{' '}
+            המקצה הבא -{' '}
             {loadedMatch?.number
               ? `מקצה ${localizedMatchStage[loadedMatch?.stage]} #${loadedMatch?.number}`
               : loadedMatch?.stage === 'test'
