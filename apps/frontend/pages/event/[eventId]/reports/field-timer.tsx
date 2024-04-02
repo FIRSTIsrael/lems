@@ -111,19 +111,20 @@ const Page: NextPage<Props> = ({
             {activeMatch?.number
               ? `מקצה #${activeMatch?.number}`
               : activeMatch?.stage === 'test'
-              ? 'מקצה בדיקה'
-              : '-'}
+                ? 'מקצה בדיקה'
+                : 'אין מקצה פעיל'}
           </Typography>
-          {activeMatch?.startTime && (
-            <Countdown
-              targetDate={getCountdownTarget(activeMatch?.startTime)}
-              expiredText="00:00"
-              fontFamily="Roboto Mono"
-              fontSize="15rem"
-              fontWeight={700}
-              textAlign="center"
-            />
-          )}
+
+          <Countdown
+            targetDate={
+              activeMatch?.startTime ? getCountdownTarget(activeMatch?.startTime) : new Date(0)
+            }
+            expiredText="00:00"
+            fontFamily="Roboto Mono"
+            fontSize="15rem"
+            fontWeight={700}
+            textAlign="center"
+          />
         </Paper>
         {activeMatch?.startTime && (
           <LinearProgress
