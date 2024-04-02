@@ -138,7 +138,7 @@ export interface WSClientEmittedEvents {
 
   createTicket: (
     eventId: string,
-    teamId: string,
+    teamId: string | null,
     content: string,
     type: TicketType,
     callback: (response: { ok: boolean; error?: string }) => void
@@ -146,7 +146,7 @@ export interface WSClientEmittedEvents {
 
   updateTicket: (
     eventId: string,
-    teamId: string,
+    teamId: string | null,
     ticketId: string,
     ticketData: Partial<Ticket>,
     callback: (response: { ok: boolean; error?: string }) => void

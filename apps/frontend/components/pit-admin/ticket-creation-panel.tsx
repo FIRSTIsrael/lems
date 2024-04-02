@@ -37,22 +37,21 @@ const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event
   const [type, setType] = useState<TicketType>('general');
 
   const createTicket = () => {
-    team &&
-      socket.emit(
-        'createTicket',
-        event._id.toString(),
-        team?._id.toString(),
-        content,
-        type,
-        response => {
-          if (response.ok) {
-            setTeam(null);
-            setContent('');
-            setType('general');
-            enqueueSnackbar('הבקשה נשלחה בהצלחה!', { variant: 'success' });
-          }
+    socket.emit(
+      'createTicket',
+      event._id.toString(),
+      team ? team._id.toString() : null,
+      content,
+      type,
+      response => {
+        if (response.ok) {
+          setTeam(null);
+          setContent('');
+          setType('general');
+          enqueueSnackbar('הבקשה נשלחה בהצלחה!', { variant: 'success' });
         }
-      );
+      }
+    );
   };
 
   return (
@@ -86,7 +85,7 @@ const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event
             <Button
               sx={{ borderRadius: 8 }}
               variant="contained"
-              disabled={!team || !content || !type}
+              disabled={!content || !type}
               onClick={createTicket}
               endIcon={<CreateOutlinedIcon />}
             >
