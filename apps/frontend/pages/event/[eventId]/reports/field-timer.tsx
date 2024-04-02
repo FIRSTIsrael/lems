@@ -14,7 +14,6 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import { useTime } from '../../../../hooks/use-time';
 import Grid from '@mui/material/Unstable_Grid2';
 import Image from 'next/image';
-import { localizedMatchStage } from '../../../../localization/field';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -114,7 +113,7 @@ const Page: NextPage<Props> = ({
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
         <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
           <Grid container direction="row">
-            <Grid xs={2} position="relative" justifySelf="self-end">
+            <Grid xs={2} position="relative">
               <Image
                 fill
                 style={{ objectFit: 'contain', padding: 16 }}
@@ -122,7 +121,16 @@ const Page: NextPage<Props> = ({
                 alt="לוגו של FIRST ישראל"
               />
             </Grid>
-            <Grid xs={2} position="relative" justifySelf="self-start">
+            <Grid xs={8}>
+              <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
+                {activeMatch?.number
+                  ? `מקצה #${activeMatch?.number}`
+                  : activeMatch?.stage === 'test'
+                    ? 'מקצה בדיקה'
+                    : 'אין מקצה פעיל'}
+              </Typography>
+            </Grid>
+            <Grid xs={2} position="relative">
               <Image
                 fill
                 style={{ objectFit: 'contain', padding: 8 }}
@@ -131,13 +139,6 @@ const Page: NextPage<Props> = ({
               />
             </Grid>
           </Grid>
-          <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
-            {activeMatch?.number
-              ? `מקצה #${activeMatch?.number}`
-              : activeMatch?.stage === 'test'
-                ? 'מקצה בדיקה'
-                : 'אין מקצה פעיל'}
-          </Typography>
           <Countdown
             targetDate={
               activeMatch?.startTime ? getCountdownTarget(activeMatch?.startTime) : new Date(0)
