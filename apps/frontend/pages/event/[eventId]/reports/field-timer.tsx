@@ -12,6 +12,9 @@ import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { useTime } from '../../../../hooks/use-time';
+import Grid from '@mui/material/Unstable_Grid2';
+import Image from 'next/image';
+import { localizedMatchStage } from '../../../../localization/field';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -110,6 +113,24 @@ const Page: NextPage<Props> = ({
     >
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
         <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
+          <Grid container direction="row">
+            <Grid xs={2} position="relative" justifySelf="self-end">
+              <Image
+                fill
+                style={{ objectFit: 'contain', padding: 16 }}
+                src="/assets/audience-display/first-israel-horizontal.svg"
+                alt="לוגו של FIRST ישראל"
+              />
+            </Grid>
+            <Grid xs={2} position="relative" justifySelf="self-start">
+              <Image
+                fill
+                style={{ objectFit: 'contain', padding: 8 }}
+                src="/assets/audience-display/technion-horizontal.svg"
+                alt="לוגו של הטכניון"
+              />
+            </Grid>
+          </Grid>
           <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
             {activeMatch?.number
               ? `מקצה #${activeMatch?.number}`
@@ -117,7 +138,6 @@ const Page: NextPage<Props> = ({
                 ? 'מקצה בדיקה'
                 : 'אין מקצה פעיל'}
           </Typography>
-
           <Countdown
             targetDate={
               activeMatch?.startTime ? getCountdownTarget(activeMatch?.startTime) : new Date(0)
