@@ -213,6 +213,7 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
         <Stack direction="row" spacing={2} my={4}>

@@ -82,6 +82,7 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/event/${event._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
+        color={event.color}
       >
         <ReportJudgingSchedule
           event={event}

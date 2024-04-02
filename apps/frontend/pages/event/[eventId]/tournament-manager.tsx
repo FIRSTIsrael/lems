@@ -212,6 +212,7 @@ const Page: NextPage<Props> = ({
             {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
           </Stack>
         }
+        color={event.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
