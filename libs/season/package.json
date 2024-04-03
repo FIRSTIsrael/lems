@@ -1,6 +1,6 @@
 {
   "name": "@lems/season",
-  "version": "2024.3.5",
+  "version": "2024.3.6",
   "dependencies": {
     "tslib": "^2.3.0"
   },
