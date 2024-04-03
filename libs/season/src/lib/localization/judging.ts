@@ -41,7 +41,11 @@ export const localizedAward: {
     description:
       'פרס ביצועי הרובוט מוענק לקבוצה אשר השיגה את הניקוד הגבוה ביותר במשחקי הרובוט. לקבוצות ניתנת הזדמנות להתחרות בלפחות שלושה מקצים של 2.5 דקות והניקוד הגבוה ביותר קובע.'
   },
-  volunteerOfTheYear: { name: 'מתנדב/ת השנה', description: '' },
+  volunteerOfTheYear: {
+    name: 'מתנדב/ת השנה',
+    description:
+      'פרס מתנדב/ת השנה מוענק למתנדב/ת שהשקיעו את מירב מאמצים ותרמו מעצמם משמעותית לתוכנית *FIRST* LEGO League.'
+  },
   champions: {
     name: 'האליפות',
     description:
