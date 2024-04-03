@@ -14,6 +14,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { WithId } from 'mongodb';
 import { localizedMatchStage } from '../../../localization/field';
 import { localizeTeam } from '../../../localization/teams';
+import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;
@@ -36,19 +37,20 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
 
   const maxScores = teams
     .map(t => {
+      const scores = [
+        ...scoresheets
+          .filter(
+            s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready'
+          )
+          .map(s => s.data?.score || 0)
+      ];
       return {
         team: t,
-        score: Math.max(
-          ...scoresheets
-            .filter(
-              s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready'
-            )
-            .map(s => s.data?.score || 0),
-          0
-        )
+        scores: scores,
+        score: Math.max(...scores, 0)
       };
     })
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => compareScoreArrays(a.scores, b.scores));
 
   const marquee = keyframes`
     from {transform: translateY(0)}

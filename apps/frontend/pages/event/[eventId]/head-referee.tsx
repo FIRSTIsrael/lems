@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -51,6 +51,20 @@ const Page: NextPage<Props> = ({
 
   const headRefereeGeneralSchedule =
     (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
+
+  useEffect(() => {
+    setTimeout(() => {
+      const currentMatch = matches.find(m => m._id == eventState.loadedMatch);
+      if (currentMatch) scrollToSelector(`match-${currentMatch.number}`);
+    }, 0);
+  }, []);
+
+  const scrollToSelector = (selector: string) => {
+    const element = document.getElementById(selector);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    }
+  };
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>

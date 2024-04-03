@@ -5,6 +5,7 @@ import { Parser, FieldInfo } from '@json2csv/plainjs';
 import * as db from '@lems/database';
 import { JudgingCategory } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, RubricsSchema } from '@lems/season';
+import { compareScoreArrays } from '@lems/utils/arrays';
 
 const router = express.Router({ mergeParams: true });
 
@@ -111,7 +112,13 @@ router.get(
       };
     });
 
-    csvData.sort((a, b) => b.highestScore - a.highestScore);
+    const flattenScores = row => {
+      return Object.keys(row)
+        .filter(key => key.startsWith('round-'))
+        .map(key => row[key]);
+    };
+
+    csvData.sort((a, b) => compareScoreArrays(flattenScores(a), flattenScores(b)));
 
     res.set('Content-Disposition', `attachment; filename=scores.csv`);
     res.set('Content-Type', 'text/csv');
