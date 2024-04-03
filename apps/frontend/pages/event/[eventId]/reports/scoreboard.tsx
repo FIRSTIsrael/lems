@@ -14,6 +14,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedMatchStage } from '../../../../localization/field';
 import { localizedRoles } from '../../../../localization/roles';
 import { localizeTeam } from '../../../../localization/teams';
+import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -118,7 +119,7 @@ const Page: NextPage<Props> = ({
       max: Math.max(...row.scores.map(score => score || 0))
     }));
 
-    teamsWithMaxScores.sort((a, b) => b.max - a.max);
+    teamsWithMaxScores.sort((a,b) => compareScoreArrays(a.scores,b.scores));
 
     const dataGridRows = teamsWithMaxScores.map((row, index) => ({
       rank: index + 1,

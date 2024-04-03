@@ -33,8 +33,10 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
     <TableRow
       sx={{
         backgroundColor: match._id === eventState.activeMatch ? '#e6f7e7' : undefined,
-        '&:last-child td, &:last-child th': { border: 0 }
+        '&:last-child td, &:last-child th': { border: 0 },
+        scrollMarginTop: 60
       }}
+      id={`match-${match.number}`}
     >
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
