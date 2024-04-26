@@ -2,16 +2,18 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import matchesRouter from './matches';
+import roleValidator from '../../../../middlewares/role-validator';
+import { RoleTypes } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', roleValidator([...RoleTypes]), (req: Request, res: Response) => {
   db.getEventTables(new ObjectId(req.params.eventId)).then(tables => {
     res.json(tables);
   });
 });
 
-router.get('/:tableId', (req: Request, res: Response) => {
+router.get('/:tableId', roleValidator('referee'), (req: Request, res: Response) => {
   db.getTable({
     _id: new ObjectId(req.params.tableId),
     eventId: new ObjectId(req.params.eventId)
@@ -20,6 +22,6 @@ router.get('/:tableId', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:tableId/matches', matchesRouter);
+router.use('/:tableId/matches', roleValidator('referee'), matchesRouter);
 
 export default router;

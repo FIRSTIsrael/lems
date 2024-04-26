@@ -3,16 +3,17 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import sessionsRouter from './sessions';
 import rubricsRouter from './rubrics';
+import roleValidator from '../../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', roleValidator(['head-queuer', 'judge-advisor', 'judge', 'lead-judge', 'queuer', 'tournament-manager']), (req: Request, res: Response) => {
   db.getEventRooms(new ObjectId(req.params.eventId)).then(rooms => {
     res.json(rooms);
   });
 });
 
-router.get('/:roomId', (req: Request, res: Response) => {
+router.get('/:roomId', roleValidator(['judge-advisor', 'judge', 'lead-judge']), (req: Request, res: Response) => {
   db.getRoom({
     _id: new ObjectId(req.params.roomId),
     eventId: new ObjectId(req.params.eventId)
@@ -21,8 +22,8 @@ router.get('/:roomId', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:roomId/sessions', sessionsRouter);
+router.use('/:roomId/sessions', roleValidator(['judge-advisor', 'judge', 'lead-judge']), sessionsRouter);
 
-router.use('/:roomId/rubrics', rubricsRouter);
+router.use('/:roomId/rubrics', roleValidator(['judge-advisor', 'judge', 'lead-judge']), rubricsRouter);
 
 export default router;
