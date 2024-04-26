@@ -23,9 +23,8 @@ router.get('/:teamId', (req: Request, res: Response) => {
   });
 });
 
-// These apis are used when exporting through the dashboad. The admin user makes a server side request
-router.use('/:teamId/rubrics', roleValidator([]), rubricsRouter);
+router.use('/:teamId/rubrics', roleValidator(["judge", "lead-judge", "judge-advisor"]), rubricsRouter);
 
-router.use('/:teamId/scoresheets', roleValidator([]), scoresheetsRouter);
+router.use('/:teamId/scoresheets', roleValidator(["head-referee", "referee"]), scoresheetsRouter);
 
 export default router;
