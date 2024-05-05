@@ -9,8 +9,8 @@ services:
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
         DASHBOARD_JWT_SECRET: ${DASHBOARD_JWT_SECRET}
-        MONGODB_URI: ${MONGODB_URI} # Change in GitHub when mongo goes back to external
-        # MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE} # Add when mongo goes back to external
+        MONGODB_URI: ${MONGODB_URI}
+        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
         RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
         DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
         DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
@@ -20,7 +20,6 @@ services:
       - '3333:3333'
     networks:
       - lems-network
-      - mongonet # Remove when mongo goes back to external
     restart: always
 
   frontend:
@@ -46,7 +45,3 @@ services:
 networks:
   lems-network:
     driver: bridge
-  # This network was created externally for Mongo 7 support.
-  # Remove the network from prod and this file before deploying with external Mongo again.
-  mongonet:
-    external: true

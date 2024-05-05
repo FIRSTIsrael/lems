@@ -38,11 +38,10 @@ RUN addgroup -S lems && adduser -S backend -G lems
 COPY dist/apps/backend backend
 RUN chown -R backend:lems .
 
-# Add when mongo goes back to external
-# ARG MONGO_CA_CERTIFICATE
-# ENV MONGO_CA_CERTIFICATE=$MONGO_CA_CERTIFICATE
-# RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
-# RUN chown backend:lems /root/mongo-ca-certificate.crt
+ARG MONGO_CA_CERTIFICATE
+ENV MONGO_CA_CERTIFICATE=$MONGO_CA_CERTIFICATE
+RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
+RUN chown backend:lems /root/mongo-ca-certificate.crt
 
 # See here: https://pptr.dev/troubleshooting#running-on-alpine
 # Installs latest Chromium (100) package.
