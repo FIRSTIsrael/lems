@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { DataGrid, GridColDef, GridValueFormatterParams, GridComparatorFn } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
 import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -75,7 +75,7 @@ const Page: NextPage<Props> = ({
       field: 'team',
       headerName: 'קבוצה',
       width: 350,
-      valueFormatter: (params: GridValueFormatterParams) => localizeTeam(params.value),
+      valueFormatter: (value: Team) => localizeTeam(value),
       sortComparator: teamNumberComparator
     },
     ...rounds.map(r => ({
@@ -119,7 +119,7 @@ const Page: NextPage<Props> = ({
       max: Math.max(...row.scores.map(score => score || 0))
     }));
 
-    teamsWithMaxScores.sort((a,b) => compareScoreArrays(a.scores,b.scores));
+    teamsWithMaxScores.sort((a, b) => compareScoreArrays(a.scores, b.scores));
 
     const dataGridRows = teamsWithMaxScores.map((row, index) => ({
       rank: index + 1,

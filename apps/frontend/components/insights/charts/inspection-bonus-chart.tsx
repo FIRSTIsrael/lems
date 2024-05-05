@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Typography, Paper, Skeleton } from '@mui/material';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
@@ -36,8 +36,7 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) =>
       headerName: 'שיוך',
       sortable: false,
       width: 400,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.teamAffiliation.name}, ${params.row.teamAffiliation.city}`
+      valueGetter: (value, row) => `${row.teamAffiliation.name}, ${row.teamAffiliation.city}`
     },
     { field: 'count', headerName: 'אי הצלחות', width: 150 }
   ];

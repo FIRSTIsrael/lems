@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
-import {
-  DataGrid,
-  GridColDef,
-  GridValueGetterParams,
-  GridValueFormatterParams
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Typography, Paper, Skeleton } from '@mui/material';
 import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
@@ -41,26 +36,25 @@ const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ event }) 
       headerName: 'שיוך',
       sortable: false,
       width: 225,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.teamAffiliation.name}, ${params.row.teamAffiliation.city}`
+      valueGetter: (value, row) => `${row.teamAffiliation.name}, ${row.teamAffiliation.city}`
     },
     {
       field: 'averageScore',
       headerName: 'ניקוד ממוצע',
       width: 100,
-      valueFormatter: (params: GridValueFormatterParams) => Number(params.value.toFixed(2))
+      valueFormatter: (value: number) => Number(value.toFixed(2))
     },
     {
       field: 'stdDev',
       headerName: 'סטיית תקן',
       width: 100,
-      valueFormatter: (params: GridValueFormatterParams) => Number(params.value.toFixed(2))
+      valueFormatter: (value: number) => Number(value.toFixed(2))
     },
     {
       field: 'relStdDev',
       headerName: 'סטיית תקן יחסית',
       width: 150,
-      valueFormatter: (params: GridValueFormatterParams) => Number(params.value.toFixed(2)) + '%'
+      valueFormatter: (value: number) => Number(value.toFixed(2)) + '%'
     }
   ];
 
