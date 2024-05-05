@@ -32,7 +32,7 @@
     "express-async-handler": "^1.2.0",
     "express-fileupload": "^1.5.0",
     "express-winston": "^4.2.0",
-    "formik": "^2.4.5",
+    "formik": "^2.4.6",
     "jsonwebtoken": "^9.0.2",
     "merge-anything": "^5.1.7",
     "mongodb": "^6.3.0",
@@ -97,4 +97,3 @@
     "typescript": "~5.4.2"
   }
 }
-
