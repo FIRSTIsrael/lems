@@ -10,15 +10,15 @@ import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 
 interface VideoSwitchProps {
-  eventState: EventState;
+  divisionState: EventState;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
+const VideoSwitch: React.FC<VideoSwitchProps> = ({ divisionState, socket }) => {
   const handleDisplayUpdate = (newScreen: string) => {
     socket.emit(
       'updateAudienceDisplay',
-      eventState.eventId.toString(),
+      divisionState.divisionId.toString(),
       { screen: newScreen },
       response => {
         if (!response.ok)
@@ -39,7 +39,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
       >
         <ToggleButtonGroup
           exclusive
-          value={eventState.audienceDisplay.screen}
+          value={divisionState.audienceDisplay.screen}
           onChange={(_e, newValue) => {
             if (newValue !== null) handleDisplayUpdate(newValue);
           }}
@@ -74,7 +74,7 @@ const VideoSwitch: React.FC<VideoSwitchProps> = ({ eventState, socket }) => {
           })}
         >
           {AudienceDisplayScreenTypes.map(t => {
-            if (eventState.presentations[t]?.enabled === false) return;
+            if (divisionState.presentations[t]?.enabled === false) return;
             return (
               <ToggleButton
                 value={t}

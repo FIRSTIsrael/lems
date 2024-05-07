@@ -22,23 +22,23 @@ import { DivisionColor, Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
 interface EditEventFormProps extends ButtonProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
-  const [name, setName] = useState<string>(event.name);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
-  const [color, setColor] = useState<DivisionColor>(event.color);
+const EditEventForm: React.FC<EditEventFormProps> = ({ division, onSubmit }) => {
+  const [name, setName] = useState<string>(division.name);
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs(division.startDate));
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs(division.endDate));
+  const [color, setColor] = useState<DivisionColor>(division.color);
 
   const updateEvent = () => {
-    apiFetch(`/api/admin/events/${event._id}`, {
+    apiFetch(`/api/admin/divisions/${division._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate.toDate() || event.startDate,
-        endDate: endDate.toDate() || event.endDate,
+        startDate: startDate.toDate() || division.startDate,
+        endDate: endDate.toDate() || division.endDate,
         color
       })
     }).then(res => {
@@ -76,11 +76,11 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
             </Grid>
             <Grid xs={6}>
               <FormControl fullWidth>
-                <InputLabel id="event-color">צבע</InputLabel>
+                <InputLabel id="division-color">צבע</InputLabel>
                 <Select
                   value={color}
                   onChange={e => setColor(e.target.value as DivisionColor)}
-                  labelId="event-color"
+                  labelId="division-color"
                   label="צבע"
                   fullWidth
                 >
@@ -100,7 +100,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid xs={6}>
                 <DatePicker
-                  disabled // Currently we do not support editing event dates (see LEMS-153)
+                  disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך התחלה"
                   value={startDate}
                   onChange={newDate => {
@@ -112,7 +112,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
               </Grid>
               <Grid xs={6}>
                 <DatePicker
-                  disabled // Currently we do not support editing event dates (see LEMS-153)
+                  disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך סיום"
                   value={endDate}
                   onChange={newDate => {

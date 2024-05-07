@@ -7,7 +7,7 @@ import rubricsRouter from './rubrics';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventRooms(new ObjectId(req.params.eventId)).then(rooms => {
+  db.getEventRooms(new ObjectId(req.params.divisionId)).then(rooms => {
     res.json(rooms);
   });
 });
@@ -15,7 +15,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:roomId', (req: Request, res: Response) => {
   db.getRoom({
     _id: new ObjectId(req.params.roomId),
-    eventId: new ObjectId(req.params.eventId)
+    divisionId: new ObjectId(req.params.divisionId)
   }).then(room => {
     res.json(room);
   });

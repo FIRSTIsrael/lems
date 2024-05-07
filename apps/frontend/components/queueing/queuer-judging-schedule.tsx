@@ -4,14 +4,14 @@ import { Event, Team, JudgingSession, JudgingRoom } from '@lems/types';
 import ReportJudgingSchedule from '../judging/report-judging-schedule';
 
 interface QueuerJudgingScheduleProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
 }
 
 const QueuerJudgingSchedule: React.FC<QueuerJudgingScheduleProps> = ({
-  event,
+  division,
   teams,
   rooms,
   sessions
@@ -20,7 +20,7 @@ const QueuerJudgingSchedule: React.FC<QueuerJudgingScheduleProps> = ({
 
   return (
     <ReportJudgingSchedule
-      event={event}
+      division={division}
       rooms={rooms}
       sessions={sessions}
       teams={teams}

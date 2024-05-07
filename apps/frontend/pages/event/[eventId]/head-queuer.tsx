@@ -28,8 +28,8 @@ import { localizedEventSection, localizedRoles } from '../../../localization/rol
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -39,8 +39,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   sessions: initialSessions,
   teams: initialTeams,
   tables,
@@ -49,25 +49,25 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
   const activeMatch = useMemo(
-    () => matches.find(match => match._id === eventState.activeMatch) || null,
-    [eventState.activeMatch, matches]
+    () => matches.find(match => match._id === divisionState.activeMatch) || null,
+    [divisionState.activeMatch, matches]
   );
   const loadedMatch = useMemo(
-    () => matches.find(match => match._id === eventState.loadedMatch) || null,
-    [eventState.loadedMatch, matches]
+    () => matches.find(match => match._id === divisionState.loadedMatch) || null,
+    [divisionState.loadedMatch, matches]
   );
   const currentSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession),
-    [sessions, eventState]
+    () => sessions.filter(session => session.number === divisionState.currentSession),
+    [sessions, divisionState]
   );
   const nextSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession + 1),
-    [sessions, eventState]
+    () => sessions.filter(session => session.number === divisionState.currentSession + 1),
+    [sessions, divisionState]
   );
 
   const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
@@ -111,7 +111,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['field', 'pit-admin', 'judging'],
     undefined,
     [
@@ -132,7 +132,7 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={['head-queuer']}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -142,10 +142,10 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            <ReportLink division={division} />
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
         {user.roleAssociation?.value === 'field' && (
           <>
@@ -154,7 +154,7 @@ const Page: NextPage<Props> = ({
               <ActiveMatch title="המקצה הבא" match={loadedMatch} showDelay={true} />
             </Stack>
             <HeadQueuerFieldSchedule
-              eventId={event._id}
+              divisionId={division._id}
               teams={teams}
               tables={tables}
               matches={matches.filter(m => m.stage !== 'test') || []}
@@ -171,7 +171,7 @@ const Page: NextPage<Props> = ({
               nextSessions={nextSessions}
             />
             <HeadQueuerJudgingSchedule
-              eventId={event._id}
+              divisionId={division._id}
               rooms={rooms}
               activeMatch={activeMatch}
               loadedMatch={loadedMatch}
@@ -193,13 +193,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`,
-        tables: `/api/events/${user.eventId}/tables`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

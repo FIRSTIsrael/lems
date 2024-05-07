@@ -3,14 +3,14 @@ import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
-import { getEventUsers } from '../../../../lib/schedule/event-users';
-import { getEventRubrics } from '../../../../lib/schedule/event-rubrics';
+import { getEventUsers } from '../../../../lib/schedule/division-users';
+import { getEventRubrics } from '../../../../lib/schedule/division-rubrics';
 import {
   parseEventData,
   parseSessionsAndMatches,
   getInitialEventState
 } from '../../../../lib/schedule/parser';
-import { getEventScoresheets } from '../../../../lib/schedule/event-scoresheets';
+import { getEventScoresheets } from '../../../../lib/schedule/division-scoresheets';
 import { cleanEventData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
@@ -19,9 +19,9 @@ router.post(
   '/parse',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
-    const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
-    const eventState = await db.getEventState({ eventId: event._id });
-    if (eventState) {
+    const division = await db.getEvent({ _id: new ObjectId(req.params.divisionId) });
+    const divisionState = await db.getEventState({ divisionId: division._id });
+    if (divisionState) {
       res.status(400).json({ error: 'Could not parse schedule: Event has data' });
       return;
     }
@@ -31,7 +31,7 @@ router.post(
       const timezone = req.body.timezone;
       const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
 
-      const { teams, tables, rooms } = parseEventData(event, csvData);
+      const { teams, tables, rooms } = parseEventData(division, csvData);
 
       console.log('📄 Inserting teams, tables, and rooms');
 
@@ -48,15 +48,15 @@ router.post(
         return;
       }
 
-      const dbTeams = await db.getEventTeams(event._id);
-      const dbTables = await db.getEventTables(event._id);
-      const dbRooms = await db.getEventRooms(event._id);
+      const dbTeams = await db.getEventTeams(division._id);
+      const dbTables = await db.getEventTables(division._id);
+      const dbRooms = await db.getEventRooms(division._id);
 
       console.log('📄 Parsing schedule');
 
       const { matches, sessions } = parseSessionsAndMatches(
         csvData,
-        event,
+        division,
         dbTeams,
         dbTables,
         dbRooms,
@@ -74,10 +74,10 @@ router.post(
 
       console.log('✅ Finished parsing schedule!');
 
-      const dbMatches = await db.getEventMatches(event._id.toString());
+      const dbMatches = await db.getEventMatches(division._id.toString());
 
       console.log('📄 Generating rubrics');
-      const rubrics = getEventRubrics(event, dbTeams);
+      const rubrics = getEventRubrics(division, dbTeams);
       if (!(await db.addRubrics(rubrics)).acknowledged) {
         res.status(500).json({ error: 'Could not create rubrics!' });
         return;
@@ -85,7 +85,7 @@ router.post(
       console.log('✅ Generated rubrics');
 
       console.log('📄 Generating scoresheets');
-      const scoresheets = getEventScoresheets(event, dbTeams, dbMatches);
+      const scoresheets = getEventScoresheets(division, dbTeams, dbMatches);
 
       if (!(await db.addScoresheets(scoresheets)).acknowledged) {
         res.status(500).json({ error: 'Could not create scoresheets!' });
@@ -93,26 +93,26 @@ router.post(
       }
       console.log('✅ Generated scoresheets!');
 
-      console.log('👤 Generating event users');
-      const users = getEventUsers(event, dbTables, dbRooms);
+      console.log('👤 Generating division users');
+      const users = getEventUsers(division, dbTables, dbRooms);
       if (!(await db.addUsers(users)).acknowledged) {
         res.status(500).json({ error: 'Could not create users!' });
         return;
       }
-      console.log('✅ Generated event users');
+      console.log('✅ Generated division users');
 
-      console.log('🔐 Creating event state');
-      await db.addEventState(getInitialEventState(event));
-      console.log('✅ Created event state');
+      console.log('🔐 Creating division state');
+      await db.addEventState(getInitialEventState(division));
+      console.log('✅ Created division state');
 
-      await db.updateEvent({ _id: event._id }, { hasState: true });
+      await db.updateEvent({ _id: division._id }, { hasState: true });
 
       res.status(200).json({ ok: true });
     } catch (error) {
       console.log('❌ Error parsing schedule');
       console.log(error);
-      await cleanEventData(event);
-      console.log('✅ Deleted event data!');
+      await cleanEventData(division);
+      console.log('✅ Deleted division data!');
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
   })

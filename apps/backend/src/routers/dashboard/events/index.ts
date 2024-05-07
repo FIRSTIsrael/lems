@@ -1,22 +1,22 @@
 import express, { Request, Response } from 'express';
 import dashboardTeamsRouter from './teams/index';
 import * as db from '@lems/database';
-import dashboardEventValidator from '../../../middlewares/dashboard/event-validator';
+import dashboardEventValidator from '../../../middlewares/dashboard/division-validator';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:eventSalesforceId', dashboardEventValidator);
+router.use('/:divisionSalesforceId', dashboardEventValidator);
 
-router.get('/:eventSalesforceId', (req: Request, res: Response) => {
-  db.getEventState({ eventId: req.event._id }).then(eventState => {
+router.get('/:divisionSalesforceId', (req: Request, res: Response) => {
+  db.getEventState({ divisionId: req.division._id }).then(divisionState => {
     res.json({
-      name: req.event.name,
-      color: req.event.color,
-      allowTeamExports: eventState.allowTeamExports
+      name: req.division.name,
+      color: req.division.color,
+      allowTeamExports: divisionState.allowTeamExports
     });
   });
 });
 
-router.use('/:eventSalesforceId/teams', dashboardTeamsRouter);
+router.use('/:divisionSalesforceId/teams', dashboardTeamsRouter);
 
 export default router;

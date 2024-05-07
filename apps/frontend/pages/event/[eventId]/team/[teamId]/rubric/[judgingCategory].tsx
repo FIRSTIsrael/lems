@@ -28,18 +28,18 @@ import { localizeTeam } from '../../../../../../localization/teams';
 import { enqueueSnackbar } from 'notistack';
 
 interface RubricSelectorProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   judgingCategory: JudgingCategory;
 }
 
-const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCategory }) => {
+const RubricSelector: React.FC<RubricSelectorProps> = ({ division, team, judgingCategory }) => {
   return (
     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
       {JudgingCategoryTypes.map(category => (
         <NextLink
           key={category}
-          href={`/event/${event._id}/team/${team._id}/rubric/${category}`}
+          href={`/division/${division._id}/team/${team._id}/rubric/${category}`}
           passHref
           legacyBehavior
         >
@@ -67,21 +67,21 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ event, team, judgingCat
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
   session: WithId<JudgingSession>;
   rubric: WithId<Rubric<JudgingCategory>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initialRubric }) => {
+const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: initialRubric }) => {
   const router = useRouter();
   if (!team.registered) {
-    router.push(`/event/${event._id}/${user.role}`);
+    router.push(`/division/${division._id}/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
   if (session.status !== 'completed') {
-    router.push(`/event/${event._id}/${user.role}`);
+    router.push(`/division/${division._id}/${user.role}`);
     enqueueSnackbar('מפגש השיפוט טרם נגמר.', { variant: 'info' });
   }
 
@@ -89,18 +89,23 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
     typeof router.query.judgingCategory === 'string' ? router.query.judgingCategory : '';
   const [rubric, setRubric] = useState<WithId<Rubric<JudgingCategory>>>(initialRubric);
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['judging'], undefined, [
-    {
-      name: 'rubricUpdated',
-      handler: rubric => {
-        if (
-          rubric.teamId === router.query.teamId &&
-          rubric.category === router.query.judgingCategory
-        )
-          setRubric(rubric);
+  const { socket, connectionStatus } = useWebsocket(
+    division._id.toString(),
+    ['judging'],
+    undefined,
+    [
+      {
+        name: 'rubricUpdated',
+        handler: rubric => {
+          if (
+            rubric.teamId === router.query.teamId &&
+            rubric.category === router.query.judgingCategory
+          )
+            setRubric(rubric);
+        }
       }
-    }
-  ]);
+    ]
+  );
 
   return (
     <RoleAuthorizer
@@ -108,19 +113,19 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
       allowedRoles={['judge', 'judge-advisor']}
       conditionalRoles={'lead-judge'}
       conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
-      onFail={() => router.push(`/event/${event._id}/${user.role}`)}
+      onFail={() => router.push(`/division/${division._id}/${user.role}`)}
     >
       {team && (
         <Layout
           maxWidth="md"
           title={`מחוון ${
             localizedJudgingCategory[judgingCategory as JudgingCategory].name
-          } של קבוצה #${team.number}, ${team.name} | ${event.name}`}
+          } של קבוצה #${team.number}, ${team.name} | ${division.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/event/${event._id}/${user.role}#${team.number.toString()}`}
+          back={`/division/${division._id}/${user.role}#${team.number.toString()}`}
           backDisabled={connectionStatus === 'connecting'}
-          color={event.color}
+          color={division.color}
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
@@ -129,14 +134,14 @@ const Page: NextPage<Props> = ({ user, event, room, team, session, rubric: initi
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['judge', 'judge-advisor']}>
             <RubricSelector
-              event={event}
+              division={division}
               team={team}
               judgingCategory={judgingCategory as JudgingCategory}
             />
           </RoleAuthorizer>
           <Box my={4}>
             <RubricForm
-              event={event}
+              division={division}
               team={team}
               user={user}
               rubric={rubric}
@@ -158,9 +163,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     if (user.roleAssociation && user.roleAssociation.type === 'room') {
       roomId = user.roleAssociation.value;
     } else {
-      const sessions = await apiFetch(`/api/events/${user.eventId}/sessions`, undefined, ctx).then(
-        res => res?.json()
-      );
+      const sessions = await apiFetch(
+        `/api/divisions/${user.divisionId}/sessions`,
+        undefined,
+        ctx
+      ).then(res => res?.json());
       roomId = sessions.find(
         (session: JudgingSession) => session.teamId == new ObjectId(String(ctx.params?.teamId))
       ).roomId;
@@ -168,11 +175,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        team: `/api/events/${user.eventId}/teams/${ctx.params?.teamId}`,
-        room: `/api/events/${user.eventId}/rooms/${roomId}`,
-        session: `/api/events/${user.eventId}/rooms/${roomId}/sessions`,
-        rubric: `/api/events/${user.eventId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+        division: `/api/divisions/${user.divisionId}`,
+        team: `/api/divisions/${user.divisionId}/teams/${ctx.params?.teamId}`,
+        room: `/api/divisions/${user.divisionId}/rooms/${roomId}`,
+        session: `/api/divisions/${user.divisionId}/rooms/${roomId}/sessions`,
+        rubric: `/api/divisions/${user.divisionId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
       },
       ctx
     );

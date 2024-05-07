@@ -30,7 +30,7 @@ import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerJudgingScheduleProps {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -41,7 +41,7 @@ interface HeadQueuerJudgingScheduleProps {
 }
 
 const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
-  eventId,
+  divisionId,
   teams,
   sessions,
   rooms,
@@ -56,7 +56,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
     (sessionId: ObjectId, sessionData: Partial<Pick<JudgingSession, 'called' | 'queued'>>) => {
       socket.emit(
         'updateJudgingSession',
-        eventId.toString(),
+        divisionId.toString(),
         sessionId.toString(),
         sessionData,
         response => {
@@ -66,7 +66,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
         }
       );
     },
-    [eventId, socket]
+    [divisionId, socket]
   );
 
   const callSessions = useCallback(

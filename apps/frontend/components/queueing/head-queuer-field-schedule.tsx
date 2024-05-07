@@ -29,7 +29,7 @@ import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerFieldScheduleProps {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -38,7 +38,7 @@ interface HeadQueuerFieldScheduleProps {
 }
 
 const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
-  eventId,
+  divisionId,
   teams,
   matches,
   tables,
@@ -51,7 +51,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
     (matchId: ObjectId, called: boolean) => {
       socket.emit(
         'updateMatchBrief',
-        eventId.toString(),
+        divisionId.toString(),
         matchId.toString(),
         { called },
         response => {
@@ -61,14 +61,14 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
         }
       );
     },
-    [eventId, socket]
+    [divisionId, socket]
   );
 
   const updateParticipantQueueStatus = useCallback(
     (match: WithId<RobotGameMatch>, teamId: ObjectId, newQueueStatus: boolean) => {
       socket.emit(
         'updateMatchParticipant',
-        eventId.toString(),
+        divisionId.toString(),
         match._id.toString(),
         {
           teamId: teamId.toString(),
@@ -81,7 +81,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
         }
       );
     },
-    [socket, eventId]
+    [socket, divisionId]
   );
 
   return (

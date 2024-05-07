@@ -16,17 +16,17 @@ import {
 } from 'recharts';
 
 interface MissionSuccessRateChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const MissionSuccessRateChart: React.FC<MissionSuccessRateChartProps> = ({ event }) => {
+const MissionSuccessRateChart: React.FC<MissionSuccessRateChartProps> = ({ division }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/missions/success-rate`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/field/missions/success-rate`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>

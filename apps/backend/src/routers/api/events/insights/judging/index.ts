@@ -12,7 +12,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           status: 'completed'
         }
       },
@@ -106,7 +106,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           category: 'core-values',
           status: {
             $in: ['ready', 'waiting-for-review', 'completed']
@@ -153,7 +153,7 @@ router.get(
   '/robot-room-correlation-to-robot-game',
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
-      { $match: { eventId: new ObjectId(req.params.eventId) } },
+      { $match: { divisionId: new ObjectId(req.params.divisionId) } },
       {
         $lookup: {
           from: 'rubrics',

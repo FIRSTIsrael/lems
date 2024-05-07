@@ -17,21 +17,21 @@ import Image from 'next/image';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   matches: initialMatches
 }) => {
   const router = useRouter();
   const currentTime = useTime({ interval: 100 });
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const sounds = useRef({
     start: new Audio('/assets/sounds/field/field-start.wav'),
@@ -41,8 +41,8 @@ const Page: NextPage<Props> = ({
   });
 
   const activeMatch = useMemo(
-    () => matches.find(m => m._id === eventState.activeMatch),
-    [matches, eventState.activeMatch]
+    () => matches.find(m => m._id === divisionState.activeMatch),
+    [matches, divisionState.activeMatch]
   );
 
   const matchEnd = useMemo(
@@ -71,31 +71,31 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.start.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchEndgame',
       handler: match => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.end.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
         handleMatchEvent(newMatch, newEventState);
       }
     }
@@ -106,7 +106,7 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -175,9 +175,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

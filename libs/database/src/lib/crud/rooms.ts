@@ -6,8 +6,8 @@ export const getRoom = (filter: Filter<JudgingRoom>) => {
   return db.collection<JudgingRoom>('rooms').findOne(filter);
 };
 
-export const getEventRooms = (eventId: ObjectId) => {
-  return db.collection<JudgingRoom>('rooms').find({ eventId }).toArray();
+export const getEventRooms = (divisionId: ObjectId) => {
+  return db.collection<JudgingRoom>('rooms').find({ divisionId }).toArray();
 };
 
 export const addRoom = (room: JudgingRoom) => {
@@ -39,9 +39,9 @@ export const deleteRoom = (filter: Filter<JudgingRoom>) => {
     .then(response => response);
 };
 
-export const deleteEventRooms = (eventId: ObjectId) => {
+export const deleteEventRooms = (divisionId: ObjectId) => {
   return db
     .collection<JudgingRoom>('rooms')
-    .deleteMany({ eventId })
+    .deleteMany({ divisionId })
     .then(response => response);
 };

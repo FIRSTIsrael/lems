@@ -1,8 +1,8 @@
 import express from 'express';
-import eventsRouter from './events';
+import divisionsRouter from './divisions';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/events', eventsRouter);
+router.use('/divisions', divisionsRouter);
 
 export default router;

@@ -32,21 +32,21 @@ import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import EventSelector from '../general/event-selector';
+import EventSelector from '../general/division-selector';
 
 interface EventScheduleEditorProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
+const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) => {
   const theme = useTheme();
   const router = useRouter();
-  const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(event.schedule || []);
+  const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(division.schedule || []);
   const [copyModal, setCopyModal] = useState(false);
-  const [events, setEvents] = useState<Array<WithId<Event>>>([]);
+  const [divisions, setEvents] = useState<Array<WithId<Event>>>([]);
 
   useEffect(() => {
-    apiFetch(`/public/events`).then(res => {
+    apiFetch(`/public/divisions`).then(res => {
       res.json().then(data => setEvents(data));
     });
   }, []);
@@ -59,15 +59,15 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
     [schedule]
   );
 
-  const copyScheduleFrom = (eventId: string | ObjectId) => {
-    apiFetch(`/api/events/${eventId}?withSchedule=true`)
+  const copyScheduleFrom = (divisionId: string | ObjectId) => {
+    apiFetch(`/api/divisions/${divisionId}?withSchedule=true`)
       .then(res => res.json())
       .then(data => {
         if (data.schedule?.length > 0) {
           const getNewDate = (date: Date): Date => {
             const hour = dayjs(date).get('hours');
             const minute = dayjs(date).get('minutes');
-            return dayjs(event.startDate).set('hours', hour).set('minutes', minute).toDate();
+            return dayjs(division.startDate).set('hours', hour).set('minutes', minute).toDate();
           };
 
           const newSchedule = data.schedule.map((entry: EventScheduleEntry) => {
@@ -89,7 +89,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
 
   const updateEvent = () => {
     setSchedule(sortedSchedule);
-    apiFetch(`/api/admin/events/${event._id}`, {
+    apiFetch(`/api/admin/divisions/${division._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ schedule: sortedSchedule })
@@ -276,8 +276,8 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
               ...schedule,
               {
                 name: `מרכיב לו״ז ${schedule.length + 1}`,
-                startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
-                endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
+                startTime: dayjs(division.startDate).set('hour', 0).set('minute', 0).toDate(),
+                endTime: dayjs(division.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
               }
             ])
@@ -327,8 +327,8 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ event }) => {
             {'העתקת לו"ז כללי'}
           </Typography>
           <EventSelector
-            events={events.filter(e => e._id.toString() !== event._id.toString())}
-            onChange={eventId => copyScheduleFrom(eventId)}
+            divisions={divisions.filter(e => e._id.toString() !== division._id.toString())}
+            onChange={divisionId => copyScheduleFrom(divisionId)}
           />
         </Paper>
       </Modal>

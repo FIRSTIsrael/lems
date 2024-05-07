@@ -18,17 +18,17 @@ import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
-  eventState: EventState;
+  divisionState: EventState;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   teams,
-  eventState,
+  divisionState,
   scoresheets: initialScoresheets
 }) => {
   const router = useRouter();
@@ -47,7 +47,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
   ]);
 
@@ -55,14 +55,14 @@ const Page: NextPage<Props> = ({
     () => [
       ...new Set([
         ...scoresheets
-          .filter(s => s.stage === eventState.currentStage)
+          .filter(s => s.stage === divisionState.currentStage)
           .map(s => {
             return s.round;
           })
           .sort((a, b) => a - b)
       ])
     ],
-    [eventState.currentStage, scoresheets]
+    [divisionState.currentStage, scoresheets]
   );
 
   const columns: GridColDef[] = [
@@ -80,7 +80,7 @@ const Page: NextPage<Props> = ({
     },
     ...rounds.map(r => ({
       field: `round-${r}`,
-      headerName: `סבב ${localizedMatchStage[eventState.currentStage]} #${r}`,
+      headerName: `סבב ${localizedMatchStage[divisionState.currentStage]} #${r}`,
       width: 125
     })),
     {
@@ -98,7 +98,7 @@ const Page: NextPage<Props> = ({
         scores: rounds.map(
           roundNumber =>
             scoresheets
-              .filter(s => s.teamId === team._id && s.stage === eventState.currentStage)
+              .filter(s => s.teamId === team._id && s.stage === divisionState.currentStage)
               .find(s => s.round === roundNumber)?.data?.score
         )
       };
@@ -127,25 +127,25 @@ const Page: NextPage<Props> = ({
     }));
 
     return dataGridRows;
-  }, [eventState.currentStage, rounds, scoresheets, teams]);
+  }, [divisionState.currentStage, rounds, scoresheets, teams]);
 
   return (
     <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <Paper
           sx={{
@@ -181,10 +181,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        scoresheets: `/api/events/${user.eventId}/scoresheets`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
       },
       ctx
     );

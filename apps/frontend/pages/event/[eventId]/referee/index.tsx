@@ -22,21 +22,21 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   table: WithId<RobotGameTable>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   table,
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
@@ -75,7 +75,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['field', 'pit-admin'],
     undefined,
     [
@@ -93,23 +93,28 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="referee"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth={800}
-        title={`שולחן ${table.name} | ${event.name}`}
+        title={`שולחן ${table.name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        color={event.color}
+        color={division.color}
       >
         {ALLOW_MATCH_SELECTOR ? (
-          <MatchSelector event={event} eventState={eventState} table={table} matches={matches} />
+          <MatchSelector
+            division={division}
+            divisionState={divisionState}
+            table={table}
+            matches={matches}
+          />
         ) : (
           <StrictRefereeDisplay
-            event={event}
-            eventState={eventState}
+            division={division}
+            divisionState={divisionState}
             table={table}
             matches={matches}
             socket={socket}
@@ -126,10 +131,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        table: `/api/events/${user.eventId}/tables/${user.roleAssociation.value}`,
-        matches: `/api/events/${user.eventId}/tables/${user.roleAssociation.value}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        table: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}`,
+        matches: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}/matches`
       },
       ctx
     );

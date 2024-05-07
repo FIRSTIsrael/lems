@@ -3,7 +3,7 @@ import { TicketType } from '../constants';
 
 export interface Ticket {
   teamId: ObjectId | null;
-  eventId: ObjectId;
+  divisionId: ObjectId;
   created: Date;
   closed?: Date;
   reasonForClose?: string;

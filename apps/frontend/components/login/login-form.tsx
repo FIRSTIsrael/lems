@@ -25,13 +25,13 @@ import { localizedEventSection } from '../../localization/roles';
 
 interface Props {
   recaptchaRequired: boolean;
-  event: WithId<Event>;
+  division: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, onCancel }) => {
+const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables, onCancel }) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -74,7 +74,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         isAdmin: false,
-        eventId: event?._id,
+        divisionId: division?._id,
         role,
         ...(association
           ? {
@@ -93,7 +93,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
         if (data && !data.error) {
           document.getElementById('recaptcha-script')?.remove();
           document.querySelector('.grecaptcha-badge')?.remove();
-          const returnUrl = router.query.returnUrl || `/event/${event._id}`;
+          const returnUrl = router.query.returnUrl || `/division/${division._id}`;
           router.push(returnUrl as string);
         } else if (data.error) {
           if (data.error === 'INVALID_CREDENTIALS') {
@@ -125,11 +125,11 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, event, rooms, tables, o
         התחברות לאירוע:
       </Typography>
       <Typography variant="h2" textAlign="center">
-        {event.name}
+        {division.name}
       </Typography>
 
       <FormDropdown
-        id="select-event-role"
+        id="select-division-role"
         value={role}
         label="תפקיד"
         onChange={e => {

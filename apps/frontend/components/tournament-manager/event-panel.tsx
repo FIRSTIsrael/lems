@@ -19,25 +19,25 @@ import { Event, EventState } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
 interface EventPanelProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
 }
 
-const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEventState }) => {
+const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initialEventState }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState(initialEventState);
+  const [divisionState, setEventState] = useState(initialEventState);
   const [endEventDialogOpen, setEndEventDialogOpen] = useState(false);
   const [allowExportsDialogOpen, setAllowExportsDialogOpen] = useState(false);
 
   const endEvent = () => {
-    apiFetch(`/api/events/${event._id}/state`, {
+    apiFetch(`/api/divisions/${division._id}/state`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ completed: true })
     }).then(() => {
       setEndEventDialogOpen(false);
-      setEventState(eventState => {
-        return { ...eventState, completed: true };
+      setEventState(divisionState => {
+        return { ...divisionState, completed: true };
       });
       enqueueSnackbar('האירוע הסתיים בהצלחה', { variant: 'success' });
       router.reload();
@@ -45,14 +45,14 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
   };
 
   const allowExports = () => {
-    apiFetch(`/api/events/${event._id}/state`, {
+    apiFetch(`/api/divisions/${division._id}/state`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ allowTeamExports: true })
     }).then(() => {
       setAllowExportsDialogOpen(false);
-      setEventState(eventState => {
-        return { ...eventState, allowTeamExports: true };
+      setEventState(divisionState => {
+        return { ...divisionState, allowTeamExports: true };
       });
       enqueueSnackbar('קבוצות יכולות כעת להוריד את תוצאות האירוע.', { variant: 'success' });
     });
@@ -65,7 +65,7 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
           <Button
             variant="contained"
             startIcon={<DoneAllIcon />}
-            disabled={eventState.completed}
+            disabled={divisionState.completed}
             onClick={e => {
               e.preventDefault();
               setEndEventDialogOpen(true);
@@ -89,7 +89,7 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
               e.preventDefault();
               setAllowExportsDialogOpen(true);
             }}
-            disabled={!eventState.completed || eventState.allowTeamExports}
+            disabled={!divisionState.completed || divisionState.allowTeamExports}
           >
             פרסום התוצאות ב-Dashboard
           </Button>
@@ -98,10 +98,10 @@ const EventPanel: React.FC<EventPanelProps> = ({ event, eventState: initialEvent
       <Dialog
         open={endEventDialogOpen}
         onClose={() => setEndEventDialogOpen(false)}
-        aria-labelledby="end-event-title"
-        aria-describedby="end-event-description"
+        aria-labelledby="end-division-title"
+        aria-describedby="end-division-description"
       >
-        <DialogTitle id="end-event-title">סיום האירוע</DialogTitle>
+        <DialogTitle id="end-division-title">סיום האירוע</DialogTitle>
         <DialogContent>
           <DialogContentText id="logout-description">
             פעולה זו תסמן שהאירוע הסתיים ותפתח את מסכי ניתוח האירוע. לא ניתן לחזור אחורה לאחר ביצוע

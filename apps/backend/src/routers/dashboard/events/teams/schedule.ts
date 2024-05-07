@@ -8,21 +8,21 @@ router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
     const teamNumber = req.teamNumber;
-    const eventId = req.event._id;
+    const divisionId = req.division._id;
 
     const pipeline = [
-      { $match: { _id: eventId } },
+      { $match: { _id: divisionId } },
       {
         $lookup: {
           from: 'teams',
-          let: { teamNumber: teamNumber, eventId: '$_id' },
+          let: { teamNumber: teamNumber, divisionId: '$_id' },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
                     {
-                      $eq: ['$eventId', '$$eventId']
+                      $eq: ['$divisionId', '$$divisionId']
                     },
                     {
                       $eq: ['$number', '$$teamNumber']
@@ -59,14 +59,14 @@ router.get(
             {
               $lookup: {
                 from: 'sessions',
-                let: { teamId: '$team._id', eventId: '$_id' },
+                let: { teamId: '$team._id', divisionId: '$_id' },
                 pipeline: [
                   {
                     $match: {
                       $expr: {
                         $and: [
                           {
-                            $eq: ['$eventId', '$$eventId']
+                            $eq: ['$divisionId', '$$divisionId']
                           },
                           {
                             $eq: ['$teamId', '$$teamId']
@@ -103,7 +103,7 @@ router.get(
               $lookup: {
                 from: 'matches',
                 localField: '_id',
-                foreignField: 'eventId',
+                foreignField: 'divisionId',
                 as: 'matches'
               }
             },
@@ -157,7 +157,7 @@ router.get(
       { $replaceRoot: { newRoot: '$schedule' } }
     ];
 
-    const report = await db.db.collection<Event>('events').aggregate(pipeline).toArray();
+    const report = await db.db.collection<Event>('divisions').aggregate(pipeline).toArray();
     res.json(report);
   })
 );

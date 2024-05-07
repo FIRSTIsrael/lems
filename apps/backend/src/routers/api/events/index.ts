@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { EventState } from '@lems/types';
 import * as db from '@lems/database';
-import eventValidator from '../../../middlewares/event-validator';
+import divisionValidator from '../../../middlewares/division-validator';
 import sessionsRouter from './sessions';
 import matchesRouter from './matches';
 import roomsRouter from './rooms';
@@ -19,27 +19,27 @@ import insightsRouter from './insights';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:eventId', eventValidator);
+router.use('/:divisionId', divisionValidator);
 
-router.get('/:eventId', (req: Request, res: Response) => {
-  db.getEvent({ _id: new ObjectId(req.params.eventId) }).then(event => {
-    if (!req.query.withSchedule) delete event.schedule;
-    res.json(event);
+router.get('/:divisionId', (req: Request, res: Response) => {
+  db.getEvent({ _id: new ObjectId(req.params.divisionId) }).then(division => {
+    if (!req.query.withSchedule) delete division.schedule;
+    res.json(division);
   });
 });
 
-router.get('/:eventId/state', (req: Request, res: Response) => {
-  db.getEventState({ eventId: new ObjectId(req.params.eventId) }).then(eventState =>
-    res.json(eventState)
+router.get('/:divisionId/state', (req: Request, res: Response) => {
+  db.getEventState({ divisionId: new ObjectId(req.params.divisionId) }).then(divisionState =>
+    res.json(divisionState)
   );
 });
 
-router.put('/:eventId/state', (req: Request, res: Response) => {
+router.put('/:divisionId/state', (req: Request, res: Response) => {
   const body: Partial<EventState> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
-  console.log(`⏬ Updating Event state for event ${req.params.eventId}`);
-  db.updateEventState({ eventId: new ObjectId(req.params.eventId) }, body).then(task => {
+  console.log(`⏬ Updating Event state for division ${req.params.divisionId}`);
+  db.updateEventState({ divisionId: new ObjectId(req.params.divisionId) }, body).then(task => {
     if (task.acknowledged) {
       console.log('✅ Event state updated!');
       return res.json({ ok: true, id: task.upsertedId });
@@ -50,30 +50,30 @@ router.put('/:eventId/state', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:eventId/awards', awardsRouter);
+router.use('/:divisionId/awards', awardsRouter);
 
-router.use('/:eventId/rooms', roomsRouter);
+router.use('/:divisionId/rooms', roomsRouter);
 
-router.use('/:eventId/tables', tablesRouter);
+router.use('/:divisionId/tables', tablesRouter);
 
-router.use('/:eventId/users', usersRouter);
+router.use('/:divisionId/users', usersRouter);
 
-router.use('/:eventId/sessions', sessionsRouter);
+router.use('/:divisionId/sessions', sessionsRouter);
 
-router.use('/:eventId/matches', matchesRouter);
+router.use('/:divisionId/matches', matchesRouter);
 
-router.use('/:eventId/teams', teamsRouter);
+router.use('/:divisionId/teams', teamsRouter);
 
-router.use('/:eventId/rubrics', rubricsRouter);
+router.use('/:divisionId/rubrics', rubricsRouter);
 
-router.use('/:eventId/scoresheets', scoresheetRouter);
+router.use('/:divisionId/scoresheets', scoresheetRouter);
 
-router.use('/:eventId/tickets', ticketsRouter);
+router.use('/:divisionId/tickets', ticketsRouter);
 
-router.use('/:eventId/cv-forms', cvFormsRouter);
+router.use('/:divisionId/cv-forms', cvFormsRouter);
 
-router.use('/:eventId/export', exportRouter);
+router.use('/:divisionId/export', exportRouter);
 
-router.use('/:eventId/insights', insightsRouter);
+router.use('/:divisionId/insights', insightsRouter);
 
 export default router;

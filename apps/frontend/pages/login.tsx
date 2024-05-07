@@ -4,25 +4,25 @@ import { WithId, ObjectId } from 'mongodb';
 import { Paper, Box, Link, Stack, Typography } from '@mui/material';
 import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
-import EventSelector from '../components/general/event-selector';
+import EventSelector from '../components/general/division-selector';
 import LoginForm from '../components/login/login-form';
 import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
-  events: Array<WithId<Event>>;
+  divisions: Array<WithId<Event>>;
   recaptchaRequired: boolean;
 }
 
-const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
+const Page: NextPage<PageProps> = ({ divisions, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
-  const [event, setEvent] = useState<WithId<Event> | undefined>(undefined);
+  const [division, setEvent] = useState<WithId<Event> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
-  const selectEvent = (eventId: string | ObjectId) => {
-    const selectedEvent = events.find(e => e._id == eventId);
+  const selectEvent = (divisionId: string | ObjectId) => {
+    const selectedEvent = divisions.find(e => e._id == divisionId);
     setEvent(selectedEvent);
   };
 
@@ -37,30 +37,30 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   }, []);
 
   useEffect(() => {
-    if (event) {
-      apiFetch(`/public/events/${event._id}/rooms`)
+    if (division) {
+      apiFetch(`/public/divisions/${division._id}/rooms`)
         .then(res => res.json())
         .then(rooms => setRooms(rooms));
     }
-  }, [event]);
+  }, [division]);
 
   useEffect(() => {
-    if (event) {
-      apiFetch(`/public/events/${event._id}/tables`)
+    if (division) {
+      apiFetch(`/public/divisions/${division._id}/tables`)
         .then(res => res.json())
         .then(tables => setTables(tables));
     }
-  }, [event]);
+  }, [division]);
 
   return (
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : event && rooms && tables ? (
+        ) : division && rooms && tables ? (
           <LoginForm
             recaptchaRequired={recaptchaRequired}
-            event={event}
+            division={division}
             rooms={rooms}
             tables={tables}
             onCancel={() => {
@@ -75,8 +75,8 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
               בחירת אירוע
             </Typography>
             <EventSelector
-              events={events}
-              getEventDisabled={event => !event.hasState}
+              divisions={divisions}
+              getEventDisabled={division => !division.hasState}
               onChange={selectEvent}
             />
           </Stack>
@@ -116,12 +116,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
-      : { redirect: { destination: `/event/${user.eventId}`, permanent: false } };
+      : { redirect: { destination: `/division/${user.divisionId}`, permanent: false } };
   } else {
-    return apiFetch('/public/events', undefined, ctx)
+    return apiFetch('/public/divisions', undefined, ctx)
       .then(response => response.json())
-      .then((events: Array<WithId<Event>>) => {
-        return { props: { events, recaptchaRequired } };
+      .then((divisions: Array<WithId<Event>>) => {
+        return { props: { divisions, recaptchaRequired } };
       });
   }
 };

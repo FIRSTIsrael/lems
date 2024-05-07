@@ -9,15 +9,15 @@ import { stringifyTwoDates } from '../../lib/utils/dayjs';
 import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
 interface EventSelectorProps {
-  events: Array<WithId<Event>>;
-  onChange: (eventId: string | ObjectId) => void;
-  getEventDisabled?: (event: WithId<Event>) => boolean;
+  divisions: Array<WithId<Event>>;
+  onChange: (divisionId: string | ObjectId) => void;
+  getEventDisabled?: (division: WithId<Event>) => boolean;
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
+const EventSelector: React.FC<EventSelectorProps> = ({ divisions, onChange, getEventDisabled }) => {
   const sortedEvents = useMemo(
     () =>
-      events.sort((a, b) => {
+      divisions.sort((a, b) => {
         const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
         const diffB = dayjs().diff(dayjs(b.startDate), 'days', true);
 
@@ -26,17 +26,17 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
         if (diffA > 1 && diffB > 1) return diffA - diffB;
         return diffB - diffA;
       }),
-    [events]
+    [divisions]
   );
 
   return (
     <Stack direction="column" spacing={2}>
-      {sortedEvents.map(event => {
+      {sortedEvents.map(division => {
         return (
           <ListItemButton
-            key={event.name}
-            onClick={() => onChange(event._id)}
-            disabled={getEventDisabled?.(event)}
+            key={division.name}
+            onClick={() => onChange(division._id)}
+            disabled={getEventDisabled?.(division)}
             sx={{ borderRadius: 2 }}
             component="a"
             dense
@@ -44,18 +44,18 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
             <ListItemAvatar>
               <Avatar
                 sx={{
-                  color: getDivisionColor(event.color),
-                  backgroundColor: getDivisionBackground(event.color)
+                  color: getDivisionColor(division.color),
+                  backgroundColor: getDivisionBackground(division.color)
                 }}
               >
                 <EventIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={event.name}
-              secondary={stringifyTwoDates(event.startDate, event.endDate)}
+              primary={division.name}
+              secondary={stringifyTwoDates(division.startDate, division.endDate)}
             />
-            {getEventDisabled?.(event) && <WarningAmberRoundedIcon />}
+            {getEventDisabled?.(division) && <WarningAmberRoundedIcon />}
           </ListItemButton>
         );
       })}

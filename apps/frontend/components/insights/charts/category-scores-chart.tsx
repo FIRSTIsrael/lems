@@ -17,7 +17,7 @@ import { Event, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 
 interface CategoryScoresChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
 type CategoryScoresChartData = Array<{
@@ -26,14 +26,14 @@ type CategoryScoresChartData = Array<{
   median: number;
 }>;
 
-const CategoryScoresChart: React.FC<CategoryScoresChartProps> = ({ event }) => {
+const CategoryScoresChart: React.FC<CategoryScoresChartProps> = ({ division }) => {
   const [data, setData] = useState<CategoryScoresChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/scores/categories`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/judging/scores/categories`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   return data ? (
     <Card variant="outlined">

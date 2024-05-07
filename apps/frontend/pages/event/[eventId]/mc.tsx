@@ -18,8 +18,8 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -27,8 +27,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   teams: initialTeams,
   matches: initialMatches,
   tables
@@ -37,7 +37,7 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useState<string>('1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -63,7 +63,7 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
-  useWebsocket(event._id.toString(), ['field', 'pit-admin', 'audience-display'], undefined, [
+  useWebsocket(division._id.toString(), ['field', 'pit-admin', 'audience-display'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
     { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'matchStarted', handler: handleMatchEvent },
@@ -79,15 +79,15 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={['mc']}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
-        action={<ReportLink event={event} />}
-        color={event.color}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        action={<ReportLink division={division} />}
+        color={division.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -101,11 +101,16 @@ const Page: NextPage<Props> = ({
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <McSchedule eventState={eventState} teams={teams} matches={matches} tables={tables} />
+            <McSchedule
+              divisionState={divisionState}
+              teams={teams}
+              matches={matches}
+              tables={tables}
+            />
           </TabPanel>
           <TabPanel value="2">
-            {eventState.presentations['awards']?.enabled ? (
-              <AwardsLineup event={event} />
+            {divisionState.presentations['awards']?.enabled ? (
+              <AwardsLineup division={division} />
             ) : (
               <AwardsNotReadyCard />
             )}
@@ -122,11 +127,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`,
-        tables: `/api/events/${user.eventId}/tables`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        matches: `/api/divisions/${user.divisionId}/matches`,
+        tables: `/api/divisions/${user.divisionId}/tables`
       },
       ctx
     );

@@ -6,8 +6,8 @@ export const getTicket = (filter: Filter<Ticket>) => {
   return db.collection<Ticket>('tickets').findOne(filter);
 };
 
-export const getEventTickets = (eventId: ObjectId) => {
-  return db.collection<Ticket>('tickets').find({ eventId: eventId }).toArray();
+export const getEventTickets = (divisionId: ObjectId) => {
+  return db.collection<Ticket>('tickets').find({ divisionId: divisionId }).toArray();
 };
 
 export const addTicket = (ticket: Ticket) => {
@@ -39,9 +39,9 @@ export const deleteTicket = (filter: Filter<Ticket>) => {
     .then(response => response);
 };
 
-export const deleteEventTickets = (eventId: ObjectId) => {
+export const deleteEventTickets = (divisionId: ObjectId) => {
   return db
     .collection<Ticket>('tickets')
-    .deleteMany({ eventId: eventId })
+    .deleteMany({ divisionId: divisionId })
     .then(response => response);
 };

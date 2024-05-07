@@ -50,7 +50,7 @@ import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetFormProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
   user: WithId<SafeUser>;
@@ -59,7 +59,7 @@ interface ScoresheetFormProps {
 }
 
 const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
-  event,
+  division,
   team,
   scoresheet,
   user,
@@ -141,7 +141,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
     socket.emit(
       'updateScoresheet',
-      event._id.toString(),
+      division._id.toString(),
       team._id.toString(),
       scoresheet._id.toString(),
       updatedScoresheet as Partial<Scoresheet>,
@@ -486,7 +486,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
                   handleSync(true, values, 'ready').then(() =>
-                    router.push(`/event/${event._id}/${user.role}`)
+                    router.push(`/division/${division._id}/${user.role}`)
                   );
                 }}
               />

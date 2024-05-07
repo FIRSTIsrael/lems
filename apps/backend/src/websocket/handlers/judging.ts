@@ -4,8 +4,8 @@ import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
 import { JUDGING_SESSION_LENGTH } from '@lems/types';
 
-export const handleStartSession = async (namespace, eventId, roomId, sessionId, callback) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+export const handleStartSession = async (namespace, divisionId, roomId, sessionId, callback) => {
+  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
 
   let session = await db.getSession({
     roomId: new ObjectId(roomId),
@@ -25,7 +25,7 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
     return;
   }
 
-  console.log(`❗ Starting session ${sessionId} for room ${roomId} in event ${eventId}`);
+  console.log(`❗ Starting session ${sessionId} for room ${roomId} in division ${divisionId}`);
 
   const startTime = new Date();
   session.startTime = startTime;
@@ -56,17 +56,17 @@ export const handleStartSession = async (namespace, eventId, roomId, sessionId, 
     }.bind(null, startTime)
   );
 
-  if (!eventState.currentSession || session.number > eventState.currentSession) {
-    await db.updateEventState({ _id: eventState._id }, { currentSession: session.number });
+  if (!divisionState.currentSession || session.number > divisionState.currentSession) {
+    await db.updateEventState({ _id: divisionState._id }, { currentSession: session.number });
   }
 
   callback({ ok: true });
   session = await db.getSession({ _id });
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('judging').emit('judgingSessionStarted', session, eventState);
+  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  namespace.to('judging').emit('judgingSessionStarted', session, divisionState);
 };
 
-export const handleAbortSession = async (namespace, eventId, roomId, sessionId, callback) => {
+export const handleAbortSession = async (namespace, divisionId, roomId, sessionId, callback) => {
   let session = await db.getSession({
     roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
@@ -80,7 +80,7 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
     return;
   }
 
-  console.log(`❌ Aborting session ${sessionId} for room ${roomId} in event ${eventId}`);
+  console.log(`❌ Aborting session ${sessionId} for room ${roomId} in division ${divisionId}`);
 
   await db.updateSession({ _id: session._id }, { startTime: undefined, status: 'not-started' });
 
@@ -89,7 +89,13 @@ export const handleAbortSession = async (namespace, eventId, roomId, sessionId, 
   namespace.to('judging').emit('judgingSessionAborted', session);
 };
 
-export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, teamId, callback) => {
+export const handleUpdateSessionTeam = async (
+  namespace,
+  divisionId,
+  sessionId,
+  teamId,
+  callback
+) => {
   let session = await db.getSession({ _id: new ObjectId(sessionId) });
 
   if (!session) {
@@ -101,7 +107,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
     return;
   }
 
-  console.log(`🖊️ Updating team for session ${sessionId} in event ${eventId}`);
+  console.log(`🖊️ Updating team for session ${sessionId} in division ${divisionId}`);
 
   await db.updateSession({ _id: session._id }, { teamId: teamId ? new ObjectId(teamId) : null });
 
@@ -110,7 +116,7 @@ export const handleUpdateSessionTeam = async (namespace, eventId, sessionId, tea
   namespace.to('judging').emit('judgingSessionUpdated', session);
 };
 
-export const handleUpdateSession = async (namespace, eventId, sessionId, data, callback) => {
+export const handleUpdateSession = async (namespace, divisionId, sessionId, data, callback) => {
   let session = await db.getSession({ _id: new ObjectId(sessionId) });
   if (!session) {
     callback({ ok: false, error: `Could not find session ${sessionId}!` });
@@ -121,7 +127,7 @@ export const handleUpdateSession = async (namespace, eventId, sessionId, data, c
     return;
   }
 
-  console.log(`🖊️ Updating session ${sessionId} in event ${eventId}`);
+  console.log(`🖊️ Updating session ${sessionId} in division ${divisionId}`);
 
   await db.updateSession({ _id: session._id }, { ...data });
 
@@ -132,7 +138,7 @@ export const handleUpdateSession = async (namespace, eventId, sessionId, data, c
 
 export const handleUpdateRubric = async (
   namespace,
-  eventId,
+  divisionId,
   teamId,
   rubricId,
   rubricData,
@@ -145,12 +151,12 @@ export const handleUpdateRubric = async (
   if (!rubric) {
     callback({
       ok: false,
-      error: `Could not find session ${rubricId} for team ${teamId} in event ${eventId}!`
+      error: `Could not find session ${rubricId} for team ${teamId} in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating rubric ${rubricId} for team ${teamId} in event ${eventId}`);
+  console.log(`🖊️ Updating rubric ${rubricId} for team ${teamId} in division ${divisionId}`);
 
   await db.updateRubric({ _id: rubric._id }, rubricData);
 
@@ -162,10 +168,10 @@ export const handleUpdateRubric = async (
     namespace.to('judging').emit('rubricStatusChanged', rubric);
 };
 
-export const handleCreateCvForm = async (namespace, eventId, content, callback) => {
-  console.log(`📄 Creating Core Values Form in event ${eventId}`);
+export const handleCreateCvForm = async (namespace, divisionId, content, callback) => {
+  console.log(`📄 Creating Core Values Form in division ${divisionId}`);
   const cvFormId = await db
-    .addCoreValuesForm({ ...content, eventId: new ObjectId(eventId) })
+    .addCoreValuesForm({ ...content, divisionId: new ObjectId(divisionId) })
     .then(result => result.insertedId);
   const cvForm = await db.getCoreValuesForm({ _id: cvFormId });
 
@@ -173,21 +179,21 @@ export const handleCreateCvForm = async (namespace, eventId, content, callback) 
   namespace.to('judging').emit('cvFormCreated', cvForm);
 };
 
-export const handleUpdateCvForm = async (namespace, eventId, cvFormId, content, callback) => {
+export const handleUpdateCvForm = async (namespace, divisionId, cvFormId, content, callback) => {
   let cvForm = await db.getCoreValuesForm({ _id: new ObjectId(cvFormId) });
   if (!cvForm) {
     callback({
       ok: false,
-      error: `Could not find core values form ${cvFormId} in event ${eventId}!`
+      error: `Could not find core values form ${cvFormId} in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating core values form ${cvFormId} in event ${eventId}`);
+  console.log(`🖊️ Updating core values form ${cvFormId} in division ${divisionId}`);
 
   await db.updateCoreValuesForm(
     { _id: cvForm._id },
-    { ...content, eventId: new ObjectId(eventId) }
+    { ...content, divisionId: new ObjectId(divisionId) }
   );
 
   callback({ ok: true });
@@ -195,7 +201,7 @@ export const handleUpdateCvForm = async (namespace, eventId, cvFormId, content, 
   namespace.to('judging').emit('cvFormUpdated', cvForm);
 };
 
-export const handleCallLeadJudge = async (namespace, eventId, roomId, callback) => {
+export const handleCallLeadJudge = async (namespace, divisionId, roomId, callback) => {
   const room = await db.getRoom({ _id: new ObjectId(roomId) });
 
   if (!room) {
@@ -203,7 +209,7 @@ export const handleCallLeadJudge = async (namespace, eventId, roomId, callback) 
     return;
   }
 
-  console.log(`💁‍♂️ Lead judge called to room ${roomId} in event ${eventId}`);
+  console.log(`💁‍♂️ Lead judge called to room ${roomId} in division ${divisionId}`);
   callback({ ok: true });
   namespace.to('judging').emit('leadJudgeCalled', room);
 };

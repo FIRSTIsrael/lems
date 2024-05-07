@@ -10,8 +10,8 @@ export const getTeamScoresheets = (teamId: ObjectId) => {
   return db.collection<Scoresheet>('scoresheets').find({ teamId }).toArray();
 };
 
-export const getEventScoresheets = (eventId: ObjectId) => {
-  return db.collection<Scoresheet>('scoresheets').find({ eventId }).toArray();
+export const getEventScoresheets = (divisionId: ObjectId) => {
+  return db.collection<Scoresheet>('scoresheets').find({ divisionId }).toArray();
 };
 
 export const addScoresheet = (scoresheet: Scoresheet) => {

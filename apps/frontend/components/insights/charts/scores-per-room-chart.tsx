@@ -17,17 +17,17 @@ import {
 import { blue, green, red } from '@mui/material/colors';
 
 interface ScoresPerRoomChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ event }) => {
+const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ division }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/scores/rooms`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/judging/scores/rooms`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>

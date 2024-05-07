@@ -5,13 +5,13 @@ import TeamQueueCard from './team-queue-card';
 
 interface QueuerFieldTeamDisplayProps {
   teams: Array<WithId<Team>>;
-  eventState: WithId<EventState>;
+  divisionState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
   teams,
-  eventState,
+  divisionState,
   matches
 }) => {
   const calledMatches = useMemo(
@@ -31,7 +31,7 @@ const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
               team={team}
               location={tableName}
               scheduledTime={match.scheduledTime}
-              urgent={eventState.loadedMatch === match._id}
+              urgent={divisionState.loadedMatch === match._id}
               urgencyThresholdMinutes={7}
             />
           )

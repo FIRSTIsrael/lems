@@ -16,15 +16,15 @@ import { Event } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
 interface DeleteEventDataProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const DeleteEventData: React.FC<DeleteEventDataProps> = ({ event }) => {
+const DeleteEventData: React.FC<DeleteEventDataProps> = ({ division }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleConfirm = () => {
-    apiFetch(`/api/admin/events/${event._id}/data`, {
+    apiFetch(`/api/admin/divisions/${division._id}/data`, {
       method: 'DELETE'
     }).then(() => {
       setOpen(false);
@@ -67,7 +67,7 @@ const DeleteEventData: React.FC<DeleteEventDataProps> = ({ event }) => {
           <DialogContentText id="delete-data-description">
             {`אתם עומדים למחוק את כל נתוני האירוע, כולל תוצאות ופרסים מיום התחרות.
             פעולה זו אינה ניתנת לשחזור במקרה של טעות. אנא אשרו שברצונכם למחוק
-            את כל המידע הקיים מאירוע "${event.name}".`}
+            את כל המידע הקיים מאירוע "${division.name}".`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

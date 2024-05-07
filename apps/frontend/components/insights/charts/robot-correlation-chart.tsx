@@ -15,17 +15,17 @@ import {
 import { red } from '@mui/material/colors';
 
 interface RobotCorrelationChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const RobotCorrelationChart: React.FC<RobotCorrelationChartProps> = ({ event }) => {
+const RobotCorrelationChart: React.FC<RobotCorrelationChartProps> = ({ division }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/robot-room-correlation-to-robot-game`).then(res =>
-      res.json().then(data => setData(data))
-    );
-  }, [event._id]);
+    apiFetch(
+      `/api/divisions/${division._id}/insights/judging/robot-room-correlation-to-robot-game`
+    ).then(res => res.json().then(data => setData(data)));
+  }, [division._id]);
 
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>

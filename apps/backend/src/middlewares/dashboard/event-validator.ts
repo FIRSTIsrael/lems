@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 
-const eventValidator = (req: Request, res: Response, next: NextFunction) => {
-  if (req.event?.salesforceId?.toString() === req.params.eventSalesforceId) {
+const divisionValidator = (req: Request, res: Response, next: NextFunction) => {
+  if (req.division?.salesforceId?.toString() === req.params.divisionSalesforceId) {
     return next();
   }
 
   return res.status(403).json({ error: 'FORBIDDEN' });
 };
 
-export default eventValidator;
+export default divisionValidator;

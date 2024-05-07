@@ -14,7 +14,7 @@ import publicRouter from './routers/public/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
-import wsValidateEvent from './middlewares/websocket/event-validator';
+import wsValidateEvent from './middlewares/websocket/division-validator';
 
 const app = express();
 const server = http.createServer(app);
@@ -51,7 +51,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
-const namespace = io.of(/^\/event\/\w+$/);
+const namespace = io.of(/^\/division\/\w+$/);
 namespace.use(wsAuth);
 namespace.use(wsValidateEvent);
 namespace.on('connection', websocket);

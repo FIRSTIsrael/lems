@@ -6,11 +6,11 @@ import Stat from '../stat';
 import TeamInsightsDashboard from './team';
 
 interface GeneralInsightsDashboardProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
 }
 
-const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ event, teams }) => {
+const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ division, teams }) => {
   return (
     <Grid container spacing={2}>
       <Grid xs={4}>
@@ -18,7 +18,7 @@ const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ eve
           title="קבוצות באירוע"
           variant="header"
           color={blue[500]}
-          url={`/api/events/${event._id}/insights/general/total-teams`}
+          url={`/api/divisions/${division._id}/insights/general/total-teams`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
@@ -27,7 +27,7 @@ const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ eve
           title="קריאות שטופלו"
           variant="header"
           color={blue[500]}
-          url={`/api/events/${event._id}/insights/general/total-tickets`}
+          url={`/api/divisions/${division._id}/insights/general/total-tickets`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
@@ -36,12 +36,12 @@ const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ eve
           title="טפסי CV שטופלו"
           variant="header"
           color={blue[500]}
-          url={`/api/events/${event._id}/insights/general/total-cv-forms`}
+          url={`/api/divisions/${division._id}/insights/general/total-cv-forms`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
       <Grid xs={12}>
-        <TeamInsightsDashboard event={event} teams={teams} />
+        <TeamInsightsDashboard division={division} teams={teams} />
       </Grid>
     </Grid>
   );

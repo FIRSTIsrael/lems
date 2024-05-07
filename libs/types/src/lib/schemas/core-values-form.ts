@@ -38,7 +38,7 @@ export interface CVFormCategory {
 }
 
 export interface CoreValuesForm {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   observers: Array<CVFormSubject>;
   observerAffiliation?: string;
   demonstrators: Array<CVFormSubject>;

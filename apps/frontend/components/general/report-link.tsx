@@ -4,13 +4,13 @@ import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
 import { Event } from '@lems/types';
 
 interface ReportLinkProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const ReportLink: React.FC<ReportLinkProps> = ({ event }) => {
+const ReportLink: React.FC<ReportLinkProps> = ({ division }) => {
   return (
     <Tooltip title="דוחות" arrow>
-      <IconButton aria-label="דוחות" href={`/event/${event._id}/reports`} target="_blank">
+      <IconButton aria-label="דוחות" href={`/division/${division._id}/reports`} target="_blank">
         <FeedRoundedIcon />
       </IconButton>
     </Tooltip>

@@ -5,19 +5,19 @@ import { Event } from '@lems/types';
 import { getApiBase } from '../../../lib/utils/fetch';
 
 interface ExportActionProps extends ButtonProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   path: string;
   children: React.ReactNode;
 }
 
-const ExportAction: React.FC<ExportActionProps> = ({ event, path, children, ...props }) => {
+const ExportAction: React.FC<ExportActionProps> = ({ division, path, children, ...props }) => {
   return (
     <Button
       component="a"
       startIcon={<DownloadIcon />}
       variant="contained"
       color="inherit"
-      href={`${getApiBase(true)}/api/events/${event._id}/export${path}`}
+      href={`${getApiBase(true)}/api/divisions/${division._id}/export${path}`}
       target="_blank"
       download
       {...props}

@@ -10,7 +10,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId) }
+        $match: { divisionId: new ObjectId(req.params.divisionId) }
       },
       {
         $group: {
@@ -31,7 +31,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId) }
+        $match: { divisionId: new ObjectId(req.params.divisionId) }
       },
       {
         $facet: {
@@ -64,7 +64,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId) }
+        $match: { divisionId: new ObjectId(req.params.divisionId) }
       },
       {
         $facet: {

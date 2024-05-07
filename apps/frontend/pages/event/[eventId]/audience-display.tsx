@@ -28,8 +28,8 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
@@ -37,14 +37,14 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   teams: initialTeams,
-  eventState: initialEventState,
+  divisionState: initialEventState,
   matches: initialMatches,
   scoresheets: initialScoresheets
 }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -57,13 +57,13 @@ const Page: NextPage<Props> = ({
   });
 
   const activeMatch = useMemo(
-    () => matches.find(m => m._id === eventState.activeMatch),
-    [matches, eventState]
+    () => matches.find(m => m._id === divisionState.activeMatch),
+    [matches, divisionState]
   );
 
   const loadedMatch = useMemo(
-    () => matches.find(m => m._id === eventState.loadedMatch),
-    [matches, eventState]
+    () => matches.find(m => m._id === divisionState.loadedMatch),
+    [matches, divisionState]
   );
 
   const previousMatch = useMemo(
@@ -71,8 +71,8 @@ const Page: NextPage<Props> = ({
       matches
         .slice()
         .reverse()
-        .find(m => m.status === 'completed' && m.stage === eventState.currentStage),
-    [matches, eventState.currentStage]
+        .find(m => m.status === 'completed' && m.stage === divisionState.currentStage),
+    [matches, divisionState.currentStage]
   );
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
@@ -122,31 +122,31 @@ const Page: NextPage<Props> = ({
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
-  useWebsocket(event._id.toString(), ['pit-admin', 'field', 'audience-display'], undefined, [
+  useWebsocket(division._id.toString(), ['pit-admin', 'field', 'audience-display'], undefined, [
     {
       name: 'matchStarted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.start.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
     {
       name: 'matchEndgame',
       handler: () => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.endgame.play();
       }
     },
     {
       name: 'matchCompleted',
       handler: (newMatch, newEventState) => {
-        if (eventState.audienceDisplay.screen === 'scores') sounds.current.end.play();
+        if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
         handleMatchEvent(newMatch, newEventState);
       }
     },
@@ -163,38 +163,38 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <AudienceDisplayContainer>
-        {eventState.audienceDisplay.screen === 'blank' && <Blank />}
-        {eventState.audienceDisplay.screen === 'logo' && <FIRSTLogo />}
-        {eventState.audienceDisplay.screen === 'hotspot' && <HotspotReminder />}
-        {eventState.audienceDisplay.screen === 'sponsors' && <Sponsors />}
-        {eventState.audienceDisplay.screen === 'match-preview' && (
-          <MatchPreview event={event} match={loadedMatch} />
+        {divisionState.audienceDisplay.screen === 'blank' && <Blank />}
+        {divisionState.audienceDisplay.screen === 'logo' && <FIRSTLogo />}
+        {divisionState.audienceDisplay.screen === 'hotspot' && <HotspotReminder />}
+        {divisionState.audienceDisplay.screen === 'sponsors' && <Sponsors />}
+        {divisionState.audienceDisplay.screen === 'match-preview' && (
+          <MatchPreview division={division} match={loadedMatch} />
         )}
-        {eventState.audienceDisplay.screen === 'scores' && (
+        {divisionState.audienceDisplay.screen === 'scores' && (
           <Scoreboard
             activeMatch={activeMatch}
             previousMatch={previousMatch}
             scoresheets={scorehseets}
             teams={teams}
-            eventState={eventState}
+            divisionState={divisionState}
           />
         )}
-        {eventState.audienceDisplay.screen === 'awards' && (
+        {divisionState.audienceDisplay.screen === 'awards' && (
           <AwardsPresentation
-            initialState={eventState.presentations['awards'].activeView}
+            initialState={divisionState.presentations['awards'].activeView}
             enableReinitialize={true}
             height="100%"
             width="100%"
-            event={event}
+            division={division}
           />
         )}
-        {eventState.audienceDisplay.screen === 'message' && (
-          <Message message={eventState.audienceDisplay.message} />
+        {divisionState.audienceDisplay.screen === 'message' && (
+          <Message message={divisionState.audienceDisplay.message} />
         )}
       </AudienceDisplayContainer>
     </RoleAuthorizer>
@@ -207,11 +207,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`,
-        scoresheets: `/api/events/${user.eventId}/scoresheets`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        matches: `/api/divisions/${user.divisionId}/matches`,
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
       },
       ctx
     );

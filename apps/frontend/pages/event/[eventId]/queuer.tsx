@@ -30,8 +30,8 @@ import QueuerJudgingTeamDisplay from '../../../components/queueing/queuer-judgin
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -42,8 +42,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   teams: initialTeams,
   tables,
   rooms,
@@ -56,7 +56,7 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [activeView, setActiveView] = useState(0);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
@@ -100,7 +100,7 @@ const Page: NextPage<Props> = ({
     if (newEventState) setEventState(newEventState);
   };
 
-  useWebsocket(event._id.toString(), ['field', 'pit-admin', 'judging'], undefined, [
+  useWebsocket(division._id.toString(), ['field', 'pit-admin', 'judging'], undefined, [
     { name: 'matchLoaded', handler: handleMatchEvent },
     { name: 'matchStarted', handler: handleMatchEvent },
     { name: 'matchCompleted', handler: handleMatchEvent },
@@ -117,32 +117,36 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={['queuer']}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedEventSection[user.roleAssociation?.value as string].name}`}
-        color={event.color}
+        color={division.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
           {activeView === 0 && (
             <>
               {user.roleAssociation?.value === 'field' && (
-                <QueuerFieldTeamDisplay eventState={eventState} teams={teams} matches={matches} />
+                <QueuerFieldTeamDisplay
+                  divisionState={divisionState}
+                  teams={teams}
+                  matches={matches}
+                />
               )}
               {user.roleAssociation?.value === 'judging' && (
                 <QueuerJudgingTeamDisplay teams={teams} sessions={sessions} rooms={rooms} />
               )}
             </>
           )}
-          {activeView === 1 && <QueuerPitMap event={event} pitMapUrl={pitMapUrl} />}
+          {activeView === 1 && <QueuerPitMap division={division} pitMapUrl={pitMapUrl} />}
           {activeView === 2 && (
             <>
               {user.roleAssociation?.value === 'field' && (
                 <QueuerFieldSchedule
-                  event={event}
+                  division={division}
                   matches={matches}
                   teams={teams}
                   tables={tables}
@@ -150,7 +154,7 @@ const Page: NextPage<Props> = ({
               )}
               {user.roleAssociation?.value === 'judging' && (
                 <QueuerJudgingSchedule
-                  event={event}
+                  division={division}
                   rooms={rooms}
                   sessions={sessions}
                   teams={teams}
@@ -162,7 +166,7 @@ const Page: NextPage<Props> = ({
         <BottomNavigation
           showLabels
           value={activeView}
-          onChange={(event, newValue) => {
+          onChange={(division, newValue) => {
             setActiveView(newValue);
           }}
           sx={{ position: 'fixed', bottom: 0, right: 0, height: NAVIGATION_HEIGHT, width: '100vw' }}
@@ -182,13 +186,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        tables: `/api/events/${user.eventId}/tables`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

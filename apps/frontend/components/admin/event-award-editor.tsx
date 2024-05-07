@@ -109,11 +109,11 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
 };
 
 interface EventAwardEditorProps {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   awardSchema: AwardSchema;
 }
 
-const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchema }) => {
+const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ divisionId, awardSchema }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [awardToAdd, setAwardToAdd] = useState<AwardNames | ''>('');
 
@@ -164,7 +164,7 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ eventId, awardSchem
           };
         });
 
-        apiFetch(`/api/admin/events/${eventId}/awards/schema`, {
+        apiFetch(`/api/admin/divisions/${divisionId}/awards/schema`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(schema)

@@ -6,19 +6,19 @@ import { Event } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface InspectionBonusChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
 type InspectionBonusChartData = { successRate: number; rows: Array<object> };
 
-const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) => {
+const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ division }) => {
   const [data, setData] = useState<InspectionBonusChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/missions/inspection-bonus`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/field/missions/inspection-bonus`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   const columns: GridColDef[] = [
     {

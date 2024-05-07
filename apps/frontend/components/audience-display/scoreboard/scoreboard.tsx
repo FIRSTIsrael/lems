@@ -12,7 +12,7 @@ interface ScoreboardProps {
   previousMatch: WithId<RobotGameMatch> | undefined;
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
-  eventState: EventState;
+  divisionState: EventState;
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({
@@ -20,11 +20,11 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   previousMatch,
   scoresheets,
   teams,
-  eventState
+  divisionState
 }) => {
   const settings = useMemo(() => {
     const { showCurrentMatch, showPreviousMatch, showSponsors } =
-      eventState.audienceDisplay.scoreboard;
+      divisionState.audienceDisplay.scoreboard;
 
     return {
       currentMatch: !!showCurrentMatch,
@@ -32,7 +32,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       previousMatch: showPreviousMatch,
       sponsors: showSponsors
     };
-  }, [eventState.audienceDisplay.scoreboard]);
+  }, [divisionState.audienceDisplay.scoreboard]);
 
   return (
     <Stack
@@ -66,7 +66,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
           py={2}
         />
       )}
-      <ScoreboardScores scoresheets={scoresheets} teams={teams} eventState={eventState} />
+      <ScoreboardScores scoresheets={scoresheets} teams={teams} divisionState={divisionState} />
       {settings.sponsors && <ScoreboardSponsorsRow />}
     </Stack>
   );

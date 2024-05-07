@@ -22,7 +22,7 @@ import ReportLink from '../../../components/general/report-link';
 import InsightsLink from '../../../components/general/insights-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
-import EventPanel from '../../../components/tournament-manager/event-panel';
+import EventPanel from '../../../components/tournament-manager/division-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -34,8 +34,8 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -47,8 +47,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   teams: initialTeams,
   tickets: initialTickets,
   rooms,
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
@@ -141,7 +141,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['pit-admin', 'field', 'judging'],
     undefined,
     [
@@ -199,20 +199,24 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="tournament-manager"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
+            {divisionState.completed ? (
+              <InsightsLink division={division} />
+            ) : (
+              <ReportLink division={division} />
+            )}
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -229,15 +233,15 @@ const Page: NextPage<Props> = ({
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <TicketPanel event={event} teams={teams} tickets={tickets} socket={socket} />
+            <TicketPanel division={division} teams={teams} tickets={tickets} socket={socket} />
           </TabPanel>
           <TabPanel value="2">
-            <EventPanel event={event} eventState={eventState} />
+            <EventPanel division={division} divisionState={divisionState} />
           </TabPanel>
           <TabPanel value="3">
             <FieldScheduleEditor
-              event={event}
-              eventState={eventState}
+              division={division}
+              divisionState={divisionState}
               teams={teams}
               tables={tables}
               matches={matches}
@@ -246,7 +250,7 @@ const Page: NextPage<Props> = ({
           </TabPanel>
           <TabPanel value="4">
             <JudgingScheduleEditor
-              event={event}
+              division={division}
               teams={teams}
               rooms={rooms}
               sessions={sessions}
@@ -254,7 +258,7 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="5">
-            <CVPanel user={user} cvForms={cvForms} event={event} socket={socket} />
+            <CVPanel user={user} cvForms={cvForms} division={division} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>
@@ -268,15 +272,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        teams: `/api/events/${user.eventId}/teams`,
-        tickets: `/api/events/${user.eventId}/tickets`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        tables: `/api/events/${user.eventId}/tables`,
-        matches: `/api/events/${user.eventId}/matches`,
-        sessions: `/api/events/${user.eventId}/sessions`,
-        cvForms: `/api/events/${user.eventId}/cv-forms`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        tickets: `/api/divisions/${user.divisionId}/tickets`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        matches: `/api/divisions/${user.divisionId}/matches`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
       },
       ctx
     );

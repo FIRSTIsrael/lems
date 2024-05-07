@@ -12,7 +12,7 @@ router.post(
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
-      eventId: new ObjectId(req.event._id),
+      divisionId: new ObjectId(req.division._id),
       number: Number(req.teamNumber)
     });
     const pdfData = (req.files.file as fileUpload.UploadedFile)?.data;
@@ -21,7 +21,7 @@ router.post(
       return;
     }
 
-    const key = `${req.event._id}/teams/${req.teamNumber}/team-info.pdf`;
+    const key = `${req.division._id}/teams/${req.teamNumber}/team-info.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);

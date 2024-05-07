@@ -28,8 +28,8 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -37,24 +37,24 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   tables,
   scoresheets: initialScoresheets,
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
 
   const headRefereeGeneralSchedule =
-    (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
+    (showGeneralSchedule && division.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
 
   useEffect(() => {
     setTimeout(() => {
-      const currentMatch = matches.find(m => m._id == eventState.loadedMatch);
+      const currentMatch = matches.find(m => m._id == divisionState.loadedMatch);
       if (currentMatch) scrollToSelector(`match-${currentMatch.number}`);
     }, 0);
   }, []);
@@ -123,7 +123,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['field', 'pit-admin'],
     undefined,
     [
@@ -145,9 +145,9 @@ const Page: NextPage<Props> = ({
     .map(r => (
       <Grid xs={12} key={'practice' + r}>
         <HeadRefereeRoundSchedule
-          event={event}
-          eventState={eventState}
-          eventSchedule={headRefereeGeneralSchedule}
+          division={division}
+          divisionState={divisionState}
+          divisionSchedule={headRefereeGeneralSchedule}
           roundStage={'practice'}
           roundNumber={r}
           tables={tables}
@@ -160,9 +160,9 @@ const Page: NextPage<Props> = ({
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
         <Grid xs={12} key={'ranking' + r}>
           <HeadRefereeRoundSchedule
-            event={event}
-            eventState={eventState}
-            eventSchedule={headRefereeGeneralSchedule}
+            division={division}
+            divisionState={divisionState}
+            divisionSchedule={headRefereeGeneralSchedule}
             roundStage={'ranking'}
             roundNumber={r}
             tables={tables}
@@ -178,23 +178,27 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="head-referee"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
+            {divisionState.completed ? (
+              <InsightsLink division={division} />
+            ) : (
+              <ReportLink division={division} />
+            )}
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
-        <WelcomeHeader event={event} user={user} />
+        <WelcomeHeader division={division} user={user} />
         <Paper sx={{ p: 2 }}>
           <ScoresheetStatusReferences />
           <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }} color="text.secondary">
@@ -216,11 +220,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}/?withSchedule=true`,
-        eventState: `/api/events/${user.eventId}/state`,
-        tables: `/api/events/${user.eventId}/tables`,
-        matches: `/api/events/${user.eventId}/matches`,
-        scoresheets: `/api/events/${user.eventId}/scoresheets`
+        division: `/api/divisions/${user.divisionId}/?withSchedule=true`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        matches: `/api/divisions/${user.divisionId}/matches`,
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
       },
       ctx
     );

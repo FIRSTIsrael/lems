@@ -31,22 +31,22 @@ import ScoreboardConfigurator from '../../../components/field/scorekeeper/scoreb
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   teams: initialTeams,
   matches: initialMatches
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useState<string>('1');
 
@@ -59,17 +59,17 @@ const Page: NextPage<Props> = ({
 
   useEffect(() => {
     if (
-      eventState.loadedMatch === null &&
+      divisionState.loadedMatch === null &&
       !matches.some(m => m.stage === 'test' && m.status === 'in-progress')
     ) {
       if (
-        nextMatch?.stage === eventState.currentStage &&
+        nextMatch?.stage === divisionState.currentStage &&
         nextMatch?.scheduledTime &&
         dayjs(nextMatch.scheduledTime).isBefore(
           currentTime.add(MATCH_AUTOLOAD_THRESHOLD, 'minutes')
         )
       )
-        socket.emit('loadMatch', event._id.toString(), nextMatch._id.toString(), response => {
+        socket.emit('loadMatch', division._id.toString(), nextMatch._id.toString(), response => {
           if (!response.ok) enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
         });
     }
@@ -106,7 +106,7 @@ const Page: NextPage<Props> = ({
   ) => {
     handleMatchEvent(newMatch, newEventState);
     if (newMatch.stage !== 'test') {
-      socket.emit('loadMatch', event._id.toString(), newMatch._id.toString(), response => {
+      socket.emit('loadMatch', division._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
         }
@@ -115,7 +115,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['field', 'audience-display'],
     undefined,
     [
@@ -135,20 +135,20 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="scorekeeper"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            <ReportLink division={division} />
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 2 }}>
@@ -163,8 +163,8 @@ const Page: NextPage<Props> = ({
           </Paper>
           <TabPanel value="1">
             <FieldControl
-              event={event}
-              eventState={eventState}
+              division={division}
+              divisionState={divisionState}
               matches={matches}
               nextMatchId={nextMatch?._id}
               socket={socket}
@@ -172,28 +172,28 @@ const Page: NextPage<Props> = ({
           </TabPanel>
           <TabPanel value="2">
             <Stack alignItems="center">
-              <VideoSwitch eventState={eventState} socket={socket} />
-              {eventState.audienceDisplay.screen === 'awards' &&
-                eventState.presentations['awards'].enabled && (
+              <VideoSwitch divisionState={divisionState} socket={socket} />
+              {divisionState.audienceDisplay.screen === 'awards' &&
+                divisionState.presentations['awards'].enabled && (
                   <PresentationController
-                    event={event}
+                    division={division}
                     socket={socket}
                     presentationId="awards"
-                    eventState={eventState}
+                    divisionState={divisionState}
                   >
                     <AwardsPresentation
-                      event={event}
+                      division={division}
                       height={108 * 2.5}
                       width={192 * 2.5}
                       position="relative"
                     />
                   </PresentationController>
                 )}
-              {eventState.audienceDisplay.screen === 'message' && (
-                <MessageEditor eventState={eventState} socket={socket} />
+              {divisionState.audienceDisplay.screen === 'message' && (
+                <MessageEditor divisionState={divisionState} socket={socket} />
               )}
-              {eventState.audienceDisplay.screen === 'scores' && (
-                <ScoreboardConfigurator eventState={eventState} socket={socket} />
+              {divisionState.audienceDisplay.screen === 'scores' && (
+                <ScoreboardConfigurator divisionState={divisionState} socket={socket} />
               )}
             </Stack>
           </TabPanel>
@@ -209,10 +209,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        eventState: `/api/events/${user.eventId}/state`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

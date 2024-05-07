@@ -29,8 +29,8 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -39,8 +39,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState,
+  division,
+  divisionState,
   rooms,
   teams: initialTeams,
   sessions: initialSessions,
@@ -51,7 +51,10 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
 
-  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    divisionState?: WithId<EventState>
+  ) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -93,7 +96,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['judging', 'pit-admin'],
     undefined,
     [
@@ -112,24 +115,28 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="lead-judge"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {eventState.completed ? <InsightsLink event={event} /> : <ReportLink event={event} />}
+            {divisionState.completed ? (
+              <InsightsLink division={division} />
+            ) : (
+              <ReportLink division={division} />
+            )}
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
         <>
-          <WelcomeHeader event={event} user={user} />
+          <WelcomeHeader division={division} user={user} />
           <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
             <RubricStatusReferences />
           </Paper>
@@ -161,7 +168,7 @@ const Page: NextPage<Props> = ({
               </Box>
               <JudgingRoomSchedule
                 sessions={sessions.filter(s => s.roomId === room._id)}
-                event={event}
+                division={division}
                 room={room}
                 teams={teams}
                 user={user}
@@ -182,12 +189,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        teams: `/api/events/${user.eventId}/teams`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`,
-        rubrics: `/api/events/${user.eventId}/rubrics`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics`
       },
       ctx
     );

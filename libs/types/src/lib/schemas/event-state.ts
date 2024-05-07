@@ -22,7 +22,7 @@ export interface AudienceDisplayState {
 }
 
 export interface EventState {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   loadedMatch: ObjectId | null;
   activeMatch: ObjectId | null;
   currentStage: 'practice' | 'ranking';

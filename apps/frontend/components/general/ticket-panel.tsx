@@ -10,13 +10,13 @@ import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 interface TicketPanelProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   tickets: Array<WithId<Ticket>>;
   teams: Array<WithId<Team>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, socket }) => {
+const TicketPanel: React.FC<TicketPanelProps> = ({ division, tickets, teams, socket }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
   return (
@@ -35,7 +35,7 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, socket
             return (
               <TicketCard
                 key={ticket._id.toString()}
-                event={event}
+                division={division}
                 ticket={ticket}
                 team={team}
                 socket={socket}
@@ -69,7 +69,7 @@ const TicketPanel: React.FC<TicketPanelProps> = ({ event, tickets, teams, socket
               return (
                 <TicketCard
                   key={ticket._id.toString()}
-                  event={event}
+                  division={division}
                   ticket={ticket}
                   team={team}
                   socket={socket}

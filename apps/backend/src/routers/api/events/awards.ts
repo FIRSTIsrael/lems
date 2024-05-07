@@ -9,7 +9,7 @@ import { updateAwardsFromFile } from 'apps/backend/src/lib/award-parser';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventAwards(new ObjectId(req.params.eventId)).then(awards => {
+  db.getEventAwards(new ObjectId(req.params.divisionId)).then(awards => {
     res.json(awards);
   });
 });
@@ -17,7 +17,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:awardId', (req: Request, res: Response) => {
   db.getAward({
     _id: new ObjectId(req.params.awardId),
-    eventId: new ObjectId(req.params.eventId)
+    divisionId: new ObjectId(req.params.divisionId)
   }).then(award => {
     res.json(award);
   });
@@ -33,7 +33,7 @@ router.put(
       award._id = new ObjectId(award._id);
       if (typeof award.winner === 'string' || !award.winner) return;
       award.winner._id = new ObjectId(award.winner?._id);
-      award.winner.eventId = new ObjectId(award.winner?.eventId);
+      award.winner.divisionId = new ObjectId(award.winner?.divisionId);
     });
 
     advancingTeams.forEach(team => {
@@ -62,12 +62,12 @@ router.post(
   '/winners/parse',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
-    const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
-    console.log(`👓 Parsing awards upload for event ${event._id}...`);
+    const division = await db.getEvent({ _id: new ObjectId(req.params.divisionId) });
+    console.log(`👓 Parsing awards upload for division ${division._id}...`);
 
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
-    const teams = await db.getEventTeams(event._id);
-    const awards = await db.getEventAwards(event._id);
+    const teams = await db.getEventTeams(division._id);
+    const awards = await db.getEventAwards(division._id);
 
     const updatedRecords = updateAwardsFromFile(teams, awards, csvData);
 

@@ -16,37 +16,37 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   pitMapUrl: string;
 }
 
-const Page: NextPage<Props> = ({ user, event, pitMapUrl }) => {
+const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
   const router = useRouter();
   const [error, setError] = useState<boolean>(false);
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, []);
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, []);
 
   return (
     <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="xl"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         {!error ? (
           <Image
-            src={`${pitMapUrl}/${event._id}.png`}
-            alt={`מפת פיטים ל${event.name}`}
+            src={`${pitMapUrl}/${division._id}.png`}
+            alt={`מפת פיטים ל${division.name}`}
             width={0}
             height={0}
             sizes="100vw"
@@ -79,7 +79,10 @@ const Page: NextPage<Props> = ({ user, event, pitMapUrl }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-    const data = await serverSideGetRequests({ event: `/api/events/${user.eventId}` }, ctx);
+    const data = await serverSideGetRequests(
+      { division: `/api/divisions/${user.divisionId}` },
+      ctx
+    );
 
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 

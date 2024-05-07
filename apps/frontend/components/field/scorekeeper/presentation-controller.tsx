@@ -9,16 +9,16 @@ import { DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
 import { Event, EventState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface PresentationControllerProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   presentationId: string;
   children: ReactElement;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const PresentationController: React.FC<PresentationControllerProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   presentationId,
   children,
   socket
@@ -41,7 +41,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
 
     socket.emit(
       'updatePresentation',
-      event._id.toString(),
+      division._id.toString(),
       presentationId,
       { activeView: newView },
       response => {
@@ -62,7 +62,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
           <Typography textAlign="center">שקף נוכחי</Typography>
           {React.Children.map(children, child => {
             return React.cloneElement(child, {
-              initialState: eventState.presentations[presentationId].activeView,
+              initialState: divisionState.presentations[presentationId].activeView,
               onViewUpdate: sendSlideUpdate,
               ref: deck
             });

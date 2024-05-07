@@ -13,7 +13,7 @@ import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
 
 interface AwardsPresentationProps extends BoxProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;
@@ -22,7 +22,7 @@ interface AwardsPresentationProps extends BoxProps {
 const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
   (
     {
-      event,
+      division,
       initialState = {
         slideIndex: 0,
         stepIndex: 0
@@ -37,13 +37,13 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
 
     useEffect(() => {
-      apiFetch(`/api/events/${event._id}/awards`).then(res =>
+      apiFetch(`/api/divisions/${division._id}/awards`).then(res =>
         res.json().then(data => setAwards(data))
       );
-      apiFetch(`/api/events/${event._id}/teams`).then(res =>
+      apiFetch(`/api/divisions/${division._id}/teams`).then(res =>
         res.json().then(data => setTeams(data))
       );
-    }, [event._id]);
+    }, [division._id]);
 
     const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
     const awardSlides = useMemo(() => {
@@ -58,11 +58,11 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
 
         return (
           <Fragment key={awardName}>
-            <TitleSlide primary={`פרס ${localized.name}`} color={event.color} />
+            <TitleSlide primary={`פרס ${localized.name}`} color={division.color} />
             <TitleSlide
               primary={`פרס ${localized.name}`}
               secondary={localized.description}
-              color={event.color}
+              color={division.color}
             />
             {sortedAwards.map(award => {
               return (
@@ -71,13 +71,13 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                     name={`פרס ${localized.name}`}
                     place={sortedAwards.length > 1 ? award.place : undefined}
                     winner={award.winner || ''}
-                    color={event.color}
+                    color={division.color}
                   />
                   <AwardWinnerSlide
                     name={`פרס ${localized.name}`}
                     place={sortedAwards.length > 1 ? award.place : undefined}
                     winner={award.winner || ''}
-                    color={event.color}
+                    color={division.color}
                   />
                 </React.Fragment>
               );
@@ -88,7 +88,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
 
       if (advancingTeams.length > 0) {
         const advancingSlide = (
-          <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={event.color} />
+          <AdvancingTeamsSlide key="advancing" teams={advancingTeams} color={division.color} />
         );
         // Place advancement slide directly before champions award
         const advancingSlideIndex = slides.findIndex(s => s.key === 'champions');
@@ -96,7 +96,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
       }
 
       return slides;
-    }, [advancingTeams, awards, event.color]);
+    }, [advancingTeams, awards, division.color]);
 
     return (
       <Box {...props}>
@@ -108,15 +108,15 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
         >
           <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
           <TitleSlide
-            primary={`טקס סיום - ${event.name}`}
-            secondary={dayjs(event.endDate).format('DD/MM/YYYY')}
-            color={event.color}
+            primary={`טקס סיום - ${division.name}`}
+            secondary={dayjs(division.endDate).format('DD/MM/YYYY')}
+            color={division.color}
           />
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"
             secondary="להתראות בעונות הבאות!"
-            color={event.color}
+            color={division.color}
           />
         </Deck>
       </Box>

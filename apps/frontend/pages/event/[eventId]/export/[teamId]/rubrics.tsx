@@ -30,12 +30,12 @@ import TitleRow from '../../../../../components/judging/rubrics/title-row';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 
 interface ExportRubricPageProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
 }
 
-const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric }) => {
+const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rubric }) => {
   const schema = rubricsSchemas[rubric.category];
   const isCoreValues = rubric.category === 'core-values';
   return (
@@ -45,7 +45,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
           <Stack justifyContent="space-between" height="100%">
             <Typography fontSize="0.75rem" color="text.secondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({rubric._id.toString()}) |{' '}
-              {event.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
+              {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
             <Typography fontSize="1.75rem" fontWeight={700}>
               מחוון {localizedJudgingCategory[rubric.category].name} של קבוצה #{team.number}
@@ -256,16 +256,21 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ event, team, rubric
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, team, rubrics }) => {
+const Page: NextPage<Props> = ({ user, division, team, rubrics }) => {
   return (
     <RoleAuthorizer user={user} allowedRoles={[]}>
       {rubrics.map(rubric => (
-        <ExportRubricPage key={rubric._id.toString()} event={event} team={team} rubric={rubric} />
+        <ExportRubricPage
+          key={rubric._id.toString()}
+          division={division}
+          team={team}
+          rubric={rubric}
+        />
       ))}
     </RoleAuthorizer>
   );
@@ -275,9 +280,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
       user: '/api/me',
-      event: `/api/events/${ctx.params?.eventId}`,
-      team: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}`,
-      rubrics: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}/rubrics`
+      division: `/api/divisions/${ctx.params?.divisionId}`,
+      team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
+      rubrics: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/rubrics`
     },
     ctx
   );

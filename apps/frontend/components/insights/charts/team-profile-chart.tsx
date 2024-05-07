@@ -16,7 +16,7 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 
 interface TeamProfileChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team> | null;
 }
 
@@ -27,15 +27,15 @@ type TeamProfileChartData = Array<{
   fullMark: number;
 }>;
 
-const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ event, team }) => {
+const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ division, team }) => {
   const [data, setData] = useState<TeamProfileChartData>([]);
 
   useEffect(() => {
     if (team)
-      apiFetch(`/api/events/${event._id}/insights/team/${team._id}/judging-profile`).then(res =>
-        res.json().then(data => setData(data))
+      apiFetch(`/api/divisions/${division._id}/insights/team/${team._id}/judging-profile`).then(
+        res => res.json().then(data => setData(data))
       );
-  }, [event._id, team]);
+  }, [division._id, team]);
 
   const renderPolarAngleAxis = (props: any) => {
     const { payload, x, y, cx, cy, ...rest } = props;

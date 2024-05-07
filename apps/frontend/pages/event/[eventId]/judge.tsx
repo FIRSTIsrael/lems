@@ -30,7 +30,7 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -39,7 +39,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   room,
   teams: initialTeams,
   sessions: initialSessions,
@@ -61,7 +61,10 @@ const Page: NextPage<Props> = ({
       : ({} as WithId<Team>);
   }, [teams, currentSession]);
 
-  const handleSessionEvent = (session: WithId<JudgingSession>, eventState?: WithId<EventState>) => {
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    divisionState?: WithId<EventState>
+  ) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -95,7 +98,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { socket, connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['judging', 'pit-admin'],
     undefined,
     [
@@ -113,23 +116,23 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="judge"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        color={event.color}
+        color={division.color}
       >
         {currentSession && activeTeam ? (
           <>
             <JudgingTimer session={currentSession} team={activeTeam} />
             <Box display="flex" justifyContent="center">
               <AbortJudgingSessionButton
-                event={event}
+                division={division}
                 room={room}
                 session={currentSession}
                 socket={socket}
@@ -139,7 +142,7 @@ const Page: NextPage<Props> = ({
           </>
         ) : (
           <>
-            <WelcomeHeader event={event} user={user} />
+            <WelcomeHeader division={division} user={user} />
             <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
               <RubricStatusReferences />
             </Paper>
@@ -170,7 +173,7 @@ const Page: NextPage<Props> = ({
               </Box>
               <JudgingRoomSchedule
                 sessions={sessions}
-                event={event}
+                division={division}
                 room={room}
                 teams={teams}
                 user={user}
@@ -179,7 +182,7 @@ const Page: NextPage<Props> = ({
               />
             </Paper>
             <AssistanceButton
-              event={event}
+              division={division}
               room={room}
               socket={socket}
               sx={{ position: 'fixed', bottom: 20, left: 20 }}
@@ -197,11 +200,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        room: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}`,
-        sessions: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}/sessions`,
-        rubrics: `/api/events/${user.eventId}/rooms/${user.roleAssociation.value}/rubrics`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        room: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}`,
+        sessions: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}/sessions`,
+        rubrics: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}/rubrics`
       },
       ctx
     );

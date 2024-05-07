@@ -7,8 +7,8 @@ import { getLemsWebpageAsPdf } from '../../../../lib/export';
 const router = express.Router({ mergeParams: true });
 
 router.use((req, res, next) => {
-  db.getEventState({ eventId: req.event._id }).then(eventState => {
-    if (!eventState.allowTeamExports) return res.status(403).json('OPERATION_NOT_ALLOWED');
+  db.getEventState({ divisionId: req.division._id }).then(divisionState => {
+    if (!divisionState.allowTeamExports) return res.status(403).json('OPERATION_NOT_ALLOWED');
     next();
   });
 });
@@ -17,7 +17,7 @@ router.get(
   '/rubrics',
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
-      eventId: new ObjectId(req.event._id),
+      divisionId: new ObjectId(req.division._id),
       number: Number(req.teamNumber)
     });
     if (!team) {
@@ -25,7 +25,9 @@ router.get(
       return;
     }
 
-    const pdf = await getLemsWebpageAsPdf(`/event/${team.eventId}/export/${team._id}/rubrics`);
+    const pdf = await getLemsWebpageAsPdf(
+      `/division/${team.divisionId}/export/${team._id}/rubrics`
+    );
 
     res.contentType('application/pdf');
     res.send(pdf);
@@ -36,7 +38,7 @@ router.get(
   '/scoresheets',
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
-      eventId: new ObjectId(req.event._id),
+      divisionId: new ObjectId(req.division._id),
       number: Number(req.teamNumber)
     });
     if (!team) {
@@ -44,7 +46,9 @@ router.get(
       return;
     }
 
-    const pdf = await getLemsWebpageAsPdf(`/event/${team.eventId}/export/${team._id}/scoresheets`);
+    const pdf = await getLemsWebpageAsPdf(
+      `/division/${team.divisionId}/export/${team._id}/scoresheets`
+    );
 
     res.contentType('application/pdf');
     res.send(pdf);

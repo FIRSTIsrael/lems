@@ -157,8 +157,8 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -167,8 +167,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   rooms,
   teams: initialTeams,
   sessions: initialSessions,
@@ -178,15 +178,15 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const activeMatch = useMemo(
-    () => matches.find(m => m._id === eventState.activeMatch),
-    [matches, eventState.activeMatch]
+    () => matches.find(m => m._id === divisionState.activeMatch),
+    [matches, divisionState.activeMatch]
   );
   const loadedMatch = useMemo(
-    () => matches.find(m => m._id === eventState.loadedMatch),
-    [matches, eventState.loadedMatch]
+    () => matches.find(m => m._id === divisionState.loadedMatch),
+    [matches, divisionState.loadedMatch]
   );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -230,7 +230,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['judging', 'pit-admin', 'field'],
     undefined,
     [
@@ -248,13 +248,13 @@ const Page: NextPage<Props> = ({
   );
 
   const currentSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession),
-    [sessions, eventState]
+    () => sessions.filter(session => session.number === divisionState.currentSession),
+    [sessions, divisionState]
   );
 
   const nextSessions = useMemo(
-    () => sessions.filter(session => session.number === eventState.currentSession + 1),
-    [sessions, eventState]
+    () => sessions.filter(session => session.number === divisionState.currentSession + 1),
+    [sessions, divisionState]
   );
 
   return (
@@ -262,18 +262,18 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <JudgingStatusTimer
           teams={teams}
@@ -300,12 +300,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        teams: `/api/events/${user.eventId}/teams`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

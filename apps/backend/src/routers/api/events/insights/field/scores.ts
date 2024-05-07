@@ -10,7 +10,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $group: {
@@ -36,7 +36,11 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready', stage: 'ranking' }
+        $match: {
+          divisionId: new ObjectId(req.params.divisionId),
+          status: 'ready',
+          stage: 'ranking'
+        }
       },
       {
         $group: {
@@ -75,7 +79,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $lookup: {
@@ -178,7 +182,11 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready', stage: 'ranking' }
+        $match: {
+          divisionId: new ObjectId(req.params.divisionId),
+          status: 'ready',
+          stage: 'ranking'
+        }
       },
       {
         $group: {
@@ -204,7 +212,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $group: {

@@ -32,9 +32,9 @@ const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
 ) => {
   const namespace = socket.nsp;
-  const eventId = socket.nsp.name.split('/')[2];
+  const divisionId = socket.nsp.name.split('/')[2];
 
-  console.log(`🔌 WS: Connection to event ${eventId}`);
+  console.log(`🔌 WS: Connection to division ${divisionId}`);
 
   socket.on('joinRoom', (rooms, callback) => {
     if (!Array.isArray(rooms)) rooms = [rooms];
@@ -88,7 +88,7 @@ const websocket = (
   socket.on('updatePresentation', (...args) => handleUpdatePresentation(namespace, ...args));
 
   socket.on('disconnect', () => {
-    console.log(`❌ WS: Disconnection from event ${eventId}`);
+    console.log(`❌ WS: Disconnection from division ${divisionId}`);
   });
 };
 

@@ -7,15 +7,15 @@ import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch'
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
 }
 
-const Page: NextPage<Props> = ({ user, event, table, match: initialMatch }) => {
+const Page: NextPage<Props> = ({ user, division, table, match: initialMatch }) => {
   return (
     <RoleAuthorizer user={user} allowedRoles="referee">
-      <Layout maxWidth={800} title={`שולחן ${table.name} | ${event.name}`}></Layout>
+      <Layout maxWidth={800} title={`שולחן ${table.name} | ${division.name}`}></Layout>
     </RoleAuthorizer>
   );
 };
@@ -26,14 +26,17 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     if (!ALLOW_MATCH_SELECTOR)
       return {
-        redirect: { destination: `/event/${ctx.params?.eventId}/${user.role}`, permanent: false }
+        redirect: {
+          destination: `/division/${ctx.params?.divisionId}/${user.role}`,
+          permanent: false
+        }
       };
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        table: `/api/events/${user.eventId}/tables/${user.roleAssociation.value}`,
-        match: `/api/events/${user.eventId}/matches/${ctx.params?.matchId}`
+        division: `/api/divisions/${user.divisionId}`,
+        table: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}`,
+        match: `/api/divisions/${user.divisionId}/matches/${ctx.params?.matchId}`
       },
       ctx
     );

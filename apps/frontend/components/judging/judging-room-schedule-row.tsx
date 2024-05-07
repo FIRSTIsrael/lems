@@ -24,7 +24,7 @@ import { localizedJudgingCategory } from '@lems/season';
 import StatusIcon from '../general/status-icon';
 
 interface Props {
-  event: WithId<Event>;
+  division: WithId<Event>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: WithId<Team>;
@@ -33,7 +33,15 @@ interface Props {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, socket }: Props) => {
+const JudgingRoomScheduleRow = ({
+  division,
+  room,
+  session,
+  team,
+  user,
+  rubrics,
+  socket
+}: Props) => {
   useEffect(() => {
     const href = window.location.href;
     if (href.includes('#')) {
@@ -60,7 +68,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
       <RoleAuthorizer user={user} allowedRoles="judge">
         <TableCell align="center">
           <StartJudgingSessionButton
-            event={event}
+            division={division}
             room={room}
             session={session}
             team={team}
@@ -102,7 +110,7 @@ const JudgingRoomScheduleRow = ({ event, room, session, team, user, rubrics, soc
             >
               <EditRubricButton
                 active={session.status === 'completed'}
-                href={`/event/${user.eventId}/team/${team._id}/rubric/${judgingCategory}`}
+                href={`/division/${user.divisionId}/team/${team._id}/rubric/${judgingCategory}`}
                 status={
                   rubrics.find(
                     rubric => rubric.category === judgingCategory && rubric.teamId === team._id

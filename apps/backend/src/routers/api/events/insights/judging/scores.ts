@@ -11,7 +11,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           status: {
             $in: ['ready', 'waiting-for-review', 'completed']
           }
@@ -54,7 +54,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           status: {
             $in: ['ready', 'waiting-for-review', 'completed']
           }
@@ -99,7 +99,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           status: {
             $in: ['ready', 'waiting-for-review', 'completed']
           }
@@ -142,7 +142,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           status: {
             $in: ['ready', 'waiting-for-review', 'completed']
           }

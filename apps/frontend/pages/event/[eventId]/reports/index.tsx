@@ -34,25 +34,25 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const Page: NextPage<Props> = ({ user, event }) => {
+const Page: NextPage<Props> = ({ user, division }) => {
   const router = useRouter();
   return (
     <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
-        back={user.role !== 'reports' ? `/event/${event._id}/${user.role}` : undefined}
-        color={event.color}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        back={user.role !== 'reports' ? `/division/${division._id}/${user.role}` : undefined}
+        color={division.color}
       >
         <Grid container spacing={3} columns={6} direction="row" mt={4}>
           <GridPaperLink path="judging-status">
@@ -92,7 +92,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
-    const data = await serverSideGetRequests({ event: `/api/events/${user.eventId}` }, ctx);
+    const data = await serverSideGetRequests(
+      { division: `/api/divisions/${user.divisionId}` },
+      ctx
+    );
 
     return { props: { user, ...data } };
   } catch (err) {

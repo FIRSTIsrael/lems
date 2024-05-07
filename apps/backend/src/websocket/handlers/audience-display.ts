@@ -3,49 +3,49 @@ import * as db from '@lems/database';
 
 export const handleUpdateAudienceDisplay = async (
   namespace,
-  eventId,
+  divisionId,
   newDisplayState,
   callback
 ) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
 
-  if (!eventState) {
+  if (!divisionState) {
     callback({
       ok: false,
-      error: `Could not find event state in event ${eventId}!`
+      error: `Could not find division state in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating audience display state in event ${eventId}`);
+  console.log(`🖊️ Updating audience display state in division ${divisionId}`);
 
   await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
-    { audienceDisplay: { ...eventState.audienceDisplay, ...newDisplayState } }
+    { divisionId: new ObjectId(divisionId) },
+    { audienceDisplay: { ...divisionState.audienceDisplay, ...newDisplayState } }
   );
 
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('audience-display').emit('audienceDisplayUpdated', eventState);
+  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  namespace.to('audience-display').emit('audienceDisplayUpdated', divisionState);
 };
 
 export const handleUpdatePresentation = async (
   namespace,
-  eventId,
+  divisionId,
   presentationId,
   newPresentationState,
   callback
 ) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
 
-  if (!eventState) {
+  if (!divisionState) {
     callback({
       ok: false,
-      error: `Could not find event state in event ${eventId}!`
+      error: `Could not find division state in division ${divisionId}!`
     });
     return;
   }
 
-  if (eventState.presentations[presentationId] === newPresentationState) {
+  if (divisionState.presentations[presentationId] === newPresentationState) {
     callback({
       ok: false,
       error: `Presentation state not updated!`
@@ -53,18 +53,21 @@ export const handleUpdatePresentation = async (
     return;
   }
 
-  console.log(`🖊️ Updating presentation ${presentationId} in event ${eventId}!`);
+  console.log(`🖊️ Updating presentation ${presentationId} in division ${divisionId}!`);
 
   await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
+    { divisionId: new ObjectId(divisionId) },
     {
       presentations: {
-        ...eventState.presentations,
-        [presentationId]: { ...eventState.presentations[presentationId], ...newPresentationState }
+        ...divisionState.presentations,
+        [presentationId]: {
+          ...divisionState.presentations[presentationId],
+          ...newPresentationState
+        }
       }
     }
   );
 
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('audience-display').emit('presentationUpdated', eventState);
+  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  namespace.to('audience-display').emit('presentationUpdated', divisionState);
 };

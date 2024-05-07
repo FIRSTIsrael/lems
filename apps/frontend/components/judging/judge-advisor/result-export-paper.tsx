@@ -8,10 +8,10 @@ import { localizedJudgingCategory } from '@lems/season';
 import ExportAction from './export-action';
 
 interface ResultExportPaperProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
+const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
   return (
     <Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
       <Box
@@ -41,7 +41,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
         {JudgingCategoryTypes.map(category => (
           <React.Fragment key={category}>
             <Grid xs={6}>
-              <ExportAction event={event} path={`/rubrics/${category}`} sx={{ m: 1 }}>
+              <ExportAction division={division} path={`/rubrics/${category}`} sx={{ m: 1 }}>
                 ייצוא מחווני {localizedJudgingCategory[category].name}
               </ExportAction>
             </Grid>
@@ -49,7 +49,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ event }) => {
         ))}
 
         <Grid xs={6}>
-          <ExportAction event={event} path="/scores" sx={{ m: 1 }}>
+          <ExportAction division={division} path="/scores" sx={{ m: 1 }}>
             ייצוא תוצאות זירה
           </ExportAction>
         </Grid>

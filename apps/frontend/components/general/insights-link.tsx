@@ -4,13 +4,13 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import { Event } from '@lems/types';
 
 interface InsightsLinkProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const InsightsLink: React.FC<InsightsLinkProps> = ({ event }) => {
+const InsightsLink: React.FC<InsightsLinkProps> = ({ division }) => {
   return (
     <Tooltip title="ניתוח אירוע" arrow>
-      <IconButton aria-label="ניתוח אירוע" href={`/event/${event._id}/insights`}>
+      <IconButton aria-label="ניתוח אירוע" href={`/division/${division._id}/insights`}>
         <InsightsIcon />
       </IconButton>
     </Tooltip>

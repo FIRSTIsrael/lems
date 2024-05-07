@@ -8,11 +8,11 @@ import { Event, CoreValuesForm } from '@lems/types';
 import { localizedFormSubject } from '../../localization/cv-form';
 
 interface CVFormCardProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   form: WithId<CoreValuesForm>;
 }
 
-const CVFormCard: React.FC<CVFormCardProps> = ({ event, form }) => {
+const CVFormCard: React.FC<CVFormCardProps> = ({ division, form }) => {
   const router = useRouter();
   return (
     <Card sx={{ ...(form.actionTaken && { backgroundColor: green[100] }) }}>
@@ -20,13 +20,13 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ event, form }) => {
         avatar={
           <Avatar
             alt="חומרת הטופס"
-            src={`https://emojicdn.elk.sh/${cvFormSchema.categories.find(
-              c => c.id === form.severity
-            )?.emoji}`}
+            src={`https://emojicdn.elk.sh/${
+              cvFormSchema.categories.find(c => c.id === form.severity)?.emoji
+            }`}
           />
         }
         action={
-          <IconButton onClick={() => router.push(`/event/${event._id}/cv-forms/${form._id}`)}>
+          <IconButton onClick={() => router.push(`/division/${division._id}/cv-forms/${form._id}`)}>
             <OpenInFullIcon />
           </IconButton>
         }

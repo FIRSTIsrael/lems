@@ -11,13 +11,13 @@ export const dashboardAuthMiddleware = async (req: Request, res: Response, next:
     const token = extractToken(req);
     const tokenData = jwt.verify(token, dashboardJwtSecret) as DashboardTokenData;
 
-    const event = await getEventBySalesforceIdAndTeamNumber(
-      tokenData.eventSalesforceId,
+    const division = await getEventBySalesforceIdAndTeamNumber(
+      tokenData.divisionSalesforceId,
       tokenData.teamNumber
     );
-    if (!event) throw new Error();
+    if (!division) throw new Error();
 
-    req.event = event;
+    req.division = division;
     req.teamNumber = tokenData.teamNumber;
     return next();
   } catch {

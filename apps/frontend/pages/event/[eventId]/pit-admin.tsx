@@ -19,12 +19,17 @@ import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: initialTickets }) => {
+const Page: NextPage<Props> = ({
+  user,
+  division,
+  teams: initialTeams,
+  tickets: initialTickets
+}) => {
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [activeTab, setActiveTab] = useState<string>('1');
@@ -58,7 +63,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
   };
 
   const { connectionStatus, socket } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['pit-admin'],
     undefined,
     [
@@ -73,21 +78,21 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
       user={user}
       allowedRoles="pit-admin"
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink event={event} />
+            <ReportLink division={division} />
           </Stack>
         }
-        color={event.color}
+        color={division.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 4 }}>
@@ -102,13 +107,13 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams, tickets: init
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <TeamRegistrationPanel socket={socket} event={event} teams={teams} />
+            <TeamRegistrationPanel socket={socket} division={division} teams={teams} />
           </TabPanel>
           <TabPanel value="2">
-            <TicketCreationPanel socket={socket} event={event} teams={teams} />
+            <TicketCreationPanel socket={socket} division={division} teams={teams} />
           </TabPanel>
           <TabPanel value="3">
-            <TicketPanel event={event} tickets={tickets} teams={teams} socket={socket} />
+            <TicketPanel division={division} tickets={tickets} teams={teams} socket={socket} />
           </TabPanel>
         </TabContext>
       </Layout>
@@ -122,9 +127,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`,
-        tickets: `/api/events/${user.eventId}/tickets`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        tickets: `/api/divisions/${user.divisionId}/tickets`
       },
       ctx
     );

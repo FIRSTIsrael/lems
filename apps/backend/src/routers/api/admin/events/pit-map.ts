@@ -10,7 +10,7 @@ router.post(
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
     const pngData = (req.files.file as fileUpload.UploadedFile)?.data;
-    const path = await uploadFile(pngData, `pit-maps/${req.params.eventId}.png`);
+    const path = await uploadFile(pngData, `pit-maps/${req.params.divisionId}.png`);
     console.log('Successfully uploaded object: ' + path);
     res.json({ ok: true });
   })

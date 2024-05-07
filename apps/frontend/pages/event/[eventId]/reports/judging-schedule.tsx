@@ -15,7 +15,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -23,7 +23,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   teams: initialTeams,
   rooms,
   sessions: initialSessions
@@ -57,7 +57,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['pit-admin', 'judging'],
     undefined,
     [
@@ -71,21 +71,21 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <ReportJudgingSchedule
-          event={event}
+          division={division}
           sessions={sessions}
           teams={teams}
           rooms={rooms}
@@ -96,8 +96,8 @@ const Page: NextPage<Props> = ({
           control={
             <Switch
               checked={showGeneralSchedule}
-              onChange={event => {
-                setShowGeneralSchedule(event.target.checked);
+              onChange={division => {
+                setShowGeneralSchedule(division.target.checked);
               }}
             />
           }
@@ -114,10 +114,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}?withSchedule=true`,
-        teams: `/api/events/${user.eventId}/teams`,
-        rooms: `/api/events/${user.eventId}/rooms`,
-        sessions: `/api/events/${user.eventId}/sessions`
+        division: `/api/divisions/${user.divisionId}?withSchedule=true`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`
       },
       ctx
     );

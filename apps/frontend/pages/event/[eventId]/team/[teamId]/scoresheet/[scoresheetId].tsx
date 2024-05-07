@@ -38,13 +38,13 @@ import { localizedMatchStage } from '../../../../../../localization/field';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
 
 interface ScoresheetSelectorProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   matchScoresheet: WithId<Scoresheet>;
 }
 
 const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
-  event,
+  division,
   team,
   matchScoresheet
 }) => {
@@ -53,7 +53,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
   );
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/teams/${team._id}/scoresheets`)
+    apiFetch(`/api/divisions/${division._id}/teams/${team._id}/scoresheets`)
       .then(res => res.json())
       .then((data: Array<WithId<Scoresheet>>) =>
         setTeamScoresheets(
@@ -62,7 +62,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
           )
         )
       );
-  }, [event._id, team._id]);
+  }, [division._id, team._id]);
 
   return (
     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
@@ -71,7 +71,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
           return (
             <NextLink
               key={scoresheet._id.toString()}
-              href={`/event/${event._id}/team/${team._id}/scoresheet/${scoresheet._id}`}
+              href={`/division/${division._id}/team/${team._id}/scoresheet/${scoresheet._id}`}
               passHref
               legacyBehavior
             >
@@ -120,7 +120,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
@@ -129,7 +129,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   team,
   table,
   match,
@@ -144,24 +144,24 @@ const Page: NextPage<Props> = ({
   );
 
   if (!team.registered) {
-    router.push(`/event/${event._id}/${user.role}`);
+    router.push(`/division/${division._id}/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
   if (match.status === 'not-started') {
-    router.push(`/event/${event._id}/${user.role}`);
+    router.push(`/division/${division._id}/${user.role}`);
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
     if (user.role !== 'head-referee') {
-      router.push(`/event/${event._id}/${user.role}`);
+      router.push(`/division/${division._id}/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
   }
 
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
-    router.push(`/event/${event._id}/${user.role}`);
+    router.push(`/division/${division._id}/${user.role}`);
 
-  const { socket, connectionStatus } = useWebsocket(event._id.toString(), ['field'], undefined, [
+  const { socket, connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     {
       name: 'scoresheetUpdated',
       handler: scoresheet => {
@@ -191,7 +191,7 @@ const Page: NextPage<Props> = ({
     (presentStatus: RobotGameMatchPresent) => {
       socket.emit(
         'updateMatchParticipant',
-        match.eventId.toString(),
+        match.divisionId.toString(),
         match._id.toString(),
         {
           teamId: team._id.toString(),
@@ -204,7 +204,7 @@ const Page: NextPage<Props> = ({
         }
       );
     },
-    [socket, match.eventId, match._id, team._id]
+    [socket, match.divisionId, match._id, team._id]
   );
 
   return (
@@ -216,7 +216,7 @@ const Page: NextPage<Props> = ({
           : ['referee', 'head-referee']
       }
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -225,12 +225,12 @@ const Page: NextPage<Props> = ({
           maxWidth="md"
           title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
             team.name
-          } | ${event.name}`}
+          } | ${division.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/event/${event._id}/${user.role}`}
+          back={`/division/${division._id}/${user.role}`}
           backDisabled={connectionStatus === 'connecting'}
-          color={event.color}
+          color={division.color}
         >
           <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
             <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
@@ -239,14 +239,14 @@ const Page: NextPage<Props> = ({
           </Paper>
           <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
             <ScoresheetSelector
-              event={event}
+              division={division}
               team={team}
               matchScoresheet={scoresheet as WithId<Scoresheet>}
             />
           </RoleAuthorizer>
           {scoresheet && (
             <ScoresheetForm
-              event={event}
+              division={division}
               team={team}
               scoresheet={scoresheet}
               user={user}
@@ -256,7 +256,7 @@ const Page: NextPage<Props> = ({
           )}
           <Dialog
             open={noShowDialogOpen}
-            onClose={(event, reason) => {
+            onClose={(division, reason) => {
               if (reason && reason === 'backdropClick') return;
               setNoShowDialogOpen(false);
             }}
@@ -276,7 +276,7 @@ const Page: NextPage<Props> = ({
             <DialogActions>
               <Button
                 variant="contained"
-                onClick={() => router.push(`/event/${event._id}/${user.role}`)}
+                onClick={() => router.push(`/division/${division._id}/${user.role}`)}
               >
                 ביטול
               </Button>
@@ -303,15 +303,17 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        scoresheet: `/api/events/${user.eventId}/scoresheets/${ctx.params?.scoresheetId}`
+        division: `/api/divisions/${user.divisionId}`,
+        scoresheet: `/api/divisions/${user.divisionId}/scoresheets/${ctx.params?.scoresheetId}`
       },
       ctx
     );
 
-    const matches = await apiFetch(`/api/events/${user.eventId}/matches`, undefined, ctx).then(
-      res => res?.json()
-    );
+    const matches = await apiFetch(
+      `/api/divisions/${user.divisionId}/matches`,
+      undefined,
+      ctx
+    ).then(res => res?.json());
     const match = matches.find(
       (m: RobotGameMatch) =>
         m.participants
@@ -338,7 +340,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
 
     const table = await apiFetch(
-      `/api/events/${user.eventId}/tables/${tableId}`,
+      `/api/divisions/${user.divisionId}/tables/${tableId}`,
       undefined,
       ctx
     ).then(res => res.json());

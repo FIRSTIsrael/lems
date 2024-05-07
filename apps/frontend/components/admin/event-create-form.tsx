@@ -37,7 +37,7 @@ const EventCreateForm = forwardRef((props, ref) => {
 
   const createEvent = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    apiFetch('/api/admin/events', {
+    apiFetch('/api/admin/divisions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -60,7 +60,7 @@ const EventCreateForm = forwardRef((props, ref) => {
           throw 'http-error';
         }
       })
-      .then(data => router.push(`/admin/event/${data.id}`))
+      .then(data => router.push(`/admin/division/${data.id}`))
       .catch(() => enqueueSnackbar('אופס, לא הצלחנו ליצור את האירוע.', { variant: 'error' }));
   };
 
@@ -119,11 +119,11 @@ const EventCreateForm = forwardRef((props, ref) => {
           />
         </LocalizationProvider>
         <FormControl>
-          <InputLabel id="event-color">צבע</InputLabel>
+          <InputLabel id="division-color">צבע</InputLabel>
           <Select
             value={color}
             onChange={e => setColor(e.target.value as DivisionColor)}
-            labelId="event-color"
+            labelId="division-color"
             label="צבע"
           >
             {[

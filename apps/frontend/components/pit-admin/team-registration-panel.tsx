@@ -9,11 +9,15 @@ import TeamSelection from '../general/team-selection';
 
 interface TeamRegistrationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
 }
 
-const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, event, teams }) => {
+const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({
+  socket,
+  division,
+  teams
+}) => {
   const [team, setTeam] = useState<WithId<Team> | null>(null);
 
   const unregisteredTeams = useMemo(
@@ -23,7 +27,7 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
 
   const registerTeam = () => {
     team &&
-      socket.emit('registerTeam', event._id.toString(), team?._id.toString(), response => {
+      socket.emit('registerTeam', division._id.toString(), team?._id.toString(), response => {
         if (response.ok) {
           enqueueSnackbar(`קבוצה #${team.number} נרשמה בהצלחה!`, { variant: 'success' });
           setTeam(null);

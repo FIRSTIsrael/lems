@@ -2,19 +2,19 @@ import { Socket } from 'socket.io';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
-const eventValidator = async (socket: Socket, next) => {
-  const eventId = socket.nsp.name.split('/')[2];
+const divisionValidator = async (socket: Socket, next) => {
+  const divisionId = socket.nsp.name.split('/')[2];
 
-  if (!eventId) {
+  if (!divisionId) {
     return next(new Error('NO_EVENT_ID'));
   }
 
-  const event = db.getEvent({ _id: new ObjectId(eventId) });
-  if (!event) {
+  const division = db.getEvent({ _id: new ObjectId(divisionId) });
+  if (!division) {
     return next(new Error('EVENT_NOT_FOUND'));
   }
 
   next();
 };
 
-export default eventValidator;
+export default divisionValidator;

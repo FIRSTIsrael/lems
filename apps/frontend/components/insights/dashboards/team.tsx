@@ -8,11 +8,11 @@ import TeamProfileChart from '../charts/team-profile-chart';
 import TeamInformationChart from '../charts/team-informaton-chart';
 
 interface TeamInsightsDashboardProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
 }
 
-const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ event, teams }) => {
+const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ division, teams }) => {
   const [team, setTeam] = useState<WithId<Team> | null>(teams.filter(t => t.registered)[0]);
 
   return (
@@ -27,10 +27,10 @@ const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ event, te
           <TeamSelection teams={teams.filter(t => t.registered)} value={team} setTeam={setTeam} />
         </Grid>
         <Grid xs={6}>
-          <TeamProfileChart event={event} team={team} />
+          <TeamProfileChart division={division} team={team} />
         </Grid>
         <Grid xs={6}>
-          <TeamInformationChart event={event} team={team} />
+          <TeamInformationChart division={division} team={team} />
         </Grid>
       </Grid>
     </Paper>

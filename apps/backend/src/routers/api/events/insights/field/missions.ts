@@ -12,7 +12,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $unwind: '$data.missions'
@@ -65,7 +65,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $unwind: '$data.missions'
@@ -110,7 +110,7 @@ router.get(
     ];
 
     const report = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
-    const totalTeams = (await db.getEventTeams(new ObjectId(req.params.eventId))).length;
+    const totalTeams = (await db.getEventTeams(new ObjectId(req.params.divisionId))).length;
     const successfulTeams = totalTeams - report.length;
     const successRate = (successfulTeams / totalTeams) * 100;
 
@@ -123,7 +123,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { eventId: new ObjectId(req.params.eventId), status: 'ready' }
+        $match: { divisionId: new ObjectId(req.params.divisionId), status: 'ready' }
       },
       {
         $project: {

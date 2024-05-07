@@ -13,7 +13,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           stage: req.query.stage || 'practice',
           status: 'completed'
         }

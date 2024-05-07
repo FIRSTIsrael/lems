@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    res.json(await db.getEventMatches(req.params.eventId));
+    res.json(await db.getEventMatches(req.params.divisionId));
   })
 );
 

@@ -11,7 +11,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          eventId: new ObjectId(req.params.eventId),
+          divisionId: new ObjectId(req.params.divisionId),
           teamId: new ObjectId(req.params.teamId)
         }
       },
@@ -48,7 +48,10 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
       {
-        $match: { _id: new ObjectId(req.params.teamId), eventId: new ObjectId(req.params.eventId) }
+        $match: {
+          _id: new ObjectId(req.params.teamId),
+          divisionId: new ObjectId(req.params.divisionId)
+        }
       },
       {
         $facet: {
@@ -56,14 +59,14 @@ router.get(
             {
               $lookup: {
                 from: 'scoresheets',
-                let: { eventId: '$eventId', teamId: '$_id' },
+                let: { divisionId: '$divisionId', teamId: '$_id' },
                 pipeline: [
                   {
                     $match: {
                       $expr: {
                         $and: [
                           {
-                            $eq: ['$eventId', '$$eventId']
+                            $eq: ['$divisionId', '$$divisionId']
                           },
                           {
                             $eq: ['$teamId', '$$teamId']
@@ -90,14 +93,14 @@ router.get(
             {
               $lookup: {
                 from: 'awards',
-                let: { eventId: '$eventId', teamId: '$_id' },
+                let: { divisionId: '$divisionId', teamId: '$_id' },
                 pipeline: [
                   {
                     $match: {
                       $expr: {
                         $and: [
                           {
-                            $eq: ['$eventId', '$$eventId']
+                            $eq: ['$divisionId', '$$divisionId']
                           },
                           {
                             $eq: ['$winner._id', '$$teamId']
@@ -122,14 +125,14 @@ router.get(
             {
               $lookup: {
                 from: 'core-values-forms',
-                let: { eventId: '$eventId', teamNumber: '$number' },
+                let: { divisionId: '$divisionId', teamNumber: '$number' },
                 pipeline: [
                   {
                     $match: {
                       $expr: {
                         $and: [
                           {
-                            $eq: ['$eventId', '$$eventId']
+                            $eq: ['$divisionId', '$$divisionId']
                           },
                           {
                             $eq: ['$demonstratorAffiliation', { $toString: '$$teamNumber' }]

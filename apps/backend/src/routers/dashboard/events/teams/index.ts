@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const teams = await db.getEventTeams(req.event._id);
+    const teams = await db.getEventTeams(req.division._id);
     res.json(teams);
   })
 );
@@ -23,7 +23,7 @@ router.get(
   '/:teamNumber',
   asyncHandler(async (req: Request, res: Response) => {
     const team = await db.getTeam({
-      eventId: new ObjectId(req.event._id),
+      divisionId: new ObjectId(req.division._id),
       number: Number(req.params.teamNumber)
     });
     res.json(team);

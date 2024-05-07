@@ -7,16 +7,21 @@ import SosRoundedIcon from '@mui/icons-material/SosRounded';
 import { Event, JudgingRoom, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 
 interface AssistanceButtonProps extends FabProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   room: WithId<JudgingRoom>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const AssistanceButton: React.FC<AssistanceButtonProps> = ({ event, room, socket, ...props }) => {
+const AssistanceButton: React.FC<AssistanceButtonProps> = ({
+  division,
+  room,
+  socket,
+  ...props
+}) => {
   const [disabled, setDisabled] = useState(false);
 
   const handleClick = () => {
-    socket.emit('callLeadJudge', event._id.toString(), room._id.toString(), response => {
+    socket.emit('callLeadJudge', division._id.toString(), room._id.toString(), response => {
       if (response.ok) {
         enqueueSnackbar('הקריאה לעזרה התקבלה.', { variant: 'success' });
       } else {

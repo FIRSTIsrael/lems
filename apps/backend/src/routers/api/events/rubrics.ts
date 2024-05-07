@@ -5,9 +5,12 @@ import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', asyncHandler(async (req: Request, res: Response) => {
-  const rubrics = await db.getEventRubrics(new ObjectId(req.params.eventId));
-  res.json(rubrics);
-}));
+router.get(
+  '/',
+  asyncHandler(async (req: Request, res: Response) => {
+    const rubrics = await db.getEventRubrics(new ObjectId(req.params.divisionId));
+    res.json(rubrics);
+  })
+);
 
 export default router;

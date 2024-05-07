@@ -6,8 +6,11 @@ export const getCoreValuesForm = (filter: Filter<CoreValuesForm>) => {
   return db.collection<CoreValuesForm>('core-values-forms').findOne(filter);
 };
 
-export const getEventCoreValuesForms = (eventId: ObjectId) => {
-  return db.collection<CoreValuesForm>('core-values-forms').find({ eventId: eventId }).toArray();
+export const getEventCoreValuesForms = (divisionId: ObjectId) => {
+  return db
+    .collection<CoreValuesForm>('core-values-forms')
+    .find({ divisionId: divisionId })
+    .toArray();
 };
 
 export const addCoreValuesForm = (cvForm: CoreValuesForm) => {

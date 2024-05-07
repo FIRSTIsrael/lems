@@ -107,8 +107,8 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -117,8 +117,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
-  eventState: initialEventState,
+  division,
+  divisionState: initialEventState,
   teams: initialTeams,
   matches: initialMatches,
   tables,
@@ -128,15 +128,15 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
-  const [eventState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
 
   const activeMatch = useMemo(
-    () => matches.find(m => m._id === eventState.activeMatch) || null,
-    [matches, eventState.activeMatch]
+    () => matches.find(m => m._id === divisionState.activeMatch) || null,
+    [matches, divisionState.activeMatch]
   );
   const loadedMatch = useMemo(
-    () => matches.find(m => m._id === eventState.loadedMatch) || null,
-    [matches, eventState.loadedMatch]
+    () => matches.find(m => m._id === divisionState.loadedMatch) || null,
+    [matches, divisionState.loadedMatch]
   );
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -180,7 +180,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(
-    event._id.toString(),
+    division._id.toString(),
     ['field', 'pit-admin', 'judging'],
     undefined,
     [
@@ -202,18 +202,18 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <MatchStatusTimer activeMatch={activeMatch} loadedMatch={loadedMatch} teams={teams} />
         <Stack direction="row" spacing={2} my={4}>
@@ -221,7 +221,7 @@ const Page: NextPage<Props> = ({
           <ActiveMatch title="המקצה הבא" match={loadedMatch} sessions={sessions} />
         </Stack>
         <FieldQueueReport
-          eventId={event._id}
+          divisionId={division._id}
           matches={matches.filter(m => m._id.toString() !== loadedMatch?._id.toString())}
           sessions={sessions}
           tables={tables}
@@ -238,12 +238,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        teams: `/api/events/${user.eventId}/teams`,
-        matches: `/api/events/${user.eventId}/matches`,
-        tables: `/api/events/${user.eventId}/tables`,
-        sessions: `/api/events/${user.eventId}/sessions`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        matches: `/api/divisions/${user.divisionId}/matches`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`
       },
       ctx
     );

@@ -4,11 +4,11 @@ import { Event, SafeUser } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
 
 interface Props {
-  event: WithId<Event>;
+  division: WithId<Event>;
   user: SafeUser;
 }
 
-const WelcomeHeader = ({ event, user }: Props) => {
+const WelcomeHeader = ({ division, user }: Props) => {
   return (
     <Paper
       elevation={0}
@@ -22,7 +22,7 @@ const WelcomeHeader = ({ event, user }: Props) => {
       }}
     >
       <Typography variant="h1" fontSize="1.25rem" fontWeight={700} gutterBottom>
-        ברוכים הבאים ל{event.name}
+        ברוכים הבאים ל{division.name}
       </Typography>
       <Typography color="#666" fontSize="0.875rem">
         יחד, אנו מעצימים את הדור הבא של מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.

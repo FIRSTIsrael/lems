@@ -6,8 +6,8 @@ export const getTable = (filter: Filter<RobotGameTable>) => {
   return db.collection<RobotGameTable>('tables').findOne(filter);
 };
 
-export const getEventTables = (eventId: ObjectId) => {
-  return db.collection<RobotGameTable>('tables').find({ eventId }).toArray();
+export const getEventTables = (divisionId: ObjectId) => {
+  return db.collection<RobotGameTable>('tables').find({ divisionId }).toArray();
 };
 
 export const addTable = (table: RobotGameTable) => {
@@ -39,9 +39,9 @@ export const deleteTable = (filter: Filter<RobotGameTable>) => {
     .then(response => response);
 };
 
-export const deleteEventTables = (eventId: ObjectId) => {
+export const deleteEventTables = (divisionId: ObjectId) => {
   return db
     .collection<RobotGameTable>('tables')
-    .deleteMany({ eventId })
+    .deleteMany({ divisionId })
     .then(response => response);
 };

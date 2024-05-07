@@ -13,7 +13,7 @@ import {
 } from '@lems/types';
 
 export const getEventUsers = (
-  event: WithId<Event>,
+  division: WithId<Event>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>
 ): User[] => {
@@ -21,7 +21,7 @@ export const getEventUsers = (
 
   RoleTypes.forEach(role => {
     const user: User = {
-      eventId: event._id,
+      divisionId: division._id,
       isAdmin: false,
       role: role,
       password: randomString(4),

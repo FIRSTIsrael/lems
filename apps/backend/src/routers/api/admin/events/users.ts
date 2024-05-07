@@ -7,7 +7,7 @@ import * as db from '@lems/database';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventUsers(new ObjectId(req.params.eventId)).then(users => {
+  db.getEventUsers(new ObjectId(req.params.divisionId)).then(users => {
     return res.json(users);
   });
 });
@@ -15,7 +15,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get(
   '/export',
   asyncHandler(async (req: Request, res: Response) => {
-    const users = await db.getEventUsersWithCredentials(new ObjectId(req.params.eventId));
+    const users = await db.getEventUsersWithCredentials(new ObjectId(req.params.divisionId));
 
     const credentials = await Promise.all(
       users.map(async user => {
@@ -47,7 +47,7 @@ router.get(
 
     res.set(
       'Content-Disposition',
-      `attachment; filename=event_${req.params.eventId}_passwords.csv`
+      `attachment; filename=division_${req.params.divisionId}_passwords.csv`
     );
     res.set('Content-Type', 'text/csv');
 
@@ -79,7 +79,7 @@ router.get(
 router.get('/:userId', (req: Request, res: Response) => {
   db.getUser({
     _id: new ObjectId(req.params.userId),
-    eventId: new ObjectId(req.params.eventId)
+    divisionId: new ObjectId(req.params.divisionId)
   }).then(user => {
     return res.json(user);
   });

@@ -34,14 +34,14 @@ import { Socket } from 'socket.io-client';
 import { LoadingButton } from '@mui/lab';
 
 interface RoundScheduleEditorRowProps {
-  eventState: WithId<EventState>;
+  divisionState: WithId<EventState>;
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
 }
 
 const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
-  eventState,
+  divisionState,
   match,
   tables,
   teams
@@ -61,7 +61,7 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
             name={`${match._id}.${table._id}`}
             disabled={
               match.status !== 'not-started' ||
-              match._id.toString() === eventState.loadedMatch?.toString()
+              match._id.toString() === divisionState.loadedMatch?.toString()
             }
           />
         );
@@ -71,8 +71,8 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 };
 
 interface RoundScheduleEditorProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   roundStage: RobotGameMatchStage;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
@@ -82,8 +82,8 @@ interface RoundScheduleEditorProps {
 }
 
 const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   roundStage,
   roundNumber,
   matches,
@@ -119,7 +119,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
 
         return new Promise((resolve, reject) => {
           if (!socket) reject('No socket connection.');
-          socket.emit('updateMatchTeams', event._id.toString(), matchId, toUpdate, response => {
+          socket.emit('updateMatchTeams', division._id.toString(), matchId, toUpdate, response => {
             response.ok ? resolve(response) : reject(response);
           });
         });
@@ -156,7 +156,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
               <TableBody>
                 {matches.map(m => (
                   <RoundScheduleEditorRow
-                    eventState={eventState}
+                    divisionState={divisionState}
                     match={m}
                     tables={tables}
                     teams={teams}

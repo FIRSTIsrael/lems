@@ -6,9 +6,9 @@ export const getEventBySalesforceIdAndTeamNumber = async (
   salesforceId: string,
   teamNumber: number
 ) => {
-  const events = await db.getEvents({ salesforceId });
-  const eventTeams = await Promise.all(events.map(e => db.getEventTeams(e._id)));
-  const allEventTeams: Array<WithId<Team>> = eventTeams.reduce((acc, arr) => acc.concat(arr));
+  const divisions = await db.getEvents({ salesforceId });
+  const divisionTeams = await Promise.all(divisions.map(e => db.getEventTeams(e._id)));
+  const allEventTeams: Array<WithId<Team>> = divisionTeams.reduce((acc, arr) => acc.concat(arr));
   const team = allEventTeams.find(t => t.number === teamNumber);
-  return events.find(e => e._id.toString() === team.eventId.toString());
+  return divisions.find(e => e._id.toString() === team.divisionId.toString());
 };

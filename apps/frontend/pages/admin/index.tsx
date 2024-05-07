@@ -6,15 +6,15 @@ import { WithId } from 'mongodb';
 import { Event, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import EventSelector from '../../components/general/event-selector';
-import EventCreateForm from '../../components/admin/event-create-form';
+import EventSelector from '../../components/general/division-selector';
+import EventCreateForm from '../../components/admin/division-create-form';
 
 interface Props {
   user: WithId<SafeUser>;
-  events: Array<WithId<Event>>;
+  divisions: Array<WithId<Event>>;
 }
 
-const Page: NextPage<Props> = ({ user, events }) => {
+const Page: NextPage<Props> = ({ user, divisions }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -33,18 +33,18 @@ const Page: NextPage<Props> = ({ user, events }) => {
             בחירת אירוע
           </Typography>
           <EventSelector
-            events={events}
-            onChange={eventId => router.push(`/admin/event/${eventId}`)}
+            divisions={divisions}
+            onChange={divisionId => router.push(`/admin/division/${divisionId}`)}
           />
           <ListItemButton
-            key={'create-event'}
+            key={'create-division'}
             dense
             sx={{ borderRadius: 2, minHeight: '50px' }}
             onClick={handleOpen}
           >
             צור אירוע
           </ListItemButton>
-          <Modal open={open} onClose={handleClose} aria-labelledby="create-event-model">
+          <Modal open={open} onClose={handleClose} aria-labelledby="create-division-model">
             <EventCreateForm />
           </Modal>
         </Stack>
@@ -54,7 +54,10 @@ const Page: NextPage<Props> = ({ user, events }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests({ user: '/api/me', events: '/public/events' }, ctx);
+  const data = await serverSideGetRequests(
+    { user: '/api/me', divisions: '/public/divisions' },
+    ctx
+  );
   return { props: data };
 };
 

@@ -15,7 +15,7 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -23,7 +23,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  event,
+  division,
   teams: initialTeams,
   tables,
   matches: initialMatches
@@ -34,7 +34,7 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const refereeGeneralSchedule =
-    (showGeneralSchedule && event.schedule?.filter(s => s.roles.includes('referee'))) || [];
+    (showGeneralSchedule && division.schedule?.filter(s => s.roles.includes('referee'))) || [];
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
     { name: 'matchUpdated', handler: handleMatchEvent }
   ]);
@@ -71,7 +71,7 @@ const Page: NextPage<Props> = ({
     .map(r => (
       <Grid xs={12} xl={6} key={'practice' + r}>
         <ReportRoundSchedule
-          eventSchedule={refereeGeneralSchedule}
+          divisionSchedule={refereeGeneralSchedule}
           roundStage="practice"
           roundNumber={r}
           matches={practiceMatches.filter(m => m.round === r)}
@@ -84,7 +84,7 @@ const Page: NextPage<Props> = ({
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
         <Grid xs={12} xl={6} key={'ranking' + r}>
           <ReportRoundSchedule
-            eventSchedule={refereeGeneralSchedule}
+            divisionSchedule={refereeGeneralSchedule}
             roundStage="ranking"
             roundNumber={r}
             matches={rankingMatches.filter(m => m.round === r)}
@@ -100,18 +100,18 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth={1800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <Grid container spacing={2} my={4}>
           {...roundSchedules}
@@ -127,10 +127,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}?withSchedule=true`,
-        teams: `/api/events/${user.eventId}/teams`,
-        tables: `/api/events/${user.eventId}/tables`,
-        matches: `/api/events/${user.eventId}/matches`
+        division: `/api/divisions/${user.divisionId}?withSchedule=true`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        matches: `/api/divisions/${user.divisionId}/matches`
       },
       ctx
     );

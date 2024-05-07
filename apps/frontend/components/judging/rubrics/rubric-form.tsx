@@ -44,7 +44,7 @@ import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
 
 interface RubricFormProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
   schema: RubricsSchema<JudgingCategory>;
@@ -55,7 +55,7 @@ interface RubricFormProps {
 }
 
 const RubricForm: React.FC<RubricFormProps> = ({
-  event,
+  division,
   team,
   rubric,
   schema,
@@ -106,7 +106,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
     socket.emit(
       'updateRubric',
-      event._id.toString(),
+      division._id.toString(),
       team._id.toString(),
       rubric._id.toString(),
       updatedRubric as Partial<Rubric<typeof rubric.category>>,
@@ -354,7 +354,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     color="inherit"
                     onClick={() => {
                       handleSync(true, values, 'waiting-for-review').then(() =>
-                        router.push(`/event/${event._id}/${user.role}`)
+                        router.push(`/division/${division._id}/${user.role}`)
                       );
                     }}
                     sx={actionButtonStyle}
@@ -371,7 +371,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   color="inherit"
                   onClick={() => {
                     handleSync(false, values, 'ready').then(() =>
-                      router.push(`/event/${event._id}/${user.role}`)
+                      router.push(`/division/${division._id}/${user.role}`)
                     );
                   }}
                   sx={actionButtonStyle}

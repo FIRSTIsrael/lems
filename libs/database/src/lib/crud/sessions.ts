@@ -6,8 +6,8 @@ export const getSession = (filter: Filter<JudgingSession>) => {
   return db.collection<JudgingSession>('sessions').findOne(filter);
 };
 
-export const getEventSessions = (eventId: ObjectId) => {
-  return db.collection<JudgingSession>('sessions').find({ eventId }).toArray();
+export const getEventSessions = (divisionId: ObjectId) => {
+  return db.collection<JudgingSession>('sessions').find({ divisionId }).toArray();
 };
 
 export const getRoomSessions = (roomId: ObjectId) => {

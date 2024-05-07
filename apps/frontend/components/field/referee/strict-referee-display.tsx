@@ -22,17 +22,17 @@ import { apiFetch } from '../../../lib/utils/fetch';
 type StrictRefereeDisplayState = 'timer' | 'prestart' | 'no-match' | undefined;
 
 interface MatchPrestartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   table: WithId<RobotGameTable>;
-  eventState: WithId<EventState>;
+  divisionState: WithId<EventState>;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
-  event,
+  division,
   table,
-  eventState,
+  divisionState,
   matches,
   socket
 }) => {
@@ -51,7 +51,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       if (!match || !participant || !participant.teamId) return;
       socket.emit(
         'updateMatchParticipant',
-        match.eventId.toString(),
+        match.divisionId.toString(),
         match._id.toString(),
         {
           teamId: participant.teamId.toString(),
@@ -69,11 +69,11 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
 
   const toScoresheet = useCallback(
     (participant: RobotGameMatchParticipant, scoresheet: WithId<Scoresheet>) => {
-      let url = `/event/${event._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`;
+      let url = `/division/${division._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`;
       if (prestartInspection !== null) url += `?inspection=${prestartInspection}`;
       router.push(url);
     },
-    [event._id, prestartInspection, router]
+    [division._id, prestartInspection, router]
   );
 
   const getScoresheet = useCallback(
@@ -81,14 +81,14 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       const fromParticipant = fromMatch.participants.find(p => p.tableId === table._id);
 
       return apiFetch(
-        `/api/events/${event._id}/teams/${fromParticipant?.teamId}/scoresheets/?stage=${fromMatch?.stage}&round=${fromMatch?.round}`
+        `/api/divisions/${division._id}/teams/${fromParticipant?.teamId}/scoresheets/?stage=${fromMatch?.stage}&round=${fromMatch?.round}`
       ).then<WithId<Scoresheet>>(res => res.json());
     },
-    [event._id, table._id]
+    [division._id, table._id]
   );
 
   useEffect(() => {
-    const activeMatch = matches.find(m => m._id === eventState.activeMatch);
+    const activeMatch = matches.find(m => m._id === divisionState.activeMatch);
     const isActiveInTable = !!activeMatch?.participants
       .filter(p => p.teamId)
       .find(p => p.tableId === table._id);
@@ -97,7 +97,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       setMatch(activeMatch);
       setDisplayState('timer');
     } else {
-      const loadedMatch = matches.find(m => m._id === eventState.loadedMatch);
+      const loadedMatch = matches.find(m => m._id === divisionState.loadedMatch);
       const loadedMatchParticipant = loadedMatch?.participants
         .filter(p => p.teamId)
         .find(p => p.tableId === table._id);
@@ -138,7 +138,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventState, matches, table._id, event._id, router, participant?.team?._id]);
+  }, [divisionState, matches, table._id, division._id, router, participant?.team?._id]);
 
   return (
     <>

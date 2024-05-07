@@ -182,12 +182,16 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
 };
 
 interface ExportScoresheetPageProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
 }
 
-const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team, scoresheet }) => {
+const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
+  division,
+  team,
+  scoresheet
+}) => {
   return (
     <>
       <Grid container>
@@ -195,7 +199,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team
           <Stack justifyContent="space-between" height="100%">
             <Typography fontSize="0.75rem" color="text.secondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({scoresheet._id.toString()}) |{' '}
-              {event.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
+              {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
             <Typography fontSize="1.75rem" fontWeight={700}>
               דף ניקוד {scoresheet.round} של קבוצה #{team.number}
@@ -247,18 +251,18 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({ event, team
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, team, scoresheets }) => {
+const Page: NextPage<Props> = ({ user, division, team, scoresheets }) => {
   return (
     <RoleAuthorizer user={user} allowedRoles={[]}>
       {scoresheets.map(scoresheet => (
         <ExportScoresheetPage
           key={scoresheet._id.toString()}
-          event={event}
+          division={division}
           team={team}
           scoresheet={scoresheet}
         />
@@ -271,9 +275,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
       user: '/api/me',
-      event: `/api/events/${ctx.params?.eventId}`,
-      team: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}`,
-      scoresheets: `/api/events/${ctx.params?.eventId}/teams/${ctx.params?.teamId}/scoresheets`
+      division: `/api/divisions/${ctx.params?.divisionId}`,
+      team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
+      scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
     },
     ctx
   );

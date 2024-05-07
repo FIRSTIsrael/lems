@@ -38,26 +38,26 @@ const EventScheduleRow: React.FC<EventScheduleRowProps> = ({ entry }) => {
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const Page: NextPage<Props> = ({ user, event }) => {
+const Page: NextPage<Props> = ({ user, division }) => {
   const router = useRouter();
   return (
     <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${event.name}`}
-        back={`/event/${event._id}/reports`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${division.name}`}
+        back={`/division/${division._id}/reports`}
         backDisabled={false}
-        color={event.color}
+        color={division.color}
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
           <Table>
@@ -70,7 +70,7 @@ const Page: NextPage<Props> = ({ user, event }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {event.schedule?.map((s, index) => {
+              {division.schedule?.map((s, index) => {
                 return <EventScheduleRow key={index} entry={s} />;
               })}
             </TableBody>
@@ -86,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     const data = await serverSideGetRequests(
-      { event: `/api/events/${user.eventId}?withSchedule=true` },
+      { division: `/api/divisions/${user.divisionId}?withSchedule=true` },
       ctx
     );
 

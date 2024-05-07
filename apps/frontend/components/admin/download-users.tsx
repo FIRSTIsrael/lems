@@ -5,16 +5,16 @@ import { Event } from '@lems/types';
 import { getApiBase } from '../../lib/utils/fetch';
 
 interface DownloadUsersButtonProps extends ButtonProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
 }
 
-const DownloadUsersButton: React.FC<DownloadUsersButtonProps> = ({ event, ...props }) => {
+const DownloadUsersButton: React.FC<DownloadUsersButtonProps> = ({ division, ...props }) => {
   return (
     <Button
       component="a"
       startIcon={<DownloadIcon />}
       variant="contained"
-      href={`${getApiBase(true)}/api/admin/events/${event._id}/users/export`}
+      href={`${getApiBase(true)}/api/admin/divisions/${division._id}/users/export`}
       target="_blank"
       download
       {...props}

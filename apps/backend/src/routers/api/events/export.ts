@@ -12,11 +12,11 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/rubrics/:judgingCategory',
   asyncHandler(async (req: Request, res: Response) => {
-    const teams = await db.getEventTeams(new ObjectId(req.params.eventId));
-    const rubrics = (await db.getEventRubrics(new ObjectId(req.params.eventId))).filter(
+    const teams = await db.getEventTeams(new ObjectId(req.params.divisionId));
+    const rubrics = (await db.getEventRubrics(new ObjectId(req.params.divisionId))).filter(
       rubric => rubric.category === req.params.judgingCategory
     );
-    const scoresheets = (await db.getEventScoresheets(new ObjectId(req.params.eventId))).filter(
+    const scoresheets = (await db.getEventScoresheets(new ObjectId(req.params.divisionId))).filter(
       scoresheet => scoresheet.stage === 'ranking'
     );
     const schema: RubricsSchema<JudgingCategory> = rubricsSchemas[req.params.judgingCategory];
@@ -89,8 +89,8 @@ router.get(
 router.get(
   '/scores',
   asyncHandler(async (req: Request, res: Response) => {
-    const teams = await db.getEventTeams(new ObjectId(req.params.eventId));
-    const scoresheets = (await db.getEventScoresheets(new ObjectId(req.params.eventId))).filter(
+    const teams = await db.getEventTeams(new ObjectId(req.params.divisionId));
+    const scoresheets = (await db.getEventScoresheets(new ObjectId(req.params.divisionId))).filter(
       scoresheet => scoresheet.stage === 'ranking'
     );
 

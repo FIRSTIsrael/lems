@@ -14,7 +14,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { RobotGameMatch, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 
 interface ControlActionsProps {
-  eventId: string;
+  divisionId: string;
   nextMatchId: ObjectId | undefined;
   loadedMatch: WithId<RobotGameMatch> | null;
   activeMatchId: ObjectId | null;
@@ -22,7 +22,7 @@ interface ControlActionsProps {
 }
 
 const ControlActions: React.FC<ControlActionsProps> = ({
-  eventId,
+  divisionId,
   nextMatchId,
   loadedMatch,
   activeMatchId,
@@ -33,38 +33,38 @@ const ControlActions: React.FC<ControlActionsProps> = ({
 
   const loadNextMatch = useCallback(() => {
     if (!nextMatchId) return;
-    socket.emit('loadMatch', eventId, nextMatchId.toString(), response => {
+    socket.emit('loadMatch', divisionId, nextMatchId.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
       }
     });
-  }, [eventId, nextMatchId, socket]);
+  }, [divisionId, nextMatchId, socket]);
 
   const startMatch = useCallback(() => {
     if (!loadedMatch) return;
-    socket.emit('startMatch', eventId, loadedMatch._id.toString(), response => {
+    socket.emit('startMatch', divisionId, loadedMatch._id.toString(), response => {
       if (!response.ok) enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
     });
 
-    socket.emit('updateAudienceDisplay', eventId, { screen: 'scores' }, response => {
+    socket.emit('updateAudienceDisplay', divisionId, { screen: 'scores' }, response => {
       if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
     });
-  }, [eventId, loadedMatch, socket]);
+  }, [divisionId, loadedMatch, socket]);
 
   const startTestMatch = useCallback(() => {
     if (activeMatchId) return;
-    socket.emit('startTestMatch', eventId, response => {
+    socket.emit('startTestMatch', divisionId, response => {
       if (!response.ok) enqueueSnackbar('אופס, הזנקת המקצה נכשלה.', { variant: 'error' });
     });
-  }, [eventId, activeMatchId, socket]);
+  }, [divisionId, activeMatchId, socket]);
 
   const abortMatch = useCallback(() => {
     if (!activeMatchId) return;
-    socket.emit('abortMatch', eventId, activeMatchId.toString(), response => {
+    socket.emit('abortMatch', divisionId, activeMatchId.toString(), response => {
       if (!response.ok) enqueueSnackbar('אופס, עצירת המקצה נכשלה.', { variant: 'error' });
     });
     setOpen(false);
-  }, [activeMatchId, eventId, socket]);
+  }, [activeMatchId, divisionId, socket]);
 
   useEffect(() => {
     setMatchShown(false);
@@ -97,9 +97,15 @@ const ControlActions: React.FC<ControlActionsProps> = ({
         size="large"
         onClick={() => {
           setMatchShown(true);
-          socket.emit('updateAudienceDisplay', eventId, { screen: 'match-preview' }, response => {
-            if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
-          });
+          socket.emit(
+            'updateAudienceDisplay',
+            divisionId,
+            { screen: 'match-preview' },
+            response => {
+              if (!response.ok)
+                enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
+            }
+          );
         }}
       >
         הצגת המקצה
@@ -111,8 +117,8 @@ const ControlActions: React.FC<ControlActionsProps> = ({
             !loadedMatch?._id
               ? 'inherit'
               : loadedMatch.participants.filter(p => p.teamId).find(p => !p.ready)
-              ? 'warning'
-              : 'success'
+                ? 'warning'
+                : 'success'
           }
           disabled={!loadedMatch?._id}
           size="large"

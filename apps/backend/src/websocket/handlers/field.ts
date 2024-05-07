@@ -4,21 +4,21 @@ import * as db from '@lems/database';
 import dayjs from 'dayjs';
 import { MATCH_LENGTH, RobotGameMatchParticipant, RobotGameMatchBrief } from '@lems/types';
 
-export const handleLoadMatch = async (namespace, eventId: string, matchId: string, callback) => {
+export const handleLoadMatch = async (namespace, divisionId: string, matchId: string, callback) => {
   let match = await db.getMatch({
-    eventId: new ObjectId(eventId),
+    divisionId: new ObjectId(divisionId),
     _id: new ObjectId(matchId)
   });
 
   if (!match) {
-    callback({ ok: false, error: `Could not find match #${matchId} in event ${eventId}!` });
+    callback({ ok: false, error: `Could not find match #${matchId} in division ${divisionId}!` });
     return;
   }
 
-  console.log(`🔃 Loading match #${matchId} in event ${eventId}`);
+  console.log(`🔃 Loading match #${matchId} in division ${divisionId}`);
 
   await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
+    { divisionId: new ObjectId(divisionId) },
     {
       loadedMatch: match._id
     }
@@ -26,22 +26,27 @@ export const handleLoadMatch = async (namespace, eventId: string, matchId: strin
 
   console.log(`✅ Loaded match #${matchId}!`);
   callback({ ok: true });
-  match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  const eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  namespace.to('field').emit('matchLoaded', match, eventState);
+  match = await db.getMatch({ divisionId: new ObjectId(divisionId), _id: new ObjectId(matchId) });
+  const divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  namespace.to('field').emit('matchLoaded', match, divisionState);
 };
 
-export const handleStartMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-  if (eventState.activeMatch !== null) {
+export const handleStartMatch = async (
+  namespace,
+  divisionId: string,
+  matchId: string,
+  callback
+) => {
+  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  if (divisionState.activeMatch !== null) {
     callback({
       ok: false,
-      error: `Event already has a running match (${eventState.activeMatch})!`
+      error: `Event already has a running match (${divisionState.activeMatch})!`
     });
     return;
   }
 
-  console.log(`❗ Starting match ${matchId} in event ${eventId}`);
+  console.log(`❗ Starting match ${matchId} in division ${divisionId}`);
 
   const startTime = new Date();
   await db.updateMatches(
@@ -71,11 +76,11 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
 
       if (result.matchedCount > 0) {
         console.log(`✅ Match ${matchId} completed!`);
-        await db.updateEventState({ _id: eventState._id }, { activeMatch: null });
+        await db.updateEventState({ _id: divisionState._id }, { activeMatch: null });
 
         const match = await db.getMatch({ _id: new ObjectId(matchId) });
-        eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
-        namespace.to('field').emit('matchCompleted', match, eventState);
+        divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+        namespace.to('field').emit('matchCompleted', match, divisionState);
       }
     }.bind(null, startTime)
   );
@@ -91,18 +96,18 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
 
       if (match) {
         console.log(`🏃 Match ${matchId} endgame!`);
-        eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+        divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
         namespace.to('field').emit('matchEndgame', match);
       }
     }.bind(null, startTime)
   );
 
   const match = await db.getMatch({ _id: new ObjectId(matchId) });
-  const switchToRanking = match.stage === 'ranking' && eventState.currentStage === 'practice';
-  const advanceRound = switchToRanking || match.round > eventState.currentRound;
+  const switchToRanking = match.stage === 'ranking' && divisionState.currentStage === 'practice';
+  const advanceRound = switchToRanking || match.round > divisionState.currentRound;
 
   await db.updateEventState(
-    { _id: eventState._id },
+    { _id: divisionState._id },
     {
       activeMatch: match._id,
       ...(match.stage !== 'test' && { loadedMatch: null }),
@@ -111,13 +116,13 @@ export const handleStartMatch = async (namespace, eventId: string, matchId: stri
     }
   );
 
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
   callback({ ok: true });
-  namespace.to('field').emit('matchStarted', match, eventState);
+  namespace.to('field').emit('matchStarted', match, divisionState);
 };
 
-export const handleStartTestMatch = async (namespace, eventId: string, callback) => {
-  const match = await db.getMatch({ eventId: new ObjectId(eventId), stage: 'test' });
+export const handleStartTestMatch = async (namespace, divisionId: string, callback) => {
+  const match = await db.getMatch({ divisionId: new ObjectId(divisionId), stage: 'test' });
 
   if (!match) {
     callback({
@@ -127,14 +132,19 @@ export const handleStartTestMatch = async (namespace, eventId: string, callback)
     return;
   }
 
-  console.log(`❗ Starting test match ${match._id} in event ${eventId}`);
-  handleStartMatch(namespace, eventId, match._id.toString(), callback);
+  console.log(`❗ Starting test match ${match._id} in division ${divisionId}`);
+  handleStartMatch(namespace, divisionId, match._id.toString(), callback);
 };
 
-export const handleAbortMatch = async (namespace, eventId: string, matchId: string, callback) => {
-  let eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+export const handleAbortMatch = async (
+  namespace,
+  divisionId: string,
+  matchId: string,
+  callback
+) => {
+  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
 
-  if (eventState.activeMatch.toString() !== matchId) {
+  if (divisionState.activeMatch.toString() !== matchId) {
     callback({
       ok: false,
       error: `Match ${matchId} is not running!`
@@ -142,13 +152,13 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
     return;
   }
 
-  console.log(`❌ Aborting match ${matchId} in event ${eventId}`);
+  console.log(`❌ Aborting match ${matchId} in division ${divisionId}`);
 
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
   await db.updateMatch(
     {
-      eventId: new ObjectId(eventId),
+      divisionId: new ObjectId(divisionId),
       _id: new ObjectId(matchId)
     },
     {
@@ -159,7 +169,7 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   );
 
   await db.updateEventState(
-    { eventId: new ObjectId(eventId) },
+    { divisionId: new ObjectId(divisionId) },
     {
       activeMatch: null,
       ...(match.stage !== 'test' && { loadedMatch: new ObjectId(matchId) })
@@ -167,14 +177,20 @@ export const handleAbortMatch = async (namespace, eventId: string, matchId: stri
   );
 
   callback({ ok: true });
-  match = await db.getMatch({ eventId: new ObjectId(eventId), _id: new ObjectId(matchId) });
-  eventState = await db.getEventState({ eventId: new ObjectId(eventId) });
+  match = await db.getMatch({ divisionId: new ObjectId(divisionId), _id: new ObjectId(matchId) });
+  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
 
-  namespace.to('field').emit('matchAborted', match, eventState);
-  if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, eventState);
+  namespace.to('field').emit('matchAborted', match, divisionState);
+  if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, divisionState);
 };
 
-export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTeams, callback) => {
+export const handleUpdateMatchTeams = async (
+  namespace,
+  divisionId,
+  matchId,
+  newTeams,
+  callback
+) => {
   let match = await db.getMatch({ _id: new ObjectId(matchId) });
 
   if (!match) {
@@ -187,7 +203,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
     return;
   }
 
-  console.log(`🖊️ Updating teams for match ${matchId} in event ${eventId}`);
+  console.log(`🖊️ Updating teams for match ${matchId} in division ${divisionId}`);
 
   newTeams.forEach(async newTeam => {
     const participantIndex = match.participants.findIndex(
@@ -210,7 +226,7 @@ export const handleUpdateMatchTeams = async (namespace, eventId, matchId, newTea
 
 export const handleUpdateMatchParticipant = async (
   namespace,
-  eventId: string,
+  divisionId: string,
   matchId: string,
   {
     teamId,
@@ -220,25 +236,25 @@ export const handleUpdateMatchParticipant = async (
 ) => {
   let match = await db.getMatch({
     _id: new ObjectId(matchId),
-    eventId: new ObjectId(eventId)
+    divisionId: new ObjectId(divisionId)
   });
 
   if (!match) {
     callback({
       ok: false,
-      error: `Could not find match ${matchId} in event ${eventId}!`
+      error: `Could not find match ${matchId} in division ${divisionId}!`
     });
     return;
   }
 
   console.log(
-    `🖊️ Updating prestart data of team ${teamId} in match ${matchId} at event ${eventId}`
+    `🖊️ Updating prestart data of team ${teamId} in match ${matchId} at division ${divisionId}`
   );
 
   await db.updateMatch(
     {
       _id: new ObjectId(matchId),
-      eventId: new ObjectId(eventId),
+      divisionId: new ObjectId(divisionId),
       'participants.teamId': new ObjectId(teamId)
     },
     Object.fromEntries(
@@ -247,48 +263,48 @@ export const handleUpdateMatchParticipant = async (
   );
 
   callback({ ok: true });
-  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  match = await db.getMatch({ _id: new ObjectId(matchId), divisionId: new ObjectId(divisionId) });
   namespace.to('field').emit('matchUpdated', match);
 };
 
 export const handleUpdateMatchBrief = async (
   namespace,
-  eventId: string,
+  divisionId: string,
   matchId: string,
   newBrief: Partial<Pick<RobotGameMatchBrief, 'called'>>,
   callback
 ) => {
   let match = await db.getMatch({
     _id: new ObjectId(matchId),
-    eventId: new ObjectId(eventId)
+    divisionId: new ObjectId(divisionId)
   });
 
   if (!match) {
     callback({
       ok: false,
-      error: `Could not find match ${matchId} in event ${eventId}!`
+      error: `Could not find match ${matchId} in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating match data of match ${matchId} at event ${eventId}`);
+  console.log(`🖊️ Updating match data of match ${matchId} at division ${divisionId}`);
 
   await db.updateMatch(
     {
       _id: new ObjectId(matchId),
-      eventId: new ObjectId(eventId)
+      divisionId: new ObjectId(divisionId)
     },
     { ...newBrief }
   );
 
   callback({ ok: true });
-  match = await db.getMatch({ _id: new ObjectId(matchId), eventId: new ObjectId(eventId) });
+  match = await db.getMatch({ _id: new ObjectId(matchId), divisionId: new ObjectId(divisionId) });
   namespace.to('field').emit('matchUpdated', match);
 };
 
 export const handleUpdateScoresheet = async (
   namespace,
-  eventId,
+  divisionId,
   teamId,
   scoresheetId,
   scoresheetData,
@@ -302,12 +318,14 @@ export const handleUpdateScoresheet = async (
   if (!scoresheet) {
     callback({
       ok: false,
-      error: `Could not find scoresheet ${scoresheetId} for team ${teamId} in event ${eventId}!`
+      error: `Could not find scoresheet ${scoresheetId} for team ${teamId} in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating scoresheet ${scoresheetId} for team ${teamId} in event ${eventId}`);
+  console.log(
+    `🖊️ Updating scoresheet ${scoresheetId} for team ${teamId} in division ${divisionId}`
+  );
 
   await db.updateScoresheet({ _id: scoresheet._id }, scoresheetData);
 

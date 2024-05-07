@@ -15,17 +15,17 @@ import GeneralInsightsDashboard from '../../../components/insights/dashboards/ge
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Event>;
+  divisionState: WithId<EventState>;
   teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, eventState, teams }) => {
+const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
 
-  if (!eventState.completed) {
-    router.push(`/event/${event._id}/${user.role}`);
+  if (!divisionState.completed) {
+    router.push(`/division/${division._id}/${user.role}`);
     enqueueSnackbar('האירוע עוד לא הסתיים', { variant: 'info' });
   }
   return (
@@ -33,15 +33,15 @@ const Page: NextPage<Props> = ({ user, event, eventState, teams }) => {
       user={user}
       allowedRoles={['judge-advisor', 'lead-judge', 'head-referee', 'tournament-manager']}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ניתוח תחרות | ${event.name}`}
-        back={`/event/${event._id}/${user.role}`}
-        color={event.color}
+        title={`ממשק ניתוח תחרות | ${division.name}`}
+        back={`/division/${division._id}/${user.role}`}
+        color={division.color}
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 4 }}>
@@ -56,13 +56,13 @@ const Page: NextPage<Props> = ({ user, event, eventState, teams }) => {
             </Tabs>
           </Paper>
           <TabPanel value="1">
-            <GeneralInsightsDashboard event={event} teams={teams} />
+            <GeneralInsightsDashboard division={division} teams={teams} />
           </TabPanel>
           <TabPanel value="2">
-            <FieldInsightsDashboard event={event} />
+            <FieldInsightsDashboard division={division} />
           </TabPanel>
           <TabPanel value="3">
-            <JudgingInsightsDashboard event={event} />
+            <JudgingInsightsDashboard division={division} />
           </TabPanel>
         </TabContext>
       </Layout>
@@ -76,9 +76,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        eventState: `/api/events/${user.eventId}/state`,
-        teams: `/api/events/${user.eventId}/teams`
+        division: `/api/divisions/${user.divisionId}`,
+        divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`
       },
       ctx
     );

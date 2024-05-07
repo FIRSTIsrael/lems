@@ -26,11 +26,11 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Event>;
   teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
+const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sortBy, setSortBy] = useState<string>('number');
@@ -76,7 +76,7 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
     setTeams(sorted);
   }, [teams, sortBy, sortDirection]);
 
-  const { connectionStatus } = useWebsocket(event._id.toString(), ['pit-admin'], undefined, [
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered }
   ]);
 
@@ -85,18 +85,18 @@ const Page: NextPage<Props> = ({ user, event, teams: initialTeams }) => {
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/event/${event._id}/${user.role}`);
+        router.push(`/division/${division._id}/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${event.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/event/${event._id}/reports`}
+        back={`/division/${division._id}/reports`}
         backDisabled={connectionStatus === 'connecting'}
-        color={event.color}
+        color={division.color}
       >
         <Paper
           sx={{
@@ -161,8 +161,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        event: `/api/events/${user.eventId}`,
-        teams: `/api/events/${user.eventId}/teams`
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`
       },
       ctx
     );

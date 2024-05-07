@@ -71,7 +71,7 @@ const GeneralScheduleRow: React.FC<GeneralScheduleRowProps> = ({ schedule, colSp
 };
 
 interface ReportJudgingScheduleProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
@@ -79,13 +79,13 @@ interface ReportJudgingScheduleProps {
 }
 
 const ReportJudgingSchedule: React.FC<ReportJudgingScheduleProps> = ({
-  event,
+  division,
   rooms,
   sessions,
   teams,
   showGeneralSchedule = false
 }) => {
-  const judgesGeneralSchedule = event.schedule?.filter(s => s.roles.includes('judge')) || [];
+  const judgesGeneralSchedule = division.schedule?.filter(s => s.roles.includes('judge')) || [];
 
   return (
     <TableContainer component={Paper} sx={{ mt: 4 }}>

@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { Scoresheet, RobotGameMatch, Team, Event } from '@lems/types';
 
 export const getEventScoresheets = (
-  event: WithId<Event>,
+  division: WithId<Event>,
   teams: Array<WithId<Team>>,
   matches: Array<WithId<RobotGameMatch>>
 ): Array<Scoresheet> => {
@@ -18,7 +18,7 @@ export const getEventScoresheets = (
     practiceRounds.forEach(r => {
       const scoresheet: Scoresheet = {
         teamId: team._id,
-        eventId: event._id,
+        divisionId: division._id,
         round: r,
         stage: 'practice',
         status: 'empty'
@@ -30,7 +30,7 @@ export const getEventScoresheets = (
     rankingRounds.forEach(r => {
       const scoresheet: Scoresheet = {
         teamId: team._id,
-        eventId: event._id,
+        divisionId: division._id,
         round: r,
         stage: 'ranking',
         status: 'empty'

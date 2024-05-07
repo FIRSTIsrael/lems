@@ -8,23 +8,28 @@ import { Event, AwardSchema } from '@lems/types';
 import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
-import EditEventForm from '../../../components/admin/edit-event-form';
-import EventAwardEditor from '../../../components/admin/event-award-editor';
-import DeleteEventData from '../../../components/admin/delete-event-data';
-import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
+import EditEventForm from '../../../components/admin/edit-division-form';
+import EventAwardEditor from '../../../components/admin/division-award-editor';
+import DeleteEventData from '../../../components/admin/delete-division-data';
+import EventScheduleEditor from '../../../components/admin/division-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
 import UploadFileButton from '../../../components/general/upload-file';
 
 interface Props {
-  event: WithId<Event>;
+  division: WithId<Event>;
   awardSchema: AwardSchema;
 }
 
-const Page: NextPage<Props> = ({ event, awardSchema }) => {
+const Page: NextPage<Props> = ({ division, awardSchema }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   return (
-    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin" color={event.color}>
+    <Layout
+      maxWidth="md"
+      title={`ניהול אירוע: ${division.name}`}
+      back="/admin"
+      color={division.color}
+    >
       <TabContext value={activeTab}>
         <Paper sx={{ mt: 2 }}>
           <Tabs
@@ -39,24 +44,24 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
         </Paper>
         <TabPanel value="1">
           <Stack spacing={2}>
-            <EditEventForm event={event} />
+            <EditEventForm division={division} />
             <Paper sx={{ p: 4 }}>
-              {event.hasState && <DeleteEventData event={event} />}
+              {division.hasState && <DeleteEventData division={division} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
                 <UploadFileButton
-                  urlPath={`/api/admin/events/${event._id}/schedule/parse`}
+                  urlPath={`/api/admin/divisions/${division._id}/schedule/parse`}
                   displayName="לוח זמנים"
                   extension=".csv"
-                  disabled={event.hasState}
+                  disabled={division.hasState}
                   requestData={{ timezone: dayjs.tz.guess() }}
                 />
-                <GenerateScheduleButton event={event} />
-                <DownloadUsersButton event={event} disabled={!event.hasState} />
+                <GenerateScheduleButton division={division} />
+                <DownloadUsersButton division={division} disabled={!division.hasState} />
               </Stack>
             </Paper>
             <Paper sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
               <UploadFileButton
-                urlPath={`/api/admin/events/${event._id}/pit-map`}
+                urlPath={`/api/admin/divisions/${division._id}/pit-map`}
                 displayName="מפת פיטים"
                 extension=".png"
               />
@@ -64,10 +69,10 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
           </Stack>
         </TabPanel>
         <TabPanel value="2">
-          <EventScheduleEditor event={event} />
+          <EventScheduleEditor division={division} />
         </TabPanel>
         <TabPanel value="3">
-          <EventAwardEditor eventId={event._id} awardSchema={awardSchema} />
+          <EventAwardEditor divisionId={division._id} awardSchema={awardSchema} />
         </TabPanel>
       </TabContext>
     </Layout>
@@ -77,8 +82,8 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
-      event: `/api/events/${ctx.params?.eventId}?withSchedule=true`,
-      awardSchema: `/api/admin/events/${ctx.params?.eventId}/awards/schema`
+      division: `/api/divisions/${ctx.params?.divisionId}?withSchedule=true`,
+      awardSchema: `/api/admin/divisions/${ctx.params?.divisionId}/awards/schema`
     },
     ctx
   );

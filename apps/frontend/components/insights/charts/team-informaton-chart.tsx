@@ -6,7 +6,7 @@ import { AwardNames, CVFormCategoryNames, Event, Team } from '@lems/types';
 import { cvFormSchema, localizedAward } from '@lems/season';
 
 interface TeamInformationChartProps {
-  event: WithId<Event>;
+  division: WithId<Event>;
   team: WithId<Team> | null;
 }
 
@@ -23,15 +23,15 @@ interface TeamInformationChartData {
   cvForms: Array<{ severity: CVFormCategoryNames }>;
 }
 
-const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ event, team }) => {
+const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ division, team }) => {
   const [data, setData] = useState<TeamInformationChartData | null>(null);
 
   useEffect(() => {
     if (team)
-      apiFetch(`/api/events/${event._id}/insights/team/${team._id}/team-stats-summary`).then(res =>
-        res.json().then(data => setData(data))
+      apiFetch(`/api/divisions/${division._id}/insights/team/${team._id}/team-stats-summary`).then(
+        res => res.json().then(data => setData(data))
       );
-  }, [event._id, team]);
+  }, [division._id, team]);
 
   return (
     <>
