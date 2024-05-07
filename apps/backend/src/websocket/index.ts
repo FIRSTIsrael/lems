@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import {
   WSServerEmittedEvents,
   WSClientEmittedEvents,
-  WSInterServerDivisions,
+  WSInterServerEvents,
   WSSocketData
 } from '@lems/types';
 import {
@@ -29,7 +29,7 @@ import {
 import { handleUpdateAudienceDisplay, handleUpdatePresentation } from './handlers/audience-display';
 
 const websocket = (
-  socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerDivisions, WSSocketData>
+  socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
 ) => {
   const namespace = socket.nsp;
   const divisionId = socket.nsp.name.split('/')[2];

@@ -75,7 +75,7 @@ const Page: NextPage<Props> = ({
     return a.place - b.place;
   });
 
-  const handleSessionDivision = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) return session;
@@ -127,10 +127,10 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin', 'audience-display'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionDivision },
-      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
-      { name: 'judgingSessionAborted', handler: handleSessionDivision },
-      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
       {

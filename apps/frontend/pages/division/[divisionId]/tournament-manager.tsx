@@ -101,7 +101,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionDivision = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -112,7 +112,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -146,15 +146,15 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'judgingSessionStarted', handler: handleSessionDivision },
-      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
-      { name: 'judgingSessionAborted', handler: handleSessionDivision },
-      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
-      { name: 'matchLoaded', handler: handleMatchDivision },
-      { name: 'matchStarted', handler: handleMatchDivision },
-      { name: 'matchCompleted', handler: handleMatchDivision },
-      { name: 'matchAborted', handler: handleMatchDivision },
-      { name: 'matchUpdated', handler: handleMatchDivision },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
       {
         name: 'cvFormCreated',
         handler: cvForm => {

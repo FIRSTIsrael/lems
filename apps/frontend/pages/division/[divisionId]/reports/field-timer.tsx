@@ -65,7 +65,7 @@ const Page: NextPage<Props> = ({
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     match: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -86,14 +86,14 @@ const Page: NextPage<Props> = ({
       name: 'matchStarted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     },
     {
@@ -106,7 +106,7 @@ const Page: NextPage<Props> = ({
       name: 'matchCompleted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     }
   ]);

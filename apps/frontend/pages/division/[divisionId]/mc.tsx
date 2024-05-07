@@ -57,7 +57,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     match: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -75,11 +75,11 @@ const Page: NextPage<Props> = ({
 
   useWebsocket(division._id.toString(), ['field', 'pit-admin', 'audience-display'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchLoaded', handler: handleMatchDivision },
-    { name: 'matchStarted', handler: handleMatchDivision },
-    { name: 'matchAborted', handler: handleMatchDivision },
-    { name: 'matchCompleted', handler: handleMatchDivision },
-    { name: 'matchUpdated', handler: handleMatchDivision },
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchStarted', handler: handleMatchEvent },
+    { name: 'matchAborted', handler: handleMatchEvent },
+    { name: 'matchCompleted', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'audienceDisplayUpdated', handler: setDivisionState },
     { name: 'presentationUpdated', handler: setDivisionState }
   ]);

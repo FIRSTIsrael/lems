@@ -86,7 +86,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -94,7 +94,7 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleScoresheetDivision = (scoresheet: WithId<Scoresheet>) => {
+  const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
       scoresheets.map(s => {
         if (s._id === scoresheet._id) {
@@ -127,14 +127,14 @@ const Page: NextPage<Props> = ({
       name: 'matchStarted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     },
     {
       name: 'matchAborted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     },
     {
@@ -147,12 +147,12 @@ const Page: NextPage<Props> = ({
       name: 'matchCompleted',
       handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
-        handleMatchDivision(newMatch, newDivisionState);
+        handleMatchEvent(newMatch, newDivisionState);
       }
     },
-    { name: 'matchLoaded', handler: handleMatchDivision },
-    { name: 'matchUpdated', handler: handleMatchDivision },
-    { name: 'scoresheetUpdated', handler: handleScoresheetDivision },
+    { name: 'matchLoaded', handler: handleMatchEvent },
+    { name: 'matchUpdated', handler: handleMatchEvent },
+    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
     { name: 'audienceDisplayUpdated', handler: setDivisionState },
     { name: 'presentationUpdated', handler: setDivisionState },
     { name: 'teamRegistered', handler: handleTeamRegistered }

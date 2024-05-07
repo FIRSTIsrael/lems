@@ -200,7 +200,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionDivision = (
+  const handleSessionEvent = (
     session: WithId<JudgingSession>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -216,7 +216,7 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     match: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -237,16 +237,16 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin', 'field'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionDivision },
-      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
-      { name: 'judgingSessionAborted', handler: handleSessionDivision },
-      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'matchLoaded', handler: handleMatchDivision },
-      { name: 'matchStarted', handler: handleMatchDivision },
-      { name: 'matchAborted', handler: handleMatchDivision },
-      { name: 'matchCompleted', handler: handleMatchDivision },
-      { name: 'matchUpdated', handler: handleMatchDivision }
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent }
     ]
   );
 

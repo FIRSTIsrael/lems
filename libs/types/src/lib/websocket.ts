@@ -221,7 +221,7 @@ export interface WSClientEmittedEvents {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface WSInterServerDivisions {
+export interface WSInterServerEvents {
   // ...
 }
 
@@ -229,7 +229,7 @@ export interface WSSocketData {
   rooms: Array<WSRoomName>;
 }
 
-export interface WSDivisionListener {
+export interface WSEventListener {
   name: DivisionNames<WSServerEmittedEvents> | DivisionNames<WSClientEmittedEvents>;
   handler: (...args: any[]) => void | Promise<void>;
 }

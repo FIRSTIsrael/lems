@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({
       : ({} as WithId<Team>);
   }, [teams, currentSession]);
 
-  const handleSessionDivision = (
+  const handleSessionEvent = (
     session: WithId<JudgingSession>,
     divisionState?: WithId<DivisionState>
   ) => {
@@ -102,10 +102,10 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionDivision },
-      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
-      { name: 'judgingSessionAborted', handler: handleSessionDivision },
-      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric }
     ]

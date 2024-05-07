@@ -48,7 +48,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchDivision = (match: WithId<RobotGameMatch>) => {
+  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({
 
   const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchUpdated', handler: handleMatchDivision }
+    { name: 'matchUpdated', handler: handleMatchEvent }
   ]);
 
   const practiceMatches = matches.filter(m => m.stage === 'practice');

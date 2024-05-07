@@ -36,7 +36,7 @@ const Page: NextPage<Props> = ({
 
   const teamNumberComparator: GridComparatorFn<Team> = (v1, v2) => v1.number - v2.number;
 
-  const handleScoresheetDivision = (scoresheet: WithId<Scoresheet>) => {
+  const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
       scoresheets.map(s => {
         if (s._id === scoresheet._id) {
@@ -48,7 +48,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
-    { name: 'scoresheetUpdated', handler: handleScoresheetDivision }
+    { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
   ]);
 
   const rounds = useMemo(

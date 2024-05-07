@@ -76,7 +76,7 @@ const Page: NextPage<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextMatch]);
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     match: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -107,7 +107,7 @@ const Page: NextPage<Props> = ({
     newMatch: WithId<RobotGameMatch>,
     newDivisionState: WithId<DivisionState>
   ) => {
-    handleMatchDivision(newMatch, newDivisionState);
+    handleMatchEvent(newMatch, newDivisionState);
     if (newMatch.stage !== 'test') {
       socket.emit('loadMatch', division._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
@@ -122,11 +122,11 @@ const Page: NextPage<Props> = ({
     ['field', 'audience-display'],
     undefined,
     [
-      { name: 'matchLoaded', handler: handleMatchDivision },
-      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
       { name: 'matchAborted', handler: handleMatchAborted },
-      { name: 'matchCompleted', handler: handleMatchDivision },
-      { name: 'matchUpdated', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'audienceDisplayUpdated', handler: setDivisionState },
       { name: 'presentationUpdated', handler: setDivisionState },
       { name: 'teamRegistered', handler: handleTeamRegistered }

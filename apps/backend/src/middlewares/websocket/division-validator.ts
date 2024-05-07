@@ -11,7 +11,7 @@ const divisionValidator = async (socket: Socket, next) => {
 
   const division = db.getDivision({ _id: new ObjectId(divisionId) });
   if (!division) {
-    return next(new Error('EVENT_NOT_FOUND'));
+    return next(new Error('DIVISION_NOT_FOUND'));
   }
 
   next();

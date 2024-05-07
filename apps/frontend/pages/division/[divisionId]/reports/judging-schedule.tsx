@@ -45,7 +45,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionDivision = (session: WithId<JudgingSession>) => {
+  const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -62,7 +62,7 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'judgingSessionUpdated', handler: handleSessionDivision }
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 

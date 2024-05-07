@@ -77,7 +77,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchDivision = (
+  const handleMatchEvent = (
     newMatch: WithId<RobotGameMatch>,
     newDivisionState?: WithId<DivisionState>
   ) => {
@@ -127,11 +127,11 @@ const Page: NextPage<Props> = ({
     ['field', 'pit-admin'],
     undefined,
     [
-      { name: 'matchLoaded', handler: handleMatchDivision },
-      { name: 'matchStarted', handler: handleMatchDivision },
-      { name: 'matchCompleted', handler: handleMatchDivision },
-      { name: 'matchAborted', handler: handleMatchDivision },
-      { name: 'matchUpdated', handler: handleMatchDivision },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'scoresheetUpdated', handler: updateScoresheet },
       { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
       { name: 'teamRegistered', handler: handleTeamRegistered }
