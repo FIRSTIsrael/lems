@@ -1,6 +1,6 @@
 import express from 'express';
 import { authMiddleware } from '../../middlewares/auth';
-import eventsRouter from './events/index';
+import divisionsRouter from './divisions/index';
 import adminRouter from './admin/index';
 import csrfValidator from '../../middlewares/csrf-validator';
 
@@ -10,7 +10,7 @@ router.use('/', authMiddleware);
 router.use('/', csrfValidator);
 
 router.use('/admin', adminRouter);
-router.use('/events', eventsRouter);
+router.use('/divisions', divisionsRouter);
 
 router.get('/me', (req, res) => {
   const user = req.user;

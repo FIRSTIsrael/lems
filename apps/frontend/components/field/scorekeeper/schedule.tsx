@@ -16,21 +16,21 @@ import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 
 interface ScheduleProps {
-  eventId: string;
+  divisionId: string;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ eventId, matches, socket }) => {
+const Schedule: React.FC<ScheduleProps> = ({ divisionId, matches, socket }) => {
   const loadMatch = useCallback(
     (matchId: ObjectId) => {
-      socket.emit('loadMatch', eventId, matchId.toString(), response => {
+      socket.emit('loadMatch', divisionId, matchId.toString(), response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, טעינת המקצה נכשלה.', { variant: 'error' });
         }
       });
     },
-    [eventId, socket]
+    [divisionId, socket]
   );
 
   return (

@@ -48,9 +48,9 @@ export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return findMatches(filter).next();
 };
 
-export const getEventMatches = (eventId: string) => {
+export const getDivisionMatches = (divisionId: string) => {
   return findMatches({
-    eventId: new ObjectId(eventId)
+    divisionId: new ObjectId(divisionId)
   }).toArray();
 };
 
@@ -90,10 +90,10 @@ export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
     .then(response => response);
 };
 
-export const deleteEventMatches = (eventId: ObjectId) => {
+export const deleteDivisionMatches = (divisionId: ObjectId) => {
   return db
     .collection<RobotGameMatch>('matches')
-    .deleteMany({ eventId: eventId })
+    .deleteMany({ divisionId: divisionId })
     .then(response => response);
 };
 

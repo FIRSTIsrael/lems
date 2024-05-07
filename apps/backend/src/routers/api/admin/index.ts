@@ -1,11 +1,11 @@
 import express from 'express';
-import adminEventRouter from './events/index';
+import adminDivisionRouter from './divisions/index';
 import adminValidator from '../../../middlewares/admin-validator';
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/', adminValidator);
 
-router.use('/events', adminEventRouter);
+router.use('/divisions', adminDivisionRouter);
 
 export default router;

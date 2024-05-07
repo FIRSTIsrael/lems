@@ -17,19 +17,19 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import TaskIcon from '@mui/icons-material/Task';
-import { Event, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
 import { localizedTicketTypes } from '../../localization/tickets';
 import { useState } from 'react';
 
 interface TicketCardProps extends PaperProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   ticket: WithId<Ticket>;
   team: WithId<Team> | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
+const TicketCard: React.FC<TicketCardProps> = ({ division, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [reasonForClose, setReasonForClose] = useState<string | undefined>(ticket.reasonForClose);
 
@@ -98,7 +98,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
             onClick={() => {
               socket.emit(
                 'updateTicket',
-                event._id.toString(),
+                division._id.toString(),
                 team ? team._id.toString() : null,
                 ticket._id.toString(),
                 { closed: new Date(), reasonForClose },

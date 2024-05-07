@@ -1,6 +1,6 @@
 import React from 'react';
 import { WithId } from 'mongodb';
-import { Event, RobotGameMatch } from '@lems/types';
+import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -8,11 +8,11 @@ import { blue, red } from '@mui/material/colors';
 import Image from 'next/image';
 
 interface MatchPreviewProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   match?: WithId<RobotGameMatch>;
 }
 
-const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
+const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
   return (
     <Box
       height="100%"
@@ -70,9 +70,9 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
                 <Grid xs={1} key={p.teamId?.toString()}>
                   <Stack
                     sx={{
-                      color: event.color === 'red' ? red[800] : blue[800],
-                      border: `1px solid ${event.color === 'red' ? red[300] : blue[300]}`,
-                      backgroundColor: event.color === 'red' ? red[100] : blue[100]
+                      color: division.color === 'red' ? red[800] : blue[800],
+                      border: `1px solid ${division.color === 'red' ? red[300] : blue[300]}`,
+                      backgroundColor: division.color === 'red' ? red[100] : blue[100]
                     }}
                     borderRadius="0.5rem"
                     px={5}

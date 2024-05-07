@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
 import {
-  Event,
+  Division,
   JudgingRoom,
   JudgingSession,
   WSServerEmittedEvents,
@@ -21,14 +21,14 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
 interface AbortJudgingSessionButtonProps extends ButtonProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
-  event,
+  division,
   room,
   session,
   socket,
@@ -36,8 +36,8 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
 
-  const abortSession = (eventId: string, roomId: string, sessionId: string) => {
-    socket.emit('abortJudgingSession', eventId, roomId, sessionId, response => {
+  const abortSession = (divisionId: string, roomId: string, sessionId: string) => {
+    socket.emit('abortJudgingSession', divisionId, roomId, sessionId, response => {
       if (response.ok) {
         enqueueSnackbar('מפגש השיפוט הופסק בהצלחה!', { variant: 'success' });
       } else {
@@ -77,7 +77,7 @@ const AbortJudgingSessionButton: React.FC<AbortJudgingSessionButtonProps> = ({
           </Button>
           <Button
             onClick={() =>
-              abortSession(event._id.toString(), room._id.toString(), session._id.toString())
+              abortSession(division._id.toString(), room._id.toString(), session._id.toString())
             }
           >
             אישור

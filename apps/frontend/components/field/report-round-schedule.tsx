@@ -17,7 +17,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStage,
-  EventScheduleEntry
+  DivisionScheduleEntry
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { localizedMatchStage } from '../../localization/field';
@@ -78,7 +78,7 @@ interface ReportRoundScheduleProps {
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
-  eventSchedule: Array<EventScheduleEntry>;
+  divisionSchedule: Array<DivisionScheduleEntry>;
   extendedTeamInfo?: boolean;
 }
 
@@ -88,7 +88,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
   matches,
   tables,
   teams,
-  eventSchedule,
+  divisionSchedule,
   extendedTeamInfo = false
 }) => {
   return (
@@ -121,7 +121,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
               key={m.number}
             />
           ))}
-          {eventSchedule
+          {divisionSchedule
             .filter(c => {
               const timeDiff = dayjs(c.startTime).diff(
                 matches[matches.length - 1].scheduledTime,

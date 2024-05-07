@@ -2,23 +2,23 @@ import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Typography, Paper, Skeleton } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface RobotConsistencyChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
 type RobotConsistencyChartData = { avgRelStdDev: number; rows: Array<object> };
 
-const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ event }) => {
+const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ division }) => {
   const [data, setData] = useState<RobotConsistencyChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/scores/consistency`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/field/scores/consistency`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   const columns: GridColDef[] = [
     {

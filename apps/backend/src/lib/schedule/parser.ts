@@ -3,8 +3,8 @@ import { ObjectId, WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
 import {
   Team,
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   RobotGameTable,
   RobotGameMatch,
   JudgingRoom,
@@ -18,9 +18,9 @@ const PRACTICE_MATCHES_BLOCK_ID = 4;
 const RANKING_MATCHES_BLOCK_ID = 2;
 const JUDGING_SESSIONS_BLOCK_ID = 3;
 
-const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
+const getTestMatch = (divisionId: ObjectId): RobotGameMatch => {
   return {
-    eventId,
+    divisionId,
     round: 0,
     stage: 'test',
     status: 'not-started',
@@ -28,12 +28,12 @@ const getTestMatch = (eventId: ObjectId): RobotGameMatch => {
   } as RobotGameMatch;
 };
 
-const extractTeamsFromBlock = (teamBlock: Line[], event: WithId<Event>): Array<Team> => {
+const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Division>): Array<Team> => {
   const LINES_TO_SKIP = 1;
   teamBlock = (teamBlock || []).splice(LINES_TO_SKIP);
 
   return teamBlock.map(teamLine => ({
-    eventId: event._id,
+    divisionId: division._id,
     number: parseInt(teamLine[0]),
     name: teamLine[1],
     registered: false,
@@ -46,7 +46,7 @@ const extractTeamsFromBlock = (teamBlock: Line[], event: WithId<Event>): Array<T
 
 const extractTablesFromBlock = (
   practiceMatchBlock: Line[],
-  event: WithId<Event>
+  division: WithId<Division>
 ): Array<RobotGameTable> => {
   const LINES_TO_SKIP = 4;
   practiceMatchBlock = (practiceMatchBlock || []).splice(LINES_TO_SKIP);
@@ -54,14 +54,14 @@ const extractTablesFromBlock = (
   const tables = (practiceMatchBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
 
   return tables.map(name => ({
-    eventId: event._id,
+    divisionId: division._id,
     name
   }));
 };
 
 const extractJudgingRoomsFromBlock = (
   judgingBlock: Line[],
-  event: WithId<Event>
+  division: WithId<Division>
 ): Array<JudgingRoom> => {
   const LINES_TO_SKIP = 4;
   judgingBlock = (judgingBlock || []).splice(LINES_TO_SKIP);
@@ -69,13 +69,13 @@ const extractJudgingRoomsFromBlock = (
   const rooms = (judgingBlock.shift() || []).slice(1).filter(name => name.trim() !== '');
 
   return rooms.map(name => ({
-    eventId: event._id,
+    divisionId: division._id,
     name
   }));
 };
 
-export const parseEventData = (
-  event: WithId<Event>,
+export const parseDivisionData = (
+  division: WithId<Division>,
   csvData: string
 ): { teams: Array<Team>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
   const file = parse(csvData.trim());
@@ -83,9 +83,9 @@ export const parseEventData = (
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
   const blocks = extractBlocksFromFile(file);
-  const teams = extractTeamsFromBlock(getBlock(blocks, TEAMS_BLOCK_ID), event);
-  const tables = extractTablesFromBlock(getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID), event);
-  const rooms = extractJudgingRoomsFromBlock(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), event);
+  const teams = extractTeamsFromBlock(getBlock(blocks, TEAMS_BLOCK_ID), division);
+  const tables = extractTablesFromBlock(getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID), division);
+  const rooms = extractJudgingRoomsFromBlock(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), division);
 
   return { teams, tables, rooms };
 };
@@ -93,7 +93,7 @@ export const parseEventData = (
 const extractMatchesFromMatchBlock = (
   matchBlock: Line[],
   stage: RobotGameMatchStage,
-  event: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
   timezone: string
@@ -107,14 +107,14 @@ const extractMatchesFromMatchBlock = (
   matchBlock.forEach(line => {
     const round = parseInt(line[1]);
     const [hour, minute] = line[2].split(':');
-    const startTime = dayjs(event.startDate)
+    const startTime = dayjs(division.startDate)
       .tz(timezone, true)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
       .set('second', 0);
 
     const match: RobotGameMatch = {
-      eventId: event._id,
+      divisionId: division._id,
       round,
       number: parseInt(line[0]),
       stage,
@@ -150,7 +150,7 @@ const extractMatchesFromMatchBlock = (
 
 const extractSessionsFromJudgingBlock = (
   judgingBlock: Line[],
-  event: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   rooms: Array<WithId<JudgingRoom>>,
   timezone: string
@@ -164,7 +164,7 @@ const extractSessionsFromJudgingBlock = (
   judgingBlock.forEach(line => {
     const number = parseInt(line[0]);
     const [hour, minute] = line[1].split(':');
-    const startTime = dayjs(event.startDate)
+    const startTime = dayjs(division.startDate)
       .tz(timezone, true)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
@@ -173,7 +173,7 @@ const extractSessionsFromJudgingBlock = (
     for (let i = 3; i < roomNames.length + 3; i++) {
       const room = rooms.find(table => table.name === roomNames[i - 3]);
       const session: JudgingSession = {
-        eventId: event._id,
+        divisionId: division._id,
         number,
         scheduledTime: startTime.toDate(),
         roomId: room._id,
@@ -196,7 +196,7 @@ const extractSessionsFromJudgingBlock = (
 
 export const parseSessionsAndMatches = (
   csvData: string,
-  event: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>,
@@ -210,7 +210,7 @@ export const parseSessionsAndMatches = (
   const practiceMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',
-    event,
+    division,
     teams,
     tables,
     timezone
@@ -218,17 +218,17 @@ export const parseSessionsAndMatches = (
   const rankingMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
-    event,
+    division,
     teams,
     tables,
     timezone
   );
   const matches = practiceMatches.concat(rankingMatches);
-  matches.push(getTestMatch(event._id));
+  matches.push(getTestMatch(division._id));
 
   const sessions = extractSessionsFromJudgingBlock(
     getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID),
-    event,
+    division,
     teams,
     rooms,
     timezone
@@ -237,7 +237,7 @@ export const parseSessionsAndMatches = (
   return { matches, sessions };
 };
 
-export const getInitialEventState = (event: WithId<Event>): EventState => {
+export const getInitialDivisionState = (division: WithId<Division>): DivisionState => {
   const supportedPresentations = ['awards'];
   const presentations = Object.fromEntries(
     supportedPresentations.map(presentaionId => [
@@ -250,7 +250,7 @@ export const getInitialEventState = (event: WithId<Event>): EventState => {
   );
 
   return {
-    eventId: event._id,
+    divisionId: division._id,
     activeMatch: null,
     loadedMatch: null,
     currentStage: 'practice',

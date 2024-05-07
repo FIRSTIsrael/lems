@@ -3,12 +3,12 @@ import { WSEventListener, ConnectionStatus, WSRoomName } from '@lems/types';
 import { getSocket } from '../lib/utils/websocket';
 
 export const useWebsocket = (
-  eventId: string,
+  divisionId: string,
   rooms: Array<WSRoomName>,
   init?: (...args: any[]) => void | Promise<void>,
   wsevents?: Array<WSEventListener>
 ) => {
-  const socket = getSocket(eventId);
+  const socket = getSocket(divisionId);
 
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
     socket.connected ? 'connected' : 'disconnected'

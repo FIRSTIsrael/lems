@@ -19,8 +19,8 @@ export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 export const CoreValuesAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
 export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 
-export const EventSectionTypes = ['field', 'judging'];
-export type EventSection = (typeof EventSectionTypes)[number];
+export const DivisionSectionTypes = ['field', 'judging'];
+export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
 export const OptionalAwardTypes = [
   'leadMentor',

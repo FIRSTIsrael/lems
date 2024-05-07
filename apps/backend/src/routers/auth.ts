@@ -24,7 +24,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       return res.status(429).json({ error: 'Captcha Failure, please try again later' });
   }
 
-  if (loginDetails.eventId) loginDetails.eventId = new ObjectId(loginDetails.eventId);
+  if (loginDetails.divisionId) loginDetails.divisionId = new ObjectId(loginDetails.divisionId);
   if (loginDetails.roleAssociation && ['room', 'table'].includes(loginDetails.roleAssociation.type))
     loginDetails.roleAssociation.value = new ObjectId(loginDetails.roleAssociation.value);
 
@@ -33,7 +33,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
     if (!user) {
       console.log(
-        `🔑 Login failed ${loginDetails.eventId ? `to event ${loginDetails.eventId}` : ''}: ${
+        `🔑 Login failed ${loginDetails.divisionId ? `to division ${loginDetails.divisionId}` : ''}: ${
           loginDetails.role || 'admin'
         }`
       );
@@ -41,7 +41,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     console.log(
-      `🔑 Login successful ${loginDetails.eventId ? `to event ${loginDetails.eventId}` : ''}: ${
+      `🔑 Login successful ${loginDetails.divisionId ? `to division ${loginDetails.divisionId}` : ''}: ${
         loginDetails.role || 'admin'
       }`
     );

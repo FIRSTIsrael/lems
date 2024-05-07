@@ -53,7 +53,7 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
     apiFetch(urlPath, {
       method: 'POST',
       body: formData,
-      headers: {'x-lems-csrf-enabled': "true"}
+      headers: { 'x-lems-csrf-enabled': 'true' }
     })
       .then(res => {
         if (res?.ok) {

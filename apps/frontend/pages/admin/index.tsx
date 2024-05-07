@@ -3,18 +3,18 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, SafeUser } from '@lems/types';
+import { Division, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import EventSelector from '../../components/general/event-selector';
-import EventCreateForm from '../../components/admin/event-create-form';
+import DivisionSelector from '../../components/general/division-selector';
+import DivisionCreateForm from '../../components/admin/division-create-form';
 
 interface Props {
   user: WithId<SafeUser>;
-  events: Array<WithId<Event>>;
+  divisions: Array<WithId<Division>>;
 }
 
-const Page: NextPage<Props> = ({ user, events }) => {
+const Page: NextPage<Props> = ({ user, divisions }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -32,20 +32,20 @@ const Page: NextPage<Props> = ({ user, events }) => {
           <Typography variant="h2" textAlign={'center'}>
             בחירת אירוע
           </Typography>
-          <EventSelector
-            events={events}
-            onChange={eventId => router.push(`/admin/event/${eventId}`)}
+          <DivisionSelector
+            divisions={divisions}
+            onChange={divisionId => router.push(`/admin/division/${divisionId}`)}
           />
           <ListItemButton
-            key={'create-event'}
+            key={'create-division'}
             dense
             sx={{ borderRadius: 2, minHeight: '50px' }}
             onClick={handleOpen}
           >
             צור אירוע
           </ListItemButton>
-          <Modal open={open} onClose={handleClose} aria-labelledby="create-event-model">
-            <EventCreateForm />
+          <Modal open={open} onClose={handleClose} aria-labelledby="create-division-model">
+            <DivisionCreateForm />
           </Modal>
         </Stack>
       </Paper>
@@ -54,7 +54,10 @@ const Page: NextPage<Props> = ({ user, events }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests({ user: '/api/me', events: '/public/events' }, ctx);
+  const data = await serverSideGetRequests(
+    { user: '/api/me', divisions: '/public/divisions' },
+    ctx
+  );
   return { props: data };
 };
 

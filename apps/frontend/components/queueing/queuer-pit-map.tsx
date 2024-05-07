@@ -3,20 +3,20 @@ import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Paper, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 
 interface QueuerPitMapProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   pitMapUrl: string;
 }
 
-const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ event, pitMapUrl }) => {
+const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ division, pitMapUrl }) => {
   const [error, setError] = useState<boolean>(false);
 
   return !error ? (
     <Image
-      src={`${pitMapUrl}/${event._id}.png`}
-      alt={`מפת פיטים ל${event.name}`}
+      src={`${pitMapUrl}/${division._id}.png`}
+      alt={`מפת פיטים ל${division.name}`}
       width={0}
       height={0}
       sizes="100vw"

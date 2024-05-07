@@ -22,7 +22,7 @@ import {
   CVFormCategoryNamesTypes,
   CVFormSubject,
   CoreValuesForm,
-  Event,
+  Division,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
   SafeUser
@@ -35,7 +35,7 @@ import CVFormCategoryRow from './cv-form-category-row';
 
 interface CVFormProps {
   user: WithId<SafeUser>;
-  event: WithId<Event>;
+  division: WithId<Division>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;
@@ -44,7 +44,7 @@ interface CVFormProps {
 
 const CVForm: React.FC<CVFormProps> = ({
   user,
-  event,
+  division,
   socket,
   cvForm: initialCvForm,
   readOnly = false,
@@ -56,7 +56,7 @@ const CVForm: React.FC<CVFormProps> = ({
   };
 
   const getEmptyCVForm = () => {
-    const eventId = event._id;
+    const divisionId = division._id;
     const observers: Array<CVFormSubject> = [];
     const observerAffiliation = '';
     const demonstrators: Array<CVFormSubject> = [];
@@ -83,7 +83,7 @@ const CVForm: React.FC<CVFormProps> = ({
       affiliation: ''
     };
     return {
-      eventId,
+      divisionId,
       observers,
       observerAffiliation,
       demonstrators,
@@ -185,7 +185,7 @@ const CVForm: React.FC<CVFormProps> = ({
         if (initialCvForm) {
           socket.emit(
             'updateCvForm',
-            event._id.toString(),
+            division._id.toString(),
             initialCvForm._id.toString(),
             { ...values, severity },
             response => {
@@ -200,14 +200,19 @@ const CVForm: React.FC<CVFormProps> = ({
             }
           );
         } else {
-          socket.emit('createCvForm', event._id.toString(), { ...values, severity }, response => {
-            if (response.ok) {
-              enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
-              actions.resetForm();
-            } else {
-              enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+          socket.emit(
+            'createCvForm',
+            division._id.toString(),
+            { ...values, severity },
+            response => {
+              if (response.ok) {
+                enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
+                actions.resetForm();
+              } else {
+                enqueueSnackbar('אופס, לא הצלחנו להגיש את טופס ערכי הליבה.', { variant: 'error' });
+              }
             }
-          });
+          );
         }
 
         if (onSubmit) onSubmit();

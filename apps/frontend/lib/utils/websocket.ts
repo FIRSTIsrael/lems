@@ -13,7 +13,7 @@ const manager = new Manager(url ? url : '', {
 });
 
 export const getSocket = (
-  eventId: string
+  divisionId: string
 ): Socket<WSServerEmittedEvents, WSClientEmittedEvents> => {
-  return manager.socket(`/event/${eventId}`);
+  return manager.socket(`/division/${divisionId}`);
 };

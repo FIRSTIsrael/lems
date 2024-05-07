@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 
 export interface Team {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   number: number;
   name: string;
   registered: boolean;

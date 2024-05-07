@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import {
-  Event,
+  Division,
   JudgingSession,
   JudgingRoom,
   Team,
@@ -15,7 +15,7 @@ import {
 import RoomScheduleRow from './judging-room-schedule-row';
 
 interface Props {
-  event: WithId<Event>;
+  division: WithId<Division>;
   sessions: Array<WithId<JudgingSession>>;
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
@@ -24,7 +24,7 @@ interface Props {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const JudgingRoomSchedule = ({ event, sessions, room, teams, user, rubrics, socket }: Props) => {
+const JudgingRoomSchedule = ({ division, sessions, room, teams, user, rubrics, socket }: Props) => {
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -44,7 +44,7 @@ const JudgingRoomSchedule = ({ event, sessions, room, teams, user, rubrics, sock
               team && (
                 <RoomScheduleRow
                   key={String(session.teamId) + session.scheduledTime}
-                  event={event}
+                  division={division}
                   team={team}
                   room={room}
                   session={session}

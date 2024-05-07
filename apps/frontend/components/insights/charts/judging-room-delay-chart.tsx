@@ -4,11 +4,11 @@ import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
 import { Box, Card, Stack, Divider, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface JudgingRoomDelayChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
 interface JudgingRoomDelayChartData {
@@ -17,14 +17,14 @@ interface JudgingRoomDelayChartData {
   average: number;
 }
 
-const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) => {
+const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ division }) => {
   const [data, setData] = useState<JudgingRoomDelayChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/delay`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/judging/delay`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   const getDuration = (seconds: number | undefined): string => {
     if (!seconds) return '00:00';

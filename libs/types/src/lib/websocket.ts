@@ -9,22 +9,22 @@ import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
-import { EventState, PresentationState } from './schemas/event-state';
+import { DivisionState, PresentationState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
 import { CoreValuesForm } from './schemas/core-values-form';
-import { AudienceDisplayState } from './schemas/event-state';
+import { AudienceDisplayState } from './schemas/division-state';
 import { JudgingRoom } from './schemas/judging-room';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
-interface EventsMap {
-  [event: string]: any;
+interface DivisionsMap {
+  [division: string]: any;
 }
 
-type EventNames<Map extends EventsMap> = keyof Map & (string | symbol);
+type DivisionNames<Map extends DivisionsMap> = keyof Map & (string | symbol);
 
 export interface WSServerEmittedEvents {
-  judgingSessionStarted: (session: JudgingSession, eventState: EventState) => void;
+  judgingSessionStarted: (session: JudgingSession, divisionState: DivisionState) => void;
 
   judgingSessionCompleted: (session: JudgingSession) => void;
 
@@ -48,15 +48,15 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticket: WithId<Ticket>) => void;
 
-  matchLoaded: (match: RobotGameMatch, eventState: EventState) => void;
+  matchLoaded: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
-  matchStarted: (match: RobotGameMatch, eventState: EventState) => void;
+  matchStarted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
   matchEndgame: (match: RobotGameMatch) => void;
 
-  matchCompleted: (match: RobotGameMatch, eventState: EventState) => void;
+  matchCompleted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
-  matchAborted: (match: RobotGameMatch, eventState: EventState) => void;
+  matchAborted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
   matchUpdated: (match: RobotGameMatch) => void;
 
@@ -64,67 +64,67 @@ export interface WSServerEmittedEvents {
 
   scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
 
-  audienceDisplayUpdated: (eventState: EventState) => void;
+  audienceDisplayUpdated: (divisionState: DivisionState) => void;
 
-  presentationUpdated: (eventState: EventState) => void;
+  presentationUpdated: (divisionState: DivisionState) => void;
 }
 
 export interface WSClientEmittedEvents {
   startJudgingSession: (
-    eventId: string,
+    divisionId: string,
     roomId: string,
     sessionId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   abortJudgingSession: (
-    eventId: string,
+    divisionId: string,
     roomId: string,
     sessionId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateJudgingSessionTeam: (
-    eventId: string,
+    divisionId: string,
     sessionId: string,
     teamId: string | null,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateJudgingSession: (
-    eventId: string,
+    divisionId: string,
     sessionId: string,
     data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   callLeadJudge: (
-    eventId: string,
+    divisionId: string,
     roomName: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   createCvForm: (
-    eventId: string,
+    divisionId: string,
     content: CoreValuesForm,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateCvForm: (
-    eventId: string,
+    divisionId: string,
     cvFormId: string,
     content: Partial<CoreValuesForm>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   registerTeam: (
-    eventId: string,
+    divisionId: string,
     teamId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateRubric: (
-    eventId: string,
+    divisionId: string,
     teamId: string,
     rubricId: string,
     rubricData: Partial<Rubric<JudgingCategory>>,
@@ -137,7 +137,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   createTicket: (
-    eventId: string,
+    divisionId: string,
     teamId: string | null,
     content: string,
     type: TicketType,
@@ -145,7 +145,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   updateTicket: (
-    eventId: string,
+    divisionId: string,
     teamId: string | null,
     ticketId: string,
     ticketData: Partial<Ticket>,
@@ -153,44 +153,44 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   loadMatch: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   startMatch: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   startTestMatch: (
-    eventId: string,
+    divisionId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   abortMatch: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateMatchBrief: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     newBrief: Partial<Pick<RobotGameMatchBrief, 'called'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateMatchTeams: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     newTeams: Array<Partial<RobotGameMatchParticipant>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updateMatchParticipant: (
-    eventId: string,
+    divisionId: string,
     matchId: string,
     data: { teamId: string } & Partial<
       Pick<RobotGameMatchParticipant, 'present' | 'ready' | 'queued'>
@@ -199,7 +199,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   updateScoresheet: (
-    eventId: string,
+    divisionId: string,
     teamId: string,
     scoresheetId: string,
     scoresheetData: Partial<Scoresheet>,
@@ -207,13 +207,13 @@ export interface WSClientEmittedEvents {
   ) => void;
 
   updateAudienceDisplay: (
-    eventId: string,
+    divisionId: string,
     newDisplayState: Partial<AudienceDisplayState>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
   updatePresentation: (
-    eventId: string,
+    divisionId: string,
     presentationId: string,
     newPresentationState: Partial<PresentationState>,
     callback: (response: { ok: boolean; error?: string }) => void
@@ -230,6 +230,6 @@ export interface WSSocketData {
 }
 
 export interface WSEventListener {
-  name: EventNames<WSServerEmittedEvents> | EventNames<WSClientEmittedEvents>;
+  name: DivisionNames<WSServerEmittedEvents> | DivisionNames<WSClientEmittedEvents>;
   handler: (...args: any[]) => void | Promise<void>;
 }

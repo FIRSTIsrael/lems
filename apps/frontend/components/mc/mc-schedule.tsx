@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EventState, RobotGameMatch, RobotGameTable, Team } from '@lems/types';
+import { DivisionState, RobotGameMatch, RobotGameTable, Team } from '@lems/types';
 import { Paper, Stack, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import { localizedMatchStage } from '../../localization/field';
@@ -7,16 +7,16 @@ import { localizeTeam } from '../../localization/teams';
 import ReportRoundSchedule from '../field/report-round-schedule';
 
 interface McScheduleProps {
-  eventState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
 }
 
-const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tables }) => {
+const McSchedule: React.FC<McScheduleProps> = ({ divisionState, teams, matches, tables }) => {
   const loadedMatch = useMemo(
-    () => matches.find(m => m._id === eventState.loadedMatch) || null,
-    [matches, eventState.loadedMatch]
+    () => matches.find(m => m._id === divisionState.loadedMatch) || null,
+    [matches, divisionState.loadedMatch]
   );
 
   const practiceMatches = matches.filter(m => m.status !== 'completed' && m.stage === 'practice');
@@ -25,7 +25,7 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
       <ReportRoundSchedule
-        eventSchedule={[]}
+        divisionSchedule={[]}
         roundStage="practice"
         roundNumber={r}
         matches={practiceMatches.filter(m => m.round === r)}
@@ -38,7 +38,7 @@ const McSchedule: React.FC<McScheduleProps> = ({ eventState, teams, matches, tab
     .concat(
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
         <ReportRoundSchedule
-          eventSchedule={[]}
+          divisionSchedule={[]}
           roundStage="ranking"
           roundNumber={r}
           matches={rankingMatches.filter(m => m.round === r)}
