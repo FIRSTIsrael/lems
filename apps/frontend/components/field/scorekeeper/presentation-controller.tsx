@@ -6,11 +6,11 @@ import { IconButton, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import { DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
-import { Event, EventState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { Division, DivisionState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface PresentationControllerProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   presentationId: string;
   children: ReactElement;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

@@ -157,7 +157,7 @@ router.get(
       { $replaceRoot: { newRoot: '$schedule' } }
     ];
 
-    const report = await db.db.collection<Event>('divisions').aggregate(pipeline).toArray();
+    const report = await db.db.collection<Division>('divisions').aggregate(pipeline).toArray();
     res.json(report);
   })
 );

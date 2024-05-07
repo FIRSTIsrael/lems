@@ -6,7 +6,7 @@ import matchesRouter from './matches';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventTables(new ObjectId(req.params.divisionId)).then(tables => {
+  db.getDivisionTables(new ObjectId(req.params.divisionId)).then(tables => {
     res.json(tables);
   });
 });

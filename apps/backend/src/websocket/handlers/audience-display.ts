@@ -7,7 +7,7 @@ export const handleUpdateAudienceDisplay = async (
   newDisplayState,
   callback
 ) => {
-  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
 
   if (!divisionState) {
     callback({
@@ -19,12 +19,12 @@ export const handleUpdateAudienceDisplay = async (
 
   console.log(`🖊️ Updating audience display state in division ${divisionId}`);
 
-  await db.updateEventState(
+  await db.updateDivisionState(
     { divisionId: new ObjectId(divisionId) },
     { audienceDisplay: { ...divisionState.audienceDisplay, ...newDisplayState } }
   );
 
-  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
   namespace.to('audience-display').emit('audienceDisplayUpdated', divisionState);
 };
 
@@ -35,7 +35,7 @@ export const handleUpdatePresentation = async (
   newPresentationState,
   callback
 ) => {
-  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
 
   if (!divisionState) {
     callback({
@@ -55,7 +55,7 @@ export const handleUpdatePresentation = async (
 
   console.log(`🖊️ Updating presentation ${presentationId} in division ${divisionId}!`);
 
-  await db.updateEventState(
+  await db.updateDivisionState(
     { divisionId: new ObjectId(divisionId) },
     {
       presentations: {
@@ -68,6 +68,6 @@ export const handleUpdatePresentation = async (
     }
   );
 
-  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
   namespace.to('audience-display').emit('presentationUpdated', divisionState);
 };

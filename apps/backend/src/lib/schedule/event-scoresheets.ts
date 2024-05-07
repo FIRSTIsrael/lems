@@ -1,8 +1,8 @@
 import { WithId } from 'mongodb';
-import { Scoresheet, RobotGameMatch, Team, Event } from '@lems/types';
+import { Scoresheet, RobotGameMatch, Team, Division } from '@lems/types';
 
-export const getEventScoresheets = (
-  division: WithId<Event>,
+export const getDivisionScoresheets = (
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   matches: Array<WithId<RobotGameMatch>>
 ): Array<Scoresheet> => {

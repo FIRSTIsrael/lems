@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, Team, Ticket, SafeUser } from '@lems/types';
+import { Division, Team, Ticket, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportLink from '../../../components/general/report-link';
@@ -19,7 +19,7 @@ import TicketPanel from '../../../components/general/ticket-panel';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
 }

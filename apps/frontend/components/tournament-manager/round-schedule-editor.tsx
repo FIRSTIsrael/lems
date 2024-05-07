@@ -15,8 +15,8 @@ import {
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   Team,
   MATCH_LENGTH,
   RobotGameMatch,
@@ -34,7 +34,7 @@ import { Socket } from 'socket.io-client';
 import { LoadingButton } from '@mui/lab';
 
 interface RoundScheduleEditorRowProps {
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
@@ -71,8 +71,8 @@ const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
 };
 
 interface RoundScheduleEditorProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   roundStage: RobotGameMatchStage;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;

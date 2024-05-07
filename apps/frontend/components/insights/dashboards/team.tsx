@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event, Team } from '@lems/types';
+import { Division, Team } from '@lems/types';
 import TeamSelection from '../../general/team-selection';
 import TeamProfileChart from '../charts/team-profile-chart';
 import TeamInformationChart from '../charts/team-informaton-chart';
 
 interface TeamInsightsDashboardProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 

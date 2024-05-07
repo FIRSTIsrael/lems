@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import Grid from '@mui/material/Unstable_Grid2/';
-import { Event, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TicketCard from './ticket-card';
 import { green } from '@mui/material/colors';
 import { Paper, Typography, Collapse, Button } from '@mui/material';
@@ -10,7 +10,7 @@ import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 interface TicketPanelProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   tickets: Array<WithId<Ticket>>;
   teams: Array<WithId<Team>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

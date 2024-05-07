@@ -14,7 +14,7 @@ import publicRouter from './routers/public/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
-import wsValidateEvent from './middlewares/websocket/division-validator';
+import wsValidateDivision from './middlewares/websocket/division-validator';
 
 const app = express();
 const server = http.createServer(app);
@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 
 const namespace = io.of(/^\/division\/\w+$/);
 namespace.use(wsAuth);
-namespace.use(wsValidateEvent);
+namespace.use(wsValidateDivision);
 namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');

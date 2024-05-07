@@ -18,20 +18,20 @@ import {
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Grid from '@mui/material/Unstable_Grid2';
-import { DivisionColor, Event } from '@lems/types';
+import { DivisionColor, Division } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-interface EditEventFormProps extends ButtonProps {
-  division: WithId<Event>;
+interface EditDivisionFormProps extends ButtonProps {
+  division: WithId<Division>;
 }
 
-const EditEventForm: React.FC<EditEventFormProps> = ({ division, onSubmit }) => {
+const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ division, onSubmit }) => {
   const [name, setName] = useState<string>(division.name);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(division.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(division.endDate));
   const [color, setColor] = useState<DivisionColor>(division.color);
 
-  const updateEvent = () => {
+  const updateDivision = () => {
     apiFetch(`/api/admin/divisions/${division._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -56,7 +56,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ division, onSubmit }) => 
         component="form"
         onSubmit={e => {
           e.preventDefault();
-          updateEvent();
+          updateDivision();
         }}
       >
         <Stack direction="column" spacing={2}>
@@ -136,4 +136,4 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ division, onSubmit }) => 
   );
 };
 
-export default EditEventForm;
+export default EditDivisionForm;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { green } from '@mui/material/colors';
 import { Paper, Skeleton, Typography } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   BarChart,
@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 
 interface MissionSuccessRateChartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const MissionSuccessRateChart: React.FC<MissionSuccessRateChartProps> = ({ division }) => {

@@ -53,7 +53,7 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
     apiFetch(urlPath, {
       method: 'POST',
       body: formData,
-      headers: {'x-lems-csrf-enabled': "true"}
+      headers: { 'x-lems-csrf-enabled': 'true' }
     })
       .then(res => {
         if (res?.ok) {
@@ -104,7 +104,7 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
                   }
                 }}
                 sx={{ display: 'none' }}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e: React.ChangeDivision<HTMLInputElement>) => {
                   const file = e.target?.files?.[0];
                   if (file) {
                     setFile(file);

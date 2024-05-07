@@ -3,11 +3,11 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import {
-  Event,
+  Division,
   SafeUser,
   RobotGameMatch,
   RobotGameTable,
-  EventState,
+  DivisionState,
   Team,
   ALLOW_MATCH_SELECTOR
 } from '@lems/types';
@@ -22,8 +22,8 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   table: WithId<RobotGameTable>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -31,12 +31,12 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   table,
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
@@ -50,12 +50,12 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (
+  const handleMatchDivision = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     updateMatches(newMatch);
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -79,10 +79,10 @@ const Page: NextPage<Props> = ({
     ['field', 'pit-admin'],
     undefined,
     [
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchAborted', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchDivision },
       { name: 'matchUpdated', handler: updateMatches },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]

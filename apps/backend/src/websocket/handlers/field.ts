@@ -17,7 +17,7 @@ export const handleLoadMatch = async (namespace, divisionId: string, matchId: st
 
   console.log(`🔃 Loading match #${matchId} in division ${divisionId}`);
 
-  await db.updateEventState(
+  await db.updateDivisionState(
     { divisionId: new ObjectId(divisionId) },
     {
       loadedMatch: match._id
@@ -27,7 +27,7 @@ export const handleLoadMatch = async (namespace, divisionId: string, matchId: st
   console.log(`✅ Loaded match #${matchId}!`);
   callback({ ok: true });
   match = await db.getMatch({ divisionId: new ObjectId(divisionId), _id: new ObjectId(matchId) });
-  const divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  const divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
   namespace.to('field').emit('matchLoaded', match, divisionState);
 };
 
@@ -37,11 +37,11 @@ export const handleStartMatch = async (
   matchId: string,
   callback
 ) => {
-  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
   if (divisionState.activeMatch !== null) {
     callback({
       ok: false,
-      error: `Event already has a running match (${divisionState.activeMatch})!`
+      error: `Division already has a running match (${divisionState.activeMatch})!`
     });
     return;
   }
@@ -76,10 +76,10 @@ export const handleStartMatch = async (
 
       if (result.matchedCount > 0) {
         console.log(`✅ Match ${matchId} completed!`);
-        await db.updateEventState({ _id: divisionState._id }, { activeMatch: null });
+        await db.updateDivisionState({ _id: divisionState._id }, { activeMatch: null });
 
         const match = await db.getMatch({ _id: new ObjectId(matchId) });
-        divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+        divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
         namespace.to('field').emit('matchCompleted', match, divisionState);
       }
     }.bind(null, startTime)
@@ -96,7 +96,7 @@ export const handleStartMatch = async (
 
       if (match) {
         console.log(`🏃 Match ${matchId} endgame!`);
-        divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+        divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
         namespace.to('field').emit('matchEndgame', match);
       }
     }.bind(null, startTime)
@@ -106,7 +106,7 @@ export const handleStartMatch = async (
   const switchToRanking = match.stage === 'ranking' && divisionState.currentStage === 'practice';
   const advanceRound = switchToRanking || match.round > divisionState.currentRound;
 
-  await db.updateEventState(
+  await db.updateDivisionState(
     { _id: divisionState._id },
     {
       activeMatch: match._id,
@@ -116,7 +116,7 @@ export const handleStartMatch = async (
     }
   );
 
-  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
   callback({ ok: true });
   namespace.to('field').emit('matchStarted', match, divisionState);
 };
@@ -142,7 +142,7 @@ export const handleAbortMatch = async (
   matchId: string,
   callback
 ) => {
-  let divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
 
   if (divisionState.activeMatch.toString() !== matchId) {
     callback({
@@ -168,7 +168,7 @@ export const handleAbortMatch = async (
     }
   );
 
-  await db.updateEventState(
+  await db.updateDivisionState(
     { divisionId: new ObjectId(divisionId) },
     {
       activeMatch: null,
@@ -178,7 +178,7 @@ export const handleAbortMatch = async (
 
   callback({ ok: true });
   match = await db.getMatch({ divisionId: new ObjectId(divisionId), _id: new ObjectId(matchId) });
-  divisionState = await db.getEventState({ divisionId: new ObjectId(divisionId) });
+  divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
 
   namespace.to('field').emit('matchAborted', match, divisionState);
   if (match.stage !== 'test') namespace.to('field').emit('matchLoaded', match, divisionState);

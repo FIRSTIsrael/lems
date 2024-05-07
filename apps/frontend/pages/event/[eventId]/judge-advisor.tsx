@@ -11,13 +11,13 @@ import {
   JudgingRoom,
   JudgingSession,
   SafeUser,
-  Event,
+  Division,
   Team,
   JudgingCategory,
   Rubric,
   Award,
   CoreValuesForm,
-  EventState
+  DivisionState
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -35,8 +35,8 @@ import BadgeTab from '../../../components/general/badge-tab';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -49,7 +49,7 @@ const Page: NextPage<Props> = ({
   user,
   division,
   rooms,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   sessions: initialSessions,
   rubrics: initialRubrics,
@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const openCVForms = useMemo(
@@ -75,7 +75,7 @@ const Page: NextPage<Props> = ({
     return a.place - b.place;
   });
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionDivision = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) return session;
@@ -127,10 +127,10 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin', 'audience-display'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'judgingSessionStarted', handler: handleSessionDivision },
+      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+      { name: 'judgingSessionAborted', handler: handleSessionDivision },
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
       {
@@ -151,7 +151,7 @@ const Page: NextPage<Props> = ({
           enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
         }
       },
-      { name: 'presentationUpdated', handler: setEventState },
+      { name: 'presentationUpdated', handler: setDivisionState },
       { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
     ]
   );

@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import {
-  Event,
+  Division,
   JudgingSession,
   JudgingRoom,
   Team,
@@ -15,7 +15,7 @@ import {
 import RoomScheduleRow from './judging-room-schedule-row';
 
 interface Props {
-  division: WithId<Event>;
+  division: WithId<Division>;
   sessions: Array<WithId<JudgingSession>>;
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;

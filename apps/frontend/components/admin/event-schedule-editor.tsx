@@ -28,26 +28,26 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Event, EventScheduleEntry, Role, RoleTypes } from '@lems/types';
+import { Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import EventSelector from '../general/division-selector';
+import DivisionSelector from '../general/division-selector';
 
-interface EventScheduleEditorProps {
-  division: WithId<Event>;
+interface DivisionScheduleEditorProps {
+  division: WithId<Division>;
 }
 
-const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) => {
+const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ division }) => {
   const theme = useTheme();
   const router = useRouter();
-  const [schedule, setSchedule] = useState<Array<EventScheduleEntry>>(division.schedule || []);
+  const [schedule, setSchedule] = useState<Array<DivisionScheduleEntry>>(division.schedule || []);
   const [copyModal, setCopyModal] = useState(false);
-  const [divisions, setEvents] = useState<Array<WithId<Event>>>([]);
+  const [divisions, setDivisions] = useState<Array<WithId<Division>>>([]);
 
   useEffect(() => {
     apiFetch(`/public/divisions`).then(res => {
-      res.json().then(data => setEvents(data));
+      res.json().then(data => setDivisions(data));
     });
   }, []);
 
@@ -70,7 +70,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) =
             return dayjs(division.startDate).set('hours', hour).set('minutes', minute).toDate();
           };
 
-          const newSchedule = data.schedule.map((entry: EventScheduleEntry) => {
+          const newSchedule = data.schedule.map((entry: DivisionScheduleEntry) => {
             return {
               ...entry,
               startTime: getNewDate(entry.startTime),
@@ -87,7 +87,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) =
       });
   };
 
-  const updateEvent = () => {
+  const updateDivision = () => {
     setSchedule(sortedSchedule);
     apiFetch(`/api/admin/divisions/${division._id}`, {
       method: 'PUT',
@@ -116,7 +116,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) =
       component="form"
       onSubmit={e => {
         e.preventDefault();
-        updateEvent();
+        updateDivision();
         router.reload();
       }}
     >
@@ -326,7 +326,7 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) =
           <Typography variant="h2" pb={2} textAlign={'center'}>
             {'העתקת לו"ז כללי'}
           </Typography>
-          <EventSelector
+          <DivisionSelector
             divisions={divisions.filter(e => e._id.toString() !== division._id.toString())}
             onChange={divisionId => copyScheduleFrom(divisionId)}
           />
@@ -336,4 +336,4 @@ const EventScheduleEditor: React.FC<EventScheduleEditorProps> = ({ division }) =
   );
 };
 
-export default EventScheduleEditor;
+export default DivisionScheduleEditor;

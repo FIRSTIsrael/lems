@@ -1,11 +1,11 @@
 import { WithId } from 'mongodb';
 import { Paper, Typography, List, ListItemButton, ListItemText, Chip } from '@mui/material';
 import NextLink from 'next/link';
-import { RobotGameMatch, Event, EventState, RobotGameTable } from '@lems/types';
+import { RobotGameMatch, Division, DivisionState, RobotGameTable } from '@lems/types';
 
 interface MatchSelectorProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   table: WithId<RobotGameTable>;
 }

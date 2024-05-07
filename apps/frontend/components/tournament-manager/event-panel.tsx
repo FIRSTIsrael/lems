@@ -15,28 +15,31 @@ import Grid from '@mui/material/Unstable_Grid2';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DownloadIcon from '@mui/icons-material/Download';
 import PublishIcon from '@mui/icons-material/Publish';
-import { Event, EventState } from '@lems/types';
+import { Division, DivisionState } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-interface EventPanelProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+interface DivisionPanelProps {
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
 }
 
-const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initialEventState }) => {
+const DivisionPanel: React.FC<DivisionPanelProps> = ({
+  division,
+  divisionState: initialDivisionState
+}) => {
   const router = useRouter();
-  const [divisionState, setEventState] = useState(initialEventState);
-  const [endEventDialogOpen, setEndEventDialogOpen] = useState(false);
+  const [divisionState, setDivisionState] = useState(initialDivisionState);
+  const [endDivisionDialogOpen, setEndDivisionDialogOpen] = useState(false);
   const [allowExportsDialogOpen, setAllowExportsDialogOpen] = useState(false);
 
-  const endEvent = () => {
+  const endDivision = () => {
     apiFetch(`/api/divisions/${division._id}/state`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ completed: true })
     }).then(() => {
-      setEndEventDialogOpen(false);
-      setEventState(divisionState => {
+      setEndDivisionDialogOpen(false);
+      setDivisionState(divisionState => {
         return { ...divisionState, completed: true };
       });
       enqueueSnackbar('האירוע הסתיים בהצלחה', { variant: 'success' });
@@ -51,7 +54,7 @@ const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initia
       body: JSON.stringify({ allowTeamExports: true })
     }).then(() => {
       setAllowExportsDialogOpen(false);
-      setEventState(divisionState => {
+      setDivisionState(divisionState => {
         return { ...divisionState, allowTeamExports: true };
       });
       enqueueSnackbar('קבוצות יכולות כעת להוריד את תוצאות האירוע.', { variant: 'success' });
@@ -68,7 +71,7 @@ const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initia
             disabled={divisionState.completed}
             onClick={e => {
               e.preventDefault();
-              setEndEventDialogOpen(true);
+              setEndDivisionDialogOpen(true);
             }}
             fullWidth
           >
@@ -96,8 +99,8 @@ const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initia
         </Grid>
       </Grid>
       <Dialog
-        open={endEventDialogOpen}
-        onClose={() => setEndEventDialogOpen(false)}
+        open={endDivisionDialogOpen}
+        onClose={() => setEndDivisionDialogOpen(false)}
         aria-labelledby="end-division-title"
         aria-describedby="end-division-description"
       >
@@ -109,8 +112,8 @@ const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initia
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEndEventDialogOpen(false)}>ביטול</Button>
-          <Button onClick={endEvent} autoFocus>
+          <Button onClick={() => setEndDivisionDialogOpen(false)}>ביטול</Button>
+          <Button onClick={endDivision} autoFocus>
             אישור
           </Button>
         </DialogActions>
@@ -139,4 +142,4 @@ const EventPanel: React.FC<EventPanelProps> = ({ division, divisionState: initia
   );
 };
 
-export default EventPanel;
+export default DivisionPanel;

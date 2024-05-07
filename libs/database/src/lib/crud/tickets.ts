@@ -6,7 +6,7 @@ export const getTicket = (filter: Filter<Ticket>) => {
   return db.collection<Ticket>('tickets').findOne(filter);
 };
 
-export const getEventTickets = (divisionId: ObjectId) => {
+export const getDivisionTickets = (divisionId: ObjectId) => {
   return db.collection<Ticket>('tickets').find({ divisionId: divisionId }).toArray();
 };
 
@@ -39,7 +39,7 @@ export const deleteTicket = (filter: Filter<Ticket>) => {
     .then(response => response);
 };
 
-export const deleteEventTickets = (divisionId: ObjectId) => {
+export const deleteDivisionTickets = (divisionId: ObjectId) => {
   return db
     .collection<Ticket>('tickets')
     .deleteMany({ divisionId: divisionId })

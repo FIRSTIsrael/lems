@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EventState, RobotGameMatch, RobotGameTable, Team } from '@lems/types';
+import { DivisionState, RobotGameMatch, RobotGameTable, Team } from '@lems/types';
 import { Paper, Stack, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import { localizedMatchStage } from '../../localization/field';
@@ -7,7 +7,7 @@ import { localizeTeam } from '../../localization/teams';
 import ReportRoundSchedule from '../field/report-round-schedule';
 
 interface McScheduleProps {
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;

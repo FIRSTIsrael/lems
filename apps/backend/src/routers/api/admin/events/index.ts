@@ -1,37 +1,37 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import * as db from '@lems/database';
 import divisionScheduleRouter from './schedule';
 import divisionUsersRouter from './users';
 import divisionAwardsRouter from './awards';
 import divisionPitMapRouter from './pit-map';
-import { cleanEventData } from '../../../../lib/schedule/cleaner';
+import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
 
 router.post('/', (req: Request, res: Response) => {
-  const body: Event = { ...req.body };
+  const body: Division = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
   body.startDate = new Date(body.startDate);
   body.endDate = new Date(body.endDate);
 
-  console.log('⏬ Creating Event...');
-  db.addEvent(body).then(task => {
+  console.log('⏬ Creating Division...');
+  db.addDivision(body).then(task => {
     if (task.acknowledged) {
-      console.log('✅ Event created!');
+      console.log('✅ Division created!');
       return res.json({ ok: true, id: task.insertedId });
     } else {
-      console.log('❌ Could not create Event');
+      console.log('❌ Could not create Division');
       return res.status(500).json({ ok: false });
     }
   });
 });
 
 router.put('/:divisionId', (req: Request, res: Response) => {
-  const body: Partial<Event> = { ...req.body };
+  const body: Partial<Division> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
   if (body.startDate) body.startDate = new Date(body.startDate);
@@ -42,13 +42,13 @@ router.put('/:divisionId', (req: Request, res: Response) => {
       return { ...e, startTime: new Date(e.startTime), endTime: new Date(e.endTime) };
     });
 
-  console.log(`⏬ Updating Event ${req.params.divisionId}`);
-  db.updateEvent({ _id: new ObjectId(req.params.divisionId) }, body, true).then(task => {
+  console.log(`⏬ Updating Division ${req.params.divisionId}`);
+  db.updateDivision({ _id: new ObjectId(req.params.divisionId) }, body, true).then(task => {
     if (task.acknowledged) {
-      console.log('✅ Event updated!');
+      console.log('✅ Division updated!');
       return res.json({ ok: true, id: task.upsertedId });
     } else {
-      console.log('❌ Could not update Event');
+      console.log('❌ Could not update Division');
       return res.status(500).json({ ok: false });
     }
   });
@@ -57,12 +57,12 @@ router.put('/:divisionId', (req: Request, res: Response) => {
 router.delete(
   '/:divisionId/data',
   asyncHandler(async (req: Request, res: Response) => {
-    const division = await db.getEvent({ _id: new ObjectId(req.params.divisionId) });
+    const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
 
     console.log(`🚮 Deleting data from division ${req.params.divisionId}`);
     try {
-      await cleanEventData(division);
-      await db.updateEvent({ _id: division._id }, { hasState: false });
+      await cleanDivisionData(division);
+      await db.updateDivision({ _id: division._id }, { hasState: false });
     } catch (error) {
       res.status(500).json(error.message);
       return;

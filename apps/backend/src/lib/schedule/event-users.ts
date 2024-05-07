@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { randomString } from '@lems/utils/random';
 import {
-  Event,
+  Division,
   RobotGameTable,
   JudgingRoom,
   User,
@@ -9,11 +9,11 @@ import {
   getAssociationType,
   JudgingCategoryTypes,
   Role,
-  EventSectionTypes
+  DivisionSectionTypes
 } from '@lems/types';
 
-export const getEventUsers = (
-  division: WithId<Event>,
+export const getDivisionUsers = (
+  division: WithId<Division>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>
 ): User[] => {
@@ -65,6 +65,6 @@ const getAssociationValues = (
     case 'category':
       return JudgingCategoryTypes;
     case 'section':
-      return EventSectionTypes;
+      return DivisionSectionTypes;
   }
 };

@@ -110,7 +110,7 @@ router.get(
     ];
 
     const report = await db.db.collection('scoresheets').aggregate(pipeline).toArray();
-    const totalTeams = (await db.getEventTeams(new ObjectId(req.params.divisionId))).length;
+    const totalTeams = (await db.getDivisionTeams(new ObjectId(req.params.divisionId))).length;
     const successfulTeams = totalTeams - report.length;
     const successRate = (successfulTeams / totalTeams) * 100;
 

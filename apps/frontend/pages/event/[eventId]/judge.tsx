@@ -5,14 +5,14 @@ import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
-  Event,
+  Division,
   Team,
   JudgingRoom,
   Rubric,
   JudgingSession,
   SafeUser,
   JudgingCategory,
-  EventState
+  DivisionState
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import RubricStatusReferences from '../../../components/judging/rubric-status-references';
@@ -30,7 +30,7 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -61,9 +61,9 @@ const Page: NextPage<Props> = ({
       : ({} as WithId<Team>);
   }, [teams, currentSession]);
 
-  const handleSessionEvent = (
+  const handleSessionDivision = (
     session: WithId<JudgingSession>,
-    divisionState?: WithId<EventState>
+    divisionState?: WithId<DivisionState>
   ) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -102,10 +102,10 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'judgingSessionStarted', handler: handleSessionDivision },
+      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+      { name: 'judgingSessionAborted', handler: handleSessionDivision },
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric }
     ]

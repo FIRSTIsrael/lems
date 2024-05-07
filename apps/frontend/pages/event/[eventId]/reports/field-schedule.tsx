@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event, Team, SafeUser, RoleTypes, RobotGameMatch, RobotGameTable } from '@lems/types';
+import { Division, Team, SafeUser, RoleTypes, RobotGameMatch, RobotGameTable } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -15,7 +15,7 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -48,7 +48,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>) => {
+  const handleMatchDivision = (match: WithId<RobotGameMatch>) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({
 
   const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchUpdated', handler: handleMatchEvent }
+    { name: 'matchUpdated', handler: handleMatchDivision }
   ]);
 
   const practiceMatches = matches.filter(m => m.stage === 'practice');

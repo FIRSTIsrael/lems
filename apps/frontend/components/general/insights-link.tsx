@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
 import { Tooltip, IconButton } from '@mui/material';
 import InsightsIcon from '@mui/icons-material/Insights';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 
 interface InsightsLinkProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const InsightsLink: React.FC<InsightsLinkProps> = ({ division }) => {

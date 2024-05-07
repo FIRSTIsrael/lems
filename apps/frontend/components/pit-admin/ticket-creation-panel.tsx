@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import {
-  Event,
+  Division,
   Team,
   TicketType,
   TicketTypes,
@@ -27,7 +27,7 @@ import TeamSelection from '../general/team-selection';
 
 interface TicketCreationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 

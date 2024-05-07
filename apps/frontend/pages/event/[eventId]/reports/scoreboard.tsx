@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
-import { Event, EventState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
+import { Division, DivisionState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -18,9 +18,9 @@ import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
-  divisionState: EventState;
+  divisionState: DivisionState;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
@@ -36,7 +36,7 @@ const Page: NextPage<Props> = ({
 
   const teamNumberComparator: GridComparatorFn<Team> = (v1, v2) => v1.number - v2.number;
 
-  const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
+  const handleScoresheetDivision = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
       scoresheets.map(s => {
         if (s._id === scoresheet._id) {
@@ -48,7 +48,7 @@ const Page: NextPage<Props> = ({
   };
 
   const { connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
-    { name: 'scoresheetUpdated', handler: handleScoresheetEvent }
+    { name: 'scoresheetUpdated', handler: handleScoresheetDivision }
   ]);
 
   const rounds = useMemo(

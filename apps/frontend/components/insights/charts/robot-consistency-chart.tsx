@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Typography, Paper, Skeleton } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface RobotConsistencyChartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 type RobotConsistencyChartData = { avgRelStdDev: number; rows: Array<object> };

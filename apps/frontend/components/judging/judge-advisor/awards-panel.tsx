@@ -22,7 +22,7 @@ import { localizedAward } from '@lems/season';
 import { fullMatch } from '@lems/utils/objects';
 import {
   Award,
-  Event,
+  Division,
   Team,
   AwardNames,
   WSServerEmittedEvents,
@@ -36,7 +36,7 @@ import UploadFileButton from '../../general/upload-file';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   readOnly: boolean;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

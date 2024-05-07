@@ -3,8 +3,8 @@ import { Socket } from 'socket.io-client';
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Stack } from '@mui/material';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   RobotGameMatch,
   WSClientEmittedEvents,
   WSServerEmittedEvents
@@ -14,8 +14,8 @@ import Schedule from './schedule';
 import ControlActions from './control-actions';
 
 interface FieldControlProps {
-  division: WithId<Event>;
-  divisionState: EventState;
+  division: WithId<Division>;
+  divisionState: DivisionState;
   matches: Array<WithId<RobotGameMatch>>;
   nextMatchId: ObjectId | undefined;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

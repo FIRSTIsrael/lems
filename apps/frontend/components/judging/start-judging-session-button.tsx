@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client';
 import { IconButton, IconButtonProps } from '@mui/material';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import {
-  Event,
+  Division,
   JudgingRoom,
   JudgingSession,
   Team,
@@ -28,7 +28,7 @@ const getButtonColor = (status: Status) => {
 };
 
 interface StartJudgingSessionButtonProps extends IconButtonProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: WithId<Team>;

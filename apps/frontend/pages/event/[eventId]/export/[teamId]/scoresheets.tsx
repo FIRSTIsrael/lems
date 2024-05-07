@@ -20,7 +20,7 @@ import {
   SEASON_SCORESHEET,
   localizedScoresheet
 } from '@lems/season';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import Markdown from 'react-markdown';
 import CustomNumberInput from '../../../../../components/field/scoresheet/number-input';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
@@ -182,7 +182,7 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
 };
 
 interface ExportScoresheetPageProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
 }
@@ -251,7 +251,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   scoresheets: Array<WithId<Scoresheet>>;
 }

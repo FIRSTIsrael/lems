@@ -19,12 +19,12 @@ import {
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import {
-  Event,
+  Division,
   Team,
   JudgingRoom,
   JudgingSession,
   SafeUser,
-  EventState,
+  DivisionState,
   RoleTypes,
   JUDGING_SESSION_LENGTH,
   RobotGameMatch
@@ -157,8 +157,8 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -168,7 +168,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   rooms,
   teams: initialTeams,
   sessions: initialSessions,
@@ -178,7 +178,7 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === divisionState.activeMatch),
@@ -200,9 +200,9 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionEvent = (
+  const handleSessionDivision = (
     session: WithId<JudgingSession>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -213,10 +213,13 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -226,7 +229,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const { connectionStatus } = useWebsocket(
@@ -234,16 +237,16 @@ const Page: NextPage<Props> = ({
     ['judging', 'pit-admin', 'field'],
     undefined,
     [
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'judgingSessionStarted', handler: handleSessionDivision },
+      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+      { name: 'judgingSessionAborted', handler: handleSessionDivision },
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent }
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchAborted', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchDivision },
+      { name: 'matchUpdated', handler: handleMatchDivision }
     ]
   );
 

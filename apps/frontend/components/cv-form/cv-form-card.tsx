@@ -4,11 +4,11 @@ import { Avatar, Card, CardHeader, CardContent, Typography, IconButton } from '@
 import { green } from '@mui/material/colors';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { cvFormSchema } from '@lems/season';
-import { Event, CoreValuesForm } from '@lems/types';
+import { Division, CoreValuesForm } from '@lems/types';
 import { localizedFormSubject } from '../../localization/cv-form';
 
 interface CVFormCardProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   form: WithId<CoreValuesForm>;
 }
 

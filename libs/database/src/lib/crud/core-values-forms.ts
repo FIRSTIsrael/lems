@@ -6,7 +6,7 @@ export const getCoreValuesForm = (filter: Filter<CoreValuesForm>) => {
   return db.collection<CoreValuesForm>('core-values-forms').findOne(filter);
 };
 
-export const getEventCoreValuesForms = (divisionId: ObjectId) => {
+export const getDivisionCoreValuesForms = (divisionId: ObjectId) => {
   return db
     .collection<CoreValuesForm>('core-values-forms')
     .find({ divisionId: divisionId })

@@ -13,11 +13,11 @@ import {
 } from '@mui/material';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
-import { Event, JudgingCategory } from '@lems/types';
+import { Division, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 
 interface CategoryScoresChartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 type CategoryScoresChartData = Array<{

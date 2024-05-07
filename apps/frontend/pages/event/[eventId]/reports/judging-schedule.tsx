@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Switch, FormControlLabel } from '@mui/material';
-import { Event, Team, JudgingRoom, SafeUser, JudgingSession, RoleTypes } from '@lems/types';
+import { Division, Team, JudgingRoom, SafeUser, JudgingSession, RoleTypes } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -15,7 +15,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -45,7 +45,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionDivision = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -62,7 +62,7 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision }
     ]
   );
 

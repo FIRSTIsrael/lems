@@ -11,18 +11,18 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { Event, SafeUser, RoleTypes, EventScheduleEntry } from '@lems/types';
+import { Division, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { localizedRoles } from '../../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 
-interface EventScheduleRowProps {
-  entry: EventScheduleEntry;
+interface DivisionScheduleRowProps {
+  entry: DivisionScheduleEntry;
 }
 
-const EventScheduleRow: React.FC<EventScheduleRowProps> = ({ entry }) => {
+const DivisionScheduleRow: React.FC<DivisionScheduleRowProps> = ({ entry }) => {
   return (
     <TableRow
       key={entry.name + entry.roles.toString()}
@@ -38,7 +38,7 @@ const EventScheduleRow: React.FC<EventScheduleRowProps> = ({ entry }) => {
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const Page: NextPage<Props> = ({ user, division }) => {
@@ -71,7 +71,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
             </TableHead>
             <TableBody>
               {division.schedule?.map((s, index) => {
-                return <EventScheduleRow key={index} entry={s} />;
+                return <DivisionScheduleRow key={index} entry={s} />;
               })}
             </TableBody>
           </Table>

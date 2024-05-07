@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, EventState, SafeUser, Team } from '@lems/types';
+import { Division, DivisionState, SafeUser, Team } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import FieldInsightsDashboard from '../../../components/insights/dashboards/field';
@@ -15,8 +15,8 @@ import GeneralInsightsDashboard from '../../../components/insights/dashboards/ge
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
 }
 

@@ -7,7 +7,7 @@ import * as db from '@lems/database';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventUsers(new ObjectId(req.params.divisionId)).then(users => {
+  db.getDivisionUsers(new ObjectId(req.params.divisionId)).then(users => {
     return res.json(users);
   });
 });
@@ -15,7 +15,7 @@ router.get('/', (req: Request, res: Response) => {
 router.get(
   '/export',
   asyncHandler(async (req: Request, res: Response) => {
-    const users = await db.getEventUsersWithCredentials(new ObjectId(req.params.divisionId));
+    const users = await db.getDivisionUsersWithCredentials(new ObjectId(req.params.divisionId));
 
     const credentials = await Promise.all(
       users.map(async user => {

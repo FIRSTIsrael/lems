@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { CoreValuesForm, Event, SafeUser } from '@lems/types';
+import { CoreValuesForm, Division, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import Layout from '../../../../components/layout';
@@ -14,7 +14,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   cvForm: WithId<CoreValuesForm>;
 }
 

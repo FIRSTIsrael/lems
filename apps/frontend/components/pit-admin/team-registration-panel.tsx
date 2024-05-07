@@ -4,12 +4,12 @@ import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
-import { Event, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 
 interface TeamRegistrationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 

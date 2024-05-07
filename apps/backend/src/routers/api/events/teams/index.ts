@@ -7,7 +7,7 @@ import scoresheetsRouter from './scoresheets';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventTeams(new ObjectId(req.params.divisionId)).then(teams => {
+  db.getDivisionTeams(new ObjectId(req.params.divisionId)).then(teams => {
     res.json(teams);
   });
 });

@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/schema',
   asyncHandler(async (req: Request, res: Response) => {
-    const awards = await db.getEventAwards(new ObjectId(req.params.divisionId));
+    const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
     const schema = Object.fromEntries(AwardNameTypes.map(a => [a, undefined]));
 
     awards.forEach(award => {
@@ -26,7 +26,7 @@ router.post(
   '/schema',
   asyncHandler(async (req: Request, res: Response) => {
     const schema: AwardSchema = req.body;
-    const awards = await db.getEventAwards(new ObjectId(req.params.divisionId));
+    const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
 
     await Promise.all(
       Object.entries(schema).map(([name, { index: awardIndex, count: totalAwardPlaces }]) => {

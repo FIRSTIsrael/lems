@@ -3,14 +3,14 @@ import { WithId } from 'mongodb';
 import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { Event, Team, Award } from '@lems/types';
+import { Division, Team, Award } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeTeam } from '../../localization/teams';
 
 interface AwardsLineupProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const AwardsLineup: React.FC<AwardsLineupProps> = ({ division }) => {

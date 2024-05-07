@@ -1,6 +1,6 @@
 import React from 'react';
 import { WithId } from 'mongodb';
-import { Event, RobotGameMatch } from '@lems/types';
+import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -8,7 +8,7 @@ import { blue, red } from '@mui/material/colors';
 import Image from 'next/image';
 
 interface MatchPreviewProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   match?: WithId<RobotGameMatch>;
 }
 

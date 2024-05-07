@@ -108,12 +108,12 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   );
 };
 
-interface EventAwardEditorProps {
+interface DivisionAwardEditorProps {
   divisionId: ObjectId;
   awardSchema: AwardSchema;
 }
 
-const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ divisionId, awardSchema }) => {
+const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, awardSchema }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [awardToAdd, setAwardToAdd] = useState<AwardNames | ''>('');
 
@@ -264,4 +264,4 @@ const EventAwardEditor: React.FC<EventAwardEditorProps> = ({ divisionId, awardSc
   );
 };
 
-export default EventAwardEditor;
+export default DivisionAwardEditor;

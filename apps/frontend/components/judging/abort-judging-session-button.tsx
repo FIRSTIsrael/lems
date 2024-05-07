@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
 import {
-  Event,
+  Division,
   JudgingRoom,
   JudgingSession,
   WSServerEmittedEvents,
@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
 interface AbortJudgingSessionButtonProps extends ButtonProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

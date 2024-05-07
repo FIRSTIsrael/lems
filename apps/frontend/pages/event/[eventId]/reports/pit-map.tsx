@@ -6,7 +6,7 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Event, SafeUser, RoleTypes } from '@lems/types';
+import { Division, SafeUser, RoleTypes } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -16,7 +16,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   pitMapUrl: string;
 }
 

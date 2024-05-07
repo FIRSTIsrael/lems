@@ -7,7 +7,7 @@ import { getLemsWebpageAsPdf } from '../../../../lib/export';
 const router = express.Router({ mergeParams: true });
 
 router.use((req, res, next) => {
-  db.getEventState({ divisionId: req.division._id }).then(divisionState => {
+  db.getDivisionState({ divisionId: req.division._id }).then(divisionState => {
     if (!divisionState.allowTeamExports) return res.status(403).json('OPERATION_NOT_ALLOWED');
     next();
   });

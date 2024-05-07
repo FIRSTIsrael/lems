@@ -1,11 +1,11 @@
 import { WithId } from 'mongodb';
 import { Button, ButtonProps } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { getApiBase } from '../../lib/utils/fetch';
 
 interface DownloadUsersButtonProps extends ButtonProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const DownloadUsersButton: React.FC<DownloadUsersButtonProps> = ({ division, ...props }) => {

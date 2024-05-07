@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Event, JudgingCategory, Rubric, SEASON_NAME, SafeUser, Team } from '@lems/types';
+import { Division, JudgingCategory, Rubric, SEASON_NAME, SafeUser, Team } from '@lems/types';
 import { serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
@@ -30,7 +30,7 @@ import TitleRow from '../../../../../components/judging/rubrics/title-row';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 
 interface ExportRubricPageProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
 }
@@ -256,7 +256,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }

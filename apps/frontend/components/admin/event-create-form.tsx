@@ -19,7 +19,7 @@ import { enqueueSnackbar } from 'notistack';
 import { DivisionColor } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-const EventCreateForm = forwardRef((props, ref) => {
+const DivisionCreateForm = forwardRef((props, ref) => {
   const router = useRouter();
   const [name, setName] = useState<string>('');
   const [salesforceId, setSalesforceId] = useState<string>('');
@@ -35,7 +35,7 @@ const EventCreateForm = forwardRef((props, ref) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(getDefaultDate());
   const [endDate, setEndDate] = useState<Dayjs | null>(getDefaultDate());
 
-  const createEvent = (e: React.FormEvent<HTMLFormElement>) => {
+  const createDivision = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     apiFetch('/api/admin/divisions', {
       method: 'POST',
@@ -67,7 +67,7 @@ const EventCreateForm = forwardRef((props, ref) => {
   return (
     <Paper
       component="form"
-      onSubmit={createEvent}
+      onSubmit={createDivision}
       elevation={0}
       sx={{
         position: 'absolute',
@@ -146,6 +146,6 @@ const EventCreateForm = forwardRef((props, ref) => {
   );
 });
 
-EventCreateForm.displayName = 'EventCreateForm';
+DivisionCreateForm.displayName = 'DivisionCreateForm';
 
-export default EventCreateForm;
+export default DivisionCreateForm;

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { WSEventListener, ConnectionStatus, WSRoomName } from '@lems/types';
+import { WSDivisionListener, ConnectionStatus, WSRoomName } from '@lems/types';
 import { getSocket } from '../lib/utils/websocket';
 
 export const useWebsocket = (
   divisionId: string,
   rooms: Array<WSRoomName>,
   init?: (...args: any[]) => void | Promise<void>,
-  wsevents?: Array<WSEventListener>
+  wsevents?: Array<WSDivisionListener>
 ) => {
   const socket = getSocket(divisionId);
 

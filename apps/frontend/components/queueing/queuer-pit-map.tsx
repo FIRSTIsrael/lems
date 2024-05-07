@@ -3,10 +3,10 @@ import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Paper, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 
 interface QueuerPitMapProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   pitMapUrl: string;
 }
 

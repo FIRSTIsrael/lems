@@ -3,10 +3,10 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, Stack, TextField } from '@mui/material';
-import { EventState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { DivisionState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface MessageEditorProps {
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

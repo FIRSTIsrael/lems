@@ -5,7 +5,7 @@ import * as db from '@lems/database';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventUsers(new ObjectId(req.params.divisionId)).then(users => {
+  db.getDivisionUsers(new ObjectId(req.params.divisionId)).then(users => {
     return res.json(users);
   });
 });

@@ -1,33 +1,37 @@
 import { Filter } from 'mongodb';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import db from '../database';
 
-export const getEvent = (filter: Filter<Event>) => {
-  return db.collection<Event>('divisions').findOne(filter);
+export const getDivision = (filter: Filter<Division>) => {
+  return db.collection<Division>('divisions').findOne(filter);
 };
 
-export const getEvents = (filter: Filter<Event>) => {
-  return db.collection<Event>('divisions').find(filter).toArray();
+export const getDivisions = (filter: Filter<Division>) => {
+  return db.collection<Division>('divisions').find(filter).toArray();
 };
 
-export const getAllEvents = () => {
-  return db.collection<Event>('divisions').find({}).toArray();
+export const getAllDivisions = () => {
+  return db.collection<Division>('divisions').find({}).toArray();
 };
 
-export const updateEvent = (filter: Filter<Event>, newEvent: Partial<Event>, upsert = false) => {
-  return db.collection<Event>('divisions').updateOne(filter, { $set: newEvent }, { upsert });
+export const updateDivision = (
+  filter: Filter<Division>,
+  newDivision: Partial<Division>,
+  upsert = false
+) => {
+  return db.collection<Division>('divisions').updateOne(filter, { $set: newDivision }, { upsert });
 };
 
-export const addEvent = (division: Event) => {
+export const addDivision = (division: Division) => {
   return db
-    .collection<Event>('divisions')
+    .collection<Division>('divisions')
     .insertOne(division)
     .then(response => response);
 };
 
-export const deleteEvent = (filter: Filter<Event>) => {
+export const deleteDivision = (filter: Filter<Division>) => {
   return db
-    .collection<Event>('divisions')
+    .collection<Division>('divisions')
     .deleteOne(filter)
     .then(response => response);
 };

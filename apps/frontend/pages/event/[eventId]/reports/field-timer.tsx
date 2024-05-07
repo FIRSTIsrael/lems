@@ -5,7 +5,14 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Typography } from '@mui/material';
-import { Event, SafeUser, EventState, RobotGameMatch, RoleTypes, MATCH_LENGTH } from '@lems/types';
+import {
+  Division,
+  SafeUser,
+  DivisionState,
+  RobotGameMatch,
+  RoleTypes,
+  MATCH_LENGTH
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Countdown from '../../../../components/general/countdown';
 import Layout from '../../../../components/layout';
@@ -17,21 +24,21 @@ import Image from 'next/image';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   matches: initialMatches
 }) => {
   const router = useRouter();
   const currentTime = useTime({ interval: 100 });
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
   const sounds = useRef({
     start: new Audio('/assets/sounds/field/field-start.wav'),
@@ -58,7 +65,10 @@ const Page: NextPage<Props> = ({
   const getCountdownTarget = (startTime: Date) =>
     dayjs(startTime).add(MATCH_LENGTH, 'seconds').toDate();
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -68,22 +78,22 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const { connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     {
       name: 'matchStarted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     },
     {
       name: 'matchAborted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     },
     {
@@ -94,9 +104,9 @@ const Page: NextPage<Props> = ({
     },
     {
       name: 'matchCompleted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     }
   ]);

@@ -9,7 +9,7 @@ import { updateAwardsFromFile } from 'apps/backend/src/lib/award-parser';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  db.getEventAwards(new ObjectId(req.params.divisionId)).then(awards => {
+  db.getDivisionAwards(new ObjectId(req.params.divisionId)).then(awards => {
     res.json(awards);
   });
 });
@@ -62,12 +62,12 @@ router.post(
   '/winners/parse',
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
-    const division = await db.getEvent({ _id: new ObjectId(req.params.divisionId) });
+    const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
     console.log(`👓 Parsing awards upload for division ${division._id}...`);
 
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
-    const teams = await db.getEventTeams(division._id);
-    const awards = await db.getEventAwards(division._id);
+    const teams = await db.getDivisionTeams(division._id);
+    const awards = await db.getDivisionAwards(division._id);
 
     const updatedRecords = updateAwardsFromFile(teams, awards, csvData);
 

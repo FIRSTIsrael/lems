@@ -12,14 +12,14 @@ import {
   DialogTitle
 } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 
-interface DeleteEventDataProps {
-  division: WithId<Event>;
+interface DeleteDivisionDataProps {
+  division: WithId<Division>;
 }
 
-const DeleteEventData: React.FC<DeleteEventDataProps> = ({ division }) => {
+const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
@@ -83,4 +83,4 @@ const DeleteEventData: React.FC<DeleteEventDataProps> = ({ division }) => {
   );
 };
 
-export default DeleteEventData;
+export default DeleteDivisionData;

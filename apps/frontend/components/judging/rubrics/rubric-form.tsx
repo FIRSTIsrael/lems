@@ -23,7 +23,7 @@ import {
 import { purple } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  Event,
+  Division,
   Team,
   Rubric,
   JudgingCategory,
@@ -44,7 +44,7 @@ import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
 
 interface RubricFormProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
   schema: RubricsSchema<JudgingCategory>;

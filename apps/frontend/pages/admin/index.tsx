@@ -3,15 +3,15 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, SafeUser } from '@lems/types';
+import { Division, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import EventSelector from '../../components/general/division-selector';
-import EventCreateForm from '../../components/admin/division-create-form';
+import DivisionSelector from '../../components/general/division-selector';
+import DivisionCreateForm from '../../components/admin/division-create-form';
 
 interface Props {
   user: WithId<SafeUser>;
-  divisions: Array<WithId<Event>>;
+  divisions: Array<WithId<Division>>;
 }
 
 const Page: NextPage<Props> = ({ user, divisions }) => {
@@ -32,7 +32,7 @@ const Page: NextPage<Props> = ({ user, divisions }) => {
           <Typography variant="h2" textAlign={'center'}>
             בחירת אירוע
           </Typography>
-          <EventSelector
+          <DivisionSelector
             divisions={divisions}
             onChange={divisionId => router.push(`/admin/division/${divisionId}`)}
           />
@@ -45,7 +45,7 @@ const Page: NextPage<Props> = ({ user, divisions }) => {
             צור אירוע
           </ListItemButton>
           <Modal open={open} onClose={handleClose} aria-labelledby="create-division-model">
-            <EventCreateForm />
+            <DivisionCreateForm />
           </Modal>
         </Stack>
       </Paper>

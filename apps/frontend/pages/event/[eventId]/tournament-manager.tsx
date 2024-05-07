@@ -7,8 +7,8 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
   CoreValuesForm,
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -22,7 +22,7 @@ import ReportLink from '../../../components/general/report-link';
 import InsightsLink from '../../../components/general/insights-link';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import TicketPanel from '../../../components/general/ticket-panel';
-import EventPanel from '../../../components/tournament-manager/division-panel';
+import DivisionPanel from '../../../components/tournament-manager/division-panel';
 import JudgingScheduleEditor from '../../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../../components/tournament-manager/field-schedule-editor';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -34,8 +34,8 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -48,7 +48,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   tickets: initialTickets,
   rooms,
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
@@ -101,7 +101,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionEvent = (session: WithId<JudgingSession>) => {
+  const handleSessionDivision = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
         if (s._id === session._id) {
@@ -112,9 +112,9 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (
+  const handleMatchDivision = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     setMatches(matches =>
       matches.map(m => {
@@ -124,7 +124,7 @@ const Page: NextPage<Props> = ({
         return m;
       })
     );
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const handleCvFormCreated = (cvForm: WithId<CoreValuesForm>) => {
@@ -146,15 +146,15 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'judgingSessionStarted', handler: handleSessionDivision },
+      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+      { name: 'judgingSessionAborted', handler: handleSessionDivision },
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision },
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchDivision },
+      { name: 'matchAborted', handler: handleMatchDivision },
+      { name: 'matchUpdated', handler: handleMatchDivision },
       {
         name: 'cvFormCreated',
         handler: cvForm => {
@@ -236,7 +236,7 @@ const Page: NextPage<Props> = ({
             <TicketPanel division={division} teams={teams} tickets={tickets} socket={socket} />
           </TabPanel>
           <TabPanel value="2">
-            <EventPanel division={division} divisionState={divisionState} />
+            <DivisionPanel division={division} divisionState={divisionState} />
           </TabPanel>
           <TabPanel value="3">
             <FieldScheduleEditor

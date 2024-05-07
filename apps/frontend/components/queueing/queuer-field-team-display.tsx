@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Team, EventState, RobotGameMatch } from '@lems/types';
+import { Team, DivisionState, RobotGameMatch } from '@lems/types';
 import TeamQueueCard from './team-queue-card';
 
 interface QueuerFieldTeamDisplayProps {
   teams: Array<WithId<Team>>;
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 

@@ -10,7 +10,7 @@ export const getTeamRubrics = (teamId: ObjectId) => {
   return db.collection<Rubric<JudgingCategory>>('rubrics').find({ teamId }).toArray();
 };
 
-export const getEventRubrics = (divisionId: ObjectId) => {
+export const getDivisionRubrics = (divisionId: ObjectId) => {
   return db.collection<Rubric<JudgingCategory>>('rubrics').find({ divisionId }).toArray();
 };
 

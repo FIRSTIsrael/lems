@@ -3,8 +3,8 @@ import { ObjectId, WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
 import {
   Team,
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   RobotGameTable,
   RobotGameMatch,
   JudgingRoom,
@@ -28,7 +28,7 @@ const getTestMatch = (divisionId: ObjectId): RobotGameMatch => {
   } as RobotGameMatch;
 };
 
-const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Event>): Array<Team> => {
+const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Division>): Array<Team> => {
   const LINES_TO_SKIP = 1;
   teamBlock = (teamBlock || []).splice(LINES_TO_SKIP);
 
@@ -46,7 +46,7 @@ const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Event>): Arra
 
 const extractTablesFromBlock = (
   practiceMatchBlock: Line[],
-  division: WithId<Event>
+  division: WithId<Division>
 ): Array<RobotGameTable> => {
   const LINES_TO_SKIP = 4;
   practiceMatchBlock = (practiceMatchBlock || []).splice(LINES_TO_SKIP);
@@ -61,7 +61,7 @@ const extractTablesFromBlock = (
 
 const extractJudgingRoomsFromBlock = (
   judgingBlock: Line[],
-  division: WithId<Event>
+  division: WithId<Division>
 ): Array<JudgingRoom> => {
   const LINES_TO_SKIP = 4;
   judgingBlock = (judgingBlock || []).splice(LINES_TO_SKIP);
@@ -74,8 +74,8 @@ const extractJudgingRoomsFromBlock = (
   }));
 };
 
-export const parseEventData = (
-  division: WithId<Event>,
+export const parseDivisionData = (
+  division: WithId<Division>,
   csvData: string
 ): { teams: Array<Team>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
   const file = parse(csvData.trim());
@@ -93,7 +93,7 @@ export const parseEventData = (
 const extractMatchesFromMatchBlock = (
   matchBlock: Line[],
   stage: RobotGameMatchStage,
-  division: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
   timezone: string
@@ -150,7 +150,7 @@ const extractMatchesFromMatchBlock = (
 
 const extractSessionsFromJudgingBlock = (
   judgingBlock: Line[],
-  division: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   rooms: Array<WithId<JudgingRoom>>,
   timezone: string
@@ -196,7 +196,7 @@ const extractSessionsFromJudgingBlock = (
 
 export const parseSessionsAndMatches = (
   csvData: string,
-  division: WithId<Event>,
+  division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>,
@@ -237,7 +237,7 @@ export const parseSessionsAndMatches = (
   return { matches, sessions };
 };
 
-export const getInitialEventState = (division: WithId<Event>): EventState => {
+export const getInitialDivisionState = (division: WithId<Division>): DivisionState => {
   const supportedPresentations = ['awards'];
   const presentations = Object.fromEntries(
     supportedPresentations.map(presentaionId => [

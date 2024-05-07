@@ -6,7 +6,7 @@ export const getAward = (filter: Filter<Award>) => {
   return db.collection<Award>('awards').findOne(filter);
 };
 
-export const getEventAwards = (divisionId: ObjectId) => {
+export const getDivisionAwards = (divisionId: ObjectId) => {
   return db.collection<Award>('awards').find({ divisionId }).toArray();
 };
 
@@ -35,7 +35,7 @@ export const deleteAwards = (filter: Filter<Award>) => {
     .then(response => response);
 };
 
-export const deleteEventAwards = (divisionId: ObjectId) => {
+export const deleteDivisionAwards = (divisionId: ObjectId) => {
   return db
     .collection<Award>('awards')
     .deleteMany({ divisionId })

@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import { Event, SafeUser } from '@lems/types';
+import { Division, SafeUser } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
 
 interface Props {
-  division: WithId<Event>;
+  division: WithId<Division>;
   user: SafeUser;
 }
 

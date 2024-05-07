@@ -1,7 +1,7 @@
 import { DivisionColor } from '../constants';
 import { Role } from '../roles';
 
-export interface EventScheduleEntry {
+export interface DivisionScheduleEntry {
   startTime: Date;
   endTime: Date;
   name: string;
@@ -9,12 +9,12 @@ export interface EventScheduleEntry {
   showOnDashboard?: boolean;
 }
 
-export interface Event {
+export interface Division {
   name: string;
   startDate: Date;
   endDate: Date;
   color: DivisionColor;
   hasState: boolean;
   salesforceId?: string;
-  schedule?: Array<EventScheduleEntry>;
+  schedule?: Array<DivisionScheduleEntry>;
 }

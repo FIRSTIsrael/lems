@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ComposedChart,
@@ -17,7 +17,7 @@ import {
 import { blue } from '@mui/material/colors';
 
 interface PrecisionTokensChartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const PrecisionTokensChart: React.FC<PrecisionTokensChartProps> = ({ division }) => {

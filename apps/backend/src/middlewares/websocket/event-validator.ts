@@ -9,7 +9,7 @@ const divisionValidator = async (socket: Socket, next) => {
     return next(new Error('NO_EVENT_ID'));
   }
 
-  const division = db.getEvent({ _id: new ObjectId(divisionId) });
+  const division = db.getDivision({ _id: new ObjectId(divisionId) });
   if (!division) {
     return next(new Error('EVENT_NOT_FOUND'));
   }

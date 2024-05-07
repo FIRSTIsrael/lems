@@ -4,19 +4,19 @@ import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, AwardSchema } from '@lems/types';
+import { Division, AwardSchema } from '@lems/types';
 import { serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
-import EditEventForm from '../../../components/admin/edit-division-form';
-import EventAwardEditor from '../../../components/admin/division-award-editor';
-import DeleteEventData from '../../../components/admin/delete-division-data';
-import EventScheduleEditor from '../../../components/admin/division-schedule-editor';
+import EditDivisionForm from '../../../components/admin/edit-division-form';
+import DivisionAwardEditor from '../../../components/admin/division-award-editor';
+import DeleteDivisionData from '../../../components/admin/delete-division-data';
+import DivisionScheduleEditor from '../../../components/admin/division-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
 import UploadFileButton from '../../../components/general/upload-file';
 
 interface Props {
-  division: WithId<Event>;
+  division: WithId<Division>;
   awardSchema: AwardSchema;
 }
 
@@ -44,9 +44,9 @@ const Page: NextPage<Props> = ({ division, awardSchema }) => {
         </Paper>
         <TabPanel value="1">
           <Stack spacing={2}>
-            <EditEventForm division={division} />
+            <EditDivisionForm division={division} />
             <Paper sx={{ p: 4 }}>
-              {division.hasState && <DeleteEventData division={division} />}
+              {division.hasState && <DeleteDivisionData division={division} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
                 <UploadFileButton
                   urlPath={`/api/admin/divisions/${division._id}/schedule/parse`}
@@ -69,10 +69,10 @@ const Page: NextPage<Props> = ({ division, awardSchema }) => {
           </Stack>
         </TabPanel>
         <TabPanel value="2">
-          <EventScheduleEditor division={division} />
+          <DivisionScheduleEditor division={division} />
         </TabPanel>
         <TabPanel value="3">
-          <EventAwardEditor divisionId={division._id} awardSchema={awardSchema} />
+          <DivisionAwardEditor divisionId={division._id} awardSchema={awardSchema} />
         </TabPanel>
       </TabContext>
     </Layout>

@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { green } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import Stat from '../stat';
 import CycleTimeReport from '../cycle-time-report';
 import AverageMedianCard from '../average-median-card';
@@ -12,7 +12,7 @@ import ScoresPerTableChart from '../charts/scores-per-table-chart';
 import RobotConsistencyChart from '../charts/robot-consistency-chart';
 
 interface FieldInsightsDashboardProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ division }) => {

@@ -3,12 +3,12 @@ import { WithId } from 'mongodb';
 import { Paper, Box, Avatar, Typography } from '@mui/material';
 import ManageIcon from '@mui/icons-material/WidgetsRounded';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event, JudgingCategoryTypes } from '@lems/types';
+import { Division, JudgingCategoryTypes } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import ExportAction from './export-action';
 
 interface ResultExportPaperProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {

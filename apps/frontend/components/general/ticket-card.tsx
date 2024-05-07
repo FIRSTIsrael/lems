@@ -17,13 +17,13 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/';
 import TaskIcon from '@mui/icons-material/Task';
-import { Event, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
 import { localizedTicketTypes } from '../../localization/tickets';
 import { useState } from 'react';
 
 interface TicketCardProps extends PaperProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   ticket: WithId<Ticket>;
   team: WithId<Team> | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

@@ -5,14 +5,14 @@ import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  EventState,
+  DivisionState,
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   ScoreboardState
 } from '@lems/types';
 
 interface ScoreboardConfiguratorProps {
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

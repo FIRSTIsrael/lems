@@ -5,7 +5,14 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Event, EventState, RobotGameMatch, RobotGameTable, SafeUser, Team } from '@lems/types';
+import {
+  Division,
+  DivisionState,
+  RobotGameMatch,
+  RobotGameTable,
+  SafeUser,
+  Team
+} from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import McSchedule from '../../../components/mc/mc-schedule';
@@ -18,8 +25,8 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -28,7 +35,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
   tables
@@ -37,7 +44,7 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useState<string>('1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -50,7 +57,10 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -60,18 +70,18 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   useWebsocket(division._id.toString(), ['field', 'pit-admin', 'audience-display'], undefined, [
     { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'audienceDisplayUpdated', handler: setEventState },
-    { name: 'presentationUpdated', handler: setEventState }
+    { name: 'matchLoaded', handler: handleMatchDivision },
+    { name: 'matchStarted', handler: handleMatchDivision },
+    { name: 'matchAborted', handler: handleMatchDivision },
+    { name: 'matchCompleted', handler: handleMatchDivision },
+    { name: 'matchUpdated', handler: handleMatchDivision },
+    { name: 'audienceDisplayUpdated', handler: setDivisionState },
+    { name: 'presentationUpdated', handler: setDivisionState }
   ]);
 
   return (

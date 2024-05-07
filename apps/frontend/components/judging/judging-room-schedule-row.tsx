@@ -5,7 +5,7 @@ import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import PageIcon from '@mui/icons-material/DescriptionOutlined';
 import { Socket } from 'socket.io-client';
 import {
-  Event,
+  Division,
   JudgingSession,
   JudgingRoom,
   Team,
@@ -24,7 +24,7 @@ import { localizedJudgingCategory } from '@lems/season';
 import StatusIcon from '../general/status-icon';
 
 interface Props {
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: WithId<Team>;

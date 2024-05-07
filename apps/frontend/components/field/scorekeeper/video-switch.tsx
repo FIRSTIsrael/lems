@@ -1,7 +1,7 @@
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import {
   AudienceDisplayScreenTypes,
-  EventState,
+  DivisionState,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -10,7 +10,7 @@ import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 
 interface VideoSwitchProps {
-  divisionState: EventState;
+  divisionState: DivisionState;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

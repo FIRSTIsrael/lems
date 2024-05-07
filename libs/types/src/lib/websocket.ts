@@ -9,7 +9,7 @@ import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
-import { EventState, PresentationState } from './schemas/division-state';
+import { DivisionState, PresentationState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './schemas/division-state';
@@ -17,14 +17,14 @@ import { JudgingRoom } from './schemas/judging-room';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
-interface EventsMap {
+interface DivisionsMap {
   [division: string]: any;
 }
 
-type EventNames<Map extends EventsMap> = keyof Map & (string | symbol);
+type DivisionNames<Map extends DivisionsMap> = keyof Map & (string | symbol);
 
 export interface WSServerEmittedEvents {
-  judgingSessionStarted: (session: JudgingSession, divisionState: EventState) => void;
+  judgingSessionStarted: (session: JudgingSession, divisionState: DivisionState) => void;
 
   judgingSessionCompleted: (session: JudgingSession) => void;
 
@@ -48,15 +48,15 @@ export interface WSServerEmittedEvents {
 
   ticketUpdated: (ticket: WithId<Ticket>) => void;
 
-  matchLoaded: (match: RobotGameMatch, divisionState: EventState) => void;
+  matchLoaded: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
-  matchStarted: (match: RobotGameMatch, divisionState: EventState) => void;
+  matchStarted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
   matchEndgame: (match: RobotGameMatch) => void;
 
-  matchCompleted: (match: RobotGameMatch, divisionState: EventState) => void;
+  matchCompleted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
-  matchAborted: (match: RobotGameMatch, divisionState: EventState) => void;
+  matchAborted: (match: RobotGameMatch, divisionState: DivisionState) => void;
 
   matchUpdated: (match: RobotGameMatch) => void;
 
@@ -64,9 +64,9 @@ export interface WSServerEmittedEvents {
 
   scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
 
-  audienceDisplayUpdated: (divisionState: EventState) => void;
+  audienceDisplayUpdated: (divisionState: DivisionState) => void;
 
-  presentationUpdated: (divisionState: EventState) => void;
+  presentationUpdated: (divisionState: DivisionState) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -221,7 +221,7 @@ export interface WSClientEmittedEvents {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface WSInterServerEvents {
+export interface WSInterServerDivisions {
   // ...
 }
 
@@ -229,7 +229,7 @@ export interface WSSocketData {
   rooms: Array<WSRoomName>;
 }
 
-export interface WSEventListener {
-  name: EventNames<WSServerEmittedEvents> | EventNames<WSClientEmittedEvents>;
+export interface WSDivisionListener {
+  name: DivisionNames<WSServerEmittedEvents> | DivisionNames<WSClientEmittedEvents>;
   handler: (...args: any[]) => void | Promise<void>;
 }

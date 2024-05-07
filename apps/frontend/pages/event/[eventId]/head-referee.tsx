@@ -5,12 +5,12 @@ import { WithId } from 'mongodb';
 import { Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  Event,
+  Division,
   SafeUser,
   Scoresheet,
   RobotGameMatch,
   RobotGameTable,
-  EventState,
+  DivisionState,
   Team
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -28,8 +28,8 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -38,13 +38,13 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   tables,
   scoresheets: initialScoresheets,
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
@@ -77,12 +77,12 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (
+  const handleMatchDivision = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     updateMatches(newMatch);
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const updateScoresheet = (scoresheet: WithId<Scoresheet>) => {
@@ -127,11 +127,11 @@ const Page: NextPage<Props> = ({
     ['field', 'pit-admin'],
     undefined,
     [
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchDivision },
+      { name: 'matchAborted', handler: handleMatchDivision },
+      { name: 'matchUpdated', handler: handleMatchDivision },
       { name: 'scoresheetUpdated', handler: updateScoresheet },
       { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
       { name: 'teamRegistered', handler: handleTeamRegistered }

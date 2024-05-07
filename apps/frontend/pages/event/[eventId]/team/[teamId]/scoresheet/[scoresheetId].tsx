@@ -17,7 +17,7 @@ import {
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
-  Event,
+  Division,
   RobotGameMatch,
   RobotGameMatchParticipant,
   RobotGameTable,
@@ -38,7 +38,7 @@ import { localizedMatchStage } from '../../../../../../localization/field';
 import ScoresheetForm from '../../../../../../components/field/scoresheet/scoresheet-form';
 
 interface ScoresheetSelectorProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   matchScoresheet: WithId<Scoresheet>;
 }
@@ -120,7 +120,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;

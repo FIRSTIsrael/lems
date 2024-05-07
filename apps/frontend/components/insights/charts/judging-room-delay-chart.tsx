@@ -4,11 +4,11 @@ import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
 import { Box, Card, Stack, Divider, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface JudgingRoomDelayChartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 interface JudgingRoomDelayChartData {

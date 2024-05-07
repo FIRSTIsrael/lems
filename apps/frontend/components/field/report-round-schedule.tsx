@@ -17,7 +17,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStage,
-  EventScheduleEntry
+  DivisionScheduleEntry
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { localizedMatchStage } from '../../localization/field';
@@ -78,7 +78,7 @@ interface ReportRoundScheduleProps {
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
-  divisionSchedule: Array<EventScheduleEntry>;
+  divisionSchedule: Array<DivisionScheduleEntry>;
   extendedTeamInfo?: boolean;
 }
 

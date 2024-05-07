@@ -6,10 +6,10 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import {
-  Event,
+  Division,
   Team,
   SafeUser,
-  EventState,
+  DivisionState,
   RobotGameMatch,
   RoleTypes,
   JudgingSession,
@@ -107,8 +107,8 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -118,7 +118,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
   tables,
@@ -128,7 +128,7 @@ const Page: NextPage<Props> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
   const activeMatch = useMemo(
     () => matches.find(m => m._id === divisionState.activeMatch) || null,
@@ -150,7 +150,10 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -160,12 +163,12 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleSessionEvent = (
+  const handleSessionDivision = (
     session: WithId<JudgingSession>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -176,7 +179,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const { connectionStatus } = useWebsocket(
@@ -185,15 +188,15 @@ const Page: NextPage<Props> = ({
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
-      { name: 'matchAborted', handler: handleMatchEvent },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'judgingSessionStarted', handler: handleSessionEvent },
-      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-      { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
+      { name: 'matchAborted', handler: handleMatchDivision },
+      { name: 'matchCompleted', handler: handleMatchDivision },
+      { name: 'matchUpdated', handler: handleMatchDivision },
+      { name: 'judgingSessionStarted', handler: handleSessionDivision },
+      { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+      { name: 'judgingSessionAborted', handler: handleSessionDivision },
+      { name: 'judgingSessionUpdated', handler: handleSessionDivision }
     ]
   );
 

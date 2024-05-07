@@ -1,21 +1,25 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
 import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import EventIcon from '@mui/icons-material/EventOutlined';
+import DivisionIcon from '@mui/icons-material/DivisionOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
-interface EventSelectorProps {
-  divisions: Array<WithId<Event>>;
+interface DivisionSelectorProps {
+  divisions: Array<WithId<Division>>;
   onChange: (divisionId: string | ObjectId) => void;
-  getEventDisabled?: (division: WithId<Event>) => boolean;
+  getDivisionDisabled?: (division: WithId<Division>) => boolean;
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({ divisions, onChange, getEventDisabled }) => {
-  const sortedEvents = useMemo(
+const DivisionSelector: React.FC<DivisionSelectorProps> = ({
+  divisions,
+  onChange,
+  getDivisionDisabled
+}) => {
+  const sortedDivisions = useMemo(
     () =>
       divisions.sort((a, b) => {
         const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
@@ -31,12 +35,12 @@ const EventSelector: React.FC<EventSelectorProps> = ({ divisions, onChange, getE
 
   return (
     <Stack direction="column" spacing={2}>
-      {sortedEvents.map(division => {
+      {sortedDivisions.map(division => {
         return (
           <ListItemButton
             key={division.name}
             onClick={() => onChange(division._id)}
-            disabled={getEventDisabled?.(division)}
+            disabled={getDivisionDisabled?.(division)}
             sx={{ borderRadius: 2 }}
             component="a"
             dense
@@ -48,14 +52,14 @@ const EventSelector: React.FC<EventSelectorProps> = ({ divisions, onChange, getE
                   backgroundColor: getDivisionBackground(division.color)
                 }}
               >
-                <EventIcon />
+                <DivisionIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={division.name}
               secondary={stringifyTwoDates(division.startDate, division.endDate)}
             />
-            {getEventDisabled?.(division) && <WarningAmberRoundedIcon />}
+            {getDivisionDisabled?.(division) && <WarningAmberRoundedIcon />}
           </ListItemButton>
         );
       })}
@@ -63,4 +67,4 @@ const EventSelector: React.FC<EventSelectorProps> = ({ divisions, onChange, getE
   );
 };
 
-export default EventSelector;
+export default DivisionSelector;

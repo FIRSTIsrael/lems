@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   SafeUser,
   CoreValuesForm,
-  Event,
+  Division,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -17,7 +17,7 @@ import CVForm from './cv-form';
 interface CVPanelProps {
   user: WithId<SafeUser>;
   cvForms: Array<WithId<CoreValuesForm>>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

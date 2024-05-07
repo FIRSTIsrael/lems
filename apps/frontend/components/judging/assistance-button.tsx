@@ -4,10 +4,10 @@ import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Fab, FabProps } from '@mui/material';
 import SosRoundedIcon from '@mui/icons-material/SosRounded';
-import { Event, JudgingRoom, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, JudgingRoom, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 
 interface AssistanceButtonProps extends FabProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }

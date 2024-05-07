@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
 import { Tooltip, IconButton } from '@mui/material';
 import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 
 interface ReportLinkProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const ReportLink: React.FC<ReportLinkProps> = ({ division }) => {

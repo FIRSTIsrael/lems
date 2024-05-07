@@ -10,11 +10,11 @@ import {
   TableRow
 } from '@mui/material';
 import {
-  Event,
+  Division,
   JudgingSession,
   JudgingRoom,
   Team,
-  EventScheduleEntry,
+  DivisionScheduleEntry,
   JUDGING_SESSION_LENGTH
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
@@ -54,7 +54,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
 };
 
 interface GeneralScheduleRowProps {
-  schedule: EventScheduleEntry;
+  schedule: DivisionScheduleEntry;
   colSpan: number;
 }
 
@@ -71,7 +71,7 @@ const GeneralScheduleRow: React.FC<GeneralScheduleRowProps> = ({ schedule, colSp
 };
 
 interface ReportJudgingScheduleProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;

@@ -4,9 +4,9 @@ import { TableCell, TableRow } from '@mui/material';
 import {
   RobotGameMatch,
   RobotGameTable,
-  EventState,
+  DivisionState,
   Scoresheet,
-  Event,
+  Division,
   MATCH_LENGTH
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
@@ -15,8 +15,8 @@ import EditScoresheetButton from './edit-scoresheet-button';
 import { localizeTeam } from '../../../localization/teams';
 
 interface HeadRefereeMatchScheduleRowProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   tables: Array<WithId<RobotGameTable>>;
   match: WithId<RobotGameMatch>;
   scoresheets: Array<WithId<Scoresheet>>;

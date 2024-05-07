@@ -7,7 +7,7 @@ import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
-  Event,
+  Division,
   JudgingCategoryTypes,
   JudgingCategory,
   JudgingRoom,
@@ -28,7 +28,7 @@ import { localizeTeam } from '../../../../../../localization/teams';
 import { enqueueSnackbar } from 'notistack';
 
 interface RubricSelectorProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   judgingCategory: JudgingCategory;
 }
@@ -67,7 +67,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ division, team, judging
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
   session: WithId<JudgingSession>;

@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
 import { Button, ButtonProps } from '@mui/material';
 import NoteAddRoundedIcon from '@mui/icons-material/NoteAddRounded';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 
 interface GenerateScheduleButtonProps extends ButtonProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const GenerateScheduleButton: React.FC<GenerateScheduleButtonProps> = ({ division, ...props }) => {

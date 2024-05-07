@@ -14,7 +14,7 @@ import {
   Box
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Event, Team, SafeUser, RoleTypes } from '@lems/types';
+import { Division, Team, SafeUser, RoleTypes } from '@lems/types';
 import BooleanIcon from '../../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -26,7 +26,7 @@ import { enqueueSnackbar } from 'notistack';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 

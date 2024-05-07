@@ -22,7 +22,7 @@ import {
   CVFormCategoryNamesTypes,
   CVFormSubject,
   CoreValuesForm,
-  Event,
+  Division,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
   SafeUser
@@ -35,7 +35,7 @@ import CVFormCategoryRow from './cv-form-category-row';
 
 interface CVFormProps {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;

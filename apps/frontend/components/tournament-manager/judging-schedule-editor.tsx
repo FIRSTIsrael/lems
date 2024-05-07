@@ -17,7 +17,7 @@ import {
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
-  Event,
+  Division,
   Team,
   JudgingRoom,
   JudgingSession,
@@ -63,7 +63,7 @@ const JudgingScheduleEditorRow: React.FC<JudgingScheduleEditorRowProps> = ({
 };
 
 interface JudgingScheduleEditorProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;

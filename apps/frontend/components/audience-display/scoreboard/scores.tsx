@@ -1,4 +1,4 @@
-import { Scoresheet, Team, EventState } from '@lems/types';
+import { Scoresheet, Team, DivisionState } from '@lems/types';
 import {
   TableContainer,
   Paper,
@@ -19,7 +19,7 @@ import { compareScoreArrays } from '@lems/utils/arrays';
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
-  divisionState: EventState;
+  divisionState: DivisionState;
 }
 
 const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({

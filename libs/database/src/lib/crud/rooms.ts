@@ -6,7 +6,7 @@ export const getRoom = (filter: Filter<JudgingRoom>) => {
   return db.collection<JudgingRoom>('rooms').findOne(filter);
 };
 
-export const getEventRooms = (divisionId: ObjectId) => {
+export const getDivisionRooms = (divisionId: ObjectId) => {
   return db.collection<JudgingRoom>('rooms').find({ divisionId }).toArray();
 };
 
@@ -39,7 +39,7 @@ export const deleteRoom = (filter: Filter<JudgingRoom>) => {
     .then(response => response);
 };
 
-export const deleteEventRooms = (divisionId: ObjectId) => {
+export const deleteDivisionRooms = (divisionId: ObjectId) => {
   return db
     .collection<JudgingRoom>('rooms')
     .deleteMany({ divisionId })

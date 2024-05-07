@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const scoresheets = await db.getEventScoresheets(new ObjectId(req.params.divisionId));
+    const scoresheets = await db.getDivisionScoresheets(new ObjectId(req.params.divisionId));
     res.json(scoresheets);
   })
 );

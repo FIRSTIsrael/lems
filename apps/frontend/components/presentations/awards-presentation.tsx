@@ -2,7 +2,7 @@ import React, { Fragment, forwardRef, useMemo, useState, useEffect } from 'react
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
-import { Event, Award, Team } from '@lems/types';
+import { Division, Award, Team } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
@@ -13,7 +13,7 @@ import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
 
 interface AwardsPresentationProps extends BoxProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;

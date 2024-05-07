@@ -21,7 +21,7 @@ export interface AudienceDisplayState {
   scoreboard: ScoreboardState;
 }
 
-export interface EventState {
+export interface DivisionState {
   divisionId: ObjectId;
   loadedMatch: ObjectId | null;
   activeMatch: ObjectId | null;

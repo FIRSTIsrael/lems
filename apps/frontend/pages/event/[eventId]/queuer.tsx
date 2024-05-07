@@ -6,10 +6,10 @@ import { enqueueSnackbar } from 'notistack';
 import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
-import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
+import DivisionNoteRoundedIcon from '@mui/icons-material/DivisionNoteRounded';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
@@ -25,13 +25,13 @@ import QueuerFieldSchedule from '../../../components/queueing/queuer-field-sched
 import QueuerPitMap from '../../../components/queueing/queuer-pit-map';
 import QueuerJudgingSchedule from '../../../components/queueing/queuer-judging-schedule';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { localizedRoles, localizedEventSection } from '../../../localization/roles';
+import { localizedRoles, localizedDivisionSection } from '../../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../../components/queueing/queuer-judging-team-display';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -43,7 +43,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   tables,
   rooms,
@@ -56,11 +56,14 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [activeView, setActiveView] = useState(0);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -70,7 +73,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -84,9 +87,9 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleSessionEvent = (
+  const handleSessionDivision = (
     session: WithId<JudgingSession>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -97,19 +100,19 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   useWebsocket(division._id.toString(), ['field', 'pit-admin', 'judging'], undefined, [
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
+    { name: 'matchLoaded', handler: handleMatchDivision },
+    { name: 'matchStarted', handler: handleMatchDivision },
+    { name: 'matchCompleted', handler: handleMatchDivision },
+    { name: 'matchUpdated', handler: handleMatchDivision },
     { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'judgingSessionStarted', handler: handleSessionEvent },
-    { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-    { name: 'judgingSessionAborted', handler: handleSessionEvent },
-    { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+    { name: 'judgingSessionStarted', handler: handleSessionDivision },
+    { name: 'judgingSessionCompleted', handler: handleSessionDivision },
+    { name: 'judgingSessionAborted', handler: handleSessionDivision },
+    { name: 'judgingSessionUpdated', handler: handleSessionDivision }
   ]);
 
   return (
@@ -123,7 +126,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedEventSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         color={division.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
@@ -173,7 +176,7 @@ const Page: NextPage<Props> = ({
         >
           <BottomNavigationAction label="בית" icon={<HomeRoundedIcon />} />
           <BottomNavigationAction label="מפת פיטים" icon={<MapRoundedIcon />} />
-          <BottomNavigationAction label="לוח זמנים" icon={<EventNoteRoundedIcon />} />
+          <BottomNavigationAction label="לוח זמנים" icon={<DivisionNoteRoundedIcon />} />
         </BottomNavigation>
       </Layout>
     </RoleAuthorizer>

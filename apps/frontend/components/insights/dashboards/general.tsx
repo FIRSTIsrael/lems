@@ -1,12 +1,12 @@
 import { WithId } from 'mongodb';
 import { blue } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event, Team } from '@lems/types';
+import { Division, Team } from '@lems/types';
 import Stat from '../stat';
 import TeamInsightsDashboard from './team';
 
 interface GeneralInsightsDashboardProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 

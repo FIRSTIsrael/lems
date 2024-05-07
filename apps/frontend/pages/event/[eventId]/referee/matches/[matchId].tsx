@@ -1,13 +1,19 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Event, SafeUser, RobotGameMatch, RobotGameTable, ALLOW_MATCH_SELECTOR } from '@lems/types';
+import {
+  Division,
+  SafeUser,
+  RobotGameMatch,
+  RobotGameTable,
+  ALLOW_MATCH_SELECTOR
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import Layout from '../../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
+  division: WithId<Division>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
 }

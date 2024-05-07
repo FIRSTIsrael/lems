@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Event,
+  Division,
   Team,
   SafeUser,
   RoleTypes,
-  EventState,
+  DivisionState,
   RobotGameMatch,
   Scoresheet
 } from '@lems/types';
@@ -28,8 +28,8 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
@@ -39,12 +39,12 @@ const Page: NextPage<Props> = ({
   user,
   division,
   teams: initialTeams,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   matches: initialMatches,
   scoresheets: initialScoresheets
 }) => {
   const router = useRouter();
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -86,15 +86,15 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleMatchEvent = (
+  const handleMatchDivision = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState?: WithId<EventState>
+    newDivisionState?: WithId<DivisionState>
   ) => {
     updateMatches(newMatch);
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
+  const handleScoresheetDivision = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
       scoresheets.map(s => {
         if (s._id === scoresheet._id) {
@@ -125,16 +125,16 @@ const Page: NextPage<Props> = ({
   useWebsocket(division._id.toString(), ['pit-admin', 'field', 'audience-display'], undefined, [
     {
       name: 'matchStarted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.start.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     },
     {
       name: 'matchAborted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.abort.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     },
     {
@@ -145,16 +145,16 @@ const Page: NextPage<Props> = ({
     },
     {
       name: 'matchCompleted',
-      handler: (newMatch, newEventState) => {
+      handler: (newMatch, newDivisionState) => {
         if (divisionState.audienceDisplay.screen === 'scores') sounds.current.end.play();
-        handleMatchEvent(newMatch, newEventState);
+        handleMatchDivision(newMatch, newDivisionState);
       }
     },
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'scoresheetUpdated', handler: handleScoresheetEvent },
-    { name: 'audienceDisplayUpdated', handler: setEventState },
-    { name: 'presentationUpdated', handler: setEventState },
+    { name: 'matchLoaded', handler: handleMatchDivision },
+    { name: 'matchUpdated', handler: handleMatchDivision },
+    { name: 'scoresheetUpdated', handler: handleScoresheetDivision },
+    { name: 'audienceDisplayUpdated', handler: setDivisionState },
+    { name: 'presentationUpdated', handler: setDivisionState },
     { name: 'teamRegistered', handler: handleTeamRegistered }
   ]);
 

@@ -13,23 +13,23 @@ import {
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStage,
-  EventScheduleEntry,
+  DivisionScheduleEntry,
   Scoresheet,
-  Event,
-  EventState
+  Division,
+  DivisionState
 } from '@lems/types';
 import { localizedMatchStage } from '../../../localization/field';
 import HeadRefereeMatchScheduleRow from './head-referee-match-schedule-row';
 
 interface ReportRoundScheduleProps {
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   roundStage: RobotGameMatchStage;
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  divisionSchedule: Array<EventScheduleEntry>;
+  divisionSchedule: Array<DivisionScheduleEntry>;
 }
 
 const HeadRefereeRoundSchedule: React.FC<ReportRoundScheduleProps> = ({

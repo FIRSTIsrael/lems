@@ -4,8 +4,8 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   RobotGameMatch,
   RobotGameMatchParticipant,
   RobotGameTable,
@@ -22,9 +22,9 @@ import { apiFetch } from '../../../lib/utils/fetch';
 type StrictRefereeDisplayState = 'timer' | 'prestart' | 'no-match' | undefined;
 
 interface MatchPrestartProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
   table: WithId<RobotGameTable>;
-  divisionState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }

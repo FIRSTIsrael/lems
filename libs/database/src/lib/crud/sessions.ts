@@ -6,7 +6,7 @@ export const getSession = (filter: Filter<JudgingSession>) => {
   return db.collection<JudgingSession>('sessions').findOne(filter);
 };
 
-export const getEventSessions = (divisionId: ObjectId) => {
+export const getDivisionSessions = (divisionId: ObjectId) => {
   return db.collection<JudgingSession>('sessions').find({ divisionId }).toArray();
 };
 

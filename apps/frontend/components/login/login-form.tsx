@@ -6,7 +6,7 @@ import { Button, Box, Typography, Stack, MenuItem, TextField } from '@mui/materi
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {
-  Event,
+  Division,
   JudgingRoom,
   RobotGameTable,
   JudgingCategoryTypes,
@@ -14,18 +14,18 @@ import {
   Role,
   RoleAssociationType,
   getAssociationType,
-  EventSectionTypes
+  DivisionSectionTypes
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
 import { createRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
-import { localizedEventSection } from '../../localization/roles';
+import { localizedDivisionSection } from '../../localization/roles';
 
 interface Props {
   recaptchaRequired: boolean;
-  division: WithId<Event>;
+  division: WithId<Division>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
@@ -47,7 +47,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
-  const getEventAssociations = (type: RoleAssociationType) => {
+  const getDivisionAssociations = (type: RoleAssociationType) => {
     switch (type) {
       case 'table':
         return tables.map(table => {
@@ -62,8 +62,8 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables
           return { id: category, name: localizedJudgingCategory[category].name };
         });
       case 'section':
-        return EventSectionTypes.map(section => {
-          return { id: section, name: localizedEventSection[section].name };
+        return DivisionSectionTypes.map(section => {
+          return { id: section, name: localizedDivisionSection[section].name };
         });
     }
   };
@@ -153,7 +153,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables
           label={localizedRoleAssociations[associationType].name}
           onChange={e => setAssociation(e.target.value)}
         >
-          {getEventAssociations(associationType).map(a => {
+          {getDivisionAssociations(associationType).map(a => {
             return (
               <MenuItem value={a.id.toString()} key={a.id.toString()}>
                 {a.name}

@@ -6,10 +6,10 @@ import { WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
-  Event,
+  Division,
   SafeUser,
   RobotGameMatch,
-  EventState,
+  DivisionState,
   Team,
   MATCH_AUTOLOAD_THRESHOLD
 } from '@lems/types';
@@ -31,8 +31,8 @@ import ScoreboardConfigurator from '../../../components/field/scorekeeper/scoreb
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Event>;
-  divisionState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -40,13 +40,13 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
-  divisionState: initialEventState,
+  divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
-  const [divisionState, setEventState] = useState<WithId<EventState>>(initialEventState);
+  const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useState<string>('1');
 
@@ -76,7 +76,10 @@ const Page: NextPage<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextMatch]);
 
-  const handleMatchEvent = (match: WithId<RobotGameMatch>, newEventState?: WithId<EventState>) => {
+  const handleMatchDivision = (
+    match: WithId<RobotGameMatch>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
     setMatches(matches =>
       matches.map(m => {
         if (m._id === match._id) {
@@ -86,7 +89,7 @@ const Page: NextPage<Props> = ({
       })
     );
 
-    if (newEventState) setEventState(newEventState);
+    if (newDivisionState) setDivisionState(newDivisionState);
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -102,9 +105,9 @@ const Page: NextPage<Props> = ({
 
   const handleMatchAborted = (
     newMatch: WithId<RobotGameMatch>,
-    newEventState: WithId<EventState>
+    newDivisionState: WithId<DivisionState>
   ) => {
-    handleMatchEvent(newMatch, newEventState);
+    handleMatchDivision(newMatch, newDivisionState);
     if (newMatch.stage !== 'test') {
       socket.emit('loadMatch', division._id.toString(), newMatch._id.toString(), response => {
         if (!response.ok) {
@@ -119,13 +122,13 @@ const Page: NextPage<Props> = ({
     ['field', 'audience-display'],
     undefined,
     [
-      { name: 'matchLoaded', handler: handleMatchEvent },
-      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchLoaded', handler: handleMatchDivision },
+      { name: 'matchStarted', handler: handleMatchDivision },
       { name: 'matchAborted', handler: handleMatchAborted },
-      { name: 'matchCompleted', handler: handleMatchEvent },
-      { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayUpdated', handler: setEventState },
-      { name: 'presentationUpdated', handler: setEventState },
+      { name: 'matchCompleted', handler: handleMatchDivision },
+      { name: 'matchUpdated', handler: handleMatchDivision },
+      { name: 'audienceDisplayUpdated', handler: setDivisionState },
+      { name: 'presentationUpdated', handler: setDivisionState },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );

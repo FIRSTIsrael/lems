@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import Stat from '../stat';
 import AverageMedianCard from '../average-median-card';
 import CategoryScoresChart from '../charts/category-scores-chart';
@@ -10,7 +10,7 @@ import ScoresPerRoomChart from '../charts/scores-per-room-chart';
 import RobotCorrelationChart from '../charts/robot-correlation-chart';
 
 interface JudgingInsightsDashboardProps {
-  division: WithId<Event>;
+  division: WithId<Division>;
 }
 
 const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ division }) => {
