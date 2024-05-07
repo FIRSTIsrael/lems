@@ -63,7 +63,7 @@
     "@firstisrael/prettier-config": "^1.1.0",
     "@nx/eslint": "18.3.4",
     "@nx/eslint-plugin": "18.3.4",
-    "@nx/express": "18.3.4",
+    "@nx/express": "19.0.0",
     "@nx/js": "18.3.4",
     "@nx/node": "18.3.4",
     "@nx/react": "18.3.4",
