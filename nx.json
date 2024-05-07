@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "neverConnectToCloud": true,
+  "useInferencePlugins": false,
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
