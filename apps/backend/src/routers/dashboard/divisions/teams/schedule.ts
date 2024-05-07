@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
+import { Division } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 

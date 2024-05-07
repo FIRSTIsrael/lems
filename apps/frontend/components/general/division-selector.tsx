@@ -4,7 +4,7 @@ import { Division } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
 import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import DivisionIcon from '@mui/icons-material/DivisionOutlined';
+import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
@@ -52,7 +52,7 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
                   backgroundColor: getDivisionBackground(division.color)
                 }}
               >
-                <DivisionIcon />
+                <EventIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText

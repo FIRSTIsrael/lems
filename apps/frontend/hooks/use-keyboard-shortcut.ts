@@ -1,13 +1,13 @@
 import { useEffect, useCallback } from 'react';
 
-type OptionalConfig = Pick<KeyboardDivision, 'altKey' | 'ctrlKey' | 'shiftKey'>;
+type OptionalConfig = Pick<KeyboardEvent, 'altKey' | 'ctrlKey' | 'shiftKey'>;
 
 interface ShortcutConfig extends Partial<OptionalConfig> {
-  code: KeyboardDivision['code'];
+  code: KeyboardEvent['code'];
   shortcutTarget?: HTMLElement;
 }
 
-type ShortcutAction = (e: KeyboardDivision) => void;
+type ShortcutAction = (e: KeyboardEvent) => void;
 
 export default function useKeyboardShortcut(
   shortcutAction: ShortcutAction,
@@ -15,9 +15,9 @@ export default function useKeyboardShortcut(
 ) {
   const targetElement = config.shortcutTarget || document;
 
-  const eventHandler: DivisionListener = useCallback(
+  const eventHandler: EventListener = useCallback(
     evt => {
-      const e = evt as KeyboardDivision;
+      const e = evt as KeyboardEvent;
       const { code, ctrlKey, altKey, shiftKey } = e;
       if (config.code !== code) return;
       if (config.ctrlKey && !ctrlKey) return;

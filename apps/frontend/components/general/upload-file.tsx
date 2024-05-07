@@ -104,7 +104,7 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
                   }
                 }}
                 sx={{ display: 'none' }}
-                onChange={(e: React.ChangeDivision<HTMLInputElement>) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target?.files?.[0];
                   if (file) {
                     setFile(file);

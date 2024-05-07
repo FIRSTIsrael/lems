@@ -25,10 +25,10 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
-  Divisionion,
+  Division,
   Team,
-  WSServerEmittedDivisionions,
-  WSClientEmittedDivisionions,
+  WSServerEmittedEvents,
+  WSClientEmittedEvents,
   SafeUser,
   Scoresheet,
   MissionClause,
@@ -50,11 +50,11 @@ import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetFormProps {
-  division: WithId<Divisionion>;
+  division: WithId<Division>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
   user: WithId<SafeUser>;
-  socket: Socket<WSServerEmittedDivisionions, WSClientEmitDivisionvisions>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   emptyScoresheetValues?: Array<Mission>;
 }
 

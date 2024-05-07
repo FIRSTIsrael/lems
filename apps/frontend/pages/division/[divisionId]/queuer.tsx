@@ -6,7 +6,7 @@ import { enqueueSnackbar } from 'notistack';
 import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
-import DivisionNoteRoundedIcon from '@mui/icons-material/DivisionNoteRounded';
+import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import {
   Division,
   DivisionState,
@@ -176,7 +176,7 @@ const Page: NextPage<Props> = ({
         >
           <BottomNavigationAction label="בית" icon={<HomeRoundedIcon />} />
           <BottomNavigationAction label="מפת פיטים" icon={<MapRoundedIcon />} />
-          <BottomNavigationAction label="לוח זמנים" icon={<DivisionNoteRoundedIcon />} />
+          <BottomNavigationAction label="לוח זמנים" icon={<EventNoteRoundedIcon />} />
         </BottomNavigation>
       </Layout>
     </RoleAuthorizer>
