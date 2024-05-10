@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { DivisionColor } from '../constants';
 import { Role } from '../roles';
 
@@ -11,10 +12,8 @@ export interface DivisionScheduleEntry {
 
 export interface Division {
   name: string;
-  startDate: Date;
-  endDate: Date;
-  color: DivisionColor;
+  eventId: ObjectId;
+  color: DivisionColor; //Turn into RGB string
   hasState: boolean;
-  salesforceId?: string;
   schedule?: Array<DivisionScheduleEntry>;
 }
