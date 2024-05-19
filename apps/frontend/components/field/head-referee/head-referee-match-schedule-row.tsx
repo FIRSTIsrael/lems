@@ -71,7 +71,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                       status={scoresheet.status}
                       score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
                       gp={scoresheet.data?.gp?.value}
-                      href={`/division/${division._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
+                      href={`/lems/${division._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
                       tooltip={
                         participant.team
                           ? (participant.team.registered ? '' : '🚫') +

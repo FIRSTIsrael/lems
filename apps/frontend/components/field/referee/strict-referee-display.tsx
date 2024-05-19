@@ -69,7 +69,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
 
   const toScoresheet = useCallback(
     (participant: RobotGameMatchParticipant, scoresheet: WithId<Scoresheet>) => {
-      let url = `/division/${division._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`;
+      let url = `/lems/${division._id}/team/${participant?.team?._id}/scoresheet/${scoresheet._id}`;
       if (prestartInspection !== null) url += `?inspection=${prestartInspection}`;
       router.push(url);
     },

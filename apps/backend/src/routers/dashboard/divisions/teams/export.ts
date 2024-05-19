@@ -25,9 +25,7 @@ router.get(
       return;
     }
 
-    const pdf = await getLemsWebpageAsPdf(
-      `/division/${team.divisionId}/export/${team._id}/rubrics`
-    );
+    const pdf = await getLemsWebpageAsPdf(`/lems/export/${team._id}/rubrics`);
 
     res.contentType('application/pdf');
     res.send(pdf);
@@ -47,7 +45,7 @@ router.get(
     }
 
     const pdf = await getLemsWebpageAsPdf(
-      `/division/${team.divisionId}/export/${team._id}/scoresheets`
+      `/lems/${team.divisionId}/export/${team._id}/scoresheets`
     );
 
     res.contentType('application/pdf');

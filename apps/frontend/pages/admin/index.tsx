@@ -34,7 +34,7 @@ const Page: NextPage<Props> = ({ user, divisions }) => {
           </Typography>
           <DivisionSelector
             divisions={divisions}
-            onChange={divisionId => router.push(`/admin/division/${divisionId}`)}
+            onChange={divisionId => router.push(`/admin/lems/${divisionId}`)}
           />
           <ListItemButton
             key={'create-division'}

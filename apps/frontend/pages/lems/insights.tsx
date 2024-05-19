@@ -25,7 +25,7 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   if (!divisionState.completed) {
-    router.push(`/division/${user.role}`);
+    router.push(`/lems/${user.role}`);
     enqueueSnackbar('האירוע עוד לא הסתיים', { variant: 'info' });
   }
   return (
@@ -33,14 +33,14 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
       user={user}
       allowedRoles={['judge-advisor', 'lead-judge', 'head-referee', 'tournament-manager']}
       onFail={() => {
-        router.push(`/division/${user.role}`);
+        router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
         title={`ממשק ניתוח תחרות | ${division.name}`}
-        back={`/division/${user.role}`}
+        back={`/lems/${user.role}`}
         color={division.color}
       >
         <TabContext value={activeTab}>

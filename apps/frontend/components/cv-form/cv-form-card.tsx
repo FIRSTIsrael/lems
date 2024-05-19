@@ -26,7 +26,7 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ division, form }) => {
           />
         }
         action={
-          <IconButton onClick={() => router.push(`/division/${division._id}/cv-forms/${form._id}`)}>
+          <IconButton onClick={() => router.push(`/lems/${division._id}/cv-forms/${form._id}`)}>
             <OpenInFullIcon />
           </IconButton>
         }

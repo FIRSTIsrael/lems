@@ -60,7 +60,7 @@ const DivisionCreateForm = forwardRef((props, ref) => {
           throw 'http-error';
         }
       })
-      .then(data => router.push(`/admin/division/${data.id}`))
+      .then(data => router.push(`/admin/lems/${data.id}`))
       .catch(() => enqueueSnackbar('אופס, לא הצלחנו ליצור את האירוע.', { variant: 'error' }));
   };
 

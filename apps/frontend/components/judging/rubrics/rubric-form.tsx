@@ -354,7 +354,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     color="inherit"
                     onClick={() => {
                       handleSync(true, values, 'waiting-for-review').then(() =>
-                        router.push(`/division/${division._id}/${user.role}`)
+                        router.push(`/lems/${division._id}/${user.role}`)
                       );
                     }}
                     sx={actionButtonStyle}
@@ -371,7 +371,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   color="inherit"
                   onClick={() => {
                     handleSync(false, values, 'ready').then(() =>
-                      router.push(`/division/${division._id}/${user.role}`)
+                      router.push(`/lems/${division._id}/${user.role}`)
                     );
                   }}
                   sx={actionButtonStyle}

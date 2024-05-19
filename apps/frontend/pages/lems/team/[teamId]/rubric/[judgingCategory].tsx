@@ -39,7 +39,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ division, team, judging
       {JudgingCategoryTypes.map(category => (
         <NextLink
           key={category}
-          href={`/division/team/${team._id}/rubric/${category}`}
+          href={`/lems/team/${team._id}/rubric/${category}`}
           passHref
           legacyBehavior
         >
@@ -77,11 +77,11 @@ interface Props {
 const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: initialRubric }) => {
   const router = useRouter();
   if (!team.registered) {
-    router.push(`/division/${user.role}`);
+    router.push(`/lems/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
   if (session.status !== 'completed') {
-    router.push(`/division/${user.role}`);
+    router.push(`/lems/${user.role}`);
     enqueueSnackbar('מפגש השיפוט טרם נגמר.', { variant: 'info' });
   }
 
@@ -113,7 +113,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
       allowedRoles={['judge', 'judge-advisor']}
       conditionalRoles={'lead-judge'}
       conditions={{ roleAssociation: { type: 'category', value: judgingCategory } }}
-      onFail={() => router.push(`/division/${user.role}`)}
+      onFail={() => router.push(`/lems/${user.role}`)}
     >
       {team && (
         <Layout
@@ -123,7 +123,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
           } של קבוצה #${team.number}, ${team.name} | ${division.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/division/${user.role}#${team.number.toString()}`}
+          back={`/lems/${user.role}#${team.number.toString()}`}
           backDisabled={connectionStatus === 'connecting'}
           color={division.color}
         >

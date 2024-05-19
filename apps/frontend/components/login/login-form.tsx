@@ -93,7 +93,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables
         if (data && !data.error) {
           document.getElementById('recaptcha-script')?.remove();
           document.querySelector('.grecaptcha-badge')?.remove();
-          const returnUrl = router.query.returnUrl || `/division/${division._id}`;
+          const returnUrl = router.query.returnUrl || `/lems/${division._id}`;
           router.push(returnUrl as string);
         } else if (data.error) {
           if (data.error === 'INVALID_CREDENTIALS') {

@@ -85,7 +85,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/division/${user.role}`);
+        router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -94,7 +94,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/division/reports`}
+        back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
       >

@@ -110,7 +110,7 @@ const JudgingRoomScheduleRow = ({
             >
               <EditRubricButton
                 active={session.status === 'completed'}
-                href={`/division/${user.divisionId}/team/${team._id}/rubric/${judgingCategory}`}
+                href={`/lems/${user.divisionId}/team/${team._id}/rubric/${judgingCategory}`}
                 status={
                   rubrics.find(
                     rubric => rubric.category === judgingCategory && rubric.teamId === team._id

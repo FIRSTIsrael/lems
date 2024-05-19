@@ -36,7 +36,7 @@ const MatchSelector: React.FC<MatchSelectorProps> = ({
             return (
               <NextLink
                 key={match._id.toString()}
-                href={`/division/${division._id}/referee/matches/${match._id}`}
+                href={`/lems/${division._id}/referee/matches/${match._id}`}
                 passHref
                 legacyBehavior
               >

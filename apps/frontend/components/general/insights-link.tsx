@@ -10,7 +10,7 @@ interface InsightsLinkProps {
 const InsightsLink: React.FC<InsightsLinkProps> = ({ division }) => {
   return (
     <Tooltip title="ניתוח אירוע" arrow>
-      <IconButton aria-label="ניתוח אירוע" href={`/division/${division._id}/insights`}>
+      <IconButton aria-label="ניתוח אירוע" href={`/lems/${division._id}/insights`}>
         <InsightsIcon />
       </IconButton>
     </Tooltip>

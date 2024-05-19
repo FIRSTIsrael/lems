@@ -41,7 +41,7 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
       user={user}
       allowedRoles={['judge-advisor', 'tournament-manager']}
       onFail={() => {
-        router.push(`/division/${user.role}`);
+        router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -49,7 +49,7 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
         maxWidth="md"
         title={`טופס ערכי ליבה | ${division.name}`}
         action={<ConnectionIndicator status={connectionStatus} />}
-        back={`/division/${user.role}`}
+        back={`/lems/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
       >
@@ -60,7 +60,7 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
             socket={socket}
             cvForm={cvForm}
             readOnly={true}
-            onSubmit={() => router.push(`/division/${user.role}`)}
+            onSubmit={() => router.push(`/lems/${user.role}`)}
           />
         </Paper>
       </Layout>

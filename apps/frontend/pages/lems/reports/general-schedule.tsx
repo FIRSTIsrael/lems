@@ -48,14 +48,14 @@ const Page: NextPage<Props> = ({ user, division }) => {
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
-        router.push(`/division/${user.role}`);
+        router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${division.name}`}
-        back={`/division/reports`}
+        back={`/lems/reports`}
         backDisabled={false}
         color={division.color}
       >
