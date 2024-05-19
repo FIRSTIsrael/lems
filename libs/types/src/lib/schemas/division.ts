@@ -15,6 +15,7 @@ export interface Division {
   eventId: ObjectId;
   startDate: Date; //TODO: remove
   endDate: Date; //TODO: remove
+  salesforceId?: string; //TODO: remove
   color: DivisionColor; //Turn into RGB string
   hasState: boolean;
   schedule?: Array<DivisionScheduleEntry>;
