@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
-      : { redirect: { destination: `/division/${user.divisionId}`, permanent: false } };
+      : { redirect: { destination: `/division`, permanent: false } };
   } else {
     return apiFetch('/public/divisions', undefined, ctx)
       .then(response => response.json())
