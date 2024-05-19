@@ -485,9 +485,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 scoresheetStatus={scoresheet.status}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
-                  handleSync(true, values, 'ready').then(() =>
-                    router.push(`/lems/${division._id}/${user.role}`)
-                  );
+                  handleSync(true, values, 'ready').then(() => router.push(`/lems/${user.role}`));
                 }}
               />
             )}

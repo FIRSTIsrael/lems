@@ -10,7 +10,7 @@ interface ReportLinkProps {
 const ReportLink: React.FC<ReportLinkProps> = ({ division }) => {
   return (
     <Tooltip title="דוחות" arrow>
-      <IconButton aria-label="דוחות" href={`/lems/${division._id}/reports`} target="_blank">
+      <IconButton aria-label="דוחות" href={`/lems/reports`} target="_blank">
         <FeedRoundedIcon />
       </IconButton>
     </Tooltip>

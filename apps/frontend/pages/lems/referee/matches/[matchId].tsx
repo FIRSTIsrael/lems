@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     if (!ALLOW_MATCH_SELECTOR)
       return {
         redirect: {
-          destination: `/lems/${ctx.params?.divisionId}/${user.role}`,
+          destination: `/lems/${user.role}`,
           permanent: false
         }
       };
