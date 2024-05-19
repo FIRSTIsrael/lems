@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   );
   return {
     redirect: {
-      destination: user ? `/division/${user.divisionId}/${user.role}` : '/login',
+      destination: user ? `/division/${user.role}` : '/login',
       permanent: false
     }
   };
