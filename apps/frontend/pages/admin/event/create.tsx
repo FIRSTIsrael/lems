@@ -202,9 +202,11 @@ const Page: NextPage = () => {
               <TextField variant="outlined" type="text" label="שם בית" fullWidth />
             </Grid>
           </Grid>
-          <Button type="submit" variant="contained">
-            צור אירוע
-          </Button>
+          <Grid xs={12}>
+            <Button type="submit" variant="contained">
+              צור אירוע
+            </Button>
+          </Grid>
         </Grid>
       </LocalizationProvider>
     </Layout>
