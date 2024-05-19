@@ -1,4 +1,5 @@
 export * from './lib/schemas/user';
+export * from './lib/schemas/fllevent';
 export * from './lib/schemas/division';
 export * from './lib/schemas/division-state';
 export * from './lib/schemas/judging-room';

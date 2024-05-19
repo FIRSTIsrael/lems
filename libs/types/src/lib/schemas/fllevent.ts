@@ -1,4 +1,4 @@
-export interface Event {
+export interface FllEvent {
   name: string;
   startDate: Date;
   endDate: Date;
