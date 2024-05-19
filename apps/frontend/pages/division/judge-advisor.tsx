@@ -161,7 +161,7 @@ const Page: NextPage<Props> = ({
       user={user}
       allowedRoles="judge-advisor"
       onFail={() => {
-        router.push(`/division/${division._id}/${user.role}`);
+        router.push(`/division/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >

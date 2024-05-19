@@ -13,6 +13,8 @@ export interface DivisionScheduleEntry {
 export interface Division {
   name: string;
   eventId: ObjectId;
+  startDate: Date; //TODO: remove
+  endDate: Date; //TODO: remove
   color: DivisionColor; //Turn into RGB string
   hasState: boolean;
   schedule?: Array<DivisionScheduleEntry>;

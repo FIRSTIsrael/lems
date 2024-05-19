@@ -71,7 +71,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
           return (
             <NextLink
               key={scoresheet._id.toString()}
-              href={`/division/${division._id}/team/${team._id}/scoresheet/${scoresheet._id}`}
+              href={`/division/team/${team._id}/scoresheet/${scoresheet._id}`}
               passHref
               legacyBehavior
             >
@@ -144,22 +144,22 @@ const Page: NextPage<Props> = ({
   );
 
   if (!team.registered) {
-    router.push(`/division/${division._id}/${user.role}`);
+    router.push(`/division/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }
   if (match.status === 'not-started') {
-    router.push(`/division/${division._id}/${user.role}`);
+    router.push(`/division/${user.role}`);
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
   if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
     if (user.role !== 'head-referee') {
-      router.push(`/division/${division._id}/${user.role}`);
+      router.push(`/division/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
   }
 
   if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
-    router.push(`/division/${division._id}/${user.role}`);
+    router.push(`/division/${user.role}`);
 
   const { socket, connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     {
@@ -216,7 +216,7 @@ const Page: NextPage<Props> = ({
           : ['referee', 'head-referee']
       }
       onFail={() => {
-        router.push(`/division/${division._id}/${user.role}`);
+        router.push(`/division/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
@@ -228,7 +228,7 @@ const Page: NextPage<Props> = ({
           } | ${division.name}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/division/${division._id}/${user.role}`}
+          back={`/division/${user.role}`}
           backDisabled={connectionStatus === 'connecting'}
           color={division.color}
         >
@@ -274,10 +274,7 @@ const Page: NextPage<Props> = ({
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button
-                variant="contained"
-                onClick={() => router.push(`/division/${division._id}/${user.role}`)}
-              >
+              <Button variant="contained" onClick={() => router.push(`/division/${user.role}`)}>
                 ביטול
               </Button>
               <Button
