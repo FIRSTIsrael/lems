@@ -1,13 +1,13 @@
+import { CSSProperties } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import { Slide } from '@lems/presentations';
-import { DivisionColor } from '@lems/types';
 import LogoStack from './logo-stack';
 
 interface TitleSlideProps {
   primary: string;
   secondary?: string;
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, color }) => {

@@ -1,16 +1,16 @@
+import { CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import { Box, Stack, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
-import { Appear, Slide } from '@lems/presentations';
-import { DivisionColor, Team } from '@lems/types';
-import { getDivisionColor } from '../../lib/utils/colors';
+import { Slide } from '@lems/presentations';
+import { Team } from '@lems/types';
 import LogoStack from './logo-stack';
 
 interface AwardWinnerSlideProps {
   name: string;
   place?: number;
   winner: string | WithId<Team>;
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner, color }) => {
@@ -29,7 +29,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
             px: 8,
             py: 6,
             borderRadius: 4,
-            boxShadow: color && `-10px 10px 12px ${getDivisionColor(color)}74`
+            boxShadow: color && `-10px 10px 12px ${color}74`
           }}
         >
           <Typography fontSize="2.75rem" color="text.secondary">

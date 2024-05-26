@@ -11,31 +11,9 @@ import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', (req: Request, res: Response) => {
-  const body: Division = { ...req.body };
-  if (!body) return res.status(400).json({ ok: false });
-
-  body.startDate = new Date(body.startDate);
-  body.endDate = new Date(body.endDate);
-
-  console.log('⏬ Creating Division...');
-  db.addDivision(body).then(task => {
-    if (task.acknowledged) {
-      console.log('✅ Division created!');
-      return res.json({ ok: true, id: task.insertedId });
-    } else {
-      console.log('❌ Could not create Division');
-      return res.status(500).json({ ok: false });
-    }
-  });
-});
-
 router.put('/:divisionId', (req: Request, res: Response) => {
   const body: Partial<Division> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
-
-  if (body.startDate) body.startDate = new Date(body.startDate);
-  if (body.endDate) body.endDate = new Date(body.endDate);
 
   if (body.schedule)
     body.schedule = body.schedule.map(e => {

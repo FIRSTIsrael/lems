@@ -6,7 +6,6 @@ import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mu
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
-import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
 interface DivisionSelectorProps {
   divisions: Array<WithId<Division>>;
@@ -48,8 +47,8 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
             <ListItemAvatar>
               <Avatar
                 sx={{
-                  color: getDivisionColor(division.color),
-                  backgroundColor: getDivisionBackground(division.color)
+                  color: division.color,
+                  backgroundColor: division.color + '1a'
                 }}
               >
                 <EventIcon />

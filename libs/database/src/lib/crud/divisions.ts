@@ -1,4 +1,4 @@
-import { Filter } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 import { Division } from '@lems/types';
 import db from '../database';
 
@@ -8,6 +8,10 @@ export const getDivision = (filter: Filter<Division>) => {
 
 export const getDivisions = (filter: Filter<Division>) => {
   return db.collection<Division>('divisions').find(filter).toArray();
+};
+
+export const getEventDivisions = (eventId: ObjectId) => {
+  return db.collection<Division>('divisions').find({ eventId }).toArray();
 };
 
 export const getAllDivisions = () => {

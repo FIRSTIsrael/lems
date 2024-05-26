@@ -2,6 +2,7 @@ export { default as db } from './lib/database';
 export * from './lib/crud/users';
 export * from './lib/crud/rooms';
 export * from './lib/crud/tables';
+export * from './lib/crud/fll-events';
 export * from './lib/crud/divisions';
 export * from './lib/crud/division-states';
 export * from './lib/crud/teams';

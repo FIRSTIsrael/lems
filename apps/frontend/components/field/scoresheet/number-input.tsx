@@ -5,7 +5,7 @@ import {
 } from '@mui/base/Unstable_NumberInput';
 import { styled } from '@mui/system';
 import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
+import AddRoundedIcon from '@mui/icons-material/Add';
 
 const CustomNumberInput = React.forwardRef(function CustomNumberInput(
   props: NumberInputProps,
@@ -30,7 +30,7 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(
           }
         },
         incrementButton: {
-          children: <AddIcon />,
+          children: <AddRoundedIcon />,
           className: 'increment'
         },
         decrementButton: {

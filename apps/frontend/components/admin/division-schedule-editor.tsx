@@ -26,7 +26,7 @@ import {
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import AddIcon from '@mui/icons-material/Add';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
@@ -283,7 +283,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
             ])
           }
         >
-          <AddIcon />
+          <AddRoundedIcon />
         </IconButton>
         <Button
           variant="contained"

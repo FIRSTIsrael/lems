@@ -1,5 +1,5 @@
+import { CSSProperties } from 'react';
 import { ObjectId } from 'mongodb';
-import { DivisionColor } from '../constants';
 import { Role } from '../roles';
 
 export interface DivisionScheduleEntry {
@@ -13,10 +13,11 @@ export interface DivisionScheduleEntry {
 export interface Division {
   name: string;
   eventId: ObjectId;
-  startDate: Date; //TODO: remove
-  endDate: Date; //TODO: remove
-  salesforceId?: string; //TODO: remove
-  color: DivisionColor; //Turn into RGB string
+  color: CSSProperties['color'];
   hasState: boolean;
   schedule?: Array<DivisionScheduleEntry>;
+  // TODO: Remove
+  startDate: Date;
+  endDate: Date;
+  salesforceId?: string;
 }

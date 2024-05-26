@@ -1,16 +1,15 @@
 import { WithId } from 'mongodb';
-import { useMemo } from 'react';
+import { useMemo, CSSProperties } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+import { Team } from '@lems/types';
 import { Appear, Slide } from '@lems/presentations';
-import { DivisionColor, Team } from '@lems/types';
-import { getDivisionColor } from '../../lib/utils/colors';
 import LogoStack from './logo-stack';
 import { localizeTeam } from '../../localization/teams';
 
 interface AdvancingTeamsSlideProps {
   teams: Array<WithId<Team>>;
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color }) => {
@@ -35,7 +34,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
             px: 4,
             py: 4,
             borderRadius: 4,
-            boxShadow: color && `-20px 20px 24px ${getDivisionColor(color)}74`
+            boxShadow: color && `-20px 20px 24px ${color}74`
           }}
         >
           <Grid container columns={splitTeamsIntoColumns ? 2 : 1} spacing={1}>

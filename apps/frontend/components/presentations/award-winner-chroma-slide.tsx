@@ -1,15 +1,15 @@
+import { CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Box, Typography } from '@mui/material';
 import { Slide, Appear } from '@lems/presentations';
-import { DivisionColor, Team } from '@lems/types';
-import { getDivisionColor } from '../../lib/utils/colors';
+import { Team } from '@lems/types';
 
 interface AwardWinnerChromaSlideProps {
   name: string;
   place?: number;
   winner: string | WithId<Team>;
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({
@@ -34,7 +34,7 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({
           bottom: 60,
           borderWidth: '0 0 10px 10px',
           borderStyle: 'solid',
-          borderColor: color && getDivisionColor(color)
+          borderColor: color ? color : undefined
         }}
       >
         <Typography fontSize="2.5rem">{place ? `${name}, מקום ${String(place)}` : name}</Typography>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
@@ -18,8 +18,9 @@ import {
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Grid from '@mui/material/Unstable_Grid2';
-import { DivisionColor, Division } from '@lems/types';
+import { Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import ColorPickerButton from './color-picker-button';
 
 interface EditDivisionFormProps extends ButtonProps {
   division: WithId<Division>;
@@ -29,7 +30,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ division, onSubmit 
   const [name, setName] = useState<string>(division.name);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(division.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(division.endDate));
-  const [color, setColor] = useState<DivisionColor>(division.color);
+  const [color, setColor] = useState<CSSProperties['color']>(division.color);
 
   const updateDivision = () => {
     apiFetch(`/api/admin/divisions/${division._id}`, {
@@ -75,27 +76,12 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ division, onSubmit 
               />
             </Grid>
             <Grid xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="division-color">צבע</InputLabel>
-                <Select
-                  value={color}
-                  onChange={e => setColor(e.target.value as DivisionColor)}
-                  labelId="division-color"
-                  label="צבע"
-                  fullWidth
-                >
-                  {[
-                    { id: 'red', displayName: 'אדום' },
-                    { id: 'blue', displayName: 'כחול' }
-                  ].map((color: { id: string; displayName: string }) => {
-                    return (
-                      <MenuItem value={color.id} key={color.id}>
-                        {color.displayName}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
+              <ColorPickerButton
+                swatches={DivisionSwatches}
+                value={color}
+                setColor={setColor}
+                fullWidth
+              />
             </Grid>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid xs={6}>

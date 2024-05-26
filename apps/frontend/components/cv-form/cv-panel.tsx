@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Stack, Button } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import AddIcon from '@mui/icons-material/Add';
+import AddRoundedIcon from '@mui/icons-material/Add';
 import {
   SafeUser,
   CoreValuesForm,
@@ -43,7 +43,7 @@ const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, division, socket }) =>
           </Grid>
           <Stack alignItems="center" mt={2}>
             <Button
-              startIcon={<AddIcon />}
+              startIcon={<AddRoundedIcon />}
               onClick={() => setNewForm(true)}
               variant="contained"
               size="large"
