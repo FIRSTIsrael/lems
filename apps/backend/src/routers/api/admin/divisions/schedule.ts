@@ -20,6 +20,7 @@ router.post(
   fileUpload(),
   asyncHandler(async (req: Request, res: Response) => {
     const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
+    const event = await db.getFllEvent({ _id: division.eventId });
     const divisionState = await db.getDivisionState({ divisionId: division._id });
     if (divisionState) {
       res.status(400).json({ error: 'Could not parse schedule: Division has data' });
@@ -56,6 +57,7 @@ router.post(
 
       const { matches, sessions } = parseSessionsAndMatches(
         csvData,
+        event,
         division,
         dbTeams,
         dbTables,

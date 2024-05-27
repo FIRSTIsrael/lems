@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
 import {
+  FllEvent,
   Team,
   Division,
   DivisionState,
@@ -93,6 +94,7 @@ export const parseDivisionData = (
 const extractMatchesFromMatchBlock = (
   matchBlock: Line[],
   stage: RobotGameMatchStage,
+  event: WithId<FllEvent>,
   division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
@@ -107,7 +109,7 @@ const extractMatchesFromMatchBlock = (
   matchBlock.forEach(line => {
     const round = parseInt(line[1]);
     const [hour, minute] = line[2].split(':');
-    const startTime = dayjs(division.startDate)
+    const startTime = dayjs(event.startDate)
       .tz(timezone, true)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
@@ -150,6 +152,7 @@ const extractMatchesFromMatchBlock = (
 
 const extractSessionsFromJudgingBlock = (
   judgingBlock: Line[],
+  event: WithId<FllEvent>,
   division: WithId<Division>,
   teams: Array<WithId<Team>>,
   rooms: Array<WithId<JudgingRoom>>,
@@ -164,7 +167,7 @@ const extractSessionsFromJudgingBlock = (
   judgingBlock.forEach(line => {
     const number = parseInt(line[0]);
     const [hour, minute] = line[1].split(':');
-    const startTime = dayjs(division.startDate)
+    const startTime = dayjs(event.startDate)
       .tz(timezone, true)
       .set('hour', parseInt(hour))
       .set('minute', parseInt(minute))
@@ -196,6 +199,7 @@ const extractSessionsFromJudgingBlock = (
 
 export const parseSessionsAndMatches = (
   csvData: string,
+  event: WithId<FllEvent>,
   division: WithId<Division>,
   teams: Array<WithId<Team>>,
   tables: Array<WithId<RobotGameTable>>,
@@ -210,6 +214,7 @@ export const parseSessionsAndMatches = (
   const practiceMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',
+    event,
     division,
     teams,
     tables,
@@ -218,6 +223,7 @@ export const parseSessionsAndMatches = (
   const rankingMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, RANKING_MATCHES_BLOCK_ID),
     'ranking',
+    event,
     division,
     teams,
     tables,
@@ -228,6 +234,7 @@ export const parseSessionsAndMatches = (
 
   const sessions = extractSessionsFromJudgingBlock(
     getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID),
+    event,
     division,
     teams,
     rooms,

@@ -5,9 +5,9 @@ import dashboardDivisionValidator from '../../../middlewares/dashboard/division-
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:divisionSalesforceId', dashboardDivisionValidator);
+router.use('/:eventSalesforceId', dashboardDivisionValidator);
 
-router.get('/:divisionSalesforceId', (req: Request, res: Response) => {
+router.get('/:eventSalesforceId', (req: Request, res: Response) => {
   db.getDivisionState({ divisionId: req.division._id }).then(divisionState => {
     res.json({
       name: req.division.name,
@@ -17,6 +17,6 @@ router.get('/:divisionSalesforceId', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:divisionSalesforceId/teams', dashboardTeamsRouter);
+router.use('/:eventSalesforceId/teams', dashboardTeamsRouter);
 
 export default router;

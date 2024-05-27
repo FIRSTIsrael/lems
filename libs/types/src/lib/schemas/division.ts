@@ -16,8 +16,4 @@ export interface Division {
   color: CSSProperties['color'];
   hasState: boolean;
   schedule?: Array<DivisionScheduleEntry>;
-  // TODO: Remove
-  startDate: Date;
-  endDate: Date;
-  salesforceId?: string;
 }
