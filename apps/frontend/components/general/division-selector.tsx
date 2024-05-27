@@ -1,26 +1,22 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Division } from '@lems/types';
+import { FllEvent, Division } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
 import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 
-interface DivisionSelectorProps {
-  divisions: Array<WithId<Division>>;
+interface EventSelectorProps {
+  events: Array<WithId<FllEvent>>;
   onChange: (divisionId: string | ObjectId) => void;
-  getDivisionDisabled?: (division: WithId<Division>) => boolean;
+  getEventDisabled?: (division: WithId<FllEvent>) => boolean;
 }
 
-const DivisionSelector: React.FC<DivisionSelectorProps> = ({
-  divisions,
-  onChange,
-  getDivisionDisabled
-}) => {
+const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
   const sortedDivisions = useMemo(
     () =>
-      divisions.sort((a, b) => {
+      events.sort((a, b) => {
         const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
         const diffB = dayjs().diff(dayjs(b.startDate), 'days', true);
 
@@ -29,17 +25,17 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
         if (diffA > 1 && diffB > 1) return diffA - diffB;
         return diffB - diffA;
       }),
-    [divisions]
+    [events]
   );
 
   return (
     <Stack direction="column" spacing={2}>
-      {sortedDivisions.map(division => {
+      {sortedDivisions.map(event => {
         return (
           <ListItemButton
-            key={division.name}
-            onClick={() => onChange(division._id)}
-            disabled={getDivisionDisabled?.(division)}
+            key={event.name}
+            onClick={() => onChange(event._id)}
+            disabled={getEventDisabled?.(event)}
             sx={{ borderRadius: 2 }}
             component="a"
             dense
@@ -47,18 +43,18 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
             <ListItemAvatar>
               <Avatar
                 sx={{
-                  color: division.color,
-                  backgroundColor: division.color + '1a'
+                  color: event.divisions?.[0].color,
+                  backgroundColor: event.divisions?.[0].color + '1a'
                 }}
               >
                 <EventIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={division.name}
-              secondary={stringifyTwoDates(division.startDate, division.endDate)}
+              primary={event.name}
+              secondary={stringifyTwoDates(event.startDate, event.endDate)}
             />
-            {getDivisionDisabled?.(division) && <WarningAmberRoundedIcon />}
+            {getEventDisabled?.(event) && <WarningAmberRoundedIcon />}
           </ListItemButton>
         );
       })}
@@ -66,4 +62,4 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
   );
 };
 
-export default DivisionSelector;
+export default EventSelector;

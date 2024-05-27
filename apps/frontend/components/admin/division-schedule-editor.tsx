@@ -32,7 +32,7 @@ import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lem
 import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import DivisionSelector from '../general/division-selector';
+import EventSelector from '../general/division-selector';
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
@@ -44,11 +44,11 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
   const router = useRouter();
   const [schedule, setSchedule] = useState<Array<DivisionScheduleEntry>>(division.schedule || []);
   const [copyModal, setCopyModal] = useState(false);
-  const [divisions, setDivisions] = useState<Array<WithId<Division>>>([]);
+  const [events, setEvents] = useState<Array<WithId<FllEvent>>>([]);
 
   useEffect(() => {
-    apiFetch(`/public/divisions`).then(res => {
-      res.json().then(data => setDivisions(data));
+    apiFetch(`/public/events`).then(res => {
+      res.json().then(data => setEvents(data));
     });
   }, []);
 
@@ -327,8 +327,8 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           <Typography variant="h2" pb={2} textAlign={'center'}>
             {'העתקת לו"ז כללי'}
           </Typography>
-          <DivisionSelector
-            divisions={divisions.filter(e => e._id.toString() !== division._id.toString())}
+          <EventSelector
+            events={events.filter(e => e.divisions?.[0]._id.toString() !== division._id.toString())}
             onChange={divisionId => copyScheduleFrom(divisionId)}
           />
         </Paper>

@@ -2,17 +2,17 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Division, SafeUser } from '@lems/types';
+import { FllEvent, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import DivisionSelector from '../../components/general/division-selector';
+import EventSelector from '../../components/general/division-selector';
 
 interface Props {
   user: WithId<SafeUser>;
-  divisions: Array<WithId<Division>>;
+  events: Array<WithId<FllEvent>>;
 }
 
-const Page: NextPage<Props> = ({ user, divisions }) => {
+const Page: NextPage<Props> = ({ user, events }) => {
   const router = useRouter();
 
   return (
@@ -22,9 +22,9 @@ const Page: NextPage<Props> = ({ user, divisions }) => {
           <Typography variant="h2" textAlign={'center'}>
             בחירת אירוע
           </Typography>
-          <DivisionSelector
-            divisions={divisions}
-            onChange={divisionId => router.push(`/admin/event/${divisionId}`)}
+          <EventSelector
+            events={events}
+            onChange={eventId => router.push(`/admin/event/${eventId}`)}
           />
           <ListItemButton
             key={'create-division'}
@@ -41,10 +41,7 @@ const Page: NextPage<Props> = ({ user, divisions }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests(
-    { user: '/api/me', divisions: '/public/divisions' },
-    ctx
-  );
+  const data = await serverSideGetRequests({ user: '/api/me', events: '/public/events' }, ctx);
   return { props: data };
 };
 
