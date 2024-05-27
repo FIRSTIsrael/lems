@@ -223,7 +223,4 @@ const Page: NextPage = () => {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async () => {
-// };
-
 export default Page;
