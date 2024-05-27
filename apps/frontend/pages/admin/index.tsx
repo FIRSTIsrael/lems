@@ -42,6 +42,7 @@ const Page: NextPage<Props> = ({ user, events }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests({ user: '/api/me', events: '/public/events' }, ctx);
+  console.log(JSON.stringify(data.events));
   return { props: data };
 };
 

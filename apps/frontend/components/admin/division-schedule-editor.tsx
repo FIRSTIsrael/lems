@@ -60,18 +60,18 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     [schedule]
   );
 
-  const copyScheduleFrom = (divisionId: string | ObjectId) => {
-    apiFetch(`/api/divisions/${divisionId}?withSchedule=true`)
+  const copyScheduleFrom = (eventId: string | ObjectId) => {
+    apiFetch(`/api/events/${eventId}/divisions?withSchedule=true`)
       .then(res => res.json())
       .then(data => {
-        if (data.schedule?.length > 0) {
+        if (data[0].schedule?.length > 0) {
           const getNewDate = (date: Date): Date => {
             const hour = dayjs(date).get('hours');
             const minute = dayjs(date).get('minutes');
             return dayjs(event.startDate).set('hours', hour).set('minutes', minute).toDate();
           };
 
-          const newSchedule = data.schedule.map((entry: DivisionScheduleEntry) => {
+          const newSchedule = data[0].schedule.map((entry: DivisionScheduleEntry) => {
             return {
               ...entry,
               startTime: getNewDate(entry.startTime),
@@ -329,7 +329,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           </Typography>
           <EventSelector
             events={events.filter(e => e.divisions?.[0]._id.toString() !== division._id.toString())}
-            onChange={divisionId => copyScheduleFrom(divisionId)}
+            onChange={eventId => copyScheduleFrom(eventId)}
           />
         </Paper>
       </Modal>
