@@ -28,17 +28,18 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
+import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import DivisionSelector from '../general/division-selector';
 
 interface DivisionScheduleEditorProps {
+  event: WithId<FllEvent>;
   division: WithId<Division>;
 }
 
-const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ division }) => {
+const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, division }) => {
   const theme = useTheme();
   const router = useRouter();
   const [schedule, setSchedule] = useState<Array<DivisionScheduleEntry>>(division.schedule || []);
@@ -67,7 +68,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
           const getNewDate = (date: Date): Date => {
             const hour = dayjs(date).get('hours');
             const minute = dayjs(date).get('minutes');
-            return dayjs(division.startDate).set('hours', hour).set('minutes', minute).toDate();
+            return dayjs(event.startDate).set('hours', hour).set('minutes', minute).toDate();
           };
 
           const newSchedule = data.schedule.map((entry: DivisionScheduleEntry) => {
@@ -276,8 +277,8 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
               ...schedule,
               {
                 name: `מרכיב לו״ז ${schedule.length + 1}`,
-                startTime: dayjs(division.startDate).set('hour', 0).set('minute', 0).toDate(),
-                endTime: dayjs(division.startDate).set('hour', 0).set('minute', 0).toDate(),
+                startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
+                endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
               }
             ])
