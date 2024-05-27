@@ -6,18 +6,19 @@ import { Box, Button, ButtonProps, TextField, Typography, Stack, Paper } from '@
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Division, DivisionSwatches } from '@lems/types';
+import { FllEvent, Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
 
 interface EditDivisionFormProps extends ButtonProps {
+  event: WithId<FllEvent>;
   division: WithId<Division>;
 }
 
-const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ division, onSubmit }) => {
+const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, onSubmit }) => {
   const [name, setName] = useState<string>(division.name);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs(division.startDate));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs(division.endDate));
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
   const [color, setColor] = useState<CSSProperties['color']>(division.color);
 
   const updateDivision = () => {
@@ -26,8 +27,8 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ division, onSubmit 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
-        startDate: startDate.toDate() || division.startDate,
-        endDate: endDate.toDate() || division.endDate,
+        startDate: startDate.toDate() || event.startDate,
+        endDate: endDate.toDate() || event.endDate,
         color
       })
     }).then(res => {

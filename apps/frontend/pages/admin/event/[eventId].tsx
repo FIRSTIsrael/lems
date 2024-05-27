@@ -16,7 +16,7 @@ import DownloadUsersButton from '../../../components/admin/download-users';
 import UploadFileButton from '../../../components/general/upload-file';
 
 interface Props {
-  event: FllEvent;
+  event: WithId<FllEvent>;
   divisions: Array<WithId<Division>>;
   awardSchema: AwardSchema;
 }
@@ -40,7 +40,7 @@ const Page: NextPage<Props> = ({ event, divisions, awardSchema }) => {
         </Paper>
         <TabPanel value="1">
           <Stack spacing={2}>
-            <EditDivisionForm division={divisions[0]} />
+            <EditDivisionForm event={event} division={divisions[0]} />
             <Paper sx={{ p: 4 }}>
               {divisions[0].hasState && <DeleteDivisionData division={divisions[0]} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
