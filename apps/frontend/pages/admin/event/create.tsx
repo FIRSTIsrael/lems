@@ -102,7 +102,7 @@ const Page: NextPage = () => {
   };
 
   return (
-    <Layout maxWidth="xl" title="יצירת אירוע">
+    <Layout maxWidth="xl" title="יצירת אירוע" back="/admin">
       <Formik initialValues={getInitialValues()} onSubmit={handleSubmit}>
         {({ values, errors, touched, setFieldValue }) => (
           <Form>
