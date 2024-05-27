@@ -5,7 +5,7 @@ import { WithId } from 'mongodb';
 import { FllEvent, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
-import EventSelector from '../../components/general/division-selector';
+import EventSelector from '../../components/general/event-selector';
 
 interface Props {
   user: WithId<SafeUser>;

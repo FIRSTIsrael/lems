@@ -4,7 +4,7 @@ import { WithId, ObjectId } from 'mongodb';
 import { Paper, Box, Link, Stack, Typography } from '@mui/material';
 import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
-import EventSelector from '../components/general/division-selector';
+import EventSelector from '../components/general/event-selector';
 import LoginForm from '../components/login/login-form';
 import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';

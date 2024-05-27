@@ -32,7 +32,7 @@ import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lem
 import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import EventSelector from '../general/division-selector';
+import EventSelector from '../general/event-selector';
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
