@@ -132,6 +132,11 @@ export const scoresheet: ScoresheetSchema = {
       }
     },
     {
+      id: 'm11b',
+      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5'], default: '0' }],
+      calculation: clause1 => Number(clause1) * 25
+    },
+    {
       id: 'm12',
       clauses: [
         { type: 'boolean', default: false },
