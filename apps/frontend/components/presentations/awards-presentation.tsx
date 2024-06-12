@@ -107,11 +107,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           enableReinitialize={enableReinitialize}
         >
           <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
-          <TitleSlide
-            primary={`טקס סיום - ${division.name}`}
-            secondary={dayjs(division.endDate).format('DD/MM/YYYY')}
-            color={division.color}
-          />
+          <TitleSlide primary={`טקס סיום - ${division.name}`} color={division.color} />
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"
