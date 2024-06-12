@@ -42,22 +42,22 @@ const Page: NextPage<Props> = ({ event, divisions, awardSchema }) => {
           <Stack spacing={2}>
             <EditDivisionForm event={event} division={divisions[0]} />
             <Paper sx={{ p: 4 }}>
-              {divisions[0].hasState && <DeleteDivisionData division={divisions[0]} />}
+              {divisions[0]?.hasState && <DeleteDivisionData division={divisions[0]} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
                 <UploadFileButton
-                  urlPath={`/api/admin/divisions/${divisions[0]._id}/schedule/parse`}
+                  urlPath={`/api/admin/divisions/${divisions[0]?._id}/schedule/parse`}
                   displayName="לוח זמנים"
                   extension=".csv"
-                  disabled={divisions[0].hasState}
+                  disabled={divisions[0]?.hasState}
                   requestData={{ timezone: dayjs.tz.guess() }}
                 />
                 <GenerateScheduleButton division={divisions[0]} />
-                <DownloadUsersButton division={divisions[0]} disabled={!divisions[0].hasState} />
+                <DownloadUsersButton division={divisions[0]} disabled={!divisions[0]?.hasState} />
               </Stack>
             </Paper>
             <Paper sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
               <UploadFileButton
-                urlPath={`/api/admin/divisions/${divisions[0]._id}/pit-map`}
+                urlPath={`/api/admin/divisions/${divisions[0]?._id}/pit-map`}
                 displayName="מפת פיטים"
                 extension=".png"
               />
@@ -68,7 +68,7 @@ const Page: NextPage<Props> = ({ event, divisions, awardSchema }) => {
           <DivisionScheduleEditor event={event} division={divisions[0]} />
         </TabPanel>
         <TabPanel value="3">
-          <DivisionAwardEditor divisionId={divisions[0]._id} awardSchema={awardSchema} />
+          <DivisionAwardEditor divisionId={divisions[0]?._id} awardSchema={awardSchema} />
         </TabPanel>
       </TabContext>
     </Layout>
@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
   const data = await serverSideGetRequests(
     {
-      awardSchema: `/api/admin/divisions/${divisions[0]._id}/awards/schema`
+      awardSchema: `/api/admin/divisions/${divisions[0]?._id}/awards/schema`
     },
     ctx
   );
