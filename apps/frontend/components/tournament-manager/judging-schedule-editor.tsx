@@ -17,7 +17,7 @@ import {
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
-  Event,
+  Division,
   Team,
   JudgingRoom,
   JudgingSession,
@@ -63,7 +63,7 @@ const JudgingScheduleEditorRow: React.FC<JudgingScheduleEditorRowProps> = ({
 };
 
 interface JudgingScheduleEditorProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -71,7 +71,7 @@ interface JudgingScheduleEditorProps {
 }
 
 const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
-  event,
+  division,
   teams,
   rooms,
   sessions,
@@ -96,7 +96,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
           if (!socket) reject('No socket connection.');
           socket.emit(
             'updateJudgingSessionTeam',
-            event._id.toString(),
+            division._id.toString(),
             sessionId,
             values[sessionId]?._id.toString() || null,
             response => {

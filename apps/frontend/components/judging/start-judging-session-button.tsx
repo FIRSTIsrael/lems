@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client';
 import { IconButton, IconButtonProps } from '@mui/material';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import {
-  Event,
+  Division,
   JudgingRoom,
   JudgingSession,
   Team,
@@ -28,7 +28,7 @@ const getButtonColor = (status: Status) => {
 };
 
 interface StartJudgingSessionButtonProps extends IconButtonProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
   team: WithId<Team>;
@@ -36,7 +36,7 @@ interface StartJudgingSessionButtonProps extends IconButtonProps {
 }
 
 const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
-  event,
+  division,
   room,
   session,
   team,
@@ -49,8 +49,8 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
     [currentTime, session.scheduledTime, team.registered]
   );
 
-  const startSession = (eventId: string, roomId: string, sessionId: string): void => {
-    socket.emit('startJudgingSession', eventId, roomId, sessionId, response => {
+  const startSession = (divisionId: string, roomId: string, sessionId: string): void => {
+    socket.emit('startJudgingSession', divisionId, roomId, sessionId, response => {
       if (!response.ok) {
         enqueueSnackbar('אופס, התחלת מפגש השיפוט נכשלה.', { variant: 'error' });
       } else {
@@ -64,7 +64,7 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
       aria-label="Start session"
       onClick={
         session.status === 'not-started'
-          ? () => startSession(event._id.toString(), room._id.toString(), session._id.toString())
+          ? () => startSession(division._id.toString(), room._id.toString(), session._id.toString())
           : undefined
       }
       disabled={isDisabled}

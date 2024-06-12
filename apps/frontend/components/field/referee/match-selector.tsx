@@ -1,18 +1,23 @@
 import { WithId } from 'mongodb';
 import { Paper, Typography, List, ListItemButton, ListItemText, Chip } from '@mui/material';
 import NextLink from 'next/link';
-import { RobotGameMatch, Event, EventState, RobotGameTable } from '@lems/types';
+import { RobotGameMatch, Division, DivisionState, RobotGameTable } from '@lems/types';
 
 interface MatchSelectorProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   table: WithId<RobotGameTable>;
 }
 
-const MatchSelector: React.FC<MatchSelectorProps> = ({ event, eventState, matches, table }) => {
+const MatchSelector: React.FC<MatchSelectorProps> = ({
+  division,
+  divisionState,
+  matches,
+  table
+}) => {
   const activeMatches = matches.filter(
-    m => m._id === eventState.activeMatch || m._id === eventState?.loadedMatch
+    m => m._id === divisionState.activeMatch || m._id === divisionState?.loadedMatch
   );
 
   return (
@@ -31,7 +36,7 @@ const MatchSelector: React.FC<MatchSelectorProps> = ({ event, eventState, matche
             return (
               <NextLink
                 key={match._id.toString()}
-                href={`/event/${event._id}/referee/matches/${match._id}`}
+                href={`/lems/referee/matches/${match._id}`}
                 passHref
                 legacyBehavior
               >

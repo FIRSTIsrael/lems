@@ -1,13 +1,13 @@
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
-export const handleRegisterTeam = async (namespace, eventId, teamId, callback) => {
+export const handleRegisterTeam = async (namespace, divisionId, teamId, callback) => {
   let team = await db.getTeam({
-    eventId: new ObjectId(eventId),
+    divisionId: new ObjectId(divisionId),
     _id: new ObjectId(teamId)
   });
   if (!team) {
-    callback({ ok: false, error: `Could not find team ${teamId} in event ${eventId}!` });
+    callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
     return;
   }
   if (team.registered) {
@@ -15,7 +15,7 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
     return;
   }
 
-  console.log(`📝 Registered team ${teamId} in event ${eventId}`);
+  console.log(`📝 Registered team ${teamId} in division ${divisionId}`);
 
   await db.updateTeam({ _id: team._id }, { registered: true });
   team = await db.getTeam({ _id: new ObjectId(teamId) });
@@ -24,25 +24,32 @@ export const handleRegisterTeam = async (namespace, eventId, teamId, callback) =
   namespace.to('pit-admin').emit('teamRegistered', team);
 };
 
-export const handleCreateTicket = async (namespace, eventId, teamId, content, type, callback) => {
+export const handleCreateTicket = async (
+  namespace,
+  divisionId,
+  teamId,
+  content,
+  type,
+  callback
+) => {
   if (teamId) {
     const team = await db.getTeam({
-      eventId: new ObjectId(eventId),
+      divisionId: new ObjectId(divisionId),
       _id: new ObjectId(teamId)
     });
     if (!team) {
-      callback({ ok: false, error: `Could not find team ${teamId} in event ${eventId}!` });
+      callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
       return;
     }
 
-    console.log(`🎫 Creating ticket for team ${teamId} in event ${eventId}`);
+    console.log(`🎫 Creating ticket for team ${teamId} in division ${divisionId}`);
   } else {
-    console.log(`🎫 Creating general ticket in event ${eventId}`);
+    console.log(`🎫 Creating general ticket in division ${divisionId}`);
   }
 
   const ticketId = await db
     .addTicket({
-      eventId: new ObjectId(eventId),
+      divisionId: new ObjectId(divisionId),
       teamId: teamId ? new ObjectId(teamId) : null,
       created: new Date(),
       content: content,
@@ -58,26 +65,26 @@ export const handleCreateTicket = async (namespace, eventId, teamId, content, ty
 
 export const handleUpdateTicket = async (
   namespace,
-  eventId,
+  divisionId,
   teamId,
   ticketId,
   ticketData,
   callback
 ) => {
   let ticket = await db.getTicket({
-    eventId: new ObjectId(eventId),
+    divisionId: new ObjectId(divisionId),
     teamId: teamId ? new ObjectId(teamId) : null,
     _id: new ObjectId(ticketId)
   });
   if (!ticket) {
     callback({
       ok: false,
-      error: `Could not find ticket ${ticketId} in event ${eventId}!`
+      error: `Could not find ticket ${ticketId} in division ${divisionId}!`
     });
     return;
   }
 
-  console.log(`🖊️ Updating ticket ${ticketId} in event ${eventId}`);
+  console.log(`🖊️ Updating ticket ${ticketId} in division ${divisionId}`);
 
   await db.updateTicket(
     {

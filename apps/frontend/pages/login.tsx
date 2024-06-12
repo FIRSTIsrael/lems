@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Box, Link, Stack, Typography } from '@mui/material';
-import { Event, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
+import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/general/event-selector';
 import LoginForm from '../components/login/login-form';
@@ -11,19 +11,19 @@ import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
 
 interface PageProps {
-  events: Array<WithId<Event>>;
+  events: Array<WithId<FllEvent>>;
   recaptchaRequired: boolean;
 }
 
 const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
-  const [event, setEvent] = useState<WithId<Event> | undefined>(undefined);
+  const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
-  const selectEvent = (eventId: string | ObjectId) => {
+  const selectDivision = (eventId: string | ObjectId) => {
     const selectedEvent = events.find(e => e._id == eventId);
-    setEvent(selectedEvent);
+    setDivision(selectedEvent?.divisions?.[0]);
   };
 
   useEffect(() => {
@@ -37,34 +37,34 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   }, []);
 
   useEffect(() => {
-    if (event) {
-      apiFetch(`/public/events/${event._id}/rooms`)
+    if (division) {
+      apiFetch(`/public/divisions/${division._id}/rooms`)
         .then(res => res.json())
         .then(rooms => setRooms(rooms));
     }
-  }, [event]);
+  }, [division]);
 
   useEffect(() => {
-    if (event) {
-      apiFetch(`/public/events/${event._id}/tables`)
+    if (division) {
+      apiFetch(`/public/divisions/${division._id}/tables`)
         .then(res => res.json())
         .then(tables => setTables(tables));
     }
-  }, [event]);
+  }, [division]);
 
   return (
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : event && rooms && tables ? (
+        ) : division && rooms && tables ? (
           <LoginForm
             recaptchaRequired={recaptchaRequired}
-            event={event}
+            division={division}
             rooms={rooms}
             tables={tables}
             onCancel={() => {
-              setEvent(undefined);
+              setDivision(undefined);
               setRooms(undefined);
               setTables(undefined);
             }}
@@ -76,8 +76,8 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              getEventDisabled={event => !event.hasState}
-              onChange={selectEvent}
+              getEventDisabled={event => !event.divisions?.[0].hasState}
+              onChange={selectDivision}
             />
           </Stack>
         )}
@@ -94,7 +94,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
           component="button"
           onClick={() => {
             setIsAdminLogin(!isAdminLogin);
-            setEvent(undefined);
+            setDivision(undefined);
             setRooms(undefined);
             setTables(undefined);
           }}
@@ -116,11 +116,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   if (user) {
     return user.isAdmin
       ? { redirect: { destination: `/admin`, permanent: false } }
-      : { redirect: { destination: `/event/${user.eventId}`, permanent: false } };
+      : { redirect: { destination: `/lems`, permanent: false } };
   } else {
     return apiFetch('/public/events', undefined, ctx)
       .then(response => response.json())
-      .then((events: Array<WithId<Event>>) => {
+      .then((events: Array<WithId<FllEvent>>) => {
         return { props: { events, recaptchaRequired } };
       });
   }

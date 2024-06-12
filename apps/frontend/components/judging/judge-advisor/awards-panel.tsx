@@ -22,7 +22,7 @@ import { localizedAward } from '@lems/season';
 import { fullMatch } from '@lems/utils/objects';
 import {
   Award,
-  Event,
+  Division,
   Team,
   AwardNames,
   WSServerEmittedEvents,
@@ -36,13 +36,13 @@ import UploadFileButton from '../../general/upload-file';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
-  event: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
   readOnly: boolean;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnly, socket }) => {
+const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, division, teams, readOnly, socket }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const validateForm = (formValues: FormikValues) => {
@@ -68,7 +68,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
 
   return (
     <>
-      <ResultExportPaper event={event} />
+      <ResultExportPaper division={division} />
       <Formik
         initialValues={{
           awards: awards.map(a => {
@@ -79,7 +79,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
         }}
         validate={validateForm}
         onSubmit={(values, actions) => {
-          apiFetch(`/api/events/${event._id}/awards/winners`, {
+          apiFetch(`/api/divisions/${division._id}/awards/winners`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(values)
@@ -150,7 +150,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                     </Button>
                     <UploadFileButton
                       displayName="קובץ פרסים"
-                      urlPath={`/api/events/${event._id}/awards/winners/parse`}
+                      urlPath={`/api/divisions/${division._id}/awards/winners/parse`}
                       extension=".csv"
                       disabled={
                         values.awards.some(a => a.winner && !(typeof a.winner === 'string')) ||
@@ -194,7 +194,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, event, teams, readOnl
                             submitForm();
                             socket.emit(
                               'updatePresentation',
-                              event._id.toString(),
+                              division._id.toString(),
                               'awards',
                               { enabled: true },
                               response => {

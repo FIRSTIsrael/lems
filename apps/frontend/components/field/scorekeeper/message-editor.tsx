@@ -3,20 +3,20 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, Stack, TextField } from '@mui/material';
-import { EventState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { DivisionState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface MessageEditorProps {
-  eventState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const MessageEditor: React.FC<MessageEditorProps> = ({ eventState, socket }) => {
-  const [message, setMessage] = useState<string>(eventState.audienceDisplay.message);
+const MessageEditor: React.FC<MessageEditorProps> = ({ divisionState, socket }) => {
+  const [message, setMessage] = useState<string>(divisionState.audienceDisplay.message);
 
   const updateMessage = (newMessage: string) => {
     socket.emit(
       'updateAudienceDisplay',
-      eventState.eventId.toString(),
+      divisionState.divisionId.toString(),
       { message: newMessage },
       response => {
         if (!response.ok) enqueueSnackbar('אופס, עדכון ההודעה נכשל.', { variant: 'error' });

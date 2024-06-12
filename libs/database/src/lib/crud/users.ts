@@ -2,12 +2,12 @@ import { ObjectId, Filter, WithId } from 'mongodb';
 import { User, SafeUser } from '@lems/types';
 import db from '../database';
 
-export const getEventUsersWithCredentials = (eventId: ObjectId) => {
-  return db.collection<User>('users').find({ eventId }).toArray();
+export const getDivisionUsersWithCredentials = (divisionId: ObjectId) => {
+  return db.collection<User>('users').find({ divisionId }).toArray();
 };
 
-export const getEventUsers = (eventId: ObjectId): Promise<Array<WithId<SafeUser>>> => {
-  return getEventUsersWithCredentials(eventId).then(users => {
+export const getDivisionUsers = (divisionId: ObjectId): Promise<Array<WithId<SafeUser>>> => {
+  return getDivisionUsersWithCredentials(divisionId).then(users => {
     return users.map(user => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, lastPasswordSetDate, ...safeUser } = user;
@@ -55,9 +55,9 @@ export const deleteUser = (filter: Filter<User>) => {
     .then(response => response);
 };
 
-export const deleteEventUsers = (eventId: ObjectId) => {
+export const deleteDivisionUsers = (divisionId: ObjectId) => {
   return db
     .collection<User>('users')
-    .deleteMany({ eventId })
+    .deleteMany({ divisionId })
     .then(response => response);
 };

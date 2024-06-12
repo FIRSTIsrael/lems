@@ -3,17 +3,17 @@ import { WithId } from 'mongodb';
 import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { Event, Team, Award } from '@lems/types';
+import { Division, Team, Award } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeTeam } from '../../localization/teams';
 
 interface AwardsLineupProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
-const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
+const AwardsLineup: React.FC<AwardsLineupProps> = ({ division }) => {
   const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
   const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
 
@@ -36,11 +36,13 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
   };
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/awards`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/awards`).then(res =>
       res.json().then(data => setAwards(data))
     );
-    apiFetch(`/api/events/${event._id}/teams`).then(res => res.json().then(data => setTeams(data)));
-  }, [event._id]);
+    apiFetch(`/api/divisions/${division._id}/teams`).then(res =>
+      res.json().then(data => setTeams(data))
+    );
+  }, [division._id]);
 
   const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
   const lineup = useMemo(() => {
@@ -107,7 +109,7 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
   return (
     <>
       <Typography fontSize="2.5rem" fontWeight={700} align="center" gutterBottom>
-        {event.name} | פרסים
+        {division.name} | פרסים
       </Typography>
       <Paper sx={{ width: '100%', p: 2, mb: 4 }}>{lineup[currentAward]}</Paper>
       <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">

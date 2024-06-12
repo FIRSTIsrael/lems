@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import {
   AppBar,
   Box,
@@ -21,8 +21,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NextLink from 'next/link';
 import { apiFetch } from '../lib/utils/fetch';
-import { DivisionColor } from '@lems/types';
-import { getDivisionColor } from '../lib/utils/colors';
 
 interface LayoutProps {
   title?: string | React.ReactNode;
@@ -32,7 +30,7 @@ interface LayoutProps {
   backDisabled?: boolean;
   action?: React.ReactNode;
   error?: boolean;
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const errorAnimation = keyframes`
@@ -65,7 +63,7 @@ const Layout: React.FC<LayoutProps> = ({
             position="fixed"
             sx={{
               animation: error ? `${errorAnimation} 1s linear infinite alternate` : undefined,
-              borderBottom: color && `5px solid ${getDivisionColor(color)}`
+              borderBottom: color && `5px solid ${color}`
             }}
           >
             <Toolbar>

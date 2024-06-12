@@ -1,21 +1,20 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Event } from '@lems/types';
+import { FllEvent, Division } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
 import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
-import { getDivisionColor, getDivisionBackground } from '../../lib/utils/colors';
 
 interface EventSelectorProps {
-  events: Array<WithId<Event>>;
-  onChange: (eventId: string | ObjectId) => void;
-  getEventDisabled?: (event: WithId<Event>) => boolean;
+  events: Array<WithId<FllEvent>>;
+  onChange: (divisionId: string | ObjectId) => void;
+  getEventDisabled?: (division: WithId<FllEvent>) => boolean;
 }
 
 const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
-  const sortedEvents = useMemo(
+  const sortedDivisions = useMemo(
     () =>
       events.sort((a, b) => {
         const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
@@ -31,7 +30,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
 
   return (
     <Stack direction="column" spacing={2}>
-      {sortedEvents.map(event => {
+      {sortedDivisions.map(event => {
         return (
           <ListItemButton
             key={event.name}
@@ -44,8 +43,8 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
             <ListItemAvatar>
               <Avatar
                 sx={{
-                  color: getDivisionColor(event.color),
-                  backgroundColor: getDivisionBackground(event.color)
+                  color: event.divisions?.[0].color,
+                  backgroundColor: event.divisions?.[0].color + '1a'
                 }}
               >
                 <EventIcon />

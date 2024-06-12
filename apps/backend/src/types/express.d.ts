@@ -1,11 +1,12 @@
 import { WithId } from 'mongodb';
-import { Event, User } from '@lems/types';
+import { FllEvent, Division, User } from '@lems/types';
 
 declare global {
   namespace Express {
     interface Request {
       user?: WithId<User>;
-      event?: WithId<Event>;
+      division?: WithId<Division>;
+      event?: WithId<FllEvent>;
       teamNumber?: number;
     }
   }

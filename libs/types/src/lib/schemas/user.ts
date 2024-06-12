@@ -5,6 +5,7 @@ export interface User {
   username?: string;
   isAdmin: boolean;
   eventId?: ObjectId;
+  divisionId?: ObjectId;
   role?: Role;
   roleAssociation?: RoleAssociation;
   password: string;

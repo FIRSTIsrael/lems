@@ -4,9 +4,9 @@ import { TableCell, TableRow } from '@mui/material';
 import {
   RobotGameMatch,
   RobotGameTable,
-  EventState,
+  DivisionState,
   Scoresheet,
-  Event,
+  Division,
   MATCH_LENGTH
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
@@ -15,16 +15,16 @@ import EditScoresheetButton from './edit-scoresheet-button';
 import { localizeTeam } from '../../../localization/teams';
 
 interface HeadRefereeMatchScheduleRowProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   tables: Array<WithId<RobotGameTable>>;
   match: WithId<RobotGameMatch>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
 const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   tables,
   match,
   scoresheets
@@ -32,7 +32,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
   return (
     <TableRow
       sx={{
-        backgroundColor: match._id === eventState.activeMatch ? '#e6f7e7' : undefined,
+        backgroundColor: match._id === divisionState.activeMatch ? '#e6f7e7' : undefined,
         '&:last-child td, &:last-child th': { border: 0 },
         scrollMarginTop: 60
       }}
@@ -55,7 +55,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
           return (
             scoresheet && (
               <TableCell align="center" key={scoresheet._id.toString()}>
-                {match._id === eventState.loadedMatch ? (
+                {match._id === divisionState.loadedMatch ? (
                   <>
                     <BooleanIcon
                       condition={participant.ready}
@@ -71,7 +71,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                       status={scoresheet.status}
                       score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
                       gp={scoresheet.data?.gp?.value}
-                      href={`/event/${event._id}/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
+                      href={`/lems/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
                       tooltip={
                         participant.team
                           ? (participant.team.registered ? '' : '🚫') +

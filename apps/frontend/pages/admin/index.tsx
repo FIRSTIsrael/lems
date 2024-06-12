@@ -1,29 +1,19 @@
-import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, SafeUser } from '@lems/types';
+import { FllEvent, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';
 import Layout from '../../components/layout';
 import EventSelector from '../../components/general/event-selector';
-import EventCreateForm from '../../components/admin/event-create-form';
 
 interface Props {
   user: WithId<SafeUser>;
-  events: Array<WithId<Event>>;
+  events: Array<WithId<FllEvent>>;
 }
 
 const Page: NextPage<Props> = ({ user, events }) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <Layout maxWidth="sm" title="ממשק ניהול">
@@ -37,16 +27,13 @@ const Page: NextPage<Props> = ({ user, events }) => {
             onChange={eventId => router.push(`/admin/event/${eventId}`)}
           />
           <ListItemButton
-            key={'create-event'}
+            key={'create-division'}
             dense
             sx={{ borderRadius: 2, minHeight: '50px' }}
-            onClick={handleOpen}
+            onClick={() => router.push('/admin/event/create')}
           >
             צור אירוע
           </ListItemButton>
-          <Modal open={open} onClose={handleClose} aria-labelledby="create-event-model">
-            <EventCreateForm />
-          </Modal>
         </Stack>
       </Paper>
     </Layout>

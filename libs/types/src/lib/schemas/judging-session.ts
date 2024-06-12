@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Status } from '../constants';
 
 export interface JudgingSession {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   number: number;
   teamId: ObjectId | null;
   roomId: ObjectId;

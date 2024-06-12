@@ -1,23 +1,23 @@
 import { WithId } from 'mongodb';
 import { Button, ButtonProps } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { getApiBase } from '../../../lib/utils/fetch';
 
 interface ExportActionProps extends ButtonProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   path: string;
   children: React.ReactNode;
 }
 
-const ExportAction: React.FC<ExportActionProps> = ({ event, path, children, ...props }) => {
+const ExportAction: React.FC<ExportActionProps> = ({ division, path, children, ...props }) => {
   return (
     <Button
       component="a"
       startIcon={<DownloadIcon />}
       variant="contained"
       color="inherit"
-      href={`${getApiBase(true)}/api/events/${event._id}/export${path}`}
+      href={`${getApiBase(true)}/api/divisions/${division._id}/export${path}`}
       target="_blank"
       download
       {...props}

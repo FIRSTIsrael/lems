@@ -1,4 +1,4 @@
-import { Scoresheet, Team, EventState } from '@lems/types';
+import { Scoresheet, Team, DivisionState } from '@lems/types';
 import {
   TableContainer,
   Paper,
@@ -19,13 +19,17 @@ import { compareScoreArrays } from '@lems/utils/arrays';
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
-  eventState: EventState;
+  divisionState: DivisionState;
 }
 
-const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams, eventState }) => {
+const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({
+  scoresheets,
+  teams,
+  divisionState
+}) => {
   const rounds = [
     ...scoresheets
-      .filter(s => s.stage === eventState.currentStage)
+      .filter(s => s.stage === divisionState.currentStage)
       .map(s => {
         return { stage: s.stage, round: s.round };
       })
@@ -40,7 +44,8 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
       const scores = [
         ...scoresheets
           .filter(
-            s => s.teamId === t._id && s.stage === eventState.currentStage && s.status === 'ready'
+            s =>
+              s.teamId === t._id && s.stage === divisionState.currentStage && s.status === 'ready'
           )
           .map(s => s.data?.score || 0)
       ];
@@ -84,7 +89,7 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
                 סבב {localizedMatchStage[r.stage]} #{r.round}
               </TableCell>
             ))}
-            {eventState.currentStage !== 'practice' && (
+            {divisionState.currentStage !== 'practice' && (
               <TableCell align="center" sx={{ font: 'inherit' }}>
                 ניקוד גבוה ביותר
               </TableCell>
@@ -94,14 +99,14 @@ const ScoreboardScores: React.FC<ScoreboardScoresProps> = ({ scoresheets, teams,
         <ScoreboardScoresBody
           scoresheets={scoresheets}
           rounds={rounds}
-          currentStage={eventState.currentStage}
+          currentStage={divisionState.currentStage}
           maxScores={maxScores}
           sx={{ animation: marqueeAnimation }}
         />
         <ScoreboardScoresBody
           scoresheets={scoresheets}
           rounds={rounds}
-          currentStage={eventState.currentStage}
+          currentStage={divisionState.currentStage}
           maxScores={maxScores}
           sx={{ animation: marqueeAnimation }}
         />

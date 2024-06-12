@@ -1,4 +1,15 @@
-export type DivisionColor = 'red' | 'blue';
+export const DivisionSwatches = [
+  '#DF1125',
+  '#FC4E12',
+  '#E8C511',
+  '#80E220',
+  '#1EA5FC',
+  '#1E538F',
+  '#5F41B2',
+  '#F12E6D',
+  '#7A6E49',
+  '#578887'
+];
 
 export type Status = 'not-started' | 'in-progress' | 'completed';
 
@@ -19,8 +30,8 @@ export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 export const CoreValuesAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
 export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 
-export const EventSectionTypes = ['field', 'judging'];
-export type EventSection = (typeof EventSectionTypes)[number];
+export const DivisionSectionTypes = ['field', 'judging'];
+export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
 export const OptionalAwardTypes = [
   'leadMentor',

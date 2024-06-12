@@ -4,27 +4,28 @@ import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
-import { Event, AwardSchema } from '@lems/types';
-import { serverSideGetRequests } from '../../../lib/utils/fetch';
+import { FllEvent, Division, AwardSchema } from '@lems/types';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import GenerateScheduleButton from '../../../components/admin/generate-schedule';
-import EditEventForm from '../../../components/admin/edit-event-form';
-import EventAwardEditor from '../../../components/admin/event-award-editor';
-import DeleteEventData from '../../../components/admin/delete-event-data';
-import EventScheduleEditor from '../../../components/admin/event-schedule-editor';
+import EditDivisionForm from '../../../components/admin/edit-division-form';
+import DivisionAwardEditor from '../../../components/admin/division-award-editor';
+import DeleteDivisionData from '../../../components/admin/delete-division-data';
+import DivisionScheduleEditor from '../../../components/admin/division-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
 import UploadFileButton from '../../../components/general/upload-file';
 
 interface Props {
-  event: WithId<Event>;
+  event: WithId<FllEvent>;
+  divisions: Array<WithId<Division>>;
   awardSchema: AwardSchema;
 }
 
-const Page: NextPage<Props> = ({ event, awardSchema }) => {
+const Page: NextPage<Props> = ({ event, divisions, awardSchema }) => {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   return (
-    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin" color={event.color}>
+    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
       <TabContext value={activeTab}>
         <Paper sx={{ mt: 2 }}>
           <Tabs
@@ -39,24 +40,24 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
         </Paper>
         <TabPanel value="1">
           <Stack spacing={2}>
-            <EditEventForm event={event} />
+            <EditDivisionForm event={event} division={divisions[0]} />
             <Paper sx={{ p: 4 }}>
-              {event.hasState && <DeleteEventData event={event} />}
+              {divisions[0].hasState && <DeleteDivisionData division={divisions[0]} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
                 <UploadFileButton
-                  urlPath={`/api/admin/events/${event._id}/schedule/parse`}
+                  urlPath={`/api/admin/divisions/${divisions[0]._id}/schedule/parse`}
                   displayName="לוח זמנים"
                   extension=".csv"
-                  disabled={event.hasState}
+                  disabled={divisions[0].hasState}
                   requestData={{ timezone: dayjs.tz.guess() }}
                 />
-                <GenerateScheduleButton event={event} />
-                <DownloadUsersButton event={event} disabled={!event.hasState} />
+                <GenerateScheduleButton division={divisions[0]} />
+                <DownloadUsersButton division={divisions[0]} disabled={!divisions[0].hasState} />
               </Stack>
             </Paper>
             <Paper sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
               <UploadFileButton
-                urlPath={`/api/admin/events/${event._id}/pit-map`}
+                urlPath={`/api/admin/divisions/${divisions[0]._id}/pit-map`}
                 displayName="מפת פיטים"
                 extension=".png"
               />
@@ -64,10 +65,10 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
           </Stack>
         </TabPanel>
         <TabPanel value="2">
-          <EventScheduleEditor event={event} />
+          <DivisionScheduleEditor event={event} division={divisions[0]} />
         </TabPanel>
         <TabPanel value="3">
-          <EventAwardEditor eventId={event._id} awardSchema={awardSchema} />
+          <DivisionAwardEditor divisionId={divisions[0]._id} awardSchema={awardSchema} />
         </TabPanel>
       </TabContext>
     </Layout>
@@ -75,15 +76,23 @@ const Page: NextPage<Props> = ({ event, awardSchema }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
+  const event = await apiFetch(`/api/events/${ctx.params?.eventId}`, undefined, ctx).then(res =>
+    res?.json()
+  );
+  const divisions = await apiFetch(
+    `/api/events/${ctx.params?.eventId}/divisions?withSchedule=true`,
+    undefined,
+    ctx
+  ).then(res => res?.json());
+
   const data = await serverSideGetRequests(
     {
-      event: `/api/events/${ctx.params?.eventId}?withSchedule=true`,
-      awardSchema: `/api/admin/events/${ctx.params?.eventId}/awards/schema`
+      awardSchema: `/api/admin/divisions/${divisions[0]._id}/awards/schema`
     },
     ctx
   );
 
-  return { props: data };
+  return { props: { event, divisions, ...data } };
 };
 
 export default Page;

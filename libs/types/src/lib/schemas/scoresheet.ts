@@ -22,7 +22,7 @@ export interface Mission {
 }
 
 export interface Scoresheet {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   teamId: ObjectId;
   stage: RobotGameMatchStage;
   round: number;

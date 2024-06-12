@@ -3,11 +3,11 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Stack, Button } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import AddIcon from '@mui/icons-material/Add';
+import AddRoundedIcon from '@mui/icons-material/Add';
 import {
   SafeUser,
   CoreValuesForm,
-  Event,
+  Division,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -17,28 +17,33 @@ import CVForm from './cv-form';
 interface CVPanelProps {
   user: WithId<SafeUser>;
   cvForms: Array<WithId<CoreValuesForm>>;
-  event: WithId<Event>;
+  division: WithId<Division>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, event, socket }) => {
+const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, division, socket }) => {
   const [newForm, setNewForm] = useState<boolean>(false);
   return (
     <>
       {newForm ? (
-        <CVForm user={user} event={event} socket={socket} onSubmit={() => setNewForm(false)} />
+        <CVForm
+          user={user}
+          division={division}
+          socket={socket}
+          onSubmit={() => setNewForm(false)}
+        />
       ) : (
         <>
           <Grid container spacing={2}>
             {cvForms.map(form => (
               <Grid xs={6} key={form._id.toString()}>
-                <CVFormCard event={event} form={form} />
+                <CVFormCard division={division} form={form} />
               </Grid>
             ))}
           </Grid>
           <Stack alignItems="center" mt={2}>
             <Button
-              startIcon={<AddIcon />}
+              startIcon={<AddRoundedIcon />}
               onClick={() => setNewForm(true)}
               variant="contained"
               size="large"

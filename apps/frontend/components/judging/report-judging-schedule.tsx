@@ -10,11 +10,11 @@ import {
   TableRow
 } from '@mui/material';
 import {
-  Event,
+  Division,
   JudgingSession,
   JudgingRoom,
   Team,
-  EventScheduleEntry,
+  DivisionScheduleEntry,
   JUDGING_SESSION_LENGTH
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
@@ -54,7 +54,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
 };
 
 interface GeneralScheduleRowProps {
-  schedule: EventScheduleEntry;
+  schedule: DivisionScheduleEntry;
   colSpan: number;
 }
 
@@ -71,7 +71,7 @@ const GeneralScheduleRow: React.FC<GeneralScheduleRowProps> = ({ schedule, colSp
 };
 
 interface ReportJudgingScheduleProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
@@ -79,13 +79,13 @@ interface ReportJudgingScheduleProps {
 }
 
 const ReportJudgingSchedule: React.FC<ReportJudgingScheduleProps> = ({
-  event,
+  division,
   rooms,
   sessions,
   teams,
   showGeneralSchedule = false
 }) => {
-  const judgesGeneralSchedule = event.schedule?.filter(s => s.roles.includes('judge')) || [];
+  const judgesGeneralSchedule = division.schedule?.filter(s => s.roles.includes('judge')) || [];
 
   return (
     <TableContainer component={Paper} sx={{ mt: 4 }}>

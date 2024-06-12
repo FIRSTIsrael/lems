@@ -1,11 +1,9 @@
+import { CSSProperties } from 'react';
 import Image from 'next/image';
 import { Stack } from '@mui/material';
-import { DivisionColor } from '@lems/types';
-
-import { getDivisionColor } from '../../lib/utils/colors';
 
 interface LogoStackProps {
-  color?: DivisionColor;
+  color?: CSSProperties['color'];
 }
 
 const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
@@ -22,7 +20,7 @@ const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
       sx={{
         borderWidth: '10px 0 0 0',
         borderStyle: 'solid',
-        borderColor: color && getDivisionColor(color)
+        borderColor: color ? color : undefined
       }}
     >
       <Image
