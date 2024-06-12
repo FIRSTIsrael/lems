@@ -76,7 +76,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              getEventDisabled={event => !event.divisions?.[0].hasState}
+              getEventDisabled={event => !event.divisions?.[0]?.hasState}
               onChange={selectDivision}
             />
           </Stack>

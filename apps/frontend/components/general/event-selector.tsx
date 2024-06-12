@@ -43,8 +43,8 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
             <ListItemAvatar>
               <Avatar
                 sx={{
-                  color: event.divisions?.[0].color,
-                  backgroundColor: event.divisions?.[0].color + '1a'
+                  color: event.divisions?.[0]?.color,
+                  backgroundColor: event.divisions?.[0]?.color + '1a'
                 }}
               >
                 <EventIcon />
