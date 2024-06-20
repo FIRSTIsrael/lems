@@ -36,6 +36,8 @@ const Page: NextPage<Props> = ({ user, division, rubrics }) => {
         },
         {}
       );
+      // Core values: add gp to values
+      // Core values: add CV
       const sum = Object.values(values).reduce((acc, current) => acc + current, 0);
       return { _id: rubric._id, teamId: rubric.teamId, ...values, sum };
     });
