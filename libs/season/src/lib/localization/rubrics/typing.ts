@@ -1,8 +1,8 @@
-import { CoreValuesAwards, JudgingCategory, RubricFields, RubricInnerFields } from '@lems/types';
+import { CoreValuesAwards, JudgingCategory } from '@lems/types';
 import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
-export interface RubricSchemaField<T extends JudgingCategory> {
-  id: RubricFields<T> | RubricInnerFields<T>;
+export interface RubricSchemaField {
+  id: string;
   title: string;
   label_1?: string;
   label_2?: string;
@@ -10,10 +10,10 @@ export interface RubricSchemaField<T extends JudgingCategory> {
   label_4?: string;
 }
 
-export interface RubricSchemaSection<T extends JudgingCategory> {
+export interface RubricSchemaSection {
   title: string;
   description: string;
-  fields: Array<RubricSchemaField<T>>;
+  fields: Array<RubricSchemaField>;
 }
 
 export interface RubricSchemaAwardCandidature {
@@ -22,13 +22,13 @@ export interface RubricSchemaAwardCandidature {
   description: string;
 }
 
-export interface RubricsSchema<T extends JudgingCategory> {
+export interface RubricsSchema {
   category: JudgingCategory;
   season: string;
   title: string;
   description: string;
   columns: typeof rubricSchemaColumns;
-  sections: Array<RubricSchemaSection<T>>;
+  sections: Array<RubricSchemaSection>;
   awards?: Array<RubricSchemaAwardCandidature>;
   feedback?: typeof rubricSchemaFeedback;
 }

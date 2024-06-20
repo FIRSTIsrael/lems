@@ -80,28 +80,6 @@ export const AudienceDisplayScreenTypes = [
 ];
 export type AudienceDisplayScreen = (typeof AudienceDisplayScreenTypes)[number];
 
-export type RubricFields<T extends JudgingCategory> = T extends 'core-values'
-  ? 'discovery' | 'innovation' | 'impact' | 'inclusion' | 'teamwork' | 'fun'
-  : 'identify' | 'design' | 'create' | 'iterate' | 'communicate';
-
-export type RubricInnerFieldPairs<T extends JudgingCategory> = T extends 'innovation-project'
-  ?
-      | ['problem', 'research']
-      | ['selection', 'plan']
-      | ['development', 'model']
-      | ['sharing', 'improvements']
-      | ['presentation', 'impact']
-  :
-      | ['strategy', 'skills']
-      | ['plan', 'features']
-      | ['functionality', 'code']
-      | ['testing', 'improvements']
-      | ['process', 'involvement'];
-
-export type RubricInnerFields<T extends JudgingCategory> =
-  | RubricInnerFieldPairs<T>[0]
-  | RubricInnerFieldPairs<T>[1];
-
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const SEASON_NAME = 'MASTERPIECE℠';

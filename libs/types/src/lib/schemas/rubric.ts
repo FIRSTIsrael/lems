@@ -1,11 +1,5 @@
 import { ObjectId } from 'mongodb';
-import {
-  JudgingCategory,
-  RubricStatus,
-  CoreValuesAwards,
-  RubricFields,
-  RubricInnerFields
-} from '../constants';
+import { JudgingCategory, RubricStatus, CoreValuesAwards } from '../constants';
 
 export interface RubricValue {
   value: number;
@@ -19,14 +13,7 @@ export interface Rubric<T extends JudgingCategory> {
   status: RubricStatus;
   data?: {
     awards: T extends 'core-values' ? { [key in CoreValuesAwards]: boolean } : undefined;
-    values: T extends 'core-values'
-      ? { [key in RubricFields<T>]: RubricValue }
-      : {
-          [key in RubricFields<T>]: {
-            //TODO: smart type that ensures 2 keys: one from [0] and one from [1]
-            [key in RubricInnerFields<T>]: RubricValue;
-          };
-        };
+    values: { [key: string]: RubricValue };
     feedback: { greatJob: string; thinkAbout: string };
   };
 }

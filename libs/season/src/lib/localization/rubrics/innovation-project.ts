@@ -5,7 +5,7 @@ import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 const category = 'innovation-project' as JudgingCategory;
 
-const rubricSections: Array<RubricSchemaSection<typeof category>> = [
+const rubricSections: Array<RubricSchemaSection> = [
   {
     title: 'זיהוי',
     description: 'הקבוצה הגדירה את הבעיה באופן ברור וחקרה אותה היטב.',
@@ -110,7 +110,7 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
   }
 ];
 
-const innovationProjectRubric: RubricsSchema<typeof category> = {
+const innovationProjectRubric: RubricsSchema = {
   category: category,
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,
