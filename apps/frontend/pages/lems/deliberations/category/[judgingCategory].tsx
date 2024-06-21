@@ -16,9 +16,11 @@ import {
   JudgingRoom,
   CoreValuesForm
 } from '@lems/types';
+import { range } from '@lems/utils/arrays';
 import { localizedJudgingCategory } from '@lems/season';
 import CategoryDeliberationsGrid from '../../../../components/deliberations/category-deliberations-grid';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
+import TeamPool from '../team-pool';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -36,55 +38,6 @@ interface Props {
   cvForms: Array<WithId<CoreValuesForm>>;
 }
 
-interface DeliberationTeamNumberProps {
-  team: WithId<Team>;
-  index: number;
-}
-
-const DeliberationTeamNumber: React.FC<DeliberationTeamNumberProps> = ({ team, index }) => {
-  return (
-    <Grid xs={1}>
-      <Draggable key={team._id.toString()} draggableId={team._id.toString()} index={index}>
-        {(provided, snapshot) => (
-          <div ref={provided.innerRef}>
-            <Paper
-              sx={{
-                border: `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,
-                borderRadius: 1,
-                minHeight: 35,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                userSelect: 'none'
-              }}
-              {...provided.dragHandleProps}
-              {...provided.draggableProps}
-              style={provided.draggableProps.style}
-            >
-              {team.number}
-            </Paper>
-            {snapshot.isDragging && (
-              <Paper
-                sx={{
-                  border: '1px solid #ccc',
-                  borderRadius: 1,
-                  minHeight: 35,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  userSelect: 'none'
-                }}
-              >
-                {team.number}
-              </Paper>
-            )}
-          </div>
-        )}
-      </Draggable>
-    </Grid>
-  );
-};
-
 const Page: NextPage<Props> = ({
   user,
   division,
@@ -97,6 +50,9 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
+  const [picklist, setPicklist] = useState<Array<WithId<Team> | string>>(
+    range(12).map(n => `מקום ${n + 1}`)
+  );
 
   return (
     <RoleAuthorizer
@@ -144,14 +100,30 @@ const Page: NextPage<Props> = ({
                 cvForms={cvForms}
               />
             </Grid>
-            <Grid xs={4} component={Box} p={2}>
+            <Grid xs={4}>
               <Droppable key="picklist" droppableId="picklist">
                 {(provided, snapshot) => (
-                  <Paper sx={{ p: 2 }}>
-                    <Stack ref={provided.innerRef} {...provided.droppableProps}>
-                      {provided.placeholder}
-                    </Stack>
-                  </Paper>
+                  <>
+                    <Paper sx={{ p: 2, height: '100%' }}>
+                      <Stack ref={provided.innerRef} {...provided.droppableProps} spacing={2}>
+                        {picklist.map(pick => (
+                          <Paper
+                            sx={{
+                              border: `2px ${typeof pick === 'string' ? 'dashed' : 'solid'} #ccc`,
+                              borderRadius: 2,
+                              minHeight: 40,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            {typeof pick === 'string' ? pick : pick.number}
+                          </Paper>
+                        ))}
+                      </Stack>
+                    </Paper>
+                    {provided.placeholder}
+                  </>
                 )}
               </Droppable>
             </Grid>
@@ -159,29 +131,7 @@ const Page: NextPage<Props> = ({
               <ScoresPerRoomChart division={division} height={210} />
             </Grid>
             <Grid xs={7}>
-              <Paper sx={{ p: 2, height: '100%' }}>
-                <Droppable droppableId="teams" isDropDisabled>
-                  {provided => (
-                    <Grid
-                      container
-                      columns={Math.max(8, Math.ceil(teams.length / 6))}
-                      columnSpacing={2}
-                      rowSpacing={1}
-                      flexDirection="row"
-                      alignItems="center"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {teams
-                        .filter(team => team.registered)
-                        .sort((a, b) => a.number - b.number)
-                        .map((team, index) => (
-                          <DeliberationTeamNumber team={team} index={index} />
-                        ))}
-                    </Grid>
-                  )}
-                </Droppable>
-              </Paper>
+              <TeamPool teams={teams.filter(t => t.registered)} />
             </Grid>
           </Grid>
         </DragDropContext>
