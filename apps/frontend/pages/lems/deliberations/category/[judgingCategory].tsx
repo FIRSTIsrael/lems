@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import Grid from '@mui/material/Unstable_Grid2';
 import { Division, SafeUser, JudgingCategory, Rubric, Team, Scoresheet } from '@lems/types';
 import { localizedJudgingCategory, rubricsSchemas, RubricSchemaSection } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -61,7 +62,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
       field: 'teamNumber',
       headerName: 'מספר קבוצה',
       type: 'string',
-      width: 110,
+      width: 80,
       valueGetter: (value, row) => row.team?.number
     },
     ...fields.map(
@@ -69,7 +70,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
         ({
           ...field,
           type: 'number',
-          width: 110
+          width: 60
         }) as GridColDef
     ),
     ...(judgingCategory === 'core-values'
@@ -79,7 +80,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
               field: `gp-${round}`,
               headerName: `GP ${round}`,
               type: 'number',
-              width: 110
+              width: 50
             }) as GridColDef
         )
       : []),
@@ -88,16 +89,16 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
         ({
           ...award,
           type: 'boolean',
-          width: 110
+          width: 50
         }) as GridColDef
     ),
     {
       field: 'sum',
       headerName: 'סה"כ',
       type: 'number',
-      width: 110
+      width: 60
     },
-    { field: '_id', headerName: 'מחוון' }
+    { field: '_id', headerName: 'מחוון', width: 50 }
   ];
 
   return (
@@ -110,7 +111,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
       }}
     >
       <Layout
-        maxWidth={800}
+        maxWidth={1920}
         title={`דיון תחום ${
           localizedJudgingCategory[judgingCategory as JudgingCategory].name
         } | בית ${division.name}`}
@@ -118,20 +119,25 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
         // action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 20
-              }
-            }
-          }}
-          pageSizeOptions={[5]}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
+        <Grid container sx={{ pt: 2 }}>
+          <Grid xs={6}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 12
+                  }
+                }
+              }}
+              pageSizeOptions={[5]}
+              checkboxSelection
+              disableRowSelectionOnClick
+            />
+          </Grid>
+          <Grid xs={6}></Grid>
+        </Grid>
       </Layout>
     </RoleAuthorizer>
   );
