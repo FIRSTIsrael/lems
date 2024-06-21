@@ -4,13 +4,8 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Division, SafeUser, JudgingCategory, Rubric, Team } from '@lems/types';
-import {
-  localizedJudgingCategory,
-  rubricsSchemas,
-  RubricSchemaSection,
-  RubricsSchema
-} from '@lems/season';
+import { Division, SafeUser, JudgingCategory, Rubric, Team, Scoresheet } from '@lems/types';
+import { localizedJudgingCategory, rubricsSchemas, RubricSchemaSection } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -21,36 +16,78 @@ interface Props {
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  scoresheets: Array<WithId<Scoresheet>>;
 }
 
-const Page: NextPage<Props> = ({ user, division, rubrics }) => {
+const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) => {
   const router = useRouter();
   const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
   const schema = rubricsSchemas[judgingCategory];
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
     section.fields.map(field => ({ field: field.id, headerName: field.title }))
   );
+  const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
+  const rankingRounds = [
+    ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
+  ];
 
   const rows = rubrics
     .filter(rubric => rubric.category === judgingCategory)
     .map(rubric => {
-      const values = rubric.data?.values || {};
-      const newValues: { [key: string]: number } = {};
-      Object.entries(values).forEach(([key, entry]) => {
-        newValues[key] = entry.value;
+      const rubricValues = rubric.data?.values || {};
+      const rubricAwards = rubric.data?.awards || {};
+      const rowValues: { [key: string]: number } = {};
+      Object.entries(rubricValues).forEach(([key, entry]) => {
+        rowValues[key] = entry.value;
       });
-      // Core values: add gp to values
-      // Core values: add CV
-      const sum = Object.values(newValues).reduce((acc, current) => acc + current, 0);
-      return { id: rubric._id, teamId: rubric.teamId, ...newValues, sum };
+
+      if (judgingCategory === 'core-values') {
+        scoresheets
+          .filter(scoresheet => scoresheet.teamId.toString() === rubric.teamId.toString())
+          .forEach(
+            scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
+          );
+        // TODO: Add CV
+      }
+
+      const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
+
+      const team = teams.find(t => t._id.toString() === rubric.teamId.toString());
+      return { id: rubric._id, team, ...rowValues, sum, rubricAwards };
     });
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
+    {
+      field: 'teamNumber',
+      headerName: 'מספר קבוצה',
+      type: 'string',
+      width: 110,
+      valueGetter: (value, row) => row.team?.number
+    },
     ...fields.map(
       field =>
         ({
           ...field,
           type: 'number',
+          width: 110
+        }) as GridColDef
+    ),
+    ...(judgingCategory === 'core-values'
+      ? rankingRounds.map(
+          round =>
+            ({
+              field: `gp-${round}`,
+              headerName: `GP ${round}`,
+              type: 'number',
+              width: 110
+            }) as GridColDef
+        )
+      : []),
+    ...awards.map(
+      award =>
+        ({
+          ...award,
+          type: 'boolean',
           width: 110
         }) as GridColDef
     ),
@@ -108,7 +145,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`
+        rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`,
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
       },
       ctx
     );
