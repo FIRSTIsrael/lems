@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Paper, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
   Division,
@@ -13,13 +13,17 @@ import {
   Team,
   Scoresheet,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  CoreValuesForm
 } from '@lems/types';
-import { localizedJudgingCategory, rubricsSchemas, RubricSchemaSection } from '@lems/season';
+import { localizedJudgingCategory } from '@lems/season';
+import CategoryDeliberationsGrid from '../../../../components/deliberations/category-deliberations-grid';
+import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -29,7 +33,57 @@ interface Props {
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
+
+interface DeliberationTeamNumberProps {
+  team: WithId<Team>;
+  index: number;
+}
+
+const DeliberationTeamNumber: React.FC<DeliberationTeamNumberProps> = ({ team, index }) => {
+  return (
+    <Grid xs={1}>
+      <Draggable key={team._id.toString()} draggableId={team._id.toString()} index={index}>
+        {(provided, snapshot) => (
+          <div ref={provided.innerRef}>
+            <Paper
+              sx={{
+                border: `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,
+                borderRadius: 1,
+                minHeight: 35,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                userSelect: 'none'
+              }}
+              {...provided.dragHandleProps}
+              {...provided.draggableProps}
+              style={provided.draggableProps.style}
+            >
+              {team.number}
+            </Paper>
+            {snapshot.isDragging && (
+              <Paper
+                sx={{
+                  border: '1px solid #ccc',
+                  borderRadius: 1,
+                  minHeight: 35,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  userSelect: 'none'
+                }}
+              >
+                {team.number}
+              </Paper>
+            )}
+          </div>
+        )}
+      </Draggable>
+    </Grid>
+  );
+};
 
 const Page: NextPage<Props> = ({
   user,
@@ -38,97 +92,11 @@ const Page: NextPage<Props> = ({
   rubrics,
   rooms,
   sessions,
+  cvForms,
   scoresheets
 }) => {
   const router = useRouter();
   const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
-  const schema = rubricsSchemas[judgingCategory];
-  const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
-    section.fields.map(field => ({ field: field.id, headerName: field.title }))
-  );
-  const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
-  const rankingRounds = [
-    ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
-  ];
-
-  const rows = rubrics
-    .filter(rubric => rubric.category === judgingCategory)
-    .map(rubric => {
-      const rubricValues = rubric.data?.values || {};
-      const rubricAwards = rubric.data?.awards || {};
-      const rowValues: { [key: string]: number } = {};
-      Object.entries(rubricValues).forEach(([key, entry]) => {
-        rowValues[key] = entry.value;
-      });
-      const roomId = sessions.find(
-        session => session.teamId?.toString() === rubric.teamId.toString()
-      )?.roomId;
-      const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-
-      if (judgingCategory === 'core-values') {
-        scoresheets
-          .filter(scoresheet => scoresheet.teamId.toString() === rubric.teamId.toString())
-          .forEach(
-            scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
-          );
-        // TODO: Add CV
-      }
-
-      const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
-
-      const team = teams.find(t => t._id.toString() === rubric.teamId.toString());
-      return { id: rubric._id, team, room: roomName, ...rowValues, sum, rubricAwards };
-    });
-
-  const columns: GridColDef<(typeof rows)[number]>[] = [
-    {
-      field: 'teamNumber',
-      headerName: 'מספר קבוצה',
-      type: 'string',
-      width: 80,
-      valueGetter: (value, row) => row.team?.number
-    },
-    {
-      field: 'room',
-      headerName: 'חדר',
-      type: 'string',
-      width: 60
-    },
-    ...fields.map(
-      field =>
-        ({
-          ...field,
-          type: 'number',
-          width: 60
-        }) as GridColDef
-    ),
-    ...(judgingCategory === 'core-values'
-      ? rankingRounds.map(
-          round =>
-            ({
-              field: `gp-${round}`,
-              headerName: `GP ${round}`,
-              type: 'number',
-              width: 50
-            }) as GridColDef
-        )
-      : []),
-    ...awards.map(
-      award =>
-        ({
-          ...award,
-          type: 'boolean',
-          width: 50
-        }) as GridColDef
-    ),
-    {
-      field: 'sum',
-      headerName: 'סה"כ',
-      type: 'number',
-      width: 60
-    },
-    { field: '_id', headerName: 'מחוון', width: 50 }
-  ];
 
   return (
     <RoleAuthorizer
@@ -140,7 +108,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth={1920}
+        maxWidth={1900}
         title={`דיון תחום ${
           localizedJudgingCategory[judgingCategory as JudgingCategory].name
         } | בית ${division.name}`}
@@ -148,25 +116,75 @@ const Page: NextPage<Props> = ({
         // action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <Grid container sx={{ pt: 2 }}>
-          <Grid xs={6}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 15
-                  }
-                }
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
-              disableRowSelectionOnClick
-            />
+        <DragDropContext
+          onDragEnd={result => {
+            console.log(result);
+            const { source, destination } = result;
+            if (!destination) {
+              console.log('yo');
+              return;
+            }
+
+            switch (source.droppableId) {
+              case 'teams':
+                console.log('hi');
+                break;
+            }
+          }}
+        >
+          <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
+            <Grid xs={8}>
+              <CategoryDeliberationsGrid
+                category={judgingCategory}
+                rooms={rooms}
+                rubrics={rubrics}
+                scoresheets={scoresheets}
+                sessions={sessions}
+                teams={teams}
+                cvForms={cvForms}
+              />
+            </Grid>
+            <Grid xs={4} component={Box} p={2}>
+              <Droppable key="picklist" droppableId="picklist">
+                {(provided, snapshot) => (
+                  <Paper sx={{ p: 2 }}>
+                    <Stack ref={provided.innerRef} {...provided.droppableProps}>
+                      {provided.placeholder}
+                    </Stack>
+                  </Paper>
+                )}
+              </Droppable>
+            </Grid>
+            <Grid xs={5}>
+              <ScoresPerRoomChart division={division} height={210} />
+            </Grid>
+            <Grid xs={7}>
+              <Paper sx={{ p: 2, height: '100%' }}>
+                <Droppable droppableId="teams" isDropDisabled>
+                  {provided => (
+                    <Grid
+                      container
+                      columns={Math.max(8, Math.ceil(teams.length / 6))}
+                      columnSpacing={2}
+                      rowSpacing={1}
+                      flexDirection="row"
+                      alignItems="center"
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {teams
+                        .filter(team => team.registered)
+                        .sort((a, b) => a.number - b.number)
+                        .map((team, index) => (
+                          <DeliberationTeamNumber team={team} index={index} />
+                        ))}
+                    </Grid>
+                  )}
+                </Droppable>
+              </Paper>
+            </Grid>
           </Grid>
-          <Grid xs={6}></Grid>
-        </Grid>
+        </DragDropContext>
       </Layout>
     </RoleAuthorizer>
   );
@@ -183,7 +201,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
       },
       ctx
     );
