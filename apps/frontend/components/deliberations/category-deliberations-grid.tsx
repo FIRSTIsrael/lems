@@ -46,13 +46,13 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     .map(team => {
       const rubric = rubrics
         .filter(r => r.category === category && r.status !== 'empty')
-        .find(r => r.teamId.toString() === team._id.toString())!; //Assert there exists a rubric (! at the end).
+        .find(r => r.teamId.toString() === team._id.toString()); //Assert there exists a rubric (! at the end).
       const roomId = sessions.find(
-        session => session.teamId?.toString() === rubric.teamId.toString()
+        session => session.teamId?.toString() === team._id.toString()
       )?.roomId;
       const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-      const rubricValues = rubric.data?.values || {};
-      const rubricAwards = rubric.data?.awards || {};
+      const rubricValues = rubric?.data?.values || {};
+      const rubricAwards = rubric?.data?.awards || {};
       const rowValues: { [key: string]: number } = {};
       Object.entries(rubricValues).forEach(([key, entry]) => {
         rowValues[key] = entry.value;
@@ -63,7 +63,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
 
       if (category === 'core-values') {
         scoresheets
-          .filter(scoresheet => scoresheet.teamId.toString() === rubric.teamId.toString())
+          .filter(scoresheet => scoresheet.teamId.toString() === team._id.toString())
           .forEach(
             scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
           );
@@ -71,7 +71,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
 
       const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
       return {
-        id: rubric._id,
+        id: team._id,
+        rubricId: rubric?._id,
         team,
         room: roomName,
         ...rowValues,
@@ -174,7 +175,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ]
       : []),
     {
-      field: '_id',
+      field: 'rubricId',
       headerName: 'מחוון',
       width: 60,
       sortable: false,
