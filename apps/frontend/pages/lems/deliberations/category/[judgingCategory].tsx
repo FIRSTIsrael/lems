@@ -5,7 +5,16 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Division, SafeUser, JudgingCategory, Rubric, Team, Scoresheet } from '@lems/types';
+import {
+  Division,
+  SafeUser,
+  JudgingCategory,
+  Rubric,
+  Team,
+  Scoresheet,
+  JudgingSession,
+  JudgingRoom
+} from '@lems/types';
 import { localizedJudgingCategory, rubricsSchemas, RubricSchemaSection } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -17,10 +26,20 @@ interface Props {
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 
-const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) => {
+const Page: NextPage<Props> = ({
+  user,
+  division,
+  teams,
+  rubrics,
+  rooms,
+  sessions,
+  scoresheets
+}) => {
   const router = useRouter();
   const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
   const schema = rubricsSchemas[judgingCategory];
@@ -41,6 +60,10 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
       Object.entries(rubricValues).forEach(([key, entry]) => {
         rowValues[key] = entry.value;
       });
+      const roomId = sessions.find(
+        session => session.teamId?.toString() === rubric.teamId.toString()
+      )?.roomId;
+      const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
 
       if (judgingCategory === 'core-values') {
         scoresheets
@@ -54,7 +77,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
       const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
 
       const team = teams.find(t => t._id.toString() === rubric.teamId.toString());
-      return { id: rubric._id, team, ...rowValues, sum, rubricAwards };
+      return { id: rubric._id, team, room: roomName, ...rowValues, sum, rubricAwards };
     });
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -64,6 +87,12 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets }) 
       type: 'string',
       width: 80,
       valueGetter: (value, row) => row.team?.number
+    },
+    {
+      field: 'room',
+      headerName: 'חדר',
+      type: 'string',
+      width: 60
     },
     ...fields.map(
       field =>
@@ -152,6 +181,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
       },
       ctx
