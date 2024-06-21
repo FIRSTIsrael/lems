@@ -5,7 +5,12 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Division, SafeUser, JudgingCategory, Rubric, Team } from '@lems/types';
-import { localizedJudgingCategory } from '@lems/season';
+import {
+  localizedJudgingCategory,
+  rubricsSchemas,
+  RubricSchemaSection,
+  RubricsSchema
+} from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
@@ -20,30 +25,35 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, division, rubrics }) => {
   const router = useRouter();
-
-  const judgingCategory: JudgingCategory =
-    typeof router.query.judgingCategory === 'string'
-      ? (router.query.judgingCategory as JudgingCategory)
-      : 'core-values'; // No default, should error if invalid
+  const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
+  const schema = rubricsSchemas[judgingCategory];
+  const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
+    section.fields.map(field => ({ field: field.id, headerName: field.title }))
+  );
 
   const rows = rubrics
     .filter(rubric => rubric.category === judgingCategory)
     .map(rubric => {
-      const values = Object.keys(rubric.data?.values || {}).reduce(
-        (acc: { [key: string]: number }, key) => {
-          acc[key] = rubric.data?.values[key].value || 0;
-          return acc;
-        },
-        {}
-      );
+      const values = rubric.data?.values || {};
+      const newValues: { [key: string]: number } = {};
+      Object.entries(values).forEach(([key, entry]) => {
+        newValues[key] = entry.value;
+      });
       // Core values: add gp to values
       // Core values: add CV
-      const sum = Object.values(values).reduce((acc, current) => acc + current, 0);
-      return { _id: rubric._id, teamId: rubric.teamId, ...values, sum };
+      const sum = Object.values(newValues).reduce((acc, current) => acc + current, 0);
+      return { id: rubric._id, teamId: rubric.teamId, ...newValues, sum };
     });
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
-    //TODO: get keys from rubric schema, map over them to create cols
+    ...fields.map(
+      field =>
+        ({
+          ...field,
+          type: 'number',
+          width: 110
+        }) as GridColDef
+    ),
     {
       field: 'sum',
       headerName: 'סה"כ',
@@ -70,7 +80,22 @@ const Page: NextPage<Props> = ({ user, division, rubrics }) => {
         // error={connectionStatus === 'disconnected'}
         // action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
-      ></Layout>
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 20
+              }
+            }
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </Layout>
     </RoleAuthorizer>
   );
 };
@@ -83,7 +108,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`
+        rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`
       },
       ctx
     );
