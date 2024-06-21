@@ -156,7 +156,7 @@ const Page: NextPage<Props> = ({
               initialState={{
                 pagination: {
                   paginationModel: {
-                    pageSize: 12
+                    pageSize: 15
                   }
                 }
               }}
