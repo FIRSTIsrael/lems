@@ -222,13 +222,14 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         columns={columns}
         rowHeight={40}
         disableRowSelectionOnClick
+        hideFooter
         getRowClassName={params =>
           selectedTeams.includes(params.row.team.number) ? 'selected-team' : ''
         }
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 14
+              pageSize: 100
             }
           },
           sorting: {
@@ -236,6 +237,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
           }
         }}
         sx={{
+          maxHeight: 670,
           '& .selected-team': {
             backgroundColor: getBackgroundColor('#32a84c', 'light'),
             '&:hover': {
