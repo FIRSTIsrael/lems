@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
@@ -17,7 +17,7 @@ import {
   CoreValuesForm,
   JudgingCategoryTypes
 } from '@lems/types';
-import { range } from '@lems/utils/arrays';
+import { reorder } from '@lems/utils/arrays';
 import { localizedJudgingCategory } from '@lems/season';
 import CategoryDeliberationsGrid from '../../../../components/deliberations/category-deliberations-grid';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
@@ -25,8 +25,10 @@ import TeamPool from '../team-pool';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
+import { copyToDroppable } from '../../../../lib/utils/dnd';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import AwardList from '../award-list';
 
 interface Props {
   category: JudgingCategory;
@@ -52,8 +54,15 @@ const Page: NextPage<Props> = ({
   scoresheets
 }) => {
   const router = useRouter();
-  const [picklist, setPicklist] = useState<Array<WithId<Team> | string>>(
-    range(12).map(n => `מקום ${n + 1}`)
+  const availableTeams = teams.filter(t => t.registered).sort((a, b) => a.number - b.number);
+
+  const [picklists, setPicklists] = useState<{ [key: string]: Array<WithId<Team>> }>({});
+  const selectedTeams = useMemo<Array<number>>(
+    () =>
+      Object.values(picklists)
+        .flat()
+        .map(t => t.number),
+    [picklists]
   );
 
   return (
@@ -75,15 +84,51 @@ const Page: NextPage<Props> = ({
         <DragDropContext
           onDragEnd={result => {
             console.log(result);
+
             const { source, destination } = result;
             if (!destination) {
-              console.log('yo');
               return;
             }
 
             switch (source.droppableId) {
-              case 'teams':
-                console.log('hi');
+              case destination.droppableId:
+                setPicklists(current => ({
+                  ...current,
+                  [destination.droppableId]: reorder(
+                    current[destination.droppableId] || [],
+                    source.index,
+                    destination.index
+                  )
+                }));
+                break;
+              case 'teamPool':
+                if (
+                  picklists[destination.droppableId]?.find(
+                    t => t.number === availableTeams[source.index].number
+                  )
+                ) {
+                  // TODO: some visual cue for this being a duplicate team
+                  break;
+                }
+                setPicklists(current => ({
+                  ...current,
+                  [destination.droppableId]: copyToDroppable(
+                    availableTeams,
+                    current[destination.droppableId] || [],
+                    source,
+                    destination
+                  )
+                }));
+                break;
+              default:
+                // this.setState(
+                //   move(
+                //     this.state[source.droppableId],
+                //     this.state[destination.droppableId],
+                //     source,
+                //     destination
+                //   )
+                // );
                 break;
             }
           }}
@@ -97,41 +142,18 @@ const Page: NextPage<Props> = ({
                 scoresheets={scoresheets}
                 sessions={sessions}
                 teams={teams}
+                selectedTeams={selectedTeams}
                 cvForms={cvForms}
               />
             </Grid>
             <Grid xs={4}>
-              <Droppable key="picklist" droppableId="picklist">
-                {(provided, snapshot) => (
-                  <>
-                    <Paper sx={{ p: 2, height: '100%' }}>
-                      <Stack ref={provided.innerRef} {...provided.droppableProps} spacing={2}>
-                        {picklist.map(pick => (
-                          <Paper
-                            sx={{
-                              border: `2px ${typeof pick === 'string' ? 'dashed' : 'solid'} #ccc`,
-                              borderRadius: 2,
-                              minHeight: 40,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            {typeof pick === 'string' ? pick : pick.number}
-                          </Paper>
-                        ))}
-                      </Stack>
-                    </Paper>
-                    {provided.placeholder}
-                  </>
-                )}
-              </Droppable>
+              <AwardList id="categoryRankings" state={picklists['categoryRankings'] || []} />
             </Grid>
             <Grid xs={5}>
               <ScoresPerRoomChart division={division} height={210} />
             </Grid>
             <Grid xs={7}>
-              <TeamPool teams={teams.filter(t => t.registered)} />
+              <TeamPool teams={availableTeams} id="teamPool" />
             </Grid>
           </Grid>
         </DragDropContext>

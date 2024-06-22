@@ -12,10 +12,16 @@ import {
   CoreValuesForm
 } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
-
+import {
+  getBackgroundColor,
+  getHoverBackgroundColor,
+  getSelectedBackgroundColor,
+  getSelectedHoverBackgroundColor
+} from '../../lib/utils/theme';
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
   teams: Array<WithId<Team>>;
+  selectedTeams: Array<number>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -26,6 +32,7 @@ interface CategoryDeliberationsGridProps {
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   category,
   teams,
+  selectedTeams,
   rubrics,
   rooms,
   sessions,
@@ -213,6 +220,11 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       <DataGrid
         rows={rows}
         columns={columns}
+        rowHeight={40}
+        disableRowSelectionOnClick
+        getRowClassName={params =>
+          selectedTeams.includes(params.row.team.number) ? 'selected-team' : ''
+        }
         initialState={{
           pagination: {
             paginationModel: {
@@ -224,14 +236,18 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
           }
         }}
         sx={{
+          '& .selected-team': {
+            backgroundColor: getBackgroundColor('#32a84c', 'light'),
+            '&:hover': {
+              backgroundColor: getHoverBackgroundColor('#32a84c', 'light')
+            }
+          },
           '& .MuiDataGrid-columnHeaderTitle': {
             textOverflow: 'clip',
             whiteSpace: 'wrap',
             textAlign: 'center'
           }
         }}
-        rowHeight={40}
-        disableRowSelectionOnClick
       />
     </Paper>
   );

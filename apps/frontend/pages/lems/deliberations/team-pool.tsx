@@ -5,14 +5,19 @@ import { Team } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 interface TeamPoolItemProps {
+  droppableId: string;
   team: WithId<Team>;
   index: number;
 }
 
-const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ team, index }) => {
+const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index }) => {
   return (
     <Grid xs={1}>
-      <Draggable key={team._id.toString()} draggableId={team._id.toString()} index={index}>
+      <Draggable
+        key={team._id.toString() + droppableId}
+        draggableId={team._id.toString()}
+        index={index}
+      >
         {(provided, snapshot) => (
           <div ref={provided.innerRef}>
             <Paper
@@ -47,6 +52,8 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ team, index }) => {
               </Paper>
             )}
           </div>
+          // There is no placeholder here. This is on purpose, ignore the warning.
+          // Don't think so? Add it and see what happens.
         )}
       </Draggable>
     </Grid>
@@ -55,12 +62,13 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ team, index }) => {
 
 interface TeamPoolProps {
   teams: Array<WithId<Team>>;
+  id: string;
 }
 
-const TeamPool: React.FC<TeamPoolProps> = ({ teams }) => {
+const TeamPool: React.FC<TeamPoolProps> = ({ teams, id }) => {
   return (
     <Paper sx={{ p: 2, height: '100%' }}>
-      <Droppable droppableId="team-pool" isDropDisabled>
+      <Droppable droppableId={id} isDropDisabled>
         {provided => (
           <Grid
             container
@@ -72,11 +80,9 @@ const TeamPool: React.FC<TeamPoolProps> = ({ teams }) => {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {teams
-              .sort((a, b) => a.number - b.number)
-              .map((team, index) => (
-                <TeamPoolItem team={team} index={index} />
-              ))}
+            {teams.map((team, index) => (
+              <TeamPoolItem team={team} index={index} droppableId={id} />
+            ))}
           </Grid>
         )}
       </Droppable>
