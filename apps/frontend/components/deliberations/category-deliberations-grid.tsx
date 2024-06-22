@@ -129,7 +129,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       type: 'number',
       width: 60,
       headerAlign: 'center',
-      align: 'center'
+      align: 'center',
+      cellClassName: 'sum-cell'
     },
     ...awards.map(
       award =>
@@ -198,7 +199,17 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   ];
 
   return (
-    <Paper component={Box} width="100%" height="100%">
+    <Paper
+      component={Box}
+      width="100%"
+      height="100%"
+      sx={{
+        '& .sum-cell': {
+          backgroundColor: '#eeeeee99',
+          fontWeight: '500'
+        }
+      }}
+    >
       <DataGrid
         rows={rows}
         columns={columns}
