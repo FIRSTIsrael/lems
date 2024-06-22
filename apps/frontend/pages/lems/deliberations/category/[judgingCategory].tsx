@@ -14,7 +14,8 @@ import {
   Scoresheet,
   JudgingSession,
   JudgingRoom,
-  CoreValuesForm
+  CoreValuesForm,
+  JudgingCategoryTypes
 } from '@lems/types';
 import { range } from '@lems/utils/arrays';
 import { localizedJudgingCategory } from '@lems/season';
@@ -143,6 +144,15 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+
+    if (
+      !(typeof ctx.params?.judgingCategory === 'string') ||
+      !JudgingCategoryTypes.includes(ctx.params?.judgingCategory as JudgingCategory)
+    ) {
+      return {
+        notFound: true
+      };
+    }
 
     const data = await serverSideGetRequests(
       {
