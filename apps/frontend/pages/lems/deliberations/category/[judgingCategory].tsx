@@ -29,6 +29,7 @@ import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 interface Props {
+  category: JudgingCategory;
   user: WithId<SafeUser>;
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
@@ -40,6 +41,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({
+  category,
   user,
   division,
   teams,
@@ -50,7 +52,6 @@ const Page: NextPage<Props> = ({
   scoresheets
 }) => {
   const router = useRouter();
-  const judgingCategory: JudgingCategory = router.query.judgingCategory as JudgingCategory;
   const [picklist, setPicklist] = useState<Array<WithId<Team> | string>>(
     range(12).map(n => `מקום ${n + 1}`)
   );
@@ -66,9 +67,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={1900}
-        title={`דיון תחום ${
-          localizedJudgingCategory[judgingCategory as JudgingCategory].name
-        } | בית ${division.name}`}
+        title={`דיון תחום ${localizedJudgingCategory[category].name} | בית ${division.name}`}
         // error={connectionStatus === 'disconnected'}
         // action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -92,7 +91,7 @@ const Page: NextPage<Props> = ({
           <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
             <Grid xs={8}>
               <CategoryDeliberationsGrid
-                category={judgingCategory}
+                category={category}
                 rooms={rooms}
                 rubrics={rubrics}
                 scoresheets={scoresheets}
@@ -144,14 +143,10 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const category = ctx.params?.judgingCategory as JudgingCategory;
 
-    if (
-      !(typeof ctx.params?.judgingCategory === 'string') ||
-      !JudgingCategoryTypes.includes(ctx.params?.judgingCategory as JudgingCategory)
-    ) {
-      return {
-        notFound: true
-      };
+    if (!JudgingCategoryTypes.includes(category)) {
+      return { notFound: true };
     }
 
     const data = await serverSideGetRequests(
@@ -167,7 +162,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     );
 
-    return { props: { user, ...data } };
+    return { props: { user, ...data, category } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
