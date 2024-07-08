@@ -37,7 +37,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
   const rowCompleted = rowSessions.every(s => s.status === 'completed');
 
   return (
-    <TableRow sx={{ backgroundColor: rowCompleted ? '#eee' : undefined }}>
+    <TableRow sx={{ backgroundColor: rowCompleted ? '#f4f4f5' : undefined }}>
       <TableCell>{startTime.format('HH:mm')}</TableCell>
       <TableCell>{startTime.add(JUDGING_SESSION_LENGTH, 'seconds').format('HH:mm')}</TableCell>
       {rooms.map(room => {
@@ -48,7 +48,7 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
           <TableCell
             key={room._id.toString()}
             align="center"
-            sx={{ backgroundColor: session?.status === 'completed' ? '#eee' : undefined }}
+            sx={{ backgroundColor: session?.status === 'completed' ? '#f4f4f5' : undefined }}
           >
             {team && <StyledTeamTooltip team={team} />}
           </TableCell>

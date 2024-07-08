@@ -40,7 +40,7 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
   return (
     <TableRow
       sx={{
-        backgroundColor: match.status === 'completed' ? '#eee' : undefined,
+        backgroundColor: match.status === 'completed' ? '#f4f4f5' : undefined,
         '&:last-child td, &:last-child th': { border: 0 }
       }}
     >
