@@ -270,6 +270,9 @@ export const getInitialDivisionState = (division: WithId<Division>): DivisionSta
         showCurrentMatch: 'timer',
         showPreviousMatch: true,
         showSponsors: false
+      },
+      awardsPresentation: {
+        awardWinnerSlideStyle: 'both'
       }
     },
     presentations,

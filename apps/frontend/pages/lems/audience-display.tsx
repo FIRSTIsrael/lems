@@ -191,6 +191,9 @@ const Page: NextPage<Props> = ({
             height="100%"
             width="100%"
             division={division}
+            awardWinnerSlideStyle={
+              divisionState.audienceDisplay.awardsPresentation.awardWinnerSlideStyle
+            }
           />
         )}
         {divisionState.audienceDisplay.screen === 'message' && (

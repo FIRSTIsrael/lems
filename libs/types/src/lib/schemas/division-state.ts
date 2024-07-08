@@ -15,10 +15,15 @@ export interface ScoreboardState {
   showSponsors: boolean;
 }
 
+export interface AwardsPresentationState {
+  awardWinnerSlideStyle: 'chroma' | 'full' | 'both';
+}
+
 export interface AudienceDisplayState {
   screen: AudienceDisplayScreen;
   message: string;
   scoreboard: ScoreboardState;
+  awardsPresentation: AwardsPresentationState;
 }
 
 export interface DivisionState {
