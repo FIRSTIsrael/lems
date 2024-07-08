@@ -174,7 +174,7 @@ const extractSessionsFromJudgingBlock = (
       .set('second', 0);
 
     for (let i = 3; i < roomNames.length + 3; i++) {
-      const room = rooms.find(table => table.name === roomNames[i - 3]);
+      const room = rooms.find(room => room.name === roomNames[i - 3]);
       const session: JudgingSession = {
         divisionId: division._id,
         number,
@@ -194,6 +194,7 @@ const extractSessionsFromJudgingBlock = (
     }
   });
 
+  console.log(sessions);
   return sessions;
 };
 

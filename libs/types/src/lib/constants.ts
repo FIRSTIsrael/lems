@@ -38,6 +38,7 @@ export const OptionalAwardTypes = [
   'impact',
   'volunteerOfTheYear',
   'excellenceInEngineering',
+  'judgesAward',
   ...CoreValuesAwardsTypes
 ] as const;
 export type OptionalAwards = (typeof CoreValuesAwardsTypes)[number];
