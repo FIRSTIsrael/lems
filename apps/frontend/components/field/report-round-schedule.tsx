@@ -38,7 +38,12 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
   const startTime = dayjs(match.scheduledTime);
 
   return (
-    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <TableRow
+      sx={{
+        backgroundColor: match.status === 'completed' ? '#f4f4f5' : undefined,
+        '&:last-child td, &:last-child th': { border: 0 }
+      }}
+    >
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{startTime.format('HH:mm')}</TableCell>
       <TableCell align="center">{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
