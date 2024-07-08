@@ -212,7 +212,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       height="100%"
       sx={{
         '& .sum-cell': {
-          backgroundColor: '#eeeeee99',
+          backgroundColor: '#f4f4f5',
           fontWeight: '500'
         }
       }}

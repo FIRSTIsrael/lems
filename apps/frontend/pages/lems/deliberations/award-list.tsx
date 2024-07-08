@@ -64,7 +64,10 @@ const AwardList: React.FC<AwardListProps> = ({ state, id }) => {
               display: 'flex',
               flexDirection: 'column',
               borderRadius: 2,
-              ...(snapshot.isDraggingOver && { border: '3px dashed #ccc', backgroundColor: '#eee' })
+              ...(snapshot.isDraggingOver && {
+                border: '3px dashed #ccc',
+                backgroundColor: '#f4f4f5'
+              })
             }}
             ref={provided.innerRef}
             {...provided.droppableProps}
