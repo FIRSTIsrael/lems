@@ -1,9 +1,10 @@
+import { ObjectId } from 'mongodb';
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import fileUpload from 'express-fileupload';
 import { uploadFile } from '../../../../lib/upload';
 import * as db from '@lems/database';
-import { ObjectId } from 'mongodb';
+import { randomAlphanumericString } from '@lems/utils/random';
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,7 +22,10 @@ router.post(
       return;
     }
 
-    const key = `${req.division._id}/teams/${req.teamNumber}/team-info.pdf`;
+    const fileName = team.profileDocumentUrl
+      ? team.profileDocumentUrl.substring(team.profileDocumentUrl.lastIndexOf('/') + 1)
+      : `${req.teamNumber}-${randomAlphanumericString(12)}`;
+    const key = `${req.event._id}/teams/${req.teamNumber}/${fileName}.pdf`;
     const path = await uploadFile(pdfData, key);
     const url = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/${key}`;
     console.log('Successfully uploaded object: ' + path);
