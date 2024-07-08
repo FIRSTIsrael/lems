@@ -32,19 +32,24 @@ const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
   rooms,
   teams
 }) => {
-  const startTime = dayjs(sessions.find(s => s.number === number)?.scheduledTime);
+  const rowSessions = sessions.filter(s => s.number === number);
+  const startTime = dayjs(rowSessions[0].scheduledTime);
+  const rowCompleted = rowSessions.every(s => s.status === 'completed');
 
   return (
-    <TableRow>
+    <TableRow sx={{ backgroundColor: rowCompleted ? '#eee' : undefined }}>
       <TableCell>{startTime.format('HH:mm')}</TableCell>
       <TableCell>{startTime.add(JUDGING_SESSION_LENGTH, 'seconds').format('HH:mm')}</TableCell>
-      {rooms.map(r => {
-        const team = teams.find(
-          t => t._id === sessions.find(s => s.number === number && s.roomId === r._id)?.teamId
-        );
+      {rooms.map(room => {
+        const session = sessions.find(s => s.number === number && s.roomId === room._id);
+        const team = teams.find(t => t._id === session?.teamId);
 
         return (
-          <TableCell key={r._id.toString()} align="center">
+          <TableCell
+            key={room._id.toString()}
+            align="center"
+            sx={{ backgroundColor: session?.status === 'completed' ? '#eee' : undefined }}
+          >
             {team && <StyledTeamTooltip team={team} />}
           </TableCell>
         );
@@ -105,7 +110,7 @@ const ReportJudgingSchedule: React.FC<ReportJudgingScheduleProps> = ({
           {[...new Set(sessions.flatMap(s => s.number))].map(row => {
             const rowTime = dayjs(sessions.find(s => s.number === row)?.scheduledTime);
             const prevRowTime = dayjs(sessions.find(s => s.number === row - 1)?.scheduledTime);
-            const rowSchedule =
+            const rowGeneralSchedule =
               judgesGeneralSchedule.filter(
                 p => dayjs(p.startTime).isBefore(rowTime) && dayjs(p.startTime).isAfter(prevRowTime)
               ) || [];
@@ -113,7 +118,7 @@ const ReportJudgingSchedule: React.FC<ReportJudgingScheduleProps> = ({
             return (
               <>
                 {showGeneralSchedule &&
-                  rowSchedule.map(rs => (
+                  rowGeneralSchedule.map(rs => (
                     <GeneralScheduleRow key={rs.name} schedule={rs} colSpan={rooms.length} />
                   ))}
                 <JudgingScheduleRow
