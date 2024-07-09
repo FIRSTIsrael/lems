@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
@@ -20,6 +21,8 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
   divisionState,
   socket
 }) => {
+  const router = useRouter();
+
   const [awardWinnerSlideStyle, setAwardWinnerSlideStyle] = useState<'chroma' | 'full' | 'both'>(
     divisionState.audienceDisplay.awardsPresentation.awardWinnerSlideStyle
   );
@@ -34,7 +37,11 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
       divisionState.divisionId.toString(),
       { awardsPresentation: newAwardsPresentation },
       response => {
-        if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
+        } else {
+          router.reload();
+        }
       }
     );
   };
