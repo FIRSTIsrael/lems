@@ -96,7 +96,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
     return groups
       .filter(group => group.length > 0)
       .filter(group => !group.some(session => session.status === 'completed'))
-      .filter(group => group.some(session => session.status !== 'not-started'))
+      .filter(group => group.some(session => session.status === 'not-started'))
       .filter(group => currentTime <= dayjs(group[0].scheduledTime).subtract(20, 'minutes'));
   }, [sessions, currentTime]);
 
