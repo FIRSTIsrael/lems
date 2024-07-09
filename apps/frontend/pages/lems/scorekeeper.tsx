@@ -27,7 +27,8 @@ import VideoSwitch from '../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../components/field/scorekeeper/presentation-controller';
 import AwardsPresentation from '../../components/presentations/awards-presentation';
 import MessageEditor from '../../components/field/scorekeeper/message-editor';
-import DisplayConfigurator from '../../components/field/scorekeeper/display-configurator';
+import ScoreboardConfigurator from '../../components/field/scorekeeper/scoreboard-configurator';
+import AwardsPresentationConfigurator from '../../components/field/scorekeeper/awards-presentation-configurator';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -176,30 +177,34 @@ const Page: NextPage<Props> = ({
           <TabPanel value="2">
             <Stack alignItems="center">
               <VideoSwitch divisionState={divisionState} socket={socket} />
-              {divisionState.audienceDisplay.screen === 'awards' &&
-                divisionState.presentations['awards'].enabled && (
-                  <PresentationController
-                    division={division}
-                    socket={socket}
-                    presentationId="awards"
-                    divisionState={divisionState}
-                  >
-                    <AwardsPresentation
+              {divisionState.audienceDisplay.screen === 'awards' && (
+                <>
+                  {divisionState.presentations['awards'].enabled && (
+                    <PresentationController
                       division={division}
-                      height={108 * 2.5}
-                      width={192 * 2.5}
-                      position="relative"
-                      awardWinnerSlideStyle={
-                        divisionState.audienceDisplay.awardsPresentation.awardWinnerSlideStyle
-                      }
-                    />
-                  </PresentationController>
-                )}
+                      socket={socket}
+                      presentationId="awards"
+                      divisionState={divisionState}
+                    >
+                      <AwardsPresentation
+                        division={division}
+                        height={108 * 2.5}
+                        width={192 * 2.5}
+                        position="relative"
+                        awardWinnerSlideStyle={
+                          divisionState.audienceDisplay.awardsPresentation.awardWinnerSlideStyle
+                        }
+                      />
+                    </PresentationController>
+                  )}
+                  <AwardsPresentationConfigurator divisionState={divisionState} socket={socket} />
+                </>
+              )}
               {divisionState.audienceDisplay.screen === 'message' && (
                 <MessageEditor divisionState={divisionState} socket={socket} />
               )}
               {divisionState.audienceDisplay.screen === 'scores' && (
-                <DisplayConfigurator divisionState={divisionState} socket={socket} />
+                <ScoreboardConfigurator divisionState={divisionState} socket={socket} />
               )}
             </Stack>
           </TabPanel>
