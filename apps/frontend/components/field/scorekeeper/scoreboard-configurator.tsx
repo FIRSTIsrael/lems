@@ -8,17 +8,18 @@ import {
   DivisionState,
   WSServerEmittedEvents,
   WSClientEmittedEvents,
-  ScoreboardState,
-  AwardsPresentationState,
-  AudienceDisplayState
+  ScoreboardState
 } from '@lems/types';
 
-interface DisplayConfiguratorProps {
+interface ScoreboardConfiguratorProps {
   divisionState: WithId<DivisionState>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const DisplayConfigurator: React.FC<DisplayConfiguratorProps> = ({ divisionState, socket }) => {
+const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
+  divisionState,
+  socket
+}) => {
   const [showCurrentMatch, setShowCurrentMatch] = useState<false | 'no-timer' | 'timer'>(
     divisionState.audienceDisplay.scoreboard.showCurrentMatch
   );
@@ -28,9 +29,6 @@ const DisplayConfigurator: React.FC<DisplayConfiguratorProps> = ({ divisionState
   const [showSponsors, setShowSponsors] = useState<boolean>(
     divisionState.audienceDisplay.scoreboard.showSponsors
   );
-  const [awardWinnerSlideStyle, setAwardWinnerSlideStyle] = useState<'chroma' | 'full' | 'both'>(
-    divisionState.audienceDisplay.awardsPresentation.awardWinnerSlideStyle
-  );
 
   const updateScoreboardSettings = () => {
     const newScoreboardSettings: ScoreboardState = {
@@ -38,21 +36,11 @@ const DisplayConfigurator: React.FC<DisplayConfiguratorProps> = ({ divisionState
       showPreviousMatch: showPreviousMatch,
       showSponsors: showSponsors
     };
-    updateAudienceDisplayKey('scoreboard', newScoreboardSettings);
-  };
 
-  const updateAwardsPresentationSetting = () => {
-    const newAwardsPresentation: AwardsPresentationState = {
-      awardWinnerSlideStyle: awardWinnerSlideStyle
-    };
-    updateAudienceDisplayKey('awardsPresentation', newAwardsPresentation);
-  };
-
-  const updateAudienceDisplayKey = (key: keyof AudienceDisplayState, data: any) => {
     socket.emit(
       'updateAudienceDisplay',
       divisionState.divisionId.toString(),
-      { [key]: data },
+      { scoreboard: newScoreboardSettings },
       response => {
         if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
       }
@@ -128,36 +116,9 @@ const DisplayConfigurator: React.FC<DisplayConfiguratorProps> = ({ divisionState
             שמור
           </Button>
         </Grid>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
-          <Typography gutterBottom>סגנון שקופיות זוכים</Typography>
-          <ToggleButtonGroup
-            value={awardWinnerSlideStyle}
-            exclusive
-            onChange={(division, value) => value !== null && setAwardWinnerSlideStyle(value)}
-          >
-            <ToggleButton sx={{ minWidth: 50 }} value="chroma">
-              כרומה
-            </ToggleButton>
-            <ToggleButton sx={{ minWidth: 50 }} value="full">
-              מלא
-            </ToggleButton>
-            <ToggleButton sx={{ minWidth: 50 }} value="both">
-              שניהם
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Grid>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
-          <Button
-            sx={{ minWidth: 200 }}
-            variant="contained"
-            onClick={() => updateAwardsPresentationSetting()}
-          >
-            שמור
-          </Button>
-        </Grid>
       </Grid>
     </Paper>
   );
 };
 
-export default DisplayConfigurator;
+export default ScoreboardConfigurator;
