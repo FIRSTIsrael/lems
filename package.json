@@ -36,7 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "merge-anything": "^5.1.7",
     "mongodb": "^6.8.0",
-    "next": "14.2.3",
+    "next": "14.2.5",
     "node-schedule": "^2.1.1",
     "notistack": "^3.0.1",
     "promise": "^8.3.0",
