@@ -144,6 +144,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ({
           ...award,
           type: 'boolean',
+          editable: true,
           width: 65
         }) as GridColDef
     ),
@@ -212,7 +213,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       height="100%"
       sx={{
         '& .sum-cell': {
-          backgroundColor: '#f4f4f5',
+          backgroundColor: '#f4f4f4',
           fontWeight: '500'
         }
       }}

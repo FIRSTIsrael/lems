@@ -25,6 +25,8 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index })
                 border: `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,
                 borderRadius: 1,
                 minHeight: 35,
+                minWidth: 100,
+                maxWidth: 120,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

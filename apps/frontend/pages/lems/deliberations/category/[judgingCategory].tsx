@@ -3,8 +3,24 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Box, Paper, Stack } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Stack,
+  Typography,
+  CircularProgress,
+  makeStyles,
+  Button,
+  Divider,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {
   Division,
   SafeUser,
@@ -29,6 +45,7 @@ import { copyToDroppable } from '../../../../lib/utils/dnd';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import AwardList from '../award-list';
+import TeamSelection from 'apps/frontend/components/general/team-selection';
 
 interface Props {
   category: JudgingCategory;
@@ -146,8 +163,115 @@ const Page: NextPage<Props> = ({
                 cvForms={cvForms}
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={1.5}>
               <AwardList id="categoryRankings" state={picklists['categoryRankings'] || []} />
+            </Grid>
+            <Grid xs={2.5}>
+              <Stack component={Paper} spacing={3} p={2} sx={{ height: '100%' }}>
+                <Box
+                  sx={{
+                    marginTop: 5,
+                    position: 'relative',
+                    display: 'inline-flex',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <CircularProgress
+                    variant="determinate"
+                    value={80}
+                    size={250}
+                    sx={{ '& .MuiCircularProgress-circle': { strokeLinecap: 'round' } }}
+                  />
+                  <Box
+                    sx={{
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      position: 'absolute',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Typography fontSize="3.5rem" fontWeight={600} textAlign="center">
+                      44:37
+                    </Typography>
+                  </Box>
+                </Box>
+                <Divider />
+                <Box display="flex" alignItems="center">
+                  <FormControl sx={{ m: 1, width: '100%' }} variant="outlined">
+                    <InputLabel>חיפוש קבוצה</InputLabel>
+                    <OutlinedInput
+                      id="outlined-adornment-password"
+                      type="text"
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="search"
+                            onClick={() => ({})}
+                            onMouseDown={() => ({})}
+                            edge="end"
+                          >
+                            {/* If empty should be clear button */}
+                            <SearchOutlinedIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="חיפוש קבוצה"
+                    />
+                  </FormControl>
+                </Box>
+                <Divider />
+                <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="center">
+                  <TeamSelection teams={teams} setTeam={() => ({})} value={null} fullWidth />
+                  <Typography>מול</Typography>
+                  <TeamSelection teams={teams} setTeam={() => ({})} value={null} fullWidth />
+                </Stack>
+                <Stack
+                  spacing={2}
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-around"
+                  paddingX="8px"
+                >
+                  <Button variant="contained" fullWidth>
+                    סימון
+                  </Button>
+                  <Button variant="contained" fullWidth>
+                    ניקוי
+                  </Button>
+                  <Button variant="contained" fullWidth>
+                    השוואה
+                  </Button>
+                </Stack>
+                <Divider />
+                <Droppable droppableId="trash">
+                  {(provided, snapshot) => (
+                    <Box
+                      sx={{
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 2,
+                        border: snapshot.isDraggingOver ? '3px dashed #ccc' : '',
+                        backgroundColor: '#f4f4f4'
+                      }}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      <DeleteOutlinedIcon
+                        sx={{ marginY: '5px', height: 40, width: 40, color: '#aaa' }}
+                      />
+                    </Box>
+                  )}
+                </Droppable>
+              </Stack>
             </Grid>
             <Grid xs={5}>
               <ScoresPerRoomChart division={division} height={210} />
