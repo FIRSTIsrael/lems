@@ -13,3 +13,4 @@ export * from './lib/crud/awards';
 export * from './lib/crud/scoresheets';
 export * from './lib/crud/tickets';
 export * from './lib/crud/core-values-forms';
+export * from './lib/crud/deliberations';

@@ -10,7 +10,12 @@ import {
   RobotGameMatch,
   JudgingRoom,
   JudgingSession,
-  RobotGameMatchStage
+  JudgingDeliberation,
+  RobotGameMatchStage,
+  AwardNameTypes,
+  OptionalAwardTypes,
+  JudgingCategoryTypes,
+  AwardNames
 } from '@lems/types';
 import { Line, getBlock, extractBlocksFromFile } from '../csv';
 
@@ -276,4 +281,30 @@ export const getInitialDivisionState = (division: WithId<Division>): DivisionSta
     completed: false,
     allowTeamExports: false
   };
+};
+
+export const getDefaultDeliberations = (division: WithId<Division>): Array<JudgingDeliberation> => {
+  const categoryDeliberations: Array<JudgingDeliberation> = JudgingCategoryTypes.map(category => ({
+    divisionId: division._id,
+    category,
+    isFinalDeliberation: false,
+    status: 'not-started',
+    awards: [
+      {
+        awardName: category as AwardNames,
+        pickList: []
+      },
+      ...(category === 'core-values' &&
+        OptionalAwardTypes.map(awardName => ({ awardName, pickList: [] })))
+    ]
+  }));
+
+  const finalDeliberation: JudgingDeliberation = {
+    divisionId: division._id,
+    isFinalDeliberation: true,
+    status: 'not-started',
+    awards: AwardNameTypes.map(awardName => ({ awardName, pickList: [] }))
+  };
+
+  return [finalDeliberation, ...categoryDeliberations];
 };
