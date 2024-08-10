@@ -93,11 +93,11 @@ const MissionClause: React.FC<MissionClauseProps> = ({
                 <ToggleButtonGroup
                   exclusive={!clause.multiSelect}
                   value={field.value}
-                  onChange={(_e, value) =>
-                    value !== null &&
-                    ensureArray(value).length > 0 &&
-                    form.setFieldValue(field.name, value)
-                  }
+                  onChange={(_e, value) => {
+                    if (value === null) return;
+                    if (clause.multiSelect && ensureArray(value).length === 0) return;
+                    form.setFieldValue(field.name, value);
+                  }}
                   disabled={readOnly}
                 >
                   {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
