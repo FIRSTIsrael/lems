@@ -5,9 +5,11 @@ import {
   MissionClauseSchema,
   localizedScoresheet
 } from '@lems/season';
+import { ensureArray } from '@lems/utils/arrays';
 import {
   Box,
   Paper,
+  Stack,
   ThemeProvider,
   ToggleButton,
   ToggleButtonGroup,
@@ -18,6 +20,8 @@ import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
 import CustomNumberInput from './number-input';
+import NoEquipmentImage from '../../../public/assets/scoresheet/no-equipment.svg';
+
 interface MissionClauseProps {
   missionIndex: number;
   clauseIndex: number;
@@ -57,7 +61,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         }
       })}
     >
-      <Grid xs={10} mt={2} ml={3}>
+      <Grid xs={10} ml={3}>
         <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
       </Grid>
       <Grid xs={12} ml={3}>
@@ -87,9 +91,13 @@ const MissionClause: React.FC<MissionClauseProps> = ({
 
               return (
                 <ToggleButtonGroup
-                  exclusive
+                  exclusive={!clause.multiSelect}
                   value={field.value}
-                  onChange={(_e, value) => value !== null && form.setFieldValue(field.name, value)}
+                  onChange={(_e, value) => {
+                    if (value === null) return;
+                    if (clause.multiSelect && ensureArray(value).length === 0) return;
+                    form.setFieldValue(field.name, value);
+                  }}
                   disabled={readOnly}
                 >
                   {localizedMission.clauses[clauseIndex].labels?.map((label, index) => (
@@ -154,15 +162,8 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
   return (
     localizedMission && (
-      <Grid
-        component={Paper}
-        container
-        spacing={0}
-        pb={2}
-        id={mission.id}
-        sx={{ scrollMarginTop: 300 }}
-      >
-        <Grid container xs={8} spacing={0} ref={ref}>
+      <Grid component={Paper} container pb={2} id={mission.id} sx={{ scrollMarginTop: 300 }}>
+        <Grid container xs={8} ref={ref}>
           <Grid
             py={1}
             xs={2}
@@ -175,14 +176,23 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               {mission.id.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid xs={6} pt={1}>
-            <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
-              {localizedMission.title}
-            </Typography>
+          <Grid xs={10} pt={1}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
+                {localizedMission.title}
+              </Typography>
+              {mission.noEquipment && (
+                <Image src={NoEquipmentImage} width={35} height={35} alt="איסור ציוד" />
+              )}
+            </Stack>
           </Grid>
-          <Grid xs={12}>
-            <Typography fontSize="1rem">{localizedMission.description}</Typography>
-          </Grid>
+          {localizedMission.description && (
+            <Grid xs={12}>
+              <Typography fontSize="1rem" fontWeight={600} mt={1} ml={2}>
+                {localizedMission.description}
+              </Typography>
+            </Grid>
+          )}
           {mission.clauses.map((clause, index) => (
             <MissionClause
               key={index}
@@ -216,7 +226,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               </Grid>
             ))}
         </Grid>
-        <Grid component={Box} borderRadius={8} p={2} xs={4}>
+        <Grid borderRadius={8} p={2} xs={4}>
           <Image
             src={src}
             width={0}
@@ -224,7 +234,6 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
             sizes="100vw"
             alt={`תמונה של משימה ${mission.id}`}
             style={{
-              objectFit: 'cover',
               width: '100%',
               height: 'auto'
             }}

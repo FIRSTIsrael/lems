@@ -45,3 +45,4 @@ Thumbs.db
 http-log.log
 
 .nx/cache
+.nx/workspace-data

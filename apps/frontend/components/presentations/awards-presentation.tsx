@@ -17,6 +17,7 @@ interface AwardsPresentationProps extends BoxProps {
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;
+  awardWinnerSlideStyle?: 'chroma' | 'full' | 'both';
 }
 
 const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
@@ -29,6 +30,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
       },
       onViewUpdate,
       enableReinitialize,
+      awardWinnerSlideStyle = 'both',
       ...props
     },
     ref
@@ -67,18 +69,22 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
             {sortedAwards.map(award => {
               return (
                 <React.Fragment key={award.place}>
-                  <AwardWinnerChromaSlide
-                    name={`פרס ${localized.name}`}
-                    place={sortedAwards.length > 1 ? award.place : undefined}
-                    winner={award.winner || ''}
-                    color={division.color}
-                  />
-                  <AwardWinnerSlide
-                    name={`פרס ${localized.name}`}
-                    place={sortedAwards.length > 1 ? award.place : undefined}
-                    winner={award.winner || ''}
-                    color={division.color}
-                  />
+                  {['chroma', 'both'].includes(awardWinnerSlideStyle) && (
+                    <AwardWinnerChromaSlide
+                      name={`פרס ${localized.name}`}
+                      place={sortedAwards.length > 1 ? award.place : undefined}
+                      winner={award.winner || ''}
+                      color={division.color}
+                    />
+                  )}
+                  {['full', 'both'].includes(awardWinnerSlideStyle) && (
+                    <AwardWinnerSlide
+                      name={`פרס ${localized.name}`}
+                      place={sortedAwards.length > 1 ? award.place : undefined}
+                      winner={award.winner || ''}
+                      color={division.color}
+                    />
+                  )}
                 </React.Fragment>
               );
             })}

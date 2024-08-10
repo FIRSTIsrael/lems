@@ -40,11 +40,11 @@ const TeamInformationChart: React.FC<TeamInformationChartProps> = ({ division, t
           <TableBody>
             <TableRow>
               <TableCell>ניקוד גבוה ביותר (רובוט)</TableCell>
-              <TableCell>{Number(data.robotPerformance.maxScore.toFixed(2))}</TableCell>
+              <TableCell>{Number(data.robotPerformance?.maxScore?.toFixed(2))}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>סטיית תקן יחסית (רובוט)</TableCell>
-              <TableCell>{Number(data.robotPerformance.relStdDev.toFixed(2)) + '%'}</TableCell>
+              <TableCell>{Number(data.robotPerformance?.relStdDev?.toFixed(2)) + '%'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>פרסים</TableCell>

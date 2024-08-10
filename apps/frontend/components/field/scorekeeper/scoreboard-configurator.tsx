@@ -42,7 +42,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
       divisionState.divisionId.toString(),
       { scoreboard: newScoreboardSettings },
       response => {
-        if (!response.ok) enqueueSnackbar('אופס, עדכון מסך הניקוד נכשל.', { variant: 'error' });
+        if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
       }
     );
   };

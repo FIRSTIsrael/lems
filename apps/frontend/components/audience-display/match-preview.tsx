@@ -41,8 +41,8 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
             />
           </Grid>
           <Grid xs={6} display="flex" alignItems="center" justifyContent="center">
-            <Typography fontSize="6rem" fontWeight={700}>
-              מקצה {localizedMatchStage[match.stage]} #{match.number}
+            <Typography fontSize="5rem" fontWeight={700}>
+              סבב {localizedMatchStage[match.stage]} #{match.round}
             </Typography>
           </Grid>
           <Grid xs={3} position="relative">
@@ -55,7 +55,7 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
           </Grid>
           <Grid xs={12}>
             <Typography fontSize="5rem" fontWeight={700} color="text.secondary">
-              סבב {match.round}
+              מקצה #{match.number}
             </Typography>
           </Grid>
           <Grid

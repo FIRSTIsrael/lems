@@ -84,7 +84,7 @@ export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const CATEGORY_DELIBERATION_LENGTH = 45 * 60;
 export const FINAL_DELIBERATION_LENGTH = 30 * 60;
-export const SEASON_NAME = 'MASTERPIECE℠';
+export const SEASON_NAME = 'SUBMERGED℠';
 
 export const MATCH_AUTOLOAD_THRESHOLD = 10;
 
