@@ -16,6 +16,7 @@ import ticketsRouter from './tickets';
 import cvFormsRouter from './cv-forms';
 import exportRouter from './export';
 import insightsRouter from './insights';
+import deliberationsRouter from './deliberations';
 
 const router = express.Router({ mergeParams: true });
 
@@ -75,5 +76,7 @@ router.use('/:divisionId/cv-forms', cvFormsRouter);
 router.use('/:divisionId/export', exportRouter);
 
 router.use('/:divisionId/insights', insightsRouter);
+
+router.use('/:divisionId/deliberations', deliberationsRouter);
 
 export default router;

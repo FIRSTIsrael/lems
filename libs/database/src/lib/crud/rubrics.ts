@@ -14,6 +14,10 @@ export const getDivisionRubrics = (divisionId: ObjectId) => {
   return db.collection<Rubric<JudgingCategory>>('rubrics').find({ divisionId }).toArray();
 };
 
+export const getDivisionRubricsFromCategory = (divisionId: ObjectId, category: JudgingCategory) => {
+  return db.collection<Rubric<JudgingCategory>>('rubrics').find({ divisionId, category }).toArray();
+};
+
 export const addRubric = (rubric: Rubric<JudgingCategory>) => {
   return db
     .collection<Rubric<JudgingCategory>>('rubrics')

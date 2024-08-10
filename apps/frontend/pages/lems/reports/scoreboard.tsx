@@ -168,6 +168,7 @@ const Page: NextPage<Props> = ({
             disableColumnMenu
             disableColumnFilter
             disableColumnSelector
+            disableRowSelectionOnClick
           />
         </Paper>
       </Layout>

@@ -47,7 +47,7 @@ interface RubricFormProps {
   division: WithId<Division>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
-  schema: RubricsSchema<JudgingCategory>;
+  schema: RubricsSchema;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   hideTitle?: boolean;
