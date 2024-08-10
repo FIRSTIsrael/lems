@@ -1,4 +1,5 @@
 import { ScoresheetSchema, ScoresheetError } from './scoresheet-types';
+import { ensureArray } from '@lems/utils/arrays';
 
 export const scoresheet: ScoresheetSchema = {
   season: 'SUBMERGED℠',
@@ -22,7 +23,8 @@ export const scoresheet: ScoresheetSchema = {
         if (clause2) points += 10;
         if (clause3) points += 20;
         return points;
-      }
+      },
+      noEquipment: true
     },
     {
       id: 'm02',
@@ -49,7 +51,8 @@ export const scoresheet: ScoresheetSchema = {
         if (clause1) points += 20;
         points += Number(clause2) * 5;
         return points;
-      }
+      },
+      noEquipment: true
     },
     {
       id: 'm04',
@@ -73,12 +76,14 @@ export const scoresheet: ScoresheetSchema = {
     {
       id: 'm06',
       clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 30 : 0)
+      calculation: clause1 => (clause1 ? 30 : 0),
+      noEquipment: true
     },
     {
       id: 'm07',
       clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 20 : 0)
+      calculation: clause1 => (clause1 ? 20 : 0),
+      noEquipment: true
     },
     {
       id: 'm08',
@@ -89,7 +94,8 @@ export const scoresheet: ScoresheetSchema = {
           default: '0'
         }
       ],
-      calculation: clause1 => Number(clause1) * 10
+      calculation: clause1 => Number(clause1) * 10,
+      noEquipment: true
     },
     {
       id: 'm09',
@@ -116,7 +122,8 @@ export const scoresheet: ScoresheetSchema = {
         if (clause1) points += 30;
         if (clause2) points += 10;
         return points;
-      }
+      },
+      noEquipment: true
     },
     {
       id: 'm11',
@@ -149,7 +156,8 @@ export const scoresheet: ScoresheetSchema = {
           default: '0'
         }
       ],
-      calculation: clause1 => Number(clause1) * 10
+      calculation: clause1 => Number(clause1) * 10,
+      noEquipment: true
     },
     {
       id: 'm13',
@@ -189,23 +197,34 @@ export const scoresheet: ScoresheetSchema = {
     {
       id: 'm15',
       clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false },
-        { type: 'enum', options: ['0', '1', '2'], default: '0' },
-        { type: 'boolean', default: false },
+        {
+          type: 'enum',
+          options: [
+            'empty',
+            'water-sample',
+            'plankton-sample',
+            'seabed-sample',
+            'trident-head',
+            'trident-handle',
+            'treasure-chest'
+          ],
+          default: 'empty',
+          multiSelect: true
+        },
         { type: 'boolean', default: false }
       ],
-      calculation: (clause1, clause2, clause3, clause4, clause5, clause6) => {
+      calculation: (clause1, clause2) => {
         let points = 0;
-        if (clause1) points += 5;
-        if (clause2) points += 5;
-        if (clause3) points += 5;
-        points += Number(clause4) * 5;
-        if (clause5) points += 5;
-        if (clause6) points += 20;
+        const _clause1 = ensureArray(clause1);
+        if (_clause1.includes('empty')) {
+          if (_clause1.length > 1) throw new ScoresheetError('m15-e1');
+        } else {
+          points += _clause1.length * 5;
+        }
+        if (clause2) points += 20;
         return points;
-      }
+      },
+      noEquipment: true
     },
     {
       id: 'pt',
@@ -230,16 +249,22 @@ export const scoresheet: ScoresheetSchema = {
   ],
   validators: [
     missions => {
-      if (missions['m15'][1] && !missions['m14'][1]) throw new ScoresheetError('e1');
+      const planktonInBoat = ensureArray(missions['m15'][0]).includes('plankton-sample');
+      if (planktonInBoat && !missions['m14'][1]) throw new ScoresheetError('e1');
     },
     missions => {
-      if (missions['m15'][2] && !missions['m14'][2]) throw new ScoresheetError('e2');
+      const seabedInBoat = ensureArray(missions['m15'][0]).includes('seabed-sample');
+      if (seabedInBoat && !missions['m14'][2]) throw new ScoresheetError('e2');
     },
     missions => {
-      if (Number(missions['m15'][3]) > Number(missions['m14'][3])) throw new ScoresheetError('e3');
+      const tridentPartsInBoat = ensureArray(missions['m15'][0]).filter(item =>
+        item.includes('trident')
+      ).length;
+      if (tridentPartsInBoat > Number(missions['m14'][3])) throw new ScoresheetError('e3');
     },
     missions => {
-      if (missions['m15'][4] && !missions['m07'][0]) throw new ScoresheetError('e4');
+      const treasureChestInBoat = ensureArray(missions['m15'][0]).includes('treasure-chest');
+      if (treasureChestInBoat && !missions['m07'][0]) throw new ScoresheetError('e4');
     }
   ]
 };

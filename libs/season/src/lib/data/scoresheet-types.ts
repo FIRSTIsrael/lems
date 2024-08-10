@@ -6,12 +6,14 @@ export interface MissionClauseSchema {
   options?: Array<string>;
   min?: number;
   max?: number;
+  multiSelect?: boolean;
 }
 
 export interface MissionSchema {
   id: string;
   clauses: Array<MissionClauseSchema>;
-  calculation: (...args: Array<boolean | string | number>) => number;
+  calculation: (...args: Array<boolean | string | number | string[]>) => number;
+  noEquipment?: boolean;
 }
 
 export interface ScoresheetSchema {
