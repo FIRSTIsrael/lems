@@ -104,7 +104,7 @@ export type RubricInnerFields<T extends JudgingCategory> =
 
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
-export const SEASON_NAME = 'MASTERPIECE℠';
+export const SEASON_NAME = 'SUBMERGED℠';
 
 export const MATCH_AUTOLOAD_THRESHOLD = 10;
 
