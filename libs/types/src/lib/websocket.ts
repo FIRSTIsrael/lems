@@ -11,6 +11,7 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { DivisionState, PresentationState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
+import { JudgingDeliberation } from './schemas/deliberation';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './schemas/division-state';
 import { JudgingRoom } from './schemas/judging-room';
@@ -31,6 +32,12 @@ export interface WSServerEmittedEvents {
   judgingSessionAborted: (session: JudgingSession) => void;
 
   judgingSessionUpdated: (session: JudgingSession) => void;
+
+  judgingDeliberationStarted: (deliberation: JudgingDeliberation) => void;
+
+  judgingDeliberationCompleted: (deliberation: JudgingDeliberation) => void;
+
+  judgingDeliberationUpdated: (deliberation: JudgingDeliberation) => void;
 
   leadJudgeCalled: (room: JudgingRoom) => void;
 
@@ -95,6 +102,19 @@ export interface WSClientEmittedEvents {
     divisionId: string,
     sessionId: string,
     data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  startJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    data: Partial<JudgingDeliberation>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

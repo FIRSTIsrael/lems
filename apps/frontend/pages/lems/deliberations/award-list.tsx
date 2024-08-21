@@ -1,5 +1,6 @@
 import { WithId } from 'mongodb';
-import { Box, Paper, Stack, Typography, Grid } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { Team } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../../lib/utils/animations';
@@ -66,7 +67,6 @@ const AwardList: React.FC<AwardListProps> = ({ state, id }) => {
                 sx={{
                   height: '100%',
                   display: 'flex',
-                  flexDirection: 'column',
                   borderRadius: 2,
                   ...(snapshot.isDraggingOver && {
                     border: '3px dashed #ccc',

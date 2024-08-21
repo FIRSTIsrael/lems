@@ -40,7 +40,7 @@ export const OptionalAwardTypes = [
   'excellenceInEngineering',
   ...CoreValuesAwardsTypes
 ] as const;
-export type OptionalAwards = (typeof CoreValuesAwardsTypes)[number];
+export type OptionalAwards = (typeof OptionalAwardTypes)[number];
 
 export const MandatoryAwardTypes = [
   'coreValues',

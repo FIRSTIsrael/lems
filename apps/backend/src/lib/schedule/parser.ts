@@ -13,7 +13,7 @@ import {
   JudgingDeliberation,
   RobotGameMatchStage,
   AwardNameTypes,
-  OptionalAwardTypes,
+  CoreValuesAwardsTypes,
   JudgingCategoryTypes,
   AwardNames
 } from '@lems/types';
@@ -287,20 +287,28 @@ export const getInitialDivisionState = (division: WithId<Division>): DivisionSta
 };
 
 export const getDefaultDeliberations = (division: WithId<Division>): Array<JudgingDeliberation> => {
-  const categoryDeliberations: Array<JudgingDeliberation> = JudgingCategoryTypes.map(category => ({
-    divisionId: division._id,
-    category,
-    isFinalDeliberation: false,
-    status: 'not-started',
-    awards: [
-      {
-        awardName: category as AwardNames,
-        pickList: []
-      },
-      ...(category === 'core-values' &&
-        OptionalAwardTypes.map(awardName => ({ awardName, pickList: [] })))
-    ]
-  }));
+  const categoryDeliberations: Array<JudgingDeliberation> = JudgingCategoryTypes.map(category => {
+    const empty: JudgingDeliberation = {
+      divisionId: division._id,
+      category,
+      isFinalDeliberation: false,
+      status: 'not-started',
+      awards: [
+        {
+          awardName: category as AwardNames,
+          pickList: []
+        }
+      ]
+    };
+
+    if (category === 'core-values') {
+      CoreValuesAwardsTypes.forEach(cvAward =>
+        empty.awards.push({ awardName: cvAward, pickList: [] })
+      );
+    }
+
+    return empty;
+  });
 
   const finalDeliberation: JudgingDeliberation = {
     divisionId: division._id,

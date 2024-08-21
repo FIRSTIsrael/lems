@@ -2,7 +2,11 @@ import dayjs from 'dayjs';
 import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
-import { JUDGING_SESSION_LENGTH } from '@lems/types';
+import {
+  JUDGING_SESSION_LENGTH,
+  FINAL_DELIBERATION_LENGTH,
+  CATEGORY_DELIBERATION_LENGTH
+} from '@lems/types';
 
 export const handleStartSession = async (namespace, divisionId, roomId, sessionId, callback) => {
   let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
@@ -134,6 +138,62 @@ export const handleUpdateSession = async (namespace, divisionId, sessionId, data
   callback({ ok: true });
   session = await db.getSession({ _id: new ObjectId(sessionId) });
   namespace.to('judging').emit('judgingSessionUpdated', session);
+};
+
+export const handleStartDeliberation = async (namespace, divisionId, deliberationId, callback) => {
+  let deliberation = await db.getJudgingDeliberation({
+    divisionId: new ObjectId(divisionId),
+    _id: new ObjectId(deliberationId)
+  });
+  if (!deliberation) {
+    callback({
+      ok: false,
+      error: `Could not find deliberation ${deliberationId} in division ${divisionId}!`
+    });
+    return;
+  }
+  if (deliberation.status !== 'not-started') {
+    callback({ ok: false, error: `Deliberation ${deliberationId} has already started!` });
+    return;
+  }
+
+  console.log(`❗ Starting deliberation ${deliberationId} in division ${divisionId}`);
+
+  const startTime = new Date();
+  deliberation.startTime = startTime;
+  deliberation.status = 'in-progress';
+  const { _id, ...deliberationData } = deliberation;
+  await db.updateJudgingDeliberation({ _id }, deliberationData);
+
+  const length = deliberation.isFinalDeliberation
+    ? FINAL_DELIBERATION_LENGTH
+    : CATEGORY_DELIBERATION_LENGTH;
+  const deliberationEnd: Date = dayjs().add(length, 'seconds').toDate();
+  scheduler.scheduleJob(
+    deliberationEnd,
+    async function () {
+      const result = await db.updateJudgingDeliberation(
+        {
+          _id,
+          status: 'in-progress',
+          startTime
+        },
+        {
+          status: 'completed'
+        }
+      );
+
+      if (result.matchedCount > 0) {
+        console.log(`✅ Deliberation ${_id} completed`);
+        const updatedDeliberation = await db.getJudgingDeliberation({ _id });
+        namespace.to('judging').emit('judgingDeliberationCompleted', updatedDeliberation);
+      }
+    }.bind(null, startTime)
+  );
+
+  callback({ ok: true });
+  deliberation = await db.getJudgingDeliberation({ _id });
+  namespace.to('judging').emit('judgingDeliberationStarted', deliberation);
 };
 
 export const handleUpdateRubric = async (

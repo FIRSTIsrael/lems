@@ -9,7 +9,6 @@ import {
   Stack,
   Typography,
   CircularProgress,
-  makeStyles,
   Button,
   Divider,
   FormControl,
@@ -21,6 +20,7 @@ import {
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
 import {
   Division,
   SafeUser,
@@ -31,7 +31,9 @@ import {
   JudgingSession,
   JudgingRoom,
   CoreValuesForm,
-  JudgingCategoryTypes
+  JudgingCategoryTypes,
+  JudgingDeliberation,
+  CATEGORY_DELIBERATION_LENGTH
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { localizedJudgingCategory } from '@lems/season';
@@ -39,13 +41,17 @@ import CategoryDeliberationsGrid from '../../../../components/deliberations/cate
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
 import TeamPool from '../team-pool';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import ConnectionIndicator from '../../../../components/connection-indicator';
 import Layout from '../../../../components/layout';
+import ConnectionIndicator from '../../../../components/connection-indicator';
+import Countdown from '../../../../components/general/countdown';
 import { copyToDroppable } from '../../../../lib/utils/dnd';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useTime } from '../../../../hooks/use-time';
+import { useWebsocket } from '../../../../hooks/use-websocket';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import AwardList from '../award-list';
 import TeamSelection from 'apps/frontend/components/general/team-selection';
+import dayjs from 'dayjs';
 
 interface Props {
   category: JudgingCategory;
@@ -57,6 +63,7 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
+  deliberation: WithId<JudgingDeliberation>;
 }
 
 const Page: NextPage<Props> = ({
@@ -68,10 +75,17 @@ const Page: NextPage<Props> = ({
   rooms,
   sessions,
   cvForms,
-  scoresheets
+  scoresheets,
+  deliberation: initialDeliberation
 }) => {
   const router = useRouter();
+  const [deliberation, setDeliberation] =
+    useState<WithId<JudgingDeliberation>>(initialDeliberation);
   const availableTeams = teams.filter(t => t.registered).sort((a, b) => a.number - b.number);
+  const endTime = deliberation.startTime
+    ? dayjs(deliberation.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'seconds')
+    : undefined;
+  const currentTime = useTime({ interval: 1000 });
 
   const [picklists, setPicklists] = useState<{ [key: string]: Array<WithId<Team>> }>({});
   const selectedTeams = useMemo<Array<number>>(
@@ -80,6 +94,33 @@ const Page: NextPage<Props> = ({
         .flat()
         .map(t => t.number),
     [picklists]
+  );
+
+  const startDeliberation = (divisionId: string, deliberationId: string): void => {
+    socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+      } else {
+        new Audio('/assets/sounds/judging/judging-start.wav').play();
+      }
+    });
+  };
+
+  const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
+    if (newDeliberation._id.toString() === deliberation._id.toString()) {
+      setDeliberation(newDeliberation);
+    }
+  };
+
+  const { socket, connectionStatus } = useWebsocket(
+    division._id.toString(),
+    ['judging'],
+    undefined,
+    [
+      { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
+      { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
+      { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent }
+    ]
   );
 
   return (
@@ -94,8 +135,8 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={1900}
         title={`דיון תחום ${localizedJudgingCategory[category].name} | בית ${division.name}`}
-        // error={connectionStatus === 'disconnected'}
-        // action={<ConnectionIndicator status={connectionStatus} />}
+        error={connectionStatus === 'disconnected'}
+        action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
         <DragDropContext
@@ -179,7 +220,12 @@ const Page: NextPage<Props> = ({
                 >
                   <CircularProgress
                     variant="determinate"
-                    value={80}
+                    value={
+                      endTime
+                        ? (endTime.diff(currentTime, 'seconds') / CATEGORY_DELIBERATION_LENGTH) *
+                          100
+                        : 0
+                    }
                     size={250}
                     sx={{ '& .MuiCircularProgress-circle': { strokeLinecap: 'round' } }}
                   />
@@ -197,9 +243,25 @@ const Page: NextPage<Props> = ({
                       justifyContent: 'center'
                     }}
                   >
-                    <Typography fontSize="3.5rem" fontWeight={600} textAlign="center">
-                      44:37
-                    </Typography>
+                    {endTime ? (
+                      <Countdown
+                        targetDate={endTime.toDate()}
+                        fontSize="3.5rem"
+                        fontWeight={600}
+                        textAlign="center"
+                      />
+                    ) : (
+                      <IconButton
+                        onClick={() =>
+                          startDeliberation(division._id.toString(), deliberation._id.toString())
+                        }
+                      >
+                        <PlayCircleOutlinedIcon
+                          sx={{ width: '8rem', height: '8rem' }}
+                          color="primary"
+                        />
+                      </IconButton>
+                    )}
                   </Box>
                 </Box>
                 <Divider />
@@ -303,7 +365,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/${ctx.params?.judgingCategory}`
       },
       ctx
     );
