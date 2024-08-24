@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
   Box,
@@ -33,6 +33,7 @@ import {
   CoreValuesForm,
   JudgingCategoryTypes,
   JudgingDeliberation,
+  AwardNames,
   CATEGORY_DELIBERATION_LENGTH
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
@@ -87,15 +88,6 @@ const Page: NextPage<Props> = ({
     : undefined;
   const currentTime = useTime({ interval: 1000 });
 
-  const [picklists, setPicklists] = useState<{ [key: string]: Array<WithId<Team>> }>({});
-  const selectedTeams = useMemo<Array<number>>(
-    () =>
-      Object.values(picklists)
-        .flat()
-        .map(t => t.number),
-    [picklists]
-  );
-
   const startDeliberation = (divisionId: string, deliberationId: string): void => {
     socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
       if (!response.ok) {
@@ -122,6 +114,23 @@ const Page: NextPage<Props> = ({
       { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent }
     ]
   );
+
+  const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
+    const newDeliberation = { ...deliberation };
+    newDeliberation.awards[name] = newList;
+
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      { awards: newDeliberation.awards },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
 
   return (
     <RoleAuthorizer
@@ -150,33 +159,35 @@ const Page: NextPage<Props> = ({
 
             switch (source.droppableId) {
               case destination.droppableId:
-                setPicklists(current => ({
-                  ...current,
-                  [destination.droppableId]: reorder(
-                    current[destination.droppableId] || [],
-                    source.index,
-                    destination.index
-                  )
-                }));
+                //TODO: uncomment
+                // setPicklists(current => ({
+                //   ...current,
+                //   [destination.droppableId]: reorder(
+                //     current[destination.droppableId] || [],
+                //     source.index,
+                //     destination.index
+                //   )
+                // }));
                 break;
               case 'teamPool':
-                if (
-                  picklists[destination.droppableId]?.find(
-                    t => t.number === availableTeams[source.index].number
-                  )
-                ) {
-                  // TODO: some visual cue for this being a duplicate team
-                  break;
-                }
-                setPicklists(current => ({
-                  ...current,
-                  [destination.droppableId]: copyToDroppable(
-                    availableTeams,
-                    current[destination.droppableId] || [],
-                    source,
-                    destination
-                  )
-                }));
+                //TODO: uncomment
+                // if (
+                //   picklists[destination.droppableId]?.find(
+                //     t => t.number === availableTeams[source.index].number
+                //   )
+                // ) {
+                //   // TODO: some visual cue for this being a duplicate team
+                //   break;
+                // }
+                // setPicklists(current => ({
+                //   ...current,
+                //   [destination.droppableId]: copyToDroppable(
+                //     availableTeams,
+                //     current[destination.droppableId] || [],
+                //     source,
+                //     destination
+                //   )
+                // }));
                 break;
               default:
                 // this.setState(
@@ -200,12 +211,18 @@ const Page: NextPage<Props> = ({
                 scoresheets={scoresheets}
                 sessions={sessions}
                 teams={teams}
-                selectedTeams={selectedTeams}
+                // selectedTeams={selectedTeams}
+                // TODO: uncomment
+                selectedTeams={[]}
                 cvForms={cvForms}
               />
             </Grid>
             <Grid xs={1.5}>
-              <AwardList id="categoryRankings" state={picklists['categoryRankings'] || []} />
+              {/* TODO: uncomment */}
+              {/* <AwardList
+                id="categoryRankings"
+                state={deliberation.awards[category as AwardNames] || []}
+              /> */}
             </Grid>
             <Grid xs={2.5}>
               <Stack component={Paper} spacing={3} p={2} sx={{ height: '100%' }}>

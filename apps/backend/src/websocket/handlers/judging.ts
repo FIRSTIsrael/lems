@@ -165,35 +165,35 @@ export const handleStartDeliberation = async (namespace, divisionId, deliberatio
   const { _id, ...deliberationData } = deliberation;
   await db.updateJudgingDeliberation({ _id }, deliberationData);
 
-  const length = deliberation.isFinalDeliberation
-    ? FINAL_DELIBERATION_LENGTH
-    : CATEGORY_DELIBERATION_LENGTH;
-  const deliberationEnd: Date = dayjs().add(length, 'seconds').toDate();
-  scheduler.scheduleJob(
-    deliberationEnd,
-    async function () {
-      const result = await db.updateJudgingDeliberation(
-        {
-          _id,
-          status: 'in-progress',
-          startTime
-        },
-        {
-          status: 'completed'
-        }
-      );
-
-      if (result.matchedCount > 0) {
-        console.log(`✅ Deliberation ${_id} completed`);
-        const updatedDeliberation = await db.getJudgingDeliberation({ _id });
-        namespace.to('judging').emit('judgingDeliberationCompleted', updatedDeliberation);
-      }
-    }.bind(null, startTime)
-  );
-
   callback({ ok: true });
   deliberation = await db.getJudgingDeliberation({ _id });
   namespace.to('judging').emit('judgingDeliberationStarted', deliberation);
+};
+
+export const handleUpdateDeliberation = async (
+  namespace,
+  divisionId,
+  deliberationId,
+  data,
+  callback
+) => {
+  let deliberation = await db.getJudgingDeliberation({ _id: new ObjectId(deliberationId) });
+  if (!deliberation) {
+    callback({ ok: false, error: `Could not find deliberation ${deliberationId}!` });
+    return;
+  }
+  if (deliberation.status === 'completed') {
+    callback({ ok: false, error: `Deliberation ${deliberationId} is not editable!` });
+    return;
+  }
+
+  console.log(`🖊️ Updating deliberation ${deliberationId} in division ${divisionId}`);
+
+  await db.updateJudgingDeliberation({ _id: deliberation._id }, { ...data });
+
+  callback({ ok: true });
+  deliberation = await db.getJudgingDeliberation({ _id: new ObjectId(deliberationId) });
+  namespace.to('judging').emit('judgingDeliberationUpdated', deliberation);
 };
 
 export const handleUpdateRubric = async (

@@ -293,18 +293,11 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
       category,
       isFinalDeliberation: false,
       status: 'not-started',
-      awards: [
-        {
-          awardName: category as AwardNames,
-          pickList: []
-        }
-      ]
+      awards: { [category]: [] as Array<ObjectId> }
     };
 
     if (category === 'core-values') {
-      CoreValuesAwardsTypes.forEach(cvAward =>
-        empty.awards.push({ awardName: cvAward, pickList: [] })
-      );
+      CoreValuesAwardsTypes.forEach(cvAward => (empty.awards[cvAward] = []));
     }
 
     return empty;
@@ -314,8 +307,9 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
     divisionId: division._id,
     isFinalDeliberation: true,
     status: 'not-started',
-    awards: AwardNameTypes.map(awardName => ({ awardName, pickList: [] }))
+    awards: {}
   };
+  AwardNameTypes.forEach(awardName => (finalDeliberation.awards[awardName] = []));
 
   return [finalDeliberation, ...categoryDeliberations];
 };
