@@ -1,4 +1,4 @@
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Paper, Box, IconButton, Avatar, Stack } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -12,16 +12,11 @@ import {
   CoreValuesForm
 } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
-import {
-  getBackgroundColor,
-  getHoverBackgroundColor,
-  getSelectedBackgroundColor,
-  getSelectedHoverBackgroundColor
-} from '../../lib/utils/theme';
+import { getBackgroundColor, getHoverBackgroundColor } from '../../lib/utils/theme';
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
   teams: Array<WithId<Team>>;
-  selectedTeams: Array<number>;
+  selectedTeams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -224,9 +219,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         rowHeight={40}
         disableRowSelectionOnClick
         hideFooter
-        getRowClassName={params =>
-          selectedTeams.includes(params.row.team.number) ? 'selected-team' : ''
-        }
+        getRowClassName={params => (selectedTeams.includes(params.row.team) ? 'selected-team' : '')}
         initialState={{
           pagination: {
             paginationModel: {

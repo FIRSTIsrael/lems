@@ -14,8 +14,8 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index })
   return (
     <Grid xs={1}>
       <Draggable
-        key={team._id.toString() + droppableId}
-        draggableId={team._id.toString()}
+        key={droppableId + ':' + team._id}
+        draggableId={droppableId + ':' + team._id}
         index={index}
       >
         {(provided, snapshot) => (
@@ -54,8 +54,6 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index })
               </Paper>
             )}
           </div>
-          // There is no placeholder here. This is on purpose, ignore the warning.
-          // Don't think so? Add it and see what happens.
         )}
       </Draggable>
     </Grid>
@@ -72,20 +70,23 @@ const TeamPool: React.FC<TeamPoolProps> = ({ teams, id }) => {
     <Paper sx={{ p: 2, height: '100%' }}>
       <Droppable droppableId={id} isDropDisabled>
         {provided => (
-          <Grid
-            container
-            columns={Math.max(8, Math.ceil(teams.length / 6))}
-            columnSpacing={2}
-            rowSpacing={1}
-            flexDirection="row"
-            alignItems="center"
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {teams.map((team, index) => (
-              <TeamPoolItem team={team} index={index} droppableId={id} />
-            ))}
-          </Grid>
+          <>
+            <Grid
+              container
+              columns={Math.max(8, Math.ceil(teams.length / 6))}
+              columnSpacing={2}
+              rowSpacing={1}
+              flexDirection="row"
+              alignItems="center"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {teams.map((team, index) => (
+                <TeamPoolItem key={index} team={team} index={index} droppableId={id} />
+              ))}
+            </Grid>
+            <span style={{ display: 'none' }}>{provided.placeholder}</span>
+          </>
         )}
       </Droppable>
     </Paper>

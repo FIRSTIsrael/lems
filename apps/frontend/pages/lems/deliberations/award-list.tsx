@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Team } from '@lems/types';
+import { Team, MANDATORY_AWARD_PICKLIST_LENGTH, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../../lib/utils/animations';
 
@@ -19,9 +19,13 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
   shouldPlayErrorAnimation
 }) => {
   return (
-    <Draggable draggableId={droppableId + team._id.toString()} index={index}>
+    <Draggable
+      key={droppableId + ':' + team._id}
+      draggableId={droppableId + ':' + team._id}
+      index={index}
+    >
       {(provided, snapshot) => (
-        <div ref={provided.innerRef}>
+        <div ref={provided.innerRef} style={{ width: '100%' }}>
           <Paper
             sx={{
               border: shouldPlayErrorAnimation
@@ -29,8 +33,7 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
                 : `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,
               borderRadius: 1,
               minHeight: 35,
-              minWidth: 100,
-              maxWidth: 120,
+              width: '100%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -52,14 +55,14 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
 };
 
 interface AwardListProps {
-  state: Array<WithId<Team>>;
-  id: string;
+  pickList: Array<WithId<Team>>;
+  id: AwardNames;
 }
 
-const AwardList: React.FC<AwardListProps> = ({ state, id }) => {
+const AwardList: React.FC<AwardListProps> = ({ pickList, id }) => {
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex' }}>
-      <Grid container>
+      <Grid container width="100%">
         <Grid xs={9}>
           <Droppable key={id} droppableId={id}>
             {(provided, snapshot) => (
@@ -69,35 +72,38 @@ const AwardList: React.FC<AwardListProps> = ({ state, id }) => {
                   display: 'flex',
                   borderRadius: 2,
                   ...(snapshot.isDraggingOver && {
-                    border: '3px dashed #ccc',
-                    backgroundColor: '#f4f4f4'
+                    border: `3px dashed ${pickList.length >= MANDATORY_AWARD_PICKLIST_LENGTH && !snapshot.draggingOverWith?.includes(id) ? '#fca5a5' : '#ccc'}`
                   })
                 }}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <Stack spacing={2} alignItems="center">
-                  {state.map((team, index) => (
+                <Stack spacing={2} alignItems="center" width="100%" px={1}>
+                  {pickList.map((team, index) => (
                     <AwardListItem
+                      key={id + ':' + team._id}
                       droppableId={id}
                       team={team}
                       index={index}
                       shouldPlayErrorAnimation={
-                        snapshot.isDraggingOver && snapshot.draggingOverWith === team._id.toString()
+                        snapshot.isDraggingOver &&
+                        !!snapshot.draggingOverWith?.includes(team._id.toString()) &&
+                        !snapshot.draggingFromThisWith?.includes(id)
                       }
                     />
                   ))}
                 </Stack>
-                {provided.placeholder}
+                <span style={{ display: 'none' }}>{provided.placeholder}</span>
               </Box>
             )}
           </Droppable>
         </Grid>
         <Grid xs={3}>
           <Stack spacing={2}>
-            {[...Array(12).keys()].map(index => (
+            {[...Array(MANDATORY_AWARD_PICKLIST_LENGTH).keys()].map(index => (
               <Typography
-                fontSize="1.5rem"
+                key={index}
+                fontSize="1.25rem"
                 fontWeight={600}
                 color="#666"
                 minHeight={35}

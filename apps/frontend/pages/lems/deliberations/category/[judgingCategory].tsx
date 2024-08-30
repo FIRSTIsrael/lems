@@ -34,7 +34,8 @@ import {
   JudgingCategoryTypes,
   JudgingDeliberation,
   AwardNames,
-  CATEGORY_DELIBERATION_LENGTH
+  CATEGORY_DELIBERATION_LENGTH,
+  MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { localizedJudgingCategory } from '@lems/season';
@@ -45,7 +46,6 @@ import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import Countdown from '../../../../components/general/countdown';
-import { copyToDroppable } from '../../../../lib/utils/dnd';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useTime } from '../../../../hooks/use-time';
 import { useWebsocket } from '../../../../hooks/use-websocket';
@@ -83,6 +83,9 @@ const Page: NextPage<Props> = ({
   const [deliberation, setDeliberation] =
     useState<WithId<JudgingDeliberation>>(initialDeliberation);
   const availableTeams = teams.filter(t => t.registered).sort((a, b) => a.number - b.number);
+  const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
+    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
+  );
   const endTime = deliberation.startTime
     ? dayjs(deliberation.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'seconds')
     : undefined;
@@ -115,10 +118,19 @@ const Page: NextPage<Props> = ({
     ]
   );
 
+  const getPicklist = (name: AwardNames) => {
+    return [...(deliberation.awards[name] ?? [])];
+  };
+
+  const isTeamInPicklist = (teamId: string, name: AwardNames) => {
+    return !!getPicklist(name).find(id => id.toString() === teamId);
+  };
+
   const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
     const newDeliberation = { ...deliberation };
     newDeliberation.awards[name] = newList;
 
+    setDeliberation(newDeliberation);
     socket.emit(
       'updateJudgingDeliberation',
       division._id.toString(),
@@ -130,6 +142,21 @@ const Page: NextPage<Props> = ({
         }
       }
     );
+  };
+
+  const addTeamToPicklist = (teamId: string, index: number, name: AwardNames) => {
+    const picklist: Array<string | ObjectId> = [...getPicklist(name)];
+    if (picklist.length >= MANDATORY_AWARD_PICKLIST_LENGTH) {
+      return;
+    }
+
+    picklist.splice(index, 0, teamId);
+    setPicklist(name, picklist as Array<ObjectId>);
+  };
+
+  const removeTeamFromPicklist = (teamId: string, name: AwardNames) => {
+    const newPicklist = getPicklist(name).filter(id => id.toString() !== teamId);
+    setPicklist(name, newPicklist);
   };
 
   return (
@@ -150,54 +177,34 @@ const Page: NextPage<Props> = ({
       >
         <DragDropContext
           onDragEnd={result => {
-            console.log(result);
-
-            const { source, destination } = result;
+            const { source, destination, draggableId } = result;
             if (!destination) {
               return;
             }
+            const teamId = draggableId.split(':')[1];
 
+            if (destination.droppableId === 'trash') {
+              if (source.droppableId === 'team-pool') {
+                return;
+              }
+              removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
+              return;
+            }
+
+            const name = destination.droppableId as AwardNames;
             switch (source.droppableId) {
-              case destination.droppableId:
-                //TODO: uncomment
-                // setPicklists(current => ({
-                //   ...current,
-                //   [destination.droppableId]: reorder(
-                //     current[destination.droppableId] || [],
-                //     source.index,
-                //     destination.index
-                //   )
-                // }));
+              case 'team-pool':
+                if (isTeamInPicklist(teamId, name)) {
+                  return;
+                }
+                addTeamToPicklist(teamId, destination.index, name);
                 break;
-              case 'teamPool':
-                //TODO: uncomment
-                // if (
-                //   picklists[destination.droppableId]?.find(
-                //     t => t.number === availableTeams[source.index].number
-                //   )
-                // ) {
-                //   // TODO: some visual cue for this being a duplicate team
-                //   break;
-                // }
-                // setPicklists(current => ({
-                //   ...current,
-                //   [destination.droppableId]: copyToDroppable(
-                //     availableTeams,
-                //     current[destination.droppableId] || [],
-                //     source,
-                //     destination
-                //   )
-                // }));
+              case destination.droppableId:
+                const reordered = reorder(getPicklist(name), source.index, destination.index);
+                setPicklist(name, reordered);
                 break;
               default:
-                // this.setState(
-                //   move(
-                //     this.state[source.droppableId],
-                //     this.state[destination.droppableId],
-                //     source,
-                //     destination
-                //   )
-                // );
+                //Move from list to other list
                 break;
             }
           }}
@@ -211,18 +218,19 @@ const Page: NextPage<Props> = ({
                 scoresheets={scoresheets}
                 sessions={sessions}
                 teams={teams}
-                // selectedTeams={selectedTeams}
-                // TODO: uncomment
-                selectedTeams={[]}
+                selectedTeams={selectedTeams}
                 cvForms={cvForms}
               />
             </Grid>
             <Grid xs={1.5}>
-              {/* TODO: uncomment */}
-              {/* <AwardList
-                id="categoryRankings"
-                state={deliberation.awards[category as AwardNames] || []}
-              /> */}
+              <AwardList
+                id={category}
+                pickList={
+                  deliberation.awards[category as AwardNames]?.map(
+                    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
+                  ) ?? []
+                }
+              />
             </Grid>
             <Grid xs={2.5}>
               <Stack component={Paper} spacing={3} p={2} sx={{ height: '100%' }}>
@@ -239,10 +247,13 @@ const Page: NextPage<Props> = ({
                     variant="determinate"
                     value={
                       endTime
-                        ? (endTime.diff(currentTime, 'seconds') / CATEGORY_DELIBERATION_LENGTH) *
-                          100
+                        ? endTime > dayjs()
+                          ? (endTime.diff(currentTime, 'seconds') / CATEGORY_DELIBERATION_LENGTH) *
+                            100
+                          : 100
                         : 0
                     }
+                    color={endTime && endTime > dayjs() ? 'primary' : 'error'}
                     size={250}
                     sx={{ '& .MuiCircularProgress-circle': { strokeLinecap: 'round' } }}
                   />
@@ -266,6 +277,7 @@ const Page: NextPage<Props> = ({
                         fontSize="3.5rem"
                         fontWeight={600}
                         textAlign="center"
+                        expiredText="00:00"
                       />
                     ) : (
                       <IconButton
@@ -296,7 +308,7 @@ const Page: NextPage<Props> = ({
                             onMouseDown={() => ({})}
                             edge="end"
                           >
-                            {/* If empty should be clear button */}
+                            {/* TODO: If not empty should be clear button */}
                             <SearchOutlinedIcon />
                           </IconButton>
                         </InputAdornment>
@@ -347,6 +359,7 @@ const Page: NextPage<Props> = ({
                       <DeleteOutlinedIcon
                         sx={{ marginY: '5px', height: 40, width: 40, color: '#aaa' }}
                       />
+                      <span style={{ display: 'none' }}>{provided.placeholder}</span>
                     </Box>
                   )}
                 </Droppable>
@@ -356,7 +369,7 @@ const Page: NextPage<Props> = ({
               <ScoresPerRoomChart division={division} height={210} />
             </Grid>
             <Grid xs={7}>
-              <TeamPool teams={availableTeams} id="teamPool" />
+              <TeamPool teams={availableTeams} id="team-pool" />
             </Grid>
           </Grid>
         </DragDropContext>
