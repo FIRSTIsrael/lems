@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
-import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { localizedAward } from '@lems/season';
 import { fullMatch } from '@lems/utils/objects';
@@ -167,7 +167,7 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, division, teams, read
                       <span>שמירה</span>
                     </LoadingButton>
                     <Button
-                      startIcon={<LockRoundedIcon />}
+                      startIcon={<LockOutlinedIcon />}
                       variant="contained"
                       onClick={() => setOpen(true)}
                       disabled={!values.awards.every(x => x.winner) || !isValid || readOnly}
@@ -180,9 +180,9 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, division, teams, read
                       aria-labelledby="lock-awards-title"
                       aria-describedby="lock-awards-description"
                     >
-                      <DialogTitle id="logout-title">נעילת פרסי האירוע</DialogTitle>
+                      <DialogTitle id="lock-awards-title">נעילת פרסי האירוע</DialogTitle>
                       <DialogContent>
-                        <DialogContentText id="logout-description">
+                        <DialogContentText id="lock-awards-description">
                           פעולה זו לא תאפשר לאף אחד לערוך את הפרסים יותר. האם אתם בטוחים שברצונכם
                           לנעול את הפרסים?
                         </DialogContentText>

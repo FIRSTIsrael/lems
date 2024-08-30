@@ -13,9 +13,7 @@ import {
   JudgingDeliberation,
   RobotGameMatchStage,
   AwardNameTypes,
-  CoreValuesAwardsTypes,
-  JudgingCategoryTypes,
-  AwardNames
+  JudgingCategoryTypes
 } from '@lems/types';
 import { Line, getBlock, extractBlocksFromFile } from '../csv';
 
@@ -295,10 +293,6 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
       status: 'not-started',
       awards: { [category]: [] as Array<ObjectId> }
     };
-
-    if (category === 'core-values') {
-      CoreValuesAwardsTypes.forEach(cvAward => (empty.awards[cvAward] = []));
-    }
 
     return empty;
   });

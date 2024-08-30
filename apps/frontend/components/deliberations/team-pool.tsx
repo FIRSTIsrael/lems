@@ -8,15 +8,22 @@ interface TeamPoolItemProps {
   droppableId: string;
   team: WithId<Team>;
   index: number;
+  disabled?: boolean;
 }
 
-const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index }) => {
+const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
+  droppableId,
+  team,
+  index,
+  disabled = false
+}) => {
   return (
     <Grid xs={1}>
       <Draggable
         key={droppableId + ':' + team._id}
         draggableId={droppableId + ':' + team._id}
         index={index}
+        isDragDisabled={disabled}
       >
         {(provided, snapshot) => (
           <div ref={provided.innerRef}>
@@ -63,9 +70,10 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({ droppableId, team, index })
 interface TeamPoolProps {
   teams: Array<WithId<Team>>;
   id: string;
+  disabled?: boolean;
 }
 
-const TeamPool: React.FC<TeamPoolProps> = ({ teams, id }) => {
+const TeamPool: React.FC<TeamPoolProps> = ({ teams, id, disabled = false }) => {
   return (
     <Paper sx={{ p: 2, height: '100%' }}>
       <Droppable droppableId={id} isDropDisabled>
@@ -82,7 +90,13 @@ const TeamPool: React.FC<TeamPoolProps> = ({ teams, id }) => {
               {...provided.droppableProps}
             >
               {teams.map((team, index) => (
-                <TeamPoolItem key={index} team={team} index={index} droppableId={id} />
+                <TeamPoolItem
+                  key={index}
+                  team={team}
+                  index={index}
+                  droppableId={id}
+                  disabled={disabled}
+                />
               ))}
             </Grid>
             <span style={{ display: 'none' }}>{provided.placeholder}</span>

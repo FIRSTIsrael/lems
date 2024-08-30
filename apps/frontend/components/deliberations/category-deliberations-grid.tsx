@@ -9,10 +9,13 @@ import {
   Scoresheet,
   JudgingSession,
   JudgingRoom,
-  CoreValuesForm
+  CoreValuesForm,
+  CoreValuesAwards,
+  CoreValuesAwardsTypes
 } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
 import { getBackgroundColor, getHoverBackgroundColor } from '../../lib/utils/theme';
+import { fullMatch, getDiff } from '@lems/utils/objects';
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
   teams: Array<WithId<Team>>;
@@ -22,6 +25,12 @@ interface CategoryDeliberationsGridProps {
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
+  updateTeamAwards?: (
+    teamId: ObjectId,
+    rubricId: ObjectId,
+    awards: { [key in CoreValuesAwards]: boolean }
+  ) => void;
+  disabled?: boolean;
 }
 
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
@@ -32,7 +41,9 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   rooms,
   sessions,
   cvForms,
-  scoresheets
+  scoresheets,
+  updateTeamAwards,
+  disabled = false
 }) => {
   const schema = rubricsSchemas[category];
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
@@ -43,46 +54,44 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
   ];
 
-  const rows = teams
-    .filter(t => t.registered)
-    .map(team => {
-      const rubric = rubrics
-        .filter(r => r.category === category && r.status !== 'empty')
-        .find(r => r.teamId.toString() === team._id.toString()); //Assert there exists a rubric (! at the end).
-      const roomId = sessions.find(
-        session => session.teamId?.toString() === team._id.toString()
-      )?.roomId;
-      const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-      const rubricValues = rubric?.data?.values || {};
-      const rubricAwards = rubric?.data?.awards || {};
-      const rowValues: { [key: string]: number } = {};
-      Object.entries(rubricValues).forEach(([key, entry]) => {
-        rowValues[key] = entry.value;
-      });
-      const cvFormSeverities = cvForms
-        .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
-        .map(cvForm => cvForm.severity);
-
-      if (category === 'core-values') {
-        scoresheets
-          .filter(scoresheet => scoresheet.teamId.toString() === team._id.toString())
-          .forEach(
-            scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
-          );
-      }
-
-      const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
-      return {
-        id: team._id,
-        rubricId: rubric?._id,
-        team,
-        room: roomName,
-        ...rowValues,
-        sum,
-        rubricAwards,
-        cvFormSeverities
-      };
+  const rows = teams.map(team => {
+    const rubric = rubrics
+      .filter(r => r.category === category && r.status !== 'empty')
+      .find(r => r.teamId.toString() === team._id.toString()); //Assert there exists a rubric (! at the end).
+    const roomId = sessions.find(
+      session => session.teamId?.toString() === team._id.toString()
+    )?.roomId;
+    const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
+    const rubricValues = rubric?.data?.values || {};
+    const rubricAwards = rubric?.data?.awards || {};
+    const rowValues: { [key: string]: number } = {};
+    Object.entries(rubricValues).forEach(([key, entry]) => {
+      rowValues[key] = entry.value;
     });
+    const cvFormSeverities = cvForms
+      .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
+      .map(cvForm => cvForm.severity);
+
+    if (category === 'core-values') {
+      scoresheets
+        .filter(scoresheet => scoresheet.teamId.toString() === team._id.toString())
+        .forEach(
+          scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
+        );
+    }
+
+    const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
+    return {
+      id: team._id,
+      rubricId: rubric?._id,
+      team,
+      room: roomName,
+      ...rowValues,
+      sum,
+      ...rubricAwards,
+      cvFormSeverities
+    };
+  });
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
     {
@@ -139,7 +148,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ({
           ...award,
           type: 'boolean',
-          editable: true,
+          editable: !disabled,
           width: 65
         }) as GridColDef
     ),
@@ -229,6 +238,25 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
           sorting: {
             sortModel: [{ field: 'sum', sort: 'desc' }]
           }
+        }}
+        processRowUpdate={(updatedRow, originalRow) => {
+          if (!!updateTeamAwards && updatedRow.rubricId && !fullMatch(updatedRow, originalRow)) {
+            // This assumes only awards can be edited. In case this changes we will need to
+            // reimplement this function. Sorry :(
+            const newAwards = getDiff(originalRow, updatedRow);
+            const oldAwards: Record<string, any> = { ...originalRow };
+            CoreValuesAwardsTypes.forEach(cvAward => {
+              if (!newAwards.hasOwnProperty(cvAward)) {
+                newAwards[cvAward] = oldAwards[cvAward] ?? false;
+              }
+            });
+            updateTeamAwards(
+              updatedRow.id,
+              updatedRow.rubricId,
+              newAwards as { [key in CoreValuesAwards]: boolean }
+            );
+          }
+          return updatedRow;
         }}
         sx={{
           maxHeight: 670,

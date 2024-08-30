@@ -7,3 +7,16 @@ export const partialMatch = <T>(partial: Partial<T>, full: T): boolean => {
 export const fullMatch = <T>(obj1: T, obj2: T): boolean => {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
 };
+
+export const getDiff = (base: Record<string, any>, compare: Record<string, any>) => {
+  const result: Record<string, any> = {};
+
+  Object.entries(compare).forEach(([key, value]) => {
+    if (base.hasOwnProperty(key) && base[key] === value) {
+      return;
+    }
+    result[key] = value;
+  });
+
+  return result;
+};

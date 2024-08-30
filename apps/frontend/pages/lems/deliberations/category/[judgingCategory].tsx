@@ -1,26 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import {
-  Box,
-  Paper,
-  Stack,
-  Typography,
-  CircularProgress,
-  Button,
-  Divider,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton
-} from '@mui/material';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
 import {
   Division,
   SafeUser,
@@ -34,25 +17,24 @@ import {
   JudgingCategoryTypes,
   JudgingDeliberation,
   AwardNames,
-  CATEGORY_DELIBERATION_LENGTH,
+  CoreValuesAwards,
   MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
+import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory } from '@lems/season';
 import CategoryDeliberationsGrid from '../../../../components/deliberations/category-deliberations-grid';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
-import TeamPool from '../team-pool';
+import TeamPool from '../../../../components/deliberations/team-pool';
+import AwardList from '../../../../components/deliberations/award-list';
+import DeliberationControlPanel from '../../../../components/deliberations/deliberation-control-panel';
+import LockOverlay from '../../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
-import Countdown from '../../../../components/general/countdown';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
-import { useTime } from '../../../../hooks/use-time';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import AwardList from '../award-list';
-import TeamSelection from 'apps/frontend/components/general/team-selection';
-import dayjs from 'dayjs';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 interface Props {
   category: JudgingCategory;
@@ -72,7 +54,7 @@ const Page: NextPage<Props> = ({
   user,
   division,
   teams,
-  rubrics,
+  rubrics: initialRubrics,
   rooms,
   sessions,
   cvForms,
@@ -80,31 +62,32 @@ const Page: NextPage<Props> = ({
   deliberation: initialDeliberation
 }) => {
   const router = useRouter();
-  const [deliberation, setDeliberation] =
-    useState<WithId<JudgingDeliberation>>(initialDeliberation);
-  const availableTeams = teams.filter(t => t.registered).sort((a, b) => a.number - b.number);
+  const [deliberation, setDeliberation] = useState(initialDeliberation);
+  const [rubrics, setRubrics] = useState(initialRubrics);
+  const availableTeams = teams
+    .filter(t => t.registered)
+    .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
+    .sort((a, b) => a.number - b.number);
   const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
     teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
   );
-  const endTime = deliberation.startTime
-    ? dayjs(deliberation.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'seconds')
-    : undefined;
-  const currentTime = useTime({ interval: 1000 });
-
-  const startDeliberation = (divisionId: string, deliberationId: string): void => {
-    socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-      } else {
-        new Audio('/assets/sounds/judging/judging-start.wav').play();
-      }
-    });
-  };
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    if (newDeliberation._id.toString() === deliberation._id.toString()) {
+    if (
+      newDeliberation._id.toString() === deliberation._id.toString() &&
+      !fullMatch(newDeliberation, deliberation)
+    ) {
       setDeliberation(newDeliberation);
     }
+  };
+
+  const updateRubric = (rubric: WithId<Rubric<JudgingCategory>>) => {
+    setRubrics(rubrics =>
+      rubrics.map(r => {
+        if (r._id === rubric._id) return rubric;
+        return r;
+      })
+    );
   };
 
   const { socket, connectionStatus } = useWebsocket(
@@ -114,7 +97,8 @@ const Page: NextPage<Props> = ({
     [
       { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
-      { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent }
+      { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent },
+      { name: 'rubricUpdated', handler: updateRubric }
     ]
   );
 
@@ -159,6 +143,53 @@ const Page: NextPage<Props> = ({
     setPicklist(name, newPicklist);
   };
 
+  const updateTeamAwards = (
+    teamId: ObjectId,
+    rubricId: ObjectId,
+    newAwards: { [key in CoreValuesAwards]: boolean }
+  ) => {
+    const rubricUpdate: any = {};
+    rubricUpdate['data.awards'] = newAwards;
+    socket.emit(
+      'updateRubric',
+      division._id.toString(),
+      teamId.toString(),
+      rubricId.toString(),
+      rubricUpdate,
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const startDeliberation = (divisionId: string, deliberationId: string): void => {
+    socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+      } else {
+        new Audio('/assets/sounds/judging/judging-start.wav').play();
+      }
+    });
+  };
+
+  const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      { status: 'completed' },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+            variant: 'error'
+          });
+        }
+      }
+    );
+  };
+
   return (
     <RoleAuthorizer
       user={user}
@@ -175,6 +206,7 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
+        {deliberation.status === 'completed' && <LockOverlay />}
         <DragDropContext
           onDragEnd={result => {
             const { source, destination, draggableId } = result;
@@ -191,20 +223,25 @@ const Page: NextPage<Props> = ({
               return;
             }
 
-            const name = destination.droppableId as AwardNames;
+            const destinationList = destination.droppableId as AwardNames;
             switch (source.droppableId) {
               case 'team-pool':
-                if (isTeamInPicklist(teamId, name)) {
+                if (isTeamInPicklist(teamId, destinationList)) {
                   return;
                 }
-                addTeamToPicklist(teamId, destination.index, name);
+                addTeamToPicklist(teamId, destination.index, destinationList);
                 break;
               case destination.droppableId:
-                const reordered = reorder(getPicklist(name), source.index, destination.index);
-                setPicklist(name, reordered);
+                const reordered = reorder(
+                  getPicklist(destinationList),
+                  source.index,
+                  destination.index
+                );
+                setPicklist(destinationList, reordered);
                 break;
               default:
-                //Move from list to other list
+                removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
+                addTeamToPicklist(teamId, destination.index, destinationList);
                 break;
             }
           }}
@@ -217,9 +254,11 @@ const Page: NextPage<Props> = ({
                 rubrics={rubrics}
                 scoresheets={scoresheets}
                 sessions={sessions}
-                teams={teams}
+                teams={availableTeams}
                 selectedTeams={selectedTeams}
                 cvForms={cvForms}
+                updateTeamAwards={updateTeamAwards}
+                disabled={deliberation.status !== 'in-progress'}
               />
             </Grid>
             <Grid xs={1.5}>
@@ -230,146 +269,26 @@ const Page: NextPage<Props> = ({
                     teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
                   ) ?? []
                 }
+                disabled={deliberation.status !== 'in-progress'}
               />
             </Grid>
             <Grid xs={2.5}>
-              <Stack component={Paper} spacing={3} p={2} sx={{ height: '100%' }}>
-                <Box
-                  sx={{
-                    marginTop: 5,
-                    position: 'relative',
-                    display: 'inline-flex',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <CircularProgress
-                    variant="determinate"
-                    value={
-                      endTime
-                        ? endTime > dayjs()
-                          ? (endTime.diff(currentTime, 'seconds') / CATEGORY_DELIBERATION_LENGTH) *
-                            100
-                          : 100
-                        : 0
-                    }
-                    color={endTime && endTime > dayjs() ? 'primary' : 'error'}
-                    size={250}
-                    sx={{ '& .MuiCircularProgress-circle': { strokeLinecap: 'round' } }}
-                  />
-                  <Box
-                    sx={{
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      position: 'absolute',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {endTime ? (
-                      <Countdown
-                        targetDate={endTime.toDate()}
-                        fontSize="3.5rem"
-                        fontWeight={600}
-                        textAlign="center"
-                        expiredText="00:00"
-                      />
-                    ) : (
-                      <IconButton
-                        onClick={() =>
-                          startDeliberation(division._id.toString(), deliberation._id.toString())
-                        }
-                      >
-                        <PlayCircleOutlinedIcon
-                          sx={{ width: '8rem', height: '8rem' }}
-                          color="primary"
-                        />
-                      </IconButton>
-                    )}
-                  </Box>
-                </Box>
-                <Divider />
-                <Box display="flex" alignItems="center">
-                  <FormControl sx={{ m: 1, width: '100%' }} variant="outlined">
-                    <InputLabel>חיפוש קבוצה</InputLabel>
-                    <OutlinedInput
-                      id="outlined-adornment-password"
-                      type="text"
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="search"
-                            onClick={() => ({})}
-                            onMouseDown={() => ({})}
-                            edge="end"
-                          >
-                            {/* TODO: If not empty should be clear button */}
-                            <SearchOutlinedIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      label="חיפוש קבוצה"
-                    />
-                  </FormControl>
-                </Box>
-                <Divider />
-                <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="center">
-                  <TeamSelection teams={teams} setTeam={() => ({})} value={null} fullWidth />
-                  <Typography>מול</Typography>
-                  <TeamSelection teams={teams} setTeam={() => ({})} value={null} fullWidth />
-                </Stack>
-                <Stack
-                  spacing={2}
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-around"
-                  paddingX="8px"
-                >
-                  <Button variant="contained" fullWidth>
-                    סימון
-                  </Button>
-                  <Button variant="contained" fullWidth>
-                    ניקוי
-                  </Button>
-                  <Button variant="contained" fullWidth>
-                    השוואה
-                  </Button>
-                </Stack>
-                <Divider />
-                <Droppable droppableId="trash">
-                  {(provided, snapshot) => (
-                    <Box
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 2,
-                        border: snapshot.isDraggingOver ? '3px dashed #ccc' : '',
-                        backgroundColor: '#f4f4f4'
-                      }}
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      <DeleteOutlinedIcon
-                        sx={{ marginY: '5px', height: 40, width: 40, color: '#aaa' }}
-                      />
-                      <span style={{ display: 'none' }}>{provided.placeholder}</span>
-                    </Box>
-                  )}
-                </Droppable>
-              </Stack>
+              <DeliberationControlPanel
+                teams={availableTeams}
+                deliberation={deliberation}
+                startDeliberation={startDeliberation}
+                lockDeliberation={lockDeliberation}
+              />
             </Grid>
             <Grid xs={5}>
               <ScoresPerRoomChart division={division} height={210} />
             </Grid>
             <Grid xs={7}>
-              <TeamPool teams={availableTeams} id="team-pool" />
+              <TeamPool
+                teams={availableTeams}
+                id="team-pool"
+                disabled={deliberation.status !== 'in-progress'}
+              />
             </Grid>
           </Grid>
         </DragDropContext>

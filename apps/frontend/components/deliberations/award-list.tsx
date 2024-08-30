@@ -3,26 +3,29 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Team, MANDATORY_AWARD_PICKLIST_LENGTH, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { errorAnimation } from '../../../lib/utils/animations';
+import { errorAnimation } from '../../lib/utils/animations';
 
 interface AwardListItemProps {
   droppableId: string;
   team: WithId<Team>;
   index: number;
   shouldPlayErrorAnimation: boolean;
+  disabled?: boolean;
 }
 
 const AwardListItem: React.FC<AwardListItemProps> = ({
   droppableId,
   team,
   index,
-  shouldPlayErrorAnimation
+  shouldPlayErrorAnimation,
+  disabled = false
 }) => {
   return (
     <Draggable
       key={droppableId + ':' + team._id}
       draggableId={droppableId + ':' + team._id}
       index={index}
+      isDragDisabled={disabled}
     >
       {(provided, snapshot) => (
         <div ref={provided.innerRef} style={{ width: '100%' }}>
@@ -57,9 +60,10 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
 interface AwardListProps {
   pickList: Array<WithId<Team>>;
   id: AwardNames;
+  disabled?: boolean;
 }
 
-const AwardList: React.FC<AwardListProps> = ({ pickList, id }) => {
+const AwardList: React.FC<AwardListProps> = ({ pickList, id, disabled = false }) => {
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex' }}>
       <Grid container width="100%">
@@ -90,6 +94,7 @@ const AwardList: React.FC<AwardListProps> = ({ pickList, id }) => {
                         !!snapshot.draggingOverWith?.includes(team._id.toString()) &&
                         !snapshot.draggingFromThisWith?.includes(id)
                       }
+                      disabled={disabled}
                     />
                   ))}
                 </Stack>
