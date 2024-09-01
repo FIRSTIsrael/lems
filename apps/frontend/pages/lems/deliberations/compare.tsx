@@ -1,0 +1,62 @@
+import { WithId } from 'mongodb';
+import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { enqueueSnackbar } from 'notistack';
+import { Division, SafeUser, Team } from '@lems/types';
+import Layout from '../../../components/layout';
+import { RoleAuthorizer } from '../../../components/role-authorizer';
+import ConnectionIndicator from '../../../components/connection-indicator';
+import CompareView from '../../../components/deliberations/compare-view';
+import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { useWebsocket } from '../../../hooks/use-websocket';
+
+interface Props {
+  user: WithId<SafeUser>;
+  division: WithId<Division>;
+  teams: Array<WithId<Team>>;
+}
+
+const Page: NextPage<Props> = ({ user, division, teams }) => {
+  const router = useRouter();
+  const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
+
+  return (
+    <RoleAuthorizer
+      user={user}
+      allowedRoles={['mc']}
+      onFail={() => {
+        router.push(`/lems/${user.role}`);
+        enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
+      }}
+    >
+      <Layout
+        maxWidth={1900}
+        title={`השוואת קבוצות | ${division.name}`}
+        action={<ConnectionIndicator status={connectionStatus} />}
+        color={division.color}
+      >
+        <CompareView teams={[teams[1], teams[2]]} rubrics={[]} cvForms={[]} />
+      </Layout>
+    </RoleAuthorizer>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  try {
+    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+
+    const data = await serverSideGetRequests(
+      {
+        division: `/api/divisions/${user.divisionId}`,
+        teams: `/api/divisions/${user.divisionId}/teams`
+      },
+      ctx
+    );
+
+    return { props: { user, ...data } };
+  } catch (err) {
+    return { redirect: { destination: '/login', permanent: false } };
+  }
+};
+
+export default Page;
