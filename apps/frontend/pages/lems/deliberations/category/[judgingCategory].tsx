@@ -35,6 +35,7 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
+import dayjs from 'dayjs';
 
 interface Props {
   category: JudgingCategory;
@@ -179,7 +180,7 @@ const Page: NextPage<Props> = ({
       'updateJudgingDeliberation',
       division._id.toString(),
       deliberation._id.toString(),
-      { status: 'completed' },
+      { status: 'completed', completionTime: dayjs().toDate() },
       response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {

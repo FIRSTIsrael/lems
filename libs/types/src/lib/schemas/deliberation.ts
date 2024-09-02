@@ -5,6 +5,7 @@ export interface JudgingDeliberation {
   category?: JudgingCategory;
   isFinalDeliberation?: boolean;
   startTime?: Date;
+  completionTime?: Date;
   status: Status;
   awards: { [key in AwardNames]?: Array<ObjectId> };
 }

@@ -45,9 +45,6 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
         paddingX="8px"
       >
         <Button variant="contained" fullWidth>
-          סימון
-        </Button>
-        <Button variant="contained" fullWidth>
           ניקוי
         </Button>
         <Button variant="contained" fullWidth>
