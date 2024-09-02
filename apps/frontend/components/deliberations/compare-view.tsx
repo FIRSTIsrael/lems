@@ -1,31 +1,42 @@
-import { createContext, useState } from 'react';
-import { WithId } from 'mongodb';
+import { createContext, useContext, useState } from 'react';
+import { WithId, ObjectId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Team } from '@lems/types';
+import { Rubric, JudgingCategory, Team, CoreValuesForm } from '@lems/types';
 
-export interface CompareContextValues {
+export interface CompareContextType {
   teams: Array<WithId<Team>>;
-  rubrics: any;
-  cvForms: any;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  cvForms: Array<CoreValuesForm>;
 }
+
+export const CompareContext = createContext<CompareContextType>(null as any);
 
 interface CompareViewProps {
+  compareTeamIds: Array<ObjectId>;
   teams: Array<WithId<Team>>;
-  rubrics: any;
-  cvForms: any;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  cvForms: Array<CoreValuesForm>;
 }
 
-const CompareView: React.FC<CompareViewProps> = props => {
-  //TODO: context can have different, changing values
-  // stored in state or memo. Currently just uses the default always.
-  const [compareData, setCompareData] = useState(props);
-  const CompareContext = createContext<CompareContextValues>({} as CompareContextValues);
+const CompareView: React.FC<CompareViewProps> = ({ compareTeamIds, teams, rubrics, cvForms }) => {
+  const compareTeams = teams.filter(t => compareTeamIds.includes(t._id));
+  const compareRubrics = rubrics.filter(r => compareTeamIds.includes(r.teamId));
+  const compareCvForms = cvForms.filter(
+    cvf =>
+      cvf.demonstratorAffiliation &&
+      compareTeams.map(t => t.number.toString()).includes(cvf.demonstratorAffiliation)
+  );
+  const [compareData, setCompareData] = useState({
+    teams: compareTeams,
+    rubrics: compareRubrics,
+    cvForms: compareCvForms
+  });
 
   return (
     <CompareContext.Provider value={compareData}>
       <Grid container>
-        {props.teams.map(team => (
-          <CompareViewTeam team={team} />
+        {compareTeamIds.map(teamId => (
+          <CompareViewTeam teamId={teamId} />
         ))}
       </Grid>
     </CompareContext.Provider>
@@ -33,11 +44,16 @@ const CompareView: React.FC<CompareViewProps> = props => {
 };
 
 interface CompareViewTeamProps {
-  team: any;
+  teamId: ObjectId;
 }
 
-const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ team }) => {
-  return <Grid xs={6}>{team.name}</Grid>;
+const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
+  const { teams, rubrics, cvForms } = useContext(CompareContext);
+  const team = teams.find(t => t._id === teamId);
+
+  if (!team) return null;
+
+  return <Grid xs={6}>{team.number}</Grid>;
 };
 
 export default CompareView;

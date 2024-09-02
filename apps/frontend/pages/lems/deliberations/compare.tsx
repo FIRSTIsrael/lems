@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Division, SafeUser, Team } from '@lems/types';
+import { Division, SafeUser, Team, Rubric, JudgingCategory, CoreValuesForm } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -14,9 +14,11 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  cvForms: Array<CoreValuesForm>;
 }
 
-const Page: NextPage<Props> = ({ user, division, teams }) => {
+const Page: NextPage<Props> = ({ user, division, teams, rubrics, cvForms }) => {
   const router = useRouter();
   const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
 
@@ -35,7 +37,12 @@ const Page: NextPage<Props> = ({ user, division, teams }) => {
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <CompareView teams={[teams[1], teams[2]]} rubrics={[]} cvForms={[]} />
+        <CompareView
+          compareTeamIds={[teams[1]._id, teams[2]._id]}
+          teams={teams}
+          rubrics={rubrics}
+          cvForms={cvForms}
+        />
       </Layout>
     </RoleAuthorizer>
   );
@@ -48,7 +55,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`
+        teams: `/api/divisions/${user.divisionId}/teams`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
       },
       ctx
     );
