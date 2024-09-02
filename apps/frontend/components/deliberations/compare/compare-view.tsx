@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
+import { Paper, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Rubric, JudgingCategory, Team, CoreValuesForm } from '@lems/types';
 
@@ -34,7 +35,7 @@ const CompareView: React.FC<CompareViewProps> = ({ compareTeamIds, teams, rubric
 
   return (
     <CompareContext.Provider value={compareData}>
-      <Grid container>
+      <Grid container component={Paper} sx={{ mt: 2 }}>
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} />
         ))}
@@ -53,7 +54,11 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
 
   if (!team) return null;
 
-  return <Grid xs={6}>{team.number}</Grid>;
+  return (
+    <Grid xs={6}>
+      <Stack>{team.number}</Stack>
+    </Grid>
+  );
 };
 
 export default CompareView;

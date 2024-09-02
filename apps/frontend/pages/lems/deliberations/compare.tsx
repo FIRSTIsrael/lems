@@ -6,7 +6,7 @@ import { Division, SafeUser, Team, Rubric, JudgingCategory, CoreValuesForm } fro
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import CompareView from '../../../components/deliberations/compare-view';
+import CompareView from '../../../components/deliberations/compare/compare-view';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 
