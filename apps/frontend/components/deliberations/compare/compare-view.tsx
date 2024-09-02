@@ -1,12 +1,17 @@
 import { createContext, useContext, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import { Paper, Stack, Box } from '@mui/material';
+import { Paper, Stack, Box, Typography, Divider, Avatar } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Rubric, JudgingCategory, Team, CoreValuesForm } from '@lems/types';
+import { Rubric, JudgingCategory, Team, CoreValuesForm, Scoresheet } from '@lems/types';
+import CompareRubricRemarks from './compare-rubric-remarks';
+import CompareNominations from './compare-nominations';
+import CompareBatteryChart from './compare-battery-chart';
+import CompareGpScores from './compare-gp-scores';
 
 export interface CompareContextType {
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<CoreValuesForm>;
   category?: JudgingCategory;
 }
@@ -18,6 +23,7 @@ interface CompareViewProps {
   category?: JudgingCategory;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<CoreValuesForm>;
 }
 
@@ -25,6 +31,7 @@ const CompareView: React.FC<CompareViewProps> = ({
   compareTeamIds,
   teams,
   rubrics,
+  scoresheets,
   cvForms,
   category
 }) => {
@@ -35,16 +42,20 @@ const CompareView: React.FC<CompareViewProps> = ({
       cvf.demonstratorAffiliation &&
       compareTeams.map(t => t.number.toString()).includes(cvf.demonstratorAffiliation)
   );
+  const compareScoresheets = scoresheets.filter(
+    s => compareTeamIds.includes(s.teamId) && s.stage !== 'practice'
+  );
   const [compareData, setCompareData] = useState({
     teams: compareTeams,
     rubrics: compareRubrics,
+    scoresheets: compareScoresheets,
     cvForms: compareCvForms,
     category
   });
 
   return (
     <CompareContext.Provider value={compareData}>
-      <Grid container component={Paper} sx={{ mt: 2 }}>
+      <Grid container sx={{ mt: 2 }}>
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} />
         ))}
@@ -64,9 +75,22 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
   if (!team) return null;
 
   return (
-    <Grid xs={12 / teams.length}>
-      <Stack>
-        <Box>{category ? <></> : <></>}</Box>
+    <Grid component={Paper} xs={12 / teams.length} height="100%">
+      <Stack
+        divider={
+          <Divider
+            sx={{ my: 1, width: '97%', alignSelf: 'center', borderWidth: 1.5, borderRadius: 20 }}
+          />
+        }
+      >
+        <Stack direction="row">
+          <Typography>{team.number}</Typography>
+          <Avatar alt="HG" />
+        </Stack>
+        <CompareBatteryChart teamId={teamId} />
+        <CompareNominations teamId={teamId} />
+        <CompareGpScores teamId={teamId} />
+        <CompareRubricRemarks teamId={teamId} />
       </Stack>
     </Grid>
   );
