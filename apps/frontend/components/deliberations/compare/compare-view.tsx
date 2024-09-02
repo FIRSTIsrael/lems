@@ -64,7 +64,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
   if (!team) return null;
 
   return (
-    <Grid xs={6}>
+    <Grid xs={12 / teams.length}>
       <Stack>
         <Box>{category ? <></> : <></>}</Box>
       </Stack>
