@@ -3,11 +3,11 @@ import { ObjectId } from 'mongodb';
 import { Stack, Typography } from '@mui/material';
 import { CompareContext } from './compare-view';
 
-interface CompareRubricRemarksProps {
+interface CompareGpScoresProps {
   teamId: ObjectId;
 }
 
-const CompareGpScores: React.FC<CompareRubricRemarksProps> = ({ teamId }) => {
+const CompareGpScores: React.FC<CompareGpScoresProps> = ({ teamId }) => {
   const { scoresheets } = useContext(CompareContext);
   const gpScores = scoresheets
     .filter(s => s.teamId === teamId)

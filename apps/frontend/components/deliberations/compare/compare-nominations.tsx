@@ -5,11 +5,11 @@ import { CoreValuesAwardsTypes } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { CompareContext } from './compare-view';
 
-interface CompareRubricRemarksProps {
+interface CompareNominationsProps {
   teamId: ObjectId;
 }
 
-const CompareNominations: React.FC<CompareRubricRemarksProps> = ({ teamId }) => {
+const CompareNominations: React.FC<CompareNominationsProps> = ({ teamId }) => {
   const { category, rubrics } = useContext(CompareContext);
   const rubric = rubrics.find(r => r.teamId === teamId && r.category === 'core-values');
 

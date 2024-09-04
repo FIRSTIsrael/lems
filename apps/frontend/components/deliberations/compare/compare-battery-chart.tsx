@@ -4,11 +4,11 @@ import { Box, Stack } from '@mui/material';
 import { green, yellow, red } from '@mui/material/colors';
 import { CompareContext } from './compare-view';
 
-interface CompareRubricRemarksProps {
+interface CompareBatteryChartProps {
   teamId: ObjectId;
 }
 
-const CompareBatteryChart: React.FC<CompareRubricRemarksProps> = ({ teamId }) => {
+const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => {
   const { category, rubrics } = useContext(CompareContext);
 
   // TODO: calculate number of leading tied and losing clauses

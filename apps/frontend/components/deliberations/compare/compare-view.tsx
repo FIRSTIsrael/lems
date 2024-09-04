@@ -7,6 +7,8 @@ import CompareRubricRemarks from './compare-rubric-remarks';
 import CompareNominations from './compare-nominations';
 import CompareBatteryChart from './compare-battery-chart';
 import CompareGpScores from './compare-gp-scores';
+import CompareRubricScores from './compare-rubric-scores';
+import CompareExceedingRemarks from './compare-exceeding-remarks';
 
 export interface CompareContextType {
   teams: Array<WithId<Team>>;
@@ -88,6 +90,8 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
           <Avatar alt="HG" />
         </Stack>
         <CompareBatteryChart teamId={teamId} />
+        <CompareRubricScores teamId={teamId} />
+        <CompareExceedingRemarks teamId={teamId} />
         <CompareNominations teamId={teamId} />
         <CompareGpScores teamId={teamId} />
         <CompareRubricRemarks teamId={teamId} />
