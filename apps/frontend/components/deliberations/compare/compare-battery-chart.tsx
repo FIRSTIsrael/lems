@@ -7,12 +7,11 @@ import { CompareContext } from './compare-view';
 import { JudgingCategory } from '@lems/types';
 
 interface CompareBatteryChartProps {
-  category?: JudgingCategory;
   teamId: ObjectId;
 }
 
-const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ category, teamId }) => {
-  const { rubrics } = useContext(CompareContext);
+const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => {
+  const { rubrics, category } = useContext(CompareContext);
   let competitorRubrics = rubrics.filter(r => r.teamId !== teamId);
   let teamRubrics = rubrics.filter(r => r.teamId === teamId);
 

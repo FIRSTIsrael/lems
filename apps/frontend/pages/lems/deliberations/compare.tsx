@@ -52,6 +52,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
           rubrics={rubrics}
           cvForms={cvForms}
           scoresheets={scoresheets}
+          category="innovation-project" //TODO: Remove
         />
       </Layout>
     </RoleAuthorizer>

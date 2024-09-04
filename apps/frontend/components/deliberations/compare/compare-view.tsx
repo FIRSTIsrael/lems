@@ -87,8 +87,8 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
           />
         }
       >
-        <CompareTeamInfo teamId={teamId} category={category} />
-        <CompareBatteryChart teamId={teamId} category={category} />
+        <CompareTeamInfo teamId={teamId} />
+        <CompareBatteryChart teamId={teamId} />
         <CompareRubricScores teamId={teamId} />
         <CompareExceedingRemarks teamId={teamId} />
         <CompareNominations teamId={teamId} />

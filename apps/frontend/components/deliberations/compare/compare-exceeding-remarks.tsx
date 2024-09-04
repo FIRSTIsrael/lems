@@ -9,8 +9,12 @@ interface CompareExceedingRemarksProps {
 }
 
 const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamId }) => {
-  const { rubrics } = useContext(CompareContext);
-  const teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
+  const { rubrics, category } = useContext(CompareContext);
+  let teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
+
+  if (category) {
+    teamRubrics = teamRubrics.filter(r => r.category === category);
+  }
 
   return teamRubrics.map(rubric => {
     const schema = rubricsSchemas[rubric.category];

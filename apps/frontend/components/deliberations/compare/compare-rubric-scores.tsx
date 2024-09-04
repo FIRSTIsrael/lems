@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { green, red, yellow } from '@mui/material/colors';
 import { Stack, Typography } from '@mui/material';
+import { JudgingCategory } from '@lems/types';
 import { rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 
@@ -11,9 +12,14 @@ interface CompareRubricScoresProps {
 }
 
 const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => {
-  const { rubrics } = useContext(CompareContext);
-  const teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
+  const { rubrics, category } = useContext(CompareContext);
+  let teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
   let competitorRubrics = rubrics.filter(r => r.teamId !== teamId);
+
+  if (category) {
+    competitorRubrics = competitorRubrics.filter(r => r.category === category);
+    teamRubrics = teamRubrics.filter(r => r.category === category);
+  }
 
   return teamRubrics.map(rubric => {
     const schema = rubricsSchemas[rubric.category];

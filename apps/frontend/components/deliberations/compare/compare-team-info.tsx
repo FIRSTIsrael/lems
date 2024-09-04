@@ -19,11 +19,10 @@ import { CompareContext } from './compare-view';
 
 interface CompareTeamInfoProps {
   teamId: ObjectId;
-  category?: JudgingCategory;
 }
 
-const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId, category }) => {
-  const { teams, rubrics } = useContext(CompareContext);
+const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
+  const { teams, rubrics, category } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
   const teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
 
