@@ -10,6 +10,7 @@ import CompareGpScores from './compare-gp-scores';
 import CompareRubricScores from './compare-rubric-scores';
 import CompareExceedingRemarks from './compare-exceeding-remarks';
 import CompareTeamInfo from './compare-team-info';
+import CompareCvForms from './compare-cv-forms';
 
 export interface CompareContextType {
   teams: Array<WithId<Team>>;
@@ -93,6 +94,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
         <CompareNominations teamId={teamId} />
         <CompareGpScores teamId={teamId} />
         <CompareRubricRemarks teamId={teamId} />
+        <CompareCvForms teamId={teamId} />
       </Stack>
     </Grid>
   );
