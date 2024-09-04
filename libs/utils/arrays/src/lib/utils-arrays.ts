@@ -30,3 +30,21 @@ export const range = (n: number) => [...Array(n).keys()];
 export const average = (arr: Array<number>) => {
   return arr.reduce((acc, value) => acc + value, 0) / arr.length;
 };
+
+export const getRelativePercentages = (arr: Array<any>) => {
+  const counts = arr.reduce((acc, value) => {
+    if (value in acc) {
+      acc[value] += 1;
+    } else {
+      acc[value] = 1;
+    }
+    return acc;
+  }, {});
+
+  const total = arr.length;
+
+  return [...new Set(arr)].reduce((acc, value) => {
+    acc[value] = ((counts[value] || 0) / total) * 100;
+    return acc;
+  }, {});
+};

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import { Paper, Stack, Box, Typography, Divider, Avatar } from '@mui/material';
+import { Paper, Stack, Divider } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Rubric, JudgingCategory, Team, CoreValuesForm, Scoresheet } from '@lems/types';
 import CompareRubricRemarks from './compare-rubric-remarks';
@@ -72,7 +72,7 @@ interface CompareViewTeamProps {
 }
 
 const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
-  const { teams, rubrics, cvForms, category } = useContext(CompareContext);
+  const { teams, category } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
 
   if (!team) return null;
@@ -86,8 +86,8 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
           />
         }
       >
-        <CompareTeamInfo teamId={teamId} category={'innovation-project'} />
-        <CompareBatteryChart teamId={teamId} />
+        <CompareTeamInfo teamId={teamId} category={category} />
+        <CompareBatteryChart teamId={teamId} category={category} />
         <CompareRubricScores teamId={teamId} />
         <CompareExceedingRemarks teamId={teamId} />
         <CompareNominations teamId={teamId} />
