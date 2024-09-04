@@ -31,9 +31,9 @@ const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ category, tea
       {} as Record<string, number>
     );
 
-  const summary: Array<'W' | 'L' | 'T'> = Object.entries(teamScores).map(([key, value]) => {
+  const summary: Array<'W' | 'L' | 'T'> = Object.entries(teamScores).map(([clauseName, value]) => {
     const highestScore = Math.max(
-      ...competitorRubrics.map(r => r.data?.values?.[key]?.value ?? -1)
+      ...competitorRubrics.map(r => r.data?.values?.[clauseName]?.value ?? -1)
     );
     if (value > highestScore) return 'W';
     if (value < highestScore) return 'L';
