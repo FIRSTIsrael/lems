@@ -26,3 +26,7 @@ export const compareScoreArrays = (
 };
 
 export const range = (n: number) => [...Array(n).keys()];
+
+export const average = (arr: Array<number>) => {
+  return arr.reduce((acc, value) => acc + value, 0) / arr.length;
+};
