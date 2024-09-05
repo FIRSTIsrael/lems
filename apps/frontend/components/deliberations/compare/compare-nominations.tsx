@@ -4,6 +4,8 @@ import { Stack, Checkbox, Typography } from '@mui/material';
 import { CoreValuesAwardsTypes } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { CompareContext } from './compare-view';
+import CheckIcon from '@mui/icons-material/Check';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 interface CompareNominationsProps {
   teamId: ObjectId;
@@ -18,9 +20,13 @@ const CompareNominations: React.FC<CompareNominationsProps> = ({ teamId }) => {
   return (
     <Stack direction="row">
       {CoreValuesAwardsTypes.map(award => (
-        <Stack>
+        <Stack width="100%" alignItems="center">
           <Typography>{localizedAward[award].name}</Typography>
-          <Checkbox readOnly checked={rubric?.data?.awards?.[award] ?? false} />
+          {rubric?.data?.awards?.[award] ? (
+            <CheckIcon sx={{ color: '#388e3c' }} />
+          ) : (
+            <RemoveIcon sx={{ color: '#666' }} />
+          )}
         </Stack>
       ))}
     </Stack>

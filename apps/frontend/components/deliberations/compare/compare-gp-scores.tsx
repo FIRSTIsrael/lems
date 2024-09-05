@@ -15,9 +15,9 @@ const CompareGpScores: React.FC<CompareGpScoresProps> = ({ teamId }) => {
     .sort((a, b) => a.round - b.round);
 
   return (
-    <Stack height={50} direction="row" px={2} spacing={2}>
+    <Stack height={70} direction="row" px={2} spacing={2}>
       {gpScores.map(({ round, gp }) => (
-        <Stack alignItems="center">
+        <Stack alignItems="center" width="100%" spacing={0.75}>
           <Typography>סבב {round}</Typography>
           <Stack direction="row" spacing={0.3}>
             {[...Array(gp?.value ?? 0).keys()].map(i => (

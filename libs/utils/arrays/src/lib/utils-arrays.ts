@@ -31,8 +31,8 @@ export const average = (arr: Array<number>) => {
   return arr.reduce((acc, value) => acc + value, 0) / arr.length;
 };
 
-export const getRelativePercentages = (arr: Array<any>) => {
-  const counts = arr.reduce((acc, value) => {
+export const getCounts = (arr: Array<any>) => {
+  return arr.reduce((acc, value) => {
     if (value in acc) {
       acc[value] += 1;
     } else {
@@ -40,7 +40,10 @@ export const getRelativePercentages = (arr: Array<any>) => {
     }
     return acc;
   }, {});
+};
 
+export const getRelativePercentages = (arr: Array<any>) => {
+  const counts = getCounts(arr);
   const total = arr.length;
 
   return [...new Set(arr)].reduce((acc, value) => {

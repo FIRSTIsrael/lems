@@ -1,10 +1,40 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { green, yellow, red } from '@mui/material/colors';
-import { getRelativePercentages } from '@lems/utils/arrays';
+import { getCounts, getRelativePercentages } from '@lems/utils/arrays';
 import { CompareContext } from './compare-view';
-import { JudgingCategory } from '@lems/types';
+
+const WTL = ['W', 'T', 'L'] as const;
+type WTLValues = (typeof WTL)[number];
+
+interface CompareBatteryBoxProps {
+  wtlValue: WTLValues;
+  counts: Record<WTLValues, number>;
+  percentages: Record<WTLValues, number>;
+}
+
+const CompareBatteryBox: React.FC<CompareBatteryBoxProps> = ({ wtlValue, counts, percentages }) => {
+  const colors = { W: green[600], T: yellow[600], L: red[600] };
+  return (
+    counts[wtlValue] > 0 && (
+      <Box
+        height="100%"
+        width={`${percentages[wtlValue]}%`}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bgcolor={colors[wtlValue]}
+      >
+        {percentages[wtlValue] > 5 && (
+          <Typography color="#333" sx={{ direction: 'rtl' }}>
+            {counts[wtlValue]} ({Math.round(percentages[wtlValue])}%)
+          </Typography>
+        )}
+      </Box>
+    )
+  );
+};
 
 interface CompareBatteryChartProps {
   teamId: ObjectId;
@@ -30,7 +60,7 @@ const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => 
       {} as Record<string, number>
     );
 
-  const summary: Array<'W' | 'L' | 'T'> = Object.entries(teamScores).map(([clauseName, value]) => {
+  const summary: Array<WTLValues> = Object.entries(teamScores).map(([clauseName, value]) => {
     const highestScore = Math.max(
       ...competitorRubrics.map(r => r.data?.values?.[clauseName]?.value ?? -1)
     );
@@ -39,13 +69,14 @@ const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => 
     return 'T';
   });
 
+  const counts = getCounts(summary);
   const percentages = getRelativePercentages(summary);
 
   return (
-    <Stack height={50} direction="row" px={2}>
-      <Box height="100%" width={`${percentages['W']}%`} bgcolor={green[500]} />
-      <Box height="100%" width={`${percentages['T']}%`} bgcolor={yellow[500]} />
-      <Box height="100%" width={`${percentages['L']}%`} bgcolor={red[500]} />
+    <Stack height={50} direction="row" borderRadius={100} overflow="hidden" mx={2}>
+      {WTL.map(wtl => (
+        <CompareBatteryBox wtlValue={wtl} counts={counts} percentages={percentages} />
+      ))}
     </Stack>
   );
 };

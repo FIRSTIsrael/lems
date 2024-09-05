@@ -29,14 +29,14 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
       );
 
     return (
-      <Stack>
+      <Stack px={2}>
         {Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
           if (!value.notes) {
             return;
           }
           return (
             <Typography>
-              נימוק ל{localizationMap[key]} : {value.notes}
+              נימוק ל{localizationMap[key]}: {value.notes}
             </Typography>
           );
         })}

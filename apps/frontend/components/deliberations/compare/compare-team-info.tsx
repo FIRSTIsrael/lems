@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { red, blue, green } from '@mui/material/colors';
 import {
@@ -29,12 +29,9 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
   if (!team) return;
 
   return (
-    <Grid container>
+    <Grid container alignItems="center">
       <Grid xs={6}>
-        <Stack direction="row">
-          <Typography>{team.number}</Typography>
-          <Avatar alt="HG" />
-        </Stack>
+        <Typography>{team.number}</Typography>
       </Grid>
       <Grid xs={6}>
         {category ? (
@@ -104,7 +101,7 @@ const CategoryAlignmentChart: React.FC<CategoryAlignmentChartProps> = ({ categor
       <RadarChart outerRadius={60} data={data}>
         <PolarGrid />
         <PolarAngleAxis dataKey="section" tick={props => renderPolarAngleAxis(props)} />
-        <PolarRadiusAxis angle={90} domain={[0, 4]} type="number" />
+        <PolarRadiusAxis angle={90} domain={[0, 4]} type="number" fontSize="0.8rem" />
         <Radar name="team" dataKey="average" stroke={color} fill={color} fillOpacity={0.6} />
       </RadarChart>
     </ResponsiveContainer>
@@ -155,10 +152,10 @@ const RubricAlignmentChart: React.FC<RubricAlignmentChartProps> = ({ rubrics }) 
 
   return (
     <ResponsiveContainer width="100%" height={170}>
-      <RadarChart outerRadius={60} data={data}>
+      <RadarChart outerRadius={60} data={data} cy={110}>
         <PolarGrid />
         <PolarAngleAxis dataKey="category" tick={props => renderPolarAngleAxis(props)} />
-        <PolarRadiusAxis angle={90} domain={[0, 4]} type="number" />
+        <PolarRadiusAxis angle={90} domain={[0, 4]} type="number" fontSize="0.8rem" />
         <Radar name="team" dataKey="average" stroke={color} fill={color} fillOpacity={0.6} />
       </RadarChart>
     </ResponsiveContainer>

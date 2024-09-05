@@ -59,7 +59,7 @@ const CompareView: React.FC<CompareViewProps> = ({
 
   return (
     <CompareContext.Provider value={compareData}>
-      <Grid container sx={{ mt: 2 }}>
+      <Grid container sx={{ mt: 2 }} columnGap={4} justifyContent="center">
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} />
         ))}
@@ -73,19 +73,15 @@ interface CompareViewTeamProps {
 }
 
 const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
-  const { teams, category } = useContext(CompareContext);
+  const { teams } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
 
   if (!team) return null;
 
   return (
-    <Grid component={Paper} xs={12 / teams.length} height="100%">
+    <Grid component={Paper} xs={11.5 / teams.length} height="100%">
       <Stack
-        divider={
-          <Divider
-            sx={{ my: 1, width: '97%', alignSelf: 'center', borderWidth: 1.5, borderRadius: 20 }}
-          />
-        }
+        divider={<Divider sx={{ my: 2, width: '100%', alignSelf: 'center', borderWidth: 1 }} />}
       >
         <CompareTeamInfo teamId={teamId} />
         <CompareBatteryChart teamId={teamId} />
