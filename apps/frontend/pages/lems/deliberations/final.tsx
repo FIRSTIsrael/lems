@@ -23,8 +23,6 @@ import {
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
-import { localizedJudgingCategory } from '@lems/season';
-import CategoryDeliberationsGrid from '../../../components/deliberations/category-deliberations-grid';
 import ScoresPerRoomChart from '../../../components/insights/charts/scores-per-room-chart';
 import TeamPool from '../../../components/deliberations/team-pool';
 import AwardList from '../../../components/deliberations/award-list';
@@ -38,7 +36,6 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 interface Props {
-  category: JudgingCategory;
   user: WithId<SafeUser>;
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
@@ -51,7 +48,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({
-  category,
   user,
   division,
   teams,
@@ -70,9 +66,9 @@ const Page: NextPage<Props> = ({
     .filter(t => t.registered)
     .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
     .sort((a, b) => a.number - b.number);
-  const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
-    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
-  );
+  // const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
+  //   teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
+  // );
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
     if (
@@ -203,7 +199,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={1900}
-        title={`דיון סופי ${localizedJudgingCategory[category].name} | בית ${division.name}`}
+        title={`דיון סופי | בית ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -249,22 +245,9 @@ const Page: NextPage<Props> = ({
           }}
         >
           <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
-            <Grid xs={8}>
-              <CategoryDeliberationsGrid
-                category={category}
-                rooms={rooms}
-                rubrics={rubrics}
-                scoresheets={scoresheets}
-                sessions={sessions}
-                teams={availableTeams}
-                selectedTeams={selectedTeams}
-                cvForms={cvForms}
-                updateTeamAwards={updateTeamAwards}
-                disabled={deliberation.status !== 'in-progress'}
-              />
-            </Grid>
+            <Grid xs={8}>{/* Grid */}</Grid>
             <Grid xs={1.5}>
-              <AwardList
+              {/* <AwardList
                 id={category}
                 pickList={
                   deliberation.awards[category as AwardNames]?.map(
@@ -272,7 +255,7 @@ const Page: NextPage<Props> = ({
                   ) ?? []
                 }
                 disabled={deliberation.status !== 'in-progress'}
-              />
+              /> */}
             </Grid>
             <Grid xs={2.5}>
               <DeliberationControlPanel
@@ -280,7 +263,6 @@ const Page: NextPage<Props> = ({
                 deliberation={deliberation}
                 startDeliberation={startDeliberation}
                 lockDeliberation={lockDeliberation}
-                category={category}
                 cvForms={cvForms}
                 rubrics={rubrics}
                 scoresheets={scoresheets}
@@ -306,27 +288,22 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
-    const category = ctx.params?.judgingCategory as JudgingCategory;
-
-    if (!JudgingCategoryTypes.includes(category)) {
-      return { notFound: true };
-    }
 
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/${ctx.params?.judgingCategory}`
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/final`
       },
       ctx
     );
 
-    return { props: { user, ...data, category } };
+    return { props: { user, ...data } };
   } catch (err) {
     return { redirect: { destination: '/login', permanent: false } };
   }
