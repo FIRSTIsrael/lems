@@ -32,7 +32,6 @@ import { apiFetch } from '../../../lib/utils/fetch';
 import AwardWinnerSelector from './award-winner-selector';
 import ResultExportPaper from './result-export-paper';
 import AdvancingTeamsSelector from './advancing-teams-selector';
-import UploadFileButton from '../../general/upload-file';
 
 interface AwardsPanelProps {
   awards: Array<WithId<Award>>;
@@ -148,15 +147,6 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({ awards, division, teams, read
                     >
                       איפוס
                     </Button>
-                    <UploadFileButton
-                      displayName="קובץ פרסים"
-                      urlPath={`/api/divisions/${division._id}/awards/winners/parse`}
-                      extension=".csv"
-                      disabled={
-                        values.awards.some(a => a.winner && !(typeof a.winner === 'string')) ||
-                        values.advancingTeams.length > 0
-                      }
-                    />
                     <LoadingButton
                       startIcon={<SaveRoundedIcon />}
                       variant="contained"
