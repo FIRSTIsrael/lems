@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import { Box, Stack, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
-import { Slide } from '@lems/presentations';
+import { Slide, Appear } from '@lems/presentations';
 import { Team } from '@lems/types';
 import LogoStack from './logo-stack';
 
@@ -11,10 +11,30 @@ interface AwardWinnerSlideProps {
   place?: number;
   winner: string | WithId<Team>;
   color?: CSSProperties['color'];
+  hideWinner?: boolean;
 }
 
-const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner, color }) => {
+const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({
+  name,
+  place,
+  winner,
+  color,
+  hideWinner = false
+}) => {
   const isTeamAward = typeof winner !== 'string';
+
+  const renderWinnerName = () => (
+    <>
+      <Typography fontSize="4rem" fontWeight={700}>
+        {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
+      </Typography>
+      {isTeamAward && (
+        <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
+          {winner.affiliation.name}, {winner.affiliation.city}
+        </Typography>
+      )}
+    </>
+  );
 
   return (
     <Slide>
@@ -35,16 +55,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ name, place, winner
           <Typography fontSize="2.75rem" color="text.secondary">
             {isTeamAward ? 'מוענק לקבוצה' : 'מוענק ל'}
           </Typography>
-          {/* <Appear> */}
-          <Typography fontSize="4rem" fontWeight={700}>
-            {isTeamAward ? `#${winner.number} ${winner.name}` : winner}
-          </Typography>
-          {isTeamAward && (
-            <Typography fontSize="3rem" fontWeight={500} color="text.secondary">
-              {winner.affiliation.name}, {winner.affiliation.city}
-            </Typography>
-          )}
-          {/* </Appear> */}
+          {hideWinner ? <Appear>{renderWinnerName()}</Appear> : renderWinnerName()}
         </Box>
         <LogoStack color={color} />
       </Stack>
