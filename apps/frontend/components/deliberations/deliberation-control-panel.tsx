@@ -53,12 +53,13 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
           lockDeliberation={lockDeliberation}
         />
         <Divider />
-        <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="center">
+        <Stack spacing={1} alignItems="center" justifyContent="center">
           <TeamSelection
             teams={teams}
             setTeam={team => setCompareTeams(prev => [team, prev[1]])}
             value={compareTeams[0]}
             fullWidth
+            size="small"
           />
           <Typography>מול</Typography>
           <TeamSelection
@@ -66,6 +67,7 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
             setTeam={team => setCompareTeams(prev => [prev[0], team])}
             value={compareTeams[1]}
             fullWidth
+            size="small"
           />
         </Stack>
         <Stack
@@ -94,7 +96,7 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
         <CompareModal
           open={compareOpen}
           setOpen={setCompareOpen}
-          compareTeamIds={compareTeams.map(t => t._id)}
+          compareTeamIds={compareTeams.map(t => t?._id)}
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}

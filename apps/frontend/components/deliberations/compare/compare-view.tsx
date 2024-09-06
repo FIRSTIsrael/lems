@@ -63,7 +63,7 @@ const CompareView: React.FC<CompareViewProps> = ({
         category
       }}
     >
-      <Grid container sx={{ mt: 2 }} columnGap={4} justifyContent="center">
+      <Grid container columnGap={4} justifyContent="center">
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} removeTeam={removeTeam} />
         ))}

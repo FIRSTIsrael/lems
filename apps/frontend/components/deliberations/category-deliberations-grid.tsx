@@ -259,7 +259,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
           return updatedRow;
         }}
         sx={{
-          maxHeight: 670,
+          maxHeight: 696,
           '& .selected-team': {
             backgroundColor: getBackgroundColor('#32a84c', 'light'),
             '&:hover': {

@@ -10,6 +10,7 @@ interface TeamSelectionProps {
   setTeam: (team: WithId<Team> | null) => void;
   readOnly?: boolean;
   fullWidth?: boolean;
+  size?: 'small' | 'medium';
   sx?: SxProps<Theme>;
 }
 

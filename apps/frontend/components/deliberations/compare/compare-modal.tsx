@@ -11,7 +11,18 @@ const CompareModal: React.FC<CompareModalProps> = props => {
 
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
-      <Paper>
+      <Paper
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          px: 2,
+          py: 3,
+          width: '75%',
+          bgcolor: '#eaeaec'
+        }}
+      >
         <CompareView {...compareViewProps} />
       </Paper>
     </Modal>
