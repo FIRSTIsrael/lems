@@ -22,7 +22,7 @@ export interface CompareContextType {
 
 export const CompareContext = createContext<CompareContextType>(null as any);
 
-interface CompareViewProps {
+export interface CompareViewProps {
   compareTeamIds: Array<ObjectId>;
   category?: JudgingCategory;
   teams: Array<WithId<Team>>;

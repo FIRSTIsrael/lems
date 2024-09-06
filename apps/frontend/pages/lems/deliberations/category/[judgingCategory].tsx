@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -35,7 +36,6 @@ import ConnectionIndicator from '../../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
-import dayjs from 'dayjs';
 
 interface Props {
   category: JudgingCategory;
@@ -65,6 +65,7 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [deliberation, setDeliberation] = useState(initialDeliberation);
   const [rubrics, setRubrics] = useState(initialRubrics);
+
   const availableTeams = teams
     .filter(t => t.registered)
     .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
@@ -279,6 +280,10 @@ const Page: NextPage<Props> = ({
                 deliberation={deliberation}
                 startDeliberation={startDeliberation}
                 lockDeliberation={lockDeliberation}
+                category={category}
+                cvForms={cvForms}
+                rubrics={rubrics}
+                scoresheets={scoresheets}
               />
             </Grid>
             <Grid xs={5}>
