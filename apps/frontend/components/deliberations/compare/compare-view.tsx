@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import { Paper, Stack, Divider } from '@mui/material';
+import { Paper, Stack, Divider, IconButton } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+import CloseRounded from '@mui/icons-material/CloseRounded';
 import { Rubric, JudgingCategory, Team, CoreValuesForm, Scoresheet } from '@lems/types';
 import CompareRubricRemarks from './compare-rubric-remarks';
 import CompareNominations from './compare-nominations';
@@ -29,6 +30,7 @@ export interface CompareViewProps {
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<CoreValuesForm>;
+  removeTeam?: (teamId: ObjectId) => void;
 }
 
 const CompareView: React.FC<CompareViewProps> = ({
@@ -37,7 +39,8 @@ const CompareView: React.FC<CompareViewProps> = ({
   rubrics,
   scoresheets,
   cvForms,
-  category
+  category,
+  removeTeam
 }) => {
   const compareTeams = teams.filter(t => compareTeamIds.includes(t._id));
   const compareRubrics = rubrics.filter(r => compareTeamIds.includes(r.teamId));
@@ -49,19 +52,20 @@ const CompareView: React.FC<CompareViewProps> = ({
   const compareScoresheets = scoresheets.filter(
     s => compareTeamIds.includes(s.teamId) && s.stage !== 'practice'
   );
-  const [compareData, setCompareData] = useState({
-    teams: compareTeams,
-    rubrics: compareRubrics,
-    scoresheets: compareScoresheets,
-    cvForms: compareCvForms,
-    category
-  });
 
   return (
-    <CompareContext.Provider value={compareData}>
+    <CompareContext.Provider
+      value={{
+        teams: compareTeams,
+        rubrics: compareRubrics,
+        scoresheets: compareScoresheets,
+        cvForms: compareCvForms,
+        category
+      }}
+    >
       <Grid container sx={{ mt: 2 }} columnGap={4} justifyContent="center">
         {compareTeamIds.map(teamId => (
-          <CompareViewTeam teamId={teamId} />
+          <CompareViewTeam teamId={teamId} removeTeam={removeTeam} />
         ))}
       </Grid>
     </CompareContext.Provider>
@@ -70,16 +74,22 @@ const CompareView: React.FC<CompareViewProps> = ({
 
 interface CompareViewTeamProps {
   teamId: ObjectId;
+  removeTeam?: (teamId: ObjectId) => void;
 }
 
-const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId }) => {
+const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam }) => {
   const { teams } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
 
   if (!team) return null;
 
   return (
-    <Grid component={Paper} xs={11.5 / teams.length} height="100%">
+    <Grid component={Paper} xs={Math.min(11.5 / teams.length, 6)} height="100%">
+      {removeTeam && (
+        <IconButton onClick={() => removeTeam(teamId)}>
+          <CloseRounded />
+        </IconButton>
+      )}
       <Stack
         divider={<Divider sx={{ my: 2, width: '100%', alignSelf: 'center', borderWidth: 1 }} />}
       >
