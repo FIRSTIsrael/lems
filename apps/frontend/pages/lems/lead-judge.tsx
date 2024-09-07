@@ -150,7 +150,11 @@ const Page: NextPage<Props> = ({
       >
         <>
           <WelcomeHeader division={division} user={user} />
-          <CategoryDeliberationHeader deliberation={deliberation} sessions={sessions} />
+          <CategoryDeliberationHeader
+            division={division}
+            deliberation={deliberation}
+            sessions={sessions}
+          />
           <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
             <RubricStatusReferences />
           </Paper>

@@ -26,7 +26,9 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
   const finalEndTime = dayjs(finalDeliberation.startTime).add(FINAL_DELIBERATION_LENGTH, 'seconds');
 
   const startJudgingDeliberation = () => {
-    console.log('boop');
+    console.log(
+      'Make final deliberation available, copy columns form other deliberations, navigate.'
+    );
   };
 
   return (

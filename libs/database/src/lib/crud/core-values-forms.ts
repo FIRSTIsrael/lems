@@ -14,10 +14,7 @@ export const getDivisionCoreValuesForms = (divisionId: ObjectId) => {
 };
 
 export const addCoreValuesForm = (cvForm: CoreValuesForm) => {
-  return db
-    .collection<CoreValuesForm>('core-values-forms')
-    .insertOne(cvForm)
-    .then(response => response);
+  return db.collection<CoreValuesForm>('core-values-forms').insertOne(cvForm);
 };
 
 export const updateCoreValuesForm = (
@@ -31,8 +28,5 @@ export const updateCoreValuesForm = (
 };
 
 export const deleteCoreValuesForm = (filter: Filter<CoreValuesForm>) => {
-  return db
-    .collection<CoreValuesForm>('core-values-forms')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<CoreValuesForm>('core-values-forms').deleteOne(filter);
 };

@@ -289,6 +289,7 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
     const empty: JudgingDeliberation = {
       divisionId: division._id,
       category,
+      available: false,
       isFinalDeliberation: false,
       status: 'not-started',
       awards: { [category]: [] as Array<ObjectId> }
@@ -300,6 +301,7 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
   const finalDeliberation: JudgingDeliberation = {
     divisionId: division._id,
     isFinalDeliberation: true,
+    available: false,
     status: 'not-started',
     awards: {}
   };

@@ -15,17 +15,11 @@ export const getRoomSessions = (roomId: ObjectId) => {
 };
 
 export const addSession = (session: JudgingSession) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .insertOne(session)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').insertOne(session);
 };
 
 export const addSessions = (sessions: Array<JudgingSession>) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .insertMany(sessions)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').insertMany(sessions);
 };
 
 export const updateSession = (
@@ -39,15 +33,9 @@ export const updateSession = (
 };
 
 export const deleteSession = (filter: Filter<JudgingSession>) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').deleteOne(filter);
 };
 
 export const deleteRoomSessions = (roomId: ObjectId) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .deleteMany({ roomId })
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').deleteMany({ roomId });
 };

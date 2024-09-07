@@ -66,6 +66,11 @@ const Page: NextPage<Props> = ({
   const [deliberation, setDeliberation] = useState(initialDeliberation);
   const [rubrics, setRubrics] = useState(initialRubrics);
 
+  if (!deliberation.available) {
+    router.push(`/lems/${user.role}`);
+    enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
+  }
+
   const availableTeams = teams
     .filter(t => t.registered)
     .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
@@ -203,6 +208,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={1900}
+        back={`/lems/${user.role}`}
         title={`דיון תחום ${localizedJudgingCategory[category].name} | בית ${division.name}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}

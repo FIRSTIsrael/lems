@@ -45,20 +45,30 @@ router.get(
   })
 );
 
-router.put('/:deliberationId', (req: Request, res: Response) => {
-  const body: Partial<JudgingDeliberation> = { ...req.body };
-  if (!body) return res.status(400).json({ ok: false });
-
-  console.log(`⏬ Updating Deliberation for division ${req.params.deliberationId}`);
-  db.updateJudgingDeliberation({ _id: new ObjectId(req.params.divisionId) }, body).then(task => {
-    if (task.acknowledged) {
-      console.log('✅ Deliberation updated!');
-      return res.json({ ok: true, id: task.upsertedId });
-    } else {
-      console.log('❌ Could not update Deliberation');
-      return res.status(500).json({ ok: false });
+router.put(
+  '/:deliberationId',
+  asyncHandler(async (req: Request, res: Response) => {
+    const body: Partial<JudgingDeliberation> = { ...req.body };
+    if (!body) {
+      res.status(400).json({ ok: false });
+      return;
     }
-  });
-});
+
+    console.log(`⏬ Updating Deliberation ${req.params.deliberationId}`);
+    const task = await db.updateJudgingDeliberation(
+      { _id: new ObjectId(req.params.deliberationId) },
+      body
+    );
+    console.log(body);
+
+    if (task.modifiedCount === 1) {
+      console.log('✅ Deliberation updated!');
+      res.json({ ok: true, id: task.upsertedId });
+      return;
+    }
+    console.log('❌ Could not update Deliberation');
+    res.status(500).json({ ok: false });
+  })
+);
 
 export default router;

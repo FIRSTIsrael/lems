@@ -11,17 +11,11 @@ export const getJudgingDeliberationsFromDivision = (divisionId: ObjectId) => {
 };
 
 export const addJudgingDeliberation = (deliberation: JudgingDeliberation) => {
-  return db
-    .collection<JudgingDeliberation>('judging-deliberation')
-    .insertOne(deliberation)
-    .then(response => response);
+  return db.collection<JudgingDeliberation>('judging-deliberation').insertOne(deliberation);
 };
 
 export const addJudgingDeliberations = (deliberations: Array<JudgingDeliberation>) => {
-  return db
-    .collection<JudgingDeliberation>('judging-deliberation')
-    .insertMany(deliberations)
-    .then(response => response);
+  return db.collection<JudgingDeliberation>('judging-deliberation').insertMany(deliberations);
 };
 
 export const updateJudgingDeliberation = (
@@ -35,8 +29,5 @@ export const updateJudgingDeliberation = (
 };
 
 export const deleteJudgingDeliberation = (filter: Filter<JudgingDeliberation>) => {
-  return db
-    .collection<JudgingDeliberation>('judging-deliberation')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<JudgingDeliberation>('judging-deliberation').deleteOne(filter);
 };
