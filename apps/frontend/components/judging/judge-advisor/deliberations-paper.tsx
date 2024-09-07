@@ -4,8 +4,14 @@ import dayjs from 'dayjs';
 import { Paper, Box, Avatar, Typography, Stack, IconButton } from '@mui/material';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import EmojiEventsRoundedIcon from '@mui/icons-material/EmojiEventsRounded';
-import { Division, JudgingDeliberation, CATEGORY_DELIBERATION_LENGTH } from '@lems/types';
+import {
+  Division,
+  JudgingDeliberation,
+  CATEGORY_DELIBERATION_LENGTH,
+  FINAL_DELIBERATION_LENGTH
+} from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
+import { useTime } from 'apps/frontend/hooks/use-time';
 import StatusIcon from '../../general/status-icon';
 
 interface DeliberationsPaperProps {
@@ -14,8 +20,10 @@ interface DeliberationsPaperProps {
 }
 
 const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }) => {
+  const currentTime = useTime({ interval: 1000 });
   const categoryDeliberations = deliberations.filter(d => !d.isFinalDeliberation);
   const finalDeliberation = deliberations.find(d => d.isFinalDeliberation)!; // Assert that it exists
+  const finalEndTime = dayjs(finalDeliberation.startTime).add(FINAL_DELIBERATION_LENGTH, 'seconds');
 
   const startJudgingDeliberation = () => {
     console.log('boop');
@@ -48,8 +56,7 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
       </Box>
       <Stack direction="row" spacing={2}>
         {categoryDeliberations.map(d => {
-          const endTime = dayjs(d.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'minutes');
-
+          const endTime = dayjs(d.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'seconds');
           return (
             <Stack width="100%" spacing={2} alignItems="center" key={d.category!}>
               <Typography textAlign="center">
@@ -57,7 +64,7 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
               </Typography>
               <StatusIcon status={d.status} />
               {d.status === 'in-progress' && (
-                <Typography>{endTime < dayjs() ? 'מתעכב' : endTime.format('HH:mm')}</Typography>
+                <Typography>{endTime < currentTime ? 'מתעכב' : endTime.format('HH:mm')}</Typography>
               )}
             </Stack>
           );
@@ -72,7 +79,14 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
               <PlayCircleFilledWhiteOutlinedIcon sx={{ width: 30, height: 30 }} />
             </IconButton>
           ) : (
-            <StatusIcon status={finalDeliberation.status} />
+            <Stack width="100%" spacing={2} alignItems="center">
+              <StatusIcon status={finalDeliberation.status} />
+              {finalDeliberation.status === 'in-progress' && (
+                <Typography>
+                  {finalEndTime < currentTime ? 'מתעכב' : finalEndTime.format('HH:mm')}
+                </Typography>
+              )}
+            </Stack>
           )}
         </Stack>
       </Stack>
