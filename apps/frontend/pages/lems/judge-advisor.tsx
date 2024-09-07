@@ -72,6 +72,15 @@ const Page: NextPage<Props> = ({
     [cvForms]
   );
 
+  const handleDeliberationEvent = (deliberation: WithId<JudgingDeliberation>) => {
+    setDeliberations(deliberations =>
+      deliberations.map(d => {
+        if (d._id === deliberation._id) return deliberation;
+        return d;
+      })
+    );
+  };
+
   const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -130,6 +139,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
+      { name: 'judgingDeliberationStatusChanged', handler: handleDeliberationEvent },
       {
         name: 'cvFormCreated',
         handler: cvForm => {

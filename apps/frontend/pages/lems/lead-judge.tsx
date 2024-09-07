@@ -57,6 +57,12 @@ const Page: NextPage<Props> = ({
   const [deliberation, setDeliberation] =
     useState<WithId<JudgingDeliberation>>(initialDeliberation);
 
+  const updateDeliberation = (newDeliberation: WithId<JudgingDeliberation>) => {
+    if (deliberation._id === newDeliberation._id) {
+      setDeliberation(newDeliberation);
+    }
+  };
+
   const handleSessionEvent = (
     session: WithId<JudgingSession>,
     divisionState?: WithId<DivisionState>
@@ -112,7 +118,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
-      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
+      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled },
+      { name: 'judgingDeliberationStatusChanged', handler: updateDeliberation }
     ]
   );
 
