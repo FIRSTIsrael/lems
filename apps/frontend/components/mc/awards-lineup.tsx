@@ -44,7 +44,9 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ division }) => {
     );
   }, [division._id]);
 
-  const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
+  // TODO: fix advancing teams to be from final deliberation
+  const advancingTeams: Array<WithId<Team>> = [];
+  // const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
   const lineup = useMemo(() => {
     const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
 
