@@ -49,7 +49,7 @@ router.put('/:deliberationId', (req: Request, res: Response) => {
   const body: Partial<JudgingDeliberation> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
-  console.log(`⏬ Updating Deliberation for deliberation ${req.params.deliberationId}`);
+  console.log(`⏬ Updating Deliberation for division ${req.params.deliberationId}`);
   db.updateJudgingDeliberation({ _id: new ObjectId(req.params.divisionId) }, body).then(task => {
     if (task.acknowledged) {
       console.log('✅ Deliberation updated!');

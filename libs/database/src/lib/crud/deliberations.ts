@@ -7,7 +7,7 @@ export const getJudgingDeliberation = (filter: Filter<JudgingDeliberation>) => {
 };
 
 export const getJudgingDeliberationsFromDivision = (divisionId: ObjectId) => {
-  return db.collection<JudgingDeliberation>('judging-deliberation').findOne({ divisionId });
+  return db.collection<JudgingDeliberation>('judging-deliberation').find({ divisionId }).toArray();
 };
 
 export const addJudgingDeliberation = (deliberation: JudgingDeliberation) => {

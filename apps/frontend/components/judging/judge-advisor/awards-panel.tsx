@@ -1,19 +1,17 @@
 import { WithId } from 'mongodb';
-import { Socket } from 'socket.io-client';
-import { Award, Division, Team, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { Division, JudgingDeliberation } from '@lems/types';
 import ResultExportPaper from './result-export-paper';
+import DeliberationsPaper from './deliberations-paper';
 
 interface AwardsPanelProps {
-  awards: Array<WithId<Award>>;
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
-  readOnly: boolean;
-  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  deliberations: Array<WithId<JudgingDeliberation>>;
 }
 
-const AwardsPanel: React.FC<AwardsPanelProps> = ({ division }) => {
+const AwardsPanel: React.FC<AwardsPanelProps> = ({ division, deliberations }) => {
   return (
     <>
+      <DeliberationsPaper division={division} deliberations={deliberations} />
       <ResultExportPaper division={division} />
     </>
   );
