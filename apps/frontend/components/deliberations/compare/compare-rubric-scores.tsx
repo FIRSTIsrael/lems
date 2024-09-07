@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { blue, green, red, yellow } from '@mui/material/colors';
 import { Stack, Typography } from '@mui/material';
-import { JudgingCategory } from '@lems/types';
 import { rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 

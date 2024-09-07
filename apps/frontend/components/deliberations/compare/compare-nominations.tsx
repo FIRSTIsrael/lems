@@ -12,10 +12,8 @@ interface CompareNominationsProps {
 }
 
 const CompareNominations: React.FC<CompareNominationsProps> = ({ teamId }) => {
-  const { category, rubrics } = useContext(CompareContext);
+  const { rubrics } = useContext(CompareContext);
   const rubric = rubrics.find(r => r.teamId === teamId && r.category === 'core-values');
-
-  if (category && category !== 'core-values') return;
 
   return (
     <Stack direction="row">

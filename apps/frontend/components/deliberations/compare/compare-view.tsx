@@ -78,13 +78,13 @@ interface CompareViewTeamProps {
 }
 
 const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam }) => {
-  const { teams } = useContext(CompareContext);
+  const { category, teams } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
 
   if (!team) return null;
 
   return (
-    <Grid component={Paper} xs={Math.min(11.5 / teams.length, 6)} height="100%">
+    <Grid component={Paper} xs={Math.min(10.75 / teams.length, 6)} height="100%" p={2}>
       {removeTeam && (
         <IconButton onClick={() => removeTeam(teamId)}>
           <CloseRounded />
@@ -97,7 +97,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
         <CompareBatteryChart teamId={teamId} />
         <CompareRubricScores teamId={teamId} />
         <CompareExceedingRemarks teamId={teamId} />
-        <CompareNominations teamId={teamId} />
+        {(!category || category === 'core-values') && <CompareNominations teamId={teamId} />}
         <CompareGpScores teamId={teamId} />
         <CompareRubricRemarks teamId={teamId} />
         <CompareCvForms teamId={teamId} />

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
 import { Stack, Typography } from '@mui/material';
-import { rubricsSchemas } from '@lems/season';
+import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 
 interface CompareExceedingRemarksProps {
@@ -27,19 +27,26 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
         },
         {} as Record<string, string>
       );
+    const remarks = Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
+      if (!value.notes) {
+        return;
+      }
+      return (
+        <Typography>
+          <span style={{ fontWeight: 500 }}>נימוק ל{localizationMap[key]}:</span> {value.notes}
+        </Typography>
+      );
+    });
 
     return (
-      <Stack px={2}>
-        {Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
-          if (!value.notes) {
-            return;
-          }
-          return (
-            <Typography>
-              נימוק ל{localizationMap[key]}: {value.notes}
-            </Typography>
-          );
-        })}
+      <Stack px={2} height={96}>
+        {!remarks.find(remark => !!remark) ? (
+          <Typography>
+            לא נמצאו ציונים ״מצטיינים״ בתחום {localizedJudgingCategory[rubric.category].name}
+          </Typography>
+        ) : (
+          remarks
+        )}
       </Stack>
     );
   });

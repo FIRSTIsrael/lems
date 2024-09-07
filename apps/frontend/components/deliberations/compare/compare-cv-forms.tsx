@@ -16,8 +16,8 @@ const CompareCvForms: React.FC<CompareCvFormsProps> = ({ teamId }) => {
     .map(cvForm => cvForm.severity);
 
   return (
-    <Stack direction="row" alignItems="center" height="100%" spacing={1}>
-      <Typography>טפסי CV</Typography>
+    <Stack direction="row" alignItems="center" height="100%" spacing={1} px={2}>
+      <Typography fontWeight={500}>טפסי CV:</Typography>
       {teamCvFormSeverities.map((severity, index) => (
         <Avatar
           key={index}

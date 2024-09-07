@@ -12,7 +12,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Box
 } from '@mui/material';
 import AddRounded from '@mui/icons-material/AddRounded';
 import {
@@ -48,7 +49,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
   const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
   const [selectedTeam, setSelectedTeam] = useState<WithId<Team> | null>(null);
   const [compareTeamIds, setCompareTeamIds] = useState<Array<ObjectId>>([]);
-  const [category, setCategory] = useState<JudgingCategory | undefined>(undefined);
+  const [category, setCategory] = useState<JudgingCategory | 'general'>('general');
 
   const addTeam = (teamId: ObjectId) => {
     setCompareTeamIds(compareTeamIds => [...compareTeamIds, teamId]);
@@ -73,25 +74,35 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <Stack direction="row" component={Paper} sx={{ mt: 2, p: 2 }} spacing={2}>
-          <Typography fontWeight={500} fontSize="1.5rem">
+        <Stack
+          direction="row"
+          component={Paper}
+          p={2}
+          my={2}
+          alignItems="center"
+          justifyContent="space-evenly"
+        >
+          <Typography fontWeight={600} fontSize="1.5rem">
             השוואת קבוצות
           </Typography>
-          <TeamSelection
-            setTeam={setSelectedTeam}
-            teams={teams.filter(team => !compareTeamIds.includes(team._id))}
-            value={selectedTeam}
-            sx={{ width: 300 }}
-          />
-          <IconButton
-            disabled={!selectedTeam}
-            onClick={() => {
-              addTeam(selectedTeam!._id);
-              setSelectedTeam(null);
-            }}
-          >
-            <AddRounded />
-          </IconButton>
+          <Stack spacing={2} direction="row" alignItems="center">
+            <TeamSelection
+              setTeam={setSelectedTeam}
+              teams={teams.filter(team => !compareTeamIds.includes(team._id))}
+              value={selectedTeam}
+              sx={{ width: 450 }}
+            />
+            <IconButton
+              disabled={!selectedTeam}
+              sx={{ width: 36, height: 36 }}
+              onClick={() => {
+                addTeam(selectedTeam!._id);
+                setSelectedTeam(null);
+              }}
+            >
+              <AddRounded />
+            </IconButton>
+          </Stack>
           <FormControl sx={{ width: 200 }}>
             <InputLabel id="category">תחום</InputLabel>
             <Select
@@ -108,7 +119,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
                   {localizedJudgingCategory[c].name}
                 </MenuItem>
               ))}
-              <MenuItem value={undefined}>כללי</MenuItem>
+              <MenuItem value="general">כללי</MenuItem>
             </Select>
           </FormControl>
         </Stack>
@@ -119,7 +130,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
           cvForms={cvForms}
           scoresheets={scoresheets}
           removeTeam={removeTeam}
-          category={category}
+          category={category === 'general' ? undefined : category}
         />
       </Layout>
     </RoleAuthorizer>

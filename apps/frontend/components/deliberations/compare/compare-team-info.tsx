@@ -16,6 +16,7 @@ import { localizedJudgingCategory, RubricSchemaSection, rubricsSchemas } from '@
 import { JudgingCategory, Rubric } from '@lems/types';
 import { average } from '@lems/utils/arrays';
 import { CompareContext } from './compare-view';
+import { localizeTeam } from 'apps/frontend/localization/teams';
 
 interface CompareTeamInfoProps {
   teamId: ObjectId;
@@ -28,10 +29,21 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
 
   if (!team) return;
 
+  const scoreAvg = average(
+    teamRubrics.map(rubric =>
+      average(Object.values(rubric.data?.values ?? {}).flatMap(value => value.value))
+    )
+  );
+
   return (
-    <Grid container alignItems="center">
+    <Grid container alignItems="center" px={2}>
       <Grid xs={6}>
-        <Typography>{team.number}</Typography>
+        <Typography fontSize="1.5rem" fontWeight={700}>
+          {localizeTeam(team, true)}
+        </Typography>
+        <Typography fontSize="1.25rem" fontWeight={500}>
+          ניקוד ממוצע: {scoreAvg}
+        </Typography>
       </Grid>
       <Grid xs={6}>
         {category ? (
