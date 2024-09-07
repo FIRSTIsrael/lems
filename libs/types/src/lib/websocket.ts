@@ -39,6 +39,8 @@ export interface WSServerEmittedEvents {
 
   judgingDeliberationUpdated: (deliberation: JudgingDeliberation) => void;
 
+  judgingDeliberationStatusChanged: (deliberation: JudgingDeliberation) => void;
+
   leadJudgeCalled: (room: JudgingRoom) => void;
 
   rubricUpdated: (rubric: Rubric<JudgingCategory>) => void;

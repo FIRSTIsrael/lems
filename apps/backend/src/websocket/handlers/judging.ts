@@ -192,8 +192,11 @@ export const handleUpdateDeliberation = async (
   await db.updateJudgingDeliberation({ _id: deliberation._id }, { ...data });
 
   callback({ ok: true });
+  const oldDeliberation = deliberation;
   deliberation = await db.getJudgingDeliberation({ _id: new ObjectId(deliberationId) });
   namespace.to('judging').emit('judgingDeliberationUpdated', deliberation);
+  if (data.status !== oldDeliberation.status)
+    namespace.to('judging').emit('judgingDeliberationStatusChanged', deliberation);
 };
 
 export const handleUpdateRubric = async (
