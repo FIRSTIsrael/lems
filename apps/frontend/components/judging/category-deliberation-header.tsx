@@ -21,7 +21,7 @@ const CategoryDeliberationHeader: React.FC<CategoryDeliberationHeaderProps> = ({
     dayjs.max(sessions.map(s => dayjs(s.scheduledTime).add(JUDGING_SESSION_LENGTH, 'seconds'))) ??
     dayjs();
 
-  if (sessionsEnd > currentTime) {
+  if (sessionsEnd > currentTime || deliberation.status === 'completed') {
     return null;
   }
 
