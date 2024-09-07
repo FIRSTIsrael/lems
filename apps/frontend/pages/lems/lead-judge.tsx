@@ -12,7 +12,8 @@ import {
   JudgingSession,
   SafeUser,
   Rubric,
-  JudgingCategory
+  JudgingCategory,
+  JudgingDeliberation
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
@@ -26,6 +27,7 @@ import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import CategoryDeliberationHeader from 'apps/frontend/components/judging/category-deliberation-header';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -35,6 +37,7 @@ interface Props {
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+  deliberation: WithId<JudgingDeliberation>;
 }
 
 const Page: NextPage<Props> = ({
@@ -44,12 +47,15 @@ const Page: NextPage<Props> = ({
   rooms,
   teams: initialTeams,
   sessions: initialSessions,
-  rubrics: initialRubrics
+  rubrics: initialRubrics,
+  deliberation: initialDeliberation
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
+  const [deliberation, setDeliberation] =
+    useState<WithId<JudgingDeliberation>>(initialDeliberation);
 
   const handleSessionEvent = (
     session: WithId<JudgingSession>,
@@ -137,6 +143,7 @@ const Page: NextPage<Props> = ({
       >
         <>
           <WelcomeHeader division={division} user={user} />
+          <CategoryDeliberationHeader deliberation={deliberation} sessions={sessions} />
           <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
             <RubricStatusReferences />
           </Paper>
@@ -186,6 +193,7 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const category = user.roleAssociation.value;
 
     const data = await serverSideGetRequests(
       {
@@ -194,7 +202,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/divisions/${user.divisionId}/teams`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`
+        rubrics: `/api/divisions/${user.divisionId}/rubrics/${category}`,
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/${category}`
       },
       ctx
     );

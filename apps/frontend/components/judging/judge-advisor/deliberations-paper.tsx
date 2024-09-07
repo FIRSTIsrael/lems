@@ -2,7 +2,6 @@ import React from 'react';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Paper, Box, Avatar, Typography, Stack, IconButton } from '@mui/material';
-import { red } from '@mui/material/colors';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import EmojiEventsRoundedIcon from '@mui/icons-material/EmojiEventsRounded';
 import { Division, JudgingDeliberation, CATEGORY_DELIBERATION_LENGTH } from '@lems/types';
