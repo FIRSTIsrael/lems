@@ -70,6 +70,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
     >
       <Layout
         maxWidth={1900}
+        back={`/lems/${user.role}`}
         title={`השוואת קבוצות | ${division.name}`}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}

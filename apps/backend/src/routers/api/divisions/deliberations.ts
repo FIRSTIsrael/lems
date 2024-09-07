@@ -59,7 +59,6 @@ router.put(
       { _id: new ObjectId(req.params.deliberationId) },
       body
     );
-    console.log(body);
 
     if (task.modifiedCount === 1) {
       console.log('✅ Deliberation updated!');

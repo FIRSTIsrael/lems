@@ -1,5 +1,6 @@
-import { Modal, Paper } from '@mui/material';
+import { IconButton, Modal, Paper } from '@mui/material';
 import CompareView, { CompareViewProps } from './compare-view';
+import CloseRounded from '@mui/icons-material/CloseRounded';
 
 interface CompareModalProps extends CompareViewProps {
   open: boolean;
@@ -23,6 +24,9 @@ const CompareModal: React.FC<CompareModalProps> = props => {
           bgcolor: '#eaeaec'
         }}
       >
+        <IconButton onClick={() => setOpen(false)} sx={{ position: 'fixed', mt: -2, ml: -1 }}>
+          <CloseRounded />
+        </IconButton>
         <CompareView {...compareViewProps} />
       </Paper>
     </Modal>

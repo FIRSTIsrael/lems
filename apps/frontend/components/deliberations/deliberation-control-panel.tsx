@@ -9,6 +9,7 @@ import {
   Rubric
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
+import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import DeliberationTimer from './deliberation-timer';
 import TrashDroppable from './trash-droppable';
 import LockDeliberationButton from './lock-deliberation-button';
@@ -87,6 +88,16 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
             onClick={() => setCompareOpen(true)}
           >
             השוואה
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            component="a"
+            href="/lems/deliberations/compare"
+            target="_blank"
+            endIcon={<OpenInNewRoundedIcon />}
+          >
+            השוואות
           </Button>
         </Stack>
         <Divider />

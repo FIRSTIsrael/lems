@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Paper, Box, Avatar, Typography, Stack, IconButton } from '@mui/material';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
-import EmojiEventsRoundedIcon from '@mui/icons-material/EmojiEventsRounded';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import {
   Division,
   JudgingDeliberation,
@@ -50,7 +50,7 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
             mr: 1
           }}
         >
-          <EmojiEventsRoundedIcon sx={{ fontSize: '1rem' }} />
+          <ForumOutlinedIcon sx={{ fontSize: '1rem' }} />
         </Avatar>
         <Typography variant="h2" fontSize="1.25rem">
           דיונים
@@ -64,7 +64,14 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }
               <Typography textAlign="center">
                 {localizedJudgingCategory[d.category!].name}
               </Typography>
-              <StatusIcon status={d.status} />
+              <IconButton
+                component="a"
+                href={`/lems/deliberations/category/${d.category}`}
+                target="_blank"
+                disabled={d.status !== 'in-progress'}
+              >
+                <StatusIcon status={d.status} />
+              </IconButton>
               {d.status === 'in-progress' && (
                 <Typography>{endTime < currentTime ? 'מתעכב' : endTime.format('HH:mm')}</Typography>
               )}

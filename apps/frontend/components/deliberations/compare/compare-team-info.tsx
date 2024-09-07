@@ -42,7 +42,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
           {localizeTeam(team, true)}
         </Typography>
         <Typography fontSize="1.25rem" fontWeight={500}>
-          ניקוד ממוצע: {scoreAvg}
+          ניקוד ממוצע: {scoreAvg.toFixed(3)}
         </Typography>
       </Grid>
       <Grid xs={6}>
