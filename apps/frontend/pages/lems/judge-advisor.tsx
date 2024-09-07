@@ -190,7 +190,7 @@ const Page: NextPage<Props> = ({
                 centered
               >
                 <Tab label="שיפוט" value="1" />
-                <Tab label="ניהול" value="2" />
+                <Tab label="פרסים" value="2" />
                 <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="3" />
               </Tabs>
             </Paper>

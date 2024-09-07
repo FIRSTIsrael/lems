@@ -141,27 +141,6 @@ const Page: NextPage<Props> = ({
     setPicklist(name, newPicklist);
   };
 
-  const updateTeamAwards = (
-    teamId: ObjectId,
-    rubricId: ObjectId,
-    newAwards: { [key in CoreValuesAwards]: boolean }
-  ) => {
-    const rubricUpdate: any = {};
-    rubricUpdate['data.awards'] = newAwards;
-    socket.emit(
-      'updateRubric',
-      division._id.toString(),
-      teamId.toString(),
-      rubricId.toString(),
-      rubricUpdate,
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-        }
-      }
-    );
-  };
-
   const startDeliberation = (divisionId: string, deliberationId: string): void => {
     socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
       if (!response.ok) {
