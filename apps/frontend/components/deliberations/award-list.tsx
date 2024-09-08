@@ -1,6 +1,8 @@
 import { WithId } from 'mongodb';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Team, MANDATORY_AWARD_PICKLIST_LENGTH, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
@@ -61,9 +63,25 @@ interface AwardListProps {
   pickList: Array<WithId<Team>>;
   id: AwardNames;
   disabled?: boolean;
+  withIcons?: boolean;
+  trophyCount: number;
 }
 
-const AwardList: React.FC<AwardListProps> = ({ pickList, id, disabled = false }) => {
+const AwardList: React.FC<AwardListProps> = ({
+  pickList,
+  id,
+  disabled = false,
+  withIcons = false,
+  trophyCount
+}) => {
+  const awardIcons = [
+    <EmojiEventsIcon fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,
+    <EmojiEventsIcon fontSize="large" sx={{ color: '#788991', ml: 3 }} />,
+    <EmojiEventsIcon fontSize="large" sx={{ color: '#a97d4f', ml: 3 }} />,
+    <WorkspacePremiumIcon fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />,
+    <WorkspacePremiumIcon fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />
+  ];
+
   return (
     <Paper sx={{ p: 2, height: '100%', display: 'flex' }}>
       <Grid container width="100%">
@@ -105,21 +123,33 @@ const AwardList: React.FC<AwardListProps> = ({ pickList, id, disabled = false })
         </Grid>
         <Grid xs={3}>
           <Stack spacing={2}>
-            {[...Array(MANDATORY_AWARD_PICKLIST_LENGTH).keys()].map(index => (
-              <Typography
-                key={index}
-                fontSize="1.25rem"
-                fontWeight={600}
-                color="#666"
-                minHeight={35}
-                display="flex"
-                flexDirection="column"
-                alignItems="flex-end"
-                justifyContent="center"
-              >
-                .{index + 1}
-              </Typography>
-            ))}
+            {[...Array(MANDATORY_AWARD_PICKLIST_LENGTH).keys()].map(index =>
+              withIcons && index < trophyCount ? (
+                <Box
+                  position="relative"
+                  display="inline-flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  minHeight={35}
+                >
+                  {awardIcons[index]}
+                </Box>
+              ) : (
+                <Typography
+                  key={index}
+                  fontSize="1.25rem"
+                  fontWeight={600}
+                  color="#666"
+                  minHeight={35}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="flex-end"
+                  justifyContent="center"
+                >
+                  .{index + 1}
+                </Typography>
+              )
+            )}
           </Stack>
         </Grid>
       </Grid>
