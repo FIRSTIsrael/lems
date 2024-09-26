@@ -64,7 +64,7 @@ interface AwardListProps {
   id: AwardNames;
   disabled?: boolean;
   withIcons?: boolean;
-  trophyCount: number;
+  trophyCount?: number;
 }
 
 const AwardList: React.FC<AwardListProps> = ({
@@ -72,7 +72,7 @@ const AwardList: React.FC<AwardListProps> = ({
   id,
   disabled = false,
   withIcons = false,
-  trophyCount
+  trophyCount = 0
 }) => {
   const awardIcons = [
     <EmojiEventsIcon fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,

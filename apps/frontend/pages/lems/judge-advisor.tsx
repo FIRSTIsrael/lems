@@ -15,7 +15,6 @@ import {
   Team,
   JudgingCategory,
   Rubric,
-  Award,
   CoreValuesForm,
   DivisionState,
   JudgingDeliberation

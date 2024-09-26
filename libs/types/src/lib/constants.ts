@@ -33,11 +33,12 @@ export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 export const DivisionSectionTypes = ['field', 'judging'];
 export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
+export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'];
+
 export const OptionalAwardTypes = [
-  'lead-mentor',
   'impact',
-  'volunteer-of-the-year',
   'excellence-in-engineering',
+  ...PersonalAwardTypes,
   ...CoreValuesAwardsTypes
 ] as const;
 export type OptionalAwards = (typeof OptionalAwardTypes)[number];

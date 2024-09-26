@@ -278,8 +278,6 @@ const Page: NextPage<Props> = ({
                   ) ?? []
                 }
                 disabled={deliberation.status !== 'in-progress'}
-                trophyCount={5}
-                withIcons
               />
             </Grid>
             <Grid xs={2.5}>
