@@ -8,16 +8,14 @@ import {
   RobotGameMatch,
   RobotGameTable,
   DivisionState,
-  Team,
-  ALLOW_MATCH_SELECTOR
+  Team
 } from '@lems/types';
-import { RoleAuthorizer } from '../../../components/role-authorizer';
-import ConnectionIndicator from '../../../components/connection-indicator';
-import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import { useWebsocket } from '../../../hooks/use-websocket';
-import MatchSelector from '../../../components/field/referee/match-selector';
-import StrictRefereeDisplay from '../../../components/field/referee/strict-referee-display';
+import { RoleAuthorizer } from '../../components/role-authorizer';
+import ConnectionIndicator from '../../components/connection-indicator';
+import Layout from '../../components/layout';
+import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { useWebsocket } from '../../hooks/use-websocket';
+import StrictRefereeDisplay from '../../components/field/referee/strict-referee-display';
 import { enqueueSnackbar } from 'notistack';
 
 interface Props {
@@ -104,22 +102,13 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        {ALLOW_MATCH_SELECTOR ? (
-          <MatchSelector
-            division={division}
-            divisionState={divisionState}
-            table={table}
-            matches={matches}
-          />
-        ) : (
-          <StrictRefereeDisplay
-            division={division}
-            divisionState={divisionState}
-            table={table}
-            matches={matches}
-            socket={socket}
-          />
-        )}
+        <StrictRefereeDisplay
+          division={division}
+          divisionState={divisionState}
+          table={table}
+          matches={matches}
+          socket={socket}
+        />
       </Layout>
     </RoleAuthorizer>
   );

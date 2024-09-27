@@ -83,17 +83,13 @@ export type AudienceDisplayScreen = (typeof AudienceDisplayScreenTypes)[number];
 
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
-export const CATEGORY_DELIBERATION_LENGTH = 45 * 60;
-export const FINAL_DELIBERATION_LENGTH = 30 * 60;
+export const CATEGORY_DELIBERATION_LENGTH = 20 * 60;
+export const CHAMPIONS_DELIBERATION_STAGE_LENGTH = 5 * 60;
+export const CORE_AWARDS_DELIBERATION_STAGE_LENGTH = 15 * 60;
+export const OPTIONAL_AWARDS_DELIBERATION_STAGE_LENGTH = 10 * 60;
 export const MANDATORY_AWARD_PICKLIST_LENGTH = 12;
-export const OPTIONAL_AWARD_PICKLIST_LENGTH = 6;
 export const SEASON_NAME = 'SUBMERGED℠';
 
 export const MATCH_AUTOLOAD_THRESHOLD = 10;
-
-// All these values will have no effect at V2.0
-// Support will be added in future versions
-export const ALLOW_MATCH_SELECTOR = false;
-export const COUNTDOWN_BEFORE_MATCH = false;
 export const ALLOW_UNREGULATED_START = false;
 export const ALLOW_UNREGULATED_LOAD = true;
