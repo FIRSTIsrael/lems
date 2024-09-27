@@ -81,6 +81,10 @@ export const AudienceDisplayScreenTypes = [
 ];
 export type AudienceDisplayScreen = (typeof AudienceDisplayScreenTypes)[number];
 
+export const RANKING_ANOMALY_THRESHOLD = 3;
+export const AnomalyReasonTypes = ['low-rank', 'high-rank'];
+export type AnomalyReasons = (typeof AnomalyReasonTypes)[number];
+
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const CATEGORY_DELIBERATION_LENGTH = 20 * 60;

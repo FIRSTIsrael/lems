@@ -19,7 +19,10 @@ import {
   JudgingDeliberation,
   AwardNames,
   CoreValuesAwards,
-  MANDATORY_AWARD_PICKLIST_LENGTH
+  AnomalyReasons,
+  MANDATORY_AWARD_PICKLIST_LENGTH,
+  RANKING_ANOMALY_THRESHOLD,
+  DeliberationAnomaly
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
@@ -182,11 +185,12 @@ const Page: NextPage<Props> = ({
   };
 
   const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
+    const anomalies = getRankingAnomalies();
     socket.emit(
       'updateJudgingDeliberation',
       division._id.toString(),
       deliberation._id.toString(),
-      { status: 'completed', completionTime: dayjs().toDate() },
+      { status: 'completed', completionTime: dayjs().toDate(), anomalies },
       response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
@@ -195,6 +199,55 @@ const Page: NextPage<Props> = ({
         }
       }
     );
+  };
+
+  const getRankingAnomalies = () => {
+    const anomalies = [];
+    const picklist = getPicklist(category as AwardNames);
+
+    const sortedTeams = teams
+      .map(team => {
+        const rubric = rubrics.find(r => r.teamId === team._id && r.category === category);
+        let sum = Object.values(rubric?.data?.values || {}).reduce(
+          (acc, current) => acc + current.value,
+          0
+        );
+        if (category === 'core-values') {
+          scoresheets
+            .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
+            .forEach(scoresheet => (sum += scoresheet.data?.gp?.value || 3));
+        }
+        return { _id: team._id, score: sum };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    picklist.forEach((teamId, rankAfterDeliberation) => {
+      const score = sortedTeams.find(t => t._id === teamId)!.score;
+      const sortedTeamsWithoutTies = sortedTeams.filter(
+        st => st.score !== score || st._id === teamId
+      );
+      const rank = sortedTeamsWithoutTies.findIndex(st => st._id === teamId);
+
+      if (rankAfterDeliberation > rank + RANKING_ANOMALY_THRESHOLD) {
+        anomalies.push({ teamId, reason: 'low-rank' });
+      }
+      if (rankAfterDeliberation < rank - RANKING_ANOMALY_THRESHOLD) {
+        anomalies.push({ teamId, reason: 'high-rank' });
+      }
+    });
+
+    for (
+      let index = 0;
+      index < MANDATORY_AWARD_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
+      index++
+    ) {
+      const teamId = sortedTeams[index]._id;
+      if (!picklist.includes(teamId)) {
+        anomalies.push({ teamId, reason: 'low-rank' });
+      }
+    }
+
+    return anomalies as Array<DeliberationAnomaly>;
   };
 
   return (

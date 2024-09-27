@@ -74,7 +74,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
 
     if (category === 'core-values') {
       scoresheets
-        .filter(scoresheet => scoresheet.teamId.toString() === team._id.toString())
+        .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
         .forEach(
           scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
         );
