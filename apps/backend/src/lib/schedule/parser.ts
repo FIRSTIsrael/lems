@@ -301,6 +301,7 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
   const finalDeliberation: JudgingDeliberation = {
     divisionId: division._id,
     isFinalDeliberation: true,
+    stage: 'champions',
     available: false,
     status: 'not-started',
     awards: {}

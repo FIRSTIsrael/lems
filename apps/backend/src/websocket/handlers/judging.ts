@@ -2,11 +2,7 @@ import dayjs from 'dayjs';
 import { ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
-import {
-  JUDGING_SESSION_LENGTH,
-  FINAL_DELIBERATION_LENGTH,
-  CATEGORY_DELIBERATION_LENGTH
-} from '@lems/types';
+import { JUDGING_SESSION_LENGTH } from '@lems/types';
 
 export const handleStartSession = async (namespace, divisionId, roomId, sessionId, callback) => {
   let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
