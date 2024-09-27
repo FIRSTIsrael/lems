@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import { Avatar, Box, Stack, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { red, blue, green } from '@mui/material/colors';
 import {
@@ -16,7 +16,7 @@ import { localizedJudgingCategory, RubricSchemaSection, rubricsSchemas } from '@
 import { JudgingCategory, Rubric } from '@lems/types';
 import { average } from '@lems/utils/arrays';
 import { CompareContext } from './compare-view';
-import { localizeTeam } from 'apps/frontend/localization/teams';
+import { localizeTeam } from '../../../localization/teams';
 
 interface CompareTeamInfoProps {
   teamId: ObjectId;
@@ -75,6 +75,9 @@ const CategoryAlignmentChart: React.FC<CategoryAlignmentChartProps> = ({ categor
   const getSectionAverage = (section: RubricSchemaSection): number => {
     const fields = section.fields.flatMap(f => f.id);
     const scores = fields.map(f => rubric?.data?.values?.[f]?.value).filter(s => s !== undefined);
+    // Typescript still thinks undefined values can be in scores for some reason
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return average(scores);
   };
 

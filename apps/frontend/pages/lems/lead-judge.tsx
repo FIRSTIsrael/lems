@@ -27,7 +27,7 @@ import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
-import CategoryDeliberationHeader from 'apps/frontend/components/judging/category-deliberation-header';
+import CategoryDeliberationHeader from '../../components/judging/category-deliberation-header';
 
 interface Props {
   user: WithId<SafeUser>;

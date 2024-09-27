@@ -15,10 +15,8 @@ import {
   JudgingSession,
   JudgingRoom,
   CoreValuesForm,
-  JudgingCategoryTypes,
   JudgingDeliberation,
   AwardNames,
-  CoreValuesAwards,
   MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
@@ -62,18 +60,11 @@ const Page: NextPage<Props> = ({
   const [deliberation, setDeliberation] = useState(initialDeliberation);
   const [rubrics, setRubrics] = useState(initialRubrics);
 
+  console.log(deliberation);
   if (!deliberation.available) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
-
-  const availableTeams = teams
-    .filter(t => t.registered)
-    .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
-    .sort((a, b) => a.number - b.number);
-  // const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
-  //   teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
-  // );
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
     if (
@@ -84,15 +75,6 @@ const Page: NextPage<Props> = ({
     }
   };
 
-  const updateRubric = (rubric: WithId<Rubric<JudgingCategory>>) => {
-    setRubrics(rubrics =>
-      rubrics.map(r => {
-        if (r._id === rubric._id) return rubric;
-        return r;
-      })
-    );
-  };
-
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['judging'],
@@ -100,77 +82,9 @@ const Page: NextPage<Props> = ({
     [
       { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
-      { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent },
-      { name: 'rubricUpdated', handler: updateRubric }
+      { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent }
     ]
   );
-
-  const getPicklist = (name: AwardNames) => {
-    return [...(deliberation.awards[name] ?? [])];
-  };
-
-  const isTeamInPicklist = (teamId: string, name: AwardNames) => {
-    return !!getPicklist(name).find(id => id.toString() === teamId);
-  };
-
-  const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
-    const newDeliberation = { ...deliberation };
-    newDeliberation.awards[name] = newList;
-
-    setDeliberation(newDeliberation);
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { awards: newDeliberation.awards },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-        }
-      }
-    );
-  };
-
-  const addTeamToPicklist = (teamId: string, index: number, name: AwardNames) => {
-    const picklist: Array<string | ObjectId> = [...getPicklist(name)];
-    if (picklist.length >= MANDATORY_AWARD_PICKLIST_LENGTH) {
-      return;
-    }
-
-    picklist.splice(index, 0, teamId);
-    setPicklist(name, picklist as Array<ObjectId>);
-  };
-
-  const removeTeamFromPicklist = (teamId: string, name: AwardNames) => {
-    const newPicklist = getPicklist(name).filter(id => id.toString() !== teamId);
-    setPicklist(name, newPicklist);
-  };
-
-  const startDeliberation = (divisionId: string, deliberationId: string): void => {
-    socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-      } else {
-        new Audio('/assets/sounds/judging/judging-start.wav').play();
-      }
-    });
-  };
-
-  const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { status: 'completed', completionTime: dayjs().toDate() },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
-        }
-      }
-    );
-  };
 
   return (
     <RoleAuthorizer
@@ -190,81 +104,6 @@ const Page: NextPage<Props> = ({
         color={division.color}
       >
         {deliberation.status === 'completed' && <LockOverlay />}
-        <DragDropContext
-          onDragEnd={result => {
-            const { source, destination, draggableId } = result;
-            if (!destination) {
-              return;
-            }
-            const teamId = draggableId.split(':')[1];
-
-            if (destination.droppableId === 'trash') {
-              if (source.droppableId === 'team-pool') {
-                return;
-              }
-              removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
-              return;
-            }
-
-            const destinationList = destination.droppableId as AwardNames;
-            switch (source.droppableId) {
-              case 'team-pool':
-                if (isTeamInPicklist(teamId, destinationList)) {
-                  return;
-                }
-                addTeamToPicklist(teamId, destination.index, destinationList);
-                break;
-              case destination.droppableId:
-                const reordered = reorder(
-                  getPicklist(destinationList),
-                  source.index,
-                  destination.index
-                );
-                setPicklist(destinationList, reordered);
-                break;
-              default:
-                removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
-                addTeamToPicklist(teamId, destination.index, destinationList);
-                break;
-            }
-          }}
-        >
-          <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
-            <Grid xs={8}>{/* Grid */}</Grid>
-            <Grid xs={1.5}>
-              {/* <AwardList
-                id={category}
-                pickList={
-                  deliberation.awards[category as AwardNames]?.map(
-                    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
-                  ) ?? []
-                }
-                disabled={deliberation.status !== 'in-progress'}
-              /> */}
-            </Grid>
-            <Grid xs={2.5}>
-              <DeliberationControlPanel
-                teams={availableTeams}
-                deliberation={deliberation}
-                startDeliberation={startDeliberation}
-                lockDeliberation={lockDeliberation}
-                cvForms={cvForms}
-                rubrics={rubrics}
-                scoresheets={scoresheets}
-              />
-            </Grid>
-            <Grid xs={5}>
-              <ScoresPerRoomChart division={division} height={210} />
-            </Grid>
-            <Grid xs={7}>
-              <TeamPool
-                teams={availableTeams}
-                id="team-pool"
-                disabled={deliberation.status !== 'in-progress'}
-              />
-            </Grid>
-          </Grid>
-        </DragDropContext>
       </Layout>
     </RoleAuthorizer>
   );

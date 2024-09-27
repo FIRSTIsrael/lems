@@ -7,7 +7,7 @@ import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { Division, JUDGING_SESSION_LENGTH, JudgingDeliberation, JudgingSession } from '@lems/types';
 import { useTime } from '../../hooks/use-time';
 import { localizedJudgingCategory } from '@lems/season';
-import { apiFetch } from 'apps/frontend/lib/utils/fetch';
+import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 
 interface CategoryDeliberationHeaderProps {

@@ -5,7 +5,6 @@ import DeliberationsPaper from './deliberations-paper';
 
 interface AwardsPanelProps {
   division: WithId<Division>;
-  awards: Array<WithId<Award>>;
   deliberations: Array<WithId<JudgingDeliberation>>;
 }
 

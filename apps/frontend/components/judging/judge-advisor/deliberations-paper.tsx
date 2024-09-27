@@ -1,6 +1,8 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
 import { Paper, Box, Avatar, Typography, Stack, IconButton } from '@mui/material';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
@@ -11,7 +13,8 @@ import {
   FINAL_DELIBERATION_LENGTH
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
-import { useTime } from 'apps/frontend/hooks/use-time';
+import { apiFetch } from '../../../lib/utils/fetch';
+import { useTime } from '../../../hooks/use-time';
 import StatusIcon from '../../general/status-icon';
 
 interface DeliberationsPaperProps {
@@ -19,16 +22,30 @@ interface DeliberationsPaperProps {
   deliberations: Array<WithId<JudgingDeliberation>>;
 }
 
-const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ deliberations }) => {
+const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ division, deliberations }) => {
+  const router = useRouter();
   const currentTime = useTime({ interval: 1000 });
   const categoryDeliberations = deliberations.filter(d => !d.isFinalDeliberation);
   const finalDeliberation = deliberations.find(d => d.isFinalDeliberation)!; // Assert that it exists
   const finalEndTime = dayjs(finalDeliberation.startTime).add(FINAL_DELIBERATION_LENGTH, 'seconds');
 
   const startJudgingDeliberation = () => {
-    console.log(
-      'Make final deliberation available, copy columns form other deliberations, navigate.'
-    );
+    if (finalDeliberation.status !== 'not-started') {
+      router.push(`/lems/deliberations/final`);
+      return;
+    }
+
+    apiFetch(`/api/divisions/${division._id}/deliberations/${finalDeliberation._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ available: true })
+    }).then(res => {
+      if (!res.ok) {
+        enqueueSnackbar('הדיון לא נמצא.', { variant: 'error' });
+        return;
+      }
+      router.push(`/lems/deliberations/final`);
+    });
   };
 
   return (

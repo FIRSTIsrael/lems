@@ -33,7 +33,7 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import CompareView from '../../../components/deliberations/compare/compare-view';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import TeamSelection from 'apps/frontend/components/general/team-selection';
+import TeamSelection from '../../../components/general/team-selection';
 
 interface Props {
   user: WithId<SafeUser>;

@@ -17,6 +17,18 @@ router.get(
 );
 
 router.get(
+  '/final',
+  asyncHandler(async (req: Request, res: Response) => {
+    const deliberation = await db.getJudgingDeliberation({
+      divisionId: new ObjectId(req.params.divisionId),
+      isFinalDeliberation: true
+    });
+
+    res.json(deliberation);
+  })
+);
+
+router.get(
   '/:judgingCategory',
   asyncHandler(async (req: Request, res: Response) => {
     if (!JudgingCategoryTypes.includes(req.params?.judgingCategory as JudgingCategory)) {
@@ -27,18 +39,6 @@ router.get(
     const deliberation = await db.getJudgingDeliberation({
       divisionId: new ObjectId(req.params.divisionId),
       category: req.params.judgingCategory as JudgingCategory
-    });
-
-    res.json(deliberation);
-  })
-);
-
-router.get(
-  '/final',
-  asyncHandler(async (req: Request, res: Response) => {
-    const deliberation = await db.getJudgingDeliberation({
-      divisionId: new ObjectId(req.params.divisionId),
-      isFinalDeliberation: true
     });
 
     res.json(deliberation);
@@ -60,7 +60,7 @@ router.put(
       body
     );
 
-    if (task.modifiedCount === 1) {
+    if (task.acknowledged) {
       console.log('✅ Deliberation updated!');
       res.json({ ok: true, id: task.upsertedId });
       return;
