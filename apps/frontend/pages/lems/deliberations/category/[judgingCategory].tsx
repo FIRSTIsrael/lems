@@ -81,6 +81,7 @@ const Page: NextPage<Props> = ({
   const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
     teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
   );
+  const unselectedTeams = availableTeams.filter(t => !selectedTeams.find(st => t._id === st._id));
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
     if (
@@ -350,7 +351,7 @@ const Page: NextPage<Props> = ({
             </Grid>
             <Grid xs={7}>
               <TeamPool
-                teams={availableTeams}
+                teams={unselectedTeams}
                 id="team-pool"
                 disabled={deliberation.status !== 'in-progress'}
               />
