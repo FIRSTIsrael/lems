@@ -12,10 +12,11 @@ import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import DeliberationTimer from '../deliberation-timer';
 import TrashDroppable from '../trash-droppable';
-import LockCategoryDeliberationButton from './lock-category-deliberation-button';
+import LockCategoryDeliberationButton from '../category/lock-category-deliberation-button';
 import TeamSelection from '../../general/team-selection';
 import { localizedJudgingCategory } from '@lems/season';
 import CompareModal from '../compare/compare-modal';
+import EndDeliberationStageButton from './end-deliberation-stage-button';
 
 interface DeliberationControlPanelProps {
   teams: Array<WithId<Team>>;
@@ -46,12 +47,10 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
       <Stack component={Paper} spacing={3} p={2} sx={{ height: '100%' }}>
         <DeliberationTimer deliberation={deliberation} startDeliberation={startDeliberation} />
         <Divider />
-        <LockCategoryDeliberationButton
+        <EndDeliberationStageButton
           deliberation={deliberation}
-          deliberationName={
-            deliberation.category ? localizedJudgingCategory[deliberation.category].name : 'מסכם'
-          }
-          lockDeliberation={lockDeliberation}
+          stageName="פרס האליפות"
+          endStage={lockDeliberation}
         />
         <Divider />
         <Stack spacing={1} alignItems="center" justifyContent="center">

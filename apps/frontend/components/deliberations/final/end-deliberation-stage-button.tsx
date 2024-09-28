@@ -9,50 +9,51 @@ import {
   DialogContentText,
   DialogActions
 } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { JudgingDeliberation } from '@lems/types';
 
-interface LockDeliberationButtonProps {
+interface EndDeliberationStageButtonProps {
   deliberation: WithId<JudgingDeliberation>;
-  deliberationName: string;
-  lockDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  stageName: string;
+  endStage: (deliberation: WithId<JudgingDeliberation>) => void;
 }
 
-const LockDeliberationButton: React.FC<LockDeliberationButtonProps> = ({
+const EndDeliberationStageButton: React.FC<EndDeliberationStageButtonProps> = ({
   deliberation,
-  deliberationName,
-  lockDeliberation
+  stageName,
+  endStage
 }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
     <Box display="flex" alignItems="center">
       <Button
-        startIcon={<LockOutlinedIcon />}
+        endIcon={<ChevronLeftIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
         disabled={deliberation.status !== 'in-progress'}
         fullWidth
       >
-        נעילת הדיון
+        מעבר לשלב הבא
       </Button>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
-        aria-labelledby="lock-deliberation-title"
-        aria-describedby="lock-deliberation-description"
+        aria-labelledby="end-stage-title"
+        aria-describedby="end-stage-description"
       >
-        <DialogTitle id="deliberation-title">נעילת דיון {deliberationName}</DialogTitle>
+        <DialogTitle id="end-stage-title">נעילת שלב {stageName}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="deliberation-description">
-            פעולה זו לא תאפשר לאף אחד לערוך את הדיון יותר. האם אתם בטוחים שברצונכם לנעול את הדיון?
+          <DialogContentText id="end-stage-description">
+            פעולה זו תנעל את שלב זה של הדיון, ולא תאפשר לאף אחד לערוך אותו יותר. האם אתם בטוחים
+            שברצונכם להמשיך לשלב הבא?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>ביטול</Button>
           <Button
             onClick={() => {
-              lockDeliberation(deliberation);
+              endStage(deliberation);
               setOpen(false);
             }}
             autoFocus
@@ -65,4 +66,4 @@ const LockDeliberationButton: React.FC<LockDeliberationButtonProps> = ({
   );
 };
 
-export default LockDeliberationButton;
+export default EndDeliberationStageButton;

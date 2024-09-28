@@ -94,6 +94,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     {
       field: 'totalRank',
       headerName: 'דירוג',
+      cellClassName: 'total-cell',
       ...defaultColumnSettings
     },
     {

@@ -33,7 +33,8 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
+import ChampionsDeliberationsGrid from '../../../components/deliberations/final/champions-deliberation-grid';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -73,32 +74,37 @@ const Page: NextPage<Props> = ({
   }
 
   const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
-  const teamsWithRanks = teams.map(team => {
-    const cvRank = rankings['core-values'].findIndex(id => id === team._id);
-    const ipRank = rankings['innovation-project'].findIndex(id => id === team._id);
-    const rdRank = rankings['robot-design'].findIndex(id => id === team._id);
-    const rgRank = robotGameRankings.findIndex(id => id === team._id);
-    return {
-      ...team,
-      cvRank,
-      ipRank,
-      rdRank,
-      rgRank,
-      totalRank: (cvRank + ipRank + rdRank + rgRank) / 4 + 1
-    };
-  });
-  const elegibleTeams = useMemo(() => {
-    teamsWithRanks
-      .sort((a, b) => {
-        let place = a.totalRank - b.totalRank;
-        if (place !== 0) return place;
-        place = a.cvRank - b.cvRank; // Tiebreaker 1 - CV score
-        if (place !== 0) return place;
-        place = b.number - a.number; // Tiebreaker 2 - Team Number
-        return place;
-      })
-      .slice(0, advancingTeams);
-  }, [deliberation.disqualifications]);
+  const teamsWithRanks = teams
+    .filter(team => team.registered)
+    .map(team => {
+      const calculateRank = (index: number) => (index === -1 ? teams.length + 1 : index + 1);
+      const cvRank = calculateRank(rankings['core-values'].findIndex(id => id === team._id));
+      const ipRank = calculateRank(rankings['innovation-project'].findIndex(id => id === team._id));
+      const rdRank = calculateRank(rankings['robot-design'].findIndex(id => id === team._id));
+      const rgRank = calculateRank(robotGameRankings.findIndex(id => id === team._id));
+      return {
+        ...team,
+        cvRank,
+        ipRank,
+        rdRank,
+        rgRank,
+        totalRank: (cvRank + ipRank + rdRank + rgRank) / 4
+      };
+    });
+  const elegibleTeams = useMemo(
+    () =>
+      teamsWithRanks
+        .sort((a, b) => {
+          let place = a.totalRank - b.totalRank;
+          if (place !== 0) return place;
+          place = a.cvRank - b.cvRank; // Tiebreaker 1 - CV score
+          if (place !== 0) return place;
+          place = b.number - a.number; // Tiebreaker 2 - Team Number
+          return place;
+        })
+        .slice(0, advancingTeams),
+    [deliberation.disqualifications]
+  );
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
     if (
@@ -120,6 +126,8 @@ const Page: NextPage<Props> = ({
     ]
   );
 
+  console.log(elegibleTeams);
+
   return (
     <RoleAuthorizer
       user={user}
@@ -138,14 +146,33 @@ const Page: NextPage<Props> = ({
         color={division.color}
       >
         {deliberation.status === 'completed' && <LockOverlay />}
+        {/* <Box
+          width="100vw"
+          height="100vh"
+          position="fixed"
+          top={0}
+          left={0}
+          display="flex"
+          alignItems="center"
+          p={4}
+        > */}
         <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-          <Grid xs={9}>Grid</Grid>
-          <Grid xs={3}>Control</Grid>
+          <Grid xs={7}>
+            <ChampionsDeliberationsGrid
+              teams={elegibleTeams}
+              rooms={rooms}
+              sessions={sessions}
+              cvForms={cvForms}
+              scoresheets={scoresheets}
+            />
+          </Grid>
+          <Grid xs={5}>Control</Grid>
           <Grid xs={7}>Awards</Grid>
           <Grid xs={5}>
             <ScoresPerRoomChart division={division} height={210} />
           </Grid>
         </Grid>
+        {/* </Box> */}
       </Layout>
     </RoleAuthorizer>
   );

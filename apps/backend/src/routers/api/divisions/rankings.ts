@@ -65,7 +65,7 @@ router.get(
         .aggregate(categoryRankPipeline(req.params.divisionId, category))
         .toArray();
       report = report.sort((a, b) => b.totalScore - a.totalScore);
-      report = report.map(entry => entry._id);
+      report = report.map(entry => entry.teamId);
       result[category] = report as Array<ObjectId>;
     }
     res.json(result);
