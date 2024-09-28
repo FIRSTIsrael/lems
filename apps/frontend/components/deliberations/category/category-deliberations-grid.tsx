@@ -14,7 +14,7 @@ import {
   CoreValuesAwardsTypes
 } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
-import { getBackgroundColor, getHoverBackgroundColor } from '../../lib/utils/theme';
+import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;

@@ -17,6 +17,7 @@ export interface JudgingDeliberation {
   completionTime?: Date;
   available?: boolean;
   anomalies?: Array<DeliberationAnomaly>;
+  disqualifications: Array<ObjectId>;
   status: Status;
   awards: { [key in AwardNames]?: Array<ObjectId> };
 }

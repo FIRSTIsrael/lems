@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -17,14 +17,15 @@ import {
   CoreValuesForm,
   JudgingDeliberation,
   AwardNames,
-  MANDATORY_AWARD_PICKLIST_LENGTH
+  MANDATORY_AWARD_PICKLIST_LENGTH,
+  ADVANCEMENT_PERCENTAGE
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 import ScoresPerRoomChart from '../../../components/insights/charts/scores-per-room-chart';
 import TeamPool from '../../../components/deliberations/team-pool';
 import AwardList from '../../../components/deliberations/award-list';
-import DeliberationControlPanel from '../../../components/deliberations/deliberation-control-panel';
+import CategoryDeliberationControlPanel from '../../../components/deliberations/category/category-deliberation-control-panel';
 import LockOverlay from '../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
@@ -32,6 +33,7 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { Paper } from '@mui/material';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -42,6 +44,8 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
+  rankings: { [key in JudgingCategory]: Array<ObjectId> };
+  robotGameRankings: Array<ObjectId>;
   deliberation: WithId<JudgingDeliberation>;
 }
 
@@ -49,22 +53,52 @@ const Page: NextPage<Props> = ({
   user,
   division,
   teams,
-  rubrics: initialRubrics,
+  rubrics,
   rooms,
   sessions,
   cvForms,
   scoresheets,
+  rankings,
+  robotGameRankings,
   deliberation: initialDeliberation
 }) => {
+  console.log(rankings);
+  console.log(robotGameRankings);
   const router = useRouter();
   const [deliberation, setDeliberation] = useState(initialDeliberation);
-  const [rubrics, setRubrics] = useState(initialRubrics);
 
-  console.log(deliberation);
   if (!deliberation.available) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
+
+  const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
+  const teamsWithRanks = teams.map(team => {
+    const cvRank = rankings['core-values'].findIndex(id => id === team._id);
+    const ipRank = rankings['innovation-project'].findIndex(id => id === team._id);
+    const rdRank = rankings['robot-design'].findIndex(id => id === team._id);
+    const rgRank = robotGameRankings.findIndex(id => id === team._id);
+    return {
+      ...team,
+      cvRank,
+      ipRank,
+      rdRank,
+      rgRank,
+      totalRank: (cvRank + ipRank + rdRank + rgRank) / 4 + 1
+    };
+  });
+  const elegibleTeams = useMemo(() => {
+    teamsWithRanks
+      .sort((a, b) => {
+        let place = a.totalRank - b.totalRank;
+        if (place !== 0) return place;
+        place = a.cvRank - b.cvRank; // Tiebreaker 1 - CV score
+        if (place !== 0) return place;
+        place = b.number - a.number; // Tiebreaker 2 - Team Number
+        return place;
+      })
+      .slice(0, advancingTeams);
+  }, [deliberation.disqualifications]);
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
     if (
@@ -104,6 +138,14 @@ const Page: NextPage<Props> = ({
         color={division.color}
       >
         {deliberation.status === 'completed' && <LockOverlay />}
+        <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+          <Grid xs={9}>Grid</Grid>
+          <Grid xs={3}>Control</Grid>
+          <Grid xs={7}>Awards</Grid>
+          <Grid xs={5}>
+            <ScoresPerRoomChart division={division} height={210} />
+          </Grid>
+        </Grid>
       </Layout>
     </RoleAuthorizer>
   );
@@ -117,11 +159,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics/core-values`, //For optional awards
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`, //For optional awards (GP values)
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
+        rankings: `/api/divisions/${user.divisionId}/rankings/rubrics`,
+        robotGameRankings: `/api/divisions/${user.divisionId}/rankings/robot-game`,
         deliberation: `/api/divisions/${user.divisionId}/deliberations/final`
       },
       ctx

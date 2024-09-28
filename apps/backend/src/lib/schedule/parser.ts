@@ -292,7 +292,8 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
       available: false,
       isFinalDeliberation: false,
       status: 'not-started',
-      awards: { [category]: [] as Array<ObjectId> }
+      awards: { [category]: [] as Array<ObjectId> },
+      disqualifications: []
     };
 
     return empty;
@@ -304,7 +305,8 @@ export const getDefaultDeliberations = (division: WithId<Division>): Array<Judgi
     stage: 'champions',
     available: false,
     status: 'not-started',
-    awards: {}
+    awards: {},
+    disqualifications: []
   };
   AwardNameTypes.forEach(awardName => (finalDeliberation.awards[awardName] = []));
 

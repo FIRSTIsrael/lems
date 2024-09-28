@@ -19,7 +19,6 @@ import {
   JudgingDeliberation,
   AwardNames,
   CoreValuesAwards,
-  AnomalyReasons,
   MANDATORY_AWARD_PICKLIST_LENGTH,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
@@ -27,11 +26,11 @@ import {
 import { reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory } from '@lems/season';
-import CategoryDeliberationsGrid from '../../../../components/deliberations/category-deliberations-grid';
+import CategoryDeliberationsGrid from '../../../../components/deliberations/category/category-deliberations-grid';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
 import TeamPool from '../../../../components/deliberations/team-pool';
 import AwardList from '../../../../components/deliberations/award-list';
-import DeliberationControlPanel from '../../../../components/deliberations/deliberation-control-panel';
+import CategoryDeliberationControlPanel from '../../../../components/deliberations/category/category-deliberation-control-panel';
 import LockOverlay from '../../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
@@ -335,7 +334,7 @@ const Page: NextPage<Props> = ({
               />
             </Grid>
             <Grid xs={2.5}>
-              <DeliberationControlPanel
+              <CategoryDeliberationControlPanel
                 teams={availableTeams}
                 deliberation={deliberation}
                 startDeliberation={startDeliberation}

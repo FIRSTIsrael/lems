@@ -10,12 +10,12 @@ import {
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
-import DeliberationTimer from './deliberation-timer';
-import TrashDroppable from './trash-droppable';
-import LockDeliberationButton from './lock-deliberation-button';
-import TeamSelection from '../general/team-selection';
+import DeliberationTimer from '../deliberation-timer';
+import TrashDroppable from '../trash-droppable';
+import LockDeliberationButton from '../lock-deliberation-button';
+import TeamSelection from '../../general/team-selection';
 import { localizedJudgingCategory } from '@lems/season';
-import CompareModal from './compare/compare-modal';
+import CompareModal from '../compare/compare-modal';
 
 interface DeliberationControlPanelProps {
   teams: Array<WithId<Team>>;
@@ -28,7 +28,7 @@ interface DeliberationControlPanelProps {
   cvForms: Array<CoreValuesForm>;
 }
 
-const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
+const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
   teams,
   deliberation,
   startDeliberation,
@@ -119,4 +119,4 @@ const DeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
   );
 };
 
-export default DeliberationControlPanel;
+export default CategoryDeliberationControlPanel;
