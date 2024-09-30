@@ -101,6 +101,7 @@ const Page: NextPage<Props> = ({
           place = b.number - a.number; // Tiebreaker 2 - Team Number
           return place;
         })
+        .filter(t => !deliberation.disqualifications.includes(t._id))
         .slice(0, advancingTeams),
     [deliberation.disqualifications]
   );
