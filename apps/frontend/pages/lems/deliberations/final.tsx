@@ -124,7 +124,13 @@ const Page: NextPage<Props> = ({
     ]
   );
 
-  console.log(elegibleTeams);
+  //TODO: hook up to deliberation
+  const places = 4; //TODO get from Schema
+  const [picklist, setPicklist] = useState<Array<ObjectId | null>>(
+    [...Array(places).keys()].map(i => null)
+  );
+
+  console.log(picklist);
 
   return (
     <RoleAuthorizer
@@ -160,7 +166,7 @@ const Page: NextPage<Props> = ({
             </Paper>
           </Grid>
           <Grid xs={6}>
-            <ChampionsPodium teams={[null, null, null, null]} setTeams={() => {}} />
+            <ChampionsPodium teams={elegibleTeams} award={picklist} setAward={setPicklist} />
           </Grid>
           <Grid xs={6}>
             <ScoresPerRoomChart division={division} height={210} />

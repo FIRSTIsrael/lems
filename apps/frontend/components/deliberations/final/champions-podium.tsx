@@ -1,10 +1,12 @@
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { Team } from '@lems/types';
+import TeamSelection from '../../general/team-selection';
 
 interface ChampionsPodiumProps {
-  teams: Array<WithId<Team> | null>;
-  setTeams: (newTeams: Array<WithId<Team>>) => void;
+  teams: Array<WithId<Team>>;
+  award: Array<ObjectId | null>;
+  setAward: (newTeams: Array<ObjectId | null>) => void;
 }
 
 const colors = [
@@ -14,19 +16,30 @@ const colors = [
   '#5cbbfa'
 ];
 
-const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({ teams, setTeams }) => {
-  if (teams.length > 4) {
-    console.warn('Impossible team length detected. Edit AwardLimits.');
+const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({ teams, award, setAward }) => {
+  if (award.length > 4) {
+    console.warn('Impossible award length detected. Edit AwardLimits.');
   }
 
   return (
     <Stack component={Paper} height="100%" direction="row" justifyContent="center" alignItems="end">
-      {teams.map((team, index) => {
+      {award.map((teamId, index) => {
         return (
-          <div
-            key={index}
-            style={{ background: colors[index], width: 75, height: 50 + 75 / (index / 2 + 1) }}
-          />
+          <Stack>
+            <TeamSelection
+              teams={teams.filter(t => !award.includes(t._id))}
+              value={teamId ? teams.find(t => t._id === teamId)! : null}
+              setTeam={newTeam => {
+                const result = structuredClone(award);
+                result[index] = newTeam ? newTeam._id : null;
+                setAward(result);
+              }}
+            />
+            <div
+              key={index}
+              style={{ background: colors[index], width: 150, height: 40 + 75 / (index / 3 + 1) }}
+            />
+          </Stack>
         );
       })}
     </Stack>
