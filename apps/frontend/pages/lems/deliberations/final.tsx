@@ -16,8 +16,6 @@ import {
   JudgingRoom,
   CoreValuesForm,
   JudgingDeliberation,
-  AwardNames,
-  MANDATORY_AWARD_PICKLIST_LENGTH,
   ADVANCEMENT_PERCENTAGE
 } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
@@ -33,8 +31,9 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import ChampionsDeliberationsGrid from '../../../components/deliberations/final/champions-deliberation-grid';
+import ChampionsPodium from '../../../components/deliberations/final/champions-podium';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -157,7 +156,7 @@ const Page: NextPage<Props> = ({
           p={4}
         > */}
         <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-          <Grid xs={7}>
+          <Grid xs={8}>
             <ChampionsDeliberationsGrid
               teams={elegibleTeams}
               rooms={rooms}
@@ -166,9 +165,15 @@ const Page: NextPage<Props> = ({
               scoresheets={scoresheets}
             />
           </Grid>
-          <Grid xs={5}>Control</Grid>
-          <Grid xs={7}>Awards</Grid>
-          <Grid xs={5}>
+          <Grid xs={4}>
+            <Paper component={Box} width="100%" height="100%">
+              <Typography>Control</Typography>
+            </Paper>
+          </Grid>
+          <Grid xs={6}>
+            <ChampionsPodium teams={[null, null, null, null]} setTeams={() => {}} />
+          </Grid>
+          <Grid xs={6}>
             <ScoresPerRoomChart division={division} height={210} />
           </Grid>
         </Grid>

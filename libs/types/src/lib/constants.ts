@@ -33,7 +33,7 @@ export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 export const DivisionSectionTypes = ['field', 'judging'];
 export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
-export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'];
+export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'] as const;
 
 export const OptionalAwardTypes = [
   'impact',
@@ -56,6 +56,18 @@ export const AwardNameTypes = [...MandatoryAwardTypes, ...OptionalAwardTypes] as
 export type AwardNames = (typeof AwardNameTypes)[number];
 
 export type AwardSchema = { [key in AwardNames]: { index: number; count: number } };
+
+export const AwardLimits: { [key in AwardNames]?: number } = {
+  champions: 4,
+  'robot-design': 4,
+  'innovation-project': 4,
+  'core-values': 4,
+  'robot-performance': 4,
+  breakthrough: 3,
+  'excellence-in-engineering': 3,
+  motivate: 3,
+  'rising-all-star': 3
+};
 
 export const RubricStatusTypes = [
   'empty',
