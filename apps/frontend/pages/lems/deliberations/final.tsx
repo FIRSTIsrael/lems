@@ -62,8 +62,6 @@ const Page: NextPage<Props> = ({
   robotGameRankings,
   deliberation: initialDeliberation
 }) => {
-  console.log(rankings);
-  console.log(robotGameRankings);
   const router = useRouter();
   const [deliberation, setDeliberation] = useState(initialDeliberation);
 
@@ -146,16 +144,6 @@ const Page: NextPage<Props> = ({
         color={division.color}
       >
         {deliberation.status === 'completed' && <LockOverlay />}
-        {/* <Box
-          width="100vw"
-          height="100vh"
-          position="fixed"
-          top={0}
-          left={0}
-          display="flex"
-          alignItems="center"
-          p={4}
-        > */}
         <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
           <Grid xs={8}>
             <ChampionsDeliberationsGrid
@@ -178,7 +166,6 @@ const Page: NextPage<Props> = ({
             <ScoresPerRoomChart division={division} height={210} />
           </Grid>
         </Grid>
-        {/* </Box> */}
       </Layout>
     </RoleAuthorizer>
   );
