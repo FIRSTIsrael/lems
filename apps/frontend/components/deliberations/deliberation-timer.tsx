@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import { CATEGORY_DELIBERATION_LENGTH, JudgingDeliberation } from '@lems/types';
+import {
+  CATEGORY_DELIBERATION_LENGTH,
+  CHAMPIONS_DELIBERATION_STAGE_LENGTH,
+  CORE_AWARDS_DELIBERATION_STAGE_LENGTH,
+  OPTIONAL_AWARDS_DELIBERATION_STAGE_LENGTH,
+  JudgingDeliberation
+} from '@lems/types';
 import { Box, CircularProgress, IconButton, Typography } from '@mui/material';
 import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
 import dayjs from 'dayjs';
@@ -16,8 +22,22 @@ const DeliberationTimer: React.FC<DeliberationTimerProps> = ({
   deliberation,
   startDeliberation
 }) => {
+  const getLength = () => {
+    if (!deliberation.isFinalDeliberation) return CATEGORY_DELIBERATION_LENGTH;
+    switch (deliberation.stage) {
+      case 'champions':
+        return CHAMPIONS_DELIBERATION_STAGE_LENGTH;
+      case 'core-awards':
+        return CORE_AWARDS_DELIBERATION_STAGE_LENGTH;
+      case 'optional-awards':
+        return OPTIONAL_AWARDS_DELIBERATION_STAGE_LENGTH;
+      default:
+        return 0;
+    }
+  };
+
   const endTime = deliberation.startTime
-    ? dayjs(deliberation.startTime).add(CATEGORY_DELIBERATION_LENGTH, 'seconds')
+    ? dayjs(deliberation.startTime).add(getLength(), 'seconds')
     : undefined;
   const currentTime = useTime({ interval: 1000 });
   const progress = useMemo(() => {

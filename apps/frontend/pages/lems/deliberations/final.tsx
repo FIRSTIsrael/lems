@@ -34,6 +34,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import { Box, Paper, Typography } from '@mui/material';
 import ChampionsDeliberationsGrid from '../../../components/deliberations/final/champions-deliberation-grid';
 import ChampionsPodium from '../../../components/deliberations/final/champions-podium';
+import FinalDeliberationController from 'apps/frontend/components/deliberations/final/final-deliberation-controller';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -130,8 +131,6 @@ const Page: NextPage<Props> = ({
     [...Array(places).keys()].map(i => null)
   );
 
-  console.log(picklist);
-
   return (
     <RoleAuthorizer
       user={user}
@@ -161,9 +160,7 @@ const Page: NextPage<Props> = ({
             />
           </Grid>
           <Grid xs={4}>
-            <Paper component={Box} width="100%" height="100%">
-              <Typography>Control</Typography>
-            </Paper>
+            <FinalDeliberationController teams={elegibleTeams} deliberation={deliberation} />
           </Grid>
           <Grid xs={6}>
             <ChampionsPodium teams={elegibleTeams} award={picklist} setAward={setPicklist} />
