@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { WithId } from 'mongodb';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Paper } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Team } from '@lems/types';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { useDimensions } from '../../hooks/use-dimensions';
 
 interface TeamPoolItemProps {
   droppableId: string;
@@ -32,8 +34,8 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
                 border: `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,
                 borderRadius: 1,
                 minHeight: 35,
-                minWidth: 100,
-                maxWidth: 120,
+                minWidth: 110,
+                maxWidth: 110,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -51,6 +53,8 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
                   border: '1px solid #ccc',
                   borderRadius: 1,
                   minHeight: 35,
+                  minWidth: 110,
+                  maxWidth: 110,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -74,14 +78,17 @@ interface TeamPoolProps {
 }
 
 const TeamPool: React.FC<TeamPoolProps> = ({ teams, id, disabled = false }) => {
+  const ref = useRef(null);
+  const { width } = useDimensions(ref);
+
   return (
-    <Paper sx={{ p: 2, height: '100%' }}>
+    <Paper sx={{ p: 2, height: '100%' }} ref={ref}>
       <Droppable droppableId={id} isDropDisabled>
         {provided => (
           <>
             <Grid
               container
-              columns={Math.max(8, Math.ceil(teams.length / 6))}
+              columns={Math.floor(width / 112)}
               columnSpacing={2}
               rowSpacing={1}
               flexDirection="row"
