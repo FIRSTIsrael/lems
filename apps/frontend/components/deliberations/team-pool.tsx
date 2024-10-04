@@ -28,7 +28,7 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
         isDragDisabled={disabled}
       >
         {(provided, snapshot) => (
-          <div ref={provided.innerRef}>
+          <div ref={provided.innerRef} style={{ display: 'flex', justifyContent: 'center' }}>
             <Paper
               sx={{
                 border: `1px ${snapshot.isDragging ? 'dashed' : 'solid'} #ccc`,

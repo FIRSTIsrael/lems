@@ -1,7 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
 import { Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { DragDropContext } from 'react-beautiful-dnd';
 import {
   Division,
   JudgingCategory,
@@ -22,7 +21,6 @@ import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
 import CoreAwardsDeliberationGrid from './core-awards-deliberation-grid';
 import TeamPool from '../../team-pool';
 import AwardList from '../../award-list';
-import TrashDroppable from '../../trash-droppable';
 
 interface CoreAwardsDeliberationLayoutProps {
   division: WithId<Division>;
@@ -50,56 +48,53 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   categoryPicklists
 }) => {
   return (
-    <DragDropContext onDragEnd={() => {}}>
-      <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-        <Grid xs={6}>
-          <CoreAwardsDeliberationGrid
-            teams={teams}
-            rooms={rooms}
-            sessions={sessions}
-            cvForms={cvForms}
-            scoresheets={scoresheets}
-            categoryPicklists={categoryPicklists}
-          />
-        </Grid>
-        <Grid xs={3}>
-          <TeamPool id="team-pool" teams={teams} />
-        </Grid>
-
-        <Grid xs={3}>
-          <FinalDeliberationControlPanel
-            teams={teams}
-            deliberation={deliberation}
-            cvForms={cvForms}
-            rubrics={rubrics}
-            scoresheets={scoresheets}
-            allowManualTeamAddition
-            onAddTeam={() => console.log('added team')} //TODO
-            enableTrash
-          />
-        </Grid>
-        <Grid xs={4.5}>
-          <Stack direction="row" spacing="2" gap={2} height="100%">
-            {JudgingCategoryTypes.map(category => (
-              <AwardList
-                title={localizedJudgingCategory[category].name}
-                // length={awards.filter(award => award.name === category).length}
-                length={3}
-                withIcons={true}
-                trophyCount={awards.filter(award => award.name === category).length}
-                id={category}
-                pickList={[]} //TODO
-                disabled={deliberation.status !== 'in-progress'}
-                fullWidth
-              />
-            ))}
-          </Stack>
-        </Grid>
-        <Grid xs={7.5}>
-          <ScoresPerRoomChart division={division} height={210} />
-        </Grid>
+    <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+      <Grid xs={6}>
+        <CoreAwardsDeliberationGrid
+          teams={teams}
+          rooms={rooms}
+          sessions={sessions}
+          cvForms={cvForms}
+          scoresheets={scoresheets}
+          categoryPicklists={categoryPicklists}
+        />
       </Grid>
-    </DragDropContext>
+      <Grid xs={3}>
+        <TeamPool id="team-pool" teams={teams} />
+      </Grid>
+      <Grid xs={3}>
+        <FinalDeliberationControlPanel
+          teams={teams}
+          deliberation={deliberation}
+          cvForms={cvForms}
+          rubrics={rubrics}
+          scoresheets={scoresheets}
+          allowManualTeamAddition
+          onAddTeam={() => console.log('added team')} //TODO
+          enableTrash
+        />
+      </Grid>
+      {/* 1.5 x number of lists*/}
+      <Grid xs={4.5}>
+        <Stack direction="row" spacing="2" gap={2} height="100%">
+          {JudgingCategoryTypes.map(category => (
+            <AwardList
+              title={localizedJudgingCategory[category].name}
+              length={awards.filter(award => award.name === category).length}
+              withIcons={true}
+              trophyCount={awards.filter(award => award.name === category).length}
+              id={category}
+              pickList={[]} //TODO
+              disabled={deliberation.status !== 'in-progress'}
+              fullWidth
+            />
+          ))}
+        </Stack>
+      </Grid>
+      <Grid xs={7.5}>
+        <ScoresPerRoomChart division={division} height={210} />
+      </Grid>
+    </Grid>
   );
 };
 

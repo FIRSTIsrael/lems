@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
+import { DragDropContext } from 'react-beautiful-dnd';
 import {
   Division,
   SafeUser,
@@ -25,7 +26,7 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ChampionsDeliberationLayout from '../../../components/deliberations/final/champions/champions-deliberation-layout';
 import CoreAwardsDeliberationLayout from '../../../components/deliberations/final/core-awards/core-awards-deliberation-layout';
-import OptionalAwardsDeliberationLayout from '../../../components/deliberations/final/optional-awards-deliberation-layout';
+import OptionalAwardsDeliberationLayout from '../../../components/deliberations/final/optional-awards/optional-awards-deliberation-layout';
 import ReviewLayout from '../../../components/deliberations/final/review-layout';
 
 interface Props {
@@ -101,23 +102,25 @@ const Page: NextPage<Props> = props => {
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        {deliberation.status === 'completed' && <LockOverlay />}
-        {deliberation.stage === 'champions' && (
-          <ChampionsDeliberationLayout {...props} deliberation={deliberation} />
-        )}
-        {deliberation.stage === 'core-awards' && (
-          <CoreAwardsDeliberationLayout
-            {...props}
-            deliberation={deliberation}
-            categoryPicklists={categoryPicklists}
-          />
-        )}
-        {deliberation.stage === 'optional-awards' && (
-          <OptionalAwardsDeliberationLayout {...props} deliberation={deliberation} />
-        )}
-        {deliberation.stage === 'review' && (
-          <ReviewLayout division={division} deliberation={deliberation} />
-        )}
+        <DragDropContext onDragEnd={() => {}}>
+          {deliberation.status === 'completed' && <LockOverlay />}
+          {deliberation.stage === 'champions' && (
+            <ChampionsDeliberationLayout {...props} deliberation={deliberation} />
+          )}
+          {deliberation.stage === 'core-awards' && (
+            <CoreAwardsDeliberationLayout
+              {...props}
+              deliberation={deliberation}
+              categoryPicklists={categoryPicklists}
+            />
+          )}
+          {deliberation.stage === 'optional-awards' && (
+            <OptionalAwardsDeliberationLayout {...props} deliberation={deliberation} />
+          )}
+          {deliberation.stage === 'review' && (
+            <ReviewLayout division={division} deliberation={deliberation} />
+          )}
+        </DragDropContext>
       </Layout>
     </RoleAuthorizer>
   );
