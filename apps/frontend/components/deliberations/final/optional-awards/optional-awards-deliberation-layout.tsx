@@ -19,6 +19,7 @@ import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
 import AwardList from '../../award-list';
 import TeamPool from '../../team-pool';
+import CategoryDeliberationsGrid from '../../category/category-deliberations-grid';
 
 interface OptionalAwardsDeliberationLayoutProps {
   division: WithId<Division>;
@@ -50,7 +51,17 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={6}>
-        <p>Grid</p>
+        <CategoryDeliberationsGrid
+          category="core-values"
+          cvForms={cvForms}
+          rooms={rooms}
+          rubrics={rubrics}
+          scoresheets={scoresheets}
+          selectedTeams={[]}
+          sessions={sessions}
+          teams={teams}
+          disabled={true}
+        />
       </Grid>
       <Grid xs={3}>
         <TeamPool id="team-pool" teams={teams} />
