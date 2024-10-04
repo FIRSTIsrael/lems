@@ -65,6 +65,9 @@ interface AwardListProps {
   disabled?: boolean;
   withIcons?: boolean;
   trophyCount?: number;
+  length?: number;
+  title?: string;
+  fullWidth?: boolean;
 }
 
 const AwardList: React.FC<AwardListProps> = ({
@@ -72,18 +75,25 @@ const AwardList: React.FC<AwardListProps> = ({
   id,
   disabled = false,
   withIcons = false,
-  trophyCount = 0
+  trophyCount = 0,
+  length = MANDATORY_AWARD_PICKLIST_LENGTH,
+  title,
+  fullWidth = false
 }) => {
   const awardIcons = [
     <EmojiEventsIcon fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,
     <EmojiEventsIcon fontSize="large" sx={{ color: '#788991', ml: 3 }} />,
     <EmojiEventsIcon fontSize="large" sx={{ color: '#a97d4f', ml: 3 }} />,
-    <WorkspacePremiumIcon fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />,
     <WorkspacePremiumIcon fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />
   ];
 
   return (
-    <Paper sx={{ p: 2, height: '100%', display: 'flex' }}>
+    <Paper sx={{ p: 2, height: '100%', width: fullWidth ? '100%' : undefined }}>
+      {title && (
+        <Typography align="center" fontWeight={500} gutterBottom>
+          {title}
+        </Typography>
+      )}
       <Grid container width="100%">
         <Grid xs={9}>
           <Droppable key={id} droppableId={id}>
@@ -94,7 +104,7 @@ const AwardList: React.FC<AwardListProps> = ({
                   display: 'flex',
                   borderRadius: 2,
                   ...(snapshot.isDraggingOver && {
-                    border: `3px dashed ${pickList.length >= MANDATORY_AWARD_PICKLIST_LENGTH && !snapshot.draggingOverWith?.includes(id) ? '#fca5a5' : '#ccc'}`
+                    border: `3px dashed ${pickList.length >= length && !snapshot.draggingOverWith?.includes(id) ? '#fca5a5' : '#ccc'}`
                   })
                 }}
                 ref={provided.innerRef}
@@ -123,7 +133,7 @@ const AwardList: React.FC<AwardListProps> = ({
         </Grid>
         <Grid xs={3}>
           <Stack spacing={2}>
-            {[...Array(MANDATORY_AWARD_PICKLIST_LENGTH).keys()].map(index =>
+            {[...Array(length).keys()].map(index =>
               withIcons && index < trophyCount ? (
                 <Box
                   position="relative"

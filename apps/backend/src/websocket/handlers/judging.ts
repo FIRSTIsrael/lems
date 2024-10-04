@@ -195,6 +195,22 @@ export const handleUpdateDeliberation = async (
     namespace.to('judging').emit('judgingDeliberationStatusChanged', deliberation);
 };
 
+export const handleCompleteDeliberation = async (
+  namespace,
+  divisionId,
+  deliberationId,
+  data,
+  callback
+) => {
+  handleUpdateDeliberation(
+    namespace,
+    divisionId,
+    deliberationId,
+    { ...data, status: 'completed', completionTime: new Date() },
+    callback
+  );
+};
+
 export const handleUpdateRubric = async (
   namespace,
   divisionId,

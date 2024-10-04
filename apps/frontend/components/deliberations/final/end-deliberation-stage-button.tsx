@@ -1,8 +1,8 @@
 import { WithId } from 'mongodb';
 import { useState } from 'react';
 import {
-  Box,
   Button,
+  ButtonProps,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -12,7 +12,7 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { JudgingDeliberation } from '@lems/types';
 
-interface EndDeliberationStageButtonProps {
+interface EndDeliberationStageButtonProps extends ButtonProps {
   deliberation: WithId<JudgingDeliberation>;
   stageName: string;
   endStage: (deliberation: WithId<JudgingDeliberation>) => void;
@@ -21,18 +21,19 @@ interface EndDeliberationStageButtonProps {
 const EndDeliberationStageButton: React.FC<EndDeliberationStageButtonProps> = ({
   deliberation,
   stageName,
-  endStage
+  endStage,
+  ...props
 }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <Box display="flex" alignItems="center">
+    <>
       <Button
+        {...props}
         endIcon={<ChevronLeftIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
         disabled={deliberation.status !== 'in-progress'}
-        fullWidth
       >
         מעבר לשלב הבא
       </Button>
@@ -62,7 +63,7 @@ const EndDeliberationStageButton: React.FC<EndDeliberationStageButtonProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </>
   );
 };
 

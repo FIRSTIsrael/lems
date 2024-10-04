@@ -120,6 +120,13 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  completeJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    data: Partial<JudgingDeliberation>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   callLeadJudge: (
     divisionId: string,
     roomName: string,

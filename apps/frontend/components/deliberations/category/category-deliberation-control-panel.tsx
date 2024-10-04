@@ -71,13 +71,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
             size="small"
           />
         </Stack>
-        <Stack
-          spacing={2}
-          direction="row"
-          alignItems="center"
-          justifyContent="space-around"
-          paddingX="8px"
-        >
+        <Stack spacing={2} direction="row" alignItems="center" justifyContent="space-around" px={2}>
           <Button variant="contained" fullWidth onClick={() => setCompareTeams([null, null])}>
             ניקוי
           </Button>

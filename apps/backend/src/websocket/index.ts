@@ -11,6 +11,7 @@ import {
   handleUpdateSession,
   handleStartDeliberation,
   handleUpdateDeliberation,
+  handleCompleteDeliberation,
   handleUpdateSessionTeam,
   handleUpdateRubric,
   handleCreateCvForm,
@@ -56,6 +57,10 @@ const websocket = (
   socket.on('startJudgingDeliberation', (...args) => handleStartDeliberation(namespace, ...args));
 
   socket.on('updateJudgingDeliberation', (...args) => handleUpdateDeliberation(namespace, ...args));
+
+  socket.on('completeJudgingDeliberation', (...args) =>
+    handleCompleteDeliberation(namespace, ...args)
+  );
 
   socket.on('callLeadJudge', (...args) => handleCallLeadJudge(namespace, ...args));
 

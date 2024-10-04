@@ -1,7 +1,13 @@
 import { ObjectId } from 'mongodb';
 import { AnomalyReasons, AwardNames, JudgingCategory, Status } from '../constants';
 
-type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
+export const FinalDeliberationStages = [
+  'champions',
+  'core-awards',
+  'optional-awards',
+  'review'
+] as const;
+export type FinalDeliberationStage = (typeof FinalDeliberationStages)[number];
 
 export interface DeliberationAnomaly {
   teamId: ObjectId;

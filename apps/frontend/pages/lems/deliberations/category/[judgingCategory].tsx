@@ -76,6 +76,7 @@ const Page: NextPage<Props> = ({
   const availableTeams = teams
     .filter(t => t.registered)
     .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
+    .filter(t => !deliberation.disqualifications.includes(t._id))
     .sort((a, b) => a.number - b.number);
   const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
     teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
@@ -187,10 +188,10 @@ const Page: NextPage<Props> = ({
   const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
     const anomalies = getRankingAnomalies();
     socket.emit(
-      'updateJudgingDeliberation',
+      'completeJudgingDeliberation',
       division._id.toString(),
       deliberation._id.toString(),
-      { status: 'completed', completionTime: dayjs().toDate(), anomalies },
+      { anomalies },
       response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {

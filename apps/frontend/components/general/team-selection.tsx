@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import React from 'react';
-import { Autocomplete, TextField, SxProps, Theme } from '@mui/material';
+import { Autocomplete, TextField, SxProps, Theme, TextFieldVariants } from '@mui/material';
 import { Team } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
 
@@ -10,7 +10,9 @@ interface TeamSelectionProps {
   setTeam: (team: WithId<Team> | null) => void;
   readOnly?: boolean;
   fullWidth?: boolean;
+  numberOnly?: boolean;
   size?: 'small' | 'medium';
+  variant?: TextFieldVariants;
   sx?: SxProps<Theme>;
 }
 
@@ -19,6 +21,8 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
   value,
   setTeam,
   readOnly = false,
+  numberOnly = false,
+  variant,
   ...props
 }) => {
   return (
@@ -26,11 +30,13 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
       {...props}
       blurOnSelect
       options={teams ? teams : []}
-      getOptionLabel={team => (typeof team !== 'string' ? localizeTeam(team) : '')}
+      getOptionLabel={team =>
+        typeof team !== 'string' ? (numberOnly ? team.number.toString() : localizeTeam(team)) : ''
+      }
       inputMode="search"
       value={value}
       onChange={(_e, value) => setTeam(typeof value !== 'string' ? value : null)}
-      renderInput={params => <TextField {...params} label="קבוצה" />}
+      renderInput={params => <TextField {...params} label="קבוצה" variant={variant} />}
       readOnly={readOnly}
     />
   );
