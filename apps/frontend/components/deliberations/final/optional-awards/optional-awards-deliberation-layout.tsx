@@ -63,6 +63,8 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
           rubrics={rubrics}
           scoresheets={scoresheets}
           enableTrash
+          allowManualTeamAddition
+          onAddTeam={() => {}}
         />
       </Grid>
       {/* 1.5 x number of lists*/}
