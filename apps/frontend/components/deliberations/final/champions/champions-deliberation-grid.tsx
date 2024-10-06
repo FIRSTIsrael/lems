@@ -1,7 +1,16 @@
 import { WithId } from 'mongodb';
-import { Paper, Box, Avatar, Stack } from '@mui/material';
+import { Paper, Box, Avatar, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Team, Scoresheet, JudgingSession, JudgingRoom, CoreValuesForm } from '@lems/types';
+import KeyboardDoubleArrowUpRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowUpRounded';
+import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
+import {
+  Team,
+  Scoresheet,
+  JudgingSession,
+  JudgingRoom,
+  CoreValuesForm,
+  DeliberationAnomaly
+} from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 
 interface TeamWithRanks extends Team {
@@ -18,7 +27,7 @@ interface ChampionsDeliberationGridProps {
   sessions: Array<WithId<JudgingSession>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  disabled?: boolean;
+  anomalies: Array<DeliberationAnomaly>;
 }
 
 const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
@@ -27,7 +36,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
   sessions,
   cvForms,
   scoresheets,
-  disabled = false
+  anomalies
 }) => {
   const rankingRounds = [
     ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
@@ -63,7 +72,8 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       rgRank: team.rgRank,
       maxScore,
       cvFormSeverities,
-      ...gp
+      ...gp,
+      anomaly: anomalies.find(a => a.teamId === team._id)?.reason
     };
   });
 
@@ -96,6 +106,35 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       headerName: 'דירוג',
       cellClassName: 'total-cell',
       ...defaultColumnSettings
+    },
+    {
+      field: 'anomaly',
+      headerName: 'חריגות',
+      headerAlign: 'center',
+      align: 'center',
+      width: 60,
+      sortable: false,
+      filterable: false,
+      renderCell: params => {
+        if (!params.row.anomaly) return null;
+
+        return (
+          <Tooltip
+            title={`ניתן לקבוצה ניקוד ${
+              params.row.anomaly === 'low-rank' ? 'נמוך' : 'גבוה'
+            } ביחס למחוון`}
+            arrow
+          >
+            <span>
+              {params.row.anomaly === 'low-rank' ? (
+                <KeyboardDoubleArrowDownRoundedIcon sx={{ mt: 1, color: 'red' }} />
+              ) : (
+                <KeyboardDoubleArrowUpRoundedIcon sx={{ mt: 1, color: 'red' }} />
+              )}
+            </span>
+          </Tooltip>
+        );
+      }
     },
     {
       field: 'cvRank',

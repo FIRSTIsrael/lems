@@ -12,7 +12,8 @@ import {
   CoreValuesForm,
   JudgingDeliberation,
   ADVANCEMENT_PERCENTAGE,
-  Award
+  Award,
+  DeliberationAnomaly
 } from '@lems/types';
 import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
@@ -31,6 +32,7 @@ interface ChampionsDeliberationLayoutProps {
   rankings: { [key in JudgingCategory]: Array<ObjectId> };
   robotGameRankings: Array<ObjectId>;
   deliberation: WithId<JudgingDeliberation>;
+  anomalies: Array<DeliberationAnomaly>;
 }
 
 const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = ({
@@ -44,7 +46,8 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
   cvForms,
   rankings,
   robotGameRankings,
-  deliberation
+  deliberation,
+  anomalies
 }) => {
   const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
   const championsAwards = awards.filter(award => award.name === 'champions');
@@ -97,6 +100,7 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           sessions={sessions}
           cvForms={cvForms}
           scoresheets={scoresheets}
+          anomalies={anomalies}
         />
       </Grid>
       <Grid xs={4}>

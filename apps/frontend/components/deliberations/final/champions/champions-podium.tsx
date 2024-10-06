@@ -58,14 +58,14 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
                 setAward(result);
               }}
               numberOnly={true}
-              sx={{ width: 180 }}
+              sx={{ width: '90%' }}
               variant="standard"
               readOnly={disabled}
             />
             <Box
               borderRadius="8px 8px 0 0"
               bgcolor={colors[index]}
-              width={180}
+              width="100%"
               height={40 + 50 * (award.length - index - 1)}
               mt={1}
             />

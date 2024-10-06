@@ -54,6 +54,15 @@ const Page: NextPage<Props> = props => {
     .filter(d => !d.isFinalDeliberation)
     .map(d => d.awards);
 
+  const anomalies = [
+    ...new Set([
+      ...initialDeliberations
+        .filter(d => !d.isFinalDeliberation)
+        .map(d => d.anomalies ?? [])
+        .flat()
+    ])
+  ];
+
   if (!deliberation) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('אירעה שגיאה!', { variant: 'error' });
@@ -105,7 +114,11 @@ const Page: NextPage<Props> = props => {
         <DragDropContext onDragEnd={() => {}}>
           {deliberation.status === 'completed' && <LockOverlay />}
           {deliberation.stage === 'champions' && (
-            <ChampionsDeliberationLayout {...props} deliberation={deliberation} />
+            <ChampionsDeliberationLayout
+              {...props}
+              deliberation={deliberation}
+              anomalies={anomalies}
+            />
           )}
           {deliberation.stage === 'core-awards' && (
             <CoreAwardsDeliberationLayout
