@@ -97,7 +97,7 @@ interface AwardListProps {
   length?: number;
   title?: string;
   fullWidth?: boolean;
-  suggestedTeam?: WithId<Team>;
+  suggestedTeam?: WithId<Team> | null;
   addSuggestedTeam?: (teamId: ObjectId) => void;
 }
 
