@@ -26,6 +26,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
   const { teams, rubrics, category } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
   const teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
+  if (category) teamRubrics.filter(r => r.category === category);
 
   if (!team) return;
 
@@ -42,7 +43,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
           {localizeTeam(team, true)}
         </Typography>
         <Typography fontSize="1.25rem" fontWeight={500}>
-          ניקוד ממוצע: {scoreAvg.toFixed(3)}
+          ניקוד ממוצע: {Number(scoreAvg.toFixed(3))}
         </Typography>
       </Grid>
       <Grid xs={6}>
