@@ -1,11 +1,13 @@
-import { WithId } from 'mongodb';
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { ObjectId, WithId } from 'mongodb';
+import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Team, MANDATORY_AWARD_PICKLIST_LENGTH, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
+import { grey } from '@mui/material/colors';
 
 interface AwardListItemProps {
   droppableId: string;
@@ -59,6 +61,33 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
   );
 };
 
+interface SuggestedTeamItem {
+  team: WithId<Team>;
+  addTeam: (teamId: ObjectId) => void;
+  disabled?: boolean;
+}
+
+const SuggestedTeamItem: React.FC<SuggestedTeamItem> = ({ team, addTeam, disabled }) => {
+  return (
+    <Stack
+      width="100%"
+      minHeight={35}
+      alignItems="center"
+      justifyContent="space-evenly"
+      sx={{ border: '1px dashed #999' }}
+      borderRadius={1}
+      direction="row"
+    >
+      <Typography width="100%" textAlign="center">
+        {team.number}
+      </Typography>
+      <IconButton onClick={() => addTeam(team._id)} sx={{ height: 33, width: 33 }}>
+        <AddCircleOutlineIcon />
+      </IconButton>
+    </Stack>
+  );
+};
+
 interface AwardListProps {
   pickList: Array<WithId<Team>>;
   id: AwardNames;
@@ -68,6 +97,8 @@ interface AwardListProps {
   length?: number;
   title?: string;
   fullWidth?: boolean;
+  suggestedTeam?: WithId<Team>;
+  addSuggestedTeam?: (teamId: ObjectId) => void;
 }
 
 const AwardList: React.FC<AwardListProps> = ({
@@ -78,7 +109,9 @@ const AwardList: React.FC<AwardListProps> = ({
   trophyCount = 0,
   length = MANDATORY_AWARD_PICKLIST_LENGTH,
   title,
-  fullWidth = false
+  fullWidth = false,
+  suggestedTeam,
+  addSuggestedTeam
 }) => {
   const awardIcons = [
     <EmojiEventsIcon fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,
@@ -125,6 +158,9 @@ const AwardList: React.FC<AwardListProps> = ({
                       disabled={disabled}
                     />
                   ))}
+                  {pickList.length < length && suggestedTeam && addSuggestedTeam && (
+                    <SuggestedTeamItem team={suggestedTeam} addTeam={addSuggestedTeam} />
+                  )}
                 </Stack>
                 <span style={{ display: 'none' }}>{provided.placeholder}</span>
               </Box>

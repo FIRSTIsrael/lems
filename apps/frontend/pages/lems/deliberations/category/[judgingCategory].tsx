@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import dayjs from 'dayjs';
+import { useState, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -78,12 +77,34 @@ const Page: NextPage<Props> = ({
     .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
     .filter(t => !deliberation.disqualifications.includes(t._id))
     .sort((a, b) => a.number - b.number);
+
   const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
     teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
   );
   const unselectedTeams = availableTeams.filter(t => !selectedTeams.find(st => t._id === st._id));
 
+  const suggestedTeam = useMemo(() => {
+    const teamsWithScores = unselectedTeams.map(team => {
+      const rubric = rubrics
+        .filter(r => r.category === category && r.status !== 'empty')
+        .find(r => r.teamId.toString() === team._id.toString());
+      const rubricValues = rubric?.data?.values || {};
+      let score = Object.values(rubricValues).reduce((acc, current) => acc + current.value, 0);
+      if (category === 'core-values') {
+        scoresheets
+          .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
+          .forEach(scoresheet => (score += scoresheet.data?.gp?.value || 3));
+      }
+      return { ...team, score };
+    });
+
+    teamsWithScores.sort((a, b) => b.score - a.score);
+    if (teamsWithScores[0].score === teamsWithScores[1].score) return null;
+    return teamsWithScores[0];
+  }, [unselectedTeams]);
+
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
+    // TODO: handle realtime DQs from JA UI
     if (
       newDeliberation._id.toString() === deliberation._id.toString() &&
       !fullMatch(newDeliberation, deliberation)
@@ -332,6 +353,11 @@ const Page: NextPage<Props> = ({
                   ) ?? []
                 }
                 disabled={deliberation.status !== 'in-progress'}
+                suggestedTeam={suggestedTeam}
+                addSuggestedTeam={teamId => {
+                  const index = getPicklist(category).length;
+                  addTeamToPicklist(teamId.toString(), index, category);
+                }}
               />
             </Grid>
             <Grid xs={2.5}>

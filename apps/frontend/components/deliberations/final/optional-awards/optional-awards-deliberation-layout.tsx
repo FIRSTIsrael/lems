@@ -61,6 +61,7 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
           sessions={sessions}
           teams={teams}
           disabled={true}
+          showRanks={false}
         />
       </Grid>
       <Grid xs={3}>

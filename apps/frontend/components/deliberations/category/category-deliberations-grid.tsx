@@ -16,6 +16,7 @@ import {
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
 import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
+
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
   teams: Array<WithId<Team>>;
@@ -31,6 +32,7 @@ interface CategoryDeliberationsGridProps {
     awards: { [key in CoreValuesAwards]: boolean }
   ) => void;
   disabled?: boolean;
+  showRanks?: boolean;
 }
 
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
@@ -43,7 +45,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   cvForms,
   scoresheets,
   updateTeamAwards,
-  disabled = false
+  disabled = false,
+  showRanks = true
 }) => {
   const schema = rubricsSchemas[category];
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
@@ -54,46 +57,71 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
   ];
 
-  const rows = teams.map(team => {
-    const rubric = rubrics
-      .filter(r => r.category === category && r.status !== 'empty')
-      .find(r => r.teamId.toString() === team._id.toString()); //Assert there exists a rubric (! at the end).
-    const roomId = sessions.find(
-      session => session.teamId?.toString() === team._id.toString()
-    )?.roomId;
-    const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-    const rubricValues = rubric?.data?.values || {};
-    const rubricAwards = rubric?.data?.awards || {};
-    const rowValues: { [key: string]: number } = {};
-    Object.entries(rubricValues).forEach(([key, entry]) => {
-      rowValues[key] = entry.value;
-    });
-    const cvFormSeverities = cvForms
-      .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
-      .map(cvForm => cvForm.severity);
+  const rows = teams
+    .map(team => {
+      const rubric = rubrics
+        .filter(r => r.category === category && r.status !== 'empty')
+        .find(r => r.teamId.toString() === team._id.toString());
+      const roomId = sessions.find(
+        session => session.teamId?.toString() === team._id.toString()
+      )?.roomId;
+      const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
+      const rubricValues = rubric?.data?.values || {};
+      const rubricAwards = rubric?.data?.awards || {};
+      const rowValues: { [key: string]: number } = {};
+      Object.entries(rubricValues).forEach(([key, entry]) => {
+        rowValues[key] = entry.value;
+      });
+      const cvFormSeverities = cvForms
+        .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
+        .map(cvForm => cvForm.severity);
 
-    if (category === 'core-values') {
-      scoresheets
-        .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
-        .forEach(
-          scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
-        );
+      if (category === 'core-values') {
+        scoresheets
+          .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
+          .forEach(
+            scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
+          );
+      }
+
+      const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
+      return {
+        id: team._id,
+        rubricId: rubric?._id,
+        team,
+        room: roomName,
+        ...rowValues,
+        sum,
+        ...rubricAwards,
+        cvFormSeverities,
+        rank: 0
+      };
+    })
+    .sort((a, b) => b.sum - a.sum);
+
+  rows[0].rank = 1;
+
+  for (var i = 1; i < rows.length; i++) {
+    if (rows[i].sum === rows[i - 1].sum) {
+      rows[i].rank = rows[i - 1].rank;
+    } else {
+      rows[i].rank = i + 1;
     }
-
-    const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
-    return {
-      id: team._id,
-      rubricId: rubric?._id,
-      team,
-      room: roomName,
-      ...rowValues,
-      sum,
-      ...rubricAwards,
-      cvFormSeverities
-    };
-  });
+  }
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
+    ...(showRanks
+      ? [
+          {
+            field: 'rank',
+            headerName: 'דירוג',
+            type: 'number',
+            width: 60,
+            headerAlign: 'center',
+            align: 'center'
+          } as GridColDef<(typeof rows)[number]>
+        ]
+      : []),
     {
       field: 'teamNumber',
       headerName: 'מספר קבוצה',
