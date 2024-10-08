@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
+import dayjs from 'dayjs';
 import {
   IconButton,
   Paper,
@@ -13,7 +14,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Box
+  Box,
+  LinearProgress
 } from '@mui/material';
 import AddRounded from '@mui/icons-material/AddRounded';
 import {
@@ -34,6 +36,7 @@ import CompareView from '../../../components/deliberations/compare/compare-view'
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import TeamSelection from '../../../components/general/team-selection';
+import useCountdown from '../../../hooks/use-countdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -59,6 +62,14 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
     setCompareTeamIds(compareTeamIds => compareTeamIds.filter(id => id !== teamId));
   };
 
+  const TIMER_LENGTH_SECONDS = 90;
+  const targetDate = useMemo(
+    () => dayjs().add(TIMER_LENGTH_SECONDS, 'seconds').toDate(),
+    [compareTeamIds, category]
+  );
+  const [days, hours, minutes, seconds] = useCountdown(targetDate);
+  const time = minutes * 60 + seconds;
+
   return (
     <RoleAuthorizer
       user={user}
@@ -75,55 +86,61 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <Stack
-          direction="row"
-          component={Paper}
-          p={2}
-          my={2}
-          alignItems="center"
-          justifyContent="space-evenly"
-        >
-          <Typography fontWeight={600} fontSize="1.5rem">
-            השוואת קבוצות
-          </Typography>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <TeamSelection
-              setTeam={setSelectedTeam}
-              teams={teams.filter(team => !compareTeamIds.includes(team._id))}
-              value={selectedTeam}
-              sx={{ width: 450 }}
-            />
-            <IconButton
-              disabled={!selectedTeam}
-              sx={{ width: 36, height: 36 }}
-              onClick={() => {
-                addTeam(selectedTeam!._id);
-                setSelectedTeam(null);
-              }}
-            >
-              <AddRounded />
-            </IconButton>
+        <Paper sx={{ mb: 2 }}>
+          <Stack direction="row" p={2} my={2} alignItems="center" justifyContent="space-evenly">
+            <Typography fontWeight={600} fontSize="1.5rem">
+              השוואת קבוצות
+            </Typography>
+            <Stack spacing={2} direction="row" alignItems="center">
+              <TeamSelection
+                setTeam={setSelectedTeam}
+                teams={teams.filter(team => !compareTeamIds.includes(team._id))}
+                value={selectedTeam}
+                sx={{ width: 450 }}
+              />
+              <IconButton
+                disabled={!selectedTeam}
+                sx={{ width: 36, height: 36 }}
+                onClick={() => {
+                  addTeam(selectedTeam!._id);
+                  setSelectedTeam(null);
+                }}
+              >
+                <AddRounded />
+              </IconButton>
+            </Stack>
+            <FormControl sx={{ width: 200 }}>
+              <InputLabel id="category">תחום</InputLabel>
+              <Select
+                labelId="category"
+                id="category-select"
+                value={category}
+                label="תחום"
+                onChange={(event: SelectChangeEvent) =>
+                  setCategory(event.target.value as JudgingCategory)
+                }
+              >
+                {JudgingCategoryTypes.map(c => (
+                  <MenuItem key={c} value={c}>
+                    {localizedJudgingCategory[c].name}
+                  </MenuItem>
+                ))}
+                <MenuItem value="general">כללי</MenuItem>
+              </Select>
+            </FormControl>
           </Stack>
-          <FormControl sx={{ width: 200 }}>
-            <InputLabel id="category">תחום</InputLabel>
-            <Select
-              labelId="category"
-              id="category-select"
-              value={category}
-              label="תחום"
-              onChange={(event: SelectChangeEvent) =>
-                setCategory(event.target.value as JudgingCategory)
-              }
-            >
-              {JudgingCategoryTypes.map(c => (
-                <MenuItem key={c} value={c}>
-                  {localizedJudgingCategory[c].name}
-                </MenuItem>
-              ))}
-              <MenuItem value="general">כללי</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
+          <LinearProgress
+            variant="determinate"
+            value={time === 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
+            color={time === 0 ? 'error' : 'primary'}
+            sx={{
+              height: 16,
+              borderBottomLeftRadius: 8,
+              borderBottomRightRadius: 8,
+              mt: -3
+            }}
+          />
+        </Paper>
         <CompareView
           compareTeamIds={compareTeamIds}
           teams={teams}

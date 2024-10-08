@@ -1,6 +1,9 @@
-import { IconButton, Modal, Paper } from '@mui/material';
+import { useMemo } from 'react';
+import dayjs from 'dayjs';
+import { IconButton, LinearProgress, Modal, Paper } from '@mui/material';
 import CompareView, { CompareViewProps } from './compare-view';
 import CloseRounded from '@mui/icons-material/CloseRounded';
+import useCountdown from 'apps/frontend/hooks/use-countdown';
 
 interface CompareModalProps extends CompareViewProps {
   open: boolean;
@@ -9,6 +12,11 @@ interface CompareModalProps extends CompareViewProps {
 
 const CompareModal: React.FC<CompareModalProps> = props => {
   const { open, setOpen, ...compareViewProps } = props;
+
+  const TIMER_LENGTH_SECONDS = 90;
+  const targetDate = useMemo(() => dayjs().add(TIMER_LENGTH_SECONDS, 'seconds').toDate(), [open]);
+  const [days, hours, minutes, seconds] = useCountdown(targetDate);
+  const time = minutes * 60 + seconds;
 
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
@@ -24,9 +32,22 @@ const CompareModal: React.FC<CompareModalProps> = props => {
           bgcolor: '#eaeaec'
         }}
       >
-        <IconButton onClick={() => setOpen(false)} sx={{ position: 'fixed', mt: -2, ml: -1 }}>
+        <LinearProgress
+          variant="determinate"
+          value={time === 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
+          color={time === 0 ? 'error' : 'primary'}
+          sx={{
+            height: 16,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            mx: -2,
+            mt: -3
+          }}
+        />
+        <IconButton onClick={() => setOpen(false)} sx={{ position: 'fixed', ml: -1 }}>
           <CloseRounded />
         </IconButton>
+        <div style={{ marginBottom: 12 }} />
         <CompareView {...compareViewProps} />
       </Paper>
     </Modal>

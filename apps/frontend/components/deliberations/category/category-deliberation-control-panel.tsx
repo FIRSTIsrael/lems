@@ -56,7 +56,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
         <Divider />
         <Stack spacing={1} alignItems="center" justifyContent="center">
           <TeamSelection
-            teams={teams}
+            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
             setTeam={team => setCompareTeams(prev => [team, prev[1]])}
             value={compareTeams[0]}
             fullWidth
@@ -64,7 +64,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
           />
           <Typography>מול</Typography>
           <TeamSelection
-            teams={teams}
+            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
             setTeam={team => setCompareTeams(prev => [prev[0], team])}
             value={compareTeams[1]}
             fullWidth
