@@ -1,8 +1,7 @@
 import { WithId } from 'mongodb';
 import { Paper, Box, Avatar, Stack, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import KeyboardDoubleArrowUpRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowUpRounded';
-import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
+
 import {
   Team,
   Scoresheet,
@@ -12,6 +11,7 @@ import {
   DeliberationAnomaly
 } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
+import AnomalyIcon from '../anomaly-icon';
 
 interface TeamWithRanks extends Team {
   cvRank: number;
@@ -119,20 +119,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
         if (!params.row.anomaly) return null;
 
         return (
-          <Tooltip
-            title={`ניתן לקבוצה ניקוד ${
-              params.row.anomaly === 'low-rank' ? 'נמוך' : 'גבוה'
-            } ביחס למחוון`}
-            arrow
-          >
-            <span>
-              {params.row.anomaly === 'low-rank' ? (
-                <KeyboardDoubleArrowDownRoundedIcon sx={{ mt: 1, color: 'red' }} />
-              ) : (
-                <KeyboardDoubleArrowUpRoundedIcon sx={{ mt: 1, color: 'red' }} />
-              )}
-            </span>
-          </Tooltip>
+          <AnomalyIcon anomaly={{ teamId: params.row.team._id, reason: params.row.anomaly }} />
         );
       }
     },

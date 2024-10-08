@@ -19,6 +19,7 @@ import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ChampionsPodium from './champions-podium';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
+import AnomalyTeams from '../anomaly-teams';
 
 interface ChampionsDeliberationLayoutProps {
   division: WithId<Division>;
@@ -93,7 +94,7 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
 
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-      <Grid xs={8}>
+      <Grid xs={7}>
         <ChampionsDeliberationsGrid
           teams={elegibleTeams}
           rooms={rooms}
@@ -103,7 +104,10 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           anomalies={anomalies}
         />
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={2}>
+        <AnomalyTeams teams={teamsWithRanks} anomalies={anomalies} />
+      </Grid>
+      <Grid xs={3}>
         <FinalDeliberationControlPanel
           teams={elegibleTeams}
           deliberation={deliberation}
