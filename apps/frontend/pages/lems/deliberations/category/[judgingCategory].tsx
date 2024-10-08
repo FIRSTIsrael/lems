@@ -251,10 +251,10 @@ const Page: NextPage<Props> = ({
       const rank = sortedTeamsWithoutTies.findIndex(st => st._id === teamId);
 
       if (rankAfterDeliberation > rank + RANKING_ANOMALY_THRESHOLD) {
-        anomalies.push({ teamId, reason: 'low-rank' });
+        anomalies.push({ teamId, reason: 'low-rank', category });
       }
       if (rankAfterDeliberation < rank - RANKING_ANOMALY_THRESHOLD) {
-        anomalies.push({ teamId, reason: 'high-rank' });
+        anomalies.push({ teamId, reason: 'high-rank', category });
       }
     });
 
@@ -265,7 +265,7 @@ const Page: NextPage<Props> = ({
     ) {
       const teamId = sortedTeams[index]._id;
       if (!picklist.includes(teamId)) {
-        anomalies.push({ teamId, reason: 'low-rank' });
+        anomalies.push({ teamId, reason: 'low-rank', category });
       }
     }
 

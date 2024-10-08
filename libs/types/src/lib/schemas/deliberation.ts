@@ -11,6 +11,7 @@ export type FinalDeliberationStage = (typeof FinalDeliberationStages)[number];
 
 export interface DeliberationAnomaly {
   teamId: ObjectId;
+  category: JudgingCategory;
   reason: AnomalyReasons;
 }
 

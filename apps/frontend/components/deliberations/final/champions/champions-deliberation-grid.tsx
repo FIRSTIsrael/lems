@@ -73,7 +73,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       maxScore,
       cvFormSeverities,
       ...gp,
-      anomaly: anomalies.find(a => a.teamId === team._id)?.reason
+      anomalies: anomalies.filter(a => a.teamId === team._id)
     };
   });
 
@@ -112,15 +112,12 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       headerName: 'חריגות',
       headerAlign: 'center',
       align: 'center',
-      width: 60,
+      width: 90,
       sortable: false,
       filterable: false,
       renderCell: params => {
-        if (!params.row.anomaly) return null;
-
-        return (
-          <AnomalyIcon anomaly={{ teamId: params.row.team._id, reason: params.row.anomaly }} />
-        );
+        if (!params.row.anomalies || params.row.anomalies.length === 0) return null;
+        return params.row.anomalies.map(anomaly => <AnomalyIcon anomaly={anomaly} />);
       }
     },
     {
