@@ -131,7 +131,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
           </Stack>
           <LinearProgress
             variant="determinate"
-            value={time === 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
+            value={time <= 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
             color={time === 0 ? 'error' : 'primary'}
             sx={{
               height: 16,
