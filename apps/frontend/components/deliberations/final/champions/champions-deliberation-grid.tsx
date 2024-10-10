@@ -218,7 +218,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
           }
         }}
         sx={{
-          maxHeight: 696,
+          maxHeight: 500,
           '& .MuiDataGrid-columnHeaderTitle': {
             textOverflow: 'clip',
             whiteSpace: 'wrap',

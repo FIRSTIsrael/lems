@@ -20,3 +20,16 @@ export const getDiff = (base: Record<string, any>, compare: Record<string, any>)
 
   return result;
 };
+
+// TODO: ES2024 implements Object.groupBy natively, so make sure to remove this when upgrading to it.
+export const groupBy = <T>(
+  array: Array<T>,
+  predicate: (value: T, index: number, array: Array<T>) => string
+) =>
+  array.reduce(
+    (acc, value, index, array) => {
+      (acc[predicate(value, index, array)] ||= []).push(value);
+      return acc;
+    },
+    {} as { [key: string]: T[] }
+  );
