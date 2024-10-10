@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Skeleton, Typography } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import { red, green, blue } from '@mui/material/colors';
 import { Division, JudgingCategory, Team } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';

@@ -31,17 +31,11 @@ export const getUser = (filter: Filter<User>): Promise<WithId<SafeUser> | null> 
 };
 
 export const addUser = (user: User) => {
-  return db
-    .collection<User>('users')
-    .insertOne(user)
-    .then(response => response);
+  return db.collection<User>('users').insertOne(user);
 };
 
 export const addUsers = (users: Array<User>) => {
-  return db
-    .collection<User>('users')
-    .insertMany(users)
-    .then(response => response);
+  return db.collection<User>('users').insertMany(users);
 };
 
 export const updateUser = (filter: Filter<User>, newUser: Partial<User>, upsert = false) => {
@@ -49,15 +43,9 @@ export const updateUser = (filter: Filter<User>, newUser: Partial<User>, upsert 
 };
 
 export const deleteUser = (filter: Filter<User>) => {
-  return db
-    .collection<User>('users')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<User>('users').deleteOne(filter);
 };
 
 export const deleteDivisionUsers = (divisionId: ObjectId) => {
-  return db
-    .collection<User>('users')
-    .deleteMany({ divisionId })
-    .then(response => response);
+  return db.collection<User>('users').deleteMany({ divisionId });
 };

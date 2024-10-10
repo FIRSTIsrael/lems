@@ -136,6 +136,81 @@ export const handleUpdateSession = async (namespace, divisionId, sessionId, data
   namespace.to('judging').emit('judgingSessionUpdated', session);
 };
 
+export const handleStartDeliberation = async (namespace, divisionId, deliberationId, callback) => {
+  let deliberation = await db.getJudgingDeliberation({
+    divisionId: new ObjectId(divisionId),
+    _id: new ObjectId(deliberationId)
+  });
+  if (!deliberation) {
+    callback({
+      ok: false,
+      error: `Could not find deliberation ${deliberationId} in division ${divisionId}!`
+    });
+    return;
+  }
+  if (deliberation.status !== 'not-started') {
+    callback({ ok: false, error: `Deliberation ${deliberationId} has already started!` });
+    return;
+  }
+
+  console.log(`❗ Starting deliberation ${deliberationId} in division ${divisionId}`);
+
+  const startTime = new Date();
+  deliberation.startTime = startTime;
+  deliberation.status = 'in-progress';
+  const { _id, ...deliberationData } = deliberation;
+  await db.updateJudgingDeliberation({ _id }, deliberationData);
+
+  callback({ ok: true });
+  deliberation = await db.getJudgingDeliberation({ _id });
+  namespace.to('judging').emit('judgingDeliberationStarted', deliberation);
+};
+
+export const handleUpdateDeliberation = async (
+  namespace,
+  divisionId,
+  deliberationId,
+  data,
+  callback
+) => {
+  let deliberation = await db.getJudgingDeliberation({ _id: new ObjectId(deliberationId) });
+  if (!deliberation) {
+    callback({ ok: false, error: `Could not find deliberation ${deliberationId}!` });
+    return;
+  }
+  if (deliberation.status === 'completed') {
+    callback({ ok: false, error: `Deliberation ${deliberationId} is not editable!` });
+    return;
+  }
+
+  console.log(`🖊️ Updating deliberation ${deliberationId} in division ${divisionId}`);
+
+  await db.updateJudgingDeliberation({ _id: deliberation._id }, { ...data });
+
+  callback({ ok: true });
+  const oldDeliberation = deliberation;
+  deliberation = await db.getJudgingDeliberation({ _id: new ObjectId(deliberationId) });
+  namespace.to('judging').emit('judgingDeliberationUpdated', deliberation);
+  if (data.status !== oldDeliberation.status)
+    namespace.to('judging').emit('judgingDeliberationStatusChanged', deliberation);
+};
+
+export const handleCompleteDeliberation = async (
+  namespace,
+  divisionId,
+  deliberationId,
+  data,
+  callback
+) => {
+  handleUpdateDeliberation(
+    namespace,
+    divisionId,
+    deliberationId,
+    { ...data, status: 'completed', completionTime: new Date() },
+    callback
+  );
+};
+
 export const handleUpdateRubric = async (
   namespace,
   divisionId,

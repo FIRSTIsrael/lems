@@ -18,9 +18,10 @@ import { blue, green, red } from '@mui/material/colors';
 
 interface ScoresPerRoomChartProps {
   division: WithId<Division>;
+  height?: number;
 }
 
-const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ division }) => {
+const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ division, height = 300 }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ division }) => 
       <Typography textAlign="center" fontSize="1.25rem" component="h2">
         ניקוד לפי חדר
       </Typography>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={height}>
         {data.length > 0 ? (
           <ComposedChart
             data={data}

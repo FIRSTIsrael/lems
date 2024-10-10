@@ -5,7 +5,7 @@ import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 
 const category = 'robot-design' as JudgingCategory;
 
-const rubricSections: Array<RubricSchemaSection<typeof category>> = [
+const rubricSections: Array<RubricSchemaSection> = [
   {
     title: 'זיהוי',
     description:
@@ -111,7 +111,7 @@ const rubricSections: Array<RubricSchemaSection<typeof category>> = [
   }
 ];
 
-const robotDesignRubric: RubricsSchema<typeof category> = {
+const robotDesignRubric: RubricsSchema = {
   category: category,
   season: SEASON_NAME,
   title: localizedJudgingCategory[category].name,

@@ -10,6 +10,7 @@ export * from './lib/schemas/team';
 export * from './lib/schemas/rubric';
 export * from './lib/schemas/scoresheet';
 export * from './lib/schemas/core-values-form';
+export * from './lib/schemas/deliberation';
 export * from './lib/schemas/ticket';
 export * from './lib/roles';
 export * from './lib/schemas/award';

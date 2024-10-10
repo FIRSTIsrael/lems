@@ -37,15 +37,9 @@ export const updateFllEvent = (
 };
 
 export const addFllEvent = (fllEvent: FllEvent) => {
-  return db
-    .collection<FllEvent>('fll-events')
-    .insertOne(fllEvent)
-    .then(response => response);
+  return db.collection<FllEvent>('fll-events').insertOne(fllEvent);
 };
 
 export const deleteFllEvent = (filter: Filter<FllEvent>) => {
-  return db
-    .collection<FllEvent>('fll-events')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<FllEvent>('fll-events').deleteOne(filter);
 };

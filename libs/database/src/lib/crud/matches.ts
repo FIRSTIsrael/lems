@@ -84,22 +84,13 @@ export const updateMatches = (
 };
 
 export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<RobotGameMatch>('matches').deleteOne(filter);
 };
 
 export const deleteDivisionMatches = (divisionId: ObjectId) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .deleteMany({ divisionId: divisionId })
-    .then(response => response);
+  return db.collection<RobotGameMatch>('matches').deleteMany({ divisionId: divisionId });
 };
 
 export const deleteTableMatches = (tableId: ObjectId) => {
-  return db
-    .collection<RobotGameMatch>('matches')
-    .deleteMany({ table: tableId })
-    .then(response => response);
+  return db.collection<RobotGameMatch>('matches').deleteMany({ table: tableId });
 };

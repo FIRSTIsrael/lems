@@ -1,4 +1,3 @@
-import React from 'react';
 import { TableCell, FormControlLabel, Radio, TableRow, Typography } from '@mui/material';
 import { Field, FieldProps } from 'formik';
 import Markdown from 'react-markdown';

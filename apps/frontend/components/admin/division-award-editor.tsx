@@ -23,13 +23,13 @@ import Grid from '@mui/material/Unstable_Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
 import {
   AwardNameTypes,
   AwardNames,
   MandatoryAwardTypes,
   OptionalAwardTypes,
-  AwardSchema
+  AwardSchema,
+  AwardLimits
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils/arrays';
@@ -91,7 +91,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                 <Grid xs={4}>
                   <CustomNumberInput
                     min={1}
-                    max={5}
+                    max={AwardLimits[name] ?? 5}
                     value={field.value}
                     onChange={(e, value) => {
                       e.preventDefault();

@@ -11,10 +11,7 @@ export const getDivisionStateFromDivision = (divisionId: ObjectId) => {
 };
 
 export const addDivisionState = (state: DivisionState) => {
-  return db
-    .collection<DivisionState>('division-states')
-    .insertOne(state)
-    .then(response => response);
+  return db.collection<DivisionState>('division-states').insertOne(state);
 };
 
 export const updateDivisionState = (
@@ -28,8 +25,5 @@ export const updateDivisionState = (
 };
 
 export const deleteDivisionState = (filter: Filter<DivisionState>) => {
-  return db
-    .collection<DivisionState>('division-states')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<DivisionState>('division-states').deleteOne(filter);
 };

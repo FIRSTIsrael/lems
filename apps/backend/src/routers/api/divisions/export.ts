@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
 import { Parser, FieldInfo } from '@json2csv/plainjs';
 import * as db from '@lems/database';
-import { JudgingCategory } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, RubricsSchema } from '@lems/season';
 import { compareScoreArrays } from '@lems/utils/arrays';
 
@@ -19,7 +18,7 @@ router.get(
     const scoresheets = (
       await db.getDivisionScoresheets(new ObjectId(req.params.divisionId))
     ).filter(scoresheet => scoresheet.stage === 'ranking');
-    const schema: RubricsSchema<JudgingCategory> = rubricsSchemas[req.params.judgingCategory];
+    const schema: RubricsSchema = rubricsSchemas[req.params.judgingCategory];
     if (!schema) {
       res.status(400).json({ error: 'Invalid category' });
       return;
@@ -34,16 +33,17 @@ router.get(
 
     const csvData = rubrics.map(rubric => {
       const values = rubric.data?.values;
+      const newValues: { [key: string]: number } = {};
       const team = teams.find(t => t._id.toString() === rubric.teamId.toString());
 
       if (!values) return { teamNumber: team?.number };
       Object.entries(values).forEach(([key, entry]) => {
-        values[key] = entry.value;
+        newValues[key] = entry.value;
       });
 
       return {
         teamNumber: team?.number,
-        ...values,
+        ...newValues,
         ...(req.params.judgingCategory === 'core-values' && {
           ...getGpScores(team._id),
           ...rubric.data.awards
@@ -59,7 +59,7 @@ router.get(
     ];
 
     fields = fields.concat(
-      schema.sections.flatMap((section: RubricSchemaSection<JudgingCategory>) =>
+      schema.sections.flatMap((section: RubricSchemaSection) =>
         section.fields.map(field => ({
           label: field.title,
           value: field.id

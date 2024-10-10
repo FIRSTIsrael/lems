@@ -27,15 +27,9 @@ export const updateDivision = (
 };
 
 export const addDivision = (division: Division) => {
-  return db
-    .collection<Division>('divisions')
-    .insertOne(division)
-    .then(response => response);
+  return db.collection<Division>('divisions').insertOne(division);
 };
 
 export const deleteDivision = (filter: Filter<Division>) => {
-  return db
-    .collection<Division>('divisions')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<Division>('divisions').deleteOne(filter);
 };

@@ -3,11 +3,13 @@ import 'dayjs/locale/he';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import duration from 'dayjs/plugin/duration';
+import minMax from 'dayjs/plugin/minMax';
 
 dayjs.locale('he');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
+dayjs.extend(minMax);
 
 export const stringifyTwoDates = (date1: Date | Dayjs, date2: Date | Dayjs) => {
   date1 = dayjs(date1);
