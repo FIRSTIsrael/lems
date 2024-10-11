@@ -18,7 +18,7 @@ import {
   Award,
   FinalDeliberationStage,
   AwardNames,
-  AwardLimits
+  MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { reorder } from '@lems/utils/arrays';
@@ -76,6 +76,61 @@ const Page: NextPage<Props> = props => {
         .flat()
     ])
   ];
+
+  const nonDeliberatedRanks = Object.entries(props.rankings).reduce(
+    (acc, [key, value]) => {
+      const filteredValue: Array<{ teamId: ObjectId; rank: number; newRank?: number }> =
+        value.filter(({ teamId }) => !categoryPicklists[key as JudgingCategory].includes(teamId));
+
+      filteredValue[0].newRank = 1;
+      for (var i = 1; i < filteredValue.length; i++) {
+        if (filteredValue[i].rank === filteredValue[i - 1].rank) {
+          filteredValue[i].newRank = filteredValue[i - 1].newRank;
+        } else {
+          filteredValue[i].newRank = i + 1;
+        }
+      }
+
+      return {
+        ...acc,
+        [key]: filteredValue.map(({ teamId, newRank }) => ({ teamId, rank: newRank }))
+      };
+    },
+    {} as { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> }
+  );
+
+  const calculateRank = (teamId: ObjectId, category: JudgingCategory | 'robot-game') => {
+    let rank: number;
+    if (category === 'robot-game') {
+      rank = props.robotGameRankings.findIndex(id => id === teamId);
+      return rank >= 0 ? rank + 1 : props.teams.filter(team => team.registered).length;
+    } else {
+      rank = categoryPicklists[category].findIndex(id => id === teamId);
+      if (rank >= 0) return rank + 1;
+      const team = nonDeliberatedRanks[category].find(entry => entry.teamId === teamId);
+      if (!team) {
+        return props.teams.filter(team => team.registered).length;
+      }
+      return team.rank + MANDATORY_AWARD_PICKLIST_LENGTH;
+    }
+  };
+
+  const teamsWithRanks = props.teams
+    .filter(team => team.registered)
+    .map(team => {
+      const cvRank = calculateRank(team._id, 'core-values');
+      const ipRank = calculateRank(team._id, 'innovation-project');
+      const rdRank = calculateRank(team._id, 'robot-design');
+      const rgRank = calculateRank(team._id, 'robot-game');
+      return {
+        ...team,
+        cvRank,
+        ipRank,
+        rdRank,
+        rgRank,
+        totalRank: (cvRank + ipRank + rdRank + rgRank) / 4
+      };
+    });
 
   if (!deliberation) {
     router.push(`/lems/${user.role}`);
@@ -282,6 +337,7 @@ const Page: NextPage<Props> = props => {
           {deliberation.stage === 'champions' && (
             <ChampionsDeliberationLayout
               {...props}
+              teamsWithRanks={teamsWithRanks}
               setPicklist={newList => setPicklist('champions', newList)}
               startDeliberationStage={startDeliberationStage}
               endDeliberationStage={endDeliberationStage}
@@ -294,6 +350,7 @@ const Page: NextPage<Props> = props => {
           {deliberation.stage === 'core-awards' && (
             <CoreAwardsDeliberationLayout
               {...props}
+              teamsWithRanks={teamsWithRanks}
               startDeliberationStage={startDeliberationStage}
               endDeliberationStage={endDeliberationStage}
               deliberation={deliberation}

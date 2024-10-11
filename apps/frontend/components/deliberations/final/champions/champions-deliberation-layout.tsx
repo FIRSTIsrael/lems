@@ -14,9 +14,7 @@ import {
   JudgingDeliberation,
   ADVANCEMENT_PERCENTAGE,
   Award,
-  DeliberationAnomaly,
-  JudgingCategoryTypes,
-  MANDATORY_AWARD_PICKLIST_LENGTH
+  DeliberationAnomaly
 } from '@lems/types';
 import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
@@ -25,9 +23,18 @@ import ScoresPerRoomChart from '../../../../components/insights/charts/scores-pe
 import AnomalyTeams from '../anomaly-teams';
 import { apiFetch } from '../../../../lib/utils/fetch';
 
+interface TeamWithRanks extends WithId<Team> {
+  cvRank: number;
+  ipRank: number;
+  rdRank: number;
+  rgRank: number;
+  totalRank: number;
+}
+
 interface ChampionsDeliberationLayoutProps {
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
+  teamsWithRanks: Array<TeamWithRanks>;
   awards: Array<WithId<Award>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -48,6 +55,7 @@ interface ChampionsDeliberationLayoutProps {
 const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = ({
   division,
   teams,
+  teamsWithRanks,
   awards,
   rubrics,
   rooms,
@@ -66,61 +74,6 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
 }) => {
   const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
   const championsAwards = awards.filter(award => award.name === 'champions').length;
-
-  const nonDeliberatedRanks = Object.entries(rankings).reduce(
-    (acc, [key, value]) => {
-      const filteredValue: Array<{ teamId: ObjectId; rank: number; newRank?: number }> =
-        value.filter(({ teamId }) => !categoryPicklists[key as JudgingCategory].includes(teamId));
-
-      filteredValue[0].newRank = 1;
-      for (var i = 1; i < filteredValue.length; i++) {
-        if (filteredValue[i].rank === filteredValue[i - 1].rank) {
-          filteredValue[i].newRank = filteredValue[i - 1].newRank;
-        } else {
-          filteredValue[i].newRank = i + 1;
-        }
-      }
-
-      return {
-        ...acc,
-        [key]: filteredValue.map(({ teamId, newRank }) => ({ teamId, rank: newRank }))
-      };
-    },
-    {} as { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> }
-  );
-
-  const calculateRank = (teamId: ObjectId, category: JudgingCategory | 'robot-game') => {
-    let rank: number;
-    if (category === 'robot-game') {
-      rank = robotGameRankings.findIndex(id => id === teamId);
-      return rank >= 0 ? rank + 1 : teams.filter(team => team.registered).length;
-    } else {
-      rank = categoryPicklists[category].findIndex(id => id === teamId);
-      if (rank >= 0) return rank + 1;
-      const team = nonDeliberatedRanks[category].find(entry => entry.teamId === teamId);
-      if (!team) {
-        return teams.filter(team => team.registered).length;
-      }
-      return team.rank + MANDATORY_AWARD_PICKLIST_LENGTH;
-    }
-  };
-
-  const teamsWithRanks = teams
-    .filter(team => team.registered)
-    .map(team => {
-      const cvRank = calculateRank(team._id, 'core-values');
-      const ipRank = calculateRank(team._id, 'innovation-project');
-      const rdRank = calculateRank(team._id, 'robot-design');
-      const rgRank = calculateRank(team._id, 'robot-game');
-      return {
-        ...team,
-        cvRank,
-        ipRank,
-        rdRank,
-        rgRank,
-        totalRank: (cvRank + ipRank + rdRank + rgRank) / 4
-      };
-    });
 
   const elegibleTeams = useMemo(
     () =>

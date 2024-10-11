@@ -24,9 +24,18 @@ import AwardList from '../../award-list';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 
+interface TeamWithRanks extends WithId<Team> {
+  cvRank: number;
+  ipRank: number;
+  rdRank: number;
+  rgRank: number;
+  totalRank: number;
+}
+
 interface CoreAwardsDeliberationLayoutProps {
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
+  teamsWithRanks: Array<TeamWithRanks>;
   awards: Array<WithId<Award>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -36,6 +45,7 @@ interface CoreAwardsDeliberationLayoutProps {
   deliberation: WithId<JudgingDeliberation>;
   categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
   anomalies: Array<DeliberationAnomaly>;
+  rankings: { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> };
   startDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
   endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
 }
@@ -43,6 +53,7 @@ interface CoreAwardsDeliberationLayoutProps {
 const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> = ({
   division,
   teams,
+  teamsWithRanks,
   awards,
   rooms,
   sessions,
@@ -52,6 +63,7 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   deliberation,
   categoryPicklists,
   anomalies,
+  rankings,
   startDeliberationStage,
   endDeliberationStage
 }) => {
@@ -98,7 +110,11 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
         deliberation.awards[category]!.map(teamId => teams.find(t => t._id === teamId)!) ?? [];
     });
 
-    const excellenceInEngineeringWinners: any[] = [];
+    const excellenceInEngineeringWinners = teamsWithRanks
+      .sort((a, b) => a.totalRank - b.totalRank)
+      .filter(team => !selectedTeams.includes(team._id) && !ineligibleTeams.includes(team._id))
+      .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length)
+      .map(winner => teams.find(t => t._id === winner._id)!);
 
     apiFetch(`/api/divisions/${division._id}/awards/winners`, {
       method: 'PUT',
