@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
@@ -35,6 +35,9 @@ interface ChampionsDeliberationLayoutProps {
   deliberation: WithId<JudgingDeliberation>;
   anomalies: Array<DeliberationAnomaly>;
   robotConsistency: { avgRelStdDev: number; rows: Array<any> };
+  setPicklist: (newList: Array<ObjectId>) => void;
+  startDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
+  endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
 }
 
 const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = ({
@@ -50,10 +53,13 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
   robotGameRankings,
   deliberation,
   anomalies,
-  robotConsistency
+  robotConsistency,
+  setPicklist,
+  startDeliberationStage,
+  endDeliberationStage
 }) => {
   const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
-  const championsAwards = awards.filter(award => award.name === 'champions');
+  const championsAwards = awards.filter(award => award.name === 'champions').length;
   const teamsWithRanks = teams
     .filter(team => team.registered)
     .map(team => {
@@ -88,14 +94,6 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
     [deliberation.disqualifications]
   );
 
-  //TODO: hook up to deliberation
-  const places = championsAwards.length;
-  const [picklist, setPicklist] = useState<Array<ObjectId | null>>(
-    [...Array(places).keys()].map(i => null)
-  );
-
-  console.log(robotConsistency);
-
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={7}>
@@ -119,12 +117,15 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}
+          startDeliberation={startDeliberationStage}
+          endDeliberationStage={endDeliberationStage}
         />
       </Grid>
       <Grid xs={6}>
         <ChampionsPodium
+          places={championsAwards}
           teams={elegibleTeams}
-          award={picklist}
+          award={deliberation.awards['champions'] ?? []}
           setAward={setPicklist}
           disabled={deliberation.status !== 'in-progress'}
         />

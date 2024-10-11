@@ -34,6 +34,8 @@ interface CoreAwardsDeliberationLayoutProps {
   deliberation: WithId<JudgingDeliberation>;
   categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
   anomalies: Array<DeliberationAnomaly>;
+  startDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
+  endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
 }
 
 const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> = ({
@@ -47,7 +49,9 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   cvForms,
   deliberation,
   categoryPicklists,
-  anomalies
+  anomalies,
+  startDeliberationStage,
+  endDeliberationStage
 }) => {
   const preliminaryDeliberationTeams = Object.values(categoryPicklists).flat(1);
   const eligibleTeams = teams.filter(
@@ -96,6 +100,8 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
           additionalTeams={additionalTeams}
           onAddTeam={() => console.log('added team')} //TODO
           enableTrash
+          startDeliberation={startDeliberationStage}
+          endDeliberationStage={endDeliberationStage}
         />
       </Grid>
       {/* 1.5 x number of lists*/}

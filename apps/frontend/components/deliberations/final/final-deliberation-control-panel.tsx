@@ -26,6 +26,8 @@ interface FinalDeliberationControlPanelProps {
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
+  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
   allowManualTeamAddition?: boolean;
   additionalTeams?: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
@@ -45,6 +47,8 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   rubrics,
   scoresheets,
   teams,
+  startDeliberation,
+  endDeliberationStage,
   allowManualTeamAddition = false,
   additionalTeams = [],
   onAddTeam,
@@ -68,7 +72,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
         </Stepper>
         <DeliberationTimer
           deliberation={deliberation}
-          startDeliberation={(a, b) => {}}
+          startDeliberation={startDeliberation}
           variant="linear"
         />
         <Divider />
@@ -85,9 +89,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
           <EndDeliberationStageButton
             deliberation={deliberation}
             stageName={localizedStages[deliberation.stage ?? 'champions']}
-            endStage={function (deliberation: WithId<JudgingDeliberation>): void {
-              throw new Error('Function not implemented.');
-            }}
+            endStage={endDeliberationStage}
             fullWidth
           />
         </Stack>

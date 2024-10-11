@@ -15,7 +15,9 @@ import {
   JudgingRoom,
   CoreValuesForm,
   JudgingDeliberation,
-  Award
+  Award,
+  FinalDeliberationStage,
+  AwardNames
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import LockOverlay from '../../../components/general/lock-overlay';
@@ -102,6 +104,66 @@ const Page: NextPage<Props> = props => {
     ]
   );
 
+  const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
+    const newDeliberation = { ...deliberation };
+    newDeliberation.awards[name] = newList;
+
+    setDeliberation(newDeliberation);
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      { awards: newDeliberation.awards },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const startDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
+    socket.emit(
+      'startJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+        } else {
+          new Audio('/assets/sounds/judging/judging-start.wav').play();
+        }
+      }
+    );
+  };
+
+  const endDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
+    let nextStage;
+    switch (deliberation.stage) {
+      case 'champions':
+        nextStage = 'core-awards';
+        break;
+      case 'core-awards':
+        nextStage = 'optional-awards';
+        break;
+      case 'optional-awards':
+        nextStage = 'review';
+        break;
+    }
+
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      { status: 'not-started', stage: nextStage as FinalDeliberationStage },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
   return (
     <RoleAuthorizer
       user={user}
@@ -124,6 +186,9 @@ const Page: NextPage<Props> = props => {
           {deliberation.stage === 'champions' && (
             <ChampionsDeliberationLayout
               {...props}
+              setPicklist={newList => setPicklist('champions', newList)}
+              startDeliberationStage={startDeliberationStage}
+              endDeliberationStage={endDeliberationStage}
               deliberation={deliberation}
               anomalies={anomalies}
             />
@@ -131,13 +196,20 @@ const Page: NextPage<Props> = props => {
           {deliberation.stage === 'core-awards' && (
             <CoreAwardsDeliberationLayout
               {...props}
+              startDeliberationStage={startDeliberationStage}
+              endDeliberationStage={endDeliberationStage}
               deliberation={deliberation}
               categoryPicklists={categoryPicklists}
               anomalies={anomalies}
             />
           )}
           {deliberation.stage === 'optional-awards' && (
-            <OptionalAwardsDeliberationLayout {...props} deliberation={deliberation} />
+            <OptionalAwardsDeliberationLayout
+              {...props}
+              startDeliberationStage={startDeliberationStage}
+              endDeliberationStage={endDeliberationStage}
+              deliberation={deliberation}
+            />
           )}
           {deliberation.stage === 'review' && (
             <ReviewLayout division={division} deliberation={deliberation} />

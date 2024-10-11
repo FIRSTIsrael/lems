@@ -33,6 +33,8 @@ interface OptionalAwardsDeliberationLayoutProps {
   rankings: { [key in JudgingCategory]: Array<ObjectId> };
   robotGameRankings: Array<ObjectId>;
   deliberation: WithId<JudgingDeliberation>;
+  startDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
+  endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
 }
 
 const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayoutProps> = ({
@@ -46,7 +48,9 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
   cvForms,
   rankings,
   robotGameRankings,
-  deliberation
+  deliberation,
+  startDeliberationStage,
+  endDeliberationStage
 }) => {
   const eligibleTeams = teams.filter(team => {
     const rubric = rubrics.find(
@@ -100,6 +104,8 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
           allowManualTeamAddition
           additionalTeams={additionalTeams}
           onAddTeam={() => {}}
+          startDeliberation={startDeliberationStage}
+          endDeliberationStage={endDeliberationStage}
         />
       </Grid>
       {/* 1.5 x number of lists*/}

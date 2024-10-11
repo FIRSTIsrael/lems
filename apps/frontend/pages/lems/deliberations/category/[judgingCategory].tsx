@@ -216,14 +216,19 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const startDeliberation = (divisionId: string, deliberationId: string): void => {
-    socket.emit('startJudgingDeliberation', divisionId, deliberationId, response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-      } else {
-        new Audio('/assets/sounds/judging/judging-start.wav').play();
+  const startDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
+    socket.emit(
+      'startJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+        } else {
+          new Audio('/assets/sounds/judging/judging-start.wav').play();
+        }
       }
-    });
+    );
   };
 
   const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {

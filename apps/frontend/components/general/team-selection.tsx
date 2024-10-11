@@ -15,6 +15,7 @@ interface TeamSelectionProps {
   size?: 'small' | 'medium';
   variant?: TextFieldVariants;
   sx?: SxProps<Theme>;
+  disableClearable?: boolean;
 }
 
 const TeamSelection: React.FC<TeamSelectionProps> = ({

@@ -5,9 +5,10 @@ import { Team, AwardLimits } from '@lems/types';
 import TeamSelection from '../../../general/team-selection';
 
 interface ChampionsPodiumProps {
+  places: number;
   teams: Array<WithId<Team>>;
-  award: Array<ObjectId | null>;
-  setAward: (newTeams: Array<ObjectId | null>) => void;
+  award: Array<ObjectId>;
+  setAward: (newTeams: Array<ObjectId>) => void;
   disabled?: boolean;
 }
 
@@ -17,9 +18,10 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
   teams,
   award,
   setAward,
+  places,
   disabled = false
 }) => {
-  if (award.length > AwardLimits['champions']!) {
+  if (places > AwardLimits['champions']!) {
     console.warn('Impossible award length detected. Edit AwardLimits.');
   }
 
@@ -39,7 +41,8 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
       alignItems="end"
       columnGap={1}
     >
-      {award.map((teamId, index) => {
+      {[...Array(places).keys()].map(index => {
+        const teamId = award[index];
         return (
           <Grid
             xs={2.5}
@@ -54,19 +57,24 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
               value={teamId ? teams.find(t => t._id === teamId)! : null}
               setTeam={newTeam => {
                 const result = structuredClone(award);
-                result[index] = newTeam ? newTeam._id : null;
+                if (!newTeam) {
+                  setAward(result.splice(0, award.length - 1));
+                  return;
+                }
+                result[index] = newTeam._id;
                 setAward(result);
               }}
               numberOnly={true}
               sx={{ width: '90%' }}
               variant="standard"
-              disabled={disabled}
+              disabled={disabled || award.length < index}
+              disableClearable={award.length !== index + 1}
             />
             <Box
               borderRadius="8px 8px 0 0"
               bgcolor={colors[index]}
               width="100%"
-              height={40 + 50 * (award.length - index - 1)}
+              height={40 + 50 * (places - index - 1)}
               mt={1}
             />
           </Grid>

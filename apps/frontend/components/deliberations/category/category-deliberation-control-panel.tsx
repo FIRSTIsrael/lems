@@ -21,7 +21,7 @@ import CompareModal from '../compare/compare-modal';
 interface DeliberationControlPanelProps {
   teams: Array<WithId<Team>>;
   deliberation: WithId<JudgingDeliberation>;
-  startDeliberation: (divisionId: string, deliberationId: string) => void;
+  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
   lockDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
   category: JudgingCategory;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
