@@ -18,11 +18,11 @@ import {
   JudgingDeliberation,
   AwardNames,
   CoreValuesAwards,
-  MANDATORY_AWARD_PICKLIST_LENGTH,
+  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
 } from '@lems/types';
-import { average, reorder } from '@lems/utils/arrays';
+import { average } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory } from '@lems/season';
 import CategoryDeliberationsGrid from '../../../../components/deliberations/category/category-deliberations-grid';
@@ -36,7 +36,7 @@ import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import { DragDropContext } from 'react-beautiful-dnd';
+import Deliberation from 'apps/frontend/components/deliberations/deliberation';
 
 interface Props {
   category: JudgingCategory;
@@ -158,10 +158,6 @@ const Page: NextPage<Props> = ({
     return [...(deliberation.awards[name] ?? [])];
   };
 
-  const isTeamInPicklist = (teamId: string, name: AwardNames) => {
-    return !!getPicklist(name).find(id => id.toString() === teamId);
-  };
-
   const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
     const newDeliberation = { ...deliberation };
     newDeliberation.awards[name] = newList;
@@ -180,19 +176,29 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const onChangeDeliberation = (newDeliberation: Partial<JudgingDeliberation>) => {
+    setDeliberation({ ...deliberation, ...newDeliberation });
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      newDeliberation,
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
   const addTeamToPicklist = (teamId: string, index: number, name: AwardNames) => {
     const picklist: Array<string | ObjectId> = [...getPicklist(name)];
-    if (picklist.length >= MANDATORY_AWARD_PICKLIST_LENGTH) {
+    if (picklist.length >= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH) {
       return;
     }
 
     picklist.splice(index, 0, teamId);
     setPicklist(name, picklist as Array<ObjectId>);
-  };
-
-  const removeTeamFromPicklist = (teamId: string, name: AwardNames) => {
-    const newPicklist = getPicklist(name).filter(id => id.toString() !== teamId);
-    setPicklist(name, newPicklist);
   };
 
   const updateTeamAwards = (
@@ -285,7 +291,7 @@ const Page: NextPage<Props> = ({
 
     for (
       let index = 0;
-      index < MANDATORY_AWARD_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
+      index < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
       index++
     ) {
       const teamId = sortedTeams[index]._id;
@@ -315,45 +321,7 @@ const Page: NextPage<Props> = ({
         color={division.color}
       >
         {deliberation.status === 'completed' && <LockOverlay />}
-        <DragDropContext
-          onDragEnd={result => {
-            const { source, destination, draggableId } = result;
-            if (!destination) {
-              return;
-            }
-            const teamId = draggableId.split(':')[1];
-
-            if (destination.droppableId === 'trash') {
-              if (source.droppableId === 'team-pool') {
-                return;
-              }
-              removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
-              return;
-            }
-
-            const destinationList = destination.droppableId as AwardNames;
-            switch (source.droppableId) {
-              case 'team-pool':
-                if (isTeamInPicklist(teamId, destinationList)) {
-                  return;
-                }
-                addTeamToPicklist(teamId, destination.index, destinationList);
-                break;
-              case destination.droppableId:
-                const reordered = reorder(
-                  getPicklist(destinationList),
-                  source.index,
-                  destination.index
-                );
-                setPicklist(destinationList, reordered);
-                break;
-              default:
-                removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
-                addTeamToPicklist(teamId, destination.index, destinationList);
-                break;
-            }
-          }}
-        >
+        <Deliberation value={deliberation} onChange={onChangeDeliberation}>
           <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
             <Grid xs={8}>
               <CategoryDeliberationsGrid
@@ -410,7 +378,7 @@ const Page: NextPage<Props> = ({
               />
             </Grid>
           </Grid>
-        </DragDropContext>
+        </Deliberation>
       </Layout>
     </RoleAuthorizer>
   );

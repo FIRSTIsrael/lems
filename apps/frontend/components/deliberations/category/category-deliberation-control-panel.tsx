@@ -7,7 +7,7 @@ import {
   Scoresheet,
   CoreValuesForm,
   Rubric,
-  MANDATORY_AWARD_PICKLIST_LENGTH
+  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -55,7 +55,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
           lockDeliberation={lockDeliberation}
           disabled={
             deliberation.status !== 'in-progress' ||
-            (deliberation.awards[category]?.length ?? 0) < MANDATORY_AWARD_PICKLIST_LENGTH
+            (deliberation.awards[category]?.length ?? 0) < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
           }
         />
         <Divider />

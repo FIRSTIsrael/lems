@@ -4,7 +4,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Team, MANDATORY_AWARD_PICKLIST_LENGTH, AwardNames } from '@lems/types';
+import { Team, PRELIMINARY_DELIBERATION_PICKLIST_LENGTH, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
 import { grey } from '@mui/material/colors';
@@ -107,7 +107,7 @@ const AwardList: React.FC<AwardListProps> = ({
   disabled = false,
   withIcons = false,
   trophyCount = 0,
-  length = MANDATORY_AWARD_PICKLIST_LENGTH,
+  length = PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
   title,
   fullWidth = false,
   suggestedTeam,
