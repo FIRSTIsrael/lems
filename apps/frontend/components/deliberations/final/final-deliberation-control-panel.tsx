@@ -59,7 +59,6 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);
   const activeStage = FinalDeliberationStages.findIndex(stage => stage === deliberation.stage);
-  console.log(nextStageUnlocked);
 
   return (
     <>

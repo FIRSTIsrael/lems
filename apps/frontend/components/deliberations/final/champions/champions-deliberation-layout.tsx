@@ -94,6 +94,11 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
     [deliberation.disqualifications]
   );
 
+  const endChampionsStage = (deliberation: WithId<JudgingDeliberation>) => {
+    // TODO: lock in award
+    endDeliberationStage(deliberation);
+  };
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={7}>
@@ -119,7 +124,7 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           scoresheets={scoresheets}
           nextStageUnlocked={deliberation.awards['champions']?.length === championsAwards}
           startDeliberation={startDeliberationStage}
-          endDeliberationStage={endDeliberationStage}
+          endDeliberationStage={endChampionsStage}
         />
       </Grid>
       <Grid xs={6}>
