@@ -34,6 +34,7 @@ interface ChampionsDeliberationLayoutProps {
   robotGameRankings: Array<ObjectId>;
   deliberation: WithId<JudgingDeliberation>;
   anomalies: Array<DeliberationAnomaly>;
+  robotConsistency: { avgRelStdDev: number; rows: Array<any> };
 }
 
 const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = ({
@@ -48,7 +49,8 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
   rankings,
   robotGameRankings,
   deliberation,
-  anomalies
+  anomalies,
+  robotConsistency
 }) => {
   const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
   const championsAwards = awards.filter(award => award.name === 'champions');
@@ -92,6 +94,8 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
     [...Array(places).keys()].map(i => null)
   );
 
+  console.log(robotConsistency);
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={7}>
@@ -102,6 +106,7 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           cvForms={cvForms}
           scoresheets={scoresheets}
           anomalies={anomalies}
+          robotConsistency={robotConsistency}
         />
       </Grid>
       <Grid xs={2}>

@@ -42,6 +42,7 @@ interface Props {
   rankings: { [key in JudgingCategory]: Array<ObjectId> };
   robotGameRankings: Array<ObjectId>;
   deliberations: Array<WithId<JudgingDeliberation>>;
+  robotConsistency: { avgRelStdDev: number; rows: Array<any> };
 }
 
 const Page: NextPage<Props> = props => {
@@ -163,6 +164,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
         rankings: `/api/divisions/${user.divisionId}/rankings/rubrics`,
         robotGameRankings: `/api/divisions/${user.divisionId}/rankings/robot-game`,
+        robotConsistency: `/api/divisions/${user.divisionId}/insights/field/scores/consistency`,
         deliberations: `/api/divisions/${user.divisionId}/deliberations`
       },
       ctx

@@ -28,6 +28,7 @@ interface ChampionsDeliberationGridProps {
   cvForms: Array<WithId<CoreValuesForm>>;
   scoresheets: Array<WithId<Scoresheet>>;
   anomalies: Array<DeliberationAnomaly>;
+  robotConsistency: { avgRelStdDev: number; rows: Array<any> };
 }
 
 const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
@@ -36,7 +37,8 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
   sessions,
   cvForms,
   scoresheets,
-  anomalies
+  anomalies,
+  robotConsistency
 }) => {
   const rankingRounds = [
     ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
@@ -61,6 +63,8 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
       .forEach(scoresheet => (gp[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3));
 
+    const consistency = robotConsistency.rows.find(row => row.id === team._id)?.relStdDev ?? 0;
+
     return {
       id: team._id,
       team,
@@ -72,6 +76,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       rgRank: team.rgRank,
       maxScore,
       cvFormSeverities,
+      consistency,
       ...gp,
       anomalies: anomalies.filter(a => a.teamId === team._id)
     };
@@ -140,11 +145,6 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       headerName: 'משחק הרובוט',
       ...defaultColumnSettings
     },
-    {
-      field: 'maxScore',
-      headerName: 'ניקוד מירבי',
-      ...defaultColumnSettings
-    },
     ...rankingRounds.map(
       round =>
         ({
@@ -156,6 +156,19 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
           width: 60
         }) as GridColDef
     ),
+    {
+      field: 'maxScore',
+      headerName: 'ניקוד מירבי',
+      ...defaultColumnSettings
+    },
+    {
+      field: 'consistency',
+      type: 'string',
+      headerName: 'עקביות הרובוט',
+      ...defaultColumnSettings,
+      width: 70,
+      valueGetter: (value: number, row) => Number(value.toFixed(2)) + '%'
+    },
     {
       field: 'cvFormSeverities',
       headerName: `טפסי CV`,
