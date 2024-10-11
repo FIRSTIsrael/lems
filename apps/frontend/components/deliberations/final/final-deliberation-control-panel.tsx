@@ -27,7 +27,7 @@ interface FinalDeliberationControlPanelProps {
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
   allowManualTeamAddition?: boolean;
-  additionalTeams: Array<WithId<Team>>;
+  additionalTeams?: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
   enableTrash?: boolean;
 }

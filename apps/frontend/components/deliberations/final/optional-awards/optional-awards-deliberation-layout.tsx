@@ -48,6 +48,28 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
   robotGameRankings,
   deliberation
 }) => {
+  const eligibleTeams = teams.filter(team => {
+    const rubric = rubrics.find(
+      rubric => rubric.category === 'core-values' && rubric.teamId === team._id
+    )!;
+    return (
+      !deliberation.disqualifications.includes(team._id) &&
+      !awards.find(
+        award =>
+          typeof award.winner !== 'string' &&
+          award.name !== 'robot-performance' &&
+          award.winner?._id === team._id
+      ) &&
+      (Object.values(rubric.data?.awards ?? {}).some(nomination => !!nomination) ||
+        deliberation.manualEligibility?.includes(team._id))
+    );
+  });
+  const additionalTeams = teams.filter(
+    team =>
+      !eligibleTeams.find(t => t._id === team._id) &&
+      !deliberation.disqualifications.includes(team._id)
+  );
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={6}>
@@ -76,6 +98,7 @@ const OptionalAwardsDeliberationLayout: React.FC<OptionalAwardsDeliberationLayou
           scoresheets={scoresheets}
           enableTrash
           allowManualTeamAddition
+          additionalTeams={additionalTeams}
           onAddTeam={() => {}}
         />
       </Grid>
