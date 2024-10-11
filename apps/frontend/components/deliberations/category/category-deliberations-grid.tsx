@@ -148,7 +148,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ({
           ...field,
           type: 'number',
-          width: 80,
+          width: 75,
           headerAlign: 'center',
           align: 'center'
         }) as GridColDef
@@ -236,7 +236,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     {
       field: 'rubricId',
       headerName: 'מחוון',
-      width: 60,
+      width: 50,
       sortable: false,
       filterable: false,
       headerAlign: 'center',
@@ -257,7 +257,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     {
       field: 'profileDocumentUrl',
       headerName: 'דף מידע',
-      width: 60,
+      width: 50,
       sortable: false,
       filterable: false,
       headerAlign: 'center',

@@ -363,6 +363,7 @@ const Page: NextPage<Props> = ({
                 updateTeamAwards={updateTeamAwards}
                 disabled={deliberation.status !== 'in-progress'}
                 roomFactors={roomFactors}
+                showRanks={true}
               />
             </Grid>
             <Grid xs={1.5}>
