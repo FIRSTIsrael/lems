@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ObjectId, WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
   Division,
@@ -20,6 +21,7 @@ import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ChampionsPodium from './champions-podium';
 import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
 import AnomalyTeams from '../anomaly-teams';
+import { apiFetch } from 'apps/frontend/lib/utils/fetch';
 
 interface ChampionsDeliberationLayoutProps {
   division: WithId<Division>;
@@ -95,8 +97,21 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
   );
 
   const endChampionsStage = (deliberation: WithId<JudgingDeliberation>) => {
-    // TODO: lock in award
-    endDeliberationStage(deliberation);
+    const awardWinners = deliberation.awards['champions']!.map(
+      teamId => teams.find(t => t._id === teamId)!
+    );
+
+    apiFetch(`/api/divisions/${division._id}/awards/champions/winners`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(awardWinners)
+    })
+      .then(res => {
+        if (!res.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+        }
+      })
+      .then(() => endDeliberationStage(deliberation));
   };
 
   return (

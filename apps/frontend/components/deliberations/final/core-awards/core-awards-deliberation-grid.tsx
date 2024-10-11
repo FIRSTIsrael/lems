@@ -49,6 +49,11 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
   anomalies
 }) => {
   const tableLength = MANDATORY_AWARD_PICKLIST_LENGTH;
+  Object.entries(categoryPicklists).forEach(([category, picklist]) => {
+    categoryPicklists[category as JudgingCategory] = picklist.filter(teamId =>
+      teams.find(t => t._id === teamId)
+    );
+  });
 
   return (
     <TableContainer component={Paper} sx={{ width: '100%', height: '100%' }}>

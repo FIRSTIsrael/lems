@@ -48,11 +48,13 @@ interface Props {
 }
 
 const Page: NextPage<Props> = props => {
-  const { user, division, deliberations: initialDeliberations } = props;
+  const { user, division, deliberations: initialDeliberations, awards: initialAwards } = props;
   const router = useRouter();
   const [deliberation, setDeliberation] = useState(
     initialDeliberations.find(d => d.isFinalDeliberation)
   );
+  const [awards, setAwards] = useState(initialAwards);
+
   const categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
     .reduce(
@@ -138,7 +140,7 @@ const Page: NextPage<Props> = props => {
   };
 
   const endDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
-    let nextStage;
+    let nextStage: string;
     switch (deliberation.stage) {
       case 'champions':
         nextStage = 'core-awards';
@@ -151,17 +153,24 @@ const Page: NextPage<Props> = props => {
         break;
     }
 
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { status: 'not-started', stage: nextStage as FinalDeliberationStage },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-        }
+    apiFetch(`/api/divisions/${division._id}/awards`).then(res => {
+      if (!res.ok) {
+        enqueueSnackbar('אופס, עדכון הפרסים נכשל.', { variant: 'error' });
+        return;
       }
-    );
+      socket.emit(
+        'updateJudgingDeliberation',
+        division._id.toString(),
+        deliberation._id.toString(),
+        { status: 'not-started', stage: nextStage as FinalDeliberationStage },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+          }
+        }
+      );
+      res.json().then(setAwards);
+    });
   };
 
   return (
@@ -191,6 +200,7 @@ const Page: NextPage<Props> = props => {
               endDeliberationStage={endDeliberationStage}
               deliberation={deliberation}
               anomalies={anomalies}
+              awards={awards}
             />
           )}
           {deliberation.stage === 'core-awards' && (
@@ -201,6 +211,7 @@ const Page: NextPage<Props> = props => {
               deliberation={deliberation}
               categoryPicklists={categoryPicklists}
               anomalies={anomalies}
+              awards={awards}
             />
           )}
           {deliberation.stage === 'optional-awards' && (
@@ -209,6 +220,7 @@ const Page: NextPage<Props> = props => {
               startDeliberationStage={startDeliberationStage}
               endDeliberationStage={endDeliberationStage}
               deliberation={deliberation}
+              awards={awards}
             />
           )}
           {deliberation.stage === 'review' && (
