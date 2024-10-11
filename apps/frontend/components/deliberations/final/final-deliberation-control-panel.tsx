@@ -28,6 +28,7 @@ interface FinalDeliberationControlPanelProps {
   teams: Array<WithId<Team>>;
   startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
   endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
+  nextStageUnlocked?: boolean;
   allowManualTeamAddition?: boolean;
   additionalTeams?: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
@@ -49,6 +50,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   teams,
   startDeliberation,
   endDeliberationStage,
+  nextStageUnlocked,
   allowManualTeamAddition = false,
   additionalTeams = [],
   onAddTeam,
@@ -57,6 +59,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);
   const activeStage = FinalDeliberationStages.findIndex(stage => stage === deliberation.stage);
+  console.log(nextStageUnlocked);
 
   return (
     <>
@@ -89,6 +92,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
           <EndDeliberationStageButton
             deliberation={deliberation}
             stageName={localizedStages[deliberation.stage ?? 'champions']}
+            disabled={!nextStageUnlocked || deliberation.status !== 'in-progress'}
             endStage={endDeliberationStage}
             fullWidth
           />
@@ -96,7 +100,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
         <Divider />
         <Stack spacing={1} alignItems="center" justifyContent="center" width="100%">
           <TeamSelection
-            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
+            teams={teams.filter(t => t._id !== compareTeams[1]?._id)}
             setTeam={team => setCompareTeams(prev => [team, prev[1]])}
             value={compareTeams[0]}
             fullWidth
@@ -104,7 +108,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
           />
           <Typography>מול</Typography>
           <TeamSelection
-            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
+            teams={teams.filter(t => t._id !== compareTeams[0]?._id)}
             setTeam={team => setCompareTeams(prev => [prev[0], team])}
             value={compareTeams[1]}
             fullWidth

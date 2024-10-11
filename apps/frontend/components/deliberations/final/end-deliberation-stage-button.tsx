@@ -33,7 +33,6 @@ const EndDeliberationStageButton: React.FC<EndDeliberationStageButtonProps> = ({
         endIcon={<ChevronLeftIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
-        disabled={deliberation.status !== 'in-progress'}
       >
         מעבר לשלב הבא
       </Button>

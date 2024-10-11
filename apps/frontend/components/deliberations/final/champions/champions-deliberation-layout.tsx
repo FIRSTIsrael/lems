@@ -117,6 +117,7 @@ const ChampionsDeliberationLayout: React.FC<ChampionsDeliberationLayoutProps> = 
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}
+          nextStageUnlocked={deliberation.awards['champions']?.length === championsAwards}
           startDeliberation={startDeliberationStage}
           endDeliberationStage={endDeliberationStage}
         />

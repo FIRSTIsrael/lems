@@ -53,7 +53,9 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
             flexDirection="column"
           >
             <TeamSelection
-              teams={teams.filter(t => !award.includes(t._id))}
+              teams={teams
+                .filter(t => !award.includes(t._id))
+                .concat(teamId ? teams.find(t => t._id === teamId)! : [])}
               value={teamId ? teams.find(t => t._id === teamId)! : null}
               setTeam={newTeam => {
                 const result = structuredClone(award);
