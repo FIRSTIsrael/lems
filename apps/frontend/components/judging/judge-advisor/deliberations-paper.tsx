@@ -106,7 +106,14 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ division, delib
             </IconButton>
           ) : (
             <Stack width="100%" spacing={2} alignItems="center">
-              <StatusIcon status={finalDeliberation.status} />
+              <IconButton
+                component="a"
+                href={`/lems/deliberations/final`}
+                target="_blank"
+                disabled={finalDeliberation.status !== 'in-progress'}
+              >
+                <StatusIcon status={finalDeliberation.status} />
+              </IconButton>
               {finalDeliberation.status === 'in-progress' && (
                 <Typography>
                   {finalEndTime < currentTime ? 'מתעכב' : finalEndTime.format('HH:mm')}

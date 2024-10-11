@@ -103,8 +103,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     })
     .sort((a, b) => b.sum - a.sum);
 
+  // Add rank to each team. Tied teams have the same rank but move the next rank down.
   rows[0].rank = 1;
-
   for (var i = 1; i < rows.length; i++) {
     if (rows[i].sum === rows[i - 1].sum) {
       rows[i].rank = rows[i - 1].rank;

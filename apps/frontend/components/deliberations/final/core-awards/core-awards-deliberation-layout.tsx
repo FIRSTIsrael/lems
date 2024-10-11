@@ -21,6 +21,8 @@ import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
 import CoreAwardsDeliberationGrid from './core-awards-deliberation-grid';
 import TeamPool from '../../team-pool';
 import AwardList from '../../award-list';
+import { apiFetch } from '../../../../lib/utils/fetch';
+import { enqueueSnackbar } from 'notistack';
 
 interface CoreAwardsDeliberationLayoutProps {
   division: WithId<Division>;
@@ -54,23 +56,65 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   endDeliberationStage
 }) => {
   const preliminaryDeliberationTeams = Object.values(categoryPicklists).flat(1);
+  const ineligibleTeams = teams
+    .filter(
+      team =>
+        deliberation.disqualifications.includes(team._id) ||
+        awards.find(
+          award =>
+            typeof award.winner !== 'string' &&
+            award.name !== 'robot-performance' &&
+            award.name !== 'advancement' &&
+            award.winner?._id === team._id
+        )
+    )
+    .map(team => team._id);
   const eligibleTeams = teams.filter(
     team =>
-      !deliberation.disqualifications.includes(team._id) &&
-      !awards.find(
-        award =>
-          typeof award.winner !== 'string' &&
-          award.name !== 'robot-performance' &&
-          award.winner?._id === team._id
-      ) &&
+      !ineligibleTeams.includes(team._id) &&
       (preliminaryDeliberationTeams.includes(team._id) ||
         deliberation.manualEligibility?.includes(team._id))
   );
   const additionalTeams = teams.filter(
-    team =>
-      !eligibleTeams.find(t => t._id === team._id) &&
-      !deliberation.disqualifications.includes(team._id)
+    team => !eligibleTeams.find(t => t._id === team._id) && !ineligibleTeams.includes(team._id)
   );
+
+  const selectedTeams = [
+    ...new Set(
+      [...JudgingCategoryTypes.map(category => deliberation.awards[category] ?? [])].flat(1)
+    )
+  ];
+
+  const nextStageUnlocked = JudgingCategoryTypes.every(
+    category =>
+      deliberation.awards[category]!.length ===
+      awards.filter(award => award.name === category).length
+  );
+
+  const endCoreAwardsStage = (deliberation: WithId<JudgingDeliberation>) => {
+    const newAwards: { [key in JudgingCategory]?: Array<WithId<Team>> } = {};
+    JudgingCategoryTypes.forEach(category => {
+      newAwards[category] =
+        deliberation.awards[category]!.map(teamId => teams.find(t => t._id === teamId)!) ?? [];
+    });
+
+    const excellenceInEngineeringWinners: any[] = [];
+
+    apiFetch(`/api/divisions/${division._id}/awards/winners`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...newAwards,
+        'excellence-in-engineering': excellenceInEngineeringWinners
+      })
+    })
+      .then(res => {
+        if (!res.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+        }
+      })
+      .then(() => endDeliberationStage(deliberation));
+  };
 
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
@@ -87,7 +131,11 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
         />
       </Grid>
       <Grid xs={3}>
-        <TeamPool id="team-pool" teams={eligibleTeams} />
+        <TeamPool
+          id="team-pool"
+          teams={eligibleTeams.filter(team => !selectedTeams.includes(team._id))}
+          disabled={deliberation.status !== 'in-progress'}
+        />
       </Grid>
       <Grid xs={3}>
         <FinalDeliberationControlPanel
@@ -100,8 +148,9 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
           additionalTeams={additionalTeams}
           onAddTeam={() => console.log('added team')} //TODO
           enableTrash
+          nextStageUnlocked={nextStageUnlocked}
           startDeliberation={startDeliberationStage}
-          endDeliberationStage={endDeliberationStage}
+          endDeliberationStage={endCoreAwardsStage}
         />
       </Grid>
       {/* 1.5 x number of lists*/}
@@ -114,7 +163,11 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
               withIcons={true}
               trophyCount={awards.filter(award => award.name === category).length}
               id={category}
-              pickList={[]} //TODO
+              pickList={
+                deliberation.awards[category]?.map(
+                  teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
+                ) ?? []
+              }
               disabled={deliberation.status !== 'in-progress'}
               fullWidth
             />

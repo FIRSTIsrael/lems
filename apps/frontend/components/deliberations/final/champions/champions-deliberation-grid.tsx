@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Paper, Box, Avatar, Stack, Tooltip } from '@mui/material';
+import { Paper, Box, Avatar, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 import {
@@ -69,6 +69,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       id: team._id,
       team,
       room: roomName,
+      place: teams.indexOf(team) + 1,
       totalRank: team.totalRank,
       cvRank: team.cvRank,
       ipRank: team.ipRank,
@@ -89,6 +90,14 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     align: 'center'
   };
   const columns: GridColDef<(typeof rows)[number]>[] = [
+    {
+      field: 'place',
+      headerName: 'דירוג',
+      type: 'number',
+      width: 50,
+      headerAlign: 'center',
+      align: 'center'
+    },
     {
       field: 'teamNumber',
       headerName: 'מספר קבוצה',

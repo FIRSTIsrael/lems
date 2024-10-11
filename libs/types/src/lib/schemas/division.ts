@@ -16,4 +16,5 @@ export interface Division {
   color: CSSProperties['color'];
   hasState: boolean;
   schedule?: Array<DivisionScheduleEntry>;
+  enableAdvancement?: boolean;
 }

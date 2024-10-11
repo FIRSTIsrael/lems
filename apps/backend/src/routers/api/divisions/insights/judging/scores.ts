@@ -144,7 +144,7 @@ router.get(
         $match: {
           divisionId: new ObjectId(req.params.divisionId),
           status: {
-            $in: ['ready', 'waiting-for-review', 'completed']
+            $in: ['ready', 'waiting-for-review', 'completed', 'in-progress']
           }
         }
       },

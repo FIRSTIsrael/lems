@@ -12,6 +12,16 @@ router.get('/', (req: Request, res: Response) => {
   });
 });
 
+router.post('/', (req: Request, res: Response) => {
+  const awards = req.body.map((award: Award) => ({
+    ...award,
+    divisionId: new ObjectId(award.divisionId)
+  }));
+  db.addAwards(awards).then(awards => {
+    res.json(awards);
+  });
+});
+
 router.get('/:awardId', (req: Request, res: Response) => {
   db.getAward({
     _id: new ObjectId(req.params.awardId),
@@ -22,20 +32,31 @@ router.get('/:awardId', (req: Request, res: Response) => {
 });
 
 router.put(
-  '/:awardName/winners',
+  '/winners',
   asyncHandler(async (req: Request, res: Response) => {
-    const awardName: AwardNames = req.params.awardName as AwardNames;
+    const body = req.body as Record<AwardNames, Array<WithId<Team> | string>>;
     let awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
-    awards = awards.filter(a => a.name === awardName);
-    if (awards.length === 0) {
+    if (!Object.keys(body).every(awardName => awards.some(award => award.name === awardName))) {
       res.status(400).json({ error: 'Invalid award name' });
       return;
     }
 
-    const winners: Array<WithId<Team> | string> = req.body;
-    const newAwards = awards
-      .sort((a, b) => a.place - b.place)
-      .map((award, index) => ({ ...award, winner: winners[index] }));
+    if (
+      !Object.entries(body).every(
+        ([awardName, winners]) => winners.length === awards.filter(a => a.name === awardName).length
+      )
+    ) {
+      res.status(400).json({ error: 'Invalid number of winners' });
+      return;
+    }
+
+    const newAwards = [];
+    Object.entries(body).forEach(([awardName, winners]) => {
+      const updatedAward = [...awards].filter(a => a.name === awardName);
+      updatedAward
+        .sort((a, b) => a.place - b.place)
+        .forEach((award, index) => newAwards.push({ ...award, winner: winners[index] }));
+    });
 
     await Promise.all(
       newAwards.map(async (award: WithId<Award>) => {

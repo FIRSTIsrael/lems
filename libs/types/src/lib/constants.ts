@@ -52,7 +52,11 @@ export const MandatoryAwardTypes = [
 ] as const;
 export type MandatoryAwards = (typeof MandatoryAwardTypes)[number];
 
-export const AwardNameTypes = [...MandatoryAwardTypes, ...OptionalAwardTypes] as const;
+export const AwardNameTypes = [
+  ...MandatoryAwardTypes,
+  ...OptionalAwardTypes,
+  'advancement'
+] as const;
 export type AwardNames = (typeof AwardNameTypes)[number];
 
 export type AwardSchema = { [key in AwardNames]: { index: number; count: number } };

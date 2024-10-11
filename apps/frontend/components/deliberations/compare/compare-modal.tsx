@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { IconButton, LinearProgress, Modal, Paper } from '@mui/material';
 import CompareView, { CompareViewProps } from './compare-view';
 import CloseRounded from '@mui/icons-material/CloseRounded';
-import useCountdown from 'apps/frontend/hooks/use-countdown';
+import useCountdown from '../../../hooks/use-countdown';
 
 interface CompareModalProps extends CompareViewProps {
   open: boolean;

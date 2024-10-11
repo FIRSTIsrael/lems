@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -17,9 +17,11 @@ import {
   JudgingDeliberation,
   Award,
   FinalDeliberationStage,
-  AwardNames
+  AwardNames,
+  AwardLimits
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
+import { reorder } from '@lems/utils/arrays';
 import LockOverlay from '../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
@@ -41,7 +43,7 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
-  rankings: { [key in JudgingCategory]: Array<ObjectId> };
+  rankings: { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> };
   robotGameRankings: Array<ObjectId>;
   deliberations: Array<WithId<JudgingDeliberation>>;
   robotConsistency: { avgRelStdDev: number; rows: Array<any> };
@@ -107,8 +109,12 @@ const Page: NextPage<Props> = props => {
   );
 
   const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
+    setPicklists({ [name]: newList });
+  };
+
+  const setPicklists = (newPicklists: { [key in AwardNames]?: Array<ObjectId> }) => {
     const newDeliberation = { ...deliberation };
-    newDeliberation.awards[name] = newList;
+    newDeliberation.awards = { ...deliberation.awards, ...newPicklists };
 
     setDeliberation(newDeliberation);
     socket.emit(
@@ -122,6 +128,45 @@ const Page: NextPage<Props> = props => {
         }
       }
     );
+  };
+
+  const getPicklist = (name: AwardNames) => {
+    return [...(deliberation.awards[name] ?? [])];
+  };
+
+  const isTeamInPicklist = (teamId: string, name: AwardNames) => {
+    return !!getPicklist(name).find(id => id.toString() === teamId);
+  };
+
+  const addTeamToPicklist = (teamId: string, index: number, name: AwardNames) => {
+    const picklist: Array<string | ObjectId> = [...getPicklist(name)];
+    if (picklist.length >= awards.filter(award => award.name === name).length) return;
+    if (picklist.includes(teamId)) return;
+
+    picklist.splice(index, 0, teamId);
+    setPicklist(name, picklist as Array<ObjectId>);
+  };
+
+  const removeTeamFromPicklist = (teamId: string, name: AwardNames) => {
+    const newPicklist = getPicklist(name).filter(id => id.toString() !== teamId);
+    setPicklist(name, newPicklist);
+  };
+
+  const moveTeamBetweenPicklists = (
+    teamId: string,
+    source: AwardNames,
+    destination: AwardNames,
+    index: number
+  ) => {
+    let destinationPicklist: Array<string | ObjectId> = [...getPicklist(destination)];
+    if (destinationPicklist.length >= awards.filter(award => award.name === destination).length) {
+      return;
+    }
+
+    let sourcePicklist: Array<string | ObjectId> = [...getPicklist(source)];
+    sourcePicklist = sourcePicklist.filter(id => id !== teamId);
+    destinationPicklist.splice(index, 0, teamId);
+    setPicklists({ [source]: sourcePicklist, [destination]: destinationPicklist });
   };
 
   const startDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
@@ -190,7 +235,49 @@ const Page: NextPage<Props> = props => {
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <DragDropContext onDragEnd={() => {}}>
+        <DragDropContext
+          onDragEnd={result => {
+            const { source, destination, draggableId } = result;
+            if (!destination) {
+              return;
+            }
+            const teamId = draggableId.split(':')[1];
+
+            if (destination.droppableId === 'trash') {
+              if (source.droppableId === 'team-pool') {
+                return;
+              }
+              removeTeamFromPicklist(teamId, source.droppableId as AwardNames);
+              return;
+            }
+
+            const destinationList = destination.droppableId as AwardNames;
+            switch (source.droppableId) {
+              case 'team-pool':
+                if (isTeamInPicklist(teamId, destinationList)) {
+                  return;
+                }
+                addTeamToPicklist(teamId, destination.index, destinationList);
+                break;
+              case destination.droppableId:
+                const reordered = reorder(
+                  getPicklist(destinationList),
+                  source.index,
+                  destination.index
+                );
+                setPicklist(destinationList, reordered);
+                break;
+              default:
+                moveTeamBetweenPicklists(
+                  teamId,
+                  source.droppableId as AwardNames,
+                  destinationList,
+                  destination.index
+                );
+                break;
+            }
+          }}
+        >
           {deliberation.status === 'completed' && <LockOverlay />}
           {deliberation.stage === 'champions' && (
             <ChampionsDeliberationLayout
@@ -198,6 +285,7 @@ const Page: NextPage<Props> = props => {
               setPicklist={newList => setPicklist('champions', newList)}
               startDeliberationStage={startDeliberationStage}
               endDeliberationStage={endDeliberationStage}
+              categoryPicklists={categoryPicklists}
               deliberation={deliberation}
               anomalies={anomalies}
               awards={awards}
