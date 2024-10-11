@@ -18,30 +18,38 @@ import {
   CoreValuesForm,
   JudgingCategoryTypes,
   JudgingCategory,
-  MANDATORY_AWARD_PICKLIST_LENGTH
+  MANDATORY_AWARD_PICKLIST_LENGTH,
+  DeliberationAnomaly,
+  Rubric
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
+import AnomalyIcon from '../anomaly-icon';
 
 interface CoreAwardsDeliberationGridProps {
   teams: Array<WithId<Team>>;
+  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   scoresheets: Array<WithId<Scoresheet>>;
   categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
   disabled?: boolean;
+  anomalies: Array<DeliberationAnomaly>;
 }
 
 const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
   teams,
+  rubrics,
   rooms,
   sessions,
   cvForms,
   scoresheets,
   categoryPicklists,
-  disabled = false
+  disabled = false,
+  anomalies
 }) => {
   const tableLength = MANDATORY_AWARD_PICKLIST_LENGTH;
+
   return (
     <TableContainer component={Paper} sx={{ width: '100%', height: '100%' }}>
       <Table size="small">
@@ -62,10 +70,34 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
               {JudgingCategoryTypes.map(category => {
                 const teamId = categoryPicklists[category][i];
                 const team = teams.find(team => team._id === teamId);
+                const rubric = rubrics.find(
+                  rubric => rubric.category === category && rubric.teamId === teamId
+                );
+                const rubricValues = rubric?.data?.values || {};
+                let score = Object.values(rubricValues).reduce(
+                  (acc, current) => acc + current.value,
+                  0
+                );
+                if (category === 'core-values') {
+                  scoresheets
+                    .filter(
+                      scoresheet => scoresheet.teamId === teamId && scoresheet.stage === 'ranking'
+                    )
+                    .forEach(scoresheet => (score += scoresheet.data?.gp?.value || 3));
+                }
+
                 return !!team ? (
                   <TableCell key={category + team._id.toString()} align="center">
-                    <Stack direction="row" alignItems="center" justifyContent="center">
+                    <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
                       <Typography>{team.number}</Typography>
+                      <Typography fontSize="0.8rem">({score})</Typography>
+                      <Stack direction="row">
+                        {anomalies
+                          .filter(a => a.teamId === teamId && a.category === category)
+                          .map(a => (
+                            <AnomalyIcon anomaly={a} redirect={false} />
+                          ))}
+                      </Stack>
                     </Stack>
                   </TableCell>
                 ) : (

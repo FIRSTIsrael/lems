@@ -84,7 +84,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
   if (!team) return null;
 
   return (
-    <Grid component={Paper} xs={Math.min(10.75 / teams.length, 6)} height="100%" p={2}>
+    <Grid component={Paper} xs={Math.min(10.75 / teams.length, 6)} height="100%" p={2} mb={2}>
       {removeTeam && (
         <IconButton onClick={() => removeTeam(teamId)}>
           <CloseRounded />

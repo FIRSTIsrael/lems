@@ -132,6 +132,7 @@ const Page: NextPage<Props> = props => {
               {...props}
               deliberation={deliberation}
               categoryPicklists={categoryPicklists}
+              anomalies={anomalies}
             />
           )}
           {deliberation.stage === 'optional-awards' && (

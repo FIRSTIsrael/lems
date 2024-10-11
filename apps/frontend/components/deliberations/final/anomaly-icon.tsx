@@ -6,9 +6,10 @@ import { localizedJudgingCategory } from '@lems/season';
 
 interface AnomalyIconProps {
   anomaly: DeliberationAnomaly;
+  redirect?: boolean;
 }
 
-const AnomalyIcon: React.FC<AnomalyIconProps> = ({ anomaly }) => {
+const AnomalyIcon: React.FC<AnomalyIconProps> = ({ anomaly, redirect = true }) => {
   const categoryColors: Record<JudgingCategory, string> = {
     'innovation-project': '#5E82BF',
     'robot-design': '#64AF75',
@@ -20,8 +21,9 @@ const AnomalyIcon: React.FC<AnomalyIconProps> = ({ anomaly }) => {
       arrow
     >
       <IconButton
-        href={`/lems/team/${anomaly.teamId}/rubric/${anomaly.category}`}
-        target="_blank"
+        {...(redirect
+          ? { href: `/lems/team/${anomaly.teamId}/rubric/${anomaly.category}`, target: '_blank' }
+          : {})}
         sx={{ width: 26, height: 26, color: categoryColors[anomaly.category] }}
       >
         {anomaly.reason === 'low-rank' ? (

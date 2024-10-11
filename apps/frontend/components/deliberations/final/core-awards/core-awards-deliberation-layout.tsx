@@ -13,7 +13,7 @@ import {
   CoreValuesForm,
   JudgingDeliberation,
   Award,
-  AwardNames
+  DeliberationAnomaly
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
@@ -33,6 +33,7 @@ interface CoreAwardsDeliberationLayoutProps {
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberation: WithId<JudgingDeliberation>;
   categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
+  anomalies: Array<DeliberationAnomaly>;
 }
 
 const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> = ({
@@ -45,9 +46,10 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   scoresheets,
   cvForms,
   deliberation,
-  categoryPicklists
+  categoryPicklists,
+  anomalies
 }) => {
-  const eligibleTeamIds = Object.values(categoryPicklists).flat(1);
+  const preliminaryDeliberationTeams = Object.values(categoryPicklists).flat(1);
   const eligibleTeams = teams.filter(
     team =>
       !deliberation.disqualifications.includes(team._id) &&
@@ -57,7 +59,8 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
           award.name !== 'robot-performance' &&
           award.winner?._id === team._id
       ) &&
-      (eligibleTeamIds.includes(team._id) || deliberation.manualEligibility?.includes(team._id))
+      (preliminaryDeliberationTeams.includes(team._id) ||
+        deliberation.manualEligibility?.includes(team._id))
   );
   const additionalTeams = teams.filter(
     team =>
@@ -70,11 +73,13 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
       <Grid xs={6}>
         <CoreAwardsDeliberationGrid
           teams={eligibleTeams}
+          rubrics={rubrics}
           rooms={rooms}
           sessions={sessions}
           cvForms={cvForms}
           scoresheets={scoresheets}
           categoryPicklists={categoryPicklists}
+          anomalies={anomalies}
         />
       </Grid>
       <Grid xs={3}>

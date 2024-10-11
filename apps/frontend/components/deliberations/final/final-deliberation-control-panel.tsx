@@ -94,7 +94,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
         <Divider />
         <Stack spacing={1} alignItems="center" justifyContent="center" width="100%">
           <TeamSelection
-            teams={teams}
+            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
             setTeam={team => setCompareTeams(prev => [team, prev[1]])}
             value={compareTeams[0]}
             fullWidth
@@ -102,7 +102,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
           />
           <Typography>מול</Typography>
           <TeamSelection
-            teams={teams}
+            teams={teams.filter(t => !compareTeams.find(ct => ct?._id === t._id))}
             setTeam={team => setCompareTeams(prev => [prev[0], team])}
             value={compareTeams[1]}
             fullWidth
