@@ -1,6 +1,7 @@
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Box, IconButton, Avatar, Stack } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
   JudgingCategory,
@@ -33,6 +34,7 @@ interface CategoryDeliberationsGridProps {
   ) => void;
   disabled?: boolean;
   showRanks?: boolean;
+  roomFactors?: Record<string, number>;
 }
 
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
@@ -46,7 +48,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   scoresheets,
   updateTeamAwards,
   disabled = false,
-  showRanks = true
+  showRanks = false,
+  roomFactors
 }) => {
   const schema = rubricsSchemas[category];
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
@@ -89,6 +92,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         id: team._id,
         rubricId: rubric?._id,
         team,
+        roomId: roomId,
         room: roomName,
         ...rowValues,
         sum,
@@ -171,6 +175,20 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       align: 'center',
       cellClassName: 'sum-cell'
     },
+    ...(!!roomFactors
+      ? [
+          {
+            field: 'roomId',
+            headerName: 'סה"כ מנורמל',
+            type: 'number',
+            width: 60,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (value, row) =>
+              Number((row.sum * roomFactors[row.roomId!.toString()]).toFixed(2))
+          } as GridColDef<(typeof rows)[number]>
+        ]
+      : []),
     ...awards.map(
       award =>
         ({
@@ -231,6 +249,28 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
               target="_blank"
             >
               <DescriptionIcon />
+            </IconButton>
+          </Box>
+        );
+      }
+    },
+    {
+      field: 'profileDocumentUrl',
+      headerName: 'דף מידע',
+      width: 60,
+      sortable: false,
+      filterable: false,
+      headerAlign: 'center',
+      renderCell: params => {
+        return (
+          <Box display="flex" justifyContent="center">
+            <IconButton
+              href={params.row.team?.profileDocumentUrl ?? ''}
+              disabled={!params.row.team?.profileDocumentUrl}
+              color="info"
+              target="_blank"
+            >
+              <ContactPageRoundedIcon />
             </IconButton>
           </Box>
         );

@@ -9,6 +9,7 @@ interface TeamSelectionProps {
   value: WithId<Team> | null;
   setTeam: (team: WithId<Team> | null) => void;
   readOnly?: boolean;
+  disabled?: boolean;
   fullWidth?: boolean;
   numberOnly?: boolean;
   size?: 'small' | 'medium';
@@ -21,6 +22,7 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
   value,
   setTeam,
   readOnly = false,
+  disabled = false,
   numberOnly = false,
   variant,
   ...props
@@ -38,6 +40,7 @@ const TeamSelection: React.FC<TeamSelectionProps> = ({
       onChange={(_e, value) => setTeam(typeof value !== 'string' ? value : null)}
       renderInput={params => <TextField {...params} label="קבוצה" variant={variant} />}
       readOnly={readOnly}
+      disabled={disabled}
     />
   );
 };

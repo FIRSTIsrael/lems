@@ -50,9 +50,16 @@ const Page: NextPage<Props> = props => {
   const [deliberation, setDeliberation] = useState(
     initialDeliberations.find(d => d.isFinalDeliberation)
   );
-  const categoryPicklists = initialDeliberations
+  const categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
-    .map(d => d.awards);
+    .reduce(
+      (acc, current) => ({ ...acc, [current.category!]: current.awards[current.category!] }),
+      {
+        'core-values': [],
+        'robot-design': [],
+        'innovation-project': []
+      }
+    );
 
   const anomalies = [
     ...new Set([
@@ -148,10 +155,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         awards: `/api/divisions/${user.divisionId}/awards`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`, // For compare view and optional awards
+        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`, // For compare view and optional awards
+        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
         rankings: `/api/divisions/${user.divisionId}/rankings/rubrics`,
         robotGameRankings: `/api/divisions/${user.divisionId}/rankings/robot-game`,

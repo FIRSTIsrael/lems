@@ -22,7 +22,7 @@ import {
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
 } from '@lems/types';
-import { reorder } from '@lems/utils/arrays';
+import { average, reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory } from '@lems/season';
 import CategoryDeliberationsGrid from '../../../../components/deliberations/category/category-deliberations-grid';
@@ -49,6 +49,7 @@ interface Props {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberation: WithId<JudgingDeliberation>;
+  roomScores: Array<any>;
 }
 
 const Page: NextPage<Props> = ({
@@ -61,7 +62,8 @@ const Page: NextPage<Props> = ({
   sessions,
   cvForms,
   scoresheets,
-  deliberation: initialDeliberation
+  deliberation: initialDeliberation,
+  roomScores
 }) => {
   const router = useRouter();
   const [deliberation, setDeliberation] = useState(initialDeliberation);
@@ -71,6 +73,12 @@ const Page: NextPage<Props> = ({
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
+
+  const averageScore = average(roomScores.map(room => room[category]));
+  const roomFactors = roomScores.reduce(
+    (acc, current) => ({ ...acc, [current.roomId]: averageScore / current[category] }),
+    {}
+  );
 
   const availableTeams = teams
     .filter(t => t.registered)
@@ -95,16 +103,28 @@ const Page: NextPage<Props> = ({
           .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
           .forEach(scoresheet => (score += scoresheet.data?.gp?.value || 3));
       }
-      return { ...team, score };
+
+      const roomId = sessions.find(s => s.teamId === team._id)!.roomId;
+      const normalizedScore = score * roomFactors[roomId.toString()];
+
+      return { ...team, score, normalizedScore };
     });
 
-    teamsWithScores.sort((a, b) => b.score - a.score);
-    if (teamsWithScores[0].score === teamsWithScores[1].score) return null;
+    teamsWithScores.sort((a, b) => {
+      let place = b.score - a.score;
+      if (place !== 0) return place;
+      place = b.normalizedScore - a.normalizedScore; // Tiebreaker - Normalized score
+      return place;
+    });
+    if (
+      teamsWithScores[0].score === teamsWithScores[1].score &&
+      teamsWithScores[0].normalizedScore === teamsWithScores[1].normalizedScore
+    )
+      return null;
     return teamsWithScores[0];
   }, [unselectedTeams]);
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    // TODO: handle realtime DQs from JA UI
     if (
       newDeliberation._id.toString() === deliberation._id.toString() &&
       !fullMatch(newDeliberation, deliberation)
@@ -342,6 +362,7 @@ const Page: NextPage<Props> = ({
                 cvForms={cvForms}
                 updateTeamAwards={updateTeamAwards}
                 disabled={deliberation.status !== 'in-progress'}
+                roomFactors={roomFactors}
               />
             </Grid>
             <Grid xs={1.5}>
@@ -407,7 +428,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/${ctx.params?.judgingCategory}`
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/${ctx.params?.judgingCategory}`,
+        roomScores: `/api/divisions/${user.divisionId}/insights/judging/scores/rooms`
       },
       ctx
     );

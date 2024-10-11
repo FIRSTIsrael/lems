@@ -60,7 +60,7 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
               numberOnly={true}
               sx={{ width: '90%' }}
               variant="standard"
-              readOnly={disabled}
+              disabled={disabled}
             />
             <Box
               borderRadius="8px 8px 0 0"

@@ -6,7 +6,8 @@ import {
   JudgingCategory,
   Scoresheet,
   CoreValuesForm,
-  Rubric
+  Rubric,
+  MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -22,7 +23,7 @@ interface DeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;
   startDeliberation: (divisionId: string, deliberationId: string) => void;
   lockDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
-  category?: JudgingCategory;
+  category: JudgingCategory;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<CoreValuesForm>;
@@ -52,6 +53,10 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
             deliberation.category ? localizedJudgingCategory[deliberation.category].name : 'מסכם'
           }
           lockDeliberation={lockDeliberation}
+          disabled={
+            deliberation.status !== 'in-progress' ||
+            (deliberation.awards[category]?.length ?? 0) < MANDATORY_AWARD_PICKLIST_LENGTH
+          }
         />
         <Divider />
         <Stack spacing={1} alignItems="center" justifyContent="center">

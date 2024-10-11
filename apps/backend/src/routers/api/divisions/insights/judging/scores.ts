@@ -219,7 +219,8 @@ router.get(
       },
       {
         $addFields: {
-          room: { $arrayElemAt: ['$room.name', 0] }
+          room: { $arrayElemAt: ['$room.name', 0] },
+          roomId: { $arrayElemAt: ['$room._id', 0] }
         }
       },
       {
@@ -229,7 +230,8 @@ router.get(
           'core-values': true,
           'robot-design': true,
           average: { $avg: ['$innovation-project', '$core-values', '$robot-design'] },
-          room: true
+          room: true,
+          roomId: true
         }
       }
     ];

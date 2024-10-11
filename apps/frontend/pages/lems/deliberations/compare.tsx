@@ -62,9 +62,9 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
     setCompareTeamIds(compareTeamIds => compareTeamIds.filter(id => id !== teamId));
   };
 
-  const TIMER_LENGTH_SECONDS = 90;
+  const totalTime = 30 * (compareTeamIds.length + 1);
   const targetDate = useMemo(
-    () => dayjs().add(TIMER_LENGTH_SECONDS, 'seconds').toDate(),
+    () => dayjs().add(totalTime, 'seconds').toDate(),
     [compareTeamIds, category]
   );
   const [days, hours, minutes, seconds] = useCountdown(targetDate);
@@ -131,7 +131,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
           </Stack>
           <LinearProgress
             variant="determinate"
-            value={time <= 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
+            value={time <= 0 ? 100 : (time / totalTime) * 100}
             color={time === 0 ? 'error' : 'primary'}
             sx={{
               height: 16,

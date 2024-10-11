@@ -16,12 +16,14 @@ interface LockCategoryDeliberationButtonProps {
   deliberation: WithId<JudgingDeliberation>;
   deliberationName: string;
   lockDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  disabled?: boolean;
 }
 
 const LockCategoryDeliberationButton: React.FC<LockCategoryDeliberationButtonProps> = ({
   deliberation,
   deliberationName,
-  lockDeliberation
+  lockDeliberation,
+  disabled = false
 }) => {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -31,7 +33,7 @@ const LockCategoryDeliberationButton: React.FC<LockCategoryDeliberationButtonPro
         startIcon={<LockOutlinedIcon />}
         variant="contained"
         onClick={() => setOpen(true)}
-        disabled={deliberation.status !== 'in-progress'}
+        disabled={disabled}
         fullWidth
       >
         נעילת הדיון

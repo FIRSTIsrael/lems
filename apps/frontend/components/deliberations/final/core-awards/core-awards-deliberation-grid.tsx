@@ -6,7 +6,9 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TableCell
+  TableCell,
+  Typography,
+  Stack
 } from '@mui/material';
 import {
   Team,
@@ -15,7 +17,8 @@ import {
   JudgingRoom,
   CoreValuesForm,
   JudgingCategoryTypes,
-  AwardNames
+  JudgingCategory,
+  MANDATORY_AWARD_PICKLIST_LENGTH
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 
@@ -25,7 +28,7 @@ interface CoreAwardsDeliberationGridProps {
   sessions: Array<WithId<JudgingSession>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  categoryPicklists: Array<{ [key in AwardNames]?: Array<ObjectId> }>;
+  categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
   disabled?: boolean;
 }
 
@@ -38,12 +41,7 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
   categoryPicklists,
   disabled = false
 }) => {
-  const tableLength = Math.max(
-    ...categoryPicklists.map(picklists =>
-      Math.max(...Object.values(picklists).map(picklist => picklist.length))
-    )
-  );
-
+  const tableLength = MANDATORY_AWARD_PICKLIST_LENGTH;
   return (
     <TableContainer component={Paper} sx={{ width: '100%', height: '100%' }}>
       <Table size="small">
@@ -62,16 +60,13 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
                 {i + 1}
               </TableCell>
               {JudgingCategoryTypes.map(category => {
-                const team = teams.find(
-                  t =>
-                    t._id ===
-                    categoryPicklists.find(picklists => picklists[category]?.length !== 0)?.[
-                      category
-                    ]?.[i]
-                );
+                const teamId = categoryPicklists[category][i];
+                const team = teams.find(team => team._id === teamId);
                 return !!team ? (
                   <TableCell key={category + team._id.toString()} align="center">
-                    {team.number}
+                    <Stack direction="row" alignItems="center" justifyContent="center">
+                      <Typography>{team.number}</Typography>
+                    </Stack>
                   </TableCell>
                 ) : (
                   <TableCell sx={{ background: '#e0e0e0' }} />

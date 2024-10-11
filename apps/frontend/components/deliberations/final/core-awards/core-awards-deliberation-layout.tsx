@@ -32,7 +32,7 @@ interface CoreAwardsDeliberationLayoutProps {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberation: WithId<JudgingDeliberation>;
-  categoryPicklists: Array<{ [key in AwardNames]?: Array<ObjectId> }>;
+  categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
 }
 
 const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> = ({
