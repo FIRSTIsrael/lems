@@ -47,11 +47,29 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
   deliberation,
   categoryPicklists
 }) => {
+  const eligibleTeamIds = Object.values(categoryPicklists).flat(1);
+  const eligibleTeams = teams.filter(
+    team =>
+      !deliberation.disqualifications.includes(team._id) &&
+      !awards.find(
+        award =>
+          typeof award.winner !== 'string' &&
+          award.name !== 'robot-performance' &&
+          award.winner?._id === team._id
+      ) &&
+      (eligibleTeamIds.includes(team._id) || deliberation.manualEligibility?.includes(team._id))
+  );
+  const additionalTeams = teams.filter(
+    team =>
+      !eligibleTeams.find(t => t._id === team._id) &&
+      !deliberation.disqualifications.includes(team._id)
+  );
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={6}>
         <CoreAwardsDeliberationGrid
-          teams={teams}
+          teams={eligibleTeams}
           rooms={rooms}
           sessions={sessions}
           cvForms={cvForms}
@@ -60,16 +78,17 @@ const CoreAwardsDeliberationLayout: React.FC<CoreAwardsDeliberationLayoutProps> 
         />
       </Grid>
       <Grid xs={3}>
-        <TeamPool id="team-pool" teams={teams} />
+        <TeamPool id="team-pool" teams={eligibleTeams} />
       </Grid>
       <Grid xs={3}>
         <FinalDeliberationControlPanel
-          teams={teams}
+          teams={eligibleTeams}
           deliberation={deliberation}
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}
           allowManualTeamAddition
+          additionalTeams={additionalTeams}
           onAddTeam={() => console.log('added team')} //TODO
           enableTrash
         />

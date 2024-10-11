@@ -27,6 +27,7 @@ interface FinalDeliberationControlPanelProps {
   scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
   allowManualTeamAddition?: boolean;
+  additionalTeams: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
   enableTrash?: boolean;
 }
@@ -45,6 +46,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   scoresheets,
   teams,
   allowManualTeamAddition = false,
+  additionalTeams = [],
   onAddTeam,
   enableTrash = false
 }) => {
@@ -75,7 +77,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
             <Button variant="contained" fullWidth endIcon={<AddCircleOutlineRoundedIcon />}>
               הוספת קבוצה
             </Button>
-            // TODO: actually add a team, but check they didnt win an award and are not DQd
+            // TODO: actually add a team, using additionalTeams prop as the options
           )}
           <Button variant="contained" fullWidth endIcon={<BlockRoundedIcon />}>
             פסילת קבוצה
