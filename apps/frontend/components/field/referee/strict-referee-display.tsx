@@ -10,6 +10,7 @@ import {
   RobotGameMatchParticipant,
   RobotGameTable,
   Scoresheet,
+  Team,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -18,6 +19,8 @@ import MatchPrestart from './prestart';
 import NoMatchCard from './no-match-card';
 import Timer from './timer';
 import { apiFetch } from '../../../lib/utils/fetch';
+import { Stack } from '@mui/material';
+import TableSchedule from './table-schedule';
 
 type StrictRefereeDisplayState = 'timer' | 'prestart' | 'no-match' | undefined;
 
@@ -25,6 +28,7 @@ interface MatchPrestartProps {
   division: WithId<Division>;
   table: WithId<RobotGameTable>;
   divisionState: WithId<DivisionState>;
+  teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
@@ -33,6 +37,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
   division,
   table,
   divisionState,
+  teams,
   matches,
   socket
 }) => {
@@ -168,7 +173,17 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
           toScoresheet={toScoresheet}
         />
       )}
-      {displayState === 'no-match' && <NoMatchCard />}
+      {displayState === 'no-match' && (
+        <Stack
+          spacing={4}
+          sx={{
+            mt: 4
+          }}
+        >
+          <NoMatchCard />
+          <TableSchedule matches={matches} table={table} teams={teams} limit={5} />
+        </Stack>
+      )}
     </>
   );
 };
