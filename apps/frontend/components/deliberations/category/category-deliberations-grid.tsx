@@ -1,32 +1,19 @@
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { Paper, Box, IconButton, Avatar, Stack } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-  JudgingCategory,
-  Rubric,
-  Team,
-  Scoresheet,
-  JudgingSession,
-  JudgingRoom,
-  CoreValuesForm,
-  CoreValuesAwards,
-  CoreValuesAwardsTypes
-} from '@lems/types';
+import { JudgingCategory, CoreValuesAwardsTypes, CoreValuesAwards } from '@lems/types';
 import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
 import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
+import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
+import { rankArray } from '@lems/utils/arrays';
 
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
-  teams: Array<WithId<Team>>;
-  selectedTeams: Array<WithId<Team>>;
-  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
-  rooms: Array<WithId<JudgingRoom>>;
-  sessions: Array<WithId<JudgingSession>>;
-  scoresheets: Array<WithId<Scoresheet>>;
-  cvForms: Array<WithId<CoreValuesForm>>;
+  teams: Array<DeliberationTeam>;
+  selectedTeams: Array<ObjectId>;
   updateTeamAwards?: (
     teamId: ObjectId,
     rubricId: ObjectId,
@@ -34,123 +21,82 @@ interface CategoryDeliberationsGridProps {
   ) => void;
   disabled?: boolean;
   showRanks?: boolean;
-  roomFactors?: Record<string, number>;
+  showNormalizedScores?: boolean;
 }
 
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   category,
   teams,
   selectedTeams,
-  rubrics,
-  rooms,
-  sessions,
-  cvForms,
-  scoresheets,
   updateTeamAwards,
   disabled = false,
   showRanks = false,
-  roomFactors
+  showNormalizedScores = false
 }) => {
   const schema = rubricsSchemas[category];
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
     section.fields.map(field => ({ field: field.id, headerName: field.title }))
   );
   const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
-  const rankingRounds = [
-    ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
-  ];
+  const rankingRounds = [teams[0].gpScores.map(gp => gp.round)].flat();
 
-  const rows = teams
+  let rows = teams
     .map(team => {
-      const rubric = rubrics
-        .filter(r => r.category === category && r.status !== 'empty')
-        .find(r => r.teamId.toString() === team._id.toString());
-      const roomId = sessions.find(
-        session => session.teamId?.toString() === team._id.toString()
-      )?.roomId;
-      const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-      const rubricValues = rubric?.data?.values || {};
-      const rubricAwards = rubric?.data?.awards || {};
-      const rowValues: { [key: string]: number } = {};
-      Object.entries(rubricValues).forEach(([key, entry]) => {
-        rowValues[key] = entry.value;
-      });
-      const cvFormSeverities = cvForms
-        .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
-        .map(cvForm => cvForm.severity);
-
+      const rowValues = team.rubricFields[category];
       if (category === 'core-values') {
-        scoresheets
-          .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
-          .forEach(
-            scoresheet => (rowValues[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3)
-          );
+        team.gpScores.forEach(gp => (rowValues[`gp-${gp.round}`] = gp.score));
       }
-
-      const sum = Object.values(rowValues).reduce((acc, current) => acc + current, 0);
       return {
         id: team._id,
-        rubricId: rubric?._id,
+        rubricId: team.rubricIds[category],
         team,
-        roomId: roomId,
-        room: roomName,
+        sum: team.scores[category],
+        roomId: team.room._id,
+        room: team.room.name,
         ...rowValues,
-        sum,
-        ...rubricAwards,
-        cvFormSeverities,
-        rank: 0
+        ...team.optionalAwardNominations
       };
     })
     .sort((a, b) => b.sum - a.sum);
+  rows = rankArray(rows, row => row.team.scores[category], 'rank');
 
-  // Add rank to each team. Tied teams have the same rank but move the next rank down.
-  rows[0].rank = 1;
-  for (var i = 1; i < rows.length; i++) {
-    if (rows[i].sum === rows[i - 1].sum) {
-      rows[i].rank = rows[i - 1].rank;
-    } else {
-      rows[i].rank = i + 1;
-    }
-  }
-
+  const defaultColumnSettings: Partial<GridColDef<(typeof rows)[number]>> = {
+    type: 'number',
+    width: 60,
+    headerAlign: 'center',
+    align: 'center'
+  };
   const columns: GridColDef<(typeof rows)[number]>[] = [
     ...(showRanks
       ? [
           {
             field: 'rank',
             headerName: 'דירוג',
-            type: 'number',
-            width: 60,
-            headerAlign: 'center',
-            align: 'center'
+            ...defaultColumnSettings
           } as GridColDef<(typeof rows)[number]>
         ]
       : []),
     {
       field: 'teamNumber',
       headerName: 'מספר קבוצה',
+      ...defaultColumnSettings,
       type: 'string',
       width: 80,
-      headerAlign: 'center',
-      align: 'center',
       valueGetter: (value, row) => row.team?.number
     },
     {
       field: 'room',
       headerName: 'חדר',
+      ...defaultColumnSettings,
       type: 'string',
-      width: 70,
-      headerAlign: 'center',
-      align: 'center'
+      width: 70
     },
     ...fields.map(
       field =>
         ({
           ...field,
-          type: 'number',
-          width: 75,
-          headerAlign: 'center',
-          align: 'center'
+          ...defaultColumnSettings,
+          width: 75
         }) as GridColDef
     ),
     ...(category === 'core-values'
@@ -159,33 +105,23 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
             ({
               field: `gp-${round}`,
               headerName: `GP ${round}`,
-              type: 'number',
-              headerAlign: 'center',
-              align: 'center',
-              width: 60
+              ...defaultColumnSettings
             }) as GridColDef
         )
       : []),
     {
       field: 'sum',
       headerName: 'סה"כ',
-      type: 'number',
-      width: 60,
-      headerAlign: 'center',
-      align: 'center',
+      ...defaultColumnSettings,
       cellClassName: 'sum-cell'
     },
-    ...(!!roomFactors
+    ...(showNormalizedScores
       ? [
           {
-            field: 'roomId',
+            field: 'normalized',
             headerName: 'סה"כ מנורמל',
-            type: 'number',
-            width: 60,
-            headerAlign: 'center',
-            align: 'center',
-            valueGetter: (value, row) =>
-              Number((row.sum * roomFactors[row.roomId!.toString()]).toFixed(2))
+            ...defaultColumnSettings,
+            valueGetter: (value, row) => row.team.normalizedScores[category]
           } as GridColDef<(typeof rows)[number]>
         ]
       : []),
@@ -217,7 +153,7 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
                   height="100%"
                   spacing={1}
                 >
-                  {params.row.cvFormSeverities.map((severity, index) => (
+                  {params.row.team.cvFormSeverities.map((severity, index) => (
                     <Avatar
                       key={index}
                       sx={{ height: '30px', width: '30px' }}
@@ -296,7 +232,9 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         rowHeight={40}
         disableRowSelectionOnClick
         hideFooter
-        getRowClassName={params => (selectedTeams.includes(params.row.team) ? 'selected-team' : '')}
+        getRowClassName={params =>
+          selectedTeams.includes(params.row.team._id) ? 'selected-team' : ''
+        }
         initialState={{
           pagination: {
             paginationModel: {
@@ -309,8 +247,6 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         }}
         processRowUpdate={(updatedRow, originalRow) => {
           if (!!updateTeamAwards && updatedRow.rubricId && !fullMatch(updatedRow, originalRow)) {
-            // This assumes only awards can be edited. In case this changes we will need to
-            // reimplement this function. Sorry :(
             const newAwards = getDiff(originalRow, updatedRow);
             const oldAwards: Record<string, any> = { ...originalRow };
             CoreValuesAwardsTypes.forEach(cvAward => {

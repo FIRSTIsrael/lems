@@ -24,7 +24,7 @@ interface TimerProps {
   progress: number;
   progressColor: 'primary' | 'error' | 'success';
   deliberation: WithId<JudgingDeliberation>;
-  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  startDeliberation: () => void;
   endTime?: dayjs.Dayjs;
 }
 
@@ -66,7 +66,7 @@ const CircularTimer: React.FC<TimerProps> = ({
         }}
       >
         {deliberation.status === 'not-started' ? (
-          <IconButton onClick={() => startDeliberation(deliberation)}>
+          <IconButton onClick={() => startDeliberation()}>
             <PlayCircleOutlinedIcon sx={{ width: '8rem', height: '8rem' }} color="primary" />
           </IconButton>
         ) : deliberation.status === 'in-progress' ? (
@@ -106,7 +106,7 @@ const LinearTimer: React.FC<TimerProps> = ({
       />
       <Box minWidth={96}>
         {deliberation.status === 'not-started' ? (
-          <IconButton onClick={() => startDeliberation(deliberation)}>
+          <IconButton onClick={() => startDeliberation()}>
             <PlayCircleOutlinedIcon sx={{ width: '3rem', height: '3rem' }} color="primary" />
           </IconButton>
         ) : deliberation.status === 'in-progress' ? (
@@ -131,7 +131,7 @@ const LinearTimer: React.FC<TimerProps> = ({
 
 interface DeliberationTimerProps {
   deliberation: WithId<JudgingDeliberation>;
-  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  startDeliberation: () => void;
   variant?: 'circular' | 'linear';
 }
 

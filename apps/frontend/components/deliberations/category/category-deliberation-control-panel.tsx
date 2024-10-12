@@ -19,25 +19,25 @@ import { localizedJudgingCategory } from '@lems/season';
 import CompareModal from '../compare/compare-modal';
 
 interface DeliberationControlPanelProps {
-  teams: Array<WithId<Team>>;
+  compareTeams: Array<WithId<Team>>;
   deliberation: WithId<JudgingDeliberation>;
-  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
-  lockDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
+  startDeliberation: () => void;
+  lockDeliberation: () => void;
   category: JudgingCategory;
-  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
-  scoresheets: Array<WithId<Scoresheet>>;
-  cvForms: Array<CoreValuesForm>;
+  compareProps: {
+    cvForms: Array<WithId<CoreValuesForm>>;
+    rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+    scoresheets: Array<WithId<Scoresheet>>;
+  };
 }
 
 const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
-  teams,
+  compareTeams: teams,
   deliberation,
   startDeliberation,
   lockDeliberation,
   category,
-  rubrics,
-  scoresheets,
-  cvForms
+  compareProps: { cvForms, rubrics, scoresheets }
 }) => {
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);

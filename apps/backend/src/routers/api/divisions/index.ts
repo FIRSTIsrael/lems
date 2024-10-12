@@ -17,7 +17,6 @@ import cvFormsRouter from './cv-forms';
 import exportRouter from './export';
 import insightsRouter from './insights';
 import deliberationsRouter from './deliberations';
-import rankingsRouter from './rankings';
 
 const router = express.Router({ mergeParams: true });
 
@@ -79,7 +78,5 @@ router.use('/:divisionId/export', exportRouter);
 router.use('/:divisionId/insights', insightsRouter);
 
 router.use('/:divisionId/deliberations', deliberationsRouter);
-
-router.use('/:divisionId/rankings', rankingsRouter);
 
 export default router;

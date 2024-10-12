@@ -1,87 +1,45 @@
 import { WithId } from 'mongodb';
 import { Paper, Box, Avatar, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-
-import {
-  Team,
-  Scoresheet,
-  JudgingSession,
-  JudgingRoom,
-  CoreValuesForm,
-  DeliberationAnomaly
-} from '@lems/types';
+import { DeliberationAnomaly } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
-
-interface TeamWithRanks extends Team {
-  cvRank: number;
-  ipRank: number;
-  rdRank: number;
-  rgRank: number;
-  totalRank: number;
-}
+import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 
 interface ChampionsDeliberationGridProps {
-  teams: Array<WithId<TeamWithRanks>>;
-  rooms: Array<WithId<JudgingRoom>>;
-  sessions: Array<WithId<JudgingSession>>;
-  cvForms: Array<WithId<CoreValuesForm>>;
-  scoresheets: Array<WithId<Scoresheet>>;
+  teams: Array<WithId<DeliberationTeam>>;
   anomalies: Array<DeliberationAnomaly>;
-  robotConsistency: { avgRelStdDev: number; rows: Array<any> };
 }
 
 const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
   teams,
-  rooms,
-  sessions,
-  cvForms,
-  scoresheets,
-  anomalies,
-  robotConsistency
+  anomalies
 }) => {
-  const rankingRounds = [
-    ...new Set(scoresheets.filter(s => s.stage === 'ranking').flatMap(s => s.round))
-  ];
+  const rankingRounds = [teams[0].gpScores.map(gp => gp.round)].flat();
 
-  const rows = teams.map(team => {
-    const roomId = sessions.find(
-      session => session.teamId?.toString() === team._id.toString()
-    )?.roomId;
-    const roomName = rooms.find(room => room._id.toString() === roomId?.toString())?.name;
-    const cvFormSeverities = cvForms
-      .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
-      .map(cvForm => cvForm.severity);
-    const maxScore = Math.max(
-      ...scoresheets
-        .filter(s => s.teamId === team._id && s.stage === 'ranking')
-        .map(s => s.data?.score ?? 0)
-    );
+  const rows = teams
+    .sort((a, b) => a.totalRank - b.totalRank)
+    .map((team, index) => {
+      const gp: Record<string, number> = {};
+      team.gpScores.forEach(score => (gp[`gp-${score.round}`] = score.score));
 
-    const gp: { [key: string]: number } = {};
-    scoresheets
-      .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
-      .forEach(scoresheet => (gp[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value || 3));
-
-    const consistency = robotConsistency.rows.find(row => row.id === team._id)?.relStdDev ?? 0;
-
-    return {
-      id: team._id,
-      team,
-      room: roomName,
-      place: teams.indexOf(team) + 1,
-      totalRank: team.totalRank,
-      cvRank: team.cvRank,
-      ipRank: team.ipRank,
-      rdRank: team.rdRank,
-      rgRank: team.rgRank,
-      maxScore,
-      cvFormSeverities,
-      consistency,
-      ...gp,
-      anomalies: anomalies.filter(a => a.teamId === team._id)
-    };
-  });
+      return {
+        id: team._id,
+        team,
+        room: team.room.name,
+        place: index + 1,
+        totalRank: team.totalRank,
+        cvRank: team.ranks['core-values'],
+        ipRank: team.ranks['innovation-project'],
+        rdRank: team.ranks['robot-design'],
+        rgRank: team.ranks['robot-game'],
+        maxScore: team.maxRobotGameScore,
+        cvFormSeverities: team.cvFormSeverities,
+        consistency: team.robotConsistency,
+        ...gp,
+        anomalies: anomalies.filter(a => a.teamId === team._id)
+      };
+    });
 
   const defaultColumnSettings: Partial<GridColDef<(typeof rows)[number]>> = {
     type: 'number',

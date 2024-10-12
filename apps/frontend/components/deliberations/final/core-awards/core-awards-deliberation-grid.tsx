@@ -1,4 +1,4 @@
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import {
   Paper,
   Table,
@@ -11,49 +11,41 @@ import {
   Stack
 } from '@mui/material';
 import {
-  Team,
-  Scoresheet,
-  JudgingSession,
-  JudgingRoom,
-  CoreValuesForm,
   JudgingCategoryTypes,
   JudgingCategory,
   PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
-  DeliberationAnomaly,
-  Rubric
+  DeliberationAnomaly
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
+import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
+import { WithId } from 'mongodb';
 
 interface CoreAwardsDeliberationGridProps {
-  teams: Array<WithId<Team>>;
-  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
-  rooms: Array<WithId<JudgingRoom>>;
-  sessions: Array<WithId<JudgingSession>>;
-  cvForms: Array<WithId<CoreValuesForm>>;
-  scoresheets: Array<WithId<Scoresheet>>;
-  categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> };
-  disabled?: boolean;
+  categoryRanks: { [key in JudgingCategory]: Array<ObjectId> };
+  teams: Array<DeliberationTeam>;
   anomalies: Array<DeliberationAnomaly>;
 }
 
 const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
+  categoryRanks,
   teams,
-  rubrics,
-  rooms,
-  sessions,
-  cvForms,
-  scoresheets,
-  categoryPicklists,
-  disabled = false,
   anomalies
 }) => {
   const tableLength = PRELIMINARY_DELIBERATION_PICKLIST_LENGTH;
-  Object.entries(categoryPicklists).forEach(([category, picklist]) => {
-    categoryPicklists[category as JudgingCategory] = picklist.filter(teamId =>
-      teams.find(t => t._id === teamId)
-    );
-  });
+
+  const categoryPicklists: Record<
+    JudgingCategory,
+    Array<DeliberationTeam>
+  > = JudgingCategoryTypes.reduce(
+    (acc, category) => ({
+      ...acc,
+      [category]: (categoryRanks[category] || [])
+        .filter(teamId => teams.find(t => t._id === teamId))
+        .map(teamId => teams.find(t => t._id === teamId))
+    }),
+    {} as Record<JudgingCategory, Array<DeliberationTeam>>
+  );
 
   return (
     <TableContainer component={Paper} sx={{ width: '100%', height: '100%' }}>
@@ -73,32 +65,16 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
                 {i + 1}
               </TableCell>
               {JudgingCategoryTypes.map(category => {
-                const teamId = categoryPicklists[category][i];
-                const team = teams.find(team => team._id === teamId);
-                const rubric = rubrics.find(
-                  rubric => rubric.category === category && rubric.teamId === teamId
-                );
-                const rubricValues = rubric?.data?.values || {};
-                let score = Object.values(rubricValues).reduce(
-                  (acc, current) => acc + current.value,
-                  0
-                );
-                if (category === 'core-values') {
-                  scoresheets
-                    .filter(
-                      scoresheet => scoresheet.teamId === teamId && scoresheet.stage === 'ranking'
-                    )
-                    .forEach(scoresheet => (score += scoresheet.data?.gp?.value || 3));
-                }
+                const team = categoryPicklists[category][i];
 
                 return !!team ? (
                   <TableCell key={category + team._id.toString()} align="center">
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
                       <Typography>{team.number}</Typography>
-                      <Typography fontSize="0.8rem">({score})</Typography>
+                      <Typography fontSize="0.8rem">({team.scores[category]})</Typography>
                       <Stack direction="row">
                         {anomalies
-                          .filter(a => a.teamId === teamId && a.category === category)
+                          .filter(a => a.teamId === team._id && a.category === category)
                           .map(a => (
                             <AnomalyIcon anomaly={a} redirect={false} />
                           ))}

@@ -1,12 +1,13 @@
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { Box, Paper } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Team, AwardLimits } from '@lems/types';
+import { AwardLimits } from '@lems/types';
 import TeamSelection from '../../../general/team-selection';
+import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 
 interface ChampionsPodiumProps {
   places: number;
-  teams: Array<WithId<Team>>;
+  teams: Array<DeliberationTeam>;
   award: Array<ObjectId>;
   setAward: (newTeams: Array<ObjectId>) => void;
   disabled?: boolean;

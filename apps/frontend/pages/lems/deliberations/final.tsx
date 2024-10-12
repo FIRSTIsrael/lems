@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -14,13 +14,15 @@ import {
   JudgingRoom,
   CoreValuesForm,
   JudgingDeliberation,
+  JudgingCategoryTypes,
   Award,
   FinalDeliberationStage,
+  ADVANCEMENT_PERCENTAGE,
   AwardNames,
+  CoreValuesAwards,
+  CoreValuesAwardsTypes,
   PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
 } from '@lems/types';
-import { fullMatch } from '@lems/utils/objects';
-import LockOverlay from '../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -30,7 +32,9 @@ import ChampionsDeliberationLayout from '../../../components/deliberations/final
 import CoreAwardsDeliberationLayout from '../../../components/deliberations/final/core-awards/core-awards-deliberation-layout';
 import OptionalAwardsDeliberationLayout from '../../../components/deliberations/final/optional-awards/optional-awards-deliberation-layout';
 import ReviewLayout from '../../../components/deliberations/final/review-layout';
-import Deliberation from 'apps/frontend/components/deliberations/deliberation';
+import { Deliberation } from '../../../components/deliberations/deliberation';
+import { DeliberationRef } from '../../../components/deliberations/deliberation';
+import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -42,29 +46,87 @@ interface Props {
   sessions: Array<WithId<JudgingSession>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
-  rankings: { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> };
-  robotGameRankings: Array<ObjectId>;
   deliberations: Array<WithId<JudgingDeliberation>>;
   robotConsistency: { avgRelStdDev: number; rows: Array<any> };
 }
 
-const Page: NextPage<Props> = props => {
-  const { user, division, deliberations: initialDeliberations, awards: initialAwards } = props;
+const Page: NextPage<Props> = ({
+  user,
+  division,
+  teams,
+  awards: initialAwards,
+  rubrics,
+  rooms,
+  sessions,
+  scoresheets,
+  cvForms,
+  deliberations: initialDeliberations,
+  robotConsistency
+}) => {
   const router = useRouter();
-  const [deliberation, setDeliberation] = useState(
-    initialDeliberations.find(d => d.isFinalDeliberation)
-  );
+  const deliberationId = initialDeliberations.find(d => d.isFinalDeliberation)!._id;
+  const deliberation = useRef<DeliberationRef>(null);
+  const stage = useMemo(() => deliberation.current?.stage, [deliberation.current?.stage]);
   const [awards, setAwards] = useState(initialAwards);
 
-  const categoryPicklists: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
+  if (!initialDeliberations.find(d => d.isFinalDeliberation)!.available) {
+    router.push(`/lems/${user.role}`);
+    enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
+  }
+
+  const checkChampionsElegibility = useCallback(
+    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+      const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
+      const shouldBeElegibile = teams
+        .sort((a, b) => {
+          let place = a.totalRank - b.totalRank;
+          if (place !== 0) return place;
+          place = a.ranks['core-values'] - b.ranks['core-values']; // Tiebreaker 1 - CV score
+          if (place !== 0) return place;
+          place = b.number - a.number; // Tiebreaker 2 - Team Number
+          return place;
+        })
+        .slice(0, advancingTeams);
+      return !!shouldBeElegibile.find(t => t._id === team._id);
+    },
+    []
+  );
+
+  const checkCoreAwardsElegibility = useCallback(
+    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+      const _team = teams.find(t => t._id === team._id)!;
+      const { 'robot-game': robotGame, ...ranks } = _team.ranks;
+      return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
+    },
+    []
+  );
+
+  const checkOptionalAwardsElegibility = useCallback(
+    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+      const _team = teams.find(t => t._id === team._id)!;
+      return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
+    },
+    []
+  );
+
+  const checkElegibility = useMemo(() => {
+    switch (stage) {
+      case 'champions':
+        return checkChampionsElegibility;
+      case 'core-awards':
+        return checkCoreAwardsElegibility;
+      case 'optional-awards':
+        return checkOptionalAwardsElegibility;
+      default:
+        return () => true;
+    }
+  }, []);
+
+  const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
     .reduce(
       (acc, current) => ({ ...acc, [current.category!]: current.awards[current.category!] }),
-      {
-        'core-values': [],
-        'robot-design': [],
-        'innovation-project': []
-      }
+      {} as { [key in JudgingCategory]: Array<ObjectId> }
     );
 
   const anomalies = [
@@ -76,78 +138,13 @@ const Page: NextPage<Props> = props => {
     ])
   ];
 
-  const nonDeliberatedRanks = Object.entries(props.rankings).reduce(
-    (acc, [key, value]) => {
-      const filteredValue: Array<{ teamId: ObjectId; rank: number; newRank?: number }> =
-        value.filter(({ teamId }) => !categoryPicklists[key as JudgingCategory].includes(teamId));
-
-      filteredValue[0].newRank = 1;
-      for (var i = 1; i < filteredValue.length; i++) {
-        if (filteredValue[i].rank === filteredValue[i - 1].rank) {
-          filteredValue[i].newRank = filteredValue[i - 1].newRank;
-        } else {
-          filteredValue[i].newRank = i + 1;
-        }
-      }
-
-      return {
-        ...acc,
-        [key]: filteredValue.map(({ teamId, newRank }) => ({ teamId, rank: newRank }))
-      };
-    },
-    {} as { [key in JudgingCategory]: Array<{ teamId: ObjectId; rank: number }> }
-  );
-
-  const calculateRank = (teamId: ObjectId, category: JudgingCategory | 'robot-game') => {
-    let rank: number;
-    if (category === 'robot-game') {
-      rank = props.robotGameRankings.findIndex(id => id === teamId);
-      return rank >= 0 ? rank + 1 : props.teams.filter(team => team.registered).length;
-    } else {
-      rank = categoryPicklists[category].findIndex(id => id === teamId);
-      if (rank >= 0) return rank + 1;
-      const team = nonDeliberatedRanks[category].find(entry => entry.teamId === teamId);
-      if (!team) {
-        return props.teams.filter(team => team.registered).length;
-      }
-      return team.rank + PRELIMINARY_DELIBERATION_PICKLIST_LENGTH;
-    }
-  };
-
-  const teamsWithRanks = props.teams
-    .filter(team => team.registered)
-    .map(team => {
-      const cvRank = calculateRank(team._id, 'core-values');
-      const ipRank = calculateRank(team._id, 'innovation-project');
-      const rdRank = calculateRank(team._id, 'robot-design');
-      const rgRank = calculateRank(team._id, 'robot-game');
-      return {
-        ...team,
-        cvRank,
-        ipRank,
-        rdRank,
-        rgRank,
-        totalRank: (cvRank + ipRank + rdRank + rgRank) / 4
-      };
-    });
-
-  if (!deliberation) {
-    router.push(`/lems/${user.role}`);
-    enqueueSnackbar('אירעה שגיאה!', { variant: 'error' });
-    return; // This makes typescript understand that the rest of the code won't be reached
-  }
-
-  if (!deliberation.available) {
-    router.push(`/lems/${user.role}`);
-    enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
-  }
-
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    if (
-      newDeliberation._id.toString() === deliberation._id.toString() &&
-      !fullMatch(newDeliberation, deliberation)
-    ) {
-      setDeliberation(newDeliberation);
+    if (newDeliberation.stage !== deliberation.current?.stage) {
+      setTimeout(() => router.reload(), 250); // TODO: solve the issue with stage change
+    }
+    if (!deliberation.current) return;
+    if (newDeliberation._id.toString() === deliberationId.toString()) {
+      deliberation.current.sync(newDeliberation);
     }
   };
 
@@ -162,34 +159,12 @@ const Page: NextPage<Props> = props => {
     ]
   );
 
-  const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
-    setPicklists({ [name]: newList });
-  };
-
-  const setPicklists = (newPicklists: { [key in AwardNames]?: Array<ObjectId> }) => {
-    const newDeliberation = { ...deliberation };
-    newDeliberation.awards = { ...deliberation.awards, ...newPicklists };
-
-    setDeliberation(newDeliberation);
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { awards: newDeliberation.awards },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-        }
-      }
-    );
-  };
-
   const onChangeDeliberation = (newDeliberation: Partial<JudgingDeliberation>) => {
-    setDeliberation({ ...deliberation, ...newDeliberation });
+    if (deliberation.current?.status === 'completed') return;
     socket.emit(
       'updateJudgingDeliberation',
       division._id.toString(),
-      deliberation._id.toString(),
+      deliberationId.toString(),
       newDeliberation,
       response => {
         if (!response.ok) {
@@ -202,7 +177,7 @@ const Page: NextPage<Props> = props => {
   const startDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
     socket.emit(
       'startJudgingDeliberation',
-      division._id.toString(),
+      deliberation.divisionId.toString(),
       deliberation._id.toString(),
       response => {
         if (!response.ok) {
@@ -214,18 +189,168 @@ const Page: NextPage<Props> = props => {
     );
   };
 
-  const endDeliberationStage = (deliberation: WithId<JudgingDeliberation>): void => {
-    let nextStage: string;
+  const sendEndStageEvent = (
+    deliberation: WithId<JudgingDeliberation>,
+    nextStage: FinalDeliberationStage
+  ) => {
+    socket.emit(
+      'updateJudgingDeliberation',
+      division._id.toString(),
+      deliberation._id.toString(),
+      { status: 'not-started', stage: nextStage as FinalDeliberationStage },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const sendLockEvent = (deliberation: WithId<JudgingDeliberation>) => {
+    socket.emit(
+      'completeJudgingDeliberation',
+      deliberation.divisionId.toString(),
+      deliberation._id.toString(),
+      {},
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+            variant: 'error'
+          });
+        }
+      }
+    );
+  };
+
+  const updateAwardWinners = (awards: { [key in AwardNames]?: Array<DeliberationTeam> }) => {
+    return apiFetch(`/api/divisions/${division._id}/awards/winners`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(awards)
+    }).then(res => {
+      if (!res.ok) {
+        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+      }
+      return res.ok;
+    });
+  };
+
+  const updateAwards = (awards: Array<Award>) => {
+    return apiFetch(`/api/divisions/${division._id}/awards`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(awards)
+    }).then(res => {
+      if (!res.ok) {
+        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+      }
+      return res.ok;
+    });
+  };
+
+  const endChampionsStage = (
+    deliberation: WithId<JudgingDeliberation>,
+    eligibleTeams: Array<DeliberationTeam>,
+    allTeams: Array<DeliberationTeam>
+  ) => {
+    const awardWinners = deliberation.awards['champions']!.map(
+      teamId => eligibleTeams.find(t => t._id === teamId)!
+    );
+
+    const advancementAwards: Array<Award> = eligibleTeams
+      .filter(team => !awardWinners.find(w => w._id === team._id))
+      .map((team, index) => ({
+        divisionId: division._id,
+        name: 'advancement',
+        index: -1,
+        place: index + 1,
+        winner: team
+      }));
+
+    const robotPerformanceWinners = allTeams
+      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
+      .slice(0, awards.filter(award => award.name === 'robot-performance').length);
+
+    return updateAwardWinners({
+      champions: awardWinners,
+      'robot-performance': robotPerformanceWinners
+    }).then(ok => {
+      if (ok) {
+        return updateAwards(advancementAwards).then(ok => ok);
+      } else {
+        return false;
+      }
+    });
+  };
+
+  const endCoreAwardsStage = (
+    deliberation: WithId<JudgingDeliberation>,
+    eligibleTeams: Array<DeliberationTeam>,
+    allTeams: Array<DeliberationTeam>
+  ) => {
+    const newAwards: { [key in JudgingCategory]?: Array<WithId<Team>> } = {};
+    JudgingCategoryTypes.forEach(category => {
+      newAwards[category] =
+        deliberation.awards[category]!.map(teamId => eligibleTeams.find(t => t._id === teamId)!) ??
+        [];
+    });
+
+    const excellenceInEngineeringWinners = eligibleTeams
+      .sort((a, b) => a.totalRank - b.totalRank)
+      .filter(team =>
+        Object.values(newAwards)
+          .flat(1)
+          .find(t => t._id === team._id)
+      )
+      .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+
+    return updateAwardWinners({
+      'excellence-in-engineering': excellenceInEngineeringWinners
+    });
+  };
+
+  const endOptionalAwardsStage = (
+    deliberation: WithId<JudgingDeliberation>,
+    eligibleTeams: Array<DeliberationTeam>,
+    allTeams: Array<DeliberationTeam>
+  ) => {
+    const newAwards: { [key in CoreValuesAwards]?: Array<DeliberationTeam> } = {};
+    CoreValuesAwardsTypes.forEach(awardName => {
+      newAwards[awardName] =
+        deliberation.awards[awardName]!.map(teamId => eligibleTeams.find(t => t._id === teamId)!) ??
+        [];
+    });
+
+    return updateAwardWinners(newAwards);
+  };
+
+  const endDeliberationStage = (
+    deliberation: WithId<JudgingDeliberation>,
+    eligibleTeams: Array<DeliberationTeam>,
+    allTeams: Array<DeliberationTeam>
+  ): void => {
     switch (deliberation.stage) {
-      case 'champions':
-        nextStage = 'core-awards';
+      case 'champions': {
+        endChampionsStage(deliberation, eligibleTeams, allTeams).then(ok => {
+          if (ok) sendEndStageEvent(deliberation, 'core-awards');
+        });
         break;
-      case 'core-awards':
-        nextStage = 'optional-awards';
+      }
+      case 'core-awards': {
+        endCoreAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
+          if (ok) sendEndStageEvent(deliberation, 'optional-awards');
+        });
         break;
-      case 'optional-awards':
-        nextStage = 'review';
+      }
+      case 'optional-awards': {
+        endOptionalAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
+          if (ok) sendEndStageEvent(deliberation, 'review');
+        });
         break;
+      }
+      case 'review': {
+        sendLockEvent(deliberation);
+      }
     }
 
     apiFetch(`/api/divisions/${division._id}/awards`).then(res => {
@@ -233,17 +358,6 @@ const Page: NextPage<Props> = props => {
         enqueueSnackbar('אופס, עדכון הפרסים נכשל.', { variant: 'error' });
         return;
       }
-      socket.emit(
-        'updateJudgingDeliberation',
-        division._id.toString(),
-        deliberation._id.toString(),
-        { status: 'not-started', stage: nextStage as FinalDeliberationStage },
-        response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-          }
-        }
-      );
       res.json().then(setAwards);
     });
   };
@@ -265,45 +379,28 @@ const Page: NextPage<Props> = props => {
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <Deliberation value={deliberation} onChange={onChangeDeliberation} awards={awards}>
-          {deliberation.status === 'completed' && <LockOverlay />}
-          {deliberation.stage === 'champions' && (
-            <ChampionsDeliberationLayout
-              {...props}
-              teamsWithRanks={teamsWithRanks}
-              setPicklist={newList => setPicklist('champions', newList)}
-              startDeliberationStage={startDeliberationStage}
-              endDeliberationStage={endDeliberationStage}
-              categoryPicklists={categoryPicklists}
-              deliberation={deliberation}
-              anomalies={anomalies}
-              awards={awards}
-            />
-          )}
-          {deliberation.stage === 'core-awards' && (
-            <CoreAwardsDeliberationLayout
-              {...props}
-              teamsWithRanks={teamsWithRanks}
-              startDeliberationStage={startDeliberationStage}
-              endDeliberationStage={endDeliberationStage}
-              deliberation={deliberation}
-              categoryPicklists={categoryPicklists}
-              anomalies={anomalies}
-              awards={awards}
-            />
-          )}
-          {deliberation.stage === 'optional-awards' && (
-            <OptionalAwardsDeliberationLayout
-              {...props}
-              startDeliberationStage={startDeliberationStage}
-              endDeliberationStage={endDeliberationStage}
-              deliberation={deliberation}
-              awards={awards}
-            />
-          )}
-          {deliberation.stage === 'review' && (
-            <ReviewLayout division={division} deliberation={deliberation} />
-          )}
+        <Deliberation
+          ref={deliberation}
+          initialState={initialDeliberations.find(d => d.isFinalDeliberation)!}
+          rooms={rooms}
+          sessions={sessions}
+          cvForms={cvForms}
+          teams={teams}
+          rubrics={rubrics}
+          scoresheets={scoresheets}
+          categoryRanks={categoryRanks}
+          robotConsistency={robotConsistency.rows}
+          awards={awards}
+          anomalies={anomalies}
+          onChange={onChangeDeliberation}
+          onStart={startDeliberationStage}
+          endStage={endDeliberationStage}
+          checkElegibility={checkElegibility}
+        >
+          {stage === 'champions' && <ChampionsDeliberationLayout />}
+          {stage === 'core-awards' && <CoreAwardsDeliberationLayout />}
+          {stage === 'optional-awards' && <OptionalAwardsDeliberationLayout />}
+          {stage === 'review' && <ReviewLayout awards={awards} />}
         </Deliberation>
       </Layout>
     </RoleAuthorizer>
@@ -324,8 +421,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        rankings: `/api/divisions/${user.divisionId}/rankings/rubrics`,
-        robotGameRankings: `/api/divisions/${user.divisionId}/rankings/robot-game`,
         robotConsistency: `/api/divisions/${user.divisionId}/insights/field/scores/consistency`,
         deliberations: `/api/divisions/${user.divisionId}/deliberations`
       },

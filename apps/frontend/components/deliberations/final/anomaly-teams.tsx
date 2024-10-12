@@ -12,20 +12,13 @@ import {
   TableCell,
   TableHead
 } from '@mui/material';
-import { DeliberationAnomaly, JudgingCategory, Rubric, Team } from '@lems/types';
+import { DeliberationAnomaly } from '@lems/types';
 import AnomalyIcon from './anomaly-icon';
 import { groupBy } from '@lems/utils/objects';
-
-interface TeamWithRanks extends Team {
-  cvRank: number;
-  ipRank: number;
-  rdRank: number;
-  rgRank: number;
-  totalRank: number;
-}
+import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 
 interface AnomalyTeamsProps extends ButtonProps {
-  teams: Array<WithId<TeamWithRanks>>;
+  teams: Array<DeliberationTeam>;
   anomalies: Array<DeliberationAnomaly>;
 }
 

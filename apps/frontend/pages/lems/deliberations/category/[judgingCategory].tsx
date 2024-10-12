@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import Grid from '@mui/material/Unstable_Grid2';
 import {
   Division,
   SafeUser,
@@ -16,27 +15,21 @@ import {
   CoreValuesForm,
   JudgingCategoryTypes,
   JudgingDeliberation,
-  AwardNames,
   CoreValuesAwards,
   PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
 } from '@lems/types';
-import { average } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory } from '@lems/season';
-import CategoryDeliberationsGrid from '../../../../components/deliberations/category/category-deliberations-grid';
-import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
-import TeamPool from '../../../../components/deliberations/team-pool';
-import AwardList from '../../../../components/deliberations/award-list';
-import CategoryDeliberationControlPanel from '../../../../components/deliberations/category/category-deliberation-control-panel';
-import LockOverlay from '../../../../components/general/lock-overlay';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
 import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
-import Deliberation from 'apps/frontend/components/deliberations/deliberation';
+import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
+import { Deliberation, DeliberationRef } from '../../../../components/deliberations/deliberation';
+import CategoryDeliberationLayout from '../../../../components/deliberations/category/category-deliberations-layout';
 
 interface Props {
   category: JudgingCategory;
@@ -66,70 +59,77 @@ const Page: NextPage<Props> = ({
   roomScores
 }) => {
   const router = useRouter();
-  const [deliberation, setDeliberation] = useState(initialDeliberation);
+  const deliberationId = initialDeliberation._id;
+  const deliberation = useRef<DeliberationRef>(null);
   const [rubrics, setRubrics] = useState(initialRubrics);
 
-  if (!deliberation.available) {
+  if (!initialDeliberation.available) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
 
-  const averageScore = average(roomScores.map(room => room[category]));
-  const roomFactors = roomScores.reduce(
-    (acc, current) => ({ ...acc, [current.roomId]: averageScore / current[category] }),
-    {}
-  );
+  const checkElegibility = useCallback(() => true, []);
 
-  const availableTeams = teams
-    .filter(t => t.registered)
-    .filter(t => rubrics.find(r => r.teamId === t._id)?.status !== 'empty')
-    .filter(t => !deliberation.disqualifications.includes(t._id))
-    .sort((a, b) => a.number - b.number);
-
-  const selectedTeams = [...new Set(Object.values(deliberation.awards).flat(1))].map(
-    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
-  );
-  const unselectedTeams = availableTeams.filter(t => !selectedTeams.find(st => t._id === st._id));
-
-  const suggestedTeam = useMemo(() => {
-    const teamsWithScores = unselectedTeams.map(team => {
-      const rubric = rubrics
-        .filter(r => r.category === category && r.status !== 'empty')
-        .find(r => r.teamId.toString() === team._id.toString());
-      const rubricValues = rubric?.data?.values || {};
-      let score = Object.values(rubricValues).reduce((acc, current) => acc + current.value, 0);
-      if (category === 'core-values') {
-        scoresheets
-          .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
-          .forEach(scoresheet => (score += scoresheet.data?.gp?.value || 3));
-      }
-
-      const roomId = sessions.find(s => s.teamId === team._id)!.roomId;
-      const normalizedScore = score * roomFactors[roomId.toString()];
-
-      return { ...team, score, normalizedScore };
+  const suggestTeam = (teams: Array<DeliberationTeam>, category?: JudgingCategory) => {
+    const getScores = (team: DeliberationTeam) => ({
+      score: category ? team.scores[category] : team.totalScore,
+      normalizedScore: category ? team.normalizedScores[category] : team.normalizedTotalScore
     });
 
-    teamsWithScores.sort((a, b) => {
-      let place = b.score - a.score;
+    const sortedTeams = teams.sort((a, b) => {
+      const aScores = getScores(a);
+      const bScores = getScores(b);
+      let place = bScores.score - aScores.score;
       if (place !== 0) return place;
-      place = b.normalizedScore - a.normalizedScore; // Tiebreaker - Normalized score
+      place = bScores.normalizedScore - aScores.normalizedScore; // Tiebreaker - Normalized score
       return place;
     });
-    if (
-      teamsWithScores[0].score === teamsWithScores[1].score &&
-      teamsWithScores[0].normalizedScore === teamsWithScores[1].normalizedScore
-    )
-      return null;
-    return teamsWithScores[0];
-  }, [unselectedTeams]);
+
+    if (fullMatch(getScores(sortedTeams[0]), getScores(sortedTeams[1]))) return null;
+    return sortedTeams[0];
+  };
+
+  const calculateAnomalies = (
+    teams: Array<DeliberationTeam>,
+    category: JudgingCategory,
+    picklist: Array<ObjectId>
+  ) => {
+    const getScore = (team: DeliberationTeam) =>
+      category ? team.scores[category] : team.totalScore;
+
+    const anomalies = [];
+    const sortedTeams = teams.sort((a, b) => getScore(b) - getScore(a));
+
+    picklist.forEach((teamId, index) => {
+      const score = getScore(sortedTeams.find(t => t._id === teamId)!);
+      const excludeTies = sortedTeams.filter(st => getScore(st) !== score || st._id === teamId);
+      const rank = excludeTies.findIndex(st => st._id === teamId);
+      if (index > rank + RANKING_ANOMALY_THRESHOLD) {
+        anomalies.push({ teamId, reason: 'low-rank', category });
+      }
+      if (index < rank - RANKING_ANOMALY_THRESHOLD) {
+        anomalies.push({ teamId, reason: 'high-rank', category });
+      }
+    });
+
+    for (
+      let index = 0;
+      index < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
+      index++
+    ) {
+      const teamId = sortedTeams[index]._id;
+      if (!picklist.includes(teamId)) {
+        anomalies.push({ teamId, reason: 'low-rank', category });
+      }
+    }
+
+    return anomalies as Array<DeliberationAnomaly>;
+  };
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    if (
-      newDeliberation._id.toString() === deliberation._id.toString() &&
-      !fullMatch(newDeliberation, deliberation)
-    ) {
-      setDeliberation(newDeliberation);
+    if (!deliberation.current) return;
+    if (newDeliberation._id.toString() === deliberationId.toString()) {
+      deliberation.current.sync(newDeliberation);
     }
   };
 
@@ -154,34 +154,12 @@ const Page: NextPage<Props> = ({
     ]
   );
 
-  const getPicklist = (name: AwardNames) => {
-    return [...(deliberation.awards[name] ?? [])];
-  };
-
-  const setPicklist = (name: AwardNames, newList: Array<ObjectId>) => {
-    const newDeliberation = { ...deliberation };
-    newDeliberation.awards[name] = newList;
-
-    setDeliberation(newDeliberation);
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { awards: newDeliberation.awards },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-        }
-      }
-    );
-  };
-
   const onChangeDeliberation = (newDeliberation: Partial<JudgingDeliberation>) => {
-    setDeliberation({ ...deliberation, ...newDeliberation });
+    if (deliberation.current?.status === 'completed') return;
     socket.emit(
       'updateJudgingDeliberation',
       division._id.toString(),
-      deliberation._id.toString(),
+      deliberationId.toString(),
       newDeliberation,
       response => {
         if (!response.ok) {
@@ -189,16 +167,6 @@ const Page: NextPage<Props> = ({
         }
       }
     );
-  };
-
-  const addTeamToPicklist = (teamId: string, index: number, name: AwardNames) => {
-    const picklist: Array<string | ObjectId> = [...getPicklist(name)];
-    if (picklist.length >= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH) {
-      return;
-    }
-
-    picklist.splice(index, 0, teamId);
-    setPicklist(name, picklist as Array<ObjectId>);
   };
 
   const updateTeamAwards = (
@@ -225,7 +193,7 @@ const Page: NextPage<Props> = ({
   const startDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
     socket.emit(
       'startJudgingDeliberation',
-      division._id.toString(),
+      deliberation.divisionId.toString(),
       deliberation._id.toString(),
       response => {
         if (!response.ok) {
@@ -238,10 +206,10 @@ const Page: NextPage<Props> = ({
   };
 
   const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
-    const anomalies = getRankingAnomalies();
+    const { anomalies } = deliberation;
     socket.emit(
       'completeJudgingDeliberation',
-      division._id.toString(),
+      deliberation.divisionId.toString(),
       deliberation._id.toString(),
       { anomalies },
       response => {
@@ -252,55 +220,6 @@ const Page: NextPage<Props> = ({
         }
       }
     );
-  };
-
-  const getRankingAnomalies = () => {
-    const anomalies = [];
-    const picklist = getPicklist(category as AwardNames);
-
-    const sortedTeams = teams
-      .map(team => {
-        const rubric = rubrics.find(r => r.teamId === team._id && r.category === category);
-        let sum = Object.values(rubric?.data?.values || {}).reduce(
-          (acc, current) => acc + current.value,
-          0
-        );
-        if (category === 'core-values') {
-          scoresheets
-            .filter(scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking')
-            .forEach(scoresheet => (sum += scoresheet.data?.gp?.value || 3));
-        }
-        return { _id: team._id, score: sum };
-      })
-      .sort((a, b) => b.score - a.score);
-
-    picklist.forEach((teamId, rankAfterDeliberation) => {
-      const score = sortedTeams.find(t => t._id === teamId)!.score;
-      const sortedTeamsWithoutTies = sortedTeams.filter(
-        st => st.score !== score || st._id === teamId
-      );
-      const rank = sortedTeamsWithoutTies.findIndex(st => st._id === teamId);
-
-      if (rankAfterDeliberation > rank + RANKING_ANOMALY_THRESHOLD) {
-        anomalies.push({ teamId, reason: 'low-rank', category });
-      }
-      if (rankAfterDeliberation < rank - RANKING_ANOMALY_THRESHOLD) {
-        anomalies.push({ teamId, reason: 'high-rank', category });
-      }
-    });
-
-    for (
-      let index = 0;
-      index < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
-      index++
-    ) {
-      const teamId = sortedTeams[index]._id;
-      if (!picklist.includes(teamId)) {
-        anomalies.push({ teamId, reason: 'low-rank', category });
-      }
-    }
-
-    return anomalies as Array<DeliberationAnomaly>;
   };
 
   return (
@@ -320,64 +239,25 @@ const Page: NextPage<Props> = ({
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        {deliberation.status === 'completed' && <LockOverlay />}
-        <Deliberation value={deliberation} onChange={onChangeDeliberation}>
-          <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
-            <Grid xs={8}>
-              <CategoryDeliberationsGrid
-                category={category}
-                rooms={rooms}
-                rubrics={rubrics}
-                scoresheets={scoresheets}
-                sessions={sessions}
-                teams={availableTeams}
-                selectedTeams={selectedTeams}
-                cvForms={cvForms}
-                updateTeamAwards={updateTeamAwards}
-                disabled={deliberation.status !== 'in-progress'}
-                roomFactors={roomFactors}
-                showRanks={true}
-              />
-            </Grid>
-            <Grid xs={1.5}>
-              <AwardList
-                id={category}
-                pickList={
-                  deliberation.awards[category as AwardNames]?.map(
-                    teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
-                  ) ?? []
-                }
-                disabled={deliberation.status !== 'in-progress'}
-                suggestedTeam={suggestedTeam}
-                addSuggestedTeam={teamId => {
-                  const index = getPicklist(category).length;
-                  addTeamToPicklist(teamId.toString(), index, category);
-                }}
-              />
-            </Grid>
-            <Grid xs={2.5}>
-              <CategoryDeliberationControlPanel
-                teams={availableTeams}
-                deliberation={deliberation}
-                startDeliberation={startDeliberation}
-                lockDeliberation={lockDeliberation}
-                category={category}
-                cvForms={cvForms}
-                rubrics={rubrics}
-                scoresheets={scoresheets}
-              />
-            </Grid>
-            <Grid xs={5}>
-              <ScoresPerRoomChart division={division} height={210} />
-            </Grid>
-            <Grid xs={7}>
-              <TeamPool
-                teams={unselectedTeams}
-                id="team-pool"
-                disabled={deliberation.status !== 'in-progress'}
-              />
-            </Grid>
-          </Grid>
+        <Deliberation
+          ref={deliberation}
+          initialState={initialDeliberation}
+          rooms={rooms}
+          sessions={sessions}
+          cvForms={cvForms}
+          teams={teams}
+          rubrics={rubrics}
+          scoresheets={scoresheets}
+          roomScores={roomScores}
+          onChange={onChangeDeliberation}
+          onStart={startDeliberation}
+          onLock={lockDeliberation}
+          checkElegibility={checkElegibility}
+          suggestTeam={suggestTeam}
+          updateTeamAwards={updateTeamAwards}
+          calculateAnomalies={calculateAnomalies}
+        >
+          <CategoryDeliberationLayout />
         </Deliberation>
       </Layout>
     </RoleAuthorizer>
@@ -393,16 +273,18 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       return { notFound: true };
     }
 
+    console.log(`/api/divisions/${user.divisionId}/deliberations/category/${category}`);
+
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics/${ctx.params?.judgingCategory}`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/${ctx.params?.judgingCategory}`,
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`,
         roomScores: `/api/divisions/${user.divisionId}/insights/judging/scores/rooms`
       },
       ctx

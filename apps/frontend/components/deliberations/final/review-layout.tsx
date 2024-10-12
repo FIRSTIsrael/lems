@@ -1,26 +1,11 @@
-import { useMemo, useState } from 'react';
-import { ObjectId, WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
-import {
-  Division,
-  JudgingCategory,
-  Rubric,
-  Team,
-  Scoresheet,
-  JudgingSession,
-  JudgingRoom,
-  CoreValuesForm,
-  JudgingDeliberation,
-  ADVANCEMENT_PERCENTAGE
-} from '@lems/types';
-import ScoresPerRoomChart from '../../../components/insights/charts/scores-per-room-chart';
+import { Award } from '@lems/types';
 
 interface ReviewLayoutProps {
-  division: WithId<Division>;
-  deliberation: WithId<JudgingDeliberation>;
+  awards: Array<Award>;
 }
 
-const ReviewLayout: React.FC<ReviewLayoutProps> = ({ division, deliberation }) => {
+const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid xs={2}>

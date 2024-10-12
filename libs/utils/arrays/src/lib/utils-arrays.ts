@@ -25,10 +25,27 @@ export const compareScoreArrays = (
   return difference;
 };
 
+export const rankArray = (sortedArray: any[], evaluate: (i: any) => number, rankField: string) => {
+  const _arr = [...sortedArray];
+  _arr[0][rankField] = 1;
+  for (let i = 1; i < _arr.length; i++) {
+    if (evaluate(_arr[i]) === evaluate(_arr[i - 1])) {
+      _arr[i][rankField] = _arr[i - 1][rankField];
+    } else {
+      _arr[i][rankField] = i + 1;
+    }
+  }
+  return _arr;
+};
+
 export const range = (n: number) => [...Array(n).keys()];
 
 export const average = (arr: Array<number>) => {
   return arr.reduce((acc, value) => acc + value, 0) / arr.length;
+};
+
+export const sum = (arr: Array<number>) => {
+  return arr.reduce((acc, value) => acc + value, 0);
 };
 
 export const getCounts = (arr: Array<any>) => {

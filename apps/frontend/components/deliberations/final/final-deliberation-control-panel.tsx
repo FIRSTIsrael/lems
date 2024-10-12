@@ -22,17 +22,19 @@ import EndDeliberationStageButton from './end-deliberation-stage-button';
 
 interface FinalDeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;
-  cvForms: Array<WithId<CoreValuesForm>>;
-  rubrics: Array<WithId<Rubric<JudgingCategory>>>;
-  scoresheets: Array<WithId<Scoresheet>>;
   teams: Array<WithId<Team>>;
-  startDeliberation: (deliberation: WithId<JudgingDeliberation>) => void;
-  endDeliberationStage: (deliberation: WithId<JudgingDeliberation>) => void;
+  startDeliberation: () => void;
+  endDeliberationStage: () => void;
   nextStageUnlocked?: boolean;
   allowManualTeamAddition?: boolean;
   additionalTeams?: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
   enableTrash?: boolean;
+  compareProps: {
+    cvForms: Array<WithId<CoreValuesForm>>;
+    rubrics: Array<WithId<Rubric<JudgingCategory>>>;
+    scoresheets: Array<WithId<Scoresheet>>;
+  };
 }
 
 const localizedStages: Record<FinalDeliberationStage, string> = {
@@ -44,9 +46,6 @@ const localizedStages: Record<FinalDeliberationStage, string> = {
 
 const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps> = ({
   deliberation,
-  cvForms,
-  rubrics,
-  scoresheets,
   teams,
   startDeliberation,
   endDeliberationStage,
@@ -54,7 +53,8 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   allowManualTeamAddition = false,
   additionalTeams = [],
   onAddTeam,
-  enableTrash = false
+  enableTrash = false,
+  compareProps: { cvForms, rubrics, scoresheets }
 }) => {
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);

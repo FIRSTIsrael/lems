@@ -158,7 +158,7 @@ const AwardList: React.FC<AwardListProps> = ({
                       disabled={disabled}
                     />
                   ))}
-                  {pickList.length < length && suggestedTeam && addSuggestedTeam && (
+                  {pickList.length < length && suggestedTeam && addSuggestedTeam && !disabled && (
                     <SuggestedTeamItem team={suggestedTeam} addTeam={addSuggestedTeam} />
                   )}
                 </Stack>

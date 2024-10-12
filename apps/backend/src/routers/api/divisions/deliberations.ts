@@ -29,7 +29,7 @@ router.get(
 );
 
 router.get(
-  '/:judgingCategory',
+  '/category/:judgingCategory',
   asyncHandler(async (req: Request, res: Response) => {
     if (!JudgingCategoryTypes.includes(req.params?.judgingCategory as JudgingCategory)) {
       res.status(400).json({ error: 'Invalid judging category' });
