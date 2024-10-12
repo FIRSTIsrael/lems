@@ -69,11 +69,7 @@ export const TableScheduleRow: React.FC<TableScheduleRowProps> = ({
 
 const BreakRow: React.FC = () => {
   return (
-    <TableRow
-      sx={{
-        backgroundColor: '#f4f4f5'
-      }}
-    >
+    <TableRow sx={{ backgroundColor: '#f4f4f5' }}>
       <TableCell colSpan={5} align="center">
         הפסקה
       </TableCell>

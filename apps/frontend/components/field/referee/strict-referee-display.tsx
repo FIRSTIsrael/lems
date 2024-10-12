@@ -174,12 +174,7 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
         />
       )}
       {displayState === 'no-match' && (
-        <Stack
-          spacing={4}
-          sx={{
-            mt: 4
-          }}
-        >
+        <Stack spacing={4} sx={{ mt: 4 }}>
           <NoMatchCard />
           <TableSchedule matches={matches} table={table} teams={teams} limit={5} />
         </Stack>
