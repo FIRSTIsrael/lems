@@ -45,7 +45,7 @@ export const TableScheduleRow: React.FC<TableScheduleRowProps> = ({
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{startTime.format('HH:mm')}</TableCell>
       <TableCell align="center">{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
-      <TableCell key={table._id.toString()} align="center">
+      <TableCell align="center">
         {team &&
           (extendedTeamInfo ? (
             <Stack>
@@ -89,26 +89,25 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
   matches,
   table,
   teams,
-  limit: length,
+  limit,
   extendedTeamInfo = false
 }) => {
-  const upcomingTableMatches = matches.filter(
-    m =>
-      m.participants.find(p => p.tableId === table._id)?.teamId != null && m.status != 'completed'
-  );
+  const upcomingTableMatches = matches
+    .filter(
+      m =>
+        m.participants.find(p => p.tableId === table._id)?.teamId != null && m.status != 'completed'
+    )
+    .slice(0, limit)
+    .sort(m => m.round)
+    .sort(m => RobotGameMatchStages.indexOf(m.stage));
 
-  const slicedUpcomingTableMatches = upcomingTableMatches.slice(0, length);
-  slicedUpcomingTableMatches.sort(m => m.round);
-  slicedUpcomingTableMatches.sort(m => RobotGameMatchStages.indexOf(m.stage));
-
-  const displayedTableRows = slicedUpcomingTableMatches.reduce(
+  const displayedTableRows = upcomingTableMatches.reduce(
     (result: Array<React.ReactElement>, currentMatch, currentMatchIndex) => {
       if (
         currentMatchIndex > 0 &&
         dayjs(currentMatch.scheduledTime)
           .add(MATCH_LENGTH)
-          .diff(dayjs(slicedUpcomingTableMatches[currentMatchIndex - 1].scheduledTime), 'minutes') >
-          15
+          .diff(dayjs(upcomingTableMatches[currentMatchIndex - 1].scheduledTime), 'minutes') > 15
       ) {
         result.push(<BreakRow />);
       }
@@ -128,8 +127,6 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
     []
   );
 
-  const slicedDisplayedTableRows = displayedTableRows.slice(0, length);
-
   return (
     <TableContainer component={Paper} elevation={3}>
       <Table size="small">
@@ -144,15 +141,12 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
             <TableCell align="center">מקצה</TableCell>
             <TableCell align="center">התחלה</TableCell>
             <TableCell align="center">סיום</TableCell>
-            <TableCell key={table._id.toString()} align="center">
-              קבוצה
-            </TableCell>
+            <TableCell align="center">קבוצה</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {...slicedDisplayedTableRows}
-          {slicedUpcomingTableMatches.length < upcomingTableMatches.length ||
-          slicedDisplayedTableRows.length < displayedTableRows.length ? (
+          {...displayedTableRows.slice(0, limit)}
+          {limit && displayedTableRows.length > limit ? (
             <TableRow>
               <TableCell colSpan={5} align="center">
                 ···
