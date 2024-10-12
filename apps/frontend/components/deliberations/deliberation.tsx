@@ -108,7 +108,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       onChange,
       onStart,
       onLock,
-      checkElegibility,
+      checkElegibility: checkEligibility,
       suggestTeam,
       endStage,
       updateTeamAwards,
@@ -219,7 +219,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       .map(team => team._id);
 
     const eligibleTeams = teams
-      .filter(team => !ineligibleTeams.includes(team._id) && checkElegibility(team, teams))
+      .filter(team => !ineligibleTeams.includes(team._id) && checkEligibility(team, teams))
       .map(team => team._id);
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];

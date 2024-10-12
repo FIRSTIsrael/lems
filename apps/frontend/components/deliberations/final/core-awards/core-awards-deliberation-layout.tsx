@@ -22,7 +22,8 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
     anomalies,
     categoryRanks,
     start,
-    endStage
+    endStage,
+    selectedTeams
   } = useContext(DeliberationContext);
 
   const limits = JudgingCategoryTypes.reduce(
@@ -45,6 +46,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           categoryRanks={categoryRanks!}
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           anomalies={anomalies ?? []}
+          selectedTeams={selectedTeams}
         />
       </Grid>
       <Grid xs={3}>

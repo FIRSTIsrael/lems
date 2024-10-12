@@ -19,18 +19,20 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
-import { WithId } from 'mongodb';
+import { getBackgroundColor } from '../../../../lib/utils/theme';
 
 interface CoreAwardsDeliberationGridProps {
   categoryRanks: { [key in JudgingCategory]: Array<ObjectId> };
   teams: Array<DeliberationTeam>;
   anomalies: Array<DeliberationAnomaly>;
+  selectedTeams: Array<ObjectId>;
 }
 
 const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
   categoryRanks,
   teams,
-  anomalies
+  anomalies,
+  selectedTeams
 }) => {
   const tableLength = PRELIMINARY_DELIBERATION_PICKLIST_LENGTH;
 
@@ -68,15 +70,23 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
                 const team = categoryPicklists[category][i];
 
                 return !!team ? (
-                  <TableCell key={category + team._id.toString()} align="center">
+                  <TableCell
+                    key={category + team._id.toString()}
+                    align="center"
+                    sx={
+                      selectedTeams.includes(team._id)
+                        ? { background: getBackgroundColor('#32a84c', 'light') }
+                        : {}
+                    }
+                  >
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
                       <Typography>{team.number}</Typography>
                       <Typography fontSize="0.8rem">({team.scores[category]})</Typography>
                       <Stack direction="row">
                         {anomalies
                           .filter(a => a.teamId === team._id && a.category === category)
-                          .map(a => (
-                            <AnomalyIcon anomaly={a} redirect={false} />
+                          .map((a, index) => (
+                            <AnomalyIcon anomaly={a} key={index} />
                           ))}
                       </Stack>
                     </Stack>

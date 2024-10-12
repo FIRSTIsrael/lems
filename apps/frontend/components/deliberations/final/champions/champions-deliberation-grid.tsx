@@ -1,19 +1,22 @@
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Paper, Box, Avatar, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DeliberationAnomaly } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
+import { getBackgroundColor, getHoverBackgroundColor } from 'apps/frontend/lib/utils/theme';
 
 interface ChampionsDeliberationGridProps {
   teams: Array<WithId<DeliberationTeam>>;
   anomalies: Array<DeliberationAnomaly>;
+  selectedTeams: Array<ObjectId>;
 }
 
 const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
   teams,
-  anomalies
+  anomalies,
+  selectedTeams
 }) => {
   const rankingRounds = [teams[0].gpScores.map(gp => gp.round)].flat();
 
@@ -89,7 +92,9 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       filterable: false,
       renderCell: params => {
         if (!params.row.anomalies || params.row.anomalies.length === 0) return null;
-        return params.row.anomalies.map(anomaly => <AnomalyIcon anomaly={anomaly} />);
+        return params.row.anomalies.map((anomaly, index) => (
+          <AnomalyIcon key={index} anomaly={anomaly} />
+        ));
       }
     },
     {
@@ -187,6 +192,9 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
         rowHeight={40}
         disableRowSelectionOnClick
         hideFooter
+        getRowClassName={params =>
+          selectedTeams.includes(params.row.team._id) ? 'selected-team' : ''
+        }
         initialState={{
           pagination: {
             paginationModel: {
@@ -199,6 +207,12 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
         }}
         sx={{
           maxHeight: 500,
+          '& .selected-team': {
+            backgroundColor: getBackgroundColor('#32a84c', 'light'),
+            '&:hover': {
+              backgroundColor: getHoverBackgroundColor('#32a84c', 'light')
+            }
+          },
           '& .MuiDataGrid-columnHeaderTitle': {
             textOverflow: 'clip',
             whiteSpace: 'wrap',

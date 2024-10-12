@@ -75,6 +75,7 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
             />
             <Box
               borderRadius="8px 8px 0 0"
+              boxShadow="4px 0px 2px #aaaaaa"
               bgcolor={colors[index]}
               width="100%"
               height={40 + 50 * (places - index - 1)}

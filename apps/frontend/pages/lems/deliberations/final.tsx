@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -86,7 +86,7 @@ const Page: NextPage<Props> = ({
           place = b.number - a.number; // Tiebreaker 2 - Team Number
           return place;
         })
-        .slice(0, advancingTeams);
+        .slice(0, advancingTeams + 1);
       return !!shouldBeElegibile.find(t => t._id === team._id);
     },
     []
@@ -120,7 +120,7 @@ const Page: NextPage<Props> = ({
       default:
         return () => true;
     }
-  }, []);
+  }, [stage]);
 
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
@@ -139,11 +139,11 @@ const Page: NextPage<Props> = ({
   ];
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    if (newDeliberation.stage !== deliberation.current?.stage) {
-      setTimeout(() => router.reload(), 250); // TODO: solve the issue with stage change
-    }
     if (!deliberation.current) return;
     if (newDeliberation._id.toString() === deliberationId.toString()) {
+      if (newDeliberation.stage !== deliberation.current?.stage) {
+        setTimeout(() => router.reload(), 250); // TODO: solve the issue with stage change
+      }
       deliberation.current.sync(newDeliberation);
     }
   };
@@ -288,23 +288,28 @@ const Page: NextPage<Props> = ({
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => {
-    const newAwards: { [key in JudgingCategory]?: Array<WithId<Team>> } = {};
-    JudgingCategoryTypes.forEach(category => {
-      newAwards[category] =
-        deliberation.awards[category]!.map(teamId => eligibleTeams.find(t => t._id === teamId)!) ??
-        [];
-    });
+    const newAwards = JudgingCategoryTypes.reduce(
+      (acc, category) => {
+        acc[category] = deliberation.awards[category]!.map(
+          teamId => eligibleTeams.find(t => t._id === teamId)!
+        );
+        return acc;
+      },
+      {} as { [key in JudgingCategory]: Array<DeliberationTeam> }
+    );
 
     const excellenceInEngineeringWinners = eligibleTeams
       .sort((a, b) => a.totalRank - b.totalRank)
-      .filter(team =>
-        Object.values(newAwards)
-          .flat(1)
-          .find(t => t._id === team._id)
+      .filter(
+        team =>
+          !Object.values(newAwards)
+            .flat(1)
+            .find(t => t._id === team._id)
       )
       .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
 
     return updateAwardWinners({
+      ...newAwards,
       'excellence-in-engineering': excellenceInEngineeringWinners
     });
   };
@@ -314,12 +319,15 @@ const Page: NextPage<Props> = ({
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => {
-    const newAwards: { [key in CoreValuesAwards]?: Array<DeliberationTeam> } = {};
-    CoreValuesAwardsTypes.forEach(awardName => {
-      newAwards[awardName] =
-        deliberation.awards[awardName]!.map(teamId => eligibleTeams.find(t => t._id === teamId)!) ??
-        [];
-    });
+    const newAwards = CoreValuesAwardsTypes.reduce(
+      (acc, awardName) => {
+        acc[awardName] = deliberation.awards[awardName]!.map(
+          teamId => eligibleTeams.find(t => t._id === teamId)!
+        );
+        return acc;
+      },
+      {} as { [key in CoreValuesAwards]: Array<DeliberationTeam> }
+    );
 
     return updateAwardWinners(newAwards);
   };

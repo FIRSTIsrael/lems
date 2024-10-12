@@ -17,6 +17,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
     selectedTeams,
     deliberation,
     eligibleTeams,
+    availableTeams,
     picklistLimits,
     compareContextProps,
     start,
@@ -48,8 +49,10 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
       </Grid>
       <Grid xs={3}>
         <TeamPool
+          teams={teams
+            .filter(team => availableTeams.includes(team._id))
+            .sort((a, b) => a.number - b.number)}
           id="team-pool"
-          teams={teams.filter(team => eligibleTeams.includes(team._id))}
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
@@ -74,7 +77,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
             <AwardList
               title={localizedAward[award].name}
               length={limits[award]!}
-              withIcons={true}
+              withIcons
               trophyCount={limits[award]!}
               id={award}
               pickList={

@@ -178,7 +178,7 @@ const AwardList: React.FC<AwardListProps> = ({
                   alignItems="center"
                   minHeight={35}
                 >
-                  {awardIcons[index]}
+                  {awardIcons[Math.min(index, 3)]}
                 </Box>
               ) : (
                 <Typography

@@ -175,7 +175,10 @@ export const useDeliberationTeams = (
           .filter(team => !categoryRanks[_category].includes(team._id))
           .sort((a, b) => b.scores[_category] - a.scores[_category]);
         ranks = rankArray(ranks, i => i.scores[_category], 'categoryRank');
-        acc[_category] = ranks.map(team => ({ teamId: team._id, rank: team.categoryRank! }));
+        acc[_category] = ranks.map(team => ({
+          teamId: team._id,
+          rank: team.categoryRank! + categoryRanks[_category].length
+        }));
       }
       return acc;
     },

@@ -14,6 +14,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
     teams,
     eligibleTeams,
     picklistLimits,
+    selectedTeams,
     setPicklist,
     compareContextProps,
     anomalies,
@@ -28,7 +29,8 @@ const ChampionsDeliberationLayout: React.FC = () => {
       <Grid xs={7}>
         <ChampionsDeliberationsGrid
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
-          anomalies={[]}
+          selectedTeams={selectedTeams}
+          anomalies={anomalies ?? []}
         />
       </Grid>
       <Grid xs={2}>
