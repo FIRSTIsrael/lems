@@ -64,36 +64,26 @@ const Page: NextPage<Props> = ({
     { name: 'matchUpdated', handler: handleMatchEvent }
   ]);
 
-  const practiceMatches = matches.filter(m => m.stage === 'practice');
-  const rankingMatches = matches.filter(m => m.stage === 'ranking');
+  const roundMatches = matches
+    .filter(m => m.stage !== 'test')
+    .reduce((result: { [key: string]: Array<WithId<RobotGameMatch>> }, match) => {
+      const roundKey = match.stage + match.round;
+      (result[roundKey] = result[roundKey] || []).push(match);
+      return result;
+    }, {});
 
-  const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
-    .map(r => (
-      <Grid xs={12} xl={6} key={'practice' + r}>
-        <ReportRoundSchedule
-          divisionSchedule={refereeGeneralSchedule}
-          roundStage="practice"
-          roundNumber={r}
-          matches={practiceMatches.filter(m => m.round === r)}
-          tables={tables}
-          teams={teams}
-        />
-      </Grid>
-    ))
-    .concat(
-      [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
-        <Grid xs={12} xl={6} key={'ranking' + r}>
-          <ReportRoundSchedule
-            divisionSchedule={refereeGeneralSchedule}
-            roundStage="ranking"
-            roundNumber={r}
-            matches={rankingMatches.filter(m => m.round === r)}
-            tables={tables}
-            teams={teams}
-          />
-        </Grid>
-      ))
-    );
+  const roundSchedules = Object.values(roundMatches).map(matches => (
+    <Grid xs={12} xl={6} key={matches[0].stage + matches[0].round}>
+      <ReportRoundSchedule
+        divisionSchedule={refereeGeneralSchedule}
+        roundStage={matches[0].stage}
+        roundNumber={matches[0].round}
+        matches={matches}
+        tables={tables}
+        teams={teams}
+      />
+    </Grid>
+  ));
 
   return (
     <RoleAuthorizer
