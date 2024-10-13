@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -64,8 +64,9 @@ const Page: NextPage<Props> = ({
   robotConsistency
 }) => {
   const router = useRouter();
-  const [privateDeliberation, setPrivateDeliberation] = useState<WithId<JudgingDeliberation>>(
-    initialDeliberations.find(d => d.isFinalDeliberation)!
+  const deliberationId = initialDeliberations.find(d => d.isFinalDeliberation)!._id;
+  const [currentStage, setCurrentStage] = useState<FinalDeliberationStage>(
+    initialDeliberations.find(d => d.isFinalDeliberation)!.stage!
   ); // Store a local copy for stage changes.
   const deliberation = useRef<DeliberationRef>(null);
   const [awards, setAwards] = useState(initialAwards);
@@ -75,32 +76,26 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
 
-  const checkChampionsElegibility = useCallback(
-    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
-      const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
-      const shouldBeElegibile = teams
-        .sort((a, b) => {
-          let place = a.totalRank - b.totalRank;
-          if (place !== 0) return place;
-          place = a.ranks['core-values'] - b.ranks['core-values']; // Tiebreaker 1 - CV score
-          if (place !== 0) return place;
-          place = b.number - a.number; // Tiebreaker 2 - Team Number
-          return place;
-        })
-        .slice(0, advancingTeams + 1);
-      return !!shouldBeElegibile.find(t => t._id === team._id);
-    },
-    []
-  );
+  const checkChampionsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+    const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
+    const shouldBeElegibile = teams
+      .sort((a, b) => {
+        let place = a.totalRank - b.totalRank;
+        if (place !== 0) return place;
+        place = a.ranks['core-values'] - b.ranks['core-values']; // Tiebreaker 1 - CV score
+        if (place !== 0) return place;
+        place = b.number - a.number; // Tiebreaker 2 - Team Number
+        return place;
+      })
+      .slice(0, advancingTeams + 1);
+    return !!shouldBeElegibile.find(t => t._id === team._id);
+  };
 
-  const checkCoreAwardsElegibility = useCallback(
-    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
-      const _team = teams.find(t => t._id === team._id)!;
-      const { 'robot-game': robotGame, ...ranks } = _team.ranks;
-      return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
-    },
-    []
-  );
+  const checkCoreAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+    const _team = teams.find(t => t._id === team._id)!;
+    const { 'robot-game': robotGame, ...ranks } = _team.ranks;
+    return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
+  };
 
   const checkOptionalAwardsElegibility = useCallback(
     (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
@@ -111,7 +106,8 @@ const Page: NextPage<Props> = ({
   );
 
   const checkElegibility = useMemo(() => {
-    switch (privateDeliberation.stage) {
+    console.log(currentStage);
+    switch (currentStage) {
       case 'champions':
         return checkChampionsElegibility;
       case 'core-awards':
@@ -121,7 +117,7 @@ const Page: NextPage<Props> = ({
       default:
         return () => true;
     }
-  }, [privateDeliberation.stage]);
+  }, [awards, currentStage]);
 
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
@@ -140,10 +136,12 @@ const Page: NextPage<Props> = ({
   ];
 
   const handleDeliberationEvent = (newDeliberation: WithId<JudgingDeliberation>) => {
-    if (!deliberation.current) return;
-    if (newDeliberation._id.toString() === privateDeliberation._id.toString()) {
-      setPrivateDeliberation(newDeliberation);
+    if (newDeliberation._id.toString() === deliberationId.toString()) {
+      if (!deliberation.current) return;
       deliberation.current.sync(newDeliberation);
+      if (newDeliberation.stage !== currentStage) {
+        setCurrentStage(newDeliberation.stage!);
+      }
     }
   };
 
@@ -158,20 +156,23 @@ const Page: NextPage<Props> = ({
     ]
   );
 
-  const onChangeDeliberation = useCallback((newDeliberation: Partial<JudgingDeliberation>) => {
-    if (deliberation.current?.status === 'completed') return;
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      privateDeliberation._id.toString(),
-      newDeliberation,
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+  const onChangeDeliberation = useCallback(
+    (newDeliberation: Partial<JudgingDeliberation>) => {
+      if (deliberation.current?.status === 'completed') return;
+      socket.emit(
+        'updateJudgingDeliberation',
+        division._id.toString(),
+        deliberationId.toString(),
+        newDeliberation,
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+          }
         }
-      }
-    );
-  }, []);
+      );
+    },
+    [deliberation.current]
+  );
 
   const startDeliberationStage = useCallback((deliberation: WithId<JudgingDeliberation>): void => {
     socket.emit(
@@ -331,6 +332,16 @@ const Page: NextPage<Props> = ({
     return updateAwardWinners(newAwards);
   };
 
+  const updateAwardsState = () => {
+    apiFetch(`/api/divisions/${division._id}/awards`).then(res => {
+      if (!res.ok) {
+        enqueueSnackbar('אופס, עדכון הפרסים נכשל.', { variant: 'error' });
+        return;
+      }
+      res.json().then(setAwards);
+    });
+  };
+
   const endDeliberationStage = useCallback(
     (
       deliberation: WithId<JudgingDeliberation>,
@@ -340,19 +351,25 @@ const Page: NextPage<Props> = ({
       switch (deliberation.stage) {
         case 'champions': {
           endChampionsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) sendEndStageEvent(deliberation, 'core-awards');
+            if (ok) {
+              sendEndStageEvent(deliberation, 'core-awards');
+            }
           });
           break;
         }
         case 'core-awards': {
           endCoreAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) sendEndStageEvent(deliberation, 'optional-awards');
+            if (ok) {
+              sendEndStageEvent(deliberation, 'optional-awards');
+            }
           });
           break;
         }
         case 'optional-awards': {
           endOptionalAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) sendEndStageEvent(deliberation, 'review');
+            if (ok) {
+              sendEndStageEvent(deliberation, 'review');
+            }
           });
           break;
         }
@@ -360,14 +377,6 @@ const Page: NextPage<Props> = ({
           sendLockEvent(deliberation);
         }
       }
-
-      apiFetch(`/api/divisions/${division._id}/awards`).then(res => {
-        if (!res.ok) {
-          enqueueSnackbar('אופס, עדכון הפרסים נכשל.', { variant: 'error' });
-          return;
-        }
-        res.json().then(setAwards);
-      });
     },
     []
   );
@@ -405,12 +414,12 @@ const Page: NextPage<Props> = ({
           onChange={onChangeDeliberation}
           onStart={startDeliberationStage}
           endStage={endDeliberationStage}
-          checkElegibility={checkElegibility}
+          checkEligibility={checkElegibility}
         >
-          {privateDeliberation.stage === 'champions' && <ChampionsDeliberationLayout />}
-          {privateDeliberation.stage === 'core-awards' && <CoreAwardsDeliberationLayout />}
-          {privateDeliberation.stage === 'optional-awards' && <OptionalAwardsDeliberationLayout />}
-          {privateDeliberation.stage === 'review' && <ReviewLayout awards={awards} />}
+          {currentStage === 'champions' && <ChampionsDeliberationLayout />}
+          {currentStage === 'core-awards' && <CoreAwardsDeliberationLayout />}
+          {currentStage === 'optional-awards' && <OptionalAwardsDeliberationLayout />}
+          {currentStage === 'review' && <ReviewLayout awards={awards} />}
         </Deliberation>
       </Layout>
     </RoleAuthorizer>

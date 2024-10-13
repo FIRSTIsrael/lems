@@ -63,7 +63,7 @@ const CompareView: React.FC<CompareViewProps> = ({
         category
       }}
     >
-      <Grid container columnGap={4} justifyContent="center">
+      <Grid container columnGap={4} justifyContent="center" height={800}>
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} removeTeam={removeTeam} />
         ))}
@@ -84,7 +84,14 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
   if (!team) return null;
 
   return (
-    <Grid component={Paper} xs={Math.min(10.75 / teams.length, 6)} height="100%" p={2} mb={2}>
+    <Grid
+      component={Paper}
+      xs={Math.min(10.75 / teams.length, 6)}
+      height="100%"
+      p={2}
+      mb={2}
+      sx={{ overflowY: 'auto' }}
+    >
       {removeTeam && (
         <IconButton onClick={() => removeTeam(teamId)}>
           <CloseRounded />

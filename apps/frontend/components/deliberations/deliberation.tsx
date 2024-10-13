@@ -65,7 +65,7 @@ interface DeliberationProps {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   onChange: (value: Partial<JudgingDeliberation>) => void;
-  checkElegibility: (team: WithId<Team>, teams: Array<DeliberationTeam>) => boolean;
+  checkEligibility: (team: WithId<Team>, teams: Array<DeliberationTeam>) => boolean;
   suggestTeam?: (
     teams: Array<DeliberationTeam>,
     category?: JudgingCategory
@@ -108,7 +108,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       onChange,
       onStart,
       onLock,
-      checkElegibility: checkEligibility,
+      checkEligibility,
       suggestTeam,
       endStage,
       updateTeamAwards,
@@ -218,9 +218,13 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       )
       .map(team => team._id);
 
-    const eligibleTeams = teams
-      .filter(team => !ineligibleTeams.includes(team._id) && checkEligibility(team, teams))
-      .map(team => team._id);
+    const eligibleTeams = useMemo(
+      () =>
+        teams
+          .filter(team => !ineligibleTeams.includes(team._id) && checkEligibility(team, teams))
+          .map(team => team._id),
+      [state, awards]
+    );
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];
     const availableTeams = eligibleTeams.filter(teamId => !selectedTeams.includes(teamId));

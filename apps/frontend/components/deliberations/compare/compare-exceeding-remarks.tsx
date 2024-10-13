@@ -16,40 +16,44 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
     teamRubrics = teamRubrics.filter(r => r.category === category);
   }
 
-  return teamRubrics.map(rubric => {
-    const schema = rubricsSchemas[rubric.category];
-    const localizationMap = schema.sections
-      .flatMap(section => section.fields)
-      .reduce(
-        (acc, field) => {
-          acc[field.id] = field.title;
-          return acc;
-        },
-        {} as Record<string, string>
-      );
-    const remarks = Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
-      if (!value.notes) {
-        return;
-      }
-      return (
-        <Typography>
-          <span style={{ fontWeight: 500 }}>נימוק ל{localizationMap[key]}:</span> {value.notes}
-        </Typography>
-      );
-    });
+  return (
+    <Stack px={2} height={192} sx={{ overflowY: 'auto' }}>
+      {teamRubrics.map(rubric => {
+        const schema = rubricsSchemas[rubric.category];
+        const localizationMap = schema.sections
+          .flatMap(section => section.fields)
+          .reduce(
+            (acc, field) => {
+              acc[field.id] = field.title;
+              return acc;
+            },
+            {} as Record<string, string>
+          );
+        const remarks = Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
+          if (!value.notes) {
+            return;
+          }
+          return (
+            <Typography>
+              <span style={{ fontWeight: 500 }}>נימוק ל{localizationMap[key]}:</span> {value.notes}
+            </Typography>
+          );
+        });
 
-    return (
-      <Stack px={2} height={96}>
-        {!remarks.find(remark => !!remark) ? (
-          <Typography>
-            לא נמצאו ציונים ״מצטיינים״ בתחום {localizedJudgingCategory[rubric.category].name}
-          </Typography>
-        ) : (
-          remarks
-        )}
-      </Stack>
-    );
-  });
+        return (
+          <Stack>
+            {!remarks.find(remark => !!remark) ? (
+              <Typography>
+                לא נמצאו ציונים ״מצטיינים״ בתחום {localizedJudgingCategory[rubric.category].name}
+              </Typography>
+            ) : (
+              remarks
+            )}
+          </Stack>
+        );
+      })}
+    </Stack>
+  );
 };
 
 export default CompareExceedingRemarks;
