@@ -97,16 +97,12 @@ const Page: NextPage<Props> = ({
     return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
   };
 
-  const checkOptionalAwardsElegibility = useCallback(
-    (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
-      const _team = teams.find(t => t._id === team._id)!;
-      return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
-    },
-    []
-  );
+  const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+    const _team = teams.find(t => t._id === team._id)!;
+    return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
+  };
 
   const checkElegibility = useMemo(() => {
-    console.log(currentStage);
     switch (currentStage) {
       case 'champions':
         return checkChampionsElegibility;
@@ -117,7 +113,7 @@ const Page: NextPage<Props> = ({
       default:
         return () => true;
     }
-  }, [awards, currentStage]);
+  }, [currentStage]);
 
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
@@ -150,6 +146,7 @@ const Page: NextPage<Props> = ({
     ['judging'],
     undefined,
     [
+      { name: 'awardsUpdated', handler: setAwards },
       { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent }
@@ -223,28 +220,22 @@ const Page: NextPage<Props> = ({
   };
 
   const updateAwardWinners = (awards: { [key in AwardNames]?: Array<DeliberationTeam> }) => {
-    return apiFetch(`/api/divisions/${division._id}/awards/winners`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(awards)
-    }).then(res => {
-      if (!res.ok) {
-        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+    socket.emit('updateAwardWinners', division._id.toString(), awards, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, לא הצלחנו לעדכן את הפרסים.', {
+          variant: 'error'
+        });
       }
-      return res.ok;
     });
   };
 
-  const updateAwards = (awards: Array<Award>) => {
-    return apiFetch(`/api/divisions/${division._id}/awards`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(awards)
-    }).then(res => {
-      if (!res.ok) {
-        enqueueSnackbar('אופס, לא הצלחנו לשמור את זוכי הפרסים.', { variant: 'error' });
+  const advanceTeams = (teams: Array<DeliberationTeam>) => {
+    socket.emit('advanceTeams', division._id.toString(), teams, response => {
+      if (!response.ok) {
+        enqueueSnackbar('אופס, לא הצלחנו לעדכן את הפרסים.', {
+          variant: 'error'
+        });
       }
-      return res.ok;
     });
   };
 
@@ -257,29 +248,14 @@ const Page: NextPage<Props> = ({
       teamId => eligibleTeams.find(t => t._id === teamId)!
     );
 
-    const advancementAwards: Array<Award> = eligibleTeams
-      .filter(team => !awardWinners.find(w => w._id === team._id))
-      .map((team, index) => ({
-        divisionId: division._id,
-        name: 'advancement',
-        index: -1,
-        place: index + 1,
-        winner: team
-      }));
-
     const robotPerformanceWinners = allTeams
       .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
       .slice(0, awards.filter(award => award.name === 'robot-performance').length);
 
-    return updateAwardWinners({
+    advanceTeams(eligibleTeams.filter(team => !awardWinners.find(w => w._id === team._id)));
+    updateAwardWinners({
       champions: awardWinners,
       'robot-performance': robotPerformanceWinners
-    }).then(ok => {
-      if (ok) {
-        return updateAwards(advancementAwards).then(ok => ok);
-      } else {
-        return false;
-      }
     });
   };
 
@@ -332,16 +308,6 @@ const Page: NextPage<Props> = ({
     return updateAwardWinners(newAwards);
   };
 
-  const updateAwardsState = () => {
-    apiFetch(`/api/divisions/${division._id}/awards`).then(res => {
-      if (!res.ok) {
-        enqueueSnackbar('אופס, עדכון הפרסים נכשל.', { variant: 'error' });
-        return;
-      }
-      res.json().then(setAwards);
-    });
-  };
-
   const endDeliberationStage = useCallback(
     (
       deliberation: WithId<JudgingDeliberation>,
@@ -350,27 +316,18 @@ const Page: NextPage<Props> = ({
     ): void => {
       switch (deliberation.stage) {
         case 'champions': {
-          endChampionsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) {
-              sendEndStageEvent(deliberation, 'core-awards');
-            }
-          });
+          endChampionsStage(deliberation, eligibleTeams, allTeams);
+          sendEndStageEvent(deliberation, 'core-awards');
           break;
         }
         case 'core-awards': {
-          endCoreAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) {
-              sendEndStageEvent(deliberation, 'optional-awards');
-            }
-          });
+          endCoreAwardsStage(deliberation, eligibleTeams, allTeams);
+          sendEndStageEvent(deliberation, 'optional-awards');
           break;
         }
         case 'optional-awards': {
-          endOptionalAwardsStage(deliberation, eligibleTeams, allTeams).then(ok => {
-            if (ok) {
-              sendEndStageEvent(deliberation, 'review');
-            }
-          });
+          endOptionalAwardsStage(deliberation, eligibleTeams, allTeams);
+          sendEndStageEvent(deliberation, 'review');
           break;
         }
         case 'review': {

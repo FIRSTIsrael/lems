@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { JudgingCategory, TicketType } from './constants';
+import { AwardNames, JudgingCategory, TicketType } from './constants';
 import {
   RobotGameMatch,
   RobotGameMatchBrief,
@@ -15,6 +15,7 @@ import { JudgingDeliberation } from './schemas/deliberation';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './schemas/division-state';
 import { JudgingRoom } from './schemas/judging-room';
+import { Award } from './schemas/award';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
@@ -76,6 +77,8 @@ export interface WSServerEmittedEvents {
   audienceDisplayUpdated: (divisionState: DivisionState) => void;
 
   presentationUpdated: (divisionState: DivisionState) => void;
+
+  awardsUpdated: (awards: Array<WithId<Award>>) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -124,6 +127,18 @@ export interface WSClientEmittedEvents {
     divisionId: string,
     deliberationId: string,
     data: Partial<JudgingDeliberation>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateAwardWinners: (
+    divisionId: string,
+    data: { [key in AwardNames]?: Array<WithId<Team> | string> },
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  advanceTeams: (
+    divisionId: string,
+    teams: Array<WithId<Team>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

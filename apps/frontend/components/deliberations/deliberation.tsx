@@ -223,7 +223,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
         teams
           .filter(team => !ineligibleTeams.includes(team._id) && checkEligibility(team, teams))
           .map(team => team._id),
-      [state, awards]
+      [state.stage, awards, ineligibleTeams]
     );
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];

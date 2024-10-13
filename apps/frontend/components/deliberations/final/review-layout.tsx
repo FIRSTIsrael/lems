@@ -27,6 +27,10 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
     ...restAwards
   } = awardsByName;
 
+  const awardsLoaded = Object.values(restAwards).every(
+    winners => !!winners.every(w => typeof w.winner !== 'string' && w.winner?._id)
+  );
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
       <Grid xs={12}>
@@ -36,36 +40,40 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
           </Typography>
         </Paper>
       </Grid>
-      {Object.keys(restAwards).map(award => {
-        const _award = award as AwardNames;
-        return (
-          <Grid key={award} xs={2}>
-            <AwardList
-              title={`פרס ${localizedAward[_award].name}`}
-              length={awardsByName[_award].length}
-              withIcons
-              trophyCount={awardsByName[_award].length}
-              disabled={true}
-              pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
-              id={_award}
-            />
-          </Grid>
-        );
-      })}
-      {
-        <Grid xs={4}>
-          <Stack component={Paper} p={2} spacing={1}>
-            <Typography fontWeight={600} fontSize="1.5rem">
-              קבוצות המעפילות שלב
-            </Typography>
-            {advancement.map((award, index) => (
-              <Typography key={String(award._id)}>
-                {index + 1}. {localizeTeam(award.winner as Team)}
-              </Typography>
-            ))}
-          </Stack>
-        </Grid>
-      }
+      {awardsLoaded && (
+        <>
+          {Object.keys(restAwards).map(award => {
+            const _award = award as AwardNames;
+            return (
+              <Grid key={award} xs={2}>
+                <AwardList
+                  title={`פרס ${localizedAward[_award].name}`}
+                  length={awardsByName[_award].length}
+                  withIcons
+                  trophyCount={awardsByName[_award].length}
+                  disabled={true}
+                  pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
+                  id={_award}
+                />
+              </Grid>
+            );
+          })}
+          {
+            <Grid xs={4}>
+              <Stack component={Paper} p={2} spacing={1}>
+                <Typography fontWeight={600} fontSize="1.5rem">
+                  קבוצות המעפילות שלב
+                </Typography>
+                {advancement.map((award, index) => (
+                  <Typography key={String(award._id)}>
+                    {index + 1}. {localizeTeam(award.winner as Team)}
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+          }
+        </>
+      )}
     </Grid>
   );
 };

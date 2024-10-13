@@ -1,10 +1,16 @@
 import dayjs from 'dayjs';
-import { ObjectId } from 'mongodb';
+import { WithId, ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
-import { JUDGING_SESSION_LENGTH } from '@lems/types';
+import { JUDGING_SESSION_LENGTH, Award, Team, AwardNames } from '@lems/types';
 
-export const handleStartSession = async (namespace, divisionId, roomId, sessionId, callback) => {
+export const handleStartSession = async (
+  namespace: any,
+  divisionId: string,
+  roomId,
+  sessionId,
+  callback
+) => {
   let divisionState = await db.getDivisionState({ divisionId: new ObjectId(divisionId) });
 
   let session = await db.getSession({
@@ -66,7 +72,13 @@ export const handleStartSession = async (namespace, divisionId, roomId, sessionI
   namespace.to('judging').emit('judgingSessionStarted', session, divisionState);
 };
 
-export const handleAbortSession = async (namespace, divisionId, roomId, sessionId, callback) => {
+export const handleAbortSession = async (
+  namespace: any,
+  divisionId: string,
+  roomId,
+  sessionId,
+  callback
+) => {
   let session = await db.getSession({
     roomId: new ObjectId(roomId),
     _id: new ObjectId(sessionId)
@@ -91,7 +103,7 @@ export const handleAbortSession = async (namespace, divisionId, roomId, sessionI
 
 export const handleUpdateSessionTeam = async (
   namespace,
-  divisionId,
+  divisionId: string,
   sessionId,
   teamId,
   callback
@@ -116,7 +128,13 @@ export const handleUpdateSessionTeam = async (
   namespace.to('judging').emit('judgingSessionUpdated', session);
 };
 
-export const handleUpdateSession = async (namespace, divisionId, sessionId, data, callback) => {
+export const handleUpdateSession = async (
+  namespace: any,
+  divisionId: string,
+  sessionId,
+  data,
+  callback
+) => {
   let session = await db.getSession({ _id: new ObjectId(sessionId) });
   if (!session) {
     callback({ ok: false, error: `Could not find session ${sessionId}!` });
@@ -136,7 +154,12 @@ export const handleUpdateSession = async (namespace, divisionId, sessionId, data
   namespace.to('judging').emit('judgingSessionUpdated', session);
 };
 
-export const handleStartDeliberation = async (namespace, divisionId, deliberationId, callback) => {
+export const handleStartDeliberation = async (
+  namespace: any,
+  divisionId: string,
+  deliberationId,
+  callback
+) => {
   let deliberation = await db.getJudgingDeliberation({
     divisionId: new ObjectId(divisionId),
     _id: new ObjectId(deliberationId)
@@ -168,7 +191,7 @@ export const handleStartDeliberation = async (namespace, divisionId, deliberatio
 
 export const handleUpdateDeliberation = async (
   namespace,
-  divisionId,
+  divisionId: string,
   deliberationId,
   data,
   callback
@@ -197,7 +220,7 @@ export const handleUpdateDeliberation = async (
 
 export const handleCompleteDeliberation = async (
   namespace,
-  divisionId,
+  divisionId: string,
   deliberationId,
   data,
   callback
@@ -213,7 +236,7 @@ export const handleCompleteDeliberation = async (
 
 export const handleUpdateRubric = async (
   namespace,
-  divisionId,
+  divisionId: string,
   teamId,
   rubricId,
   rubricData,
@@ -243,7 +266,7 @@ export const handleUpdateRubric = async (
     namespace.to('judging').emit('rubricStatusChanged', rubric);
 };
 
-export const handleCreateCvForm = async (namespace, divisionId, content, callback) => {
+export const handleCreateCvForm = async (namespace: any, divisionId: string, content, callback) => {
   console.log(`📄 Creating Core Values Form in division ${divisionId}`);
   const cvFormId = await db
     .addCoreValuesForm({ ...content, divisionId: new ObjectId(divisionId) })
@@ -254,7 +277,13 @@ export const handleCreateCvForm = async (namespace, divisionId, content, callbac
   namespace.to('judging').emit('cvFormCreated', cvForm);
 };
 
-export const handleUpdateCvForm = async (namespace, divisionId, cvFormId, content, callback) => {
+export const handleUpdateCvForm = async (
+  namespace: any,
+  divisionId: string,
+  cvFormId,
+  content,
+  callback
+) => {
   let cvForm = await db.getCoreValuesForm({ _id: new ObjectId(cvFormId) });
   if (!cvForm) {
     callback({
@@ -276,7 +305,7 @@ export const handleUpdateCvForm = async (namespace, divisionId, cvFormId, conten
   namespace.to('judging').emit('cvFormUpdated', cvForm);
 };
 
-export const handleCallLeadJudge = async (namespace, divisionId, roomId, callback) => {
+export const handleCallLeadJudge = async (namespace: any, divisionId: string, roomId, callback) => {
   const room = await db.getRoom({ _id: new ObjectId(roomId) });
 
   if (!room) {
@@ -287,4 +316,79 @@ export const handleCallLeadJudge = async (namespace, divisionId, roomId, callbac
   console.log(`💁‍♂️ Lead judge called to room ${roomId} in division ${divisionId}`);
   callback({ ok: true });
   namespace.to('judging').emit('leadJudgeCalled', room);
+};
+
+export const handleUpdateAwardWinners = async (
+  namespace: any,
+  divisionId: string,
+  data,
+  callback
+) => {
+  const body = data as Record<AwardNames, Array<WithId<Team> | string>>;
+  let awards = await db.getDivisionAwards(new ObjectId(divisionId));
+  if (!awards) {
+    callback({ ok: false, error: `Error getting awards for division ${divisionId}!` });
+    return;
+  }
+  if (!Object.keys(body).every(awardName => awards.some(award => award.name === awardName))) {
+    callback({ ok: false, error: `Invalid award name provided!` });
+    return;
+  }
+  if (
+    !Object.entries(body).every(
+      ([awardName, winners]) => winners.length === awards.filter(a => a.name === awardName).length
+    )
+  ) {
+    callback({ ok: false, error: `Invalid number of winners!` });
+    return;
+  }
+
+  const newAwards = [];
+  Object.entries(body).forEach(([awardName, winners]) => {
+    const updatedAward = [...awards].filter(a => a.name === awardName);
+    updatedAward
+      .sort((a, b) => a.place - b.place)
+      .forEach((award, index) => newAwards.push({ ...award, winner: winners[index] }));
+  });
+
+  console.log(`🏆 Updating winners for awards in division ${divisionId}`);
+
+  await Promise.all(
+    newAwards.map(async (award: WithId<Award>) => {
+      if (!(await db.updateAward({ _id: award._id }, { winner: award.winner })).acknowledged)
+        return callback({ ok: false, error: `Error while updating awards!` });
+    })
+  );
+
+  callback({ ok: true });
+  awards = await db.getDivisionAwards(new ObjectId(divisionId));
+  namespace.to('judging').emit('awardsUpdated', awards);
+};
+
+export const handleAdvanceTeams = async (
+  namespace: any,
+  divisionId: string,
+  teams: Array<WithId<Team>>,
+  callback
+) => {
+  let awards = await db.getDivisionAwards(new ObjectId(divisionId));
+  if (!awards) {
+    callback({ ok: false, error: `Error getting awards for division ${divisionId}!` });
+    return;
+  }
+
+  const advancementAwards: Array<Award> = teams.map((team, index) => ({
+    divisionId: new ObjectId(divisionId),
+    name: 'advancement',
+    index: -1,
+    place: index + 1,
+    winner: team
+  }));
+
+  console.log(`🏆 Setting advancing teams for division ${divisionId}`);
+  await db.deleteAwards({ divisionId: new ObjectId(divisionId), name: 'advancement' });
+  await db.addAwards(advancementAwards);
+  callback({ ok: true });
+  awards = await db.getDivisionAwards(new ObjectId(divisionId));
+  namespace.to('judging').emit('awardsUpdated', awards);
 };
