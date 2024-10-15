@@ -68,7 +68,6 @@ export const useDeliberationState = (
 
     switch (action.type) {
       case 'REORDER': {
-        // console.log(source, destination);
         const copy = [...awards[destination.name]!];
         return updateAwards({ [destination.name]: reorder(copy, source.index, destination.index) });
       }

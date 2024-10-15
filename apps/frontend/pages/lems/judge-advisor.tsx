@@ -17,7 +17,8 @@ import {
   Rubric,
   CoreValuesForm,
   DivisionState,
-  JudgingDeliberation
+  JudgingDeliberation,
+  Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
@@ -43,6 +44,7 @@ interface Props {
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberations: Array<WithId<JudgingDeliberation>>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -54,7 +56,8 @@ const Page: NextPage<Props> = ({
   sessions: initialSessions,
   rubrics: initialRubrics,
   cvForms: initialCvForms,
-  deliberations: initialDeliberations
+  deliberations: initialDeliberations,
+  awards: initialAwards
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -64,6 +67,7 @@ const Page: NextPage<Props> = ({
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [deliberations, setDeliberations] =
     useState<Array<WithId<JudgingDeliberation>>>(initialDeliberations);
+  const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const openCVForms = useMemo(
@@ -76,6 +80,15 @@ const Page: NextPage<Props> = ({
       deliberations.map(d => {
         if (d._id === deliberation._id) return deliberation;
         return d;
+      })
+    );
+  };
+
+  const handleAwardsEvent = (award: WithId<Award>) => {
+    setAwards(awards =>
+      awards.map(a => {
+        if (a._id === award._id) return award;
+        return a;
       })
     );
   };
@@ -139,6 +152,7 @@ const Page: NextPage<Props> = ({
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
       { name: 'judgingDeliberationStatusChanged', handler: handleDeliberationEvent },
+      { name: 'awardsUpdated', handler: handleAwardsEvent },
       {
         name: 'cvFormCreated',
         handler: cvForm => {
@@ -243,7 +257,13 @@ const Page: NextPage<Props> = ({
               ))}
             </TabPanel>
             <TabPanel value="2">
-              <AwardsPanel division={division} deliberations={deliberations} />
+              <AwardsPanel
+                division={division}
+                teams={teams}
+                deliberations={deliberations}
+                awards={awards}
+                socket={socket}
+              />
             </TabPanel>
             <TabPanel value="3">
               <Grid container spacing={2}>
@@ -274,7 +294,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberations: `/api/divisions/${user.divisionId}/deliberations`
+        deliberations: `/api/divisions/${user.divisionId}/deliberations`,
+        awards: `/api/divisions/${user.divisionId}/awards`
       },
       ctx
     );

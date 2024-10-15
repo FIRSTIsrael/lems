@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Award, AwardNames, Team } from '@lems/types';
-import { Paper, Stack, Typography } from '@mui/material';
+import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
 import AwardList from '../award-list';
 import { localizeTeam } from 'apps/frontend/localization/teams';
@@ -26,6 +26,8 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
     'volunteer-of-the-year': voty,
     ...restAwards
   } = awardsByName;
+
+  const personalAwards = [leadMentor, voty];
 
   const awardsLoaded = Object.values(restAwards).every(
     winners => !!winners.every(w => typeof w.winner !== 'string' && w.winner?._id)
@@ -72,6 +74,13 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
               </Stack>
             </Grid>
           }
+          <Grid xs={12}>
+            <Stack direction="row" justifyContent="center">
+              <Button variant="contained" sx={{ width: 250 }}>
+                אישור הפרסים
+              </Button>
+            </Stack>
+          </Grid>
         </>
       )}
     </Grid>

@@ -9,20 +9,21 @@ import {
   DialogActions,
   ButtonProps
 } from '@mui/material';
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
 import { Team } from '@lems/types';
 import TeamSelection from '../general/team-selection';
+import { red } from '@mui/material/colors';
 
-interface ManualAdditionButtonProps extends ButtonProps {
-  additionalTeams: Array<WithId<Team>>;
-  onAddTeam: (team: WithId<Team>) => void;
-  disabled: boolean;
+interface DisqualificationButtonProps extends ButtonProps {
+  teams: Array<WithId<Team>>;
+  disqualifyTeam: (team: WithId<Team>) => void;
+  disabled?: boolean;
 }
 
-const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
-  additionalTeams,
-  onAddTeam,
-  disabled,
+const DisqualificationButton: React.FC<DisqualificationButtonProps> = ({
+  teams,
+  disqualifyTeam,
+  disabled = false,
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -33,11 +34,11 @@ const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
       <Button
         {...props}
         variant="contained"
-        endIcon={<AddCircleOutlineRoundedIcon />}
+        endIcon={<BlockRoundedIcon />}
         disabled={disabled}
         onClick={() => setOpen(true)}
       >
-        הוספת קבוצה
+        פסילת קבוצה
       </Button>
       <Dialog
         open={open}
@@ -47,17 +48,15 @@ const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
         aria-labelledby="add-team-dialog-title"
         aria-describedby="add-team-dialog-description"
       >
-        <DialogTitle id="add-team-dialog-title">הוספת מועמדות לקבוצה</DialogTitle>
+        <DialogTitle id="add-team-dialog-title" color={red[500]}>
+          אזהרה! פסילת קבוצה
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="add-team-description" mb={2}>
-            בחרו קבוצה להעמיד לדיון הפרסים.
+            בחרו קבוצה לפסול מדיוני הפרסים. שימו לב שפעולה זו לא ניתנת לביטול ותמנע מהקבוצה לזכות
+            בפרסים בתחרות זו.
           </DialogContentText>
-          <TeamSelection
-            teams={additionalTeams}
-            value={selectedTeam}
-            setTeam={setSelectedTeam}
-            fullWidth
-          />
+          <TeamSelection teams={teams} value={selectedTeam} setTeam={setSelectedTeam} fullWidth />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
@@ -67,7 +66,7 @@ const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
             disabled={!selectedTeam}
             onClick={() => {
               if (selectedTeam) {
-                onAddTeam(selectedTeam);
+                disqualifyTeam(selectedTeam);
                 setOpen(false);
                 setSelectedTeam(null);
               }
@@ -81,4 +80,4 @@ const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
   );
 };
 
-export default ManualAdditionButton;
+export default DisqualificationButton;

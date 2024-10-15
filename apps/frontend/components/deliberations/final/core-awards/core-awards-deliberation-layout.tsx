@@ -25,6 +25,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
     start,
     endStage,
     onAddTeam,
+    disqualifyTeam,
     selectedTeams
   } = useContext(DeliberationContext);
 
@@ -49,6 +50,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           anomalies={anomalies ?? []}
           selectedTeams={selectedTeams}
+          additionalTeams={deliberation.manualEligibility ?? []}
         />
       </Grid>
       <Grid xs={3}>
@@ -71,6 +73,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           allowManualTeamAddition
           additionalTeams={additionalTeams}
           onAddTeam={onAddTeam}
+          disqualifyTeam={disqualifyTeam}
           enableTrash
         />
       </Grid>

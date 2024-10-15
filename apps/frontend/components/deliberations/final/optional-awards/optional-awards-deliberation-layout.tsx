@@ -23,7 +23,8 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
     compareContextProps,
     start,
     endStage,
-    onAddTeam
+    onAddTeam,
+    disqualifyTeam
   } = useContext(DeliberationContext);
 
   const limits = CoreValuesAwardsTypes.reduce(
@@ -69,6 +70,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
           allowManualTeamAddition
           additionalTeams={additionalTeams}
           onAddTeam={onAddTeam}
+          disqualifyTeam={disqualifyTeam}
           enableTrash
         />
       </Grid>

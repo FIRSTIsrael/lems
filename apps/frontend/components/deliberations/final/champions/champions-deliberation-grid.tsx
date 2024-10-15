@@ -78,7 +78,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     },
     {
       field: 'totalRank',
-      headerName: 'דירוג',
+      headerName: 'ממוצע דירוג',
       cellClassName: 'total-cell',
       ...defaultColumnSettings
     },
@@ -87,7 +87,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       headerName: 'חריגות',
       headerAlign: 'center',
       align: 'center',
-      width: 90,
+      width: 100,
       sortable: false,
       filterable: false,
       renderCell: params => {

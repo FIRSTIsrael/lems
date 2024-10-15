@@ -76,7 +76,11 @@ const Page: NextPage<Props> = ({
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
 
-  const checkChampionsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+  const checkChampionsElegibility = (
+    team: WithId<Team>,
+    teams: Array<DeliberationTeam>,
+    disqualifications: Array<ObjectId>
+  ) => {
     const advancingTeams = Math.round(teams.length * ADVANCEMENT_PERCENTAGE);
     const shouldBeElegibile = teams
       .sort((a, b) => {
@@ -87,6 +91,7 @@ const Page: NextPage<Props> = ({
         place = b.number - a.number; // Tiebreaker 2 - Team Number
         return place;
       })
+      .filter(t => !disqualifications.includes(t._id))
       .slice(0, advancingTeams + 1);
     return !!shouldBeElegibile.find(t => t._id === team._id);
   };
@@ -194,7 +199,7 @@ const Page: NextPage<Props> = ({
       'updateJudgingDeliberation',
       division._id.toString(),
       deliberation._id.toString(),
-      { status: 'not-started', stage: nextStage as FinalDeliberationStage },
+      { status: 'not-started', stage: nextStage as FinalDeliberationStage, manualEligibility: [] },
       response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });

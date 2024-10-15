@@ -26,16 +26,16 @@ interface CoreAwardsDeliberationGridProps {
   teams: Array<DeliberationTeam>;
   anomalies: Array<DeliberationAnomaly>;
   selectedTeams: Array<ObjectId>;
+  additionalTeams: Array<ObjectId>;
 }
 
 const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
   categoryRanks,
   teams,
   anomalies,
-  selectedTeams
+  selectedTeams,
+  additionalTeams
 }) => {
-  const tableLength = PRELIMINARY_DELIBERATION_PICKLIST_LENGTH;
-
   const categoryPicklists: Record<
     JudgingCategory,
     Array<DeliberationTeam>
@@ -48,6 +48,8 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
     }),
     {} as Record<JudgingCategory, Array<DeliberationTeam>>
   );
+
+  const tableLength = Math.max(...Object.values(categoryPicklists).map(list => list.length));
 
   return (
     <TableContainer component={Paper} sx={{ width: '100%', height: '100%' }}>
@@ -64,7 +66,7 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
           {[...Array(tableLength).keys()].map(i => (
             <TableRow key={i}>
               <TableCell align="center" component="th" scope="row">
-                {i + 1}
+                <Typography>{i + 1}</Typography>
               </TableCell>
               {JudgingCategoryTypes.map(category => {
                 const team = categoryPicklists[category][i];
@@ -82,13 +84,11 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
                       <Typography>{team.number}</Typography>
                       <Typography fontSize="0.8rem">({team.scores[category]})</Typography>
-                      <Stack direction="row">
-                        {anomalies
-                          .filter(a => a.teamId === team._id && a.category === category)
-                          .map((a, index) => (
-                            <AnomalyIcon anomaly={a} key={index} />
-                          ))}
-                      </Stack>
+                      {anomalies
+                        .filter(a => a.teamId === team._id && a.category === category)
+                        .map((a, index) => (
+                          <AnomalyIcon anomaly={a} key={index} />
+                        ))}
                     </Stack>
                   </TableCell>
                 ) : (
@@ -97,6 +97,36 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
               })}
             </TableRow>
           ))}
+
+          {additionalTeams.length > 0 && (
+            <>
+              <TableRow>
+                <TableCell colSpan={4} sx={{ backgroundColor: '#666', height: 3, p: 0 }} />
+              </TableRow>
+              {additionalTeams.map((teamId, index) => {
+                const team = teams.find(t => t._id === teamId)!;
+                return (
+                  <TableRow key={'added-' + index}>
+                    <TableCell>
+                      <Typography align="center">{team.number}</Typography>
+                    </TableCell>
+                    {JudgingCategoryTypes.map(category => (
+                      <TableCell key={'addedscore-' + category}>
+                        <Stack direction="row" justifyContent="center" spacing={1}>
+                          <Typography>{team.scores[category]}</Typography>
+                          {anomalies
+                            .filter(a => a.teamId === team._id && a.category === category)
+                            .map((a, index) => (
+                              <AnomalyIcon anomaly={a} key={index} />
+                            ))}
+                        </Stack>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

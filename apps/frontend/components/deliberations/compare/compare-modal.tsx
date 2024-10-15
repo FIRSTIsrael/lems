@@ -35,7 +35,7 @@ const CompareModal: React.FC<CompareModalProps> = props => {
         <LinearProgress
           variant="determinate"
           value={time <= 0 ? 100 : (time / TIMER_LENGTH_SECONDS) * 100}
-          color={time === 0 ? 'error' : 'primary'}
+          color={time <= 0 ? 'error' : 'primary'}
           sx={{
             height: 16,
             borderTopLeftRadius: 8,

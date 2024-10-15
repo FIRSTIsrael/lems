@@ -53,6 +53,7 @@ export interface DeliberationContextType {
     picklist: Array<ObjectId>
   ) => Array<DeliberationAnomaly>;
   onAddTeam: (team: WithId<Team>) => void;
+  disqualifyTeam: (team: WithId<Team>) => void;
   endStage?: () => void;
 }
 
@@ -67,7 +68,11 @@ interface DeliberationProps {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   onChange: (value: Partial<JudgingDeliberation>) => void;
-  checkEligibility: (team: WithId<Team>, teams: Array<DeliberationTeam>) => boolean;
+  checkEligibility: (
+    team: WithId<Team>,
+    teams: Array<DeliberationTeam>,
+    disqualifications: Array<ObjectId>
+  ) => boolean;
   suggestTeam?: (
     teams: Array<DeliberationTeam>,
     category?: JudgingCategory
@@ -160,7 +165,8 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
 
     const { stage, status, state, ...actions } = useDeliberationState(initialState, {
       onStart,
-      onLock: lockWithAnomalies
+      onLock: lockWithAnomalies,
+      picklistLimits
     });
 
     useImperativeHandle(ref, () => ({ sync: actions.sync, stage, status }), [
@@ -226,7 +232,8 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
           .filter(
             team =>
               !ineligibleTeams.includes(team._id) &&
-              (checkEligibility(team, teams) || state.manualEligibility?.includes(team._id))
+              (checkEligibility(team, teams, state.disqualifications) ||
+                state.manualEligibility?.includes(team._id))
           )
           .map(team => team._id),
       [state.stage, awards, ineligibleTeams]
@@ -241,6 +248,20 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
     const onAddTeam = (team: WithId<Team>) => {
       const updatedAddtionalTeams = [...(state.manualEligibility || []), team._id];
       onChange({ manualEligibility: updatedAddtionalTeams });
+    };
+
+    const disqualifyTeam = (team: WithId<Team>) => {
+      const updatedDisqualification = [...(state.disqualifications || []), team._id];
+      const updatedAwards = Object.entries(state.awards).reduce(
+        (acc, [awardName, picklist]) => {
+          acc[awardName as AwardNames] = picklist.includes(team._id)
+            ? picklist.filter(id => id !== team._id)
+            : [...picklist];
+          return acc;
+        },
+        {} as { [key in AwardNames]: Array<ObjectId> }
+      );
+      onChange({ disqualifications: updatedDisqualification, awards: updatedAwards });
     };
 
     return (
@@ -271,6 +292,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             updateTeamAwards,
             calculateAnomalies,
             onAddTeam,
+            disqualifyTeam,
             compareContextProps: { cvForms, rubrics, scoresheets },
             picklistLimits,
             anomalies,

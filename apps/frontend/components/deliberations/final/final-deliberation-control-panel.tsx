@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import {
   Team,
   JudgingDeliberation,
@@ -8,38 +8,17 @@ import {
   CoreValuesForm,
   Rubric,
   FinalDeliberationStage,
-  FinalDeliberationStages,
-  AwardNames,
-  OptionalAwardTypes
+  FinalDeliberationStages
 } from '@lems/types';
-import {
-  Button,
-  Typography,
-  Stack,
-  Paper,
-  Divider,
-  Stepper,
-  Step,
-  StepLabel,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select
-} from '@mui/material';
-import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
+import { Button, Typography, Stack, Paper, Divider, Stepper, Step, StepLabel } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import DeliberationTimer from '../deliberation-timer';
 import TrashDroppable from '../trash-droppable';
 import TeamSelection from '../../general/team-selection';
 import CompareModal from '../compare/compare-modal';
 import EndDeliberationStageButton from './end-deliberation-stage-button';
-import { localizedAward } from '@lems/season';
 import ManualAdditionButton from '../manual-addition-button';
+import DisqualificationButton from '../disqualification-button';
 
 interface FinalDeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;
@@ -50,6 +29,7 @@ interface FinalDeliberationControlPanelProps {
   allowManualTeamAddition?: boolean;
   additionalTeams?: Array<WithId<Team>>;
   onAddTeam?: (team: WithId<Team>) => void;
+  disqualifyTeam?: (team: WithId<Team>) => void;
   enableTrash?: boolean;
   compareProps: {
     cvForms: Array<WithId<CoreValuesForm>>;
@@ -74,6 +54,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   allowManualTeamAddition = false,
   additionalTeams,
   onAddTeam,
+  disqualifyTeam,
   enableTrash = false,
   compareProps: { cvForms, rubrics, scoresheets }
 }) => {
@@ -105,11 +86,17 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
               additionalTeams={additionalTeams}
               onAddTeam={onAddTeam}
               disabled={deliberation.status !== 'in-progress'}
+              fullWidth
             />
           )}
-          <Button variant="contained" fullWidth endIcon={<BlockRoundedIcon />}>
-            פסילת קבוצה
-          </Button>
+          {disqualifyTeam && (
+            <DisqualificationButton
+              teams={teams}
+              disqualifyTeam={disqualifyTeam}
+              disabled={deliberation.status !== 'in-progress'}
+              fullWidth
+            />
+          )}
           <EndDeliberationStageButton
             deliberation={deliberation}
             stageName={localizedStages[deliberation.stage ?? 'champions']}

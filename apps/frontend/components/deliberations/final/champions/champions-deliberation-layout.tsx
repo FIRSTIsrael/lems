@@ -19,7 +19,8 @@ const ChampionsDeliberationLayout: React.FC = () => {
     compareContextProps,
     anomalies,
     start,
-    endStage
+    endStage,
+    disqualifyTeam
   } = useContext(DeliberationContext);
 
   const places = picklistLimits['champions'] ?? AwardLimits['champions']!;
@@ -42,6 +43,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
           deliberation={deliberation}
           nextStageUnlocked={deliberation.awards['champions']?.length === places}
           startDeliberation={start}
+          disqualifyTeam={disqualifyTeam}
           endDeliberationStage={endStage ?? (() => {})}
           compareProps={compareContextProps}
         />

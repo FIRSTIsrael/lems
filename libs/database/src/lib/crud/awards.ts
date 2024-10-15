@@ -22,8 +22,12 @@ export const updateAward = (filter: Filter<Award>, newAward: Partial<Award>, ups
   return db.collection<Award>('awards').updateOne(filter, { $set: newAward }, { upsert });
 };
 
-export const deleteAwards = (filter: Filter<Award>) => {
+export const deleteAward = (filter: Filter<Award>) => {
   return db.collection<Award>('awards').deleteOne(filter);
+};
+
+export const deleteAwards = (filter: Filter<Award>) => {
+  return db.collection<Award>('awards').deleteMany(filter);
 };
 
 export const deleteDivisionAwards = (divisionId: ObjectId) => {
