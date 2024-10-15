@@ -27,7 +27,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
     ...restAwards
   } = awardsByName;
 
-  const personalAwards = [leadMentor, voty];
+  const personalAwards = { 'lead-mentor': leadMentor, 'volunteer-of-the-year': voty };
 
   const awardsLoaded = Object.values(restAwards).every(
     winners => !!winners.every(w => typeof w.winner !== 'string' && w.winner?._id)
@@ -74,6 +74,19 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
               </Stack>
             </Grid>
           }
+          {personalAwards &&
+            Object.entries(personalAwards).map(([title, awards]) => (
+              <Grid xs={3} key={title}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography fontSize="1.5rem" fontWeight={600}>
+                    {localizedAward[title as AwardNames].name}
+                  </Typography>
+                  {awards.map(a => (
+                    <Typography>{String(a.winner)}</Typography>
+                  ))}
+                </Paper>
+              </Grid>
+            ))}
           <Grid xs={12}>
             <Stack direction="row" justifyContent="center">
               <Button variant="contained" sx={{ width: 250 }}>

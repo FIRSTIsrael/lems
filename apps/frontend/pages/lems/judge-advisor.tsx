@@ -84,15 +84,6 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleAwardsEvent = (award: WithId<Award>) => {
-    setAwards(awards =>
-      awards.map(a => {
-        if (a._id === award._id) return award;
-        return a;
-      })
-    );
-  };
-
   const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
       sessions.map(s => {
@@ -152,7 +143,7 @@ const Page: NextPage<Props> = ({
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
       { name: 'judgingDeliberationStatusChanged', handler: handleDeliberationEvent },
-      { name: 'awardsUpdated', handler: handleAwardsEvent },
+      { name: 'awardsUpdated', handler: setAwards },
       {
         name: 'cvFormCreated',
         handler: cvForm => {

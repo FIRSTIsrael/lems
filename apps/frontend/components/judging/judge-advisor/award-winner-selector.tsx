@@ -14,13 +14,13 @@ interface AwardWinnerSelectorProps {
 }
 
 const AwardWinnerSelector: React.FC<AwardWinnerSelectorProps> = ({ award, socket }) => {
-  const [winner, setWinner] = useState('');
+  const [winner, setWinner] = useState(award.winner ?? '');
 
   const updateAward = () => {
     socket.emit(
       'updateAwardWinners',
       award.divisionId.toString(),
-      { [award.name]: winner },
+      { [award.name]: [winner] },
       response => {
         if (!response.ok) {
           enqueueSnackbar('אופס, לא הצלחנו לעדכן את הפרס.', {
