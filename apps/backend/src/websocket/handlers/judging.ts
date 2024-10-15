@@ -392,3 +392,48 @@ export const handleAdvanceTeams = async (
   awards = await db.getDivisionAwards(new ObjectId(divisionId));
   namespace.to('judging').emit('awardsUpdated', awards);
 };
+
+export const handleDisqualifyTeam = async (
+  namespace: any,
+  divisionId: string,
+  teamId: string,
+  callback
+) => {
+  let team = await db.getTeam({ divisionId: new ObjectId(divisionId), _id: new ObjectId(teamId) });
+  if (!team) {
+    callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
+    return;
+  }
+
+  console.log(team);
+
+  console.log(`🚫 Disqualifying team ${teamId} in division ${divisionId}`);
+  const deliberations = await db.getJudgingDeliberationsFromDivision(new ObjectId(divisionId));
+  for (const deliberation of deliberations) {
+    if (deliberation.status === 'completed') continue;
+    const updatedDisqualification = [...(deliberation.disqualifications || []), team._id];
+    const updatedAwards = Object.entries(deliberation.awards).reduce(
+      (acc, [awardName, picklist]) => {
+        const _picklist = picklist as unknown as Array<string>;
+        acc[awardName as AwardNames] = _picklist.includes(teamId)
+          ? picklist.filter(id => String(id) !== teamId)
+          : [...picklist];
+        return acc;
+      },
+      {} as { [key in AwardNames]: Array<ObjectId> }
+    );
+
+    const result = await db.updateJudgingDeliberation(
+      { _id: deliberation._id },
+      { disqualifications: updatedDisqualification, awards: updatedAwards }
+    );
+    if (!result.acknowledged) {
+      callback({ ok: false, error: `Error while updating deliberation ${deliberation._id}!` });
+      return;
+    }
+    const newDeliberation = await db.getJudgingDeliberation({ _id: deliberation._id });
+    namespace.to('judging').emit('judgingDeliberationUpdated', newDeliberation);
+  }
+
+  callback({ ok: true });
+};

@@ -18,7 +18,8 @@ import {
   handleUpdateCvForm,
   handleCallLeadJudge,
   handleAdvanceTeams,
-  handleUpdateAwardWinners
+  handleUpdateAwardWinners,
+  handleDisqualifyTeam
 } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
@@ -63,6 +64,8 @@ const websocket = (
   socket.on('completeJudgingDeliberation', (...args) =>
     handleCompleteDeliberation(namespace, ...args)
   );
+
+  socket.on('disqualifyTeam', (...args) => handleDisqualifyTeam(namespace, ...args));
 
   socket.on('updateAwardWinners', (...args) => handleUpdateAwardWinners(namespace, ...args));
 

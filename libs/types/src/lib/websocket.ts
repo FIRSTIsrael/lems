@@ -136,6 +136,12 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  disqualifyTeam: (
+    divisionId: string,
+    teamId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   advanceTeams: (
     divisionId: string,
     teams: Array<WithId<Team>>,

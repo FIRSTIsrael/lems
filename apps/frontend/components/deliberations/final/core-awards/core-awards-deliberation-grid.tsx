@@ -106,23 +106,25 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
               {additionalTeams.map((teamId, index) => {
                 const team = teams.find(t => t._id === teamId)!;
                 return (
-                  <TableRow key={'added-' + index}>
-                    <TableCell>
-                      <Typography align="center">{team.number}</Typography>
-                    </TableCell>
-                    {JudgingCategoryTypes.map(category => (
-                      <TableCell key={'addedscore-' + category}>
-                        <Stack direction="row" justifyContent="center" spacing={1}>
-                          <Typography>{team.scores[category]}</Typography>
-                          {anomalies
-                            .filter(a => a.teamId === team._id && a.category === category)
-                            .map((a, index) => (
-                              <AnomalyIcon anomaly={a} key={index} />
-                            ))}
-                        </Stack>
+                  !!team && (
+                    <TableRow key={'added-' + index}>
+                      <TableCell>
+                        <Typography align="center">{team.number}</Typography>
                       </TableCell>
-                    ))}
-                  </TableRow>
+                      {JudgingCategoryTypes.map(category => (
+                        <TableCell key={'addedscore-' + category}>
+                          <Stack direction="row" justifyContent="center" spacing={1}>
+                            <Typography>{team.scores[category]}</Typography>
+                            {anomalies
+                              .filter(a => a.teamId === team._id && a.category === category)
+                              .map((a, index) => (
+                                <AnomalyIcon anomaly={a} key={index} />
+                              ))}
+                          </Stack>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
                 );
               })}
             </>

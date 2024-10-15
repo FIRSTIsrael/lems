@@ -33,31 +33,11 @@ const AwardsPaper: React.FC<AwardsPaperProps> = ({
   socket
 }) => {
   const disqualifyTeam = (team: WithId<Team>) => {
-    for (const deliberation of deliberations) {
-      if (deliberation.status === 'completed') continue;
-      const updatedDisqualification = [...(deliberation.disqualifications || []), team._id];
-      const updatedAwards = Object.entries(deliberation.awards).reduce(
-        (acc, [awardName, picklist]) => {
-          acc[awardName as AwardNames] = picklist.includes(team._id)
-            ? picklist.filter(id => id !== team._id)
-            : [...picklist];
-          return acc;
-        },
-        {} as { [key in AwardNames]: Array<ObjectId> }
-      );
-
-      socket.emit(
-        'updateJudgingDeliberation',
-        division._id.toString(),
-        deliberation._id.toString(),
-        { disqualifications: updatedDisqualification, awards: updatedAwards },
-        response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
-          }
-        }
-      );
-    }
+    socket.emit('disqualifyTeam', division._id.toString(), team._id.toString(), response => {
+      if (!response.ok) {
+        enqueueSnackbar('לא הצלחנו לפסול את הקבוצה.', { variant: 'error' });
+      }
+    });
   };
 
   return (
@@ -94,7 +74,7 @@ const AwardsPaper: React.FC<AwardsPaperProps> = ({
           sx={{ width: 200 }}
         />
         {awards
-          .filter(award => PersonalAwardTypes.includes(award.name))
+          .filter(award => PersonalAwardTypes.includes(award.name as any)) // Have to cast to any since AwardNames is more general than PersonalAwardTypes
           .map(award => (
             <AwardWinnerSelector key={award._id.toString()} award={award} socket={socket} />
           ))}

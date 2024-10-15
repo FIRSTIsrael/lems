@@ -251,6 +251,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
     };
 
     const disqualifyTeam = (team: WithId<Team>) => {
+      if (!state.isFinalDeliberation) return; // DQs for category deliberations are handled by the JA UI
       const updatedDisqualification = [...(state.disqualifications || []), team._id];
       const updatedAwards = Object.entries(state.awards).reduce(
         (acc, [awardName, picklist]) => {
