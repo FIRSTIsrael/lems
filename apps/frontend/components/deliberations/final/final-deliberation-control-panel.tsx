@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import {
   Team,
   JudgingDeliberation,
@@ -8,17 +8,38 @@ import {
   CoreValuesForm,
   Rubric,
   FinalDeliberationStage,
-  FinalDeliberationStages
+  FinalDeliberationStages,
+  AwardNames,
+  OptionalAwardTypes
 } from '@lems/types';
-import { Button, Typography, Stack, Paper, Divider, Stepper, Step, StepLabel } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Stack,
+  Paper,
+  Divider,
+  Stepper,
+  Step,
+  StepLabel,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select
+} from '@mui/material';
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import DeliberationTimer from '../deliberation-timer';
 import TrashDroppable from '../trash-droppable';
 import TeamSelection from '../../general/team-selection';
 import CompareModal from '../compare/compare-modal';
 import EndDeliberationStageButton from './end-deliberation-stage-button';
+import { localizedAward } from '@lems/season';
+import ManualAdditionButton from '../manual-addition-button';
 
 interface FinalDeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;
@@ -51,7 +72,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   endDeliberationStage,
   nextStageUnlocked,
   allowManualTeamAddition = false,
-  additionalTeams = [],
+  additionalTeams,
   onAddTeam,
   enableTrash = false,
   compareProps: { cvForms, rubrics, scoresheets }
@@ -79,11 +100,12 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
         />
         <Divider />
         <Stack spacing={2} direction="row" alignItems="center">
-          {allowManualTeamAddition && onAddTeam && (
-            <Button variant="contained" fullWidth endIcon={<AddCircleOutlineRoundedIcon />}>
-              הוספת קבוצה
-            </Button>
-            // TODO: actually add a team, using additionalTeams prop as the options
+          {allowManualTeamAddition && additionalTeams && onAddTeam && (
+            <ManualAdditionButton
+              additionalTeams={additionalTeams}
+              onAddTeam={onAddTeam}
+              disabled={deliberation.status !== 'in-progress'}
+            />
           )}
           <Button variant="contained" fullWidth endIcon={<BlockRoundedIcon />}>
             פסילת קבוצה

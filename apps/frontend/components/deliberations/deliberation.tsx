@@ -28,6 +28,7 @@ export interface DeliberationContextType {
   eligibleTeams: Array<ObjectId>;
   selectedTeams: Array<ObjectId>;
   availableTeams: Array<ObjectId>;
+  additionalTeams: Array<WithId<Team>>;
   suggestedTeam: DeliberationTeam | null;
   picklistLimits: { [key in AwardNames]?: number };
   anomalies?: Array<DeliberationAnomaly>;
@@ -51,6 +52,7 @@ export interface DeliberationContextType {
     category: JudgingCategory,
     picklist: Array<ObjectId>
   ) => Array<DeliberationAnomaly>;
+  onAddTeam: (team: WithId<Team>) => void;
   endStage?: () => void;
 }
 
@@ -221,13 +223,25 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
     const eligibleTeams = useMemo(
       () =>
         teams
-          .filter(team => !ineligibleTeams.includes(team._id) && checkEligibility(team, teams))
+          .filter(
+            team =>
+              !ineligibleTeams.includes(team._id) &&
+              (checkEligibility(team, teams) || state.manualEligibility?.includes(team._id))
+          )
           .map(team => team._id),
       [state.stage, awards, ineligibleTeams]
     );
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];
     const availableTeams = eligibleTeams.filter(teamId => !selectedTeams.includes(teamId));
+    const additionalTeams = teams.filter(
+      team => !(ineligibleTeams.includes(team._id) || eligibleTeams.includes(team._id))
+    );
+
+    const onAddTeam = (team: WithId<Team>) => {
+      const updatedAddtionalTeams = [...(state.manualEligibility || []), team._id];
+      onChange({ manualEligibility: updatedAddtionalTeams });
+    };
 
     return (
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -238,6 +252,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             eligibleTeams,
             selectedTeams,
             availableTeams,
+            additionalTeams,
             start: actions.start,
             lock: actions.lock,
             setPicklist: actions.replace,
@@ -255,6 +270,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
               : null,
             updateTeamAwards,
             calculateAnomalies,
+            onAddTeam,
             compareContextProps: { cvForms, rubrics, scoresheets },
             picklistLimits,
             anomalies,
