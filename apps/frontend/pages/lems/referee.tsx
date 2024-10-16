@@ -22,6 +22,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<Division>;
   divisionState: WithId<DivisionState>;
+  teams: Array<WithId<Team>>;
   table: WithId<RobotGameTable>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -30,12 +31,14 @@ const Page: NextPage<Props> = ({
   user,
   division,
   divisionState: initialDivisionState,
+  teams: initialTeams,
   table,
   matches: initialMatches
 }) => {
   const router = useRouter();
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>
@@ -57,6 +60,16 @@ const Page: NextPage<Props> = ({
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
+    setTeams(teams =>
+      teams.map(t => {
+        if (t._id == team._id) {
+          return team;
+        } else {
+          return t;
+        }
+      })
+    );
+
     setMatches(matches =>
       matches.map(m => {
         const teamIndex = m.participants
@@ -106,6 +119,7 @@ const Page: NextPage<Props> = ({
           division={division}
           divisionState={divisionState}
           table={table}
+          teams={teams}
           matches={matches}
           socket={socket}
         />
@@ -122,6 +136,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${user.divisionId}`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
+        teams: `/api/divisions/${user.divisionId}/teams`,
         table: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}`,
         matches: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}/matches`
       },
