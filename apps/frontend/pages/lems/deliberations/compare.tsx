@@ -86,7 +86,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
-        <Paper sx={{ mb: 2 }}>
+        <Paper sx={{ mb: 2, width: '100%', position: 'sticky', top: 70, zIndex: 10 }}>
           <Stack direction="row" p={2} my={2} alignItems="center" justifyContent="space-evenly">
             <Typography fontWeight={600} fontSize="1.5rem">
               השוואת קבוצות
@@ -135,6 +135,7 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
             color={time === 0 ? 'error' : 'primary'}
             sx={{
               height: 16,
+              width: '100%',
               borderBottomLeftRadius: 8,
               borderBottomRightRadius: 8,
               mt: -3
