@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
 import { blue, green, red, yellow } from '@mui/material/colors';
 import { Stack, Typography } from '@mui/material';
-import { rubricsSchemas } from '@lems/season';
+import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 
 interface CompareRubricScoresProps {
@@ -12,14 +12,9 @@ interface CompareRubricScoresProps {
 
 const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => {
   const { rubrics, category } = useContext(CompareContext);
+  const colors = { W: '#34c759', T: '#ffcc00', L: '#ff3b30' };
   let teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
   let competitorRubrics = rubrics.filter(r => r.teamId !== teamId);
-
-  const categoryColors = {
-    'robot-design': green[50],
-    'innovation-project': blue[50],
-    'core-values': red[50]
-  };
 
   if (category) {
     competitorRubrics = competitorRubrics.filter(r => r.category === category);
@@ -39,28 +34,34 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
       );
 
     return (
-      <Grid container mx={2} bgcolor={categoryColors[rubric.category]}>
-        {Object.entries(rubric.data?.values ?? {}).map(([clauseName, value]) => {
-          let color;
-          const highestScore = Math.max(
-            ...competitorRubrics.map(r => r.data?.values?.[clauseName]?.value ?? -1)
-          );
-          if (value.value > highestScore) {
-            color = green[700];
-          } else if (value.value < highestScore) {
-            color = red[700];
-          } else {
-            color = yellow[700];
-          }
+      <Grid container mx={2} pb={2}>
+        <Grid xs={3.5}>
+          <Typography fontWeight={600}>{localizedJudgingCategory[rubric.category].name}</Typography>
+        </Grid>
+        <Grid container xs={8.5}>
+          {Object.entries(rubric.data?.values ?? {}).map(([clauseName, value]) => {
+            let color;
+            const highestScore = Math.max(
+              ...competitorRubrics.map(r => r.data?.values?.[clauseName]?.value ?? -1)
+            );
+            if (value.value > highestScore) {
+              color = colors['W'];
+            } else if (value.value < highestScore) {
+              color = colors['L'];
+            } else {
+              color = colors['T'];
+            }
 
-          return (
-            <Grid xs={6} px={0.5}>
-              <Typography>
-                {localizationMap[clauseName]}: <span style={{ color: color }}>{value.value}</span>
-              </Typography>
-            </Grid>
-          );
-        })}
+            return (
+              <Grid xs={6} px={0.5}>
+                <Typography>
+                  {localizationMap[clauseName]}:{' '}
+                  <span style={{ color: color, fontWeight: 600 }}>{value.value}</span>
+                </Typography>
+              </Grid>
+            );
+          })}
+        </Grid>
       </Grid>
     );
   });

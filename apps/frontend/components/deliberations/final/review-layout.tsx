@@ -96,16 +96,18 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
             })}
           <Grid xs={12}>
             <Stack direction="row" justifyContent="center">
-              <Button
-                variant="contained"
-                sx={{ width: 250 }}
-                onClick={() => {
-                  onSubmit(deliberation);
-                  router.push('/lems/judge-advisor');
-                }}
-              >
-                אישור הפרסים
-              </Button>
+              {deliberation.status !== 'completed' && (
+                <Button
+                  variant="contained"
+                  sx={{ width: 250 }}
+                  onClick={() => {
+                    onSubmit(deliberation);
+                    router.push('/lems/judge-advisor');
+                  }}
+                >
+                  אישור הפרסים
+                </Button>
+              )}
             </Stack>
           </Grid>
         </>

@@ -15,7 +15,7 @@ interface CompareBatteryBoxProps {
 }
 
 const CompareBatteryBox: React.FC<CompareBatteryBoxProps> = ({ wtlValue, counts, percentages }) => {
-  const colors = { W: green[600], T: yellow[600], L: red[600] };
+  const colors = { W: '#34c759', T: '#ffcc00', L: '#ff3b30' };
   return (
     counts[wtlValue] > 0 && (
       <Box

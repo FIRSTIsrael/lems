@@ -35,13 +35,16 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
           }
           return (
             <Typography>
-              <span style={{ fontWeight: 500 }}>נימוק ל{localizationMap[key]}:</span> {value.notes}
+              <span style={{ fontWeight: 500 }}>{localizationMap[key]}:</span> "{value.notes}"
             </Typography>
           );
         });
 
         return (
-          <Stack>
+          <Stack pb={2}>
+            <Typography fontWeight={600}>
+              {localizedJudgingCategory[rubric.category].name}
+            </Typography>
             {!remarks.find(remark => !!remark) ? (
               <Typography>
                 לא נמצאו ציונים ״מצטיינים״ בתחום {localizedJudgingCategory[rubric.category].name}

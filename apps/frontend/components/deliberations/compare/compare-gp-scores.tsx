@@ -15,12 +15,12 @@ const CompareGpScores: React.FC<CompareGpScoresProps> = ({ teamId }) => {
     .sort((a, b) => a.round - b.round);
 
   return (
-    <Stack height={70} direction="row" px={2} spacing={2}>
+    <Stack height={65} direction="row" px={2} spacing={2} sx={{ overflowY: 'auto' }}>
       {gpScores.map(({ round, gp }) => (
         <Stack alignItems="center" width="100%" spacing={0.75}>
           <Typography>סבב {round}</Typography>
           <Stack direction="row" spacing={0.3}>
-            {[...Array(gp?.value ?? 0).keys()].map(i => (
+            {[...Array(gp?.value ?? 3).keys()].map(i => (
               <div
                 key={i}
                 style={{ height: 5, width: 5, backgroundColor: '#666', borderRadius: '50%' }}

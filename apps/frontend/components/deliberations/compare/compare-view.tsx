@@ -24,6 +24,7 @@ export interface CompareContextType {
 export const CompareContext = createContext<CompareContextType>(null as any);
 
 export interface CompareViewProps {
+  height?: number;
   compareTeamIds: Array<ObjectId>;
   category?: JudgingCategory;
   teams: Array<WithId<Team>>;
@@ -34,6 +35,7 @@ export interface CompareViewProps {
 }
 
 const CompareView: React.FC<CompareViewProps> = ({
+  height,
   compareTeamIds,
   teams,
   rubrics,
@@ -63,7 +65,7 @@ const CompareView: React.FC<CompareViewProps> = ({
         category
       }}
     >
-      <Grid container columnGap={4} justifyContent="center" height={800}>
+      <Grid container columnGap={4} justifyContent="center">
         {compareTeamIds.map(teamId => (
           <CompareViewTeam teamId={teamId} removeTeam={removeTeam} />
         ))}

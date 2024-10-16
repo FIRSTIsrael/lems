@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { IconButton, LinearProgress, Modal, Paper } from '@mui/material';
+import { IconButton, LinearProgress, Modal, Paper, Box } from '@mui/material';
 import CompareView, { CompareViewProps } from './compare-view';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import useCountdown from '../../../hooks/use-countdown';
@@ -29,7 +29,8 @@ const CompareModal: React.FC<CompareModalProps> = props => {
           px: 2,
           py: 3,
           width: '75%',
-          bgcolor: '#eaeaec'
+          bgcolor: '#eaeaec',
+          height: '80%'
         }}
       >
         <LinearProgress
@@ -48,7 +49,9 @@ const CompareModal: React.FC<CompareModalProps> = props => {
           <CloseRounded />
         </IconButton>
         <div style={{ marginBottom: 12 }} />
-        <CompareView {...compareViewProps} />
+        <Box sx={{ height: '100%', overflowY: 'auto' }}>
+          <CompareView {...compareViewProps} />
+        </Box>
       </Paper>
     </Modal>
   );
