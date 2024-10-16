@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { JudgingCategory, TicketType } from './constants';
+import { AwardNames, JudgingCategory, TicketType } from './constants';
 import {
   RobotGameMatch,
   RobotGameMatchBrief,
@@ -11,9 +11,11 @@ import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
 import { DivisionState, PresentationState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
+import { JudgingDeliberation } from './schemas/deliberation';
 import { CoreValuesForm } from './schemas/core-values-form';
 import { AudienceDisplayState } from './schemas/division-state';
 import { JudgingRoom } from './schemas/judging-room';
+import { Award } from './schemas/award';
 
 export type WSRoomName = 'judging' | 'field' | 'pit-admin' | 'audience-display';
 
@@ -31,6 +33,14 @@ export interface WSServerEmittedEvents {
   judgingSessionAborted: (session: JudgingSession) => void;
 
   judgingSessionUpdated: (session: JudgingSession) => void;
+
+  judgingDeliberationStarted: (deliberation: JudgingDeliberation) => void;
+
+  judgingDeliberationCompleted: (deliberation: JudgingDeliberation) => void;
+
+  judgingDeliberationUpdated: (deliberation: JudgingDeliberation) => void;
+
+  judgingDeliberationStatusChanged: (deliberation: JudgingDeliberation) => void;
 
   leadJudgeCalled: (room: JudgingRoom) => void;
 
@@ -67,6 +77,8 @@ export interface WSServerEmittedEvents {
   audienceDisplayUpdated: (divisionState: DivisionState) => void;
 
   presentationUpdated: (divisionState: DivisionState) => void;
+
+  awardsUpdated: (awards: Array<WithId<Award>>) => void;
 }
 
 export interface WSClientEmittedEvents {
@@ -95,6 +107,44 @@ export interface WSClientEmittedEvents {
     divisionId: string,
     sessionId: string,
     data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  startJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    data: Partial<JudgingDeliberation>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  completeJudgingDeliberation: (
+    divisionId: string,
+    deliberationId: string,
+    data: Partial<JudgingDeliberation>,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  updateAwardWinners: (
+    divisionId: string,
+    data: { [key in AwardNames]?: Array<WithId<Team> | string> },
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  disqualifyTeam: (
+    divisionId: string,
+    teamId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  advanceTeams: (
+    divisionId: string,
+    teams: Array<WithId<Team>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
-import PageIcon from '@mui/icons-material/DescriptionOutlined';
+import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
 import { Socket } from 'socket.io-client';
 import {
   Division,
@@ -93,7 +93,7 @@ const JudgingRoomScheduleRow = ({
               disabled={!team.profileDocumentUrl}
               color="primary"
             >
-              <PageIcon />
+              <ContactPageRoundedIcon />
             </IconButton>
           </span>
         </Tooltip>

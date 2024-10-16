@@ -35,21 +35,21 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
     },
     ref
   ) => {
-    const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
     const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
 
     useEffect(() => {
       apiFetch(`/api/divisions/${division._id}/awards`).then(res =>
         res.json().then(data => setAwards(data))
       );
-      apiFetch(`/api/divisions/${division._id}/teams`).then(res =>
-        res.json().then(data => setTeams(data))
-      );
     }, [division._id]);
 
-    const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
+    const advancingTeams = awards
+      .filter(award => award.name === 'advancement')
+      .map(award => award.winner) as Array<WithId<Team>>;
     const awardSlides = useMemo(() => {
-      const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
+      const awardIndices = [
+        ...new Set(awards.filter(award => award.index > 0).flatMap(a => a.index))
+      ].sort((a, b) => a - b);
 
       const slides = awardIndices.map(index => {
         const sortedAwards = awards

@@ -16,7 +16,7 @@ export const localizedOptionalAward: {
     description:
       'קבוצה שחבריה עשו התקדמות משמעותית ביכולותיהם ובביטחון העצמי שלהם והבינו שמה שהם מגלים חשוב יותר מהפרסים.'
   },
-  risingAllStar: {
+  'rising-all-star': {
     name: 'הכוכב העולה',
     description: 'קבוצה אשר תפסה את תשומת לב השופטים והם צופים לה הישגים גדולים בעתיד.'
   },

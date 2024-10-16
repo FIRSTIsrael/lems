@@ -8,7 +8,8 @@ import { getDivisionRubrics } from '../../../../lib/schedule/division-rubrics';
 import {
   parseDivisionData,
   parseSessionsAndMatches,
-  getInitialDivisionState
+  getInitialDivisionState,
+  getDefaultDeliberations
 } from '../../../../lib/schedule/parser';
 import { getDivisionScoresheets } from '../../../../lib/schedule/division-scoresheets';
 import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
@@ -102,6 +103,14 @@ router.post(
         return;
       }
       console.log('✅ Generated division users');
+
+      console.log('📄 Generating deliberations');
+      const deliberations = getDefaultDeliberations(division);
+      if (!(await db.addJudgingDeliberations(deliberations)).acknowledged) {
+        res.status(500).json({ error: 'Could not create deliberations!' });
+        return;
+      }
+      console.log('✅ Generated deliberations');
 
       console.log('🔐 Creating division state');
       await db.addDivisionState(getInitialDivisionState(division));

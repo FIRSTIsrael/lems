@@ -15,9 +15,10 @@ import {
   Team,
   JudgingCategory,
   Rubric,
-  Award,
   CoreValuesForm,
-  DivisionState
+  DivisionState,
+  JudgingDeliberation,
+  Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
@@ -41,8 +42,9 @@ interface Props {
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
-  awards: Array<WithId<Award>>;
   cvForms: Array<WithId<CoreValuesForm>>;
+  deliberations: Array<WithId<JudgingDeliberation>>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -53,8 +55,9 @@ const Page: NextPage<Props> = ({
   teams: initialTeams,
   sessions: initialSessions,
   rubrics: initialRubrics,
-  awards,
-  cvForms: initialCvForms
+  cvForms: initialCvForms,
+  deliberations: initialDeliberations,
+  awards: initialAwards
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -62,6 +65,9 @@ const Page: NextPage<Props> = ({
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
+  const [deliberations, setDeliberations] =
+    useState<Array<WithId<JudgingDeliberation>>>(initialDeliberations);
+  const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const openCVForms = useMemo(
@@ -69,11 +75,14 @@ const Page: NextPage<Props> = ({
     [cvForms]
   );
 
-  awards.sort((a, b) => {
-    const diff = a.index - b.index;
-    if (diff !== 0) return diff;
-    return a.place - b.place;
-  });
+  const handleDeliberationEvent = (deliberation: WithId<JudgingDeliberation>) => {
+    setDeliberations(deliberations =>
+      deliberations.map(d => {
+        if (d._id === deliberation._id) return deliberation;
+        return d;
+      })
+    );
+  };
 
   const handleSessionEvent = (session: WithId<JudgingSession>) => {
     setSessions(sessions =>
@@ -133,6 +142,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
+      { name: 'judgingDeliberationStatusChanged', handler: handleDeliberationEvent },
+      { name: 'awardsUpdated', handler: setAwards },
       {
         name: 'cvFormCreated',
         handler: cvForm => {
@@ -190,7 +201,7 @@ const Page: NextPage<Props> = ({
                 centered
               >
                 <Tab label="שיפוט" value="1" />
-                <Tab label="ניהול" value="2" />
+                <Tab label="פרסים" value="2" />
                 <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="3" />
               </Tabs>
             </Paper>
@@ -238,10 +249,10 @@ const Page: NextPage<Props> = ({
             </TabPanel>
             <TabPanel value="2">
               <AwardsPanel
-                awards={awards}
                 division={division}
-                readOnly={divisionState.presentations['awards'].enabled}
                 teams={teams}
+                deliberations={deliberations}
+                awards={awards}
                 socket={socket}
               />
             </TabPanel>
@@ -273,8 +284,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics`,
-        awards: `/api/divisions/${user.divisionId}/awards`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
+        deliberations: `/api/divisions/${user.divisionId}/deliberations`,
+        awards: `/api/divisions/${user.divisionId}/awards`
       },
       ctx
     );

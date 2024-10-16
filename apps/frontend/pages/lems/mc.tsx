@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { WithId } from 'mongodb';
+import { W, WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
@@ -11,7 +11,8 @@ import {
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
-  Team
+  Team,
+  Award
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -30,6 +31,7 @@ interface Props {
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -38,13 +40,15 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  tables
+  tables,
+  awards: initialAwards
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
+  const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -81,7 +85,8 @@ const Page: NextPage<Props> = ({
     { name: 'matchCompleted', handler: handleMatchEvent },
     { name: 'matchUpdated', handler: handleMatchEvent },
     { name: 'audienceDisplayUpdated', handler: setDivisionState },
-    { name: 'presentationUpdated', handler: setDivisionState }
+    { name: 'presentationUpdated', handler: setDivisionState },
+    { name: 'awardsUpdated', handler: setAwards }
   ]);
 
   return (
@@ -120,7 +125,7 @@ const Page: NextPage<Props> = ({
           </TabPanel>
           <TabPanel value="2">
             {divisionState.presentations['awards']?.enabled ? (
-              <AwardsLineup division={division} />
+              <AwardsLineup division={division} awards={awards} />
             ) : (
               <AwardsNotReadyCard />
             )}
@@ -141,7 +146,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`,
-        tables: `/api/divisions/${user.divisionId}/tables`
+        tables: `/api/divisions/${user.divisionId}/tables`,
+        awards: `/api/divisions/${user.divisionId}/awards`
       },
       ctx
     );

@@ -13,9 +13,12 @@ router.get(
     const schema = Object.fromEntries(AwardNameTypes.map(a => [a, undefined]));
 
     awards.forEach(award => {
-      let count = schema[award.name]?.count;
-      if (!count || count < award.place) count = award.place;
-      schema[award.name] = { index: award.index, count };
+      if (award.index >= 0) {
+        // Non-display awards get index -1
+        let count = schema[award.name]?.count;
+        if (!count || count < award.place) count = award.place;
+        schema[award.name] = { index: award.index, count };
+      }
     });
 
     res.json(schema);
@@ -26,7 +29,9 @@ router.post(
   '/schema',
   asyncHandler(async (req: Request, res: Response) => {
     const schema: AwardSchema = req.body;
-    const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
+    const awards = (await db.getDivisionAwards(new ObjectId(req.params.divisionId))).filter(
+      award => award.index >= 0
+    );
 
     await Promise.all(
       Object.entries(schema).map(([name, { index: awardIndex, count: totalAwardPlaces }]) => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
@@ -17,24 +17,25 @@ import {
 import { blue, green, red } from '@mui/material/colors';
 
 interface ScoresPerRoomChartProps {
-  division: WithId<Division>;
+  divisionId: ObjectId;
+  height?: number;
 }
 
-const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ division }) => {
+const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ divisionId, height = 300 }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/divisions/${division._id}/insights/judging/scores/rooms`).then(res =>
+    apiFetch(`/api/divisions/${divisionId}/insights/judging/scores/rooms`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [division._id]);
+  }, [divisionId]);
 
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>
       <Typography textAlign="center" fontSize="1.25rem" component="h2">
         ניקוד לפי חדר
       </Typography>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={height}>
         {data.length > 0 ? (
           <ComposedChart
             data={data}

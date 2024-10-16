@@ -47,7 +47,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ div
         <JudgingRoomDelayChart division={division} />
       </Grid>
       <Grid xs={12}>
-        <ScoresPerRoomChart division={division} />
+        <ScoresPerRoomChart divisionId={division._id} />
       </Grid>
       <Grid xs={12}>
         <RobotCorrelationChart division={division} />
