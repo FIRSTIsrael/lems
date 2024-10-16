@@ -13,9 +13,12 @@ router.get(
     const schema = Object.fromEntries(AwardNameTypes.map(a => [a, undefined]));
 
     awards.forEach(award => {
-      let count = schema[award.name]?.count;
-      if (!count || count < award.place) count = award.place;
-      schema[award.name] = { index: award.index, count };
+      if (award.index >= 0) {
+        // Non-display awards get index -1
+        let count = schema[award.name]?.count;
+        if (!count || count < award.place) count = award.place;
+        schema[award.name] = { index: award.index, count };
+      }
     });
 
     res.json(schema);
