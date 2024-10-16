@@ -83,6 +83,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                       place={sortedAwards.length > 1 ? award.place : undefined}
                       winner={award.winner || ''}
                       color={division.color}
+                      hideWinner={awardWinnerSlideStyle === 'full'}
                     />
                   )}
                 </React.Fragment>
