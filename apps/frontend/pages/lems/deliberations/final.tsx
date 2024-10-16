@@ -222,6 +222,19 @@ const Page: NextPage<Props> = ({
         }
       }
     );
+    socket.emit(
+      'updatePresentation',
+      division._id.toString(),
+      'awards',
+      { enabled: true },
+      response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+            variant: 'error'
+          });
+        }
+      }
+    );
   };
 
   const updateAwardWinners = (awards: { [key in AwardNames]?: Array<DeliberationTeam> }) => {
@@ -381,7 +394,7 @@ const Page: NextPage<Props> = ({
           {currentStage === 'champions' && <ChampionsDeliberationLayout />}
           {currentStage === 'core-awards' && <CoreAwardsDeliberationLayout />}
           {currentStage === 'optional-awards' && <OptionalAwardsDeliberationLayout />}
-          {currentStage === 'review' && <ReviewLayout awards={awards} />}
+          {currentStage === 'review' && <ReviewLayout awards={awards} onSubmit={sendLockEvent} />}
         </Deliberation>
       </Layout>
     </RoleAuthorizer>

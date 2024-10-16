@@ -1,17 +1,24 @@
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Award, AwardNames, Team } from '@lems/types';
+import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
 import AwardList from '../award-list';
 import { localizeTeam } from 'apps/frontend/localization/teams';
 import PersonalAwardWinnerList from './personal-award-winner-list';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import { DeliberationContext } from '../deliberation';
 
 interface ReviewLayoutProps {
   awards: Array<WithId<Award>>;
+  onSubmit: (deliberation: WithId<JudgingDeliberation>) => void;
 }
 
-const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
+const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
+  const router = useRouter();
+  const { deliberation } = useContext(DeliberationContext);
+
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
@@ -89,7 +96,14 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
             })}
           <Grid xs={12}>
             <Stack direction="row" justifyContent="center">
-              <Button variant="contained" sx={{ width: 250 }}>
+              <Button
+                variant="contained"
+                sx={{ width: 250 }}
+                onClick={() => {
+                  onSubmit(deliberation);
+                  router.push('/lems/judge-advisor');
+                }}
+              >
                 אישור הפרסים
               </Button>
             </Stack>
