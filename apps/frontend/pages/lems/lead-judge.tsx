@@ -214,7 +214,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics/${category}`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/${category}`
+        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`
       },
       ctx
     );
