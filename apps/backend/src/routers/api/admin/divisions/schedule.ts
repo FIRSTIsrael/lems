@@ -107,7 +107,7 @@ router.post(
       console.log('📄 Generating deliberations');
       const deliberations = getDefaultDeliberations(division);
       if (!(await db.addJudgingDeliberations(deliberations)).acknowledged) {
-        res.status(500).json({ error: 'Could not create users!' });
+        res.status(500).json({ error: 'Could not create deliberations!' });
         return;
       }
       console.log('✅ Generated deliberations');
