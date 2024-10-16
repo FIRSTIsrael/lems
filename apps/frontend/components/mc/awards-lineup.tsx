@@ -11,44 +11,39 @@ import { localizeTeam } from '../../localization/teams';
 
 interface AwardsLineupProps {
   division: WithId<Division>;
+  awards: Array<WithId<Award>>;
 }
 
-const AwardsLineup: React.FC<AwardsLineupProps> = ({ division }) => {
-  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
-  const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
-
+const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
   const getAwardIndexFromQuery = () => {
     const searchParams = new URLSearchParams(window.location.search);
     return searchParams.get('awardIndex') === null
       ? 0
       : parseInt(searchParams.get('awardIndex') as string);
   };
+
   const updateAwardIndexInUrl = (index: number) => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('awardIndex', index.toString());
     const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
     history.pushState(null, '', newRelativePathQuery);
   };
+
   const [currentAward, setCurrentAwardState] = useState(getAwardIndexFromQuery());
   const setCurrentAward = (index: number) => {
     updateAwardIndexInUrl(index);
     setCurrentAwardState(index);
   };
 
-  useEffect(() => {
-    apiFetch(`/api/divisions/${division._id}/awards`).then(res =>
-      res.json().then(data => setAwards(data))
-    );
-    apiFetch(`/api/divisions/${division._id}/teams`).then(res =>
-      res.json().then(data => setTeams(data))
-    );
-  }, [division._id]);
+  const advancingTeams: Array<WithId<Team>> = awards
+    .filter(a => a.name === 'advancement')
+    .map(a => a.winner)
+    .filter(winner => !!winner && typeof winner !== 'string');
 
-  // TODO: fix advancing teams to be from final deliberation
-  const advancingTeams: Array<WithId<Team>> = [];
-  // const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
   const lineup = useMemo(() => {
-    const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
+    const awardIndices = [...new Set(awards.filter(a => a.index >= 0).flatMap(a => a.index))].sort(
+      (a, b) => a - b
+    );
 
     const awardScripts = awardIndices.map(index => {
       const sortedAwards = awards.filter(a => a.index === index).sort((a, b) => b.place - a.place);
