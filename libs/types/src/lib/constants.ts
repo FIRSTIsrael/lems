@@ -34,6 +34,7 @@ export const DivisionSectionTypes = ['field', 'judging'];
 export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
 export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'] as const;
+export type PersonalAwards = (typeof PersonalAwardTypes)[number];
 
 export const OptionalAwardTypes = [
   'impact',

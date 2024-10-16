@@ -5,6 +5,7 @@ import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
 import AwardList from '../award-list';
 import { localizeTeam } from 'apps/frontend/localization/teams';
+import PersonalAwardWinnerList from './personal-award-winner-list';
 
 interface ReviewLayoutProps {
   awards: Array<WithId<Award>>;
@@ -60,7 +61,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
               </Grid>
             );
           })}
-          {
+          {advancement && advancement.length > 0 && (
             <Grid xs={4}>
               <Stack component={Paper} p={2} spacing={1}>
                 <Typography fontWeight={600} fontSize="1.5rem">
@@ -73,20 +74,19 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards }) => {
                 ))}
               </Stack>
             </Grid>
-          }
+          )}
           {personalAwards &&
-            Object.entries(personalAwards).map(([title, awards]) => (
-              <Grid xs={3} key={title}>
-                <Paper sx={{ p: 2 }}>
-                  <Typography fontSize="1.5rem" fontWeight={600}>
-                    {localizedAward[title as AwardNames].name}
-                  </Typography>
-                  {awards.map(a => (
-                    <Typography>{String(a.winner)}</Typography>
-                  ))}
-                </Paper>
-              </Grid>
-            ))}
+            Object.entries(personalAwards).map(([title, awards]) => {
+              if (!awards?.length || !awards?.every(a => typeof a.winner === 'string')) return null;
+              return (
+                <Grid xs={3} key={title}>
+                  <PersonalAwardWinnerList
+                    title={title as AwardNames}
+                    winners={awards.map(a => String(a.winner))}
+                  />
+                </Grid>
+              );
+            })}
           <Grid xs={12}>
             <Stack direction="row" justifyContent="center">
               <Button variant="contained" sx={{ width: 250 }}>

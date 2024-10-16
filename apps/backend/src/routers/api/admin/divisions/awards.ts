@@ -29,7 +29,9 @@ router.post(
   '/schema',
   asyncHandler(async (req: Request, res: Response) => {
     const schema: AwardSchema = req.body;
-    const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
+    const awards = (await db.getDivisionAwards(new ObjectId(req.params.divisionId))).filter(
+      award => award.index >= 0
+    );
 
     await Promise.all(
       Object.entries(schema).map(([name, { index: awardIndex, count: totalAwardPlaces }]) => {

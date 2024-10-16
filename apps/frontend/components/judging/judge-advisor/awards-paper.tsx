@@ -11,11 +11,12 @@ import {
   Team,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
-  AwardNames,
-  PersonalAwardTypes
+  PersonalAwardTypes,
+  PersonalAwards,
+  AwardNames
 } from '@lems/types';
 import DisqualificationButton from '../../deliberations/disqualification-button';
-import AwardWinnerSelector from './award-winner-selector';
+import PersonalAwardWinnerSelector from './personal-award-winner-selector';
 
 interface AwardsPaperProps {
   division: WithId<Division>;
@@ -39,6 +40,18 @@ const AwardsPaper: React.FC<AwardsPaperProps> = ({
       }
     });
   };
+
+  const personalAwards = awards
+    .filter(award => PersonalAwardTypes.includes(award.name as any))
+    .reduce(
+      (acc, award) => {
+        const name = award.name as PersonalAwards;
+        const copy = [...(acc[name] ?? []), award];
+        acc[name] = copy.sort((a, b) => a.place - b.place);
+        return acc;
+      },
+      {} as Record<PersonalAwards, Array<WithId<Award>>>
+    );
 
   return (
     <Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
@@ -73,11 +86,14 @@ const AwardsPaper: React.FC<AwardsPaperProps> = ({
           disqualifyTeam={disqualifyTeam}
           sx={{ width: 200 }}
         />
-        {awards
-          .filter(award => PersonalAwardTypes.includes(award.name as any)) // Have to cast to any since AwardNames is more general than PersonalAwardTypes
-          .map(award => (
-            <AwardWinnerSelector key={award._id.toString()} award={award} socket={socket} />
-          ))}
+        {Object.entries(personalAwards).map(([title, awards], index) => (
+          <PersonalAwardWinnerSelector
+            key={index}
+            title={title as AwardNames}
+            awards={awards}
+            socket={socket}
+          />
+        ))}
       </Stack>
     </Paper>
   );
