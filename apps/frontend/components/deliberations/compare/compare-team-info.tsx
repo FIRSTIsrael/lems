@@ -25,8 +25,8 @@ interface CompareTeamInfoProps {
 const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
   const { teams, rubrics, category } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
-  const teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
-  if (category) teamRubrics.filter(r => r.category === category);
+  let teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
+  if (category) teamRubrics = teamRubrics.filter(r => r.category === category);
 
   if (!team) return;
 
