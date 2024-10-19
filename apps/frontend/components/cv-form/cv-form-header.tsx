@@ -1,7 +1,7 @@
 import React from 'react';
 import { FastField, FieldProps, FormikValues } from 'formik';
 import { Typography, TextField } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import CVFormSubjectSelect from './cv-form-subject';
 
 interface CVFormHeaderProps {
@@ -12,25 +12,35 @@ interface CVFormHeaderProps {
 const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, readOnly }) => {
   return (
     <Grid container spacing={2} sx={{ my: 2 }}>
-      <Grid xs={12} md={5}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 5
+        }}
+      >
         <Typography variant="h2" sx={{ mb: 2 }}>
           טופס ערכי ליבה
         </Typography>
-        <Typography color="text.secondary" fontSize="0.875rem">
+        <Typography color="textSecondary" fontSize="0.875rem">
           טופס ערכי הליבה נועד על מנת לתעד עדויות של התרחשויות, בין אם הן טובות או לא, של קבוצות,
           תלמידים, מנטורים ומתנדבים ולשתפן עם השופט הראשי ומנהל האירוע.
         </Typography>
       </Grid>
-
-      <Grid container xs={12} md={6}>
+      <Grid
+        container
+        size={{
+          xs: 12,
+          md: 6
+        }}
+      >
         {['demonstrators', 'observers'].map(subjectType => (
           <React.Fragment key={subjectType}>
-            <Grid xs={12}>
+            <Grid size={12}>
               <Typography fontSize="0.875rem">
                 סמנו מי {subjectType === 'observers' ? 'היו עדים' : 'גרמו'} להתרחשות
               </Typography>
             </Grid>
-            <Grid xs={values[subjectType].includes('team') ? 6 : 12}>
+            <Grid size={values[subjectType].includes('team') ? 6 : 12}>
               <CVFormSubjectSelect
                 name={subjectType}
                 label={subjectType === 'observers' ? 'עדים' : 'גורמים'}
@@ -38,7 +48,7 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, readOnly }) => {
               />
             </Grid>
             {values[subjectType].includes('team') && (
-              <Grid xs={6} sx={{ display: 'flex' }}>
+              <Grid sx={{ display: 'flex' }} size={6}>
                 <FastField name={`${subjectType.slice(0, -1)}Affiliation`}>
                   {({ field, form }: FieldProps) => (
                     <TextField

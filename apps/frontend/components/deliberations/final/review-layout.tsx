@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
@@ -42,8 +42,8 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
   );
 
   return (
-    <Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
-      <Grid xs={12}>
+    (<Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
+      <Grid size={12}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="h2" textAlign="center">
             סיכום פרסים
@@ -55,7 +55,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
           {Object.keys(restAwards).map(award => {
             const _award = award as AwardNames;
             return (
-              <Grid key={award} xs={2}>
+              (<Grid key={award} size={2}>
                 <AwardList
                   title={`פרס ${localizedAward[_award].name}`}
                   length={awardsByName[_award].length}
@@ -65,11 +65,11 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
                   pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
                   id={_award}
                 />
-              </Grid>
+              </Grid>)
             );
           })}
           {advancement && advancement.length > 0 && (
-            <Grid xs={4}>
+            <Grid size={4}>
               <Stack component={Paper} p={2} spacing={1}>
                 <Typography fontWeight={600} fontSize="1.5rem">
                   קבוצות המעפילות שלב
@@ -86,15 +86,15 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
             Object.entries(personalAwards).map(([title, awards]) => {
               if (!awards?.length || !awards?.every(a => typeof a.winner === 'string')) return null;
               return (
-                <Grid xs={3} key={title}>
+                (<Grid key={title} size={3}>
                   <PersonalAwardWinnerList
                     title={title as AwardNames}
                     winners={awards.map(a => String(a.winner))}
                   />
-                </Grid>
+                </Grid>)
               );
             })}
-          <Grid xs={12}>
+          <Grid size={12}>
             <Stack direction="row" justifyContent="center">
               {deliberation.status !== 'completed' && (
                 <Button
@@ -112,7 +112,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
           </Grid>
         </>
       )}
-    </Grid>
+    </Grid>)
   );
 };
 

@@ -115,7 +115,13 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
       <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
         {localizeTeam(team)}
       </Typography>
-      <Typography variant="body1" fontSize="1rem" fontWeight={600} color="#666" gutterBottom>
+      <Typography
+        variant="body1"
+        fontSize="1rem"
+        fontWeight={600}
+        sx={{ color: '#666' }}
+        gutterBottom
+      >
         מפגש השיפוט יסתיים בשעה {sessionEnd.format('HH:mm')}
       </Typography>
     </Paper>

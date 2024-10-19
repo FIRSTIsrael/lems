@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { WithId } from 'mongodb';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Paper } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { Team } from '@lems/types';
 import { useDimensions } from '../../hooks/use-dimensions';
 
@@ -20,7 +20,7 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
   disabled = false
 }) => {
   return (
-    <Grid xs={1}>
+    (<Grid size={1}>
       <Draggable
         key={droppableId + ':' + team._id}
         draggableId={droppableId + ':' + team._id}
@@ -67,7 +67,7 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
           </div>
         )}
       </Draggable>
-    </Grid>
+    </Grid>)
   );
 };
 

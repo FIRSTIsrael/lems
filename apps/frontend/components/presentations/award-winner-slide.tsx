@@ -52,7 +52,7 @@ const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({
             boxShadow: color && `-10px 10px 12px ${color}74`
           }}
         >
-          <Typography fontSize="2.75rem" color="text.secondary">
+          <Typography fontSize="2.75rem" color="textSecondary">
             {isTeamAward ? 'מוענק לקבוצה' : 'מוענק ל'}
           </Typography>
           {hideWinner ? <Appear>{renderWinnerName()}</Appear> : renderWinnerName()}

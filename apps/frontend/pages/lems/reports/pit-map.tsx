@@ -66,7 +66,7 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
             <Typography fontSize="2.25rem" fontWeight={600}>
               אופס, לא נמצאה מפת פיטים לאירוע
             </Typography>
-            <Typography fontSize="1.5rem" color="text.secondary">
+            <Typography fontSize="1.5rem" color="textSecondary">
               נא לפנות למנהל המערכת.
             </Typography>
           </Stack>

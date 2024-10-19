@@ -17,8 +17,8 @@ const CompareNominations: React.FC<CompareNominationsProps> = ({ teamId }) => {
 
   return (
     <Stack direction="row">
-      {CoreValuesAwardsTypes.map(award => (
-        <Stack width="100%" alignItems="center">
+      {CoreValuesAwardsTypes.map((award, index) => (
+        <Stack width="100%" alignItems="center" key={index}>
           <Typography>{localizedAward[award].name}</Typography>
           {rubric?.data?.awards?.[award] ? (
             <CheckIcon sx={{ color: '#388e3c' }} />

@@ -5,7 +5,7 @@ import { enqueueSnackbar } from 'notistack';
 import { Box, Button, ButtonProps, TextField, Typography, Stack, Paper } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { FllEvent, Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
@@ -41,7 +41,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
   };
 
   return (
-    <Paper sx={{ p: 4 }}>
+    (<Paper sx={{ p: 4 }}>
       <Box
         component="form"
         onSubmit={e => {
@@ -54,7 +54,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
             פרטי האירוע
           </Typography>
           <Grid container spacing={2}>
-            <Grid xs={6}>
+            <Grid size={6}>
               <TextField
                 variant="outlined"
                 type="text"
@@ -64,7 +64,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
                 fullWidth
               />
             </Grid>
-            <Grid xs={6}>
+            <Grid size={6}>
               <ColorPickerButton
                 swatches={DivisionSwatches}
                 value={color}
@@ -73,7 +73,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
               />
             </Grid>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid xs={6}>
+              <Grid size={6}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך התחלה"
@@ -85,7 +85,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>
-              <Grid xs={6}>
+              <Grid size={6}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך סיום"
@@ -107,7 +107,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
           </Box>
         </Stack>
       </Box>
-    </Paper>
+    </Paper>)
   );
 };
 

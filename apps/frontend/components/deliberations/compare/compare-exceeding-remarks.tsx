@@ -18,7 +18,7 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
 
   return (
     <Stack px={2} height={192} sx={{ overflowY: 'auto' }}>
-      {teamRubrics.map(rubric => {
+      {teamRubrics.map((rubric, index) => {
         const schema = rubricsSchemas[rubric.category];
         const localizationMap = schema.sections
           .flatMap(section => section.fields)
@@ -29,19 +29,19 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
             },
             {} as Record<string, string>
           );
-        const remarks = Object.entries(rubric.data?.values ?? {}).map(([key, value]) => {
+        const remarks = Object.entries(rubric.data?.values ?? {}).map(([key, value], index) => {
           if (!value.notes) {
             return;
           }
           return (
-            <Typography>
+            <Typography key={index}>
               <span style={{ fontWeight: 500 }}>{localizationMap[key]}:</span> "{value.notes}"
             </Typography>
           );
         });
 
         return (
-          <Stack pb={2}>
+          <Stack pb={2} key={`rubric-${index}`}>
             <Typography fontWeight={600}>
               {localizedJudgingCategory[rubric.category].name}
             </Typography>

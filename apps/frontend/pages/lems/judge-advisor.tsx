@@ -5,7 +5,7 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   JudgingRoom,
@@ -168,7 +168,7 @@ const Page: NextPage<Props> = ({
   );
 
   return (
-    <RoleAuthorizer
+    (<RoleAuthorizer
       user={user}
       allowedRoles="judge-advisor"
       onFail={() => {
@@ -259,7 +259,7 @@ const Page: NextPage<Props> = ({
             <TabPanel value="3">
               <Grid container spacing={2}>
                 {cvForms.map(form => (
-                  <Grid xs={6} key={form._id.toString()}>
+                  <Grid key={form._id.toString()} size={6}>
                     <CVFormCard division={division} form={form} />
                   </Grid>
                 ))}
@@ -268,7 +268,7 @@ const Page: NextPage<Props> = ({
           </TabContext>
         </>
       </Layout>
-    </RoleAuthorizer>
+    </RoleAuthorizer>)
   );
 };
 

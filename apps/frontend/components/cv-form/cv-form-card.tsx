@@ -44,7 +44,7 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ division, form }) => {
           הוגש על ידי {form.completedBy.name} ({form.completedBy.affiliation}) טל.{' '}
           {form.completedBy.phone}
         </Typography>
-        <Typography fontSize="0.875rem" color="text.secondary">
+        <Typography fontSize="0.875rem" color="textSecondary">
           {form.details}
         </Typography>
       </CardContent>

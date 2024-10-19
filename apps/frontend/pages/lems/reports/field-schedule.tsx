@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { Division, Team, SafeUser, RoleTypes, RobotGameMatch, RobotGameTable } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -73,7 +73,12 @@ const Page: NextPage<Props> = ({
     }, {});
 
   const roundSchedules = Object.values(roundMatches).map(matches => (
-    <Grid xs={12} xl={6} key={matches[0].stage + matches[0].round}>
+    <Grid
+      key={matches[0].stage + matches[0].round}
+      size={{
+        xs: 12,
+        xl: 6
+      }}>
       <ReportRoundSchedule
         divisionSchedule={refereeGeneralSchedule}
         roundStage={matches[0].stage}

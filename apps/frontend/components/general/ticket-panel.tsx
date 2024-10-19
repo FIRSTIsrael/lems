@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
-import Grid from '@mui/material/Unstable_Grid2/';
+import Grid from '@mui/material/Grid2';
 import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TicketCard from './ticket-card';
 import { green } from '@mui/material/colors';

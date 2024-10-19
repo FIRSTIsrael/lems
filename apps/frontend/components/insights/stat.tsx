@@ -39,7 +39,7 @@ const Stat: React.FC<StatProps> = ({
     if (variant === 'header') {
       return (
         <Box p={1} textAlign="center" sx={{ backgroundColor: color }}>
-          <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
+          <Typography fontSize="1.5rem" fontWeight={700} sx={{ color: '#FFF' }}>
             {title}
           </Typography>
         </Box>

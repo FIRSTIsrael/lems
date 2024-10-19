@@ -61,7 +61,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               s.round === previousMatch?.round &&
               previousMatch?.participants.some(p => p.teamId === s.teamId)
           )}
-          xs={12}
+          size={12}
           px={4}
           py={2}
         />

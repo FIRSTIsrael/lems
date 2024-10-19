@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { Division, JudgingCategory, Rubric, SEASON_NAME, SafeUser, Team } from '@lems/types';
 import { serverSideGetRequests } from '../../../../lib/utils/fetch';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
   Box,
   Checkbox,
@@ -41,9 +41,9 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
   return (
     <>
       <Grid container>
-        <Grid xs={10}>
+        <Grid size={10}>
           <Stack justifyContent="space-between" height="100%">
-            <Typography fontSize="0.75rem" color="text.secondary">
+            <Typography fontSize="0.75rem" color="textSecondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({rubric._id.toString()}) |{' '}
               {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
@@ -52,20 +52,20 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
             </Typography>
           </Stack>
         </Grid>
-        <Grid xs={2}>
+        <Grid size={2}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="לוגו של תוכניות FIRST LEGO League Challenge"
             src="/assets/audience-display/sponsors/fllc-horizontal.svg"
           />
         </Grid>
-        <Grid xs={isCoreValues ? 4 : 12}>
+        <Grid size={isCoreValues ? 4 : 12}>
           <Typography fontSize="0.875rem">
             <Markdown>{schema.description}</Markdown>
           </Typography>
         </Grid>
         {isCoreValues && schema.awards && (
-          <Grid xs={8}>
+          <Grid size={8}>
             <Typography variant="body2" gutterBottom textAlign="center">
               אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
             </Typography>
@@ -109,7 +109,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
             ))}
           </Grid>
         )}
-        <Grid xs={12} mb={2}>
+        <Grid mb={2} size={12}>
           <Table
             sx={{
               tableLayout: 'fixed',
@@ -179,7 +179,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
                                   <Typography
                                     fontSize="0.75em"
                                     fontWeight={isCellSelected ? 700 : undefined}
-                                    color={!isCellSelected ? 'text.secondary' : ''}
+                                    color={!isCellSelected ? 'textSecondary' : ''}
                                   >
                                     <Markdown skipHtml>{label || ''}</Markdown>
                                   </Typography>
@@ -225,16 +225,16 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
             ))}
           </Table>
         </Grid>
-        <Grid xs={5.5}>
+        <Grid size={5.5}>
           <Stack spacing={1} textAlign="center">
             <Typography fontWeight={700}>{schema.feedback?.[0].title}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.greatJob}</Typography>
           </Stack>
         </Grid>
-        <Grid xs={1}>
+        <Grid size={1}>
           <Divider orientation="vertical" variant="middle" />
         </Grid>
-        <Grid xs={5.5}>
+        <Grid size={5.5}>
           <Stack spacing={1} textAlign="center">
             <Typography fontWeight={700}>{schema.feedback?.[1].title}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.thinkAbout}</Typography>

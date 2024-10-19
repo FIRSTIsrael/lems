@@ -1,8 +1,7 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
-import Grid from '@mui/material/Unstable_Grid2';
-import { blue, green, red, yellow } from '@mui/material/colors';
-import { Stack, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import { Typography } from '@mui/material';
 import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 
@@ -21,7 +20,7 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
     teamRubrics = teamRubrics.filter(r => r.category === category);
   }
 
-  return teamRubrics.map(rubric => {
+  return teamRubrics.map((rubric, index) => {
     const schema = rubricsSchemas[rubric.category];
     const localizationMap = schema.sections
       .flatMap(section => section.fields)
@@ -34,11 +33,11 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
       );
 
     return (
-      <Grid container mx={2} pb={2}>
-        <Grid xs={3.5}>
+      <Grid container mx={2} pb={2} key={index}>
+        <Grid size={3.5}>
           <Typography fontWeight={600}>{localizedJudgingCategory[rubric.category].name}</Typography>
         </Grid>
-        <Grid container xs={8.5}>
+        <Grid container size={8.5}>
           {Object.entries(rubric.data?.values ?? {}).map(([clauseName, value]) => {
             let color;
             const highestScore = Math.max(
@@ -53,7 +52,7 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
             }
 
             return (
-              <Grid xs={6} px={0.5}>
+              <Grid px={0.5} size={6} key={clauseName}>
                 <Typography>
                   {localizationMap[clauseName]}:{' '}
                   <span style={{ color: color, fontWeight: 600 }}>{value.value}</span>

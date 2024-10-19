@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
 import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -120,14 +120,14 @@ const AwardList: React.FC<AwardListProps> = ({
   ];
 
   return (
-    <Paper sx={{ p: 2, height: '100%', width: fullWidth ? '100%' : undefined }}>
+    (<Paper sx={{ p: 2, height: '100%', width: fullWidth ? '100%' : undefined }}>
       {title && (
         <Typography align="center" fontWeight={500} gutterBottom>
           {title}
         </Typography>
       )}
       <Grid container width="100%">
-        <Grid xs={9}>
+        <Grid size={9}>
           <Droppable key={id} droppableId={id}>
             {(provided, snapshot) => (
               <Box
@@ -166,7 +166,7 @@ const AwardList: React.FC<AwardListProps> = ({
             )}
           </Droppable>
         </Grid>
-        <Grid xs={3}>
+        <Grid size={3}>
           <Stack spacing={2}>
             {[...Array(length).keys()].map(index =>
               withIcons && index < trophyCount ? (
@@ -198,7 +198,7 @@ const AwardList: React.FC<AwardListProps> = ({
           </Stack>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper>)
   );
 };
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Stack, Button } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import AddRoundedIcon from '@mui/icons-material/Add';
 import {
   SafeUser,
@@ -23,38 +23,36 @@ interface CVPanelProps {
 
 const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, division, socket }) => {
   const [newForm, setNewForm] = useState<boolean>(false);
-  return (
-    <>
-      {newForm ? (
-        <CVForm
-          user={user}
-          division={division}
-          socket={socket}
-          onSubmit={() => setNewForm(false)}
-        />
-      ) : (
-        <>
-          <Grid container spacing={2}>
-            {cvForms.map(form => (
-              <Grid xs={6} key={form._id.toString()}>
-                <CVFormCard division={division} form={form} />
-              </Grid>
-            ))}
-          </Grid>
-          <Stack alignItems="center" mt={2}>
-            <Button
-              startIcon={<AddRoundedIcon />}
-              onClick={() => setNewForm(true)}
-              variant="contained"
-              size="large"
-            >
-              יצירת טופס CV חדש
-            </Button>
-          </Stack>
-        </>
-      )}
-    </>
-  );
+  return (<>
+    {newForm ? (
+      <CVForm
+        user={user}
+        division={division}
+        socket={socket}
+        onSubmit={() => setNewForm(false)}
+      />
+    ) : (
+      <>
+        <Grid container spacing={2}>
+          {cvForms.map(form => (
+            <Grid key={form._id.toString()} size={6}>
+              <CVFormCard division={division} form={form} />
+            </Grid>
+          ))}
+        </Grid>
+        <Stack alignItems="center" mt={2}>
+          <Button
+            startIcon={<AddRoundedIcon />}
+            onClick={() => setNewForm(true)}
+            variant="contained"
+            size="large"
+          >
+            יצירת טופס CV חדש
+          </Button>
+        </Stack>
+      </>
+    )}
+  </>);
 };
 
 export default CVPanel;

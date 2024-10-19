@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
   DivisionState,
   WSServerEmittedEvents,
@@ -48,7 +48,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
   };
 
   return (
-    <Paper
+    (<Paper
       sx={{
         p: 4,
         mt: 2,
@@ -59,7 +59,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת מקצה נוכחי</Typography>
           <ToggleButtonGroup
             value={showCurrentMatch}
@@ -77,7 +77,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת מקצה קודם</Typography>
           <ToggleButtonGroup
             value={showPreviousMatch}
@@ -92,7 +92,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת נותני חסות</Typography>
           <ToggleButtonGroup
             value={showSponsors}
@@ -107,7 +107,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={12}>
           <Button
             sx={{ minWidth: 200 }}
             variant="contained"
@@ -117,7 +117,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
           </Button>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper>)
   );
 };
 

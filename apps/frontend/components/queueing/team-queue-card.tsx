@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { red } from '@mui/material/colors';
 import { Team } from '@lems/types';
 import dayjs from 'dayjs';
@@ -46,24 +46,24 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
         ...(isUrgent && { backgroundColor: red[100], border: `1px solid ${red[400]}` })
       }}
     >
-      <Grid xs={1}>
+      <Grid size={1}>
         <Typography fontWeight={500} fontSize="1.25rem">
           #{team.number}
         </Typography>
-        <Typography fontSize="1rem" color="text.secondary">
+        <Typography fontSize="1rem" color="textSecondary">
           {team.name}
         </Typography>
-        <Typography fontSize="1rem" color="text.secondary">
+        <Typography fontSize="1rem" color="textSecondary">
           {team.affiliation.name}, {team.affiliation.city}
         </Typography>
       </Grid>
-      <Grid xs={1}>
+      <Grid size={1}>
         <Typography fontWeight={500} fontSize="1.25rem">
           {location}
         </Typography>
         {scheduledTime && (
           <Stack direction="row" spacing={2}>
-            <Typography fontSize="1rem" color="text.secondary">
+            <Typography fontSize="1rem" color="textSecondary">
               {dayjs(scheduledTime).format('HH:mm')} (
               {totalMinutes >= 0 ? `בעוד ${totalMinutes}` : `לפני ${totalUpMinutes}`} דק&apos;)
             </Typography>

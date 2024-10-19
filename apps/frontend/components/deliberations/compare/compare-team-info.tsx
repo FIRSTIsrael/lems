@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { red, blue, green } from '@mui/material/colors';
 import {
   RadarChart,
@@ -37,8 +37,8 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
   );
 
   return (
-    <Grid container alignItems="center" px={2}>
-      <Grid xs={6}>
+    (<Grid container alignItems="center" px={2}>
+      <Grid size={6}>
         <Typography fontSize="1.5rem" fontWeight={700}>
           {localizeTeam(team, true)}
         </Typography>
@@ -46,7 +46,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
           ניקוד ממוצע: {Number(scoreAvg.toFixed(3))}
         </Typography>
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         {category ? (
           <CategoryAlignmentChart
             category={category}
@@ -56,7 +56,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
           <RubricAlignmentChart rubrics={teamRubrics} />
         )}
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

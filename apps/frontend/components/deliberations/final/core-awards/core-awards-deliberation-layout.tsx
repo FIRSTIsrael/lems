@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { WithId } from 'mongodb';
 import { Stack } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { JudgingCategory, Team, JudgingCategoryTypes, AwardLimits } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
@@ -43,8 +43,8 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
   );
 
   return (
-    <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-      <Grid xs={6}>
+    (<Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+      <Grid size={6}>
         <CoreAwardsDeliberationGrid
           categoryRanks={categoryRanks!}
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
@@ -53,7 +53,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           additionalTeams={deliberation.manualEligibility ?? []}
         />
       </Grid>
-      <Grid xs={3}>
+      <Grid size={3}>
         <TeamPool
           teams={teams
             .filter(team => availableTeams.includes(team._id))
@@ -62,7 +62,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
-      <Grid xs={3}>
+      <Grid size={3}>
         <FinalDeliberationControlPanel
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
@@ -78,7 +78,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
         />
       </Grid>
       {/* 1.5 x number of lists*/}
-      <Grid xs={4.5}>
+      <Grid size={4.5}>
         <Stack direction="row" spacing="2" gap={2} height="100%">
           {JudgingCategoryTypes.map(category => (
             <AwardList
@@ -98,10 +98,10 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           ))}
         </Stack>
       </Grid>
-      <Grid xs={7.5}>
+      <Grid size={7.5}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

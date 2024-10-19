@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Stack, Divider, IconButton } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import { Rubric, JudgingCategory, Team, CoreValuesForm, Scoresheet } from '@lems/types';
 import CompareRubricRemarks from './compare-rubric-remarks';
@@ -86,13 +86,13 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
   if (!team) return null;
 
   return (
-    <Grid
+    (<Grid
       component={Paper}
-      xs={Math.min(10.75 / teams.length, 6)}
       height="100%"
       p={2}
       mb={2}
       sx={{ overflowY: 'auto' }}
+      size={Math.min(10.75 / teams.length, 6)}
     >
       {removeTeam && (
         <IconButton onClick={() => removeTeam(teamId)}>
@@ -111,7 +111,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
         <CompareRubricRemarks teamId={teamId} />
         <CompareCvForms teamId={teamId} />
       </Stack>
-    </Grid>
+    </Grid>)
   );
 };
 

@@ -119,14 +119,14 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     },
     ...rankingRounds.map(
       round =>
-        ({
+        (({
           field: `gp-${round}`,
           headerName: `GP ${round}`,
           type: 'number',
           headerAlign: 'center',
           align: 'center',
           width: 60
-        }) as GridColDef
+        }) as GridColDef)
     ),
     {
       field: 'maxScore',

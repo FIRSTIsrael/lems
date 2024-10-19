@@ -37,8 +37,8 @@ const PersonalAwardWinnerSelector: React.FC<PersonalAwardWinnerSelectorProps> = 
         פרס {localizedAward[title].name}
       </Typography>
       {awards.map((award, index) => (
-        <Stack direction="row" spacing={2} p={2} alignItems="center">
-          <Typography fontSize="0.875rem" color="text.secondary" width="12%">
+        <Stack direction="row" spacing={2} p={2} alignItems="center" key={index}>
+          <Typography fontSize="0.875rem" color="textSecondary" width="12%">
             מקום {award.place}
           </Typography>
           <TextField

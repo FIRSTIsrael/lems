@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import ScoresPerRoomChart from '../../insights/charts/scores-per-room-chart';
 import TeamPool from '../team-pool';
 import AwardList from '../award-list';
@@ -27,8 +27,8 @@ const CategoryDeliberationLayout: React.FC = () => {
   );
 
   return (
-    <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
-      <Grid xs={8}>
+    (<Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
+      <Grid size={8}>
         <CategoryDeliberationsGrid
           category={category}
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
@@ -39,7 +39,7 @@ const CategoryDeliberationLayout: React.FC = () => {
           showRanks={true}
         />
       </Grid>
-      <Grid xs={1.5}>
+      <Grid size={1.5}>
         <AwardList
           id={category}
           pickList={picklist}
@@ -48,7 +48,7 @@ const CategoryDeliberationLayout: React.FC = () => {
           addSuggestedTeam={teamId => appendToPicklist(category, teamId)}
         />
       </Grid>
-      <Grid xs={2.5}>
+      <Grid size={2.5}>
         <CategoryDeliberationControlPanel
           compareTeams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
@@ -58,10 +58,10 @@ const CategoryDeliberationLayout: React.FC = () => {
           compareProps={compareContextProps}
         />
       </Grid>
-      <Grid xs={5}>
+      <Grid size={5}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
-      <Grid xs={7}>
+      <Grid size={7}>
         <TeamPool
           teams={teams
             .filter(team => availableTeams.includes(team._id))
@@ -70,7 +70,7 @@ const CategoryDeliberationLayout: React.FC = () => {
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

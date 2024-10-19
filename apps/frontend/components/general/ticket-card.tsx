@@ -15,7 +15,7 @@ import {
   DialogTitle,
   TextField
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/';
+import Grid from '@mui/material/Grid2';
 import TaskIcon from '@mui/icons-material/Task';
 import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
@@ -37,7 +37,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ division, ticket, team, socket,
     <>
       <Grid
         component={Paper}
-        xs={5}
+        size={5}
         key={ticket._id.toString()}
         p={2}
         overflow="auto"
@@ -49,7 +49,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ division, ticket, team, socket,
         </Typography>
         <Typography fontSize="1rem">{localizedTicketTypes[ticket.type]}</Typography>
         <Typography
-          color="text.secondary"
+          color="textSecondary"
           maxHeight={225}
           width="100%"
           overflow={'auto'}
@@ -59,7 +59,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ division, ticket, team, socket,
         </Typography>
         {ticket.closed ? (
           ticket.reasonForClose && (
-            <Typography color="text.secondary" fontSize="0.8rem">
+            <Typography color="textSecondary" fontSize="0.8rem">
               <b>סיבת הסגירה:</b> {ticket.reasonForClose}
             </Typography>
           )

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { AwardLimits } from '@lems/types';
 import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
@@ -26,18 +26,18 @@ const ChampionsDeliberationLayout: React.FC = () => {
   const places = picklistLimits['champions'] ?? AwardLimits['champions']!;
 
   return (
-    <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
-      <Grid xs={7}>
+    (<Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+      <Grid size={7}>
         <ChampionsDeliberationsGrid
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           selectedTeams={selectedTeams}
           anomalies={anomalies ?? []}
         />
       </Grid>
-      <Grid xs={2}>
+      <Grid size={2}>
         <AnomalyTeams teams={teams} anomalies={anomalies ?? []} />
       </Grid>
-      <Grid xs={3}>
+      <Grid size={3}>
         <FinalDeliberationControlPanel
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
@@ -48,7 +48,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
           compareProps={compareContextProps}
         />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <ChampionsPodium
           places={places}
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
@@ -57,10 +57,10 @@ const ChampionsDeliberationLayout: React.FC = () => {
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

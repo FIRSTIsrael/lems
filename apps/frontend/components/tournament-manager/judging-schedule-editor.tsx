@@ -151,7 +151,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
               onClick={submitForm}
               loading={isSubmitting}
             >
-              <span>שמירה</span>
+              שמירה
             </LoadingButton>
             <Button
               startIcon={<RestartAltIcon />}

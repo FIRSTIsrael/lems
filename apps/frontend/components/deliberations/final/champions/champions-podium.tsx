@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Box, Paper } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { AwardLimits } from '@lems/types';
 import TeamSelection from '../../../general/team-selection';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
@@ -34,7 +34,7 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
   };
 
   return (
-    <Grid
+    (<Grid
       container
       component={Paper}
       height="100%"
@@ -45,13 +45,13 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
       {[...Array(places).keys()].map(index => {
         const teamId = award[index];
         return (
-          <Grid
-            xs={2.5}
+          (<Grid
             order={organizePodium(index)}
             key={index}
             display="flex"
             alignItems="center"
             flexDirection="column"
+            size={2.5}
           >
             <TeamSelection
               teams={teams
@@ -81,10 +81,10 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
               height={40 + 50 * (places - index - 1)}
               mt={1}
             />
-          </Grid>
+          </Grid>)
         );
       })}
-    </Grid>
+    </Grid>)
   );
 };
 

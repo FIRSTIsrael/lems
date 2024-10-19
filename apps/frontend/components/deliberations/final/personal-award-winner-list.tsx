@@ -1,5 +1,5 @@
 import { Stack, Box, Paper, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { AwardNames } from '@lems/types';
@@ -19,12 +19,12 @@ const PersonalAwardWinnerList: React.FC<PersonalAwardWinnerListProps> = ({ title
   ];
 
   return (
-    <Paper sx={{ p: 2, height: '100%', width: '100%' }}>
+    (<Paper sx={{ p: 2, height: '100%', width: '100%' }}>
       <Typography align="center" fontWeight={500} gutterBottom>
         פרס {localizedAward[title].name}
       </Typography>
       <Grid container width="100%">
-        <Grid xs={9}>
+        <Grid size={9}>
           <Stack spacing={2} alignItems="left" justifyContent="center" width="100%" px={1}>
             {winners.map(winner => (
               <Paper
@@ -44,7 +44,7 @@ const PersonalAwardWinnerList: React.FC<PersonalAwardWinnerListProps> = ({ title
             ))}
           </Stack>
         </Grid>
-        <Grid xs={3}>
+        <Grid size={3}>
           <Stack spacing={2}>
             {[...Array(winners.length).keys()].map(index => (
               <Box
@@ -60,7 +60,7 @@ const PersonalAwardWinnerList: React.FC<PersonalAwardWinnerListProps> = ({ title
           </Stack>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper>)
   );
 };
 

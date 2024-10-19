@@ -19,7 +19,7 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -49,7 +49,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
 
   return (
-    <Draggable draggableId={name} index={index}>
+    (<Draggable draggableId={name} index={index}>
       {provided => (
         <Grid
           container
@@ -61,13 +61,13 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <Grid xs={1} display="flex" alignItems="center" {...provided.dragHandleProps}>
+          <Grid display="flex" alignItems="center" {...provided.dragHandleProps} size={1}>
             <DragIndicatorIcon color="disabled" />
           </Grid>
           <FastField name={`${name}`}>
             {({ field, form }: FieldProps) => (
-              <Grid xs={10} display="flex" alignItems="center" {...field}>
-                <Grid xs={2} display="flex" alignItems="center">
+              <Grid display="flex" alignItems="center" {...field} size={10}>
+                <Grid display="flex" alignItems="center" size={2}>
                   {isMandatory ? (
                     <Tooltip title="פרס חובה" arrow>
                       <span>
@@ -87,10 +87,10 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                     </IconButton>
                   )}
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <Typography>פרס {localizedAward[name].name || name}</Typography>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <CustomNumberInput
                     min={1}
                     max={AwardLimits[name] ?? 5}
@@ -106,7 +106,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           </FastField>
         </Grid>
       )}
-    </Draggable>
+    </Draggable>)
   );
 };
 

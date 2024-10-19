@@ -43,7 +43,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               }}
             />
           ) : (
-            <Typography fontSize="1.125rem" fontWeight={700} color="#f57c00">
+            <Typography fontSize="1.125rem" fontWeight={700} sx={{ color: '#f57c00' }}>
               שימו לב: הקבוצה טרם הגיעה לאירוע
             </Typography>
           )}

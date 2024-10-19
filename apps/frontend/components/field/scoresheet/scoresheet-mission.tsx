@@ -7,7 +7,6 @@ import {
 } from '@lems/season';
 import { ensureArray } from '@lems/utils/arrays';
 import {
-  Box,
   Paper,
   Stack,
   ThemeProvider,
@@ -15,7 +14,7 @@ import {
   ToggleButtonGroup,
   Typography
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/';
+import Grid from '@mui/material/Grid2';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
@@ -61,10 +60,10 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         }
       })}
     >
-      <Grid xs={10} ml={3}>
+      <Grid size={10} ml={3}>
         <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
       </Grid>
-      <Grid xs={12} ml={3}>
+      <Grid size={12} ml={3}>
         {clause.type === 'boolean' ? (
           <Field name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
             {({ field, form }: FieldProps) => (
@@ -163,20 +162,20 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   return (
     localizedMission && (
       <Grid component={Paper} container pb={2} id={mission.id} sx={{ scrollMarginTop: 300 }}>
-        <Grid container xs={8} ref={ref}>
+        <Grid container size={8} ref={ref}>
           <Grid
             py={1}
-            xs={2}
+            size={2}
             alignSelf="flex-start"
             bgcolor={errors.length > 0 ? '#f44336' : '#388e3c'}
             borderRadius="8px 0 0 0"
             textAlign="center"
           >
-            <Typography fontSize="1.5rem" fontWeight={600} color="#fff">
+            <Typography fontSize="1.5rem" fontWeight={600} sx={{ color: '#FFF' }}>
               {mission.id.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid xs={10} pt={1}>
+          <Grid size={10} pt={1}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
                 {localizedMission.title}
@@ -187,7 +186,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
             </Stack>
           </Grid>
           {localizedMission.description && (
-            <Grid xs={12}>
+            <Grid size={12}>
               <Typography fontSize="1rem" fontWeight={600} mt={1} ml={2}>
                 {localizedMission.description}
               </Typography>
@@ -204,7 +203,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               maxWidth={missionWidth * 0.9}
             />
           ))}
-          <Grid xs={12} mt={2}>
+          <Grid size={12} mt={2}>
             {localizedMission.remarks?.map(remark => (
               <Typography
                 key={remark}
@@ -219,14 +218,14 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           </Grid>
           {errors.length > 0 &&
             errors.map(e => (
-              <Grid key={e?.id} xs={12} mt={2}>
+              <Grid key={e?.id} size={12} mt={2}>
                 <Typography pl={3} fontSize="1rem" color="error" fontWeight={700}>
                   {e?.description}
                 </Typography>
               </Grid>
             ))}
         </Grid>
-        <Grid borderRadius={8} p={2} xs={4}>
+        <Grid borderRadius={8} p={2} size={4}>
           <Image
             src={src}
             width={0}

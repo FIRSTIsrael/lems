@@ -38,7 +38,7 @@ const CategoryScoresChart: React.FC<CategoryScoresChartProps> = ({ division }) =
   return data ? (
     <Card variant="outlined">
       <Box p={1} textAlign="center" sx={{ backgroundColor: red[600] }}>
-        <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
+        <Typography fontSize="1.5rem" fontWeight={700} sx={{ color: '#FFF' }}>
           ציוני תחומים
         </Typography>
       </Box>

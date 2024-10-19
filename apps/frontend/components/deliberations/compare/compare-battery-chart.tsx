@@ -27,7 +27,7 @@ const CompareBatteryBox: React.FC<CompareBatteryBoxProps> = ({ wtlValue, counts,
         bgcolor={colors[wtlValue]}
       >
         {percentages[wtlValue] > 5 && (
-          <Typography color="#333" sx={{ direction: 'rtl' }}>
+          <Typography sx={{ color: '#333', direction: 'rtl' }}>
             {counts[wtlValue]}{' '}
             {percentages[wtlValue] > 9 && <span>({Math.round(percentages[wtlValue])}%)</span>}
           </Typography>

@@ -52,10 +52,10 @@ export const TableScheduleRow: React.FC<TableScheduleRowProps> = ({
               <Typography
                 fontWeight={500}
               >{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
-              <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+              <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                 {team.affiliation.name}
               </Typography>
-              <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+              <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                 {team.affiliation.city}
               </Typography>
             </Stack>

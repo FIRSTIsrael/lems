@@ -21,7 +21,7 @@ import {
   Theme
 } from '@mui/material';
 import { purple } from '@mui/material/colors';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
   Division,
   Team,
@@ -196,15 +196,25 @@ const RubricForm: React.FC<RubricFormProps> = ({
             {(!hideDescription || (schema.awards?.length || 0) > 0) && (
               <Grid container spacing={6} sx={{ mb: 4 }}>
                 {!hideDescription && (
-                  <Grid xs={12} md={(schema.awards?.length || 0) > 0 ? 5 : 9}>
-                    <Typography color="text.secondary" fontSize="0.875rem" component="span">
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: (schema.awards?.length || 0) > 0 ? 5 : 9
+                    }}
+                  >
+                    <Typography color="textSecondary" fontSize="0.875rem" component="span">
                       <Markdown skipHtml>{schema.description}</Markdown>
                     </Typography>
                   </Grid>
                 )}
 
                 {schema.awards && schema.awards.length > 0 && (
-                  <Grid xs={12} md={7}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 7
+                    }}
+                  >
                     <Typography variant="body2" gutterBottom>
                       אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
                     </Typography>
@@ -399,8 +409,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <DialogContent>
                     <DialogContentText id="reset-dialog-description">
                       {`איפוס המחוון ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
-                        בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
-                        של קבוצה ${localizeTeam(team)}?`}
+                      בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
+                      של קבוצה ${localizeTeam(team)}?`}
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
