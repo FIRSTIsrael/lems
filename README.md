@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node 20 LTS
+- Node 22 LTS
 - Docker
 
 ## DB Setup
