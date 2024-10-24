@@ -288,44 +288,46 @@ const RubricForm: React.FC<RubricFormProps> = ({
               )}
             </Stack>
 
-            <Table
-              sx={{
-                tableLayout: 'fixed',
-                borderBottom: '1px solid rgba(0,0,0,0.2)',
-                '@media print': {
-                  fontSize: '0.75rem'
-                }
-              }}
-              stickyHeader
-            >
-              <TableHead>
-                <HeaderRow
-                  columns={schema.columns}
-                  category={schema.category}
-                  hideDescriptions={schema.category !== 'core-values'}
-                />
-              </TableHead>
-              {schema.sections.map(section => (
-                <TableBody key={section.title}>
-                  <TitleRow
-                    title={section.title}
-                    description={section.description}
+            {schema.sections.length > 0 && (
+              <Table
+                sx={{
+                  tableLayout: 'fixed',
+                  borderBottom: '1px solid rgba(0,0,0,0.2)',
+                  '@media print': {
+                    fontSize: '0.75rem'
+                  }
+                }}
+                stickyHeader
+              >
+                <TableHead>
+                  <HeaderRow
+                    columns={schema.columns}
                     category={schema.category}
+                    hideDescriptions={schema.category !== 'core-values'}
                   />
-                  {section.fields.map(field => (
-                    <RatingRow
-                      key={field.id}
-                      name={`values.${field.id}`}
-                      label_1={field.label_1}
-                      label_2={field.label_2}
-                      label_3={field.label_3}
-                      label_4={field.label_4}
-                      disabled={!isEditable}
+                </TableHead>
+                {schema.sections.map(section => (
+                  <TableBody key={section.title}>
+                    <TitleRow
+                      title={section.title}
+                      description={section.description}
+                      category={schema.category}
                     />
-                  ))}
-                </TableBody>
-              ))}
-            </Table>
+                    {section.fields.map(field => (
+                      <RatingRow
+                        key={field.id}
+                        name={`values.${field.id}`}
+                        label_1={field.label_1}
+                        label_2={field.label_2}
+                        label_3={field.label_3}
+                        label_4={field.label_4}
+                        disabled={!isEditable}
+                      />
+                    ))}
+                  </TableBody>
+                ))}
+              </Table>
+            )}
 
             <Stack sx={{ my: 4 }} direction="row" spacing={4}>
               {schema.feedback?.map(feedback => (
