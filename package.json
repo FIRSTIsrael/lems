@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",
-    "@babel/preset-react": "^7.25.7",
+    "@babel/preset-react": "^7.25.9",
     "@firstisrael/prettier-config": "^1.1.0",
     "@nx/eslint": "20.0.3",
     "@nx/eslint-plugin": "^20.0.3",
