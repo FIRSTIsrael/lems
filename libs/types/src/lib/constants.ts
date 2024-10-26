@@ -27,7 +27,12 @@ export type RobotGameMatchPresent = 'present' | 'no-show';
 export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
 export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 
-export const CoreValuesAwardsTypes = ['breakthrough', 'rising-all-star', 'motivate'] as const;
+export const CoreValuesAwardsTypes = [
+  'breakthrough',
+  'rising-all-star',
+  'motivate',
+  'impact'
+] as const;
 export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 
 export const DivisionSectionTypes = ['field', 'judging'];
@@ -37,7 +42,6 @@ export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'] as co
 export type PersonalAwards = (typeof PersonalAwardTypes)[number];
 
 export const OptionalAwardTypes = [
-  'impact',
   'excellence-in-engineering',
   ...PersonalAwardTypes,
   ...CoreValuesAwardsTypes

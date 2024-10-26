@@ -1,6 +1,6 @@
 import { JudgingCategory, CoreValuesAwardsTypes, SEASON_NAME } from '@lems/types';
-import { RubricsSchema, RubricSchemaSection } from './typing';
-import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
+import { RubricsSchema } from './typing';
+import { rubricSchemaFeedback } from './common';
 import { localizedJudgingCategory } from '../judging';
 import { localizedOptionalAward } from '../rubrics';
 
@@ -19,7 +19,8 @@ const coreValuesRubric: RubricsSchema = {
     description: localizedOptionalAward[id].description
   })),
   sections: [],
-  feedback: rubricSchemaFeedback
+  feedback: rubricSchemaFeedback,
+  showCvDescription: false
 };
 
 export default coreValuesRubric;

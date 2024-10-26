@@ -193,13 +193,13 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 {schema.title}
               </Typography>
             )}
-            {(!hideDescription || (schema.awards?.length || 0) > 0) && (
+            {!hideDescription && (
               <Grid container spacing={6} sx={{ mb: 4 }}>
                 {!hideDescription && (
                   <Grid
                     size={{
                       xs: 12,
-                      md: (schema.awards?.length || 0) > 0 ? 5 : 9
+                      md: 9
                     }}
                   >
                     <Typography color="textSecondary" fontSize="0.875rem" component="span">
@@ -207,29 +207,23 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     </Typography>
                   </Grid>
                 )}
-
-                {schema.awards && schema.awards.length > 0 && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      md: 7
-                    }}
-                  >
-                    <Typography variant="body2" gutterBottom>
-                      אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
-                    </Typography>
-                    {schema.awards.map(award => (
-                      <AwardCandidatureCheckbox
-                        key={award.id}
-                        name={`awards.${award.id}`}
-                        title={award.title}
-                        description={award.description}
-                        disabled={!isEditable}
-                      />
-                    ))}
-                  </Grid>
-                )}
               </Grid>
+            )}
+            {schema.awards && schema.awards.length > 0 && (
+              <Stack>
+                <Typography variant="body2" gutterBottom>
+                  אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
+                </Typography>
+                {schema.awards.map(award => (
+                  <AwardCandidatureCheckbox
+                    key={award.id}
+                    name={`awards.${award.id}`}
+                    title={award.title}
+                    description={award.description}
+                    disabled={!isEditable}
+                  />
+                ))}
+              </Stack>
             )}
 
             <Stack

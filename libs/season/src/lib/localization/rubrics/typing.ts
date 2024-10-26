@@ -4,6 +4,7 @@ import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
 export interface RubricSchemaField {
   id: string;
   title: string;
+  isCoreValuesField?: boolean;
   label_1?: string;
   label_2?: string;
   label_3?: string;
@@ -31,4 +32,5 @@ export interface RubricsSchema {
   sections: Array<RubricSchemaSection>;
   awards?: Array<RubricSchemaAwardCandidature>;
   feedback?: typeof rubricSchemaFeedback;
+  showCvDescription: boolean;
 }
