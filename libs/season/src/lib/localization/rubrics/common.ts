@@ -16,13 +16,4 @@ export const rubricSchemaColumns = [
   }
 ];
 
-export const rubricSchemaFeedback = [
-  {
-    id: 'greatJob',
-    title: 'עבודה מצוינת'
-  },
-  {
-    id: 'thinkAbout',
-    title: 'חשבו על'
-  }
-];
+export const rubricSchemaFeedback = { greatJob: 'עבודה מצוינת', thinkAbout: 'חשבו על' };

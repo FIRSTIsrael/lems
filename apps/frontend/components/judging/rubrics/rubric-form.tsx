@@ -39,6 +39,7 @@ import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
+import FeedbackRow from './feedback-row';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
@@ -133,9 +134,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
       }
     });
 
-    schema.feedback?.forEach(feedback => {
-      if (!formValues.feedback[feedback.id]) {
-        errors[feedback.id] = 'שדה חובה';
+    Object.entries(schema.feedback ?? {}).forEach(([key, value]) => {
+      if (!formValues.feedback[key]) {
+        errors[key] = 'שדה חובה';
       }
     });
 
@@ -323,19 +324,13 @@ const RubricForm: React.FC<RubricFormProps> = ({
               </Table>
             )}
 
-            <Stack sx={{ my: 4 }} direction="row" spacing={4}>
-              {schema.feedback?.map(feedback => (
-                <FormikTextField
-                  key={feedback.id}
-                  name={`feedback.${feedback.id}`}
-                  label={feedback.title}
-                  disabled={!isEditable}
-                  spellCheck
-                  multiline
-                  minRows={4}
-                />
-              ))}
-            </Stack>
+            {schema.feedback && (
+              <FeedbackRow
+                description="TODO: THIS"
+                feedback={schema.feedback}
+                isEditable={isEditable}
+              />
+            )}
 
             {!isValid && (
               <Alert
