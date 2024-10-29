@@ -2,7 +2,7 @@ import { Divider, Paper, Stack, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import FormikTextField from '../../general/forms/formik-text-field';
 import Markdown from 'react-markdown';
-import { CategoryColors, JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types';
 
 interface FeedbackRowProps {
   description: string;
@@ -17,6 +17,12 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
   isEditable,
   category
 }) => {
+  const colors: { [K in JudgingCategory]: string } = {
+    'core-values': '#F5DAD4',
+    'innovation-project': '#D3DAED',
+    'robot-design': '#DAE8D8'
+  };
+
   return (
     <Stack
       component={Paper}
@@ -41,7 +47,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
           </Typography>
         ))}
       </Stack>
-      <Grid size={12} px={2} sx={{ background: CategoryColors[category] }}>
+      <Grid size={12} px={2} sx={{ background: colors[category] }}>
         <Box height={25} justifyContent="center" marginTop={-1} marginBottom={0.5}>
           <Markdown>{description}</Markdown>
         </Box>
