@@ -1,4 +1,4 @@
-import { Divider, Paper, Stack, Typography, Box } from '@mui/material';
+import { Divider, Paper, Stack, Typography, Box, TableRow, TableCell } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import FormikTextField from '../../general/forms/formik-text-field';
 import Markdown from 'react-markdown';
@@ -23,51 +23,82 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
     'robot-design': '#DAE8D8'
   };
 
+  const standalone = category === 'core-values';
+
+  const getBorderRadius = (index: number, length: number): string | undefined => {
+    if (index === 0) return '12px 0 0 0';
+    if (index === length - 1) return '0 12px 0 0';
+  };
+
   return (
-    <Stack
-      component={Paper}
-      my={4}
-      divider={<Divider sx={{ border: '1px black solid' }} flexItem />}
-      border="2px black solid"
-    >
-      <Stack direction="row" divider={<Divider orientation="vertical" flexItem />}>
+    <>
+      <TableRow>
         {Object.values(feedback).map((value, index) => (
-          <Typography
+          <TableCell
+            colSpan={2}
             key={index}
-            fontWeight={600}
             sx={{
-              width: '100%',
-              height: 35,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
+              bgcolor: '#fff',
+              borderTop: '1px solid #000',
+              borderRight: '1px solid rgba(0,0,0,0.2)',
+              borderLeft: '1px solid rgba(0,0,0,0.2)',
+              borderBottom: 'none',
+              border: standalone ? '2px solid black' : undefined,
+              borderRadius: standalone ? getBorderRadius(index, 2) : undefined
             }}
           >
-            {value}...
-          </Typography>
+            <Typography fontWeight={600} align="center">
+              {value}...
+            </Typography>
+          </TableCell>
         ))}
-      </Stack>
-      <Grid size={12} px={2} sx={{ background: colors[category] }}>
-        <Box height={25} justifyContent="center" marginTop={-1} marginBottom={0.5}>
-          <Markdown>{description}</Markdown>
-        </Box>
-      </Grid>
-      <Stack direction="row" divider={<Divider orientation="vertical" flexItem />}>
+      </TableRow>
+      <TableRow
+        sx={{
+          '& .MuiTableCell-root': {
+            padding: '5px'
+          }
+        }}
+      >
+        <TableCell
+          colSpan={4}
+          sx={{
+            bgcolor: colors[category],
+            border: '1px solid black'
+          }}
+        >
+          <Box height={25} justifyContent="center" marginTop={-1}>
+            <Markdown css={{ marginLeft: '12px' }}>{description}</Markdown>
+          </Box>
+        </TableCell>
+      </TableRow>
+      <TableRow
+        sx={{
+          '& .MuiTableCell-root': {
+            padding: '0px'
+          }
+        }}
+      >
         {Object.entries(feedback).map(([key, value], index) => (
-          <FormikTextField
-            key={key}
-            name={`feedback.${key}`}
-            disabled={!isEditable}
-            spellCheck
-            multiline
-            minRows={4}
-            slotProps={{
-              input: { sx: { borderRadius: `0 0 ${index === 0 ? '0 12px' : '12px 0'}` } }
-            }}
-          />
+          <TableCell key={key} colSpan={2} sx={{ borderBottom: 'none' }}>
+            <FormikTextField
+              name={`feedback.${key}`}
+              disabled={!isEditable}
+              spellCheck
+              multiline
+              minRows={4}
+              slotProps={{
+                input: {
+                  sx: {
+                    borderRadius: `0 0 ${index === 0 ? '0 12px' : '12px 0'}`
+                  }
+                }
+              }}
+            />
+          </TableCell>
         ))}
-      </Stack>
-    </Stack>
+      </TableRow>
+    </>
   );
 };
 

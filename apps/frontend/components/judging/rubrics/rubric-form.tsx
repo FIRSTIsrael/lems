@@ -282,25 +282,26 @@ const RubricForm: React.FC<RubricFormProps> = ({
               )}
             </Stack>
 
-            {schema.sections.length > 0 && (
-              <Table
-                sx={{
-                  tableLayout: 'fixed',
-                  '@media print': {
-                    fontSize: '0.75rem'
-                  }
-                }}
-                stickyHeader
-              >
-                <TableHead>
-                  <HeaderRow
-                    columns={schema.columns}
-                    category={schema.category}
-                    hideDescriptions={schema.category !== 'core-values'}
-                  />
-                </TableHead>
+            <Table
+              sx={{
+                pb: 2,
+                tableLayout: 'fixed',
+                '@media print': {
+                  fontSize: '0.75rem'
+                }
+              }}
+              stickyHeader
+            >
+              <TableHead>
+                <HeaderRow
+                  columns={schema.columns}
+                  category={schema.category}
+                  hideDescriptions={schema.category !== 'core-values'}
+                />
+              </TableHead>
+              <TableBody>
                 {schema.sections.map(section => (
-                  <TableBody key={section.title}>
+                  <>
                     <TitleRow
                       title={section.title}
                       description={section.description}
@@ -318,25 +319,24 @@ const RubricForm: React.FC<RubricFormProps> = ({
                         isCoreValuesField={field.isCoreValuesField}
                       />
                     ))}
-                  </TableBody>
+                  </>
                 ))}
-              </Table>
-            )}
+                {schema.feedback && (
+                  <FeedbackRow
+                    description={schema.feedback.description}
+                    feedback={schema.feedback.fields}
+                    isEditable={isEditable}
+                    category={rubric.category}
+                  />
+                )}
+              </TableBody>
+            </Table>
 
             {schema.cvDescription && (
-              <Stack direction="row" spacing={2} sx={{ pt: 2 }}>
+              <Stack direction="row" spacing={2} sx={{ pb: 1 }}>
                 <CvFieldUncheckedIcon />
                 <Markdown>{schema.cvDescription}</Markdown>
               </Stack>
-            )}
-
-            {schema.feedback && (
-              <FeedbackRow
-                description={schema.feedback.description}
-                feedback={schema.feedback.fields}
-                isEditable={isEditable}
-                category={rubric.category}
-              />
             )}
 
             {!isValid && (
