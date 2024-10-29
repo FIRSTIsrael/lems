@@ -1,5 +1,5 @@
 import { CoreValuesAwards, JudgingCategory } from '@lems/types';
-import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
+import { rubricSchemaColumns, rubricSchemaFeedbackFields } from './common';
 
 export interface RubricSchemaField {
   id: string;
@@ -31,6 +31,6 @@ export interface RubricsSchema {
   columns: typeof rubricSchemaColumns;
   sections: Array<RubricSchemaSection>;
   awards?: Array<RubricSchemaAwardCandidature>;
-  feedback?: typeof rubricSchemaFeedback;
-  showCvDescription: boolean;
+  feedback?: { description: string; fields: typeof rubricSchemaFeedbackFields };
+  cvDescription?: string;
 }

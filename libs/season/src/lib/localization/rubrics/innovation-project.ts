@@ -1,7 +1,7 @@
 import { SEASON_NAME, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '../judging';
 import { RubricsSchema, RubricSchemaSection } from './typing';
-import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
+import { rubricSchemaColumns, rubricSchemaFeedbackFields } from './common';
 
 const category = 'innovation-project' as JudgingCategory;
 
@@ -123,8 +123,12 @@ const innovationProjectRubric: RubricsSchema = {
     'על הקבוצה להציג בפני השופטים את הישגיה בכל אחד מהקריטריונים הבאים. יש למלא את מחוון השיפוט על פי ההצגה של פרויקט החדשנות. השופטים **נדרשים** לסמן תיבת סימון אחת בכל שורה בנפרד על מנת לציין את רמת ההישגים של הקבוצה. אם הקבוצה **מצטיינת**, נדרש נימוק קצר בעמודה זו.**',
   columns: rubricSchemaColumns,
   sections: rubricSections,
-  feedback: rubricSchemaFeedback,
-  showCvDescription: true
+  feedback: {
+    description: 'כיצד הקבוצה זיהתה בעיה הקשורה לנושא של העונה וניגשה לפתור אותה?',
+    fields: rubricSchemaFeedbackFields
+  },
+  cvDescription:
+    '*קריטריונים עם תיבת סימון זו נחשבים פעמיים בעת קביעת המועמדות לפרסים - גם להערכת **פרויקט החדשנות** וגם להערכת **ערכי הליבה**.*'
 };
 
 export default innovationProjectRubric;

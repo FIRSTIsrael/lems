@@ -34,7 +34,6 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
-import FormikTextField from '../../general/forms/formik-text-field';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
@@ -43,6 +42,7 @@ import FeedbackRow from './feedback-row';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
+import CvFieldUncheckedIcon from '../../icons/CvFieldUncheckedIcon';
 
 interface RubricFormProps {
   division: WithId<Division>;
@@ -78,16 +78,13 @@ const RubricForm: React.FC<RubricFormProps> = ({
     user.role === 'judge-advisor';
 
   const getEmptyRubric = () => {
-    const awardKeys = [...awardCandidates] as const;
-    const fieldKeys = [...fields] as const;
-
-    const awards: { [key in (typeof awardKeys)[number]]: boolean } = {} as {
-      [key in (typeof awardKeys)[number]]: boolean;
+    const awards: { [key in (typeof awardCandidates)[number]]: boolean } = {} as {
+      [key in (typeof awardCandidates)[number]]: boolean;
     };
     awardCandidates.map(award => (awards[award] = false));
 
-    const values: { [key in (typeof fieldKeys)[number]]: RubricValue } = {} as {
-      [key in (typeof fieldKeys)[number]]: RubricValue;
+    const values: { [key in (typeof fields)[number]]: RubricValue } = {} as {
+      [key in (typeof fields)[number]]: RubricValue;
     };
     fields.map(field => (values[field] = { value: 0 }));
 
@@ -317,6 +314,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                         label_3={field.label_3}
                         label_4={field.label_4}
                         disabled={!isEditable}
+                        isCoreValuesField={field.isCoreValuesField}
                       />
                     ))}
                   </TableBody>
@@ -324,10 +322,17 @@ const RubricForm: React.FC<RubricFormProps> = ({
               </Table>
             )}
 
+            {schema.cvDescription && (
+              <Stack direction="row" spacing={2} sx={{ pt: 2 }}>
+                <CvFieldUncheckedIcon />
+                <Markdown>{schema.cvDescription}</Markdown>
+              </Stack>
+            )}
+
             {schema.feedback && (
               <FeedbackRow
-                description="**TODO:** *THIS*"
-                feedback={schema.feedback}
+                description={schema.feedback.description}
+                feedback={schema.feedback.fields}
                 isEditable={isEditable}
                 category={rubric.category}
               />

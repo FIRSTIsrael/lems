@@ -1,6 +1,6 @@
 import { JudgingCategory, CoreValuesAwardsTypes, SEASON_NAME } from '@lems/types';
 import { RubricsSchema } from './typing';
-import { rubricSchemaFeedback } from './common';
+import { rubricSchemaFeedbackFields } from './common';
 import { localizedJudgingCategory } from '../judging';
 import { localizedOptionalAward } from '../rubrics';
 
@@ -19,8 +19,11 @@ const coreValuesRubric: RubricsSchema = {
     description: localizedOptionalAward[id].description
   })),
   sections: [],
-  feedback: rubricSchemaFeedback,
-  showCvDescription: false
+  feedback: {
+    description:
+      'כיצד הקבוצה הדגימה **עבודת צוות, גילוי, הכלה, חדשנות, השפעה,** ו**הנאה** בעבודתה?',
+    fields: rubricSchemaFeedbackFields
+  }
 };
 
 export default coreValuesRubric;

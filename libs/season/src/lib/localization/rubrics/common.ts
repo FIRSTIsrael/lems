@@ -16,4 +16,4 @@ export const rubricSchemaColumns = [
   }
 ];
 
-export const rubricSchemaFeedback = { greatJob: 'עבודה מצוינת', thinkAbout: 'חשבו על' };
+export const rubricSchemaFeedbackFields = { greatJob: 'עבודה מצוינת', thinkAbout: 'חשבו על' };

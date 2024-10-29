@@ -1,7 +1,7 @@
 import { SEASON_NAME, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '../judging';
 import { RubricsSchema, RubricSchemaSection } from './typing';
-import { rubricSchemaColumns, rubricSchemaFeedback } from './common';
+import { rubricSchemaColumns, rubricSchemaFeedbackFields } from './common';
 
 const category = 'robot-design' as JudgingCategory;
 
@@ -124,8 +124,12 @@ const robotDesignRubric: RubricsSchema = {
     'על הקבוצה להציג בפני השופטים את הישגיה בכל אחד מהקריטריונים הבאים. יש למלא את מחוון השיפוט על פי ההצגה של תכנון הרובוט. השופטים **נדרשים** לסמן תיבת סימון אחת בכל שורה בנפרד על מנת לציין את רמת ההישגים של הקבוצה. אם הקבוצה **מצטיינת**, נדרש נימוק קצר בעמודה זו.**',
   columns: rubricSchemaColumns,
   sections: rubricSections,
-  feedback: rubricSchemaFeedback,
-  showCvDescription: true
+  feedback: {
+    description: 'מה הייתה גישת הקבוצה לפתרון משימות הרובוט בעזרת בנייה ותכנות?',
+    fields: rubricSchemaFeedbackFields
+  },
+  cvDescription:
+    '*קריטריונים עם תיבת סימון זו נחשבים פעמיים בעת קביעת המועמדות לפרסים - גם להערכת **תכנון הרובוט** וגם להערכת **ערכי הליבה**.*'
 };
 
 export default robotDesignRubric;
