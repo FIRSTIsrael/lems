@@ -20,6 +20,11 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
   category: type,
   hideDescriptions = false
 }) => {
+  const getBorderRadius = (index: number, length: number): string | undefined => {
+    if (index === 0) return '12px 0 0 0';
+    if (index === length - 1) return '0 12px 0 0';
+  };
+
   return (
     <TableRow>
       {columns.map((column, index) => (
@@ -28,7 +33,9 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
           align="center"
           sx={{
             bgcolor: colors[type][index],
-            border: '1px solid #000',
+            border: '1.5px solid #000',
+            boxSizing: 'border-box',
+            borderRadius: getBorderRadius(index, columns.length),
             fontSize: '1em',
             py: '0.875em',
             px: '0.5em',

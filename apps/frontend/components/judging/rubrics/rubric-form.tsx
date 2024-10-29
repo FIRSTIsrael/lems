@@ -18,7 +18,9 @@ import {
   DialogContentText,
   DialogTitle,
   SxProps,
-  Theme
+  Paper,
+  Theme,
+  TableContainer
 } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import Grid from '@mui/material/Grid2';
@@ -284,7 +286,6 @@ const RubricForm: React.FC<RubricFormProps> = ({
               <Table
                 sx={{
                   tableLayout: 'fixed',
-                  borderBottom: '1px solid rgba(0,0,0,0.2)',
                   '@media print': {
                     fontSize: '0.75rem'
                   }
