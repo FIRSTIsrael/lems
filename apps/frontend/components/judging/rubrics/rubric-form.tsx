@@ -326,9 +326,10 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
             {schema.feedback && (
               <FeedbackRow
-                description="TODO: THIS"
+                description="**TODO:** *THIS*"
                 feedback={schema.feedback}
                 isEditable={isEditable}
+                category={rubric.category}
               />
             )}
 

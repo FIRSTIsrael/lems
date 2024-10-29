@@ -123,3 +123,9 @@ export const SEASON_NAME = 'SUBMERGED℠';
 export const MATCH_AUTOLOAD_THRESHOLD = 10;
 export const ALLOW_UNREGULATED_START = false;
 export const ALLOW_UNREGULATED_LOAD = true;
+
+export const CategoryColors: Record<JudgingCategory, string> = {
+  'innovation-project': '#C7EAFB',
+  'robot-design': '#CCE7D3',
+  'core-values': '#FCD3C1'
+};
