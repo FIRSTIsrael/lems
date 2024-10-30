@@ -46,3 +46,5 @@ http-log.log
 
 .nx/cache
 .nx/workspace-data
+
+.pyc
