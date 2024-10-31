@@ -8,7 +8,7 @@ import {
   rubricsSchemas,
   RubricSchemaSection,
   cvFormSchema,
-  getLocalizedCvFields
+  inferCvrubricSchema
 } from '@lems/season';
 import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
@@ -38,15 +38,13 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   showRanks = false,
   showNormalizedScores = false
 }) => {
-  const schema = rubricsSchemas[category];
-  let fields;
-  if (category === 'core-values') {
-    fields = getLocalizedCvFields();
-  } else {
-    fields = schema.sections.flatMap((section: RubricSchemaSection) =>
-      section.fields.map(field => ({ field: field.id, headerName: field.title }))
-    );
-  }
+  let schema = rubricsSchemas[category];
+  if (category === 'core-values') schema = inferCvrubricSchema();
+
+  const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
+    section.fields.map(field => ({ field: field.id, headerName: field.title }))
+  );
+
   const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
   const rankingRounds = [teams[0]?.gpScores.map(gp => gp.round)].flat();
 

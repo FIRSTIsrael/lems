@@ -1,25 +1,87 @@
 import { WithId } from 'mongodb';
 import { JudgingCategory, Rubric, RubricValue } from '@lems/types';
 import { rubricsSchemas } from './localization/rubrics/index';
+import { RubricSchemaSection, RubricsSchema } from './localization/rubrics/typing';
 
-export const getLocalizedCvFields = () => {
-  const { 'innovation-project': ipFields, 'robot-design': rdFields } = getCvFieldIds();
-  const ipFieldsLocalized = rubricsSchemas['innovation-project'].sections.flatMap(
-    section => section.fields
-  );
-  const rdFieldsLocalized = rubricsSchemas['robot-design'].sections.flatMap(
-    section => section.fields
-  );
-  return [
-    ...ipFields.map(field => ({
-      field: 'ip-' + field,
-      headerName: ipFieldsLocalized.find(f => f.id === field)?.title
-    })),
-    ...rdFields.map(field => ({
-      field: 'rd-' + field,
-      headerName: rdFieldsLocalized.find(f => f.id === field)?.title
-    }))
+export const inferCvrubricSchema = (): RubricsSchema => {
+  const inferredSchemaSections: RubricSchemaSection[] = [
+    {
+      title: 'זיהוי',
+      description: '',
+      fields: [
+        {
+          id: 'ip-research',
+          title: 'מחקר'
+        },
+        {
+          id: 'rd-resources',
+          title: 'שימוש במשאבים'
+        }
+      ]
+    },
+    {
+      title: 'תכנון',
+      description: '',
+      fields: [
+        {
+          id: 'rd-ideation',
+          title: 'רעיונות'
+        },
+        {
+          id: 'ip-participation',
+          title: 'השתתפות בתהליך'
+        }
+      ]
+    },
+    {
+      title: 'יצירה',
+      description: '',
+      fields: [
+        {
+          id: 'ip-innovation',
+          title: 'חדשנות'
+        }
+      ]
+    },
+    {
+      title: 'חזרה ושינוי',
+      description: '',
+      fields: [
+        {
+          id: 'rd-improvements',
+          title: 'שיפורים'
+        }
+      ]
+    },
+    {
+      title: 'הצגה',
+      description:
+        'הקבוצה שיתפה במצגת תכליתית את הפתרון שלה ואת השפעתו על אחרים, וחגגה את ההתקדמות שלה.',
+      fields: [
+        {
+          id: 'ip-explanation',
+          title: 'הסבר'
+        },
+        {
+          id: 'ip-excitement',
+          title: 'התלהבות'
+        },
+        {
+          id: 'rd-explanation',
+          title: 'הסבר'
+        },
+        {
+          id: 'rd-excitement',
+          title: 'התלהבות'
+        }
+      ]
+    }
   ];
+
+  return {
+    ...rubricsSchemas['core-values'],
+    sections: inferredSchemaSections
+  };
 };
 
 export const getCvFieldIds = () => {

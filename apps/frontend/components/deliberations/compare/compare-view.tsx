@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Stack, Divider, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -12,6 +12,7 @@ import CompareRubricScores from './compare-rubric-scores';
 import CompareExceedingRemarks from './compare-exceeding-remarks';
 import CompareTeamInfo from './compare-team-info';
 import CompareCvForms from './compare-cv-forms';
+import { makeCvValuesForAllRubrics } from '@lems/season';
 
 export interface CompareContextType {
   teams: Array<WithId<Team>>;
@@ -44,8 +45,9 @@ const CompareView: React.FC<CompareViewProps> = ({
   category,
   removeTeam
 }) => {
+  const rubricsWithCvScores = makeCvValuesForAllRubrics(rubrics);
   const compareTeams = teams.filter(t => compareTeamIds.includes(t._id));
-  const compareRubrics = rubrics.filter(r => compareTeamIds.includes(r.teamId));
+  const compareRubrics = rubricsWithCvScores.filter(r => compareTeamIds.includes(r.teamId));
   const compareCvForms = cvForms.filter(
     cvf =>
       cvf.demonstratorAffiliation &&
@@ -67,7 +69,7 @@ const CompareView: React.FC<CompareViewProps> = ({
     >
       <Grid container columnGap={4} justifyContent="center">
         {compareTeamIds.map(teamId => (
-          <CompareViewTeam teamId={teamId} removeTeam={removeTeam} />
+          <CompareViewTeam key={String(teamId)} teamId={teamId} removeTeam={removeTeam} />
         ))}
       </Grid>
     </CompareContext.Provider>
@@ -86,7 +88,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
   if (!team) return null;
 
   return (
-    (<Grid
+    <Grid
       component={Paper}
       height="100%"
       p={2}
@@ -111,7 +113,7 @@ const CompareViewTeam: React.FC<CompareViewTeamProps> = ({ teamId, removeTeam })
         <CompareRubricRemarks teamId={teamId} />
         <CompareCvForms teamId={teamId} />
       </Stack>
-    </Grid>)
+    </Grid>
   );
 };
 

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
 import Grid from '@mui/material/Grid2';
 import { Typography } from '@mui/material';
-import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
+import { inferCvrubricSchema, localizedJudgingCategory, rubricsSchemas } from '@lems/season';
 import { CompareContext } from './compare-view';
 
 interface CompareRubricScoresProps {
@@ -21,7 +21,9 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
   }
 
   return teamRubrics.map((rubric, index) => {
-    const schema = rubricsSchemas[rubric.category];
+    let schema = rubricsSchemas[rubric.category];
+    if (category === 'core-values') schema = inferCvrubricSchema();
+
     const localizationMap = schema.sections
       .flatMap(section => section.fields)
       .reduce(

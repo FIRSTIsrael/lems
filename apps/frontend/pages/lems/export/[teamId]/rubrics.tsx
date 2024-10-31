@@ -38,6 +38,7 @@ interface ExportRubricPageProps {
 const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rubric }) => {
   const schema = rubricsSchemas[rubric.category];
   const isCoreValues = rubric.category === 'core-values';
+
   return (
     <>
       <Grid container>
