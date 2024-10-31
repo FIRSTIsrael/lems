@@ -15,7 +15,7 @@ interface JudgingInsightsDashboardProps {
 
 const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ division }) => {
   return (
-    (<Grid container spacing={2}>
+    <Grid container spacing={2}>
       <Grid size={4}>
         <AverageMedianCard
           title="ציוני מחוונים"
@@ -52,7 +52,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ div
       <Grid size={12}>
         <RobotCorrelationChart division={division} />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 

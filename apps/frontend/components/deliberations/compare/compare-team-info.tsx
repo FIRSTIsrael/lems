@@ -12,7 +12,12 @@ import {
   ResponsiveContainer,
   Text
 } from 'recharts';
-import { localizedJudgingCategory, RubricSchemaSection, rubricsSchemas } from '@lems/season';
+import {
+  inferCvrubricSchema,
+  localizedJudgingCategory,
+  RubricSchemaSection,
+  rubricsSchemas
+} from '@lems/season';
 import { JudgingCategory, Rubric } from '@lems/types';
 import { average } from '@lems/utils/arrays';
 import { CompareContext } from './compare-view';
@@ -37,7 +42,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
   );
 
   return (
-    (<Grid container alignItems="center" px={2}>
+    <Grid container alignItems="center" px={2}>
       <Grid size={6}>
         <Typography fontSize="1.5rem" fontWeight={700}>
           {localizeTeam(team, true)}
@@ -56,7 +61,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
           <RubricAlignmentChart rubrics={teamRubrics} />
         )}
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 
@@ -71,7 +76,8 @@ type CategoryAlignmentChartData = Array<{
 }>;
 
 const CategoryAlignmentChart: React.FC<CategoryAlignmentChartProps> = ({ category, rubric }) => {
-  const sections = rubricsSchemas[category].sections;
+  let sections = rubricsSchemas[category].sections;
+  if (category === 'core-values') sections = inferCvrubricSchema().sections;
 
   const getSectionAverage = (section: RubricSchemaSection): number => {
     const fields = section.fields.flatMap(f => f.id);

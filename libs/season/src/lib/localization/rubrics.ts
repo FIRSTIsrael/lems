@@ -11,6 +11,11 @@ export const localizedRubricStatus: { [key in RubricStatus]: string } = {
 export const localizedOptionalAward: {
   [key in CoreValuesAwards]: { name: string; description: string };
 } = {
+  impact: {
+    name: 'ההשפעה',
+    description:
+      'קבוצה שבצעה פעילות משמעותית לטובת הקהילה והדגימה כיצד השתתפותה ב- _FIRST®_ LEGO® League השפיעה על כל אחד ואחת מחברי הקבוצה.'
+  },
   breakthrough: {
     name: 'פורצי הדרך',
     description:

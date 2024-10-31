@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
 import { Stack, Typography } from '@mui/material';
-import { localizedJudgingCategory, rubricsSchemas } from '@lems/season';
+import { localizedJudgingCategory, rubricsSchemas, inferCvrubricSchema } from '@lems/season';
 import { CompareContext } from './compare-view';
 
 interface CompareExceedingRemarksProps {
@@ -19,7 +19,9 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
   return (
     <Stack px={2} height={192} sx={{ overflowY: 'auto' }}>
       {teamRubrics.map((rubric, index) => {
-        const schema = rubricsSchemas[rubric.category];
+        let schema = rubricsSchemas[rubric.category];
+        if (category === 'core-values') schema = inferCvrubricSchema();
+
         const localizationMap = schema.sections
           .flatMap(section => section.fields)
           .reduce(
@@ -35,7 +37,8 @@ const CompareExceedingRemarks: React.FC<CompareExceedingRemarksProps> = ({ teamI
           }
           return (
             <Typography key={index}>
-              <span style={{ fontWeight: 500 }}>{localizationMap[key]}:</span> "{value.notes}"
+              <span style={{ fontWeight: 500 }}>{localizationMap[key]}:</span> &quot;{value.notes}
+              &quot;
             </Typography>
           );
         });

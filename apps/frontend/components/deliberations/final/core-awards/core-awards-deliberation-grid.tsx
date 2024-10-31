@@ -10,12 +10,7 @@ import {
   Typography,
   Stack
 } from '@mui/material';
-import {
-  JudgingCategoryTypes,
-  JudgingCategory,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
-  DeliberationAnomaly
-} from '@lems/types';
+import { JudgingCategoryTypes, JudgingCategory, DeliberationAnomaly } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
@@ -58,7 +53,9 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
           <TableRow>
             <TableCell align="center">דירוג</TableCell>
             {JudgingCategoryTypes.map(category => (
-              <TableCell align="center">{localizedJudgingCategory[category].name}</TableCell>
+              <TableCell key={category} align="center">
+                {localizedJudgingCategory[category].name}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -71,7 +68,7 @@ const CoreAwardsDeliberationGrid: React.FC<CoreAwardsDeliberationGridProps> = ({
               {JudgingCategoryTypes.map(category => {
                 const team = categoryPicklists[category][i];
 
-                return !!team ? (
+                return team ? (
                   <TableCell
                     key={category + team._id.toString()}
                     align="center"

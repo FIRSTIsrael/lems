@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
@@ -375,6 +375,7 @@ const Page: NextPage<Props> = ({
       >
         <Deliberation
           ref={deliberation}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           initialState={initialDeliberations.find(d => d.isFinalDeliberation)!}
           rooms={rooms}
           sessions={sessions}
@@ -410,7 +411,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         awards: `/api/divisions/${user.divisionId}/awards`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
@@ -422,7 +423,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

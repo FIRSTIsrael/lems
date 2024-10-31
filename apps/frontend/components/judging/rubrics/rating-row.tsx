@@ -1,9 +1,8 @@
 import { TableCell, FormControlLabel, Radio, TableRow, Typography } from '@mui/material';
 import { Field, FieldProps } from 'formik';
 import Markdown from 'react-markdown';
-import UncheckedIcon from '@mui/icons-material/CircleOutlined';
-import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import ExceededNotesCell from './exceeded-notes-cell';
+import RubricRadioIcon from './rubric-radio-icon';
 
 // The labels are split into 4 props to help React.memo() optimize the rendering.
 interface Props {
@@ -13,9 +12,18 @@ interface Props {
   label_3?: string;
   label_4?: string;
   disabled?: boolean;
+  isCoreValuesField?: boolean;
 }
 
-const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props) => {
+const RatingRow = ({
+  name,
+  label_1,
+  label_2,
+  label_3,
+  label_4,
+  disabled,
+  isCoreValuesField = false
+}: Props) => {
   const labels = [label_1, label_2, label_3, label_4];
   return (
     <Field name={`${name}.value`}>
@@ -48,14 +56,22 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                         disableRipple
                         sx={{ p: '0.5em' }}
                         icon={
-                          <UncheckedIcon
+                          <RubricRadioIcon
+                            checked={false}
+                            isCoreValuesField={isCoreValuesField}
                             sx={{
                               fontSize: '1.5em',
                               color: meta.touched && meta.error ? '#f74848' : 'rgba(0,0,0,0.24)'
                             }}
                           />
                         }
-                        checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
+                        checkedIcon={
+                          <RubricRadioIcon
+                            checked={true}
+                            isCoreValuesField={isCoreValuesField}
+                            sx={{ fontSize: '1.5em', color: '#0071e3' }}
+                          />
+                        }
                         checked={field.value === cellValue}
                         onChange={e => {
                           form.setFieldValue(field.name, cellValue);
@@ -68,6 +84,7 @@ const RatingRow = ({ name, label_1, label_2, label_3, label_4, disabled }: Props
                       <Typography
                         fontSize="0.875em"
                         fontWeight={field.value === String(index + 1) ? 700 : undefined}
+                        component="span"
                       >
                         <Markdown skipHtml>{label || ''}</Markdown>
                       </Typography>

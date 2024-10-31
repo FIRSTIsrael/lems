@@ -21,7 +21,7 @@ import {
   DeliberationAnomaly
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
-import { localizedJudgingCategory } from '@lems/season';
+import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
@@ -42,7 +42,7 @@ interface Props {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberation: WithId<JudgingDeliberation>;
-  roomScores: Array<any>;
+  roomScores: Array<unknown>;
 }
 
 const Page: NextPage<Props> = ({
@@ -71,6 +71,7 @@ const Page: NextPage<Props> = ({
   const checkElegibility = useCallback(() => true, []);
 
   const suggestTeam = (teams: Array<DeliberationTeam>, category?: JudgingCategory) => {
+    if (teams.length < 2) return null;
     const getScores = (team: DeliberationTeam) => ({
       score: category ? team.scores[category] : team.totalScore,
       normalizedScore: category ? team.normalizedScores[category] : team.normalizedTotalScore
@@ -101,6 +102,7 @@ const Page: NextPage<Props> = ({
     const sortedTeams = teams.sort((a, b) => getScore(b) - getScore(a));
 
     picklist.forEach((teamId, index) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const score = getScore(sortedTeams.find(t => t._id === teamId)!);
       const excludeTies = sortedTeams.filter(st => getScore(st) !== score || st._id === teamId);
       const rank = excludeTies.findIndex(st => st._id === teamId);
@@ -136,7 +138,12 @@ const Page: NextPage<Props> = ({
   const updateRubric = (rubric: WithId<Rubric<JudgingCategory>>) => {
     setRubrics(rubrics =>
       rubrics.map(r => {
-        if (r._id === rubric._id) return rubric;
+        if (r._id === rubric._id) {
+          if (rubric.category === 'core-values') {
+            return makeCvValuesForRubric(rubric as WithId<Rubric<'core-values'>>, rubrics);
+          }
+          return rubric;
+        }
         return r;
       })
     );
@@ -174,6 +181,7 @@ const Page: NextPage<Props> = ({
     rubricId: ObjectId,
     newAwards: { [key in CoreValuesAwards]: boolean }
   ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rubricUpdate: any = {};
     rubricUpdate['data.awards'] = newAwards;
     socket.emit(
@@ -279,7 +287,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${user.divisionId}`,
         teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
+        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
@@ -291,7 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data, category } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

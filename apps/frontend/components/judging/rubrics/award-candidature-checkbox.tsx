@@ -26,7 +26,7 @@ const AwardCandidatureCheckbox: React.FC<AwardCandidatureCheckboxProps> = ({
   return (
     <FastField name={`${name}`}>
       {({ field: { onBlur, checked, ...field }, form }: FieldProps) => (
-        <ListItem disablePadding sx={{ maxWidth: '28rem' }}>
+        <ListItem disablePadding>
           <ListItemButton
             role={undefined}
             dense
@@ -56,11 +56,7 @@ const AwardCandidatureCheckbox: React.FC<AwardCandidatureCheckboxProps> = ({
                   {title}
                 </Typography>
               }
-              secondary={
-                <Typography component="span">
-                  <Markdown skipHtml>{description}</Markdown>
-                </Typography>
-              }
+              secondary={<Markdown skipHtml>{description}</Markdown>}
             />
           </ListItemButton>
         </ListItem>

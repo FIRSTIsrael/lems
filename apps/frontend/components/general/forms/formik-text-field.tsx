@@ -3,7 +3,7 @@ import { TextField, TextFieldProps } from '@mui/material';
 
 type FormikTextFieldProps = {
   name: string;
-  label: string;
+  label?: string;
 } & TextFieldProps;
 
 const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, ...props }) => {

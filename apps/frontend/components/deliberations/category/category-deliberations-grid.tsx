@@ -4,7 +4,12 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { JudgingCategory, CoreValuesAwardsTypes, CoreValuesAwards } from '@lems/types';
-import { rubricsSchemas, RubricSchemaSection, cvFormSchema } from '@lems/season';
+import {
+  rubricsSchemas,
+  RubricSchemaSection,
+  cvFormSchema,
+  inferCvrubricSchema
+} from '@lems/season';
 import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
@@ -33,12 +38,15 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   showRanks = false,
   showNormalizedScores = false
 }) => {
-  const schema = rubricsSchemas[category];
+  let schema = rubricsSchemas[category];
+  if (category === 'core-values') schema = inferCvrubricSchema();
+
   const fields = schema.sections.flatMap((section: RubricSchemaSection) =>
     section.fields.map(field => ({ field: field.id, headerName: field.title }))
   );
+
   const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
-  const rankingRounds = [teams[0].gpScores.map(gp => gp.round)].flat();
+  const rankingRounds = [teams[0]?.gpScores.map(gp => gp.round)].flat();
 
   let rows = teams
     .map(team => {
@@ -93,20 +101,20 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     },
     ...fields.map(
       field =>
-        (({
+        ({
           ...field,
           ...defaultColumnSettings,
           width: 75
-        }) as GridColDef)
+        }) as GridColDef
     ),
     ...(category === 'core-values'
       ? rankingRounds.map(
           round =>
-            (({
+            ({
               field: `gp-${round}`,
               headerName: `GP ${round}`,
               ...defaultColumnSettings
-            }) as GridColDef)
+            }) as GridColDef
         )
       : []),
     {
@@ -127,12 +135,12 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       : []),
     ...awards.map(
       award =>
-        (({
+        ({
           ...award,
           type: 'boolean',
           editable: !disabled,
           width: 65
-        }) as GridColDef)
+        }) as GridColDef
     ),
     ...(category === 'core-values'
       ? [
@@ -248,9 +256,9 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         processRowUpdate={(updatedRow, originalRow) => {
           if (!!updateTeamAwards && updatedRow.rubricId && !fullMatch(updatedRow, originalRow)) {
             const newAwards = getDiff(originalRow, updatedRow);
-            const oldAwards: Record<string, any> = { ...originalRow };
+            const oldAwards: Record<string, unknown> = { ...originalRow };
             CoreValuesAwardsTypes.forEach(cvAward => {
-              if (!newAwards.hasOwnProperty(cvAward)) {
+              if (!Object.prototype.hasOwnProperty.call(newAwards, cvAward)) {
                 newAwards[cvAward] = oldAwards[cvAward] ?? false;
               }
             });

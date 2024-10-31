@@ -20,7 +20,7 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
   disabled = false
 }) => {
   return (
-    (<Grid size={1}>
+    <Grid size={1}>
       <Draggable
         key={droppableId + ':' + team._id}
         draggableId={droppableId + ':' + team._id}
@@ -67,17 +67,17 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
           </div>
         )}
       </Draggable>
-    </Grid>)
+    </Grid>
   );
 };
 
 interface TeamPoolProps {
   teams: Array<WithId<Team>>;
-  id: string;
   disabled?: boolean;
 }
 
-const TeamPool: React.FC<TeamPoolProps> = ({ teams, id, disabled = false }) => {
+const TeamPool: React.FC<TeamPoolProps> = ({ teams, disabled = false }) => {
+  const id = 'team-pool';
   const ref = useRef(null);
   const { width } = useDimensions(ref);
 

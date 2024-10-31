@@ -40,7 +40,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
   );
 
   return (
-    (<Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+    <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid size={6}>
         <CategoryDeliberationsGrid
           category="core-values"
@@ -55,7 +55,6 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
           teams={teams
             .filter(team => availableTeams.includes(team._id))
             .sort((a, b) => a.number - b.number)}
-          id="team-pool"
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
@@ -64,6 +63,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
           startDeliberation={start}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           endDeliberationStage={endStage ?? (() => {})}
           nextStageUnlocked={nextStageUnlocked}
           compareProps={compareContextProps}
@@ -77,8 +77,9 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
       {/* 1.5 x number of lists*/}
       <Grid size={4.5}>
         <Stack direction="row" spacing="2" gap={2} height="100%">
-          {CoreValuesAwardsTypes.map(award => (
+          {CoreValuesAwardsTypes.map((award, index) => (
             <AwardList
+              key={index}
               title={localizedAward[award].name}
               length={limits[award]!}
               withIcons
@@ -98,7 +99,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
       <Grid size={7.5}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 

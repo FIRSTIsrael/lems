@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
+import { cvRubricPipeline } from '../../../../lib/mongo/pipelines/cv-rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,6 +16,7 @@ router.get(
           teamId: new ObjectId(req.params.teamId)
         }
       },
+      ...cvRubricPipeline, // Make cv rubric values
       {
         $project: {
           category: true,
