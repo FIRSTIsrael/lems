@@ -228,7 +228,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
         </Grid>
         <Grid size={5.5}>
           <Stack spacing={1} textAlign="center">
-            <Typography fontWeight={700}>{schema.feedback?.[0].title}</Typography>
+            <Typography fontWeight={700}>{schema.feedback?.fields.greatJob}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.greatJob}</Typography>
           </Stack>
         </Grid>
@@ -237,7 +237,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
         </Grid>
         <Grid size={5.5}>
           <Stack spacing={1} textAlign="center">
-            <Typography fontWeight={700}>{schema.feedback?.[1].title}</Typography>
+            <Typography fontWeight={700}>{schema.feedback?.fields.thinkAbout}</Typography>
             <Typography fontSize="0.875rem">{rubric.data?.feedback.thinkAbout}</Typography>
           </Stack>
         </Grid>
