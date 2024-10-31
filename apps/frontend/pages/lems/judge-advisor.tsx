@@ -168,7 +168,7 @@ const Page: NextPage<Props> = ({
   );
 
   return (
-    (<RoleAuthorizer
+    <RoleAuthorizer
       user={user}
       allowedRoles="judge-advisor"
       onFail={() => {
@@ -268,7 +268,7 @@ const Page: NextPage<Props> = ({
           </TabContext>
         </>
       </Layout>
-    </RoleAuthorizer>)
+    </RoleAuthorizer>
   );
 };
 
@@ -292,7 +292,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

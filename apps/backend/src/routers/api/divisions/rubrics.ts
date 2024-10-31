@@ -3,13 +3,17 @@ import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
 import { JudgingCategory, JudgingCategoryTypes } from '@lems/types';
+import { makeCvValuesForAllRubrics } from '@lems/season';
 
 const router = express.Router({ mergeParams: true });
 
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const rubrics = await db.getDivisionRubrics(new ObjectId(req.params.divisionId));
+    let rubrics = await db.getDivisionRubrics(new ObjectId(req.params.divisionId));
+    if (req.query.makeCvValues) {
+      rubrics = makeCvValuesForAllRubrics(rubrics);
+    }
     res.json(rubrics);
   })
 );

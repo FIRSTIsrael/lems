@@ -18,9 +18,7 @@ import {
   DialogContentText,
   DialogTitle,
   SxProps,
-  Paper,
-  Theme,
-  TableContainer
+  Theme
 } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import Grid from '@mui/material/Grid2';
@@ -123,6 +121,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
   };
 
   const validateRubric = (formValues: FormikValues) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const errors: any = {};
 
     fields.forEach(field => {
@@ -133,7 +132,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
       }
     });
 
-    Object.entries(schema.feedback ?? {}).forEach(([key, value]) => {
+    Object.entries(schema.feedback?.fields ?? {}).forEach(([key, value]) => {
       if (!formValues.feedback[key]) {
         errors[key] = 'שדה חובה';
       }
@@ -202,9 +201,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                       md: 9
                     }}
                   >
-                    <Typography color="textSecondary" fontSize="0.875rem" component="span">
-                      <Markdown skipHtml>{schema.description}</Markdown>
-                    </Typography>
+                    <Markdown skipHtml>{schema.description}</Markdown>
                   </Grid>
                 )}
               </Grid>
@@ -300,8 +297,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 />
               </TableHead>
               <TableBody>
-                {schema.sections.map(section => (
-                  <>
+                {schema.sections.map((section, index) => (
+                  <React.Fragment key={index}>
                     <TitleRow
                       title={section.title}
                       description={section.description}
@@ -319,7 +316,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                         isCoreValuesField={field.isCoreValuesField}
                       />
                     ))}
-                  </>
+                  </React.Fragment>
                 ))}
                 {schema.feedback && (
                   <FeedbackRow

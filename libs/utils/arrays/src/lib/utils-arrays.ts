@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const ensureArray = (value: any | Array<any>) => {
   return Array.isArray(value) ? value : [value];
 };
@@ -26,6 +27,7 @@ export const compareScoreArrays = (
 };
 
 export const rankArray = (sortedArray: any[], evaluate: (i: any) => number, rankField: string) => {
+  if (sortedArray.length < 2) return sortedArray;
   const _arr = [...sortedArray];
   _arr[0][rankField] = 1;
   for (let i = 1; i < _arr.length; i++) {

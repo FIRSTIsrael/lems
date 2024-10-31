@@ -56,11 +56,7 @@ const AwardCandidatureCheckbox: React.FC<AwardCandidatureCheckboxProps> = ({
                   {title}
                 </Typography>
               }
-              secondary={
-                <Typography component="span">
-                  <Markdown skipHtml>{description}</Markdown>
-                </Typography>
-              }
+              secondary={<Markdown skipHtml>{description}</Markdown>}
             />
           </ListItemButton>
         </ListItem>

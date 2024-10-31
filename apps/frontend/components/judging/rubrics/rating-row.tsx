@@ -84,6 +84,7 @@ const RatingRow = ({
                       <Typography
                         fontSize="0.875em"
                         fontWeight={field.value === String(index + 1) ? 700 : undefined}
+                        component="span"
                       >
                         <Markdown skipHtml>{label || ''}</Markdown>
                       </Typography>
