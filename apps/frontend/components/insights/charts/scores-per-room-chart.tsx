@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
-import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ComposedChart,

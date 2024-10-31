@@ -37,6 +37,7 @@ const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ division, team }) =
       );
   }, [division._id, team]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPolarAngleAxis = (props: any) => {
     const { payload, x, y, cx, cy, ...rest } = props;
     const category: JudgingCategory = payload.value;
