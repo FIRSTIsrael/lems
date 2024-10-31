@@ -298,8 +298,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       ctx
     );
 
-    console.log(data.rubrics);
-
     return { props: { user, ...data, category } };
   } catch {
     return { redirect: { destination: '/login', permanent: false } };
