@@ -27,7 +27,7 @@ const CategoryDeliberationLayout: React.FC = () => {
   );
 
   return (
-    (<Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
+    <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
       <Grid size={8}>
         <CategoryDeliberationsGrid
           category={category}
@@ -66,11 +66,10 @@ const CategoryDeliberationLayout: React.FC = () => {
           teams={teams
             .filter(team => availableTeams.includes(team._id))
             .sort((a, b) => b.scores[category] - a.scores[category])}
-          id="team-pool"
           disabled={deliberation.status !== 'in-progress'}
         />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 

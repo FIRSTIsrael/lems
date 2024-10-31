@@ -314,4 +314,6 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
   }
 );
 
+Deliberation.displayName = 'Deliberation';
+
 export type DeliberationRef = Pick<DeliberationStateAndActions, 'sync' | 'stage' | 'status'>;
