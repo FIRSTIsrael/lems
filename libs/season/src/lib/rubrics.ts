@@ -4,78 +4,22 @@ import { rubricsSchemas } from './localization/rubrics/index';
 import { RubricSchemaSection, RubricsSchema } from './localization/rubrics/typing';
 
 export const inferCvrubricSchema = (): RubricsSchema => {
+  const ipSchema = rubricsSchemas['innovation-project'];
+  const rdSchema = rubricsSchemas['robot-design'];
   const inferredSchemaSections: RubricSchemaSection[] = [
-    {
-      title: 'זיהוי',
-      description: '',
+    // Rd and Ip have the same sections, so we can just use one of them (ipSchema)
+    ...ipSchema.sections.map(section => ({
+      ...section,
       fields: [
-        {
-          id: 'ip-research',
-          title: 'מחקר'
-        },
-        {
-          id: 'rd-resources',
-          title: 'שימוש במשאבים'
-        }
+        ...section.fields
+          .filter(f => f.isCoreValuesField)
+          .map(field => ({ id: 'ip-' + field.id, title: field.title })),
+        ...(rdSchema.sections
+          .find(s => s.title === section.title)
+          ?.fields.filter(f => f.isCoreValuesField)
+          .map(field => ({ id: 'rd-' + field.id, title: field.title })) ?? [])
       ]
-    },
-    {
-      title: 'תכנון',
-      description: '',
-      fields: [
-        {
-          id: 'rd-ideation',
-          title: 'רעיונות'
-        },
-        {
-          id: 'ip-participation',
-          title: 'השתתפות בתהליך'
-        }
-      ]
-    },
-    {
-      title: 'יצירה',
-      description: '',
-      fields: [
-        {
-          id: 'ip-innovation',
-          title: 'חדשנות'
-        }
-      ]
-    },
-    {
-      title: 'חזרה ושינוי',
-      description: '',
-      fields: [
-        {
-          id: 'rd-improvements',
-          title: 'שיפורים'
-        }
-      ]
-    },
-    {
-      title: 'הצגה',
-      description:
-        'הקבוצה שיתפה במצגת תכליתית את הפתרון שלה ואת השפעתו על אחרים, וחגגה את ההתקדמות שלה.',
-      fields: [
-        {
-          id: 'ip-explanation',
-          title: 'הסבר'
-        },
-        {
-          id: 'ip-excitement',
-          title: 'התלהבות'
-        },
-        {
-          id: 'rd-explanation',
-          title: 'הסבר'
-        },
-        {
-          id: 'rd-excitement',
-          title: 'התלהבות'
-        }
-      ]
-    }
+    }))
   ];
 
   return {
