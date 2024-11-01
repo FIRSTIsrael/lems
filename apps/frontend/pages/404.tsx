@@ -18,7 +18,7 @@ const Custom404: NextPage = () => {
         <Typography variant="h1" gutterBottom>
           הדף אליו נכנסתם לא נמצא
         </Typography>
-        <Typography variant="h2" color="#666" fontSize="1.5rem">
+        <Typography variant="h2" sx={{ color: '#666' }} fontSize="1.5rem">
           שגיאה 404
         </Typography>
       </Paper>

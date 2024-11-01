@@ -27,34 +27,56 @@ export type RobotGameMatchPresent = 'present' | 'no-show';
 export const JudgingCategoryTypes = ['innovation-project', 'robot-design', 'core-values'] as const;
 export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 
-export const CoreValuesAwardsTypes = ['breakthrough', 'risingAllStar', 'motivate'] as const;
+export const CoreValuesAwardsTypes = [
+  'breakthrough',
+  'rising-all-star',
+  'motivate',
+  'impact'
+] as const;
 export type CoreValuesAwards = (typeof CoreValuesAwardsTypes)[number];
 
 export const DivisionSectionTypes = ['field', 'judging'];
 export type DivisionSection = (typeof DivisionSectionTypes)[number];
 
+export const PersonalAwardTypes = ['lead-mentor', 'volunteer-of-the-year'] as const;
+export type PersonalAwards = (typeof PersonalAwardTypes)[number];
+
 export const OptionalAwardTypes = [
-  'leadMentor',
-  'impact',
-  'volunteerOfTheYear',
-  'excellenceInEngineering',
+  'excellence-in-engineering',
+  ...PersonalAwardTypes,
   ...CoreValuesAwardsTypes
 ] as const;
-export type OptionalAwards = (typeof CoreValuesAwardsTypes)[number];
+export type OptionalAwards = (typeof OptionalAwardTypes)[number];
 
 export const MandatoryAwardTypes = [
-  'coreValues',
-  'innovationProject',
-  'robotDesign',
-  'robotPerformance',
+  'core-values',
+  'innovation-project',
+  'robot-design',
+  'robot-performance',
   'champions'
 ] as const;
 export type MandatoryAwards = (typeof MandatoryAwardTypes)[number];
 
-export const AwardNameTypes = [...MandatoryAwardTypes, ...OptionalAwardTypes] as const;
+export const AwardNameTypes = [
+  ...MandatoryAwardTypes,
+  ...OptionalAwardTypes,
+  'advancement'
+] as const;
 export type AwardNames = (typeof AwardNameTypes)[number];
 
 export type AwardSchema = { [key in AwardNames]: { index: number; count: number } };
+
+export const AwardLimits: { [key in AwardNames]?: number } = {
+  champions: 4,
+  'robot-design': 4,
+  'innovation-project': 4,
+  'core-values': 4,
+  'robot-performance': 4,
+  breakthrough: 3,
+  'excellence-in-engineering': 3,
+  motivate: 3,
+  'rising-all-star': 3
+};
 
 export const RubricStatusTypes = [
   'empty',
@@ -80,37 +102,30 @@ export const AudienceDisplayScreenTypes = [
 ];
 export type AudienceDisplayScreen = (typeof AudienceDisplayScreenTypes)[number];
 
-export type RubricFields<T extends JudgingCategory> = T extends 'core-values'
-  ? 'discovery' | 'innovation' | 'impact' | 'inclusion' | 'teamwork' | 'fun'
-  : 'identify' | 'design' | 'create' | 'iterate' | 'communicate';
-
-export type RubricInnerFieldPairs<T extends JudgingCategory> = T extends 'innovation-project'
-  ?
-      | ['problem', 'research']
-      | ['selection', 'plan']
-      | ['development', 'model']
-      | ['sharing', 'improvements']
-      | ['presentation', 'impact']
-  :
-      | ['strategy', 'skills']
-      | ['plan', 'features']
-      | ['functionality', 'code']
-      | ['testing', 'improvements']
-      | ['process', 'involvement'];
-
-export type RubricInnerFields<T extends JudgingCategory> =
-  | RubricInnerFieldPairs<T>[0]
-  | RubricInnerFieldPairs<T>[1];
+export const RANKING_ANOMALY_THRESHOLD = 3;
+export const AnomalyReasonTypes = ['low-rank', 'high-rank'];
+export type AnomalyReasons = (typeof AnomalyReasonTypes)[number];
 
 export const JUDGING_SESSION_LENGTH = 27 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
+export const CATEGORY_DELIBERATION_LENGTH = 20 * 60;
+export const CHAMPIONS_DELIBERATION_STAGE_LENGTH = 5 * 60;
+export const CORE_AWARDS_DELIBERATION_STAGE_LENGTH = 15 * 60;
+export const OPTIONAL_AWARDS_DELIBERATION_STAGE_LENGTH = 10 * 60;
+export const FINAL_DELIBERATION_LENGTH =
+  CHAMPIONS_DELIBERATION_STAGE_LENGTH +
+  CORE_AWARDS_DELIBERATION_STAGE_LENGTH +
+  OPTIONAL_AWARDS_DELIBERATION_STAGE_LENGTH;
+export const PRELIMINARY_DELIBERATION_PICKLIST_LENGTH = 12;
+export const ADVANCEMENT_PERCENTAGE = 0.18;
 export const SEASON_NAME = 'SUBMERGED℠';
 
 export const MATCH_AUTOLOAD_THRESHOLD = 10;
-
-// All these values will have no effect at V2.0
-// Support will be added in future versions
-export const ALLOW_MATCH_SELECTOR = false;
-export const COUNTDOWN_BEFORE_MATCH = false;
 export const ALLOW_UNREGULATED_START = false;
 export const ALLOW_UNREGULATED_LOAD = true;
+
+export const CategoryColors: Record<JudgingCategory, string> = {
+  'innovation-project': '#C7EAFB',
+  'robot-design': '#CCE7D3',
+  'core-values': '#FCD3C1'
+};

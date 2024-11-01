@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Skeleton, Typography } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import { red, green, blue } from '@mui/material/colors';
 import { Division, JudgingCategory, Team } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
@@ -37,6 +37,7 @@ const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ division, team }) =
       );
   }, [division._id, team]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPolarAngleAxis = (props: any) => {
     const { payload, x, y, cx, cy, ...rest } = props;
     const category: JudgingCategory = payload.value;

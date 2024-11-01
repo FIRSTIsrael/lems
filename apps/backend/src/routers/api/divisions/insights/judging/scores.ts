@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
+import { cvRubricPipeline } from '../../../../../lib/mongo/pipelines/cv-rubrics';
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,6 +18,7 @@ router.get(
           }
         }
       },
+      ...cvRubricPipeline, // Make cv rubric values
       {
         $project: {
           category: true,
@@ -60,6 +62,7 @@ router.get(
           }
         }
       },
+      ...cvRubricPipeline, // Make cv rubric values
       {
         $project: {
           category: true,
@@ -105,6 +108,7 @@ router.get(
           }
         }
       },
+      ...cvRubricPipeline, // Make cv rubric values
       {
         $project: {
           category: true,
@@ -144,10 +148,11 @@ router.get(
         $match: {
           divisionId: new ObjectId(req.params.divisionId),
           status: {
-            $in: ['ready', 'waiting-for-review', 'completed']
+            $in: ['ready', 'waiting-for-review', 'completed', 'in-progress']
           }
         }
       },
+      ...cvRubricPipeline, // Make cv rubric values
       {
         $addFields: {
           scores: { $objectToArray: '$data.values' }
@@ -219,7 +224,8 @@ router.get(
       },
       {
         $addFields: {
-          room: { $arrayElemAt: ['$room.name', 0] }
+          room: { $arrayElemAt: ['$room.name', 0] },
+          roomId: { $arrayElemAt: ['$room._id', 0] }
         }
       },
       {
@@ -229,7 +235,8 @@ router.get(
           'core-values': true,
           'robot-design': true,
           average: { $avg: ['$innovation-project', '$core-values', '$robot-design'] },
-          room: true
+          room: true,
+          roomId: true
         }
       }
     ];

@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
   Division,
   SafeUser,
@@ -143,7 +143,7 @@ const Page: NextPage<Props> = ({
 
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
-      <Grid xs={12} key={'practice' + r}>
+      <Grid key={'practice' + r} size={12}>
         <HeadRefereeRoundSchedule
           division={division}
           divisionState={divisionState}
@@ -158,7 +158,7 @@ const Page: NextPage<Props> = ({
     ))
     .concat(
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
-        <Grid xs={12} key={'ranking' + r}>
+        <Grid key={'ranking' + r} size={12}>
           <HeadRefereeRoundSchedule
             division={division}
             divisionState={divisionState}
@@ -201,7 +201,7 @@ const Page: NextPage<Props> = ({
         <WelcomeHeader division={division} user={user} />
         <Paper sx={{ p: 2 }}>
           <ScoresheetStatusReferences />
-          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }} color="text.secondary">
+          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }} color="textSecondary">
             הניקוד במקצה יופיע מעל הכפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
             הקבוצה.
           </Typography>

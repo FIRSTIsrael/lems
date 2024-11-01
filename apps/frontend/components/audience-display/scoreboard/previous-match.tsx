@@ -1,5 +1,5 @@
 import { Stack, Typography, Grid2Props, Paper } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { yellow, grey, green } from '@mui/material/colors';
 import { WithId } from 'mongodb';
 import { Team, Scoresheet, RobotGameMatch } from '@lems/types';
@@ -42,7 +42,7 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
       height="100%"
     >
       <Typography fontSize="2rem">#{team.number}</Typography>
-      <Typography fontWeight={700} fontSize="2rem" color="text.secondary">
+      <Typography fontWeight={700} fontSize="2rem" color="textSecondary">
         {scoresheet.status === 'waiting-for-head-ref' ? 'בבדיקה' : scoresheet.data?.score || '-'}
       </Typography>
     </Stack>
@@ -61,7 +61,7 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
 }) => {
   return (
     <Grid container component={Paper} {...props} alignItems="center">
-      <Grid xs={3}>
+      <Grid size={3}>
         <Typography component="h2" fontSize="1.75rem" fontWeight={500}>
           {previousMatch?.number
             ? `מקצה קודם (מקצה ${previousMatch && localizedMatchStage[previousMatch.stage]} #${previousMatch?.number})`
@@ -69,18 +69,18 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
               ? 'מקצה בדיקה'
               : 'מקצה קודם (-)'}
         </Typography>
-        <Typography fontWeight={400} fontSize="1.5rem" color="text.secondary">
+        <Typography fontWeight={400} fontSize="1.5rem" color="textSecondary">
           הניקוד אינו סופי ויכול להשתנות בכל רגע.
         </Typography>
       </Grid>
       <Grid
         container
-        xs={9}
         columns={previousMatch?.participants.filter(p => p.teamId).length}
         alignContent="center"
         direction="row"
         height="100%"
         spacing={2}
+        size={9}
       >
         {previousMatch?.participants
           .filter(p => p.teamId)
@@ -88,7 +88,7 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
             const scoresheet = previousScoresheets.find(s => s.teamId === p.teamId);
             return (
               scoresheet && (
-                <Grid key={scoresheet._id.toString()} xs={1} height="100%">
+                <Grid key={scoresheet._id.toString()} height="100%" size={1}>
                   <TeamScoreBox
                     team={p.team || ({} as WithId<Team>)}
                     scoresheet={scoresheet || ({} as WithId<Scoresheet>)}

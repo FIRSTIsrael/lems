@@ -14,13 +14,13 @@ import {
   IconButton,
   Toolbar,
   Tooltip,
-  Typography,
-  keyframes
+  Typography
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NextLink from 'next/link';
 import { apiFetch } from '../lib/utils/fetch';
+import { errorAnimation } from '../lib/utils/animations';
 
 interface LayoutProps {
   title?: string | React.ReactNode;
@@ -32,11 +32,6 @@ interface LayoutProps {
   error?: boolean;
   color?: CSSProperties['color'];
 }
-
-const errorAnimation = keyframes`
-  from { background: #fecaca; }
-  to { background: #fca5a5; }
-`;
 
 const Layout: React.FC<LayoutProps> = ({
   title,

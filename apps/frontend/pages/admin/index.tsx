@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Paper, Typography, Stack, ListItemButton, Modal } from '@mui/material';
+import { Paper, Typography, Stack, ListItemButton } from '@mui/material';
 import { WithId } from 'mongodb';
 import { FllEvent, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../lib/utils/fetch';

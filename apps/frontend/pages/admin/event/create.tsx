@@ -19,7 +19,7 @@ import { grey } from '@mui/material/colors';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import ImportIcon from '@mui/icons-material/UploadRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { DivisionSwatches } from '@lems/types';
@@ -30,8 +30,8 @@ import ColorPickerButton from '../../../components/admin/color-picker-button';
 
 const DivisionField: React.FC<{ name: string }> = ({ name }) => {
   return (
-    <Grid container alignItems="center" xs={6} spacing={2}>
-      <Grid xs={1.5} position="relative" height="100%">
+    (<Grid container alignItems="center" spacing={2} size={6}>
+      <Grid position="relative" height="100%" size={1.5}>
         <Field name={`${name}.color`}>
           {({ field, form }: FieldProps) => (
             <ColorPickerButton
@@ -43,7 +43,7 @@ const DivisionField: React.FC<{ name: string }> = ({ name }) => {
           )}
         </Field>
       </Grid>
-      <Grid xs={10.5}>
+      <Grid size={10.5}>
         <FormikTextField
           name={`${name}.name`}
           variant="outlined"
@@ -52,7 +52,7 @@ const DivisionField: React.FC<{ name: string }> = ({ name }) => {
           fullWidth
         />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 
@@ -102,16 +102,16 @@ const Page: NextPage = () => {
   };
 
   return (
-    <Layout maxWidth="xl" title="יצירת אירוע" back="/admin">
+    (<Layout maxWidth="xl" title="יצירת אירוע" back="/admin">
       <Formik initialValues={getInitialValues()} onSubmit={handleSubmit}>
         {({ values, errors, touched, setFieldValue }) => (
           <Form>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid component={Paper} container rowGap={3} columnSpacing={3} p={2} mt={2}>
-                <Grid xs={12}>
+                <Grid size={12}>
                   <Typography variant="h2">הגדרות כלליות</Typography>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <FormikTextField
                     variant="outlined"
                     type="text"
@@ -120,7 +120,7 @@ const Page: NextPage = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <DatePicker
                     label="תאריך התחלה"
                     value={values.startDate}
@@ -139,7 +139,7 @@ const Page: NextPage = () => {
                     }}
                   />
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <DatePicker
                     label="תאריך סיום"
                     value={values.endDate}
@@ -156,7 +156,7 @@ const Page: NextPage = () => {
                     }}
                   />
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <Button
                     variant="contained"
                     startIcon={<ImportIcon />}
@@ -167,26 +167,26 @@ const Page: NextPage = () => {
                     העלאת רשימת קבוצות
                   </Button>
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                   <Typography variant="h2">הגדרות אינטגרציה</Typography>
                 </Grid>
-                <Grid container alignItems="center" xs={4} spacing={2}>
-                  <Grid xs={2}>
+                <Grid container alignItems="center" spacing={2} size={4}>
+                  <Grid size={2}>
                     <Avatar
                       src="/assets/first-israel-vertical.png"
                       alt="לוגו של פירסט ישראל"
                       sx={{ bgcolor: grey[100], width: 56, height: 56 }}
                     />
                   </Grid>
-                  <Grid xs={4}>
+                  <Grid size={4}>
                     <Typography>
                       ה-Dashboard של <em>FIRST</em> ישראל
                     </Typography>
                   </Grid>
-                  <Grid xs={2}>
+                  <Grid size={2}>
                     <FormControlLabel control={<Checkbox disabled checked />} label="פעיל" />
                   </Grid>
-                  <Grid xs={4}>
+                  <Grid size={4}>
                     <FormikTextField
                       variant="outlined"
                       type="text"
@@ -196,12 +196,12 @@ const Page: NextPage = () => {
                     />
                   </Grid>
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                   <Typography variant="h2">הגדרות בתים</Typography>
                 </Grid>
                 <DivisionField name="divisions[0]" />
               </Grid>
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Tooltip title="הוספת בית" arrow>
                   <span>
                     <IconButton disabled>
@@ -219,7 +219,7 @@ const Page: NextPage = () => {
           </Form>
         )}
       </Formik>
-    </Layout>
+    </Layout>)
   );
 };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { Division, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
 import ReportRoundSchedule from '../field/report-round-schedule';
 
@@ -26,7 +26,12 @@ const QueuerFieldSchedule: React.FC<QueuerFieldScheduleProps> = ({
 
   const roundSchedules = [...new Set(practiceMatches.flatMap(m => m.round))]
     .map(r => (
-      <Grid xs={12} xl={6} key={'practice' + r}>
+      <Grid
+        key={'practice' + r}
+        size={{
+          xs: 12,
+          xl: 6
+        }}>
         <ReportRoundSchedule
           divisionSchedule={refereeGeneralSchedule}
           roundStage="practice"
@@ -39,7 +44,12 @@ const QueuerFieldSchedule: React.FC<QueuerFieldScheduleProps> = ({
     ))
     .concat(
       [...new Set(rankingMatches.flatMap(m => m.round))].map(r => (
-        <Grid xs={12} xl={6} key={'ranking' + r}>
+        <Grid
+          key={'ranking' + r}
+          size={{
+            xs: 12,
+            xl: 6
+          }}>
           <ReportRoundSchedule
             divisionSchedule={refereeGeneralSchedule}
             roundStage="ranking"

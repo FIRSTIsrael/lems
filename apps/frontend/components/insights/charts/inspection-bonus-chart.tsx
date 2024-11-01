@@ -48,7 +48,7 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ division })
           <Typography fontSize="1.5rem" fontWeight={500} textAlign="center" pt={1}>
             בונוס ביקורת הציוד
           </Typography>
-          <Typography textAlign="center" color="#666">
+          <Typography textAlign="center" sx={{ color: '#666' }}>
             {Number(data.successRate.toFixed(2))}% הצלחה
           </Typography>
           <DataGrid

@@ -4,7 +4,7 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
   DivisionState,
   WSServerEmittedEvents,
@@ -47,7 +47,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
   };
 
   return (
-    <Paper
+    (<Paper
       sx={{
         p: 4,
         mt: 2,
@@ -58,7 +58,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={12}>
           <Typography gutterBottom>סגנון שקופיות זוכים</Typography>
           <ToggleButtonGroup
             value={awardWinnerSlideStyle}
@@ -76,7 +76,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={12}>
           <Button
             sx={{ minWidth: 200 }}
             variant="contained"
@@ -86,7 +86,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
           </Button>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper>)
   );
 };
 

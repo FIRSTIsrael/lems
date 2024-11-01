@@ -11,17 +11,11 @@ export const getDivisionTickets = (divisionId: ObjectId) => {
 };
 
 export const addTicket = (ticket: Ticket) => {
-  return db
-    .collection<Ticket>('tickets')
-    .insertOne(ticket)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').insertOne(ticket);
 };
 
 export const addTickets = (tickets: Array<Ticket>) => {
-  return db
-    .collection<Ticket>('tickets')
-    .insertMany(tickets)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').insertMany(tickets);
 };
 
 export const updateTicket = (
@@ -33,15 +27,9 @@ export const updateTicket = (
 };
 
 export const deleteTicket = (filter: Filter<Ticket>) => {
-  return db
-    .collection<Ticket>('tickets')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').deleteOne(filter);
 };
 
 export const deleteDivisionTickets = (divisionId: ObjectId) => {
-  return db
-    .collection<Ticket>('tickets')
-    .deleteMany({ divisionId: divisionId })
-    .then(response => response);
+  return db.collection<Ticket>('tickets').deleteMany({ divisionId: divisionId });
 };

@@ -19,23 +19,25 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
 import {
   AwardNameTypes,
   AwardNames,
   MandatoryAwardTypes,
   OptionalAwardTypes,
-  AwardSchema
+  AwardSchema,
+  AwardLimits,
+  ADVANCEMENT_PERCENTAGE
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils/arrays';
 import CustomNumberInput from '../field/scoresheet/number-input';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
+import FormikCheckbox from '../general/forms/formik-checkbox';
 
 interface AwardItemProps {
   name: AwardNames;
@@ -47,7 +49,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
 
   return (
-    <Draggable draggableId={name} index={index}>
+    (<Draggable draggableId={name} index={index}>
       {provided => (
         <Grid
           container
@@ -59,13 +61,13 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <Grid xs={1} display="flex" alignItems="center" {...provided.dragHandleProps}>
+          <Grid display="flex" alignItems="center" {...provided.dragHandleProps} size={1}>
             <DragIndicatorIcon color="disabled" />
           </Grid>
           <FastField name={`${name}`}>
             {({ field, form }: FieldProps) => (
-              <Grid xs={10} display="flex" alignItems="center" {...field}>
-                <Grid xs={2} display="flex" alignItems="center">
+              <Grid display="flex" alignItems="center" {...field} size={10}>
+                <Grid display="flex" alignItems="center" size={2}>
                   {isMandatory ? (
                     <Tooltip title="פרס חובה" arrow>
                       <span>
@@ -85,13 +87,13 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                     </IconButton>
                   )}
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <Typography>פרס {localizedAward[name].name || name}</Typography>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                   <CustomNumberInput
                     min={1}
-                    max={5}
+                    max={AwardLimits[name] ?? 5}
                     value={field.value}
                     onChange={(e, value) => {
                       e.preventDefault();
@@ -104,7 +106,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           </FastField>
         </Grid>
       )}
-    </Draggable>
+    </Draggable>)
   );
 };
 
@@ -133,7 +135,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
   const [awards, setAwards] = useState<Array<AwardNames>>(getExistingAwards(awardSchema));
 
   const getInitialValues = (schema: AwardSchema) => {
-    const values = Object.fromEntries(
+    const values: Record<string, number | boolean> = Object.fromEntries(
       Object.entries(schema).map(([key, value]) => [key, value.count])
     );
 
@@ -142,6 +144,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
       if (!values[a]) values[a] = isMandatory ? 1 : 0;
     });
 
+    values['enableAdvancement'] = true;
     return values;
   };
 
@@ -157,9 +160,10 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
       initialValues={getInitialValues(awardSchema)}
       onSubmit={(values, actions) => {
         const schema = {} as AwardSchema;
-        Object.entries(values).forEach(([awardName, awardCount]) => {
+        const { enableAdvancement, ...awardValues } = values;
+        Object.entries(awardValues).forEach(([awardName, awardCount]) => {
           schema[awardName as AwardNames] = {
-            count: awardCount,
+            count: awardCount as number,
             index: awards.findIndex(a => a === awardName)
           };
         });
@@ -173,6 +177,16 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
             enqueueSnackbar('רשימת הפרסים נשמרה בהצלחה!', { variant: 'success' });
           } else {
             enqueueSnackbar('אופס, לא הצלחנו לשמור את רשימת הפרסים.', { variant: 'error' });
+          }
+        });
+
+        apiFetch(`/api/admin/divisions/${divisionId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enableAdvancement })
+        }).then(res => {
+          if (!res.ok) {
+            enqueueSnackbar('לא הצלחנו לעדכן את פרטי האירוע.', { variant: 'error' });
           }
         });
 
@@ -198,13 +212,14 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
               )}
             </Droppable>
           </DragDropContext>
-          <Stack my={4} direction="row" spacing={2}>
+          <Stack component={Paper} my={2} p={2} width="100%" direction="row" spacing={2}>
             <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 150 }}>
               הוספת פרס רשות
             </Button>
             <Button variant="contained" onClick={submitForm} sx={{ minWidth: 150 }}>
               שמירה
             </Button>
+            <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
           </Stack>
           <Dialog
             open={open}

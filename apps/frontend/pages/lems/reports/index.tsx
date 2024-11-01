@@ -2,7 +2,7 @@ import React from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { SafeUser, Division, RoleTypes } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -18,7 +18,7 @@ interface GridPaperLinkProps {
 
 const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
   return (
-    <Grid xs={3}>
+    (<Grid size={3}>
       <Paper>
         <Button
           href={'reports/' + path}
@@ -28,7 +28,7 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
           {children}
         </Button>
       </Paper>
-    </Grid>
+    </Grid>)
   );
 };
 

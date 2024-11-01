@@ -65,7 +65,7 @@ const RobotConsistencyChart: React.FC<RobotConsistencyChartProps> = ({ division 
           <Typography fontSize="1.5rem" fontWeight={500} textAlign="center" pt={1}>
             עקביות הרובוטים
           </Typography>
-          <Typography textAlign="center" color="#666">
+          <Typography textAlign="center" sx={{ color: '#666' }}>
             {Number(data.avgRelStdDev.toFixed(2))}% סטיית תקן ממוצעת
           </Typography>
           <DataGrid

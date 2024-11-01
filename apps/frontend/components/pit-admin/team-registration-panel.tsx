@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/';
+import Grid from '@mui/material/Grid2';
 import { Division, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 
@@ -38,10 +38,10 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({
   return (
     <Paper sx={{ p: 4 }}>
       <Grid container direction="row" alignItems="center" spacing={4}>
-        <Grid xs={9}>
+        <Grid size={9}>
           <TeamSelection teams={unregisteredTeams} value={team} setTeam={setTeam} />
         </Grid>
-        <Grid xs={3}>
+        <Grid size={3}>
           <Button
             sx={{ borderRadius: 8 }}
             variant="contained"

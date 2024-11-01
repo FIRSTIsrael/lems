@@ -14,18 +14,16 @@ export const getDivisionRubrics = (divisionId: ObjectId) => {
   return db.collection<Rubric<JudgingCategory>>('rubrics').find({ divisionId }).toArray();
 };
 
+export const getDivisionRubricsFromCategory = (divisionId: ObjectId, category: JudgingCategory) => {
+  return db.collection<Rubric<JudgingCategory>>('rubrics').find({ divisionId, category }).toArray();
+};
+
 export const addRubric = (rubric: Rubric<JudgingCategory>) => {
-  return db
-    .collection<Rubric<JudgingCategory>>('rubrics')
-    .insertOne(rubric)
-    .then(response => response);
+  return db.collection<Rubric<JudgingCategory>>('rubrics').insertOne(rubric);
 };
 
 export const addRubrics = (rubrics: Array<Rubric<JudgingCategory>>) => {
-  return db
-    .collection<Rubric<JudgingCategory>>('rubrics')
-    .insertMany(rubrics)
-    .then(response => response);
+  return db.collection<Rubric<JudgingCategory>>('rubrics').insertMany(rubrics);
 };
 
 export const updateRubric = (
@@ -39,15 +37,9 @@ export const updateRubric = (
 };
 
 export const deleteRubric = (filter: Filter<Rubric<JudgingCategory>>) => {
-  return db
-    .collection<Rubric<JudgingCategory>>('rubrics')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<Rubric<JudgingCategory>>('rubrics').deleteOne(filter);
 };
 
 export const deleteTeamRubrics = (teamId: ObjectId) => {
-  return db
-    .collection<Rubric<JudgingCategory>>('rubrics')
-    .deleteMany({ teamId })
-    .then(response => response);
+  return db.collection<Rubric<JudgingCategory>>('rubrics').deleteMany({ teamId });
 };

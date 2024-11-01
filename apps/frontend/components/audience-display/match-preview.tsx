@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { blue, red } from '@mui/material/colors';
 import Image from 'next/image';
 
@@ -32,7 +32,7 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
     >
       {match && (
         <Grid container component={Paper} width="80%" height="80%" pb={4} px={6} textAlign="center">
-          <Grid xs={3} position="relative">
+          <Grid position="relative" size={3}>
             <Image
               fill
               style={{ objectFit: 'contain', padding: 24 }}
@@ -40,12 +40,12 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
               alt="לוגו של FIRST ישראל"
             />
           </Grid>
-          <Grid xs={6} display="flex" alignItems="center" justifyContent="center">
+          <Grid display="flex" alignItems="center" justifyContent="center" size={6}>
             <Typography fontSize="5rem" fontWeight={700}>
               סבב {localizedMatchStage[match.stage]} #{match.round}
             </Typography>
           </Grid>
-          <Grid xs={3} position="relative">
+          <Grid position="relative" size={3}>
             <Image
               fill
               style={{ objectFit: 'contain', padding: 16 }}
@@ -53,21 +53,21 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
               alt="לוגו של הטכניון"
             />
           </Grid>
-          <Grid xs={12}>
-            <Typography fontSize="5rem" fontWeight={700} color="text.secondary">
+          <Grid size={12}>
+            <Typography fontSize="5rem" fontWeight={700} color="textSecondary">
               מקצה #{match.number}
             </Typography>
           </Grid>
           <Grid
-            xs={12}
             container
             spacing={2}
             columns={match.participants.filter(p => p.teamId).length}
+            size={12}
           >
             {match.participants
               .filter(p => p.teamId)
               .map(p => (
-                <Grid xs={1} key={p.teamId?.toString()}>
+                <Grid key={p.teamId?.toString()} size={1}>
                   <Stack
                     sx={{
                       color: division.color === 'red' ? red[800] : blue[800],
@@ -89,7 +89,7 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
                     <Typography fontSize="1.5rem" fontWeight={500}>
                       {p.team && `${p.team.affiliation.name}, ${p.team.affiliation.city}`}
                     </Typography>
-                    <Typography fontSize="1.25rem" fontWeight={700} color="text.secondary">
+                    <Typography fontSize="1.25rem" fontWeight={700} color="textSecondary">
                       שולחן {p.tableName && p.tableName}
                     </Typography>
                   </Stack>

@@ -28,7 +28,7 @@ const AverageMedianCard: React.FC<AverageMedianCardProps> = ({
   return stats ? (
     <Card variant="outlined" sx={sx}>
       <Box p={1} textAlign="center" sx={{ backgroundColor: color }}>
-        <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
+        <Typography fontSize="1.5rem" fontWeight={700} sx={{ color: '#FFF' }}>
           {title}
         </Typography>
       </Box>
@@ -44,7 +44,7 @@ const AverageMedianCard: React.FC<AverageMedianCardProps> = ({
               ? Number(stats.average.toFixed(precision))
               : stats.average}
           </Typography>
-          <Typography color="text.secondary">ממוצע</Typography>
+          <Typography color="textSecondary">ממוצע</Typography>
         </Stack>
         <Stack spacing={0} textAlign="center">
           <Typography fontWeight={600}>
@@ -52,7 +52,7 @@ const AverageMedianCard: React.FC<AverageMedianCardProps> = ({
               ? Number(stats.median.toFixed(precision))
               : stats.median}
           </Typography>
-          <Typography color="text.secondary">חציון</Typography>
+          <Typography color="textSecondary">חציון</Typography>
         </Stack>
       </Stack>
     </Card>

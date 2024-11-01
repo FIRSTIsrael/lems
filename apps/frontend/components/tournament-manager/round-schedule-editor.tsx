@@ -174,7 +174,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
               onClick={submitForm}
               loading={isSubmitting}
             >
-              <span>שמירה</span>
+              שמירה
             </LoadingButton>
             <Button
               startIcon={<RestartAltIcon />}

@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { Division } from '@lems/types';
 import Stat from '../stat';
 import AverageMedianCard from '../average-median-card';
@@ -16,7 +16,7 @@ interface JudgingInsightsDashboardProps {
 const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ division }) => {
   return (
     <Grid container spacing={2}>
-      <Grid xs={4}>
+      <Grid size={4}>
         <AverageMedianCard
           title="ציוני מחוונים"
           color={red[600]}
@@ -25,7 +25,7 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ div
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={4}>
+      <Grid size={4}>
         <Stat
           title="ציון ממוצע גבוה ביותר"
           url={`/api/divisions/${division._id}/insights/judging/scores/highest-average-score`}
@@ -33,23 +33,23 @@ const JudgingInsightsDashboard: React.FC<JudgingInsightsDashboardProps> = ({ div
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={4}>
+      <Grid size={4}>
         <Stat
           title="קבוצות שהועמדו לפרסי רשות"
           url={`/api/divisions/${division._id}/insights/judging/optional-award-nominations`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <CategoryScoresChart division={division} />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <JudgingRoomDelayChart division={division} />
       </Grid>
-      <Grid xs={12}>
-        <ScoresPerRoomChart division={division} />
+      <Grid size={12}>
+        <ScoresPerRoomChart divisionId={division._id} />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <RobotCorrelationChart division={division} />
       </Grid>
     </Grid>

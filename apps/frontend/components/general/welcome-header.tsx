@@ -24,10 +24,10 @@ const WelcomeHeader = ({ division, user }: Props) => {
       <Typography variant="h1" fontSize="1.25rem" fontWeight={700} gutterBottom>
         ברוכים הבאים ל{division.name}
       </Typography>
-      <Typography color="#666" fontSize="0.875rem">
+      <Typography fontSize="0.875rem" sx={{ color: '#666' }}>
         יחד, אנו מעצימים את הדור הבא של מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.
       </Typography>
-      <Typography color="#666" fontSize="0.875rem">
+      <Typography fontSize="0.875rem" sx={{ color: '#666' }}>
         תודה שבאת להתנדב איתנו בתור {user.role ? localizedRoles[user.role].name : ''}!
       </Typography>
     </Paper>

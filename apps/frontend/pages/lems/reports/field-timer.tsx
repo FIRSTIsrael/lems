@@ -19,7 +19,7 @@ import Layout from '../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/use-time';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 
 interface Props {
@@ -112,7 +112,7 @@ const Page: NextPage<Props> = ({
   ]);
 
   return (
-    <RoleAuthorizer
+    (<RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
@@ -123,7 +123,7 @@ const Page: NextPage<Props> = ({
       <Layout maxWidth="xl" error={connectionStatus === 'disconnected'}>
         <Paper sx={{ p: 2, mt: 'calc(50vh - 302px)' }}>
           <Grid container direction="row">
-            <Grid xs={2} position="relative">
+            <Grid position="relative" size={2}>
               <Image
                 fill
                 style={{ objectFit: 'contain', padding: 16 }}
@@ -131,7 +131,7 @@ const Page: NextPage<Props> = ({
                 alt="לוגו של FIRST ישראל"
               />
             </Grid>
-            <Grid xs={8}>
+            <Grid size={8}>
               <Typography fontSize="7.5rem" fontWeight={700} textAlign="center">
                 {activeMatch?.number
                   ? `מקצה #${activeMatch?.number}`
@@ -140,7 +140,7 @@ const Page: NextPage<Props> = ({
                     : 'אין מקצה פעיל'}
               </Typography>
             </Grid>
-            <Grid xs={2} position="relative">
+            <Grid position="relative" size={2}>
               <Image
                 fill
                 style={{ objectFit: 'contain', padding: 8 }}
@@ -175,7 +175,7 @@ const Page: NextPage<Props> = ({
         )}
         {/* </Box> */}
       </Layout>
-    </RoleAuthorizer>
+    </RoleAuthorizer>)
   );
 };
 

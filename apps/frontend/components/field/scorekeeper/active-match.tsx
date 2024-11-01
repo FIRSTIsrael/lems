@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, Paper, Tooltip, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { green, red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -48,7 +48,6 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
       <Typography fontSize="1.75rem" fontWeight={700}>
         {match?.number ? `מקצה #${match?.number}` : match?.stage === 'test' ? 'מקצה בדיקה' : '-'}
       </Typography>
-
       {startTime ? (
         <Countdown
           targetDate={getCountdownTarget(startTime)}
@@ -77,11 +76,10 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                   )
                   .find(s => s.teamId === participant.teamId);
                 return (
-                  <Grid key={index} xs={1}>
+                  <Grid key={index} size={1}>
                     <Grid
                       container
                       spacing={2}
-                      xs={2}
                       sx={{
                         backgroundColor: participant.ready ? green[100] : red[100],
                         border: `1px solid ${participant.ready ? green[300] : red[300]}`,
@@ -89,14 +87,15 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                         height: '100%',
                         pb: 2
                       }}
+                      size={2}
                     >
-                      <Grid xs={1}>
+                      <Grid size={1}>
                         <Typography fontWeight={500}>#{participant.team?.number}</Typography>
-                        <Typography fontSize="0.875rem" color="text.secondary">
+                        <Typography fontSize="0.875rem" color="textSecondary">
                           {participant.tableName}
                         </Typography>
                       </Grid>
-                      <Grid xs={1} alignItems="center" display="flex">
+                      <Grid alignItems="center" display="flex" size={1}>
                         {participant.present === 'present' ? (
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />

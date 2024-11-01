@@ -95,7 +95,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                 <Typography
                   fontSize="1rem"
                   fontWeight={500}
-                  color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
+                  sx={{ color: matchScoresheet._id === scoresheet._id ? '#fff' : purple[700] }}
                   gutterBottom
                 >
                   מקצה {localizedMatchStage[scoresheet.stage]} #{scoresheet.round}
@@ -104,7 +104,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
                   <Typography
                     fontSize="0.75rem"
                     fontWeight={500}
-                    color={matchScoresheet._id === scoresheet._id ? '#fff' : purple[700]}
+                    sx={{ color: matchScoresheet._id === scoresheet._id ? '#fff' : purple[700] }}
                   >
                     {scoresheet.data.score} נק&apos;,{' '}
                     {scoresheet.data.gp?.value && `GP - ${scoresheet.data.gp.value}`}

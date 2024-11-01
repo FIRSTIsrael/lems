@@ -11,7 +11,7 @@ import {
   ToggleButtonGroup,
   Typography
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import {
   LocalizedMission,
@@ -62,10 +62,10 @@ const MissionClause: React.FC<ExportMissionClauseProps> = ({
         }
       })}
     >
-      <Grid xs={10} mt={2} ml={3}>
+      <Grid mt={2} ml={3} size={10}>
         <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
       </Grid>
-      <Grid xs={12} ml={3}>
+      <Grid ml={3} size={12}>
         {clause.type === 'boolean' ? (
           <ToggleButtonGroup
             exclusive
@@ -131,25 +131,25 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
         id={mission.id}
         sx={{ scrollMarginTop: 300 }}
       >
-        <Grid container xs={8} spacing={0}>
+        <Grid container spacing={0} size={8}>
           <Grid
             py={1}
-            xs={2}
             alignSelf="flex-start"
             bgcolor="#388e3c"
             borderRadius="8px 0 0 0"
             textAlign="center"
+            size={2}
           >
-            <Typography fontSize="1.5rem" fontWeight={600} color="#fff">
+            <Typography fontSize="1.5rem" fontWeight={600} sx={{ color: '#FFF' }}>
               {mission.id.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid xs={6} pt={1}>
+          <Grid pt={1} size={6}>
             <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
               {localizedMission.title}
             </Typography>
           </Grid>
-          <Grid xs={12}>
+          <Grid size={12}>
             <Typography fontSize="1rem">{localizedMission.description}</Typography>
           </Grid>
           {mission.clauses.map((clause, index) => (
@@ -162,7 +162,7 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
               localizedMission={localizedMission}
             />
           ))}
-          <Grid xs={12} mt={2}>
+          <Grid mt={2} size={12}>
             {localizedMission.remarks?.map(remark => (
               <Typography
                 key={remark}
@@ -195,9 +195,9 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
   return (
     <>
       <Grid container>
-        <Grid xs={10}>
+        <Grid size={10}>
           <Stack justifyContent="space-between" height="100%">
-            <Typography fontSize="0.75rem" color="text.secondary">
+            <Typography fontSize="0.75rem" color="textSecondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({scoresheet._id.toString()}) |{' '}
               {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
@@ -206,7 +206,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
             </Typography>
           </Stack>
         </Grid>
-        <Grid xs={2}>
+        <Grid size={2}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="לוגו של תוכניות FIRST LEGO League Challenge"
