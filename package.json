@@ -50,7 +50,7 @@
     "react-spring": "^9.7.4",
     "recharts": "^2.13.0",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^4.8.0",
+    "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.0",
     "stylis": "^4.3.4",
     "stylis-plugin-rtl": "^2.1.1",
