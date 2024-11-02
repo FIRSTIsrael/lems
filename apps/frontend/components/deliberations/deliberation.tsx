@@ -21,7 +21,7 @@ import {
 } from '../../hooks/use-deliberation-state';
 import { DeliberationTeam, useDeliberationTeams } from '../../hooks/use-deliberation-teams';
 import LockOverlay from '../../components/general/lock-overlay';
-import { getDefaultPicklistLimit } from 'apps/frontend/lib/utils/math';
+import { getDefaultPicklistLimit } from '../../lib/utils/math';
 
 export interface DeliberationContextType {
   deliberation: WithId<JudgingDeliberation>;
