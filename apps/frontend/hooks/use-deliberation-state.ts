@@ -34,10 +34,11 @@ export interface DeliberationConfig {
 
 export const useDeliberationState = (
   initialState: WithId<JudgingDeliberation>,
+  defaultPicklistLimit: number,
   config: DeliberationConfig
 ) => {
   const getPicklistLimit = (name: AwardNames) =>
-    config.picklistLimits?.[name] ?? PRELIMINARY_DELIBERATION_PICKLIST_LENGTH;
+    config.picklistLimits?.[name] ?? defaultPicklistLimit;
 
   const deliberationReducer = (state: WithId<JudgingDeliberation>, action: ReducerActions) => {
     if (action.type === 'START') {

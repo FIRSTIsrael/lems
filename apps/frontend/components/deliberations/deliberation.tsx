@@ -21,6 +21,7 @@ import {
 } from '../../hooks/use-deliberation-state';
 import { DeliberationTeam, useDeliberationTeams } from '../../hooks/use-deliberation-teams';
 import LockOverlay from '../../components/general/lock-overlay';
+import { getDefaultPicklistLimit } from 'apps/frontend/lib/utils/math';
 
 export interface DeliberationContextType {
   deliberation: WithId<JudgingDeliberation>;
@@ -163,11 +164,15 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       onLock?.(lockState);
     };
 
-    const { stage, status, state, ...actions } = useDeliberationState(initialState, {
-      onStart,
-      onLock: lockWithAnomalies,
-      picklistLimits
-    });
+    const { stage, status, state, ...actions } = useDeliberationState(
+      initialState,
+      getDefaultPicklistLimit(allTeams.length),
+      {
+        onStart,
+        onLock: lockWithAnomalies,
+        picklistLimits
+      }
+    );
 
     useImperativeHandle(ref, () => ({ sync: actions.sync, stage, status }), [
       actions.sync,

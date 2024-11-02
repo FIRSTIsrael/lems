@@ -20,8 +20,7 @@ import {
   ADVANCEMENT_PERCENTAGE,
   AwardNames,
   CoreValuesAwards,
-  CoreValuesAwardsTypes,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
+  CoreValuesAwardsTypes
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
@@ -35,6 +34,7 @@ import ReviewLayout from '../../../components/deliberations/final/review-layout'
 import { Deliberation } from '../../../components/deliberations/deliberation';
 import { DeliberationRef } from '../../../components/deliberations/deliberation';
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
+import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -99,7 +99,7 @@ const Page: NextPage<Props> = ({
   const checkCoreAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
     const _team = teams.find(t => t._id === team._id)!;
     const { 'robot-game': robotGame, ...ranks } = _team.ranks;
-    return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
+    return Object.values(ranks).some(rank => rank <= getDefaultPicklistLimit(teams.length));
   };
 
   const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {

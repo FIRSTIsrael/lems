@@ -16,7 +16,6 @@ import {
   JudgingCategoryTypes,
   JudgingDeliberation,
   CoreValuesAwards,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
 } from '@lems/types';
@@ -30,6 +29,7 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 import { Deliberation, DeliberationRef } from '../../../../components/deliberations/deliberation';
 import CategoryDeliberationLayout from '../../../../components/deliberations/category/category-deliberations-layout';
+import { getDefaultPicklistLimit } from '../../../..//lib/utils/math';
 
 interface Props {
   category: JudgingCategory;
@@ -116,7 +116,7 @@ const Page: NextPage<Props> = ({
 
     for (
       let index = 0;
-      index < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
+      index < getDefaultPicklistLimit(teams.length) - RANKING_ANOMALY_THRESHOLD;
       index++
     ) {
       const teamId = sortedTeams[index]._id;

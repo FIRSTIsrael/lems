@@ -6,8 +6,7 @@ import {
   JudgingCategory,
   Scoresheet,
   CoreValuesForm,
-  Rubric,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
+  Rubric
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -17,6 +16,7 @@ import LockCategoryDeliberationButton from './lock-category-deliberation-button'
 import TeamSelection from '../../general/team-selection';
 import { localizedJudgingCategory } from '@lems/season';
 import CompareModal from '../compare/compare-modal';
+import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 interface DeliberationControlPanelProps {
   compareTeams: Array<WithId<Team>>;
@@ -55,7 +55,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
           lockDeliberation={lockDeliberation}
           disabled={
             deliberation.status !== 'in-progress' ||
-            (deliberation.awards[category]?.length ?? 0) < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
+            (deliberation.awards[category]?.length ?? 0) < getDefaultPicklistLimit(teams.length)
           }
         />
         <Divider />
