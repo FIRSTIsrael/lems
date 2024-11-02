@@ -4,7 +4,7 @@ import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
 import AwardList from '../award-list';
-import { localizeTeam } from 'apps/frontend/localization/teams';
+import { localizeTeam } from '../../../localization/teams';
 import PersonalAwardWinnerList from './personal-award-winner-list';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
@@ -42,7 +42,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
   );
 
   return (
-    (<Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
+    <Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
       <Grid size={12}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="h2" textAlign="center">
@@ -55,7 +55,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
           {Object.keys(restAwards).map(award => {
             const _award = award as AwardNames;
             return (
-              (<Grid key={award} size={2}>
+              <Grid key={award} size={2}>
                 <AwardList
                   title={`פרס ${localizedAward[_award].name}`}
                   length={awardsByName[_award].length}
@@ -65,7 +65,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
                   pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
                   id={_award}
                 />
-              </Grid>)
+              </Grid>
             );
           })}
           {advancement && advancement.length > 0 && (
@@ -86,12 +86,12 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
             Object.entries(personalAwards).map(([title, awards]) => {
               if (!awards?.length || !awards?.every(a => typeof a.winner === 'string')) return null;
               return (
-                (<Grid key={title} size={3}>
+                <Grid key={title} size={3}>
                   <PersonalAwardWinnerList
                     title={title as AwardNames}
                     winners={awards.map(a => String(a.winner))}
                   />
-                </Grid>)
+                </Grid>
               );
             })}
           <Grid size={12}>
@@ -112,7 +112,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
           </Grid>
         </>
       )}
-    </Grid>)
+    </Grid>
   );
 };
 
