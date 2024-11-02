@@ -11,10 +11,12 @@ import {
   TableHead,
   TableSortLabel,
   TableRow,
-  Box
+  Box,
+  IconButton
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Division, Team, SafeUser, RoleTypes } from '@lems/types';
+import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
+import { Division, Team, SafeUser, RoleTypes, Role } from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -36,17 +38,23 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  const headCells = useMemo(
-    () => [
-      { label: 'מספר', sort: 'number' },
-      { label: 'שם', sort: 'name' },
-      { label: 'מוסד', sort: 'institution' },
-      { label: 'עיר', sort: 'city' },
-      {
+  const headCells = useMemo<{
+    [key: string]: { label: string; sort: string; allowedRoles?: Array<Role> };
+  }>(
+    () => ({
+      number: { label: 'מספר', sort: 'number' },
+      name: { label: 'שם', sort: 'name' },
+      institution: { label: 'מוסד', sort: 'institution' },
+      city: {
         label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
         sort: 'registration'
+      },
+      profileDocumentUrl: {
+        label: 'דף מידע',
+        sort: 'profileDocumentUrl',
+        allowedRoles: ['head-referee']
       }
-    ],
+    }),
     [teams]
   );
 
@@ -68,7 +76,8 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       name: (a, b) => a.name.localeCompare(b.name),
       institution: (a, b) => a.affiliation.name.localeCompare(b.affiliation.name),
       city: (a, b) => a.affiliation.city.localeCompare(b.affiliation.city),
-      registration: (a, b) => (b.registered ? 1 : -1)
+      registration: (a, b) => (b.registered ? 1 : -1),
+      profileDocumentUrl: (a, b) => (b.profileDocumentUrl ? 1 : -1)
     };
 
     const sorted = teams.sort(sortFunctions[sortBy]);
@@ -110,25 +119,31 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
             <Table aria-label="team list">
               <TableHead>
                 <TableRow>
-                  {headCells.map((cell, index) => (
-                    <TableCell key={index} align="left">
-                      <TableSortLabel
-                        active={sortBy === cell.sort}
-                        direction={sortBy === cell.sort ? sortDirection : 'asc'}
-                        onClick={() => {
-                          const isAsc = sortBy === cell.sort && sortDirection === 'asc';
-                          setSortDirection(isAsc ? 'desc' : 'asc');
-                          setSortBy(cell.sort);
-                        }}
-                      >
-                        {cell.label}
-                        {sortBy === cell.sort ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {sortDirection === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
-                    </TableCell>
+                  {Object.values(headCells).map((cell, index) => (
+                    <RoleAuthorizer
+                      key={index}
+                      user={user}
+                      allowedRoles={cell.allowedRoles ?? [...RoleTypes]}
+                    >
+                      <TableCell align="left">
+                        <TableSortLabel
+                          active={sortBy === cell.sort}
+                          direction={sortBy === cell.sort ? sortDirection : 'asc'}
+                          onClick={() => {
+                            const isAsc = sortBy === cell.sort && sortDirection === 'asc';
+                            setSortDirection(isAsc ? 'desc' : 'asc');
+                            setSortBy(cell.sort);
+                          }}
+                        >
+                          {cell.label}
+                          {sortBy === cell.sort ? (
+                            <Box component="span" sx={visuallyHidden}>
+                              {sortDirection === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            </Box>
+                          ) : null}
+                        </TableSortLabel>
+                      </TableCell>
+                    </RoleAuthorizer>
                   ))}
                 </TableRow>
               </TableHead>
@@ -143,6 +158,21 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
                       <TableCell align="left">
                         <BooleanIcon condition={team.registered} />
                       </TableCell>
+                      <RoleAuthorizer
+                        user={user}
+                        allowedRoles={headCells['profileDocumentUrl'].allowedRoles}
+                      >
+                        <TableCell align="left">
+                          <IconButton
+                            href={team.profileDocumentUrl ?? ''}
+                            disabled={!team.profileDocumentUrl}
+                            color="info"
+                            target="_blank"
+                          >
+                            <ContactPageRoundedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </RoleAuthorizer>
                     </TableRow>
                   );
                 })}
