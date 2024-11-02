@@ -38,22 +38,23 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  const headCells = useMemo(
-    () => [
-      { label: 'מספר', sort: 'number' },
-      { label: 'שם', sort: 'name' },
-      { label: 'מוסד', sort: 'institution' },
-      { label: 'עיר', sort: 'city' },
-      {
+  const headCells = useMemo<{
+    [key: string]: { label: string; sort: string; allowedRoles?: Array<Role> };
+  }>(
+    () => ({
+      number: { label: 'מספר', sort: 'number' },
+      name: { label: 'שם', sort: 'name' },
+      institution: { label: 'מוסד', sort: 'institution' },
+      city: {
         label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
         sort: 'registration'
       },
-      {
+      profileDocumentUrl: {
         label: 'דף מידע',
         sort: 'profileDocumentUrl',
-        allowedRoles: ['head-referee'] as Array<Role>
+        allowedRoles: ['head-referee']
       }
-    ],
+    }),
     [teams]
   );
 
@@ -75,7 +76,8 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       name: (a, b) => a.name.localeCompare(b.name),
       institution: (a, b) => a.affiliation.name.localeCompare(b.affiliation.name),
       city: (a, b) => a.affiliation.city.localeCompare(b.affiliation.city),
-      registration: (a, b) => (b.registered ? 1 : -1)
+      registration: (a, b) => (b.registered ? 1 : -1),
+      profileDocumentUrl: (a, b) => (b.profileDocumentUrl ? 1 : -1)
     };
 
     const sorted = teams.sort(sortFunctions[sortBy]);
@@ -117,7 +119,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
             <Table aria-label="team list">
               <TableHead>
                 <TableRow>
-                  {headCells.map((cell, index) => (
+                  {Object.values(headCells).map((cell, index) => (
                     <RoleAuthorizer
                       key={index}
                       user={user}
@@ -158,10 +160,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
                       </TableCell>
                       <RoleAuthorizer
                         user={user}
-                        allowedRoles={
-                          headCells.find(cell => cell.sort === 'profileDocumentUrl')
-                            ?.allowedRoles ?? [...RoleTypes]
-                        }
+                        allowedRoles={headCells['profileDocumentUrl'].allowedRoles}
                       >
                         <TableCell align="left">
                           <IconButton
