@@ -110,7 +110,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
         <CompareModal
           open={compareOpen}
           setOpen={setCompareOpen}
-          compareTeamIds={compareTeams.map(t => t?._id!)}
+          compareTeamIds={compareTeams.map(t => t._id)}
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}
