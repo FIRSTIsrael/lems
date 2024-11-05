@@ -28,10 +28,16 @@ interface CompareTeamInfoProps {
 }
 
 const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
-  const { teams, rubrics, category } = useContext(CompareContext);
+  const { teams, rubrics, category, rooms, sessions } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
   let teamRubrics = rubrics.filter(rubric => rubric.teamId === teamId);
   if (category) teamRubrics = teamRubrics.filter(r => r.category === category);
+  const room = rooms.find(r =>
+    sessions
+      .filter(s => s.teamId === team?._id)
+      .map(s => s.roomId)
+      .includes(r._id)
+  );
 
   if (!team) return;
 
@@ -50,6 +56,7 @@ const CompareTeamInfo: React.FC<CompareTeamInfoProps> = ({ teamId }) => {
         <Typography fontSize="1.25rem" fontWeight={500}>
           ניקוד ממוצע: {Number(scoreAvg.toFixed(3))}
         </Typography>
+        {room && <Typography fontSize="1.25rem">חדר {room.name}</Typography>}
       </Grid>
       <Grid size={6}>
         {category ? (

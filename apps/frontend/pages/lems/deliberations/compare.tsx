@@ -26,7 +26,9 @@ import {
   JudgingCategory,
   CoreValuesForm,
   Scoresheet,
-  JudgingCategoryTypes
+  JudgingCategoryTypes,
+  JudgingSession,
+  JudgingRoom
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import Layout from '../../../components/layout';
@@ -44,10 +46,21 @@ interface Props {
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  cvForms: Array<CoreValuesForm>;
+  cvForms: Array<WithId<CoreValuesForm>>;
+  sessions: Array<WithId<JudgingSession>>;
+  rooms: Array<WithId<JudgingRoom>>;
 }
 
-const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cvForms }) => {
+const Page: NextPage<Props> = ({
+  user,
+  division,
+  teams,
+  rubrics,
+  scoresheets,
+  cvForms,
+  sessions,
+  rooms
+}) => {
   const router = useRouter();
   const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
   const [selectedTeam, setSelectedTeam] = useState<WithId<Team> | null>(null);
@@ -147,6 +160,8 @@ const Page: NextPage<Props> = ({ user, division, teams, rubrics, scoresheets, cv
           teams={teams}
           rubrics={rubrics}
           cvForms={cvForms}
+          sessions={sessions}
+          rooms={rooms}
           scoresheets={scoresheets}
           removeTeam={removeTeam}
           category={category === 'general' ? undefined : category}
@@ -166,7 +181,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/divisions/${user.divisionId}/teams`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
+        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
+        sessions: `/api/divisions/${user.divisionId}/sessions`,
+        rooms: `/api/divisions/${user.divisionId}/rooms`
       },
       ctx
     );

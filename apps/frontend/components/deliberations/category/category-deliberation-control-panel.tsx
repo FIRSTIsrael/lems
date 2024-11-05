@@ -6,7 +6,9 @@ import {
   JudgingCategory,
   Scoresheet,
   CoreValuesForm,
-  Rubric
+  Rubric,
+  JudgingRoom,
+  JudgingSession
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -28,6 +30,8 @@ interface DeliberationControlPanelProps {
     cvForms: Array<WithId<CoreValuesForm>>;
     rubrics: Array<WithId<Rubric<JudgingCategory>>>;
     scoresheets: Array<WithId<Scoresheet>>;
+    rooms: Array<WithId<JudgingRoom>>;
+    sessions: Array<WithId<JudgingSession>>;
   };
 }
 
@@ -37,7 +41,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
   startDeliberation,
   lockDeliberation,
   category,
-  compareProps: { cvForms, rubrics, scoresheets }
+  compareProps: { cvForms, rubrics, scoresheets, sessions, rooms }
 }) => {
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -106,11 +110,13 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
         <CompareModal
           open={compareOpen}
           setOpen={setCompareOpen}
-          compareTeamIds={compareTeams.map(t => t?._id)}
+          compareTeamIds={compareTeams.map(t => t?._id!)}
           cvForms={cvForms}
           rubrics={rubrics}
           scoresheets={scoresheets}
           teams={teams}
+          sessions={sessions}
+          rooms={rooms}
           category={category}
         />
       )}

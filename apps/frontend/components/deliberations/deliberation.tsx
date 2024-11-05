@@ -38,6 +38,8 @@ export interface DeliberationContextType {
     cvForms: Array<WithId<CoreValuesForm>>;
     rubrics: Array<WithId<Rubric<JudgingCategory>>>;
     scoresheets: Array<WithId<Scoresheet>>;
+    rooms: Array<WithId<JudgingRoom>>;
+    sessions: Array<WithId<JudgingSession>>;
   };
   start: () => void;
   lock: () => void;
@@ -299,7 +301,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             calculateAnomalies,
             onAddTeam,
             disqualifyTeam,
-            compareContextProps: { cvForms, rubrics, scoresheets },
+            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions },
             picklistLimits,
             anomalies,
             categoryRanks,

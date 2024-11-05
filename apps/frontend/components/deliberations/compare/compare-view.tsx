@@ -3,7 +3,15 @@ import { WithId, ObjectId } from 'mongodb';
 import { Paper, Stack, Divider, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import CloseRounded from '@mui/icons-material/CloseRounded';
-import { Rubric, JudgingCategory, Team, CoreValuesForm, Scoresheet } from '@lems/types';
+import {
+  Rubric,
+  JudgingCategory,
+  Team,
+  CoreValuesForm,
+  Scoresheet,
+  JudgingRoom,
+  JudgingSession
+} from '@lems/types';
 import CompareRubricRemarks from './compare-rubric-remarks';
 import CompareNominations from './compare-nominations';
 import CompareBatteryChart from './compare-battery-chart';
@@ -18,30 +26,34 @@ export interface CompareContextType {
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  cvForms: Array<CoreValuesForm>;
+  cvForms: Array<WithId<CoreValuesForm>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  sessions: Array<WithId<JudgingSession>>;
   category?: JudgingCategory;
 }
 
 export const CompareContext = createContext<CompareContextType>(null as any);
 
 export interface CompareViewProps {
-  height?: number;
   compareTeamIds: Array<ObjectId>;
   category?: JudgingCategory;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  cvForms: Array<CoreValuesForm>;
+  cvForms: Array<WithId<CoreValuesForm>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  sessions: Array<WithId<JudgingSession>>;
   removeTeam?: (teamId: ObjectId) => void;
 }
 
 const CompareView: React.FC<CompareViewProps> = ({
-  height,
   compareTeamIds,
   teams,
   rubrics,
   scoresheets,
   cvForms,
+  rooms,
+  sessions,
   category,
   removeTeam
 }) => {
@@ -56,6 +68,8 @@ const CompareView: React.FC<CompareViewProps> = ({
   const compareScoresheets = scoresheets.filter(
     s => compareTeamIds.includes(s.teamId) && s.stage !== 'practice'
   );
+  const comapreSessions = sessions.filter(s => s.teamId && compareTeamIds.includes(s.teamId));
+  const compareRooms = rooms.filter(r => comapreSessions.find(s => s.roomId == r._id));
 
   return (
     <CompareContext.Provider
@@ -64,6 +78,8 @@ const CompareView: React.FC<CompareViewProps> = ({
         rubrics: compareRubrics,
         scoresheets: compareScoresheets,
         cvForms: compareCvForms,
+        rooms: compareRooms,
+        sessions: comapreSessions,
         category
       }}
     >
