@@ -1,20 +1,30 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { FllEvent, Division } from '@lems/types';
+import { Division, FllEvent } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
-import { Avatar, ListItemAvatar, ListItemButton, ListItemText, Stack } from '@mui/material';
+import { Avatar, ListItemAvatar, ListItemButton, ListItemText, List } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import HomeIcon from '@mui/icons-material/HomeRounded';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
 
 interface EventSelectorProps {
   events: Array<WithId<FllEvent>>;
-  onChange: (divisionId: string | ObjectId) => void;
-  getEventDisabled?: (division: WithId<FllEvent>) => boolean;
+  includeDivisions?: boolean;
+  disableParentSelection?: boolean;
+  onChange: (eventId: string | ObjectId, divisionId?: string | ObjectId) => void;
+  getEventDisabled?: (event: WithId<FllEvent>) => boolean;
+  getDivisionDisabled?: (division: WithId<Division>) => boolean;
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEventDisabled }) => {
-  const sortedDivisions = useMemo(
+const EventSelector: React.FC<EventSelectorProps> = ({
+  events,
+  includeDivisions = false,
+  onChange,
+  getEventDisabled,
+  getDivisionDisabled
+}) => {
+  const sortedEvents = useMemo(
     () =>
       events.sort((a, b) => {
         const diffA = dayjs().diff(dayjs(a.startDate), 'days', true);
@@ -29,36 +39,69 @@ const EventSelector: React.FC<EventSelectorProps> = ({ events, onChange, getEven
   );
 
   return (
-    <Stack direction="column" spacing={2}>
-      {sortedDivisions.map(event => {
+    <List>
+      {sortedEvents.map(event => {
+        const disabled =
+          getEventDisabled?.(event) ||
+          (!event.enableDivisions &&
+            !!event.divisions?.[0] &&
+            getDivisionDisabled?.(event.divisions[0]));
+
         return (
-          <ListItemButton
-            key={event.name}
-            onClick={() => onChange(event._id)}
-            disabled={getEventDisabled?.(event)}
-            sx={{ borderRadius: 2 }}
-            component="a"
-            dense
-          >
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  color: event.divisions?.[0]?.color,
-                  backgroundColor: event.divisions?.[0]?.color + '1a'
-                }}
-              >
-                <EventIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={event.name}
-              secondary={stringifyTwoDates(event.startDate, event.endDate)}
-            />
-            {getEventDisabled?.(event) && <WarningAmberRoundedIcon />}
-          </ListItemButton>
+          <>
+            <ListItemButton
+              key={String(event._id)}
+              onClick={() => onChange(event._id)}
+              disabled={disabled}
+              sx={{ borderRadius: 2 }}
+              component="a"
+              dense
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    color: event.color ?? '#666',
+                    backgroundColor: (event.color ?? '#666666') + '1a'
+                  }}
+                >
+                  <EventIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={event.name}
+                secondary={stringifyTwoDates(event.startDate, event.endDate)}
+              />
+              {disabled && <WarningAmberRoundedIcon />}
+            </ListItemButton>
+            {includeDivisions &&
+              event.enableDivisions &&
+              event.divisions?.map(division => (
+                <ListItemButton
+                  key={String(division._id)}
+                  onClick={() => onChange(event._id, division._id)}
+                  disabled={getDivisionDisabled?.(division)}
+                  sx={{ borderRadius: 2, pl: 4 }}
+                  component="a"
+                  dense
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        color: division.color,
+                        backgroundColor: division.color + '1a'
+                      }}
+                    >
+                      <HomeIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={`בית ${division.name}`} />
+                  {getDivisionDisabled?.(division) && <WarningAmberRoundedIcon />}
+                </ListItemButton>
+              ))}
+          </>
         );
       })}
-    </Stack>
+    </List>
   );
 };
 

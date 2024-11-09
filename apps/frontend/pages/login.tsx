@@ -21,9 +21,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
-  const selectDivision = (eventId: string | ObjectId) => {
-    const selectedEvent = events.find(e => e._id == eventId);
-    setDivision(selectedEvent?.divisions?.[0]);
+  const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
+    if (!divisionId) return;
+    const event = events.find(e => String(e._id) === String(eventId));
+    const division = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    setDivision(division);
   };
 
   useEffect(() => {
@@ -76,7 +78,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              getEventDisabled={event => !event.divisions?.[0]?.hasState}
+              includeDivisions
+              getEventDisabled={event =>
+                !!event.divisions && event.divisions.every(d => !d.hasState)
+              }
+              getDivisionDisabled={division => !division.hasState}
               onChange={selectDivision}
             />
           </Stack>
