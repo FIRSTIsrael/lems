@@ -5,15 +5,15 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
 import { FllEvent, Division, AwardSchema } from '@lems/types';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
-import Layout from '../../../components/layout';
-import GenerateScheduleButton from '../../../components/admin/generate-schedule';
-import EditDivisionForm from '../../../components/admin/edit-division-form';
-import DivisionAwardEditor from '../../../components/admin/division-award-editor';
-import DeleteDivisionData from '../../../components/admin/delete-division-data';
-import DivisionScheduleEditor from '../../../components/admin/division-schedule-editor';
-import DownloadUsersButton from '../../../components/admin/download-users';
-import UploadFileButton from '../../../components/general/upload-file';
+import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import Layout from '../../../../components/layout';
+import GenerateScheduleButton from '../../../../components/admin/generate-schedule';
+import EditDivisionForm from '../../../../components/admin/edit-division-form';
+import DivisionAwardEditor from '../../../../components/admin/division-award-editor';
+import DeleteDivisionData from '../../../../components/admin/delete-division-data';
+import DivisionScheduleEditor from '../../../../components/admin/division-schedule-editor';
+import DownloadUsersButton from '../../../../components/admin/download-users';
+import UploadFileButton from '../../../../components/general/upload-file';
 
 interface Props {
   event: WithId<FllEvent>;
