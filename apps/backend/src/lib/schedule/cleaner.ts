@@ -50,4 +50,6 @@ export const cleanDivisionData = async (division: WithId<Division>) => {
     throw new Error('Could not delete awards!');
   if (!(await db.deleteDivisionTickets(division._id)).acknowledged)
     throw new Error('Could not delete tickets!');
+  if (!(await db.deleteDivisionDeliberations(division._id)).acknowledged)
+    throw new Error('Could not delete deliberations!');
 };
