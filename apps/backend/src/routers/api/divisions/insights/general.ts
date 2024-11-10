@@ -22,7 +22,7 @@ router.get(
     ];
 
     const report = await db.db.collection('teams').aggregate(pipeline).next();
-    res.json({ result: `${report.registered} / ${report.total}` });
+    res.json({ result: `${report.registered ?? 0} / ${report.total ?? 0}` });
   })
 );
 
@@ -55,7 +55,7 @@ router.get(
     ];
 
     const report = await db.db.collection('tickets').aggregate(pipeline).next();
-    res.json({ result: `${report.closed} / ${report.total}` });
+    res.json({ result: `${report.closed ?? 0} / ${report.total ?? 0}` });
   })
 );
 
@@ -88,7 +88,7 @@ router.get(
     ];
 
     const report = await db.db.collection('core-values-forms').aggregate(pipeline).next();
-    res.json({ result: `${report.closed} / ${report.total}` });
+    res.json({ result: `${report.closed ?? 0} / ${report.total ?? 0}` });
   })
 );
 
