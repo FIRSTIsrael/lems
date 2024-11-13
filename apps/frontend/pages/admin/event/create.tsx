@@ -46,33 +46,36 @@ const DivisionField: React.FC<{ index: number }> = ({ index }) => {
   const name = `divisions[${index}]`;
 
   return (
-    <Stack direction="row" spacing={2} justifyContent="center">
-      <Field name={`${name}.color`}>
-        {({ field, form }: FieldProps) => (
-          <ColorPickerButton
-            swatches={DivisionSwatches}
-            sx={{ width: 120 }}
-            value={field.value}
-            setColor={newColor => form.setFieldValue(field.name, newColor)}
-          />
-        )}
-      </Field>
-      <FormikTextField
-        name={`${name}.name`}
-        variant="outlined"
-        type="text"
-        label="שם בית"
-        fullWidth
-      />
-      <IconButton
-        disabled={values.divisions.length < 2}
-        onClick={() =>
-          setFieldValue('divisions', [...values.divisions.filter((item, i) => i !== index)])
-        }
-      >
-        <DeleteRoundedIcon />
-      </IconButton>
-    </Stack>
+    <Grid size={4}>
+      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" height="100%">
+        <Field name={`${name}.color`}>
+          {({ field, form }: FieldProps) => (
+            <ColorPickerButton
+              swatches={DivisionSwatches}
+              sx={{ width: 120 }}
+              value={field.value}
+              setColor={newColor => form.setFieldValue(field.name, newColor)}
+            />
+          )}
+        </Field>
+        <FormikTextField
+          name={`${name}.name`}
+          variant="outlined"
+          type="text"
+          label="שם בית"
+          fullWidth
+        />
+        <IconButton
+          disabled={values.divisions.length < 2}
+          onClick={() =>
+            setFieldValue('divisions', [...values.divisions.filter((item, i) => i !== index)])
+          }
+          sx={{ height: 34, width: 34 }}
+        >
+          <DeleteRoundedIcon />
+        </IconButton>
+      </Stack>
+    </Grid>
   );
 };
 
@@ -130,12 +133,12 @@ const Page: NextPage = () => {
   };
 
   return (
-    <Layout maxWidth="md" title="יצירת אירוע" back="/admin">
+    <Layout maxWidth="lg" title="יצירת אירוע" back="/admin">
       <Formik initialValues={getInitialValues()} onSubmit={handleSubmit}>
         {({ values, errors, touched, setFieldValue }) => (
           <Form>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid component={Paper} container rowGap={3} columnSpacing={3} p={3} mt={2}>
+              <Grid component={Paper} container rowSpacing={3} columnSpacing={3} p={3} mt={2}>
                 <Grid size={12}>
                   <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
                     כללי
@@ -231,7 +234,13 @@ const Page: NextPage = () => {
                             onClick={() =>
                               setFieldValue('divisions', [
                                 ...values.divisions,
-                                { name: '', color: DivisionSwatches[0] }
+                                {
+                                  name: '',
+                                  color:
+                                    DivisionSwatches.filter(
+                                      color => !values.divisions.map(d => d.color).includes(color)
+                                    )[0] ?? DivisionSwatches[0]
+                                }
                               ])
                             }
                           >

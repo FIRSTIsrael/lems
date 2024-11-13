@@ -7,6 +7,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
 import EventIcon from '@mui/icons-material/EventOutlined';
 import { stringifyTwoDates } from '../../lib/utils/dayjs';
+import { getBackgroundColor } from '../../lib/utils/theme';
 
 interface EventSelectorProps {
   events: Array<WithId<FllEvent>>;
@@ -60,8 +61,8 @@ const EventSelector: React.FC<EventSelectorProps> = ({
               <ListItemAvatar>
                 <Avatar
                   sx={{
-                    color: event.color ?? '#666',
-                    backgroundColor: (event.color ?? '#666666') + '1a'
+                    color: event.color ?? '#a7ab99',
+                    backgroundColor: getBackgroundColor(event.color ?? '#a7ab99', 'light')
                   }}
                 >
                   <EventIcon />
