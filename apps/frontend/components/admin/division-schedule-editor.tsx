@@ -60,7 +60,19 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     [schedule]
   );
 
-  const copyScheduleFrom = (eventId: string | ObjectId) => {
+  const copyScheduleFrom = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
+    if (divisionId && String(divisionId) === String(division._id)) return;
+    const event = events.find(e => String(e._id) === String(eventId));
+    if (!event) return;
+    if (!divisionId && event?.enableDivisions) return;
+    let copyFromDivision;
+    if (divisionId) {
+      copyFromDivision = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    } else {
+      copyFromDivision = event?.divisions?.[0];
+    }
+    if (!copyFromDivision) return;
+
     apiFetch(`/api/events/${eventId}/divisions?withSchedule=true`)
       .then(res => res.json())
       .then(data => {
@@ -83,7 +95,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           enqueueSnackbar('הלו"ז בכללי הועתק בהצלחה!', { variant: 'success' });
           setCopyModal(false);
         } else {
-          enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
+          enqueueSnackbar('לבית שבחרתם אין לו"ז כללי', { variant: 'warning' });
         }
       });
   };
@@ -96,9 +108,9 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
       body: JSON.stringify({ schedule: sortedSchedule })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('לוח הזמנים של האירוע נשמרה בהצלחה!', { variant: 'success' });
+        enqueueSnackbar('לוח הזמנים של הבית נשמרה בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת לוח הזמנים של האירוע נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, שמירת לוח הזמנים של הבית נכשלה.', { variant: 'error' });
       }
     });
   };
@@ -123,7 +135,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     >
       <Paper sx={{ p: 4 }}>
         <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          לוח זמנים כללי לאירוע
+          לוח זמנים כללי לבית
         </Typography>
       </Paper>
       <Stack spacing={2} mt={2}>
@@ -303,7 +315,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           onClick={() => setCopyModal(true)}
           disabled={schedule.length > 0}
         >
-          העתקה מאירוע אחר
+          העתקה מבית אחר
         </Button>
       </Stack>
       <Modal
@@ -328,10 +340,9 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
             {'העתקת לו"ז כללי'}
           </Typography>
           <EventSelector
-            events={events.filter(
-              e => e.divisions?.[0]?._id.toString() !== division._id.toString()
-            )}
-            onChange={eventId => copyScheduleFrom(eventId)}
+            events={events}
+            includeDivisions
+            onChange={(eventId, divisionId) => copyScheduleFrom(eventId, divisionId)}
           />
         </Paper>
       </Modal>

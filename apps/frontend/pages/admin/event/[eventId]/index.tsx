@@ -1,19 +1,26 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Paper } from '@mui/material';
 import { WithId } from 'mongodb';
-import { FllEvent, Division } from '@lems/types';
+import { FllEvent } from '@lems/types';
 import { apiFetch } from '../../../../lib/utils/fetch';
 import Layout from '../../../../components/layout';
+import EditEventForm from '../../../../components/admin/edit-event-form';
+import DivisionLink from '../../../../components/admin/division-link';
 
 interface Props {
   event: WithId<FllEvent>;
-  divisions: Array<WithId<Division>>;
 }
 
-const Page: NextPage<Props> = ({ event, divisions }) => {
+const Page: NextPage<Props> = ({ event }) => {
   return (
     <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
-      <Paper sx={{ mt: 2 }}>TODO</Paper>
+      <EditEventForm sx={{ p: 4, mt: 2 }} event={event} />
+      {event.enableDivisions && event.divisions && event.divisions?.length > 1 ? (
+        event.divisions.map(division => (
+          <DivisionLink key={String(division._id)} division={division} />
+        ))
+      ) : (
+        <></>
+      )}
     </Layout>
   );
 };

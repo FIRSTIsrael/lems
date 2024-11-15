@@ -22,9 +22,15 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
   const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
-    if (!divisionId) return;
     const event = events.find(e => String(e._id) === String(eventId));
-    const division = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    if (!divisionId && event?.enableDivisions) return;
+    let division;
+    if (divisionId) {
+      division = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    } else {
+      division = event?.divisions?.[0];
+    }
+    if (!division) return;
     setDivision(division);
   };
 
