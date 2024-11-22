@@ -1,8 +1,7 @@
 import React, { Fragment, forwardRef, useMemo, useState, useEffect } from 'react';
-import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
-import { Division, Award, Team } from '@lems/types';
+import { Award, Team, DivisionWithEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
@@ -11,9 +10,10 @@ import AwardWinnerChromaSlide from './award-winner-chroma-slide';
 import AwardWinnerSlide from './award-winner-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
 import { apiFetch } from '../../lib/utils/fetch';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface AwardsPresentationProps extends BoxProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   initialState?: DeckView;
   onViewUpdate?: (activeView: DeckView) => void;
   enableReinitialize?: boolean;
@@ -103,6 +103,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
       }
 
       return slides;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [advancingTeams, awards, division.color]);
 
     return (
@@ -114,7 +115,10 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           enableReinitialize={enableReinitialize}
         >
           <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
-          <TitleSlide primary={`טקס סיום - ${division.name}`} color={division.color} />
+          <TitleSlide
+            primary={`טקס סיום - ${localizeDivisionTitle(division)}`}
+            color={division.color}
+          />
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"

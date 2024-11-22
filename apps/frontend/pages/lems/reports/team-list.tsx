@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
-import { Division, Team, SafeUser, RoleTypes, Role } from '@lems/types';
+import { DivisionWithEvent, Team, SafeUser, RoleTypes, Role } from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -25,10 +25,11 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
 }
 
@@ -100,7 +101,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -191,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`
       },
       ctx

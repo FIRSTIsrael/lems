@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Grid from '@mui/material/Grid2';
 import { FllEvent } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import ColorPickerButton from './color-picker-button';
+import { DivisionSwatches } from '@lems/types';
 
 interface EditEventFormProps extends PaperProps {
   event: WithId<FllEvent>;
@@ -17,6 +19,8 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
   const [name, setName] = useState<string>(event.name);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
+  const gridItemSize = event.enableDivisions ? 4 : 3.5;
+  const [color, setColor] = useState<CSSProperties['color']>(event.color);
 
   const updateEvent = () => {
     apiFetch(`/api/admin/events/${event._id}`, {
@@ -50,7 +54,17 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
             פרטי האירוע
           </Typography>
           <Grid container spacing={2}>
-            <Grid size={4}>
+            {!event.enableDivisions && (
+              <Grid size={1.5}>
+                <ColorPickerButton
+                  fullWidth
+                  swatches={DivisionSwatches}
+                  value={color}
+                  setColor={setColor}
+                />
+              </Grid>
+            )}
+            <Grid size={gridItemSize}>
               <TextField
                 variant="outlined"
                 type="text"
@@ -61,7 +75,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
               />
             </Grid>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid size={4}>
+              <Grid size={gridItemSize}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך התחלה"
@@ -73,7 +87,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>
-              <Grid size={4}>
+              <Grid size={gridItemSize}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך סיום"

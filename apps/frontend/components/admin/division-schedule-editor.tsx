@@ -95,7 +95,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           enqueueSnackbar('הלו"ז בכללי הועתק בהצלחה!', { variant: 'success' });
           setCopyModal(false);
         } else {
-          enqueueSnackbar('לבית שבחרתם אין לו"ז כללי', { variant: 'warning' });
+          enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
         }
       });
   };
@@ -108,9 +108,9 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
       body: JSON.stringify({ schedule: sortedSchedule })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('לוח הזמנים של הבית נשמרה בהצלחה!', { variant: 'success' });
+        enqueueSnackbar('לוח הזמנים נשמר בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת לוח הזמנים של הבית נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, שמירת לוח הזמנים נכשלה.', { variant: 'error' });
       }
     });
   };
@@ -135,7 +135,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     >
       <Paper sx={{ p: 4 }}>
         <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          לוח זמנים כללי לבית
+          לוח זמנים כללי
         </Typography>
       </Paper>
       <Stack spacing={2} mt={2}>
@@ -315,7 +315,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           onClick={() => setCopyModal(true)}
           disabled={schedule.length > 0}
         >
-          העתקה מבית אחר
+          העתקה מאירוע אחר
         </Button>
       </Stack>
       <Modal

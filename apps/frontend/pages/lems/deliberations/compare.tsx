@@ -14,12 +14,11 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Box,
   LinearProgress
 } from '@mui/material';
 import AddRounded from '@mui/icons-material/AddRounded';
 import {
-  Division,
+  DivisionWithEvent,
   SafeUser,
   Team,
   Rubric,
@@ -39,10 +38,11 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import TeamSelection from '../../../components/general/team-selection';
 import useCountdown from '../../../hooks/use-countdown';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
@@ -78,9 +78,10 @@ const Page: NextPage<Props> = ({
   const totalTime = 30 * (compareTeamIds.length + 1);
   const targetDate = useMemo(
     () => dayjs().add(totalTime, 'seconds').toDate(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [compareTeamIds, category]
   );
-  const [days, hours, minutes, seconds] = useCountdown(targetDate);
+  const [, , minutes, seconds] = useCountdown(targetDate);
   const time = minutes * 60 + seconds;
 
   return (
@@ -95,7 +96,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={1900}
         back={`/lems/${user.role}`}
-        title={`השוואת קבוצות | ${division.name}`}
+        title={`השוואת קבוצות | ${localizeDivisionTitle(division)}`}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
       >
@@ -177,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
@@ -189,7 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

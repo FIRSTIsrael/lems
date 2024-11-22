@@ -6,7 +6,7 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import {
-  Division,
+  DivisionWithEvent,
   Team,
   SafeUser,
   DivisionState,
@@ -25,6 +25,7 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/use-time';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
@@ -107,7 +108,7 @@ const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loaded
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -211,7 +212,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -241,7 +242,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         matches: `/api/divisions/${user.divisionId}/matches`,

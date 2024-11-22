@@ -10,3 +10,7 @@ export interface FllEvent {
   salesforceId?: string;
   divisions?: Array<WithId<Division>>;
 }
+
+export interface DivisionWithEvent extends Division {
+  event: WithId<FllEvent>;
+}

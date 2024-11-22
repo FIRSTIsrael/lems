@@ -1,16 +1,16 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import { WithId } from 'mongodb';
 import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { Division, Team, Award } from '@lems/types';
-import { apiFetch } from '../../lib/utils/fetch';
+import { Team, Award, DivisionWithEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeTeam } from '../../localization/teams';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface AwardsLineupProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   awards: Array<WithId<Award>>;
 }
 
@@ -106,7 +106,7 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
   return (
     <>
       <Typography fontSize="2.5rem" fontWeight={700} align="center" gutterBottom>
-        {division.name} | פרסים
+        {localizeDivisionTitle(division)} | פרסים
       </Typography>
       <Paper sx={{ width: '100%', p: 2, mb: 4 }}>{lineup[currentAward]}</Paper>
       <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">

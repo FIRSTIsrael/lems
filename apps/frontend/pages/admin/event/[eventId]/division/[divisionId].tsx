@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
-import { FllEvent, Division, AwardSchema } from '@lems/types';
+import { FllEvent, AwardSchema, Division } from '@lems/types';
 import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import Layout from '../../../../../components/layout';
 import GenerateScheduleButton from '../../../../../components/admin/generate-schedule';
@@ -14,6 +14,7 @@ import DeleteDivisionData from '../../../../../components/admin/delete-division-
 import DivisionScheduleEditor from '../../../../../components/admin/division-schedule-editor';
 import DownloadUsersButton from '../../../../../components/admin/download-users';
 import UploadFileButton from '../../../../../components/general/upload-file';
+import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -27,7 +28,7 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
   return (
     <Layout
       maxWidth="md"
-      title={`ניהול אירוע: ${event.name} - בית ${division.name}`}
+      title={`ניהול אירוע: ${localizeDivisionTitle({ ...division, event })}`}
       back={`/admin/event/${event._id}`}
     >
       <TabContext value={activeTab}>
@@ -46,7 +47,7 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
           <Stack spacing={2}>
             <EditDivisionForm event={event} division={division} />
             <Paper sx={{ p: 4 }}>
-              {division?.hasState && <DeleteDivisionData division={division} />}
+              {division?.hasState && <DeleteDivisionData division={{ ...division, event }} />}
               <Stack justifyContent="center" direction="row" spacing={2}>
                 <UploadFileButton
                   urlPath={`/api/admin/divisions/${division?._id}/schedule/parse`}

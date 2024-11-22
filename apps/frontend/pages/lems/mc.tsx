@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { W, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
-  Division,
   DivisionState,
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
   Team,
-  Award
+  Award,
+  DivisionWithEvent
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -23,10 +23,11 @@ import ReportLink from '../../components/general/report-link';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -100,7 +101,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         action={<ReportLink division={division} />}
         color={division.color}
       >
@@ -142,7 +143,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`,
@@ -153,7 +154,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

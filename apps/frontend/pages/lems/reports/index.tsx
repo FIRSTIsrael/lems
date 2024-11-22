@@ -3,13 +3,14 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { SafeUser, Division, RoleTypes } from '@lems/types';
+import { SafeUser, DivisionWithEvent, RoleTypes } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface GridPaperLinkProps {
   path: string;
@@ -18,7 +19,7 @@ interface GridPaperLinkProps {
 
 const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
   return (
-    (<Grid size={3}>
+    <Grid size={3}>
       <Paper>
         <Button
           href={'reports/' + path}
@@ -28,13 +29,13 @@ const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
           {children}
         </Button>
       </Paper>
-    </Grid>)
+    </Grid>
   );
 };
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
 }
 
 const Page: NextPage<Props> = ({ user, division }) => {
@@ -50,7 +51,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         back={user.role !== 'reports' ? `/lems/${user.role}` : undefined}
         color={division.color}
       >
@@ -93,12 +94,12 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${user.divisionId}` },
+      { division: `/api/divisions/${user.divisionId}?withEvent=true` },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

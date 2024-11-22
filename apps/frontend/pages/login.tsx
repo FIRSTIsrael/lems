@@ -17,6 +17,7 @@ interface PageProps {
 
 const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
+  const [event, setEvent] = useState<WithId<FllEvent> | undefined>(undefined);
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
@@ -31,6 +32,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       division = event?.divisions?.[0];
     }
     if (!division) return;
+    setEvent(event);
     setDivision(division);
   };
 
@@ -65,9 +67,10 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : division && rooms && tables ? (
+        ) : division && event && rooms && tables ? (
           <LoginForm
             recaptchaRequired={recaptchaRequired}
+            event={event}
             division={division}
             rooms={rooms}
             tables={tables}

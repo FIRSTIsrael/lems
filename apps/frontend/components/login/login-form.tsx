@@ -6,7 +6,6 @@ import { Button, Box, Typography, Stack, MenuItem, TextField } from '@mui/materi
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {
-  Division,
   JudgingRoom,
   RobotGameTable,
   JudgingCategoryTypes,
@@ -14,7 +13,9 @@ import {
   Role,
   RoleAssociationType,
   getAssociationType,
-  DivisionSectionTypes
+  DivisionSectionTypes,
+  Division,
+  FllEvent
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
@@ -22,16 +23,25 @@ import { apiFetch } from '../../lib/utils/fetch';
 import { createRecaptchaToken } from '../../lib/utils/captcha';
 import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
 import { localizedDivisionSection } from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   recaptchaRequired: boolean;
+  event: WithId<FllEvent>;
   division: WithId<Division>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables, onCancel }) => {
+const LoginForm: React.FC<Props> = ({
+  recaptchaRequired,
+  event,
+  division,
+  rooms,
+  tables,
+  onCancel
+}) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
@@ -125,7 +135,7 @@ const LoginForm: React.FC<Props> = ({ recaptchaRequired, division, rooms, tables
         התחברות לאירוע:
       </Typography>
       <Typography variant="h2" textAlign="center">
-        {division.name}
+        {localizeDivisionTitle({ ...division, event })}
       </Typography>
 
       <FormDropdown

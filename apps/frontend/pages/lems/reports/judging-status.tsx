@@ -19,7 +19,7 @@ import {
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import {
-  Division,
+  DivisionWithEvent,
   Team,
   JudgingRoom,
   JudgingSession,
@@ -38,6 +38,7 @@ import JudgingStatusTimer from '../../../components/judging/judging-status-timer
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { localizeDivisionTitle } from '../../../localization/event';
 interface JudgingStatusTableProps {
   currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
@@ -157,7 +158,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
@@ -271,7 +272,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -303,7 +304,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,

@@ -8,14 +8,14 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import {
-  Division,
   DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
 import Layout from '../../components/layout';
@@ -30,7 +30,7 @@ import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-t
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -189,7 +189,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         tables: `/api/divisions/${user.divisionId}/tables`,
@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 
     return { props: { user, pitMapUrl, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

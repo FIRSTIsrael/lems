@@ -1,6 +1,13 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Division, JudgingCategory, Rubric, SEASON_NAME, SafeUser, Team } from '@lems/types';
+import {
+  DivisionWithEvent,
+  JudgingCategory,
+  Rubric,
+  SEASON_NAME,
+  SafeUser,
+  Team
+} from '@lems/types';
 import { serverSideGetRequests } from '../../../../lib/utils/fetch';
 import Grid from '@mui/material/Grid2';
 import {
@@ -28,9 +35,10 @@ import Markdown from 'react-markdown';
 import HeaderRow from '../../../../components/judging/rubrics/header-row';
 import TitleRow from '../../../../components/judging/rubrics/title-row';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import { localizeDivisionTitle } from '../../../../localization/event';
 
 interface ExportRubricPageProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
 }
@@ -46,7 +54,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
           <Stack justifyContent="space-between" height="100%">
             <Typography fontSize="0.75rem" color="textSecondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({rubric._id.toString()}) |{' '}
-              {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
+              {localizeDivisionTitle(division)} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
             <Typography fontSize="1.75rem" fontWeight={700}>
               מחוון {localizedJudgingCategory[rubric.category].name} של קבוצה #{team.number}
@@ -257,7 +265,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }

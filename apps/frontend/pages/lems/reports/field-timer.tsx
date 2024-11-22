@@ -112,7 +112,7 @@ const Page: NextPage<Props> = ({
   ]);
 
   return (
-    (<RoleAuthorizer
+    <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
@@ -175,7 +175,7 @@ const Page: NextPage<Props> = ({
         )}
         {/* </Box> */}
       </Layout>
-    </RoleAuthorizer>)
+    </RoleAuthorizer>
   );
 };
 
@@ -185,7 +185,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`
       },

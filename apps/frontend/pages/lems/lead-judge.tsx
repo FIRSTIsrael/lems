@@ -5,7 +5,6 @@ import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography, Stack } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
-  Division,
   DivisionState,
   Team,
   JudgingRoom,
@@ -13,7 +12,8 @@ import {
   SafeUser,
   Rubric,
   JudgingCategory,
-  JudgingDeliberation
+  JudgingDeliberation,
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
@@ -28,10 +28,11 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import CategoryDeliberationHeader from '../../components/judging/category-deliberation-header';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
@@ -134,7 +135,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -208,7 +209,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
@@ -220,7 +221,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

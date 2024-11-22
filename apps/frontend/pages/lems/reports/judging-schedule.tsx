@@ -4,7 +4,14 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Switch, FormControlLabel } from '@mui/material';
-import { Division, Team, JudgingRoom, SafeUser, JudgingSession, RoleTypes } from '@lems/types';
+import {
+  DivisionWithEvent,
+  Team,
+  JudgingRoom,
+  SafeUser,
+  JudgingSession,
+  RoleTypes
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -12,10 +19,11 @@ import ReportJudgingSchedule from '../../../components/judging/report-judging-sc
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -77,7 +85,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -114,7 +122,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withSchedule=true`,
+        division: `/api/divisions/${user.divisionId}?withSchedule=true&withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
         sessions: `/api/divisions/${user.divisionId}/sessions`

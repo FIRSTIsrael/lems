@@ -35,7 +35,7 @@ router.put(
   '/winners',
   asyncHandler(async (req: Request, res: Response) => {
     const body = req.body as Record<AwardNames, Array<WithId<Team> | string>>;
-    let awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
+    const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
     if (!Object.keys(body).every(awardName => awards.some(award => award.name === awardName))) {
       res.status(400).json({ error: 'Invalid award name' });
       return;

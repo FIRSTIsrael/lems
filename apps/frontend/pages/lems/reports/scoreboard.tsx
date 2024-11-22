@@ -5,7 +5,14 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
-import { Division, DivisionState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
+import {
+  DivisionWithEvent,
+  DivisionState,
+  RoleTypes,
+  SafeUser,
+  Scoresheet,
+  Team
+} from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -15,10 +22,11 @@ import { localizedMatchStage } from '../../../localization/field';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeTeam } from '../../../localization/teams';
 import { compareScoreArrays } from '@lems/utils/arrays';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   divisionState: DivisionState;
   scoresheets: Array<WithId<Scoresheet>>;
@@ -140,7 +148,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -182,7 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         scoresheets: `/api/divisions/${user.divisionId}/scoresheets`

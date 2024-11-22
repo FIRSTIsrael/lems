@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import {
-  Division,
+  DivisionWithEvent,
   SafeUser,
   RobotGameMatch,
   RobotGameTable,
@@ -17,10 +17,11 @@ import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
 import StrictRefereeDisplay from '../../components/field/referee/strict-referee-display';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   table: WithId<RobotGameTable>;
@@ -110,7 +111,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={800}
-        title={`שולחן ${table.name} | ${division.name}`}
+        title={`שולחן ${table.name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -134,7 +135,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         table: `/api/divisions/${user.divisionId}/tables/${user.roleAssociation.value}`,
@@ -144,7 +145,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

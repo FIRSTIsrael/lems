@@ -32,7 +32,7 @@ export interface DeliberationTeam extends WithId<Team> {
 }
 
 const getRoomFactors = (roomScores: Array<any>) => {
-  let result: Record<string, Record<string, number>> = {};
+  const result: Record<string, Record<string, number>> = {};
   [...JudgingCategoryTypes, 'average'].forEach(category => {
     const averageScore = average(roomScores.map(room => room[category]));
     result[category] = roomScores.reduce(
@@ -83,9 +83,9 @@ export const useDeliberationTeams = (
   rubrics: Array<WithId<Rubric<JudgingCategory>>>,
   scoresheets: Array<WithId<Scoresheet>>,
   cvForms: Array<WithId<CoreValuesForm>>,
-  roomScores?: Array<any>,
+  roomScores?: Array<unknown>,
   categoryRanks?: { [key in JudgingCategory]: Array<ObjectId> },
-  robotConsistency?: Array<any>
+  robotConsistency?: Array<{ relStdDev: number }>
 ) => {
   let roomFactors: Record<string, Record<string, number>> = {};
   if (roomScores) roomFactors = getRoomFactors(roomScores);
@@ -114,13 +114,13 @@ export const useDeliberationTeams = (
     const totalScore = Object.values(scores).reduce((acc, current) => acc + current, 0);
 
     const optionalAwardNominations: { [key in CoreValuesAwards]?: boolean } =
-      teamRubrics.find(rubric => rubric.category === 'core-values')!.data?.awards ?? {};
+      teamRubrics.find(rubric => rubric.category === 'core-values')?.data?.awards ?? {};
 
     const cvFormSeverities = cvForms
       .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
       .map(cvForm => cvForm.severity);
 
-    let normalizedScores = { ...scores };
+    const normalizedScores = { ...scores };
     if (roomFactors) {
       JudgingCategoryTypes.forEach(category => {
         const normalized = normalizedScores[category] * roomFactors[category][String(room._id)];
@@ -164,20 +164,28 @@ export const useDeliberationTeams = (
   const nonDeliberatedRanks = [...JudgingCategoryTypes, 'robot-game'].reduce(
     (acc, category) => {
       if (category === 'robot-game') {
-        let ranks: Array<DeliberationTeam & { rgRank?: number }> = [...teamsWithInfo].sort((a, b) =>
+        const ranks: Array<DeliberationTeam> = [...teamsWithInfo].sort((a, b) =>
           compareScoreArrays(a.robotGameScores, b.robotGameScores)
         );
-        ranks = rankArray(ranks, i => sum(i.robotGameScores), 'rgRank');
-        acc[category] = ranks.map(team => ({ teamId: team._id, rank: team.rgRank! }));
+        const ranksWithRg: Array<DeliberationTeam & { rgRank: number }> = rankArray(
+          ranks,
+          i => sum(i.robotGameScores),
+          'rgRank'
+        );
+        acc[category] = ranksWithRg.map(team => ({ teamId: team._id, rank: team.rgRank }));
       } else {
         const _category = category as JudgingCategory;
-        let ranks: Array<DeliberationTeam & { categoryRank?: number }> = [...teamsWithInfo]
+        const ranks: Array<DeliberationTeam> = [...teamsWithInfo]
           .filter(team => !categoryRanks[_category].includes(team._id))
           .sort((a, b) => b.scores[_category] - a.scores[_category]);
-        ranks = rankArray(ranks, i => i.scores[_category], 'categoryRank');
-        acc[_category] = ranks.map(team => ({
+        const ranksWithCategory: Array<DeliberationTeam & { categoryRank: number }> = rankArray(
+          ranks,
+          i => i.scores[_category],
+          'categoryRank'
+        );
+        acc[_category] = ranksWithCategory.map(team => ({
           teamId: team._id,
-          rank: team.categoryRank! + categoryRanks[_category].length
+          rank: team.categoryRank + categoryRanks[_category].length
         }));
       }
       return acc;
@@ -189,20 +197,21 @@ export const useDeliberationTeams = (
     team.ranks = [...JudgingCategoryTypes, 'robot-game'].reduce(
       (acc, category) => {
         const _category = category as JudgingCategory | 'robot-game';
+
         if (_category === 'robot-game') {
-          acc[_category] = nonDeliberatedRanks[category].find(
+          const rank = nonDeliberatedRanks['robot-game'].find(
             entry => entry.teamId === team._id
-          )!.rank;
+          )?.rank;
+          if (rank) acc[_category] = rank;
           return acc;
         }
-        let rank = categoryRanks[_category].findIndex(id => id === team._id);
+
+        const rank = categoryRanks[_category].findIndex(id => id === team._id);
         if (rank >= 0) {
           acc[_category] = rank + 1;
           return acc;
         }
-        rank = acc[_category] = nonDeliberatedRanks[category].find(
-          entry => entry.teamId === team._id
-        )!.rank;
+
         return acc;
       },
       {} as { [key in JudgingCategory | 'robot-game']: number }

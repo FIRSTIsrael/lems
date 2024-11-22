@@ -5,17 +5,18 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Division, DivisionState, SafeUser, Team } from '@lems/types';
+import { DivisionWithEvent, DivisionState, SafeUser, Team } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import FieldInsightsDashboard from '../../components/insights/dashboards/field';
 import JudgingInsightsDashboard from '../../components/insights/dashboards/judging';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import GeneralInsightsDashboard from '../../components/insights/dashboards/general';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
 }
@@ -39,7 +40,7 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ניתוח תחרות | ${division.name}`}
+        title={`ממשק ניתוח תחרות | ${localizeDivisionTitle(division)}`}
         back={`/lems/${user.role}`}
         color={division.color}
       >
@@ -47,7 +48,7 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
           <Paper sx={{ mt: 4 }}>
             <Tabs
               value={activeTab}
-              onChange={(_e: any, newValue: string) => setActiveTab(newValue)}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
               <Tab label="כללי" value="1" />
@@ -76,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`
       },
@@ -84,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };
