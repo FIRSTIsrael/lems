@@ -16,6 +16,8 @@ import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import TicketPanel from '../../components/general/ticket-panel';
+import { useQueryParam } from '../../hooks/use-query-param';
+
 
 interface Props {
   user: WithId<SafeUser>;
@@ -32,7 +34,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>

@@ -33,6 +33,8 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import AwardsPanel from '../../components/judging/judge-advisor/awards-panel';
 import CVFormCard from '../../components/cv-form/cv-form-card';
 import BadgeTab from '../../components/general/badge-tab';
+import { useQueryParam } from '../../hooks/use-query-param';
+
 
 interface Props {
   user: WithId<SafeUser>;
@@ -68,7 +70,7 @@ const Page: NextPage<Props> = ({
   const [deliberations, setDeliberations] =
     useState<Array<WithId<JudgingDeliberation>>>(initialDeliberations);
   const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   const openCVForms = useMemo(
     () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
