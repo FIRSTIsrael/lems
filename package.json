@@ -60,7 +60,7 @@
     "winston": "^3.15.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.8",
+    "@babel/core": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@firstisrael/prettier-config": "^1.1.0",
     "@nx/eslint": "20.0.7",
