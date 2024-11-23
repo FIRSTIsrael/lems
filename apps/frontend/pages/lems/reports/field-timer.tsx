@@ -185,7 +185,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
+        division: `/api/divisions/${user.divisionId}`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`
       },

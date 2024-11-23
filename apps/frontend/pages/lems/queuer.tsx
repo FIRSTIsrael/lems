@@ -27,6 +27,7 @@ import QueuerJudgingSchedule from '../../components/queueing/queuer-judging-sche
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles, localizedDivisionSection } from '../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-team-display';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -126,7 +127,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         color={division.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
