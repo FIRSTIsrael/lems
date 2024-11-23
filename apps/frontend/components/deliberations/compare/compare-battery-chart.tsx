@@ -74,8 +74,8 @@ const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => 
 
   return (
     <Stack height={50} direction="row" borderRadius={100} overflow="hidden" mx={2}>
-      {WTL.map(wtl => (
-        <CompareBatteryBox key={wtl} wtlValue={wtl} counts={counts} percentages={percentages} />
+      {WTL.map((wtl, index) => (
+        <CompareBatteryBox key={index} wtlValue={wtl} counts={counts} percentages={percentages} />
       ))}
     </Stack>
   );
