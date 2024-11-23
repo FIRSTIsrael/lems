@@ -1,9 +1,8 @@
-import dayjs from 'dayjs';
-import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { WithId } from 'mongodb';
+import dayjs from 'dayjs';
 import { FllEvent, AwardSchema, Division } from '@lems/types';
 import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
 import Layout from '../../../../../components/layout';
@@ -15,6 +14,7 @@ import DivisionScheduleEditor from '../../../../../components/admin/division-sch
 import DownloadUsersButton from '../../../../../components/admin/download-users';
 import UploadFileButton from '../../../../../components/general/upload-file';
 import { localizeDivisionTitle } from '../../../../../localization/event';
+import { useQueryParam } from '../../../../../hooks/use-query-param';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   return (
     <Layout
