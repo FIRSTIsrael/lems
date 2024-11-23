@@ -12,11 +12,12 @@ import {
   DialogTitle
 } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Division } from '@lems/types';
+import { DivisionWithEvent } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface DeleteDivisionDataProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
 }
 
 const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => {
@@ -67,7 +68,7 @@ const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => 
           <DialogContentText id="delete-data-description">
             {`אתם עומדים למחוק את כל נתוני האירוע, כולל תוצאות ופרסים מיום התחרות.
             פעולה זו אינה ניתנת לשחזור במקרה של טעות. אנא אשרו שברצונכם למחוק
-            את כל המידע הקיים מאירוע "${division.name}".`}
+            את כל המידע הקיים מאירוע "${localizeDivisionTitle(division)}".`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

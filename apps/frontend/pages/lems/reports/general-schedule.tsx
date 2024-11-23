@@ -11,12 +11,13 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { Division, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface DivisionScheduleRowProps {
   entry: DivisionScheduleEntry;
@@ -38,7 +39,7 @@ const DivisionScheduleRow: React.FC<DivisionScheduleRowProps> = ({ entry }) => {
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
 }
 
 const Page: NextPage<Props> = ({ user, division }) => {
@@ -54,7 +55,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${localizeDivisionTitle(division)}`}
         back={`/lems/reports`}
         backDisabled={false}
         color={division.color}
@@ -86,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${user.divisionId}?withSchedule=true` },
+      { division: `/api/divisions/${user.divisionId}?withSchedule=true&withEvent=true` },
       ctx
     );
 

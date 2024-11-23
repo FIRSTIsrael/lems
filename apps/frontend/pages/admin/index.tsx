@@ -24,7 +24,10 @@ const Page: NextPage<Props> = ({ user, events }) => {
           </Typography>
           <EventSelector
             events={events}
-            onChange={eventId => router.push(`/admin/event/${eventId}`)}
+            onChange={(eventId, divisionId) => {
+              if (divisionId) router.push(`/admin/event/${eventId}/division/${divisionId}`);
+              router.push(`/admin/event/${eventId}`);
+            }}
           />
           <ListItemButton
             key={'create-division'}

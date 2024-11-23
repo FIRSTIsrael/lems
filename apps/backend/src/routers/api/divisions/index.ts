@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { DivisionState } from '@lems/types';
 import * as db from '@lems/database';
+import asyncHandler from 'express-async-handler';
 import divisionValidator from '../../../middlewares/division-validator';
 import sessionsRouter from './sessions';
 import matchesRouter from './matches';
@@ -22,12 +23,20 @@ const router = express.Router({ mergeParams: true });
 
 router.use('/:divisionId', divisionValidator);
 
-router.get('/:divisionId', (req: Request, res: Response) => {
-  db.getDivision({ _id: new ObjectId(req.params.divisionId) }).then(division => {
+router.get(
+  '/:divisionId',
+  asyncHandler(async (req: Request, res: Response) => {
+    let division;
+    if (req.query.withEvent) {
+      division = await db.getDivisionWithEvent({ _id: new ObjectId(req.params.divisionId) });
+    } else {
+      division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
+    }
+
     if (!req.query.withSchedule) delete division.schedule;
     res.json(division);
-  });
-});
+  })
+);
 
 router.get('/:divisionId/state', (req: Request, res: Response) => {
   db.getDivisionState({ divisionId: new ObjectId(req.params.divisionId) }).then(divisionState =>

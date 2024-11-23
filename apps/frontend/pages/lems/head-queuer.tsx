@@ -5,14 +5,14 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Stack } from '@mui/material';
 import {
-  Division,
   DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
 import ConnectionIndicator from '../../components/connection-indicator';
@@ -25,10 +25,11 @@ import HeadQueuerJudgingSchedule from '../../components/queueing/head-queuer-jud
 import JudgingStatusTimer from '../../components/judging/judging-status-timer';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedDivisionSection, localizedRoles } from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
@@ -140,7 +141,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -196,7 +197,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,
@@ -208,7 +209,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

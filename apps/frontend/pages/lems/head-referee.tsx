@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
+import { enqueueSnackbar } from 'notistack';
 import { Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
-  Division,
   SafeUser,
   Scoresheet,
   RobotGameMatch,
   RobotGameTable,
   DivisionState,
-  Team
+  Team,
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import ConnectionIndicator from '../../components/connection-indicator';
@@ -24,11 +25,11 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import HeadRefereeRoundSchedule from '../../components/field/head-referee/head-referee-round-schedule';
 import ScoresheetStatusReferences from '../../components/field/head-referee/scoresheet-status-references';
-import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
@@ -47,7 +48,7 @@ const Page: NextPage<Props> = ({
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
-  const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
+  const [showGeneralSchedule] = useState<boolean>(true);
 
   const headRefereeGeneralSchedule =
     (showGeneralSchedule && division.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
@@ -57,6 +58,7 @@ const Page: NextPage<Props> = ({
       const currentMatch = matches.find(m => m._id == divisionState.loadedMatch);
       if (currentMatch) scrollToSelector(`match-${currentMatch.number}`);
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToSelector = (selector: string) => {
@@ -148,7 +150,7 @@ const Page: NextPage<Props> = ({
           division={division}
           divisionState={divisionState}
           divisionSchedule={headRefereeGeneralSchedule}
-          roundStage={'practice'}
+          roundStage="practice"
           roundNumber={r}
           tables={tables}
           matches={practiceMatches.filter(m => m.round === r)}
@@ -163,7 +165,7 @@ const Page: NextPage<Props> = ({
             division={division}
             divisionState={divisionState}
             divisionSchedule={headRefereeGeneralSchedule}
-            roundStage={'ranking'}
+            roundStage="ranking"
             roundNumber={r}
             tables={tables}
             matches={rankingMatches.filter(m => m.round === r)}
@@ -184,7 +186,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -220,7 +222,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}/?withSchedule=true`,
+        division: `/api/divisions/${user.divisionId}/?withSchedule=true&withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         tables: `/api/divisions/${user.divisionId}/tables`,
         matches: `/api/divisions/${user.divisionId}/matches`,
@@ -230,7 +232,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

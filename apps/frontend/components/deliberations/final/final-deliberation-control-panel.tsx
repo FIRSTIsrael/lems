@@ -156,7 +156,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
         <CompareModal
           open={compareOpen}
           setOpen={setCompareOpen}
-          compareTeamIds={compareTeams.map(t => t?._id!)}
+          compareTeamIds={compareTeams.map(t => t?._id)}
           cvForms={cvForms}
           rubrics={rubrics}
           sessions={sessions}

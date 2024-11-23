@@ -4,17 +4,18 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { CoreValuesForm, Division, SafeUser } from '@lems/types';
+import { CoreValuesForm, DivisionWithEvent, SafeUser } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import CVForm from '../../../components/cv-form/cv-form';
 import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   cvForm: WithId<CoreValuesForm>;
 }
 
@@ -47,7 +48,7 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
     >
       <Layout
         maxWidth="md"
-        title={`טופס ערכי ליבה | ${division.name}`}
+        title={`טופס ערכי ליבה | ${localizeDivisionTitle(division)}`}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
@@ -74,14 +75,14 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         cvForm: `/api/divisions/${user.divisionId}/cv-forms/${ctx.params?.cvFormId}`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

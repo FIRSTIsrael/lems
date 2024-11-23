@@ -3,10 +3,11 @@ import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Paper, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Division } from '@lems/types';
+import { DivisionWithEvent } from '@lems/types';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface QueuerPitMapProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   pitMapUrl: string;
 }
 
@@ -16,7 +17,7 @@ const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ division, pitMapUrl }) => {
   return !error ? (
     <Image
       src={`${pitMapUrl}/${division._id}.png`}
-      alt={`מפת פיטים ל${division.name}`}
+      alt={`מפת פיטים ל${localizeDivisionTitle(division)}`}
       width={0}
       height={0}
       sizes="100vw"

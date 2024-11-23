@@ -17,13 +17,23 @@ interface PageProps {
 
 const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
+  const [event, setEvent] = useState<WithId<FllEvent> | undefined>(undefined);
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
-  const selectDivision = (eventId: string | ObjectId) => {
-    const selectedEvent = events.find(e => e._id == eventId);
-    setDivision(selectedEvent?.divisions?.[0]);
+  const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
+    const event = events.find(e => String(e._id) === String(eventId));
+    if (!divisionId && event?.enableDivisions) return;
+    let division;
+    if (divisionId) {
+      division = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    } else {
+      division = event?.divisions?.[0];
+    }
+    if (!division) return;
+    setEvent(event);
+    setDivision(division);
   };
 
   useEffect(() => {
@@ -57,9 +67,10 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : division && rooms && tables ? (
+        ) : division && event && rooms && tables ? (
           <LoginForm
             recaptchaRequired={recaptchaRequired}
+            event={event}
             division={division}
             rooms={rooms}
             tables={tables}
@@ -76,7 +87,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              getEventDisabled={event => !event.divisions?.[0]?.hasState}
+              includeDivisions
+              getEventDisabled={event =>
+                !!event.divisions && event.divisions.every(d => !d.hasState)
+              }
+              getDivisionDisabled={division => !division.hasState}
               onChange={selectDivision}
             />
           </Stack>

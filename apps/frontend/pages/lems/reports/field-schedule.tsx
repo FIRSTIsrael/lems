@@ -3,7 +3,14 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Grid2';
-import { Division, Team, SafeUser, RoleTypes, RobotGameMatch, RobotGameTable } from '@lems/types';
+import {
+  DivisionWithEvent,
+  Team,
+  SafeUser,
+  RoleTypes,
+  RobotGameMatch,
+  RobotGameTable
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -12,10 +19,11 @@ import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -29,7 +37,7 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
+  const [showGeneralSchedule] = useState<boolean>(true);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
@@ -78,7 +86,8 @@ const Page: NextPage<Props> = ({
       size={{
         xs: 12,
         xl: 6
-      }}>
+      }}
+    >
       <ReportRoundSchedule
         divisionSchedule={refereeGeneralSchedule}
         roundStage={matches[0].stage}
@@ -101,7 +110,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={1800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז זירה | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         back={`/lems/reports`}
@@ -122,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withSchedule=true`,
+        division: `/api/divisions/${user.divisionId}?withSchedule=true&withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         tables: `/api/divisions/${user.divisionId}/tables`,
         matches: `/api/divisions/${user.divisionId}/matches`

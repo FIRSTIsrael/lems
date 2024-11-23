@@ -112,7 +112,7 @@ const Page: NextPage<Props> = ({
   ]);
 
   return (
-    (<RoleAuthorizer
+    <RoleAuthorizer
       user={user}
       allowedRoles={[...RoleTypes]}
       onFail={() => {
@@ -175,7 +175,7 @@ const Page: NextPage<Props> = ({
         )}
         {/* </Box> */}
       </Layout>
-    </RoleAuthorizer>)
+    </RoleAuthorizer>
   );
 };
 

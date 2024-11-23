@@ -6,12 +6,11 @@ import { WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
-  Division,
   SafeUser,
   RobotGameMatch,
   DivisionState,
-  Team,
-  MATCH_AUTOLOAD_THRESHOLD
+  MATCH_AUTOLOAD_THRESHOLD,
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import ConnectionIndicator from '../../components/connection-indicator';
@@ -29,13 +28,13 @@ import AwardsPresentation from '../../components/presentations/awards-presentati
 import MessageEditor from '../../components/field/scorekeeper/message-editor';
 import ScoreboardConfigurator from '../../components/field/scorekeeper/scoreboard-configurator';
 import AwardsPresentationConfigurator from '../../components/field/scorekeeper/awards-presentation-configurator';
+import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
 
@@ -43,11 +42,9 @@ const Page: NextPage<Props> = ({
   user,
   division,
   divisionState: initialDivisionState,
-  teams: initialTeams,
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
@@ -94,17 +91,6 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
-    setTeams(teams =>
-      teams.map(t => {
-        if (t._id == team._id) {
-          return team;
-        }
-        return t;
-      })
-    );
-  };
-
   const handleMatchAborted = (
     newMatch: WithId<RobotGameMatch>,
     newDivisionState: WithId<DivisionState>
@@ -130,8 +116,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'audienceDisplayUpdated', handler: setDivisionState },
-      { name: 'presentationUpdated', handler: setDivisionState },
-      { name: 'teamRegistered', handler: handleTeamRegistered }
+      { name: 'presentationUpdated', handler: setDivisionState }
     ]
   );
 
@@ -145,7 +130,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -221,8 +206,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`
       },
@@ -230,7 +214,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

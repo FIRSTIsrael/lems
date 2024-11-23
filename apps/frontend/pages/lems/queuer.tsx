@@ -8,14 +8,14 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import {
-  Division,
   DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
 import Layout from '../../components/layout';
@@ -27,10 +27,11 @@ import QueuerJudgingSchedule from '../../components/queueing/queuer-judging-sche
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles, localizedDivisionSection } from '../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-team-display';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -126,7 +127,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         color={division.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
@@ -189,7 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         tables: `/api/divisions/${user.divisionId}/tables`,
@@ -203,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 
     return { props: { user, pitMapUrl, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

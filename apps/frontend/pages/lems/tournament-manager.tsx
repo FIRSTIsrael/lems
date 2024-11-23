@@ -7,7 +7,7 @@ import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
 import {
   CoreValuesForm,
-  Division,
+  DivisionWithEvent,
   DivisionState,
   JudgingRoom,
   JudgingSession,
@@ -31,11 +31,12 @@ import BadgeTab from '../../components/general/badge-tab';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tickets: Array<WithId<Ticket>>;
@@ -205,7 +206,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -273,7 +274,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         tickets: `/api/divisions/${user.divisionId}/tickets`,
@@ -287,7 +288,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

@@ -11,7 +11,7 @@ import {
   JudgingRoom,
   JudgingSession,
   SafeUser,
-  Division,
+  DivisionWithEvent,
   Team,
   JudgingCategory,
   Rubric,
@@ -33,12 +33,12 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import AwardsPanel from '../../components/judging/judge-advisor/awards-panel';
 import CVFormCard from '../../components/cv-form/cv-form-card';
 import BadgeTab from '../../components/general/badge-tab';
+import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
-
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
@@ -180,7 +180,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
@@ -280,7 +280,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,

@@ -17,7 +17,7 @@ import {
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
-  Division,
+  DivisionWithEvent,
   RobotGameMatch,
   RobotGameMatchParticipant,
   RobotGameTable,
@@ -36,9 +36,10 @@ import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../localization/teams';
 import { localizedMatchStage } from '../../../../../localization/field';
 import ScoresheetForm from '../../../../../components/field/scoresheet/scoresheet-form';
+import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface ScoresheetSelectorProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   matchScoresheet: WithId<Scoresheet>;
 }
@@ -120,7 +121,7 @@ const ScoresheetSelector: React.FC<ScoresheetSelectorProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
@@ -225,7 +226,7 @@ const Page: NextPage<Props> = ({
           maxWidth="md"
           title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
             team.name
-          } | ${division.name}`}
+          } | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/lems/${user.role}`}
@@ -300,7 +301,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         scoresheet: `/api/divisions/${user.divisionId}/scoresheets/${ctx.params?.scoresheetId}`
       },
       ctx

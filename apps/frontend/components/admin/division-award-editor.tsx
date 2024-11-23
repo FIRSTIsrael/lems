@@ -29,8 +29,7 @@ import {
   MandatoryAwardTypes,
   OptionalAwardTypes,
   AwardSchema,
-  AwardLimits,
-  ADVANCEMENT_PERCENTAGE
+  AwardLimits
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils/arrays';
@@ -49,7 +48,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
 
   return (
-    (<Draggable draggableId={name} index={index}>
+    <Draggable draggableId={name} index={index}>
       {provided => (
         <Grid
           container
@@ -106,7 +105,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
           </FastField>
         </Grid>
       )}
-    </Draggable>)
+    </Draggable>
   );
 };
 

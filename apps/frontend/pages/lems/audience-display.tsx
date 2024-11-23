@@ -4,13 +4,13 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Division,
   Team,
   SafeUser,
   RoleTypes,
   DivisionState,
   RobotGameMatch,
-  Scoresheet
+  Scoresheet,
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import Blank from '../../components/audience-display/blank';
@@ -28,7 +28,7 @@ import { useWebsocket } from '../../hooks/use-websocket';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
@@ -210,7 +210,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         divisionState: `/api/divisions/${user.divisionId}/state`,
         matches: `/api/divisions/${user.divisionId}/matches`,

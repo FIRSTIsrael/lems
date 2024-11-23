@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Division,
+  DivisionWithEvent,
   SafeUser,
   JudgingCategory,
   Rubric,
@@ -29,12 +29,13 @@ import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 import { Deliberation, DeliberationRef } from '../../../../components/deliberations/deliberation';
 import CategoryDeliberationLayout from '../../../../components/deliberations/category/category-deliberations-layout';
-import { getDefaultPicklistLimit } from '../../../..//lib/utils/math';
+import { getDefaultPicklistLimit } from '../../../../lib/utils/math';
+import { localizeDivisionTitle } from '../../../../localization/event';
 
 interface Props {
   category: JudgingCategory;
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -242,7 +243,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={1900}
         back={`/lems/${user.role}`}
-        title={`דיון תחום ${localizedJudgingCategory[category].name} | בית ${division.name}`}
+        title={`דיון תחום ${localizedJudgingCategory[category].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -285,7 +286,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         teams: `/api/divisions/${user.divisionId}/teams`,
         rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
         rooms: `/api/divisions/${user.divisionId}/rooms`,

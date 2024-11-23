@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
 import { Box, Stack, Typography } from '@mui/material';
-import { green, yellow, red } from '@mui/material/colors';
 import { getCounts, getRelativePercentages } from '@lems/utils/arrays';
 import { CompareContext } from './compare-view';
 
@@ -75,8 +74,8 @@ const CompareBatteryChart: React.FC<CompareBatteryChartProps> = ({ teamId }) => 
 
   return (
     <Stack height={50} direction="row" borderRadius={100} overflow="hidden" mx={2}>
-      {WTL.map(wtl => (
-        <CompareBatteryBox wtlValue={wtl} counts={counts} percentages={percentages} />
+      {WTL.map((wtl, index) => (
+        <CompareBatteryBox key={index} wtlValue={wtl} counts={counts} percentages={percentages} />
       ))}
     </Stack>
   );

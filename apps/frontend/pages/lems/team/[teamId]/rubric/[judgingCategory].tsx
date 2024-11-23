@@ -7,14 +7,14 @@ import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
-  Division,
   JudgingCategoryTypes,
   JudgingCategory,
   JudgingRoom,
   JudgingSession,
   SafeUser,
   Rubric,
-  Team
+  Team,
+  DivisionWithEvent
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import { rubricsSchemas } from '@lems/season';
@@ -26,9 +26,10 @@ import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch'
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../localization/teams';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface RubricSelectorProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   judgingCategory: JudgingCategory;
 }
@@ -67,7 +68,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ division, team, judging
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
   session: WithId<JudgingSession>;
@@ -120,7 +121,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
           maxWidth="md"
           title={`מחוון ${
             localizedJudgingCategory[judgingCategory as JudgingCategory].name
-          } של קבוצה #${team.number}, ${team.name} | ${division.name}`}
+          } של קבוצה #${team.number}, ${team.name} | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/lems/${user.role}#${team.number.toString()}`}
@@ -175,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
+        division: `/api/divisions/${user.divisionId}?withEvent=true`,
         team: `/api/divisions/${user.divisionId}/teams/${ctx.params?.teamId}`,
         room: `/api/divisions/${user.divisionId}/rooms/${roomId}`,
         session: `/api/divisions/${user.divisionId}/rooms/${roomId}/sessions`,
