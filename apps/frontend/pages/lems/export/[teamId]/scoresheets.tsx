@@ -276,7 +276,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
       user: '/api/me',
-      division: `/api/divisions/${ctx.params?.divisionId}`,
+      division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
       team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
       scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
     },
