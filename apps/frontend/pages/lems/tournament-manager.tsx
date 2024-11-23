@@ -32,6 +32,7 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -59,7 +60,7 @@ const Page: NextPage<Props> = ({
   cvForms: initialCvForms
 }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);

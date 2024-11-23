@@ -1,7 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
@@ -12,6 +11,7 @@ import FieldInsightsDashboard from '../../components/insights/dashboards/field';
 import JudgingInsightsDashboard from '../../components/insights/dashboards/judging';
 import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import GeneralInsightsDashboard from '../../components/insights/dashboards/general';
+import { useQueryParam } from '../../hooks/use-query-param';
 import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   if (!divisionState.completed) {
     router.push(`/lems/${user.role}`);

@@ -29,6 +29,7 @@ import MessageEditor from '../../components/field/scorekeeper/message-editor';
 import ScoreboardConfigurator from '../../components/field/scorekeeper/scoreboard-configurator';
 import AwardsPresentationConfigurator from '../../components/field/scorekeeper/awards-presentation-configurator';
 import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -46,7 +47,7 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   const currentTime = useTime({ interval: 1000 });
 

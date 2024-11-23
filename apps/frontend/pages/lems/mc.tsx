@@ -24,6 +24,7 @@ import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -45,7 +46,7 @@ const Page: NextPage<Props> = ({
   awards: initialAwards
 }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
