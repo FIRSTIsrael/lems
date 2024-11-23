@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
@@ -14,6 +13,7 @@ import DeleteDivisionData from '../../../components/admin/delete-division-data';
 import DivisionScheduleEditor from '../../../components/admin/division-schedule-editor';
 import DownloadUsersButton from '../../../components/admin/download-users';
 import UploadFileButton from '../../../components/general/upload-file';
+import { useQueryParam } from '../../../hooks/use-query-param';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, divisions, awardSchema }) => {
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   return (
     <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
