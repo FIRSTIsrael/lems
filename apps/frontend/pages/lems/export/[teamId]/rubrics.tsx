@@ -143,7 +143,7 @@ const ExportRubricPage: React.FC<ExportRubricPageProps> = ({ division, team, rub
                 />
                 {section.fields.map(field => {
                   const labels = [field.label_1, field.label_2, field.label_3, field.label_4];
-                  const rubricValues = rubric.data?.values as any;
+                  const rubricValues = rubric.data?.values;
 
                   return (
                     <>
@@ -289,7 +289,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const data = await serverSideGetRequests(
     {
       user: '/api/me',
-      division: `/api/divisions/${ctx.params?.divisionId}`,
+      division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
       team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
       rubrics: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/rubrics`
     },
