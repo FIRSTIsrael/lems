@@ -1,15 +1,16 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
-import { FllEvent } from '@lems/types';
+import { FllEvent, Role } from '@lems/types';
 import * as db from '@lems/database';
+import { randomString } from '@lems/utils/random';
 
 const router = express.Router({ mergeParams: true });
 
 router.post(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { divisions, ...body }: any = { ...req.body };
+    const { divisions, eventUsers, ...body }: any = { ...req.body };
     if (!body) {
       res.status(400).json({ ok: false });
       return;
@@ -41,6 +42,26 @@ router.post(
         return;
       }
     });
+
+    console.log('⏬ Creating event users...');
+    const users = Object.entries(eventUsers).map(([role, enabled]: [Role, boolean]) => {
+      if (!enabled) return;
+      return {
+        role,
+        isAdmin: false,
+        eventId: eventResult.insertedId,
+        password: randomString(4),
+        lastPasswordSetDate: new Date()
+      };
+    });
+    const userResult = await db.addUsers(users);
+    if (userResult.acknowledged) {
+      console.log(`✅ Event users created!`);
+    } else {
+      console.log(`❌ Could not create event users for ${eventResult.insertedId}`);
+      res.status(500).json({ ok: false });
+      return;
+    }
 
     res.json({ ok: true, id: eventResult.insertedId });
   })

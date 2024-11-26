@@ -23,11 +23,13 @@ import Grid from '@mui/material/Grid2';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
-import { DivisionSwatches } from '@lems/types';
+import { DivisionSwatches, EventUserAllowedRoles, EventUserAllowedRoleTypes } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import FormikTextField from '../../../components/general/forms/formik-text-field';
+import FormikCheckbox from '../../../components/general/forms/formik-checkbox';
 import ColorPickerButton from '../../../components/admin/color-picker-button';
+import { localizedRoles } from '../../../localization/roles';
 
 interface EventCreateFormValues {
   name: string;
@@ -35,6 +37,7 @@ interface EventCreateFormValues {
   enableDivisions: boolean;
   startDate: Dayjs;
   endDate: Dayjs;
+  eventUsers: Record<EventUserAllowedRoles, boolean>;
   divisions: {
     name: string;
     color: string;
@@ -126,6 +129,7 @@ const Page: NextPage = () => {
       name: '',
       salesforceId: '',
       enableDivisions: false,
+      eventUsers: { 'tournament-manager': false, 'pit-admin': false },
       startDate: getDefaultDate(),
       endDate: getDefaultDate(),
       divisions: [{ name: '', color: DivisionSwatches[0] }]
@@ -217,13 +221,32 @@ const Page: NextPage = () => {
                     fullWidth
                   />
                 </Stack>
-                <Grid size={12}>
-                  <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
-                    בתים
-                  </Typography>
-                </Grid>
                 {values.enableDivisions ? (
                   <>
+                    <Grid size={12}>
+                      <Typography fontSize="1.5rem" fontWeight={500}>
+                        משתמשי אירוע
+                      </Typography>
+                      <Typography color="textSecondary" fontSize="0.75rem">
+                        משתמשי אירוע יקבלו גישה למידע מכל הבתים ויוכלו לעבור ביניהם בלחיצת כפתור.
+                      </Typography>
+                    </Grid>
+                    <Grid size={12}>
+                      <Stack direction="row" spacing={4}>
+                        {EventUserAllowedRoleTypes.map((user, index) => (
+                          <FormikCheckbox
+                            name={`eventUsers.[${index}]`}
+                            label={localizedRoles[user].name}
+                          />
+                        ))}
+                      </Stack>
+                    </Grid>
+
+                    <Grid size={12}>
+                      <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                        בתים
+                      </Typography>
+                    </Grid>
                     {values.divisions.map((division, index) => (
                       <DivisionField key={index} index={index} />
                     ))}
@@ -251,13 +274,13 @@ const Page: NextPage = () => {
                     </Grid>
                   </>
                 ) : (
-                  <Grid size={4}>
+                  <Grid size={12}>
                     <Button
                       variant="contained"
                       startIcon={<HomeIcon />}
                       size="large"
-                      fullWidth
                       onClick={() => setFieldValue('enableDivisions', true)}
+                      sx={{ width: 350 }}
                     >
                       פיצול האירוע לבתים
                     </Button>
