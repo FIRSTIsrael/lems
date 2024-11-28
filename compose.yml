@@ -48,6 +48,8 @@ services:
       context: ./apps/scheduler
       args:
         PYTHON_ENV: production
+        MONGODB_URI: ${MONGODB_URI}
+        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
     image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
     ports:
       - '8000:8000'
