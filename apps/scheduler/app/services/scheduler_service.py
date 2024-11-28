@@ -2,10 +2,10 @@ from datetime import datetime
 from typing import List, Tuple
 import random
 
-from apps.scheduler.app.modles.slot import Slot
-from apps.scheduler.app.modles.team import Team
-from apps.scheduler.app.modles.team_event import TeamEvent
-from apps.scheduler.app.repoistory.lems_repository import LemsRepository
+from apps.scheduler.app.models.slot import Slot
+from apps.scheduler.app.models.team import Team
+from apps.scheduler.app.models.team_event import TeamEvent
+from apps.scheduler.app.repository.lems_repository import LemsRepository
 
 
 def get_random_team(team_options: List[Team]) -> Team:
@@ -28,8 +28,13 @@ class SchedulerService:
 
             if self.team_prefers(team, current_slot):
                 start_time, end_time = self.get_event_time(current_slot)
-                team_event = TeamEvent(start_time, end_time, current_slot.event_type, current_slot.slot,
-                                       team.team_number)
+                team_event = TeamEvent(
+                    start_time,
+                    end_time,
+                    current_slot.event_type,
+                    current_slot.slot,
+                    team.team_number,
+                )
                 team.team_events.append(team_event)
                 current_slot.team_events.append(team_event)
 
