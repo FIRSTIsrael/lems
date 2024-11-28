@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "npx nx run-many --target=serve --projects=backend,frontend",
     "build": "npx nx run-many --target=build --projects=backend,frontend",
-    "scheduler": "cd apps/scheduler/src && python -m fastapi run main.py"
+    "scheduler": "cd apps/scheduler/src && python -m fastapi dev main.py"
   },
   "private": true,
   "dependencies": {
