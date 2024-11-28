@@ -2,10 +2,10 @@ from datetime import datetime
 from typing import List, Tuple
 import random
 
-from apps.scheduler.app.models.slot import Slot
-from apps.scheduler.app.models.team import Team
-from apps.scheduler.app.models.team_event import TeamEvent
-from apps.scheduler.app.repository.lems_repository import LemsRepository
+from models.slot import Slot
+from models.team import Team
+from models.team_event import TeamEvent
+from repository.lems_repository import LemsRepository
 
 
 def get_random_team(team_options: List[Team]) -> Team:
