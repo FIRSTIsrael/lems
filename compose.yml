@@ -42,6 +42,19 @@ services:
       - lems-network
     restart: always
 
+  scheduler:
+    build:
+      dockerfile: apps/scheduler/Dockerfile
+      context: ./apps/scheduler
+      args:
+        PYTHON_ENV: production
+    image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
+    ports:
+      - '8000:8000'
+    networks:
+      - lems-network
+    restart: always
+
 networks:
   lems-network:
     driver: bridge
