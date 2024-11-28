@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 
 COPY ./src /src
 
-CMD ["python", "main.py"]
+CMD ["fastapi", "run", "main.py"]
