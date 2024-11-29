@@ -55,7 +55,7 @@ const DivisionField: React.FC<{ index: number }> = ({ index }) => {
           {({ field, form }: FieldProps) => (
             <ColorPickerButton
               swatches={DivisionSwatches}
-              sx={{ width: 120 }}
+              sx={{ width: 120, minHeight: 56 }}
               value={field.value}
               setColor={newColor => form.setFieldValue(field.name, newColor)}
             />
@@ -236,7 +236,7 @@ const Page: NextPage = () => {
                         {EventUserAllowedRoleTypes.map((user, index) => (
                           <FormikCheckbox
                             key={index}
-                            name={`eventUsers.[${index}]`}
+                            name={`eventUsers.${user}`}
                             label={localizedRoles[user].name}
                           />
                         ))}
@@ -248,8 +248,11 @@ const Page: NextPage = () => {
                         בתים
                       </Typography>
                     </Grid>
+
                     {values.divisions.map((division, index) => (
-                      <DivisionField key={index} index={index} />
+                      <Grid size={12} key={index}>
+                        <DivisionField index={index} />
+                      </Grid>
                     ))}
                     <Grid size={12}>
                       <Tooltip title="הוספת בית" arrow>
@@ -289,7 +292,7 @@ const Page: NextPage = () => {
                 )}
               </Grid>
               <Stack direction="row" marginTop={2} justifyContent="center">
-                <Button type="submit" variant="contained" sx={{ minWidth: 180 }}>
+                <Button type="submit" variant="contained" sx={{ minWidth: 180, mb: 2 }}>
                   צור אירוע
                 </Button>
               </Stack>

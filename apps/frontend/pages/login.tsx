@@ -5,7 +5,8 @@ import { Paper, Box, Link, Stack, Typography } from '@mui/material';
 import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/general/event-selector';
-import LoginForm from '../components/login/login-form';
+import DivisionLoginForm from '../components/login/division-login-form';
+import EventLoginForm from '../components/login/event-login-form';
 import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
@@ -24,16 +25,17 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
 
   const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
     const event = events.find(e => String(e._id) === String(eventId));
-    if (!divisionId && event?.enableDivisions) return;
-    let division;
-    if (divisionId) {
-      division = event?.divisions?.find(d => String(d._id) === String(divisionId));
-    } else {
-      division = event?.divisions?.[0];
-    }
-    if (!division) return;
+    if (!event) return;
     setEvent(event);
-    setDivision(division);
+
+    if (!event.enableDivisions) {
+      setDivision(event.divisions?.[0]);
+      return;
+    }
+
+    if (divisionId) {
+      setDivision(event.divisions?.find(d => String(d._id) === String(divisionId)));
+    }
   };
 
   useEffect(() => {
@@ -67,14 +69,21 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
+        ) : event && !division ? (
+          <EventLoginForm
+            event={event}
+            onCancel={() => setEvent(undefined)}
+            recaptchaRequired={recaptchaRequired}
+          />
         ) : division && event && rooms && tables ? (
-          <LoginForm
+          <DivisionLoginForm
             recaptchaRequired={recaptchaRequired}
             event={event}
             division={division}
             rooms={rooms}
             tables={tables}
             onCancel={() => {
+              setEvent(undefined);
               setDivision(undefined);
               setRooms(undefined);
               setTables(undefined);

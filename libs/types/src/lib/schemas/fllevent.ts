@@ -1,5 +1,6 @@
 import { WithId } from 'mongodb';
 import { Division } from './division';
+import { EventUserAllowedRoles } from '../roles';
 
 export interface FllEvent {
   name: string;
@@ -9,6 +10,7 @@ export interface FllEvent {
   enableDivisions?: boolean;
   salesforceId?: string;
   divisions?: Array<WithId<Division>>;
+  eventUsers: Array<EventUserAllowedRoles>;
 }
 
 export interface DivisionWithEvent extends Division {

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
-import { FllEvent, Role } from '@lems/types';
+import { FllEvent, User, Role } from '@lems/types';
 import * as db from '@lems/database';
 import { randomString } from '@lems/utils/random';
 
@@ -15,6 +15,11 @@ router.post(
       res.status(400).json({ ok: false });
       return;
     }
+
+    // Save the created users on the event
+    body.eventUsers = Object.entries(eventUsers)
+      .filter(([, enabled]) => !!enabled)
+      .map(([role]) => role);
 
     body.startDate = new Date(body.startDate);
     body.endDate = new Date(body.endDate);
@@ -44,23 +49,26 @@ router.post(
     });
 
     console.log('⏬ Creating event users...');
-    const users = Object.entries(eventUsers).map(([role, enabled]: [Role, boolean]) => {
-      if (!enabled) return;
-      return {
-        role,
+    const users: User[] = [];
+    for (const [role, enabled] of Object.entries(eventUsers)) {
+      if (!enabled) continue;
+      users.push({
+        role: role as Role,
         isAdmin: false,
         eventId: eventResult.insertedId,
         password: randomString(4),
         lastPasswordSetDate: new Date()
-      };
-    });
-    const userResult = await db.addUsers(users);
-    if (userResult.acknowledged) {
-      console.log(`✅ Event users created!`);
-    } else {
-      console.log(`❌ Could not create event users for ${eventResult.insertedId}`);
-      res.status(500).json({ ok: false });
-      return;
+      });
+    }
+    if (users.length > 0) {
+      const userResult = await db.addUsers(users);
+      if (userResult.acknowledged) {
+        console.log(`✅ Event users created!`);
+      } else {
+        console.log(`❌ Could not create event users for ${eventResult.insertedId}`);
+        res.status(500).json({ ok: false });
+        return;
+      }
     }
 
     res.json({ ok: true, id: eventResult.insertedId });

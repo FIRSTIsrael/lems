@@ -9,17 +9,19 @@ import {
   getAssociationType,
   JudgingCategoryTypes,
   Role,
-  DivisionSectionTypes
+  DivisionSectionTypes,
+  FllEvent,
+  EventUserAllowedRoles
 } from '@lems/types';
 
 export const getDivisionUsers = (
+  event: WithId<FllEvent>,
   division: WithId<Division>,
   tables: Array<WithId<RobotGameTable>>,
-  rooms: Array<WithId<JudgingRoom>>,
-  eventUserRoles: Array<Role>
+  rooms: Array<WithId<JudgingRoom>>
 ): User[] => {
   const users = [];
-  const roles = RoleTypes.filter(role => !eventUserRoles.includes(role));
+  const roles = RoleTypes.filter(role => !event.eventUsers.includes(role as EventUserAllowedRoles));
 
   roles.forEach(role => {
     const user: User = {
