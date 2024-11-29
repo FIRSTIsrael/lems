@@ -2,14 +2,27 @@ from datetime import datetime
 from typing import List, Tuple
 import random
 
-from models.slot import Slot
-from models.team import Team
-from models.team_event import TeamEvent
-from repository.lems_repository import LemsRepository
+from ..models.slot import Slot
+from ..models.team import Team
+from ..models.session import Session
+from ..repository.lems_repository import LemsRepository
 
 
 def get_random_team(team_options: List[Team]) -> Team:
     return team_options[random.randint(0, len(team_options) - 1)]
+
+
+def get_teams_not_in_event(teams: List[Team], slot_id: int) -> List[Team]:
+    teams_not_in_event = []
+
+    for team in teams:
+        team_events = team.team_events
+        for event in team_events:
+            if event.slot_number == slot_id:
+                continue
+            teams_not_in_event.append(team)
+
+    return teams_not_in_event
 
 
 class SchedulerService:
@@ -23,8 +36,7 @@ class SchedulerService:
 
         while len(self.slots_left) > 0:
             current_slot = self.slots_left[0]
-            team_options = self.get_valid_teams(current_slot)
-            team = get_random_team(team_options)
+            team = get_random_team(self.teams)
 
             if self.team_prefers(team, current_slot):
                 start_time, end_time = self.get_event_time(current_slot)
@@ -43,12 +55,6 @@ class SchedulerService:
                     self.slots_left.remove(current_slot)
 
         return self.teams, completed_slots
-
-    def get_valid_teams(self, slot: Slot) -> List[Team]:
-        pass
-
-    def team_prefers(self, team: Team, slot: Slot) -> bool:
-        pass
 
     def get_event_time(self, slot: Slot) -> Tuple[datetime, datetime]:
         pass

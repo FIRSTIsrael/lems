@@ -2,7 +2,7 @@ import os
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.collection import Collection
-from repository.schemas.team import Team
+from ..repository.schemas.team import Team
 
 
 class LemsRepository:
