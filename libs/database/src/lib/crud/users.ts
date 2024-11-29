@@ -16,6 +16,20 @@ export const getDivisionUsers = (divisionId: ObjectId): Promise<Array<WithId<Saf
   });
 };
 
+export const getEventUsers = (eventId: ObjectId): Promise<Array<WithId<SafeUser>>> => {
+  return db
+    .collection<User>('users')
+    .find({ eventId })
+    .toArray()
+    .then(users => {
+      return users.map(user => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, lastPasswordSetDate, ...safeUser } = user;
+        return safeUser as WithId<SafeUser>;
+      });
+    });
+};
+
 export const getUserWithCredentials = (filter: Filter<User>) => {
   return db.collection<User>('users').findOne(filter);
 };

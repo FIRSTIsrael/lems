@@ -15,11 +15,13 @@ import {
 export const getDivisionUsers = (
   division: WithId<Division>,
   tables: Array<WithId<RobotGameTable>>,
-  rooms: Array<WithId<JudgingRoom>>
+  rooms: Array<WithId<JudgingRoom>>,
+  eventUserRoles: Array<Role>
 ): User[] => {
   const users = [];
+  const roles = RoleTypes.filter(role => !eventUserRoles.includes(role));
 
-  RoleTypes.forEach(role => {
+  roles.forEach(role => {
     const user: User = {
       divisionId: division._id,
       isAdmin: false,

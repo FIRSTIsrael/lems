@@ -235,6 +235,7 @@ const Page: NextPage = () => {
                       <Stack direction="row" spacing={4}>
                         {EventUserAllowedRoleTypes.map((user, index) => (
                           <FormikCheckbox
+                            key={index}
                             name={`eventUsers.[${index}]`}
                             label={localizedRoles[user].name}
                           />

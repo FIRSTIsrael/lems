@@ -10,7 +10,7 @@ const router = express.Router({ mergeParams: true });
 router.post(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { divisions, eventUsers, ...body }: any = { ...req.body };
+    const { divisions, eventUsers, ...body } = { ...req.body };
     if (!body) {
       res.status(400).json({ ok: false });
       return;
