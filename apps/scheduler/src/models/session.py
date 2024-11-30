@@ -10,7 +10,7 @@ class Session:
     event_type: EventType
     start_time: datetime
     end_time: datetime
-    event_type_index: 0
     event_index: int
+    session_index: int
     team_number: int
     rejected_teams: List[int]

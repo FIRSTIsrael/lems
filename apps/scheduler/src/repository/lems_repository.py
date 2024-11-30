@@ -2,10 +2,12 @@ import os
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.collection import Collection
+
+from .ilems_repoistory import ILemsRepoistory
 from ..repository.schemas.team import Team
 
 
-class LemsRepository:
+class LemsRepository(ILemsRepoistory):
     def __init__(self):
         connection_string = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
         self.client = MongoClient(

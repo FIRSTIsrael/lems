@@ -49,9 +49,9 @@ def check_team_preference(team: Team, session: Session) -> Optional[Session]:
     current_event_session_index = session.event_index
     team_current_event_session = None
 
-    for session in team.team_events:
-        if session.event_index == current_event_session_index:
-            team_current_event_session = session
+    for team_session in team.team_events:
+        if team_session.event_index == current_event_session_index:
+            team_current_event_session = team_session
 
     if team_current_event_session is None:
         team.team_events.append(session)
@@ -78,13 +78,15 @@ def check_team_preference(team: Team, session: Session) -> Optional[Session]:
 
 def gale_shapley(teams: List[Team], sessions: List[Session]) -> Tuple[List[Team], List[Session]]:
     sessions_left = sessions.copy()
+    amount_of_sessions_left = len(sessions_left)
 
-    while len(sessions_left) > 0:
-        current_session = sessions.pop()
+    while amount_of_sessions_left > 0:
+        current_session = sessions_left.pop()
         session_preference_function = get_session_preference_function(current_session)
         current_team = get_best_team_match(current_session, teams, session_preference_function)
         session_left_alone = check_team_preference(current_team, current_session)
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
+        amount_of_sessions_left = len(sessions_left)
 
     return teams, sessions

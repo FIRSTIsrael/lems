@@ -16,9 +16,9 @@ class Match(Event):
     def check_times_in_table(table_index: int, team_events: List[Session]) -> int:
         count = 0
 
-        for event in team_events:
-            if event.event_type == Match.event_type():
-                if event.event_index == table_index:
+        for session in team_events:
+            if session.event_type == Match.event_type():
+                if session.session_index == table_index:
                     count += 1
 
         return count
@@ -28,7 +28,7 @@ class Match(Event):
         if team.team_number in session.rejected_teams:
             return 0
 
-        times_in_table = Match.check_times_in_table(session.event_index, team.team_events)
+        times_in_table = Match.check_times_in_table(session.session_index, team.team_events)
 
         if times_in_table == MAX_MATCHES_PER_TABLE:
             return 0
