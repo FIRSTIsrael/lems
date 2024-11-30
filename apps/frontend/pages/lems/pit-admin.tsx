@@ -91,7 +91,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink division={division} />
+            <ReportLink />
           </Stack>
         }
         color={division.color}

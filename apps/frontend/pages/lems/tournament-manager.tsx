@@ -33,6 +33,7 @@ import { localizedRoles } from '../../localization/roles';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
+import DivisionDropdown from '../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -49,7 +50,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  division,
+  division: initialDivision,
   divisionState: initialDivisionState,
   teams: initialTeams,
   tickets: initialTickets,
@@ -61,6 +62,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
+  const [division] = useState<WithId<DivisionWithEvent>>(initialDivision);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
@@ -211,11 +213,15 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? (
-              <InsightsLink division={division} />
-            ) : (
-              <ReportLink division={division} />
-            )}
+            <DivisionDropdown
+              event={division.event}
+              selected={division._id.toString()}
+              onSelect={id => {
+                if (id === division._id.toString()) return;
+                router.push({ pathname: `/lems/tournament-manager`, query: { divisionId: id } });
+              }}
+            />
+            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }
         color={division.color}

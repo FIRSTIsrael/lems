@@ -103,7 +103,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        action={<ReportLink division={division} />}
+        action={<ReportLink />}
         color={division.color}
       >
         <TabContext value={activeTab}>
