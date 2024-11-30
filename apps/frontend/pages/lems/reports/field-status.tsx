@@ -21,7 +21,7 @@ import Countdown from '../../../components/general/countdown';
 import FieldQueueReport from '../../../components/queueing/field-queue-report';
 import ActiveMatch from '../../../components/field/scorekeeper/active-match';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/use-time';
@@ -238,16 +238,16 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        sessions: `/api/divisions/${divisionId}/sessions`
       },
       ctx
     );

@@ -23,7 +23,7 @@ import WelcomeHeader from '../../components/general/welcome-header';
 import JudgingTimer from '../../components/judging/judging-timer';
 import AbortJudgingSessionButton from '../../components/judging/abort-judging-session-button';
 import AssistanceButton from '../../components/judging/assistance-button';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
@@ -197,15 +197,15 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        room: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}`,
-        sessions: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rooms/${user.roleAssociation.value}/rubrics`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        room: `/api/divisions/${divisionId}/rooms/${user.roleAssociation.value}`,
+        sessions: `/api/divisions/${divisionId}/rooms/${user.roleAssociation.value}/sessions`,
+        rubrics: `/api/divisions/${divisionId}/rooms/${user.roleAssociation.value}/rubrics`
       },
       ctx
     );

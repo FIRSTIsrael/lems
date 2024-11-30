@@ -33,7 +33,8 @@ router.post(
     }
 
     console.log('⏬ Creating Event divisions...');
-    divisions.forEach(async division => {
+    const divisionIds = [];
+    for (const division of divisions) {
       const divisionResult = await db.addDivision({
         ...division,
         eventId: eventResult.insertedId,
@@ -41,12 +42,13 @@ router.post(
       });
       if (divisionResult.acknowledged) {
         console.log(`✅ Division ${divisionResult.insertedId} created!`);
+        divisionIds.push(divisionResult.insertedId);
       } else {
         console.log(`❌ Could not create division ${division.name}`);
         res.status(500).json({ ok: false });
         return;
       }
-    });
+    }
 
     console.log('⏬ Creating event users...');
     const users: User[] = [];
@@ -56,6 +58,7 @@ router.post(
         role: role as Role,
         isAdmin: false,
         eventId: eventResult.insertedId,
+        assignedDivisions: divisionIds,
         password: randomString(4),
         lastPasswordSetDate: new Date()
       });

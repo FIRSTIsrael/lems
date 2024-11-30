@@ -12,7 +12,7 @@ import ReportLink from '../../components/general/report-link';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import TicketCreationPanel from '../../components/pit-admin/ticket-creation-panel';
 import TeamRegistrationPanel from '../../components/pit-admin/team-registration-panel';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import TicketPanel from '../../components/general/ticket-panel';
@@ -125,13 +125,13 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        tickets: `/api/divisions/${user.divisionId}/tickets`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        tickets: `/api/divisions/${divisionId}/tickets`
       },
       ctx
     );

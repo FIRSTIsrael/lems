@@ -17,7 +17,7 @@ import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedMatchStage } from '../../../localization/field';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeTeam } from '../../../localization/teams';
@@ -186,14 +186,14 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`
       },
       ctx
     );

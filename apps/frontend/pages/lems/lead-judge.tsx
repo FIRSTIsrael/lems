@@ -23,7 +23,7 @@ import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
 import InsightsLink from '../../components/general/insights-link';
 import WelcomeHeader from '../../components/general/welcome-header';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
@@ -204,18 +204,18 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
     const category = user.roleAssociation.value;
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics/${category}`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        rubrics: `/api/divisions/${divisionId}/rubrics/${category}`,
+        deliberation: `/api/divisions/${divisionId}/deliberations/category/${category}`
       },
       ctx
     );

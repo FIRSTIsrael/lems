@@ -30,7 +30,7 @@ import CVPanel from '../../components/cv-form/cv-panel';
 import BadgeTab from '../../components/general/badge-tab';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizedRoles } from '../../localization/roles';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
 
@@ -270,19 +270,19 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        tickets: `/api/divisions/${user.divisionId}/tickets`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        tickets: `/api/divisions/${divisionId}/tickets`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`
       },
       ctx
     );

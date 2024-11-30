@@ -21,7 +21,7 @@ import {
   Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
@@ -276,19 +276,19 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberations: `/api/divisions/${user.divisionId}/deliberations`,
-        awards: `/api/divisions/${user.divisionId}/awards`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        rubrics: `/api/divisions/${divisionId}/rubrics`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        deliberations: `/api/divisions/${divisionId}/deliberations`,
+        awards: `/api/divisions/${divisionId}/awards`
       },
       ctx
     );

@@ -14,7 +14,7 @@ import {
 import { DivisionWithEvent, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
@@ -84,10 +84,10 @@ const Page: NextPage<Props> = ({ user, division }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${user.divisionId}?withSchedule=true&withEvent=true` },
+      { division: `/api/divisions/${divisionId}?withSchedule=true&withEvent=true` },
       ctx
     );
 

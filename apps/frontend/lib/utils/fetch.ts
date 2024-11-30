@@ -31,6 +31,20 @@ export const apiFetch = (
   });
 };
 
+export const getUserAndDivision = async (ctx: GetServerSidePropsContext) => {
+  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+  let divisionId = user.divisionId;
+  if (!divisionId && user.eventId && user.assignedDivisions.length > 0) {
+    const idFromQuery = (ctx.query.divisionId as string) || undefined;
+    if (user.assignedDivisions.includes(idFromQuery)) {
+      divisionId = idFromQuery;
+    } else {
+      divisionId = user.assignedDivisions[0];
+    }
+  }
+  return { user, divisionId };
+};
+
 export const serverSideGetRequests = async (
   toFetch: { [key: string]: string },
   ctx: GetServerSidePropsContext

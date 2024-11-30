@@ -69,7 +69,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : event && !division ? (
+        ) : event && event.eventUsers?.length > 0 && !division ? (
           <EventLoginForm
             event={event}
             onCancel={() => setEvent(undefined)}

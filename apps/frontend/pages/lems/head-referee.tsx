@@ -20,7 +20,7 @@ import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
 import InsightsLink from '../../components/general/insights-link';
 import WelcomeHeader from '../../components/general/welcome-header';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import HeadRefereeRoundSchedule from '../../components/field/head-referee/head-referee-round-schedule';
@@ -218,15 +218,15 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}/?withSchedule=true&withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
+        division: `/api/divisions/${divisionId}/?withSchedule=true&withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`
       },
       ctx
     );

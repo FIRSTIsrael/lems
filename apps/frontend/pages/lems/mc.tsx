@@ -20,7 +20,7 @@ import McSchedule from '../../components/mc/mc-schedule';
 import AwardsLineup from '../../components/mc/awards-lineup';
 import AwardsNotReadyCard from '../../components/mc/awards-not-ready-card';
 import ReportLink from '../../components/general/report-link';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
@@ -140,16 +140,16 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        awards: `/api/divisions/${user.divisionId}/awards`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        awards: `/api/divisions/${divisionId}/awards`
       },
       ctx
     );
