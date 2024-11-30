@@ -18,11 +18,11 @@ router = APIRouter(
 EVENT_DATE = datetime.datetime(2020, 1, 1, 0, 0, 0)
 
 EVENTS = [
-    JudgingRoom(30, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), 45, 7, 0),
-    PracticeMatch(10, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), 45, 8, 1),
-    Match(10, EVENT_DATE + datetime.timedelta(hours=10), 45, 8, 2),
-    Match(10, EVENT_DATE + datetime.timedelta(hours=11, minutes=30), 45, 8, 3),
-    Match(10, EVENT_DATE + datetime.timedelta(hours=14), 45, 8, 4)
+    JudgingRoom(30, 10, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), 45, 7, 0),
+    PracticeMatch(10, 0, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), 45, 8, 1),
+    Match(10, 0, EVENT_DATE + datetime.timedelta(hours=10), 45, 8, 2),
+    Match(10, 0, EVENT_DATE + datetime.timedelta(hours=11, minutes=30), 45, 8, 3),
+    Match(10, 0, EVENT_DATE + datetime.timedelta(hours=14), 45, 8, 4)
 ]
 
 @router.post("/")
