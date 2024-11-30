@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({
       ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
       : '';
     const url = `${back}${queryString ? `?${queryString}` : ''}`;
-    window.open(url, '_blank');
+    router.push(url);
   };
 
   const logout = () => {
