@@ -3,14 +3,16 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Switch, FormControlLabel } from '@mui/material';
+import { Switch, FormControlLabel, Stack } from '@mui/material';
 import {
   DivisionWithEvent,
   Team,
   JudgingRoom,
   SafeUser,
   JudgingSession,
-  RoleTypes
+  RoleTypes,
+  EventUserAllowedRoleTypes,
+  EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -20,6 +22,7 @@ import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fe
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -87,7 +90,14 @@ const Page: NextPage<Props> = ({
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

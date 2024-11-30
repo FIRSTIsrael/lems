@@ -12,11 +12,20 @@ import {
   TableSortLabel,
   TableRow,
   Box,
-  IconButton
+  IconButton,
+  Stack
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
-import { DivisionWithEvent, Team, SafeUser, RoleTypes, Role } from '@lems/types';
+import {
+  DivisionWithEvent,
+  Team,
+  SafeUser,
+  RoleTypes,
+  Role,
+  EventUserAllowedRoleTypes,
+  EventUserAllowedRoles
+} from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -26,6 +35,7 @@ import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -103,7 +113,14 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper } from '@mui/material';
+import { Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
 import {
   DivisionWithEvent,
@@ -11,7 +11,9 @@ import {
   RoleTypes,
   SafeUser,
   Scoresheet,
-  Team
+  Team,
+  EventUserAllowedRoleTypes,
+  EventUserAllowedRoles
 } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -23,6 +25,7 @@ import { localizedRoles } from '../../../localization/roles';
 import { localizeTeam } from '../../../localization/teams';
 import { compareScoreArrays } from '@lems/utils/arrays';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -150,7 +153,14 @@ const Page: NextPage<Props> = ({
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

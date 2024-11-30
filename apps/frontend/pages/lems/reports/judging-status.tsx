@@ -27,7 +27,9 @@ import {
   DivisionState,
   RoleTypes,
   JUDGING_SESSION_LENGTH,
-  RobotGameMatch
+  RobotGameMatch,
+  EventUserAllowedRoleTypes,
+  EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -39,6 +41,8 @@ import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fe
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
+
 interface JudgingStatusTableProps {
   currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
@@ -274,7 +278,14 @@ const Page: NextPage<Props> = ({
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב השיפוט | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

@@ -213,14 +213,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <DivisionDropdown
-              event={division.event}
-              selected={division._id.toString()}
-              onSelect={id => {
-                if (id === division._id.toString()) return;
-                router.push({ pathname: `/lems/${user.role}`, query: { divisionId: id } });
-              }}
-            />
+            <DivisionDropdown event={division.event} selected={division._id.toString()} />
             {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }

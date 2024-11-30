@@ -6,6 +6,7 @@ import { FllEvent, Division } from '@lems/types';
 import { Box, IconButton, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/HomeRounded';
 import { apiFetch } from '../../lib/utils/fetch';
+import { useRouter } from 'next/router';
 
 interface DropdownOptionProps {
   id: string;
@@ -43,13 +44,14 @@ const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color }) => {
 interface DivisionDropdownProps {
   event: WithId<FllEvent>;
   selected: string;
-  onSelect: (divisionId: string) => void;
+  onSelect?: (divisionId: string) => void;
 }
 
 const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, onSelect }) => {
   const listboxRef = useRef<HTMLUListElement>(null);
   const [open, setOpen] = useState(false);
   const [divisions, setDivisions] = useState<WithId<Division>[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     apiFetch(`/api/events/${event._id}/divisions`)
@@ -57,13 +59,19 @@ const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, on
       .then(data => setDivisions(data));
   }, [event._id]);
 
+  const handleChange =
+    onSelect ??
+    ((divisionId: string) => {
+      router.push({ query: { divisionId } });
+    });
+
   const { getButtonProps, getListboxProps, contextValue } = useSelect<string, false>({
     listboxRef,
     onOpenChange: setOpen,
     open: open,
     value: selected,
     onChange(event, value) {
-      value && onSelect(value);
+      value && handleChange(value);
     }
   });
 

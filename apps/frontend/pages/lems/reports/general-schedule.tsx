@@ -11,13 +11,21 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { DivisionWithEvent, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
+import {
+  DivisionWithEvent,
+  SafeUser,
+  RoleTypes,
+  DivisionScheduleEntry,
+  EventUserAllowedRoleTypes,
+  EventUserAllowedRoles
+} from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface DivisionScheduleRowProps {
   entry: DivisionScheduleEntry;
@@ -59,6 +67,11 @@ const Page: NextPage<Props> = ({ user, division }) => {
         back={`/lems/reports`}
         backDisabled={false}
         color={division.color}
+        action={
+          EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+          )
+        }
       >
         <TableContainer component={Paper} sx={{ mt: 4 }}>
           <Table>
