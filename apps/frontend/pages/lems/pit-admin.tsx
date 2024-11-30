@@ -18,6 +18,7 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import TicketPanel from '../../components/general/ticket-panel';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
+import DivisionDropdown from '../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -28,10 +29,11 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  division,
+  division: initialDivision,
   teams: initialTeams,
   tickets: initialTickets
 }) => {
+  const [division] = useState<WithId<DivisionWithEvent>>(initialDivision);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
@@ -91,6 +93,14 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
+            <DivisionDropdown
+              event={division.event}
+              selected={division._id.toString()}
+              onSelect={id => {
+                if (id === division._id.toString()) return;
+                router.push({ pathname: `/lems/${user.role}`, query: { divisionId: id } });
+              }}
+            />
             <ReportLink />
           </Stack>
         }

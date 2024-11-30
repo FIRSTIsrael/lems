@@ -218,7 +218,7 @@ const Page: NextPage<Props> = ({
               selected={division._id.toString()}
               onSelect={id => {
                 if (id === division._id.toString()) return;
-                router.push({ pathname: `/lems/tournament-manager`, query: { divisionId: id } });
+                router.push({ pathname: `/lems/${user.role}`, query: { divisionId: id } });
               }}
             />
             {divisionState.completed ? <InsightsLink /> : <ReportLink />}
