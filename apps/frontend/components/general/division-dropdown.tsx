@@ -32,6 +32,7 @@ const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color }) => {
       alignItems="center"
       borderRadius={1}
       paddingX={2}
+      sx={{ cursor: 'pointer', '&:hover': { bgcolor: '#e5eaf2' } }}
     >
       <Box height={10} width={10} borderRadius="50%" bgcolor={color} />
       <Typography>{name}</Typography>
@@ -87,6 +88,9 @@ const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, on
           visibility: open ? 'visible' : 'hidden',
           opacity: open ? 1 : 0
         }}
+        display={'flex'}
+        flexDirection="column"
+        gap={1}
       >
         <SelectProvider value={contextValue}>
           {divisions.map((division, index) => (

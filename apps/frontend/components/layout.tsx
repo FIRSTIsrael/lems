@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
-import NextLink from 'next/link';
 import { apiFetch } from '../lib/utils/fetch';
 import { errorAnimation } from '../lib/utils/animations';
 
@@ -46,6 +45,14 @@ const Layout: React.FC<LayoutProps> = ({
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
+  const handleBack = () => {
+    const queryString = router.query.divisionId
+      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
+      : '';
+    const url = `${back}${queryString ? `?${queryString}` : ''}`;
+    window.open(url, '_blank');
+  };
+
   const logout = () => {
     apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/'));
   };
@@ -63,17 +70,16 @@ const Layout: React.FC<LayoutProps> = ({
           >
             <Toolbar>
               {back && (
-                <NextLink href={back} passHref legacyBehavior>
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    disabled={backDisabled}
-                    aria-label="אחורה"
-                    sx={{ mr: 2 }}
-                  >
-                    <ChevronRightIcon />
-                  </IconButton>
-                </NextLink>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  disabled={backDisabled}
+                  aria-label="אחורה"
+                  sx={{ mr: 2 }}
+                  onClick={handleBack}
+                >
+                  <ChevronRightIcon />
+                </IconButton>
               )}
 
               <Typography
