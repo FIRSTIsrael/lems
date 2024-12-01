@@ -96,8 +96,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 
     return { props: { user, pitMapUrl, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

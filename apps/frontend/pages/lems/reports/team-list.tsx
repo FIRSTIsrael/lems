@@ -55,7 +55,8 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       number: { label: 'מספר', sort: 'number' },
       name: { label: 'שם', sort: 'name' },
       institution: { label: 'מוסד', sort: 'institution' },
-      city: {
+      city: { label: 'עיר', sort: 'city' },
+      registration: {
         label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
         sort: 'registration'
       },
@@ -177,7 +178,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
                       </TableCell>
                       <RoleAuthorizer
                         user={user}
-                        allowedRoles={headCells['profileDocumentUrl'].allowedRoles}
+                        allowedRoles={headCells.profileDocumentUrl.allowedRoles}
                       >
                         <TableCell align="left">
                           <IconButton
@@ -215,8 +216,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

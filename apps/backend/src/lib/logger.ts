@@ -13,7 +13,7 @@ export const expressLogger = expressWinston.logger({
         winston.format.timestamp(),
         winston.format.json(),
         winston.format.printf(info => {
-          const { req, res } = info.meta;
+          const { req, res } = info.meta as any;
           const error = `${info.error ? ` / ${JSON.stringify(info.error)}` : ''}`;
           return `[${info.timestamp}] ${req.method} ${req.url} ${res.statusCode}${error}`;
         })

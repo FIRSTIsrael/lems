@@ -3,13 +3,12 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import rubricsRouter from './rubrics';
 import scoresheetsRouter from './scoresheets';
-import { RoleTypes } from '@lems/types';
 import roleValidator from '../../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', roleValidator([...RoleTypes]), (req: Request, res: Response) => {
-  db.getDivisionTeams(new ObjectId(req.params.eventId)).then(teams => {
+router.get('/', (req: Request, res: Response) => {
+  db.getDivisionTeams(new ObjectId(req.params.divisionId)).then(teams => {
     res.json(teams);
   });
 });
