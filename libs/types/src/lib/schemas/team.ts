@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 
 export interface Team {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   number: number;
   name: string;
   registered: boolean;
@@ -10,5 +10,4 @@ export interface Team {
     city: string;
   };
   profileDocumentUrl?: string;
-  advancing?: boolean;
 }

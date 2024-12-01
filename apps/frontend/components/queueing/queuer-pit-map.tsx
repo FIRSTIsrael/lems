@@ -3,20 +3,21 @@ import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Paper, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Event } from '@lems/types';
+import { DivisionWithEvent } from '@lems/types';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface QueuerPitMapProps {
-  event: WithId<Event>;
+  division: WithId<DivisionWithEvent>;
   pitMapUrl: string;
 }
 
-const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ event, pitMapUrl }) => {
+const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ division, pitMapUrl }) => {
   const [error, setError] = useState<boolean>(false);
 
   return !error ? (
     <Image
-      src={`${pitMapUrl}/${event._id}.png`}
-      alt={`מפת פיטים ל${event.name}`}
+      src={`${pitMapUrl}/${division._id}.png`}
+      alt={`מפת פיטים ל${localizeDivisionTitle(division)}`}
       width={0}
       height={0}
       sizes="100vw"
@@ -36,7 +37,7 @@ const QueuerPitMap: React.FC<QueuerPitMapProps> = ({ event, pitMapUrl }) => {
       <Typography fontSize="2.25rem" fontWeight={600}>
         אופס, לא נמצאה מפת פיטים לאירוע
       </Typography>
-      <Typography fontSize="1.5rem" color="text.secondary">
+      <Typography fontSize="1.5rem" color="textSecondary">
         נא לפנות למנהל המערכת.
       </Typography>
     </Stack>

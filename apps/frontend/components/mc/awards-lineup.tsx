@@ -1,30 +1,33 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useMemo, Fragment } from 'react';
 import { WithId } from 'mongodb';
-import { Box, Divider, Paper, Stack, Typography } from '@mui/material';
-import { Event, Team, Award } from '@lems/types';
-import { apiFetch } from '../../lib/utils/fetch';
+import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
+import EastRoundedIcon from '@mui/icons-material/EastRounded';
+import WestRoundedIcon from '@mui/icons-material/WestRounded';
+import { Team, Award, DivisionWithEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
-import { localizeTeam } from 'apps/frontend/localization/teams';
+import { localizeTeam } from '../../localization/teams';
+import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface AwardsLineupProps {
-  event: WithId<Event>;
+  division: WithId<DivisionWithEvent>;
+  awards: Array<WithId<Award>>;
 }
 
-const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
-  const [teams, setTeams] = useState<Array<WithId<Team>>>([]);
-  const [awards, setAwards] = useState<Array<WithId<Award>>>([]);
+const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
+  const [awardIndex, setAwardIndex] = useQueryParam('awardIndex', '0');
+  const currentAward = parseInt(awardIndex);
 
-  useEffect(() => {
-    apiFetch(`/api/events/${event._id}/awards`).then(res =>
-      res.json().then(data => setAwards(data))
-    );
-    apiFetch(`/api/events/${event._id}/teams`).then(res => res.json().then(data => setTeams(data)));
-  }, [event._id]);
+  const advancingTeams: Array<WithId<Team>> = awards
+    .filter(a => a.name === 'advancement')
+    .map(a => a.winner)
+    .filter(winner => !!winner && typeof winner !== 'string');
 
-  const advancingTeams = useMemo(() => teams.filter(t => t.advancing), [teams]);
   const lineup = useMemo(() => {
-    const awardIndices = [...new Set(awards.flatMap(a => a.index))].sort((a, b) => a - b);
+    const awardIndices = [...new Set(awards.filter(a => a.index >= 0).flatMap(a => a.index))].sort(
+      (a, b) => a - b
+    );
 
     const awardScripts = awardIndices.map(index => {
       const sortedAwards = awards.filter(a => a.index === index).sort((a, b) => b.place - a.place);
@@ -34,16 +37,16 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
       return (
         <Fragment key={awardName}>
           <Box>
-            <Typography fontSize="1.5rem" fontWeight={700}>
+            <Typography fontSize="1.75rem" fontWeight={700}>
               פרס {localized.name}
             </Typography>
-            <Typography fontSize="1.25rem">
+            <Typography fontSize="1.75rem">
               <Markdown>{localized.description}</Markdown>
             </Typography>
 
             {sortedAwards.map(award => {
               return (
-                <Typography fontSize="1.25rem" key={award.name + award.place} gutterBottom>
+                <Typography fontSize="1.75rem" key={award.name + award.place} gutterBottom>
                   {sortedAwards.length > 1 && 'במקום ה-' + award.place + ': '}
                   {award.winner
                     ? typeof award.winner === 'string'
@@ -54,7 +57,6 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
               );
             })}
           </Box>
-          <Divider />
         </Fragment>
       );
     });
@@ -62,20 +64,19 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
     if (advancingTeams.length > 0) {
       const advancingTeamsText = (
         <>
-          <Typography fontSize="1.5rem" fontWeight={700} sx={{ pt: 2 }}>
+          <Typography fontSize="1.75rem" fontWeight={700} sx={{ pt: 2 }}>
             קבוצות המעפילות לתחרות האליפות
           </Typography>
-          <Typography fontSize="1.25rem">
+          <Typography fontSize="1.45rem">
             רגע לפני שנכריז מי הן הקבוצות הזוכות בפרס האליפות, ישנן {advancingTeams.length} קבוצות
             נוספות בתחרות אשר יזכו להעפיל לתחרות האליפות. אנחנו שמחים להכריז שהקבוצות הבאות, ללא סדר
             מסוים, זכאיות גם הן לעלות שלב:
           </Typography>
           {advancingTeams.map(team => (
-            <Typography key={team._id.toString()} fontSize="1.25rem" gutterBottom>
+            <Typography key={team._id.toString()} fontSize="1.75rem" gutterBottom>
               {localizeTeam(team)}
             </Typography>
           ))}
-          <Divider />
         </>
       );
       // Place advancement script directly before champions award
@@ -87,12 +88,29 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ event }) => {
   }, [advancingTeams, awards]);
 
   return (
-    <Stack component={Paper} width="100%" p={2} spacing={2}>
-      <Typography fontSize="2rem" fontWeight={700} align="center">
-        {event.name} | פרסים
+    <>
+      <Typography fontSize="2.5rem" fontWeight={700} align="center" gutterBottom>
+        {localizeDivisionTitle(division)} | פרסים
       </Typography>
-      {lineup}
-    </Stack>
+      <Paper sx={{ width: '100%', p: 2, mb: 4 }}>{lineup[currentAward]}</Paper>
+      <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
+        <IconButton
+          onClick={() => setAwardIndex(Math.max(currentAward - 1, 0).toString())}
+          size="large"
+        >
+          <EastRoundedIcon fontSize="large" />
+        </IconButton>
+        <Typography fontSize="1.5rem">
+          {lineup.length} / {currentAward + 1}
+        </Typography>
+        <IconButton
+          onClick={() => setAwardIndex(Math.min(currentAward + 1, lineup.length - 1).toString())}
+          size="large"
+        >
+          <WestRoundedIcon fontSize="large" />
+        </IconButton>
+      </Stack>
+    </>
   );
 };
 

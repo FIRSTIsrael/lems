@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Skeleton, Typography } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import { red, green, blue } from '@mui/material/colors';
-import { Event, JudgingCategory, Team } from '@lems/types';
+import { Division, JudgingCategory, Team } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   RadarChart,
@@ -16,7 +16,7 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 
 interface TeamProfileChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team> | null;
 }
 
@@ -27,16 +27,17 @@ type TeamProfileChartData = Array<{
   fullMark: number;
 }>;
 
-const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ event, team }) => {
+const TeamProfileChart: React.FC<TeamProfileChartProps> = ({ division, team }) => {
   const [data, setData] = useState<TeamProfileChartData>([]);
 
   useEffect(() => {
     if (team)
-      apiFetch(`/api/events/${event._id}/insights/team/${team._id}/judging-profile`).then(res =>
-        res.json().then(data => setData(data))
+      apiFetch(`/api/divisions/${division._id}/insights/team/${team._id}/judging-profile`).then(
+        res => res.json().then(data => setData(data))
       );
-  }, [event._id, team]);
+  }, [division._id, team]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPolarAngleAxis = (props: any) => {
     const { payload, x, y, cx, cy, ...rest } = props;
     const category: JudgingCategory = payload.value;

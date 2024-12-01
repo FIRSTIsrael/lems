@@ -29,8 +29,8 @@ import { Socket } from 'socket.io-client';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { useTime } from '../../hooks/use-time';
 
-interface HeadQueuerFieldScheduleProps {
-  eventId: ObjectId;
+interface HeadQueuerJudgingScheduleProps {
+  divisionId: ObjectId;
   teams: Array<WithId<Team>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -40,8 +40,8 @@ interface HeadQueuerFieldScheduleProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
-  eventId,
+const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
+  divisionId,
   teams,
   sessions,
   rooms,
@@ -56,7 +56,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
     (sessionId: ObjectId, sessionData: Partial<Pick<JudgingSession, 'called' | 'queued'>>) => {
       socket.emit(
         'updateJudgingSession',
-        eventId.toString(),
+        divisionId.toString(),
         sessionId.toString(),
         sessionData,
         response => {
@@ -66,7 +66,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
         }
       );
     },
-    [eventId, socket]
+    [divisionId, socket]
   );
 
   const callSessions = useCallback(
@@ -84,17 +84,21 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
     [updateSession]
   );
 
-  const groupedSessions: Array<Array<WithId<JudgingSession>>> = useMemo(
-    () =>
-      Object.values(
-        sessions.reduce((acc: any, session: JudgingSession) => {
-          const sessionNumber = session.number;
-          (acc[sessionNumber] = acc[sessionNumber] || []).push(session);
-          return acc;
-        }, {})
-      ),
-    [sessions]
-  );
+  const availableSessionGroups = useMemo(() => {
+    const groups: Array<Array<WithId<JudgingSession>>> = Object.values(
+      sessions.reduce((acc: any, session: JudgingSession) => {
+        const sessionNumber = session.number;
+        (acc[sessionNumber] = acc[sessionNumber] || []).push(session);
+        return acc;
+      }, {})
+    );
+
+    return groups
+      .filter(group => group.length > 0)
+      .filter(group => !group.some(session => session.status === 'completed'))
+      .filter(group => group.some(session => session.status === 'not-started'))
+      .filter(group => currentTime >= dayjs(group[0].scheduledTime).subtract(20, 'minutes'));
+  }, [sessions, currentTime]);
 
   return (
     <TableContainer component={Paper} sx={{ py: 1, my: 2 }}>
@@ -112,15 +116,8 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {groupedSessions.map((group, index) => {
-            if (group.length === 0) return <></>;
+          {availableSessionGroups.map((group, index) => {
             const firstSession = group[0];
-            if (
-              firstSession.status !== 'not-started' ||
-              currentTime <= dayjs(firstSession.scheduledTime).subtract(20, 'minutes')
-            )
-              return <></>;
-
             return (
               <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row" align="center">

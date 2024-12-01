@@ -12,13 +12,13 @@ const config: {
   connected: {
     rippleColor: '#3cd3b2',
     textColor: '#111111',
-    backgroundColor: '#f4f4f5',
+    backgroundColor: '#f4f4f4',
     text: 'מחובר'
   },
   connecting: {
     rippleColor: '#a21caf',
     textColor: '#000000',
-    backgroundColor: '#f4f4f5',
+    backgroundColor: '#f4f4f4',
     text: 'מתחבר...'
   },
   disconnected: {

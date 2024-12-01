@@ -3,7 +3,7 @@ import { RobotGameMatchStage, RobotGameMatchStatus, RobotGameMatchPresent } from
 import { Team } from './team';
 
 export interface RobotGameMatchBrief {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   round: number;
   number: number;
   stage: RobotGameMatchStage;

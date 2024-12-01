@@ -3,17 +3,21 @@ import React, { useMemo, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/';
-import { Event, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import Grid from '@mui/material/Grid2';
+import { Division, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 
 interface TeamRegistrationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  event: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 
-const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, event, teams }) => {
+const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({
+  socket,
+  division,
+  teams
+}) => {
   const [team, setTeam] = useState<WithId<Team> | null>(null);
 
   const unregisteredTeams = useMemo(
@@ -23,7 +27,7 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
 
   const registerTeam = () => {
     team &&
-      socket.emit('registerTeam', event._id.toString(), team?._id.toString(), response => {
+      socket.emit('registerTeam', division._id.toString(), team?._id.toString(), response => {
         if (response.ok) {
           enqueueSnackbar(`קבוצה #${team.number} נרשמה בהצלחה!`, { variant: 'success' });
           setTeam(null);
@@ -34,10 +38,10 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({ socket, e
   return (
     <Paper sx={{ p: 4 }}>
       <Grid container direction="row" alignItems="center" spacing={4}>
-        <Grid xs={9}>
+        <Grid size={9}>
           <TeamSelection teams={unregisteredTeams} value={team} setTeam={setTeam} />
         </Grid>
-        <Grid xs={3}>
+        <Grid size={3}>
           <Button
             sx={{ borderRadius: 8 }}
             variant="contained"

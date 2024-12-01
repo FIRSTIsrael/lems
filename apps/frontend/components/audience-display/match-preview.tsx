@@ -1,17 +1,18 @@
 import React from 'react';
 import { WithId } from 'mongodb';
-import { Event, RobotGameMatch } from '@lems/types';
+import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { blue, red } from '@mui/material/colors';
+import Image from 'next/image';
 
 interface MatchPreviewProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   match?: WithId<RobotGameMatch>;
 }
 
-const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
+const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
   return (
     <Box
       height="100%"
@@ -30,32 +31,48 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
       justifyContent="center"
     >
       {match && (
-        <Grid container component={Paper} width="80%" height="80%" p={8} textAlign="center">
-          <Grid xs={12}>
-            <Typography fontSize="7.5rem" fontWeight={700}>
-              מקצה {localizedMatchStage[match.stage]} #{match.number}
+        <Grid container component={Paper} width="80%" height="80%" pb={4} px={6} textAlign="center">
+          <Grid position="relative" size={3}>
+            <Image
+              fill
+              style={{ objectFit: 'contain', padding: 24 }}
+              src="/assets/audience-display/first-israel-horizontal.svg"
+              alt="לוגו של FIRST ישראל"
+            />
+          </Grid>
+          <Grid display="flex" alignItems="center" justifyContent="center" size={6}>
+            <Typography fontSize="5rem" fontWeight={700}>
+              סבב {localizedMatchStage[match.stage]} #{match.round}
             </Typography>
           </Grid>
-          <Grid xs={12}>
-            <Typography fontSize="5rem" fontWeight={700} color="text.secondary">
-              סבב {match.round}
+          <Grid position="relative" size={3}>
+            <Image
+              fill
+              style={{ objectFit: 'contain', padding: 16 }}
+              src="/assets/audience-display/technion-horizontal.svg"
+              alt="לוגו של הטכניון"
+            />
+          </Grid>
+          <Grid size={12}>
+            <Typography fontSize="5rem" fontWeight={700} color="textSecondary">
+              מקצה #{match.number}
             </Typography>
           </Grid>
           <Grid
-            xs={12}
             container
             spacing={2}
             columns={match.participants.filter(p => p.teamId).length}
+            size={12}
           >
             {match.participants
               .filter(p => p.teamId)
               .map(p => (
-                <Grid xs={1} key={p.teamId?.toString()}>
+                <Grid key={p.teamId?.toString()} size={1}>
                   <Stack
                     sx={{
-                      color: event.color === 'red' ? red[800] : blue[800],
-                      border: `1px solid ${event.color === 'red' ? red[300] : blue[300]}`,
-                      backgroundColor: event.color === 'red' ? red[100] : blue[100]
+                      color: division.color === 'red' ? red[800] : blue[800],
+                      border: `1px solid ${division.color === 'red' ? red[300] : blue[300]}`,
+                      backgroundColor: division.color === 'red' ? red[100] : blue[100]
                     }}
                     borderRadius="0.5rem"
                     px={5}
@@ -72,7 +89,7 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ event, match }) => {
                     <Typography fontSize="1.5rem" fontWeight={500}>
                       {p.team && `${p.team.affiliation.name}, ${p.team.affiliation.city}`}
                     </Typography>
-                    <Typography fontSize="1.25rem" fontWeight={700} color="text.secondary">
+                    <Typography fontSize="1.25rem" fontWeight={700} color="textSecondary">
                       שולחן {p.tableName && p.tableName}
                     </Typography>
                   </Stack>

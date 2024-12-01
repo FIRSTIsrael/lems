@@ -6,22 +6,16 @@ export const getTable = (filter: Filter<RobotGameTable>) => {
   return db.collection<RobotGameTable>('tables').findOne(filter);
 };
 
-export const getEventTables = (eventId: ObjectId) => {
-  return db.collection<RobotGameTable>('tables').find({ eventId }).toArray();
+export const getDivisionTables = (divisionId: ObjectId) => {
+  return db.collection<RobotGameTable>('tables').find({ divisionId }).toArray();
 };
 
 export const addTable = (table: RobotGameTable) => {
-  return db
-    .collection<RobotGameTable>('tables')
-    .insertOne(table)
-    .then(response => response);
+  return db.collection<RobotGameTable>('tables').insertOne(table);
 };
 
 export const addTables = (tables: Array<RobotGameTable>) => {
-  return db
-    .collection<RobotGameTable>('tables')
-    .insertMany(tables)
-    .then(response => response);
+  return db.collection<RobotGameTable>('tables').insertMany(tables);
 };
 
 export const updateTable = (
@@ -33,15 +27,9 @@ export const updateTable = (
 };
 
 export const deleteTable = (filter: Filter<RobotGameTable>) => {
-  return db
-    .collection<RobotGameTable>('tables')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<RobotGameTable>('tables').deleteOne(filter);
 };
 
-export const deleteEventTables = (eventId: ObjectId) => {
-  return db
-    .collection<RobotGameTable>('tables')
-    .deleteMany({ eventId })
-    .then(response => response);
+export const deleteDivisionTables = (divisionId: ObjectId) => {
+  return db.collection<RobotGameTable>('tables').deleteMany({ divisionId });
 };

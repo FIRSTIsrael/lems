@@ -1,14 +1,15 @@
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import { Event, SafeUser } from '@lems/types';
+import { DivisionWithEvent, SafeUser } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
-  event: WithId<Event>;
+  division: WithId<DivisionWithEvent>;
   user: SafeUser;
 }
 
-const WelcomeHeader = ({ event, user }: Props) => {
+const WelcomeHeader = ({ division, user }: Props) => {
   return (
     <Paper
       elevation={0}
@@ -22,12 +23,12 @@ const WelcomeHeader = ({ event, user }: Props) => {
       }}
     >
       <Typography variant="h1" fontSize="1.25rem" fontWeight={700} gutterBottom>
-        ברוכים הבאים ל{event.name}
+        ברוכים הבאים ל{localizeDivisionTitle(division)}
       </Typography>
-      <Typography color="#666" fontSize="0.875rem">
+      <Typography fontSize="0.875rem" sx={{ color: '#666' }}>
         יחד, אנו מעצימים את הדור הבא של מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.
       </Typography>
-      <Typography color="#666" fontSize="0.875rem">
+      <Typography fontSize="0.875rem" sx={{ color: '#666' }}>
         תודה שבאת להתנדב איתנו בתור {user.role ? localizedRoles[user.role].name : ''}!
       </Typography>
     </Paper>

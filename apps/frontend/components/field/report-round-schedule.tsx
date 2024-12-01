@@ -17,7 +17,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStage,
-  EventScheduleEntry
+  DivisionScheduleEntry
 } from '@lems/types';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { localizedMatchStage } from '../../localization/field';
@@ -38,7 +38,12 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
   const startTime = dayjs(match.scheduledTime);
 
   return (
-    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <TableRow
+      sx={{
+        backgroundColor: match.status === 'completed' ? '#f4f4f5' : undefined,
+        '&:last-child td, &:last-child th': { border: 0 }
+      }}
+    >
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{startTime.format('HH:mm')}</TableCell>
       <TableCell align="center">{startTime.add(MATCH_LENGTH, 'seconds').format('HH:mm')}</TableCell>
@@ -55,10 +60,10 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
                   <Typography
                     fontWeight={500}
                   >{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
-                  <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+                  <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                     {team.affiliation.name}
                   </Typography>
-                  <Typography color="text.secondary" fontSize="0.875rem" fontWeight={500}>
+                  <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                     {team.affiliation.city}
                   </Typography>
                 </Stack>
@@ -78,7 +83,7 @@ interface ReportRoundScheduleProps {
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   teams: Array<WithId<Team>>;
-  eventSchedule: Array<EventScheduleEntry>;
+  divisionSchedule: Array<DivisionScheduleEntry>;
   extendedTeamInfo?: boolean;
 }
 
@@ -88,7 +93,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
   matches,
   tables,
   teams,
-  eventSchedule,
+  divisionSchedule,
   extendedTeamInfo = false
 }) => {
   return (
@@ -121,7 +126,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
               key={m.number}
             />
           ))}
-          {eventSchedule
+          {divisionSchedule
             .filter(c => {
               const timeDiff = dayjs(c.startTime).diff(
                 matches[matches.length - 1].scheduledTime,

@@ -27,7 +27,7 @@ const Error: NextPage<Props> = ({ statusCode }) => {
         <Typography variant="h1" gutterBottom>
           שגיאה לא צפויה, אנא נסו שנית
         </Typography>
-        <Typography variant="h2" color="#666" fontSize="1.5rem">
+        <Typography variant="h2" sx={{ color: '#666' }} fontSize="1.5rem">
           קוד שגיאה: {statusCode}
         </Typography>
       </Paper>

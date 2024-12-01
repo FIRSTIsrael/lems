@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import {
-  Event,
+  Division,
   Team,
   TicketType,
   TicketTypes,
@@ -27,32 +27,31 @@ import TeamSelection from '../general/team-selection';
 
 interface TicketCreationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  event: WithId<Event>;
+  division: WithId<Division>;
   teams: Array<WithId<Team>>;
 }
 
-const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event, teams }) => {
+const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, division, teams }) => {
   const [team, setTeam] = useState<WithId<Team> | null>(null);
   const [content, setContent] = useState<string>('');
   const [type, setType] = useState<TicketType>('general');
 
   const createTicket = () => {
-    team &&
-      socket.emit(
-        'createTicket',
-        event._id.toString(),
-        team?._id.toString(),
-        content,
-        type,
-        response => {
-          if (response.ok) {
-            setTeam(null);
-            setContent('');
-            setType('general');
-            enqueueSnackbar('הבקשה נשלחה בהצלחה!', { variant: 'success' });
-          }
+    socket.emit(
+      'createTicket',
+      division._id.toString(),
+      team ? team._id.toString() : null,
+      content,
+      type,
+      response => {
+        if (response.ok) {
+          setTeam(null);
+          setContent('');
+          setType('general');
+          enqueueSnackbar('הבקשה נשלחה בהצלחה!', { variant: 'success' });
         }
-      );
+      }
+    );
   };
 
   return (
@@ -86,7 +85,7 @@ const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, event
             <Button
               sx={{ borderRadius: 8 }}
               variant="contained"
-              disabled={!team || !content || !type}
+              disabled={!content || !type}
               onClick={createTicket}
               endIcon={<CreateOutlinedIcon />}
             >

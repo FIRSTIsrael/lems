@@ -6,15 +6,15 @@ export const getCoreValuesForm = (filter: Filter<CoreValuesForm>) => {
   return db.collection<CoreValuesForm>('core-values-forms').findOne(filter);
 };
 
-export const getEventCoreValuesForms = (eventId: ObjectId) => {
-  return db.collection<CoreValuesForm>('core-values-forms').find({ eventId: eventId }).toArray();
+export const getDivisionCoreValuesForms = (divisionId: ObjectId) => {
+  return db
+    .collection<CoreValuesForm>('core-values-forms')
+    .find({ divisionId: divisionId })
+    .toArray();
 };
 
 export const addCoreValuesForm = (cvForm: CoreValuesForm) => {
-  return db
-    .collection<CoreValuesForm>('core-values-forms')
-    .insertOne(cvForm)
-    .then(response => response);
+  return db.collection<CoreValuesForm>('core-values-forms').insertOne(cvForm);
 };
 
 export const updateCoreValuesForm = (
@@ -28,8 +28,5 @@ export const updateCoreValuesForm = (
 };
 
 export const deleteCoreValuesForm = (filter: Filter<CoreValuesForm>) => {
-  return db
-    .collection<CoreValuesForm>('core-values-forms')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<CoreValuesForm>('core-values-forms').deleteOne(filter);
 };

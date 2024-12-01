@@ -17,6 +17,9 @@ export const RoleTypes = [
 ] as const;
 export type Role = (typeof RoleTypes)[number];
 
+export const EventUserAllowedRoleTypes = ['tournament-manager', 'pit-admin'] as const;
+export type EventUserAllowedRoles = (typeof EventUserAllowedRoleTypes)[number];
+
 export const RoleAssociationTypes = ['room', 'table', 'category', 'section'] as const;
 export type RoleAssociationType = (typeof RoleAssociationTypes)[number];
 

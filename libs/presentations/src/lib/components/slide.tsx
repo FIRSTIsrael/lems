@@ -19,10 +19,16 @@ export const SlideContext = createContext<SlideContextType>(null as any);
 export interface SlideProps {
   id?: SlideId;
   className?: string;
+  chromaKey?: boolean;
   children: React.ReactNode;
 }
 
-export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = '', children }) => {
+export const Slide: React.FC<SlideProps> = ({
+  id: userProvidedId,
+  className = '',
+  chromaKey = false,
+  children
+}) => {
   const { slideId, placeholder } = useSlide(userProvidedId);
   const { setStepContainer, activationThresholds, finalStepIndex } = useCollectSteps();
   const immediate = false;
@@ -140,7 +146,10 @@ export const Slide: React.FC<SlideProps> = ({ id: userProvidedId, className = ''
                 left: 0,
                 height: '100%',
                 width: '100%',
-                backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+                backgroundImage: chromaKey
+                  ? 'none'
+                  : 'url(/assets/audience-display/season-background.webp)',
+                backgroundColor: chromaKey ? '#ff00ff' : 'transparent',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 overflow: 'hidden'

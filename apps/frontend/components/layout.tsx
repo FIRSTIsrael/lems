@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import {
   AppBar,
   Box,
@@ -14,13 +14,12 @@ import {
   IconButton,
   Toolbar,
   Tooltip,
-  Typography,
-  keyframes
+  Typography
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
-import NextLink from 'next/link';
 import { apiFetch } from '../lib/utils/fetch';
+import { errorAnimation } from '../lib/utils/animations';
 
 interface LayoutProps {
   title?: string | React.ReactNode;
@@ -30,12 +29,8 @@ interface LayoutProps {
   backDisabled?: boolean;
   action?: React.ReactNode;
   error?: boolean;
+  color?: CSSProperties['color'];
 }
-
-const errorAnimation = keyframes`
-  from { background: #fecaca; }
-  to { background: #fca5a5; }
-`;
 
 const Layout: React.FC<LayoutProps> = ({
   title,
@@ -44,10 +39,19 @@ const Layout: React.FC<LayoutProps> = ({
   children,
   maxWidth = 'lg',
   action,
-  error
+  error,
+  color
 }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleBack = () => {
+    const queryString = router.query.divisionId
+      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
+      : '';
+    const url = `${back}${queryString ? `?${queryString}` : ''}`;
+    router.push(url);
+  };
 
   const logout = () => {
     apiFetch('/auth/logout', { method: 'POST' }).then(res => router.push('/'));
@@ -60,22 +64,22 @@ const Layout: React.FC<LayoutProps> = ({
           <AppBar
             position="fixed"
             sx={{
-              animation: error ? `${errorAnimation} 1s linear infinite alternate` : undefined
+              animation: error ? `${errorAnimation} 1s linear infinite alternate` : undefined,
+              borderBottom: color && `5px solid ${color}`
             }}
           >
-            <Toolbar sx={{ px: { xs: 2, md: 3, lg: 4 } }}>
+            <Toolbar>
               {back && (
-                <NextLink href={back} passHref legacyBehavior>
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    disabled={backDisabled}
-                    aria-label="אחורה"
-                    sx={{ mr: 2 }}
-                  >
-                    <ChevronRightIcon />
-                  </IconButton>
-                </NextLink>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  disabled={backDisabled}
+                  aria-label="אחורה"
+                  sx={{ mr: 2 }}
+                  onClick={handleBack}
+                >
+                  <ChevronRightIcon />
+                </IconButton>
               )}
 
               <Typography

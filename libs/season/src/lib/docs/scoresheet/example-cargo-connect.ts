@@ -1,6 +1,6 @@
-import { Scoresheet, ScoresheetError } from '../../data/scoresheet-types';
+import { ScoresheetSchema, ScoresheetError } from '../../data/scoresheet-types';
 
-const scoresheet: Scoresheet = {
+const scoresheet: ScoresheetSchema = {
   season: 'CARGO CONNECT℠',
   missions: [
     {

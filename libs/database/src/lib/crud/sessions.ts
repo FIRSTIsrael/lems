@@ -6,8 +6,8 @@ export const getSession = (filter: Filter<JudgingSession>) => {
   return db.collection<JudgingSession>('sessions').findOne(filter);
 };
 
-export const getEventSessions = (eventId: ObjectId) => {
-  return db.collection<JudgingSession>('sessions').find({ eventId }).toArray();
+export const getDivisionSessions = (divisionId: ObjectId) => {
+  return db.collection<JudgingSession>('sessions').find({ divisionId }).toArray();
 };
 
 export const getRoomSessions = (roomId: ObjectId) => {
@@ -15,17 +15,11 @@ export const getRoomSessions = (roomId: ObjectId) => {
 };
 
 export const addSession = (session: JudgingSession) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .insertOne(session)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').insertOne(session);
 };
 
 export const addSessions = (sessions: Array<JudgingSession>) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .insertMany(sessions)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').insertMany(sessions);
 };
 
 export const updateSession = (
@@ -39,15 +33,9 @@ export const updateSession = (
 };
 
 export const deleteSession = (filter: Filter<JudgingSession>) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').deleteOne(filter);
 };
 
 export const deleteRoomSessions = (roomId: ObjectId) => {
-  return db
-    .collection<JudgingSession>('sessions')
-    .deleteMany({ roomId })
-    .then(response => response);
+  return db.collection<JudgingSession>('sessions').deleteMany({ roomId });
 };

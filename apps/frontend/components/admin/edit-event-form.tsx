@@ -1,35 +1,26 @@
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
-import {
-  Box,
-  Button,
-  ButtonProps,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  Stack,
-  Paper
-} from '@mui/material';
+import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Grid from '@mui/material/Unstable_Grid2';
-import { DivisionColor, Event } from '@lems/types';
+import { FllEvent } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
+import ColorPickerButton from './color-picker-button';
+import { DivisionSwatches } from '@lems/types';
 
-interface EditEventFormProps extends ButtonProps {
-  event: WithId<Event>;
+interface EditEventFormProps extends PaperProps {
+  event: WithId<FllEvent>;
 }
 
-const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
+const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
   const [name, setName] = useState<string>(event.name);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
-  const [color, setColor] = useState<DivisionColor>(event.color);
+  const gridItemSize = event.enableDivisions ? 4 : 3.5;
+  const [color, setColor] = useState<CSSProperties['color']>(event.color);
 
   const updateEvent = () => {
     apiFetch(`/api/admin/events/${event._id}`, {
@@ -38,8 +29,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
       body: JSON.stringify({
         name,
         startDate: startDate.toDate() || event.startDate,
-        endDate: endDate.toDate() || event.endDate,
-        color
+        endDate: endDate.toDate() || event.endDate
       })
     }).then(res => {
       if (res.ok) {
@@ -51,7 +41,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
   };
 
   return (
-    <Paper sx={{ p: 4 }}>
+    <Paper {...props}>
       <Box
         component="form"
         onSubmit={e => {
@@ -64,7 +54,17 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
             פרטי האירוע
           </Typography>
           <Grid container spacing={2}>
-            <Grid xs={6}>
+            {!event.enableDivisions && (
+              <Grid size={1.5}>
+                <ColorPickerButton
+                  fullWidth
+                  swatches={DivisionSwatches}
+                  value={color}
+                  setColor={setColor}
+                />
+              </Grid>
+            )}
+            <Grid size={gridItemSize}>
               <TextField
                 variant="outlined"
                 type="text"
@@ -74,33 +74,10 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
                 fullWidth
               />
             </Grid>
-            <Grid xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="event-color">צבע</InputLabel>
-                <Select
-                  value={color}
-                  onChange={e => setColor(e.target.value as DivisionColor)}
-                  labelId="event-color"
-                  label="צבע"
-                  fullWidth
-                >
-                  {[
-                    { id: 'red', displayName: 'אדום' },
-                    { id: 'blue', displayName: 'כחול' }
-                  ].map((color: { id: string; displayName: string }) => {
-                    return (
-                      <MenuItem value={color.id} key={color.id}>
-                        {color.displayName}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid xs={6}>
+              <Grid size={gridItemSize}>
                 <DatePicker
-                  disabled // Currently we do not support editing event dates (see LEMS-153)
+                  disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך התחלה"
                   value={startDate}
                   onChange={newDate => {
@@ -110,9 +87,9 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>
-              <Grid xs={6}>
+              <Grid size={gridItemSize}>
                 <DatePicker
-                  disabled // Currently we do not support editing event dates (see LEMS-153)
+                  disabled // Currently we do not support editing division dates (see LEMS-153)
                   label="תאריך סיום"
                   value={endDate}
                   onChange={newDate => {
@@ -126,7 +103,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSubmit }) => {
           </Grid>
 
           <Box justifyContent="center" display="flex">
-            <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
+            <Button type="submit" variant="contained" sx={{ minWidth: 250 }}>
               שמירה
             </Button>
           </Box>

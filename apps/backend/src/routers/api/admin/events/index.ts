@@ -1,49 +1,92 @@
 import express, { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import asyncHandler from 'express-async-handler';
-import { Event } from '@lems/types';
+import { ObjectId } from 'mongodb';
+import { FllEvent, User, Role } from '@lems/types';
 import * as db from '@lems/database';
-import eventScheduleRouter from './schedule';
-import eventUsersRouter from './users';
-import eventAwardsRouter from './awards';
-import eventPitMapRouter from './pit-map';
-import { cleanEventData } from '../../../../lib/schedule/cleaner';
+import { randomString } from '@lems/utils/random';
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', (req: Request, res: Response) => {
-  const body: Event = { ...req.body };
-  if (!body) return res.status(400).json({ ok: false });
-
-  body.startDate = new Date(body.startDate);
-  body.endDate = new Date(body.endDate);
-
-  console.log('⏬ Creating Event...');
-  db.addEvent(body).then(task => {
-    if (task.acknowledged) {
-      console.log('✅ Event created!');
-      return res.json({ ok: true, id: task.insertedId });
-    } else {
-      console.log('❌ Could not create Event');
-      return res.status(500).json({ ok: false });
+router.post(
+  '/',
+  asyncHandler(async (req: Request, res: Response) => {
+    const { divisions, eventUsers, ...body } = { ...req.body };
+    if (!body) {
+      res.status(400).json({ ok: false });
+      return;
     }
-  });
-});
+
+    // Save the created users on the event
+    body.eventUsers = Object.entries(eventUsers)
+      .filter(([, enabled]) => !!enabled)
+      .map(([role]) => role);
+
+    body.startDate = new Date(body.startDate);
+    body.endDate = new Date(body.endDate);
+
+    console.log('⏬ Creating Event...');
+    const eventResult = await db.addFllEvent(body);
+    if (!eventResult.acknowledged) {
+      console.log(`❌ Could not create Event ${body.name}`);
+      res.status(500).json({ ok: false });
+      return;
+    }
+
+    console.log('⏬ Creating Event divisions...');
+    const divisionIds = [];
+    for (const division of divisions) {
+      const divisionResult = await db.addDivision({
+        ...division,
+        eventId: eventResult.insertedId,
+        hasState: false
+      });
+      if (divisionResult.acknowledged) {
+        console.log(`✅ Division ${divisionResult.insertedId} created!`);
+        divisionIds.push(divisionResult.insertedId);
+      } else {
+        console.log(`❌ Could not create division ${division.name}`);
+        res.status(500).json({ ok: false });
+        return;
+      }
+    }
+
+    console.log('⏬ Creating event users...');
+    const users: User[] = [];
+    for (const [role, enabled] of Object.entries(eventUsers)) {
+      if (!enabled) continue;
+      users.push({
+        role: role as Role,
+        isAdmin: false,
+        eventId: eventResult.insertedId,
+        assignedDivisions: divisionIds,
+        password: randomString(4),
+        lastPasswordSetDate: new Date()
+      });
+    }
+    if (users.length > 0) {
+      const userResult = await db.addUsers(users);
+      if (userResult.acknowledged) {
+        console.log(`✅ Event users created!`);
+      } else {
+        console.log(`❌ Could not create event users for ${eventResult.insertedId}`);
+        res.status(500).json({ ok: false });
+        return;
+      }
+    }
+
+    res.json({ ok: true, id: eventResult.insertedId });
+  })
+);
 
 router.put('/:eventId', (req: Request, res: Response) => {
-  const body: Partial<Event> = { ...req.body };
+  const body: Partial<FllEvent> = { ...req.body };
   if (!body) return res.status(400).json({ ok: false });
 
   if (body.startDate) body.startDate = new Date(body.startDate);
   if (body.endDate) body.endDate = new Date(body.endDate);
 
-  if (body.schedule)
-    body.schedule = body.schedule.map(e => {
-      return { ...e, startTime: new Date(e.startTime), endTime: new Date(e.endTime) };
-    });
-
   console.log(`⏬ Updating Event ${req.params.eventId}`);
-  db.updateEvent({ _id: new ObjectId(req.params.eventId) }, body, true).then(task => {
+  db.updateFllEvent({ _id: new ObjectId(req.params.eventId) }, body, true).then(task => {
     if (task.acknowledged) {
       console.log('✅ Event updated!');
       return res.json({ ok: true, id: task.upsertedId });
@@ -53,28 +96,5 @@ router.put('/:eventId', (req: Request, res: Response) => {
     }
   });
 });
-
-router.delete(
-  '/:eventId/data',
-  asyncHandler(async (req: Request, res: Response) => {
-    const event = await db.getEvent({ _id: new ObjectId(req.params.eventId) });
-
-    console.log(`🚮 Deleting data from event ${req.params.eventId}`);
-    try {
-      await cleanEventData(event);
-      await db.updateEvent({ _id: event._id }, { hasState: false });
-    } catch (error) {
-      res.status(500).json(error.message);
-      return;
-    }
-    console.log('✅ Deleted event data!');
-    res.status(200).json({ ok: true });
-  })
-);
-
-router.use('/:eventId/schedule', eventScheduleRouter);
-router.use('/:eventId/pit-map', eventPitMapRouter);
-router.use('/:eventId/users', eventUsersRouter);
-router.use('/:eventId/awards', eventAwardsRouter);
 
 export default router;

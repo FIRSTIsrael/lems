@@ -9,11 +9,17 @@ import {
   handleStartSession,
   handleAbortSession,
   handleUpdateSession,
+  handleStartDeliberation,
+  handleUpdateDeliberation,
+  handleCompleteDeliberation,
   handleUpdateSessionTeam,
   handleUpdateRubric,
   handleCreateCvForm,
   handleUpdateCvForm,
-  handleCallLeadJudge
+  handleCallLeadJudge,
+  handleAdvanceTeams,
+  handleUpdateAwardWinners,
+  handleDisqualifyTeam
 } from './handlers/judging';
 import { handleRegisterTeam, handleCreateTicket, handleUpdateTicket } from './handlers/pit-admin';
 import {
@@ -32,9 +38,9 @@ const websocket = (
   socket: Socket<WSClientEmittedEvents, WSServerEmittedEvents, WSInterServerEvents, WSSocketData>
 ) => {
   const namespace = socket.nsp;
-  const eventId = socket.nsp.name.split('/')[2];
+  const divisionId = socket.nsp.name.split('/')[2];
 
-  console.log(`🔌 WS: Connection to event ${eventId}`);
+  console.log(`🔌 WS: Connection to division ${divisionId}`);
 
   socket.on('joinRoom', (rooms, callback) => {
     if (!Array.isArray(rooms)) rooms = [rooms];
@@ -50,6 +56,20 @@ const websocket = (
   socket.on('updateJudgingSessionTeam', (...args) => handleUpdateSessionTeam(namespace, ...args));
 
   socket.on('updateJudgingSession', (...args) => handleUpdateSession(namespace, ...args));
+
+  socket.on('startJudgingDeliberation', (...args) => handleStartDeliberation(namespace, ...args));
+
+  socket.on('updateJudgingDeliberation', (...args) => handleUpdateDeliberation(namespace, ...args));
+
+  socket.on('completeJudgingDeliberation', (...args) =>
+    handleCompleteDeliberation(namespace, ...args)
+  );
+
+  socket.on('disqualifyTeam', (...args) => handleDisqualifyTeam(namespace, ...args));
+
+  socket.on('updateAwardWinners', (...args) => handleUpdateAwardWinners(namespace, ...args));
+
+  socket.on('advanceTeams', (...args) => handleAdvanceTeams(namespace, ...args));
 
   socket.on('callLeadJudge', (...args) => handleCallLeadJudge(namespace, ...args));
 
@@ -88,7 +108,7 @@ const websocket = (
   socket.on('updatePresentation', (...args) => handleUpdatePresentation(namespace, ...args));
 
   socket.on('disconnect', () => {
-    console.log(`❌ WS: Disconnection from event ${eventId}`);
+    console.log(`❌ WS: Disconnection from division ${divisionId}`);
   });
 };
 

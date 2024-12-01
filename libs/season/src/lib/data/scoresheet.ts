@@ -1,7 +1,8 @@
-import { Scoresheet, ScoresheetError } from './scoresheet-types';
+import { ScoresheetSchema, ScoresheetError } from './scoresheet-types';
+import { ensureArray } from '@lems/utils/arrays';
 
-export const scoresheet: Scoresheet = {
-  season: 'MASTERPIECE℠',
+export const scoresheet: ScoresheetSchema = {
+  season: 'SUBMERGED℠',
   missions: [
     {
       id: 'eib',
@@ -10,27 +11,48 @@ export const scoresheet: Scoresheet = {
     },
     {
       id: 'm01',
-      clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 20 : 0)
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false }
+      ],
+      calculation: (clause1, clause2, clause3) => {
+        if (!clause1 && clause2) throw new ScoresheetError('m01-e1');
+        let points = 0;
+        if (clause1) points += 20;
+        if (clause2) points += 10;
+        if (clause3) points += 20;
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'm02',
       clauses: [
-        { type: 'enum', options: ['none', 'blue', 'pink', 'orange'], default: 'none' },
+        { type: 'boolean', default: false },
         { type: 'boolean', default: false }
       ],
       calculation: (clause1, clause2) => {
         if (clause2) {
-          if (clause1 === 'none') throw new ScoresheetError('m02-e1');
-          return clause1 === 'blue' ? 30 : clause1 === 'pink' ? 50 : 40;
+          if (!clause1) throw new ScoresheetError('m02-e1');
+          return 30;
         }
-        return clause1 === 'blue' ? 10 : clause1 === 'pink' ? 20 : clause1 === 'orange' ? 30 : 0;
+        return clause1 ? 20 : 0;
       }
     },
     {
       id: 'm03',
-      clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 20 : 0)
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'enum', options: ['0', '1', '2', '3'], default: '0' }
+      ],
+      calculation: (clause1, clause2) => {
+        let points = 0;
+        if (clause1) points += 20;
+        points += Number(clause2) * 5;
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'm04',
@@ -41,9 +63,9 @@ export const scoresheet: Scoresheet = {
       calculation: (clause1, clause2) => {
         if (clause2) {
           if (!clause1) throw new ScoresheetError('m04-e1');
-          return 30;
+          return 40;
         }
-        return clause1 ? 10 : 0;
+        return clause1 ? 20 : 0;
       }
     },
     {
@@ -53,43 +75,27 @@ export const scoresheet: Scoresheet = {
     },
     {
       id: 'm06',
-      clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false }
-      ],
-      calculation: (clause1, clause2) => {
-        let points = 0;
-        if (clause1) points += 10;
-        if (clause2) points += 10;
-        return points;
-      }
+      clauses: [{ type: 'boolean', default: false }],
+      calculation: clause1 => (clause1 ? 30 : 0),
+      noEquipment: true
     },
     {
       id: 'm07',
       clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 20 : 0)
+      calculation: clause1 => (clause1 ? 20 : 0),
+      noEquipment: true
     },
     {
       id: 'm08',
       clauses: [
         {
           type: 'enum',
-          options: ['none', 'dark-blue', 'medium-blue', 'light-blue'],
-          default: 'none'
+          options: ['0', '1', '2', '3', '4'],
+          default: '0'
         }
       ],
-      calculation: clause1 => {
-        switch (String(clause1)) {
-          case 'dark-blue':
-            return 10;
-          case 'medium-blue':
-            return 20;
-          case 'light-blue':
-            return 30;
-          default:
-            return 0;
-        }
-      }
+      calculation: clause1 => Number(clause1) * 10,
+      noEquipment: true
     },
     {
       id: 'm09',
@@ -98,33 +104,43 @@ export const scoresheet: Scoresheet = {
         { type: 'boolean', default: false }
       ],
       calculation: (clause1, clause2) => {
-        let points = 0;
-        if (clause1) points += 10;
-        if (clause2) points += 10;
-        return points;
+        if (clause2) {
+          if (!clause1) throw new ScoresheetError('m09-e1');
+          return 30;
+        }
+        return clause1 ? 20 : 0;
       }
     },
     {
       id: 'm10',
-      clauses: [{ type: 'enum', options: ['0', '1', '2', '3'], default: '0' }],
-      calculation: clause1 => Number(clause1) * 10
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false }
+      ],
+      calculation: (clause1, clause2) => {
+        let points = 0;
+        if (clause1) points += 30;
+        if (clause2) points += 10;
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'm11',
       clauses: [
         {
           type: 'enum',
-          options: ['none', 'yellow', 'green', 'blue'],
-          default: 'none'
+          options: ['0', '1', '2'],
+          default: '0'
         }
       ],
       calculation: clause1 => {
-        switch (String(clause1)) {
-          case 'yellow':
-            return 10;
-          case 'green':
+        switch (Number(clause1)) {
+          case 0:
+            return 0;
+          case 1:
             return 20;
-          case 'blue':
+          case 2:
             return 30;
           default:
             return 0;
@@ -134,51 +150,81 @@ export const scoresheet: Scoresheet = {
     {
       id: 'm12',
       clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false }
-      ],
-      calculation: (clause1, clause2) => {
-        if (clause2) {
-          if (!clause1) throw new ScoresheetError('m12-e1');
-          return 30;
+        {
+          type: 'enum',
+          options: ['0', '1', '2', '3', '4', '5'],
+          default: '0'
         }
-        return clause1 ? 10 : 0;
-      }
+      ],
+      calculation: clause1 => Number(clause1) * 10,
+      noEquipment: true
     },
     {
       id: 'm13',
-      clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false }
-      ],
-      calculation: (clause1, clause2) => {
-        let points = 0;
-        if (clause1) points += 10;
-        if (clause2) points += 20;
-        return points;
-      }
+      clauses: [{ type: 'boolean', default: false }],
+      calculation: clause1 => (clause1 ? 20 : 0)
     },
     {
       id: 'm14',
       clauses: [
-        { type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6', '7'], default: '0' },
-        { type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6', '7'], default: '0' }
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
+        { type: 'enum', options: ['0', '1', '2'], default: '0' }
       ],
-      calculation: (clause1, clause2) => {
+      calculation: (clause1, clause2, clause3, clause4) => {
         let points = 0;
-        points += Number(clause1) * 5;
-        points += Number(clause2) * 5;
+        if (clause1) points += 5;
+        if (clause2) points += 10;
+        if (clause3) points += 10;
 
-        if (Number(clause2) > Number(clause1)) throw new ScoresheetError('m14-e1');
-        if (Number(clause1) > 0 && Number(clause2) === 0) throw new ScoresheetError('m14-e2');
+        switch (Number(clause4)) {
+          case 0:
+            break;
+          case 1:
+            points += 20;
+            break;
+          case 2:
+            points += 10;
+            break;
+          default:
+            break;
+        }
 
         return points;
       }
     },
     {
       id: 'm15',
-      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5'], default: '0' }],
-      calculation: clause1 => Number(clause1) * 10
+      clauses: [
+        {
+          type: 'enum',
+          options: [
+            'empty',
+            'water-sample',
+            'plankton-sample',
+            'seabed-sample',
+            'trident-head',
+            'trident-handle',
+            'treasure-chest'
+          ],
+          default: 'empty',
+          multiSelect: true
+        },
+        { type: 'boolean', default: false }
+      ],
+      calculation: (clause1, clause2) => {
+        let points = 0;
+        const _clause1 = ensureArray(clause1);
+        if (_clause1.includes('empty')) {
+          if (_clause1.length > 1) throw new ScoresheetError('m15-e1');
+        } else {
+          points += _clause1.length * 5;
+        }
+        if (clause2) points += 20;
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'pt',
@@ -201,5 +247,24 @@ export const scoresheet: Scoresheet = {
       }
     }
   ],
-  validators: []
+  validators: [
+    missions => {
+      const planktonInBoat = ensureArray(missions['m15'][0]).includes('plankton-sample');
+      if (planktonInBoat && !missions['m14'][1]) throw new ScoresheetError('e1');
+    },
+    missions => {
+      const seabedInBoat = ensureArray(missions['m15'][0]).includes('seabed-sample');
+      if (seabedInBoat && !missions['m14'][2]) throw new ScoresheetError('e2');
+    },
+    missions => {
+      const tridentPartsInBoat = ensureArray(missions['m15'][0]).filter(item =>
+        item.includes('trident')
+      ).length;
+      if (tridentPartsInBoat > Number(missions['m14'][3])) throw new ScoresheetError('e3');
+    },
+    missions => {
+      const treasureChestInBoat = ensureArray(missions['m15'][0]).includes('treasure-chest');
+      if (treasureChestInBoat && !missions['m07'][0]) throw new ScoresheetError('e4');
+    }
+  ]
 };

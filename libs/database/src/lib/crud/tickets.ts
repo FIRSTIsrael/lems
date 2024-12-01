@@ -6,22 +6,16 @@ export const getTicket = (filter: Filter<Ticket>) => {
   return db.collection<Ticket>('tickets').findOne(filter);
 };
 
-export const getEventTickets = (eventId: ObjectId) => {
-  return db.collection<Ticket>('tickets').find({ eventId: eventId }).toArray();
+export const getDivisionTickets = (divisionId: ObjectId) => {
+  return db.collection<Ticket>('tickets').find({ divisionId: divisionId }).toArray();
 };
 
 export const addTicket = (ticket: Ticket) => {
-  return db
-    .collection<Ticket>('tickets')
-    .insertOne(ticket)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').insertOne(ticket);
 };
 
 export const addTickets = (tickets: Array<Ticket>) => {
-  return db
-    .collection<Ticket>('tickets')
-    .insertMany(tickets)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').insertMany(tickets);
 };
 
 export const updateTicket = (
@@ -33,15 +27,9 @@ export const updateTicket = (
 };
 
 export const deleteTicket = (filter: Filter<Ticket>) => {
-  return db
-    .collection<Ticket>('tickets')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<Ticket>('tickets').deleteOne(filter);
 };
 
-export const deleteEventTickets = (eventId: ObjectId) => {
-  return db
-    .collection<Ticket>('tickets')
-    .deleteMany({ eventId: eventId })
-    .then(response => response);
+export const deleteDivisionTickets = (divisionId: ObjectId) => {
+  return db.collection<Ticket>('tickets').deleteMany({ divisionId: divisionId });
 };

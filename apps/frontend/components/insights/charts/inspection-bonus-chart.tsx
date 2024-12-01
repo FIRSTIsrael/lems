@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Typography, Paper, Skeleton } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface InspectionBonusChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
 type InspectionBonusChartData = { successRate: number; rows: Array<object> };
 
-const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) => {
+const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ division }) => {
   const [data, setData] = useState<InspectionBonusChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/missions/inspection-bonus`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/field/missions/inspection-bonus`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   const columns: GridColDef[] = [
     {
@@ -36,8 +36,7 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) =>
       headerName: 'שיוך',
       sortable: false,
       width: 400,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.teamAffiliation.name}, ${params.row.teamAffiliation.city}`
+      valueGetter: (value, row) => `${row.teamAffiliation.name}, ${row.teamAffiliation.city}`
     },
     { field: 'count', headerName: 'אי הצלחות', width: 150 }
   ];
@@ -49,7 +48,7 @@ const InspectionBonusChart: React.FC<InspectionBonusChartProps> = ({ event }) =>
           <Typography fontSize="1.5rem" fontWeight={500} textAlign="center" pt={1}>
             בונוס ביקורת הציוד
           </Typography>
-          <Typography textAlign="center" color="#666">
+          <Typography textAlign="center" sx={{ color: '#666' }}>
             {Number(data.successRate.toFixed(2))}% הצלחה
           </Typography>
           <DataGrid

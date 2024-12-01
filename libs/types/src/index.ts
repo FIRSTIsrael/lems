@@ -1,6 +1,7 @@
 export * from './lib/schemas/user';
-export * from './lib/schemas/event';
-export * from './lib/schemas/event-state';
+export * from './lib/schemas/fllevent';
+export * from './lib/schemas/division';
+export * from './lib/schemas/division-state';
 export * from './lib/schemas/judging-room';
 export * from './lib/schemas/judging-session';
 export * from './lib/schemas/robot-game-match';
@@ -9,6 +10,7 @@ export * from './lib/schemas/team';
 export * from './lib/schemas/rubric';
 export * from './lib/schemas/scoresheet';
 export * from './lib/schemas/core-values-form';
+export * from './lib/schemas/deliberation';
 export * from './lib/schemas/ticket';
 export * from './lib/roles';
 export * from './lib/schemas/award';

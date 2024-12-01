@@ -22,11 +22,11 @@ const NoMatchCard: React.FC = () => {
         <Typography variant="h4" sx={{ mb: 2 }}>
           אין לכם מקצה פועל כרגע!
         </Typography>
-        <Typography fontSize="1.15rem" color="#666">
+        <Typography fontSize="1.15rem" sx={{ color: '#666' }}>
           אנו מודים לכם שהתנדבתם איתנו היום ועל התמיכה במשימתנו. ביחד, אנו מעצימים את הדור הבא של
           מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.
         </Typography>
-        <Typography fontSize="1rem" color="#666">
+        <Typography fontSize="1rem" sx={{ color: '#666' }}>
           זה זמן טוב לשתות מים ולהתכונן למקצה הבא.
         </Typography>
       </Stack>

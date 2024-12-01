@@ -3,8 +3,8 @@ import { Socket } from 'socket.io-client';
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Stack } from '@mui/material';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   RobotGameMatch,
   WSClientEmittedEvents,
   WSServerEmittedEvents
@@ -14,27 +14,27 @@ import Schedule from './schedule';
 import ControlActions from './control-actions';
 
 interface FieldControlProps {
-  event: WithId<Event>;
-  eventState: EventState;
+  division: WithId<Division>;
+  divisionState: DivisionState;
   matches: Array<WithId<RobotGameMatch>>;
   nextMatchId: ObjectId | undefined;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const FieldControl: React.FC<FieldControlProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   matches,
   nextMatchId,
   socket
 }) => {
   const activeMatch = useMemo(
-    () => matches.find(match => match._id === eventState.activeMatch) || null,
-    [eventState.activeMatch, matches]
+    () => matches.find(match => match._id === divisionState.activeMatch) || null,
+    [divisionState.activeMatch, matches]
   );
   const loadedMatch = useMemo(
-    () => matches.find(match => match._id === eventState.loadedMatch) || null,
-    [eventState.loadedMatch, matches]
+    () => matches.find(match => match._id === divisionState.loadedMatch) || null,
+    [divisionState.loadedMatch, matches]
   );
 
   return (
@@ -50,7 +50,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
       </Stack>
 
       <ControlActions
-        eventId={event._id.toString()}
+        divisionId={division._id.toString()}
         nextMatchId={nextMatchId}
         loadedMatch={loadedMatch}
         activeMatchId={activeMatch?._id || null}
@@ -59,7 +59,7 @@ const FieldControl: React.FC<FieldControlProps> = ({
 
       <Paper sx={{ px: 4, py: 1, mt: 2, overflowY: 'scroll' }}>
         <Schedule
-          eventId={event._id.toString()}
+          divisionId={division._id.toString()}
           matches={matches.filter(m => m.stage !== 'test') || []}
           socket={socket}
         />

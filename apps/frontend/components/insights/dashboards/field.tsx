@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import { green } from '@mui/material/colors';
-import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import Grid from '@mui/material/Grid2';
+import { Division } from '@lems/types';
 import Stat from '../stat';
 import CycleTimeReport from '../cycle-time-report';
 import AverageMedianCard from '../average-median-card';
@@ -12,65 +12,65 @@ import ScoresPerTableChart from '../charts/scores-per-table-chart';
 import RobotConsistencyChart from '../charts/robot-consistency-chart';
 
 interface FieldInsightsDashboardProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
-const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ event }) => {
+const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ division }) => {
   return (
-    <Grid container spacing={2}>
-      <Grid xs={4}>
+    (<Grid container spacing={2}>
+      <Grid size={4}>
         <AverageMedianCard
           title="ניקוד משחק הרובוט"
           color={green[600]}
-          url={`/api/events/${event._id}/insights/field/scores/average-median`}
+          url={`/api/divisions/${division._id}/insights/field/scores/average-median`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={4}>
+      <Grid size={4}>
         <AverageMedianCard
           title="ניקוד גבוה ביותר"
           color={green[600]}
-          url={`/api/events/${event._id}/insights/field/scores/average-median/top-scores`}
+          url={`/api/divisions/${division._id}/insights/field/scores/average-median/top-scores`}
           precision={2}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={4}>
+      <Grid size={4}>
         <Stat
           title="שיא ניקוד"
-          url={`/api/events/${event._id}/insights/field/scores/highest-score`}
+          url={`/api/divisions/${division._id}/insights/field/scores/highest-score`}
           sx={{ width: '100%', height: '100%' }}
         />
       </Grid>
-      <Grid xs={12}>
-        <ScoresPerTableChart event={event} />
+      <Grid size={12}>
+        <ScoresPerTableChart division={division} />
       </Grid>
-      <Grid xs={12}>
-        <MissionSuccessRateChart event={event} />
+      <Grid size={12}>
+        <MissionSuccessRateChart division={division} />
       </Grid>
-      <Grid xs={12}>
-        <InspectionBonusChart event={event} />
+      <Grid size={12}>
+        <InspectionBonusChart division={division} />
       </Grid>
-      <Grid xs={12}>
-        <PrecisionTokensChart event={event} />
+      <Grid size={12}>
+        <PrecisionTokensChart division={division} />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <CycleTimeReport
           title="סייקלים - דירוג"
-          url={`/api/events/${event._id}/insights/field/cycle-time?stage=ranking`}
+          url={`/api/divisions/${division._id}/insights/field/cycle-time?stage=ranking`}
         />
       </Grid>
-      <Grid xs={6}>
+      <Grid size={6}>
         <CycleTimeReport
           title="סייקלים - אימונים"
-          url={`/api/events/${event._id}/insights/field/cycle-time?stage=practice`}
+          url={`/api/divisions/${division._id}/insights/field/cycle-time?stage=practice`}
         />
       </Grid>
-      <Grid xs={12}>
-        <RobotConsistencyChart event={event} />
+      <Grid size={12}>
+        <RobotConsistencyChart division={division} />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

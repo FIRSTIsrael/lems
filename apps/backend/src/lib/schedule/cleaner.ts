@@ -1,19 +1,19 @@
 import { WithId } from 'mongodb';
 import * as db from '@lems/database';
-import { Event, JudgingRoom, Team } from '@lems/types';
+import { Division, JudgingRoom, Team } from '@lems/types';
 
-export const cleanEventData = async (event: WithId<Event>) => {
-  if (!(await db.deleteEventUsers(event._id)).acknowledged)
+export const cleanDivisionData = async (division: WithId<Division>) => {
+  if (!(await db.deleteDivisionUsers(division._id)).acknowledged)
     throw new Error('Could not delete users!');
 
-  const oldEventState = await db.getEventStateFromEvent(event._id);
-  if (oldEventState) {
-    if (!(await db.deleteEventState(oldEventState)).acknowledged)
-      throw new Error('Could not delete event state!');
+  const oldDivisionState = await db.getDivisionStateFromDivision(division._id);
+  if (oldDivisionState) {
+    if (!(await db.deleteDivisionState(oldDivisionState)).acknowledged)
+      throw new Error('Could not delete division state!');
   }
 
-  const oldRooms = await db.getEventRooms(event._id);
-  const oldTeams = await db.getEventTeams(event._id);
+  const oldRooms = await db.getDivisionRooms(division._id);
+  const oldTeams = await db.getDivisionTeams(division._id);
 
   await Promise.all(
     oldRooms.map(async (room: WithId<JudgingRoom>) => {
@@ -36,18 +36,20 @@ export const cleanEventData = async (event: WithId<Event>) => {
     })
   );
 
-  if (!(await db.deleteEventTeams(event._id)).acknowledged)
+  if (!(await db.deleteDivisionTeams(division._id)).acknowledged)
     throw new Error('Could not delete teams!');
-  if (!(await db.deleteEventTables(event._id)).acknowledged)
+  if (!(await db.deleteDivisionTables(division._id)).acknowledged)
     throw new Error('Could not delete tables!');
-  if (!(await db.deleteEventRooms(event._id)).acknowledged)
+  if (!(await db.deleteDivisionRooms(division._id)).acknowledged)
     throw new Error('Could not delete rooms!');
-  if (!(await db.deleteEventMatches(event._id)).acknowledged)
+  if (!(await db.deleteDivisionMatches(division._id)).acknowledged)
     throw new Error('Could not delete matches!');
-  if (!(await db.deleteEventUsers(event._id)).acknowledged)
+  if (!(await db.deleteDivisionUsers(division._id)).acknowledged)
     throw new Error('Could not delete users!');
-  if (!(await db.deleteEventAwards(event._id)).acknowledged)
+  if (!(await db.deleteDivisionAwards(division._id)).acknowledged)
     throw new Error('Could not delete awards!');
-  if (!(await db.deleteEventTickets(event._id)).acknowledged)
+  if (!(await db.deleteDivisionTickets(division._id)).acknowledged)
     throw new Error('Could not delete tickets!');
+  if (!(await db.deleteDivisionDeliberations(division._id)).acknowledged)
+    throw new Error('Could not delete deliberations!');
 };

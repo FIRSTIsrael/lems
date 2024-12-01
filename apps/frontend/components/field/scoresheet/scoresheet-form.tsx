@@ -25,7 +25,7 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import SignatureCanvas from 'react-signature-canvas';
 import Image from 'next/image';
 import {
-  Event,
+  Division,
   Team,
   WSServerEmittedEvents,
   WSClientEmittedEvents,
@@ -50,7 +50,7 @@ import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetFormProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
   user: WithId<SafeUser>;
@@ -59,7 +59,7 @@ interface ScoresheetFormProps {
 }
 
 const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
-  event,
+  division,
   team,
   scoresheet,
   user,
@@ -141,7 +141,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
     socket.emit(
       'updateScoresheet',
-      event._id.toString(),
+      division._id.toString(),
       team._id.toString(),
       scoresheet._id.toString(),
       updatedScoresheet as Partial<Scoresheet>,
@@ -485,9 +485,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 scoresheetStatus={scoresheet.status}
                 onBack={() => handleSync(false, values, 'completed')}
                 onSubmit={() => {
-                  handleSync(true, values, 'ready').then(() =>
-                    router.push(`/event/${event._id}/${user.role}`)
-                  );
+                  handleSync(true, values, 'ready').then(() => router.push(`/lems/${user.role}`));
                 }}
               />
             )}

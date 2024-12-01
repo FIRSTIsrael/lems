@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Button, Stack } from '@mui/material';
 import {
-  Event,
-  EventState,
+  Division,
+  DivisionState,
   Team,
   RobotGameMatch,
   RobotGameTable,
@@ -19,8 +19,8 @@ import { Socket } from 'socket.io-client';
 type RoundInfo = { stage: RobotGameMatchStage; number: number };
 
 interface FieldScheduleEditorProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -28,8 +28,8 @@ interface FieldScheduleEditorProps {
 }
 
 const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   teams,
   tables,
   matches,
@@ -84,8 +84,8 @@ const FieldScheduleEditor: React.FC<FieldScheduleEditorProps> = ({
         ))}
       </Stack>
       <RoundScheduleEditor
-        event={event}
-        eventState={eventState}
+        division={division}
+        divisionState={divisionState}
         roundStage={activeRound.stage}
         roundNumber={activeRound.number}
         matches={matches.filter(

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
-import { Event } from '@lems/types';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ComposedChart,
@@ -17,17 +17,17 @@ import {
 import { blue } from '@mui/material/colors';
 
 interface ScoresPerTableChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
-const ScoresPerTableChart: React.FC<ScoresPerTableChartProps> = ({ event }) => {
+const ScoresPerTableChart: React.FC<ScoresPerTableChartProps> = ({ division }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/field/scores/tables`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/field/scores/tables`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   return (
     <Paper sx={{ p: 2, width: '100%', height: '100%' }}>

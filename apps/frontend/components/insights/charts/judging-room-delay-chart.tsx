@@ -3,12 +3,12 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
 import { Box, Card, Stack, Divider, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
-import { Event } from '@lems/types';
+import Grid from '@mui/material/Grid2';
+import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 interface JudgingRoomDelayChartProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
 }
 
 interface JudgingRoomDelayChartData {
@@ -17,14 +17,14 @@ interface JudgingRoomDelayChartData {
   average: number;
 }
 
-const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) => {
+const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ division }) => {
   const [data, setData] = useState<JudgingRoomDelayChartData | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/events/${event._id}/insights/judging/delay`).then(res =>
+    apiFetch(`/api/divisions/${division._id}/insights/judging/delay`).then(res =>
       res.json().then(data => setData(data))
     );
-  }, [event._id]);
+  }, [division._id]);
 
   const getDuration = (seconds: number | undefined): string => {
     if (!seconds) return '00:00';
@@ -36,12 +36,12 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
   return (
     <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
       <Box p={1} textAlign="center" sx={{ backgroundColor: red[600] }}>
-        <Typography fontSize="1.5rem" fontWeight={700} color="#fff">
+        <Typography fontSize="1.5rem" fontWeight={700} sx={{ color: '#FFF' }}>
           עיכוב
         </Typography>
       </Box>
       <Grid container>
-        <Grid xs={12} sx={{ pt: 2 }}>
+        <Grid sx={{ pt: 2 }} size={12}>
           <Typography fontWeight={500} fontSize="1.125rem" textAlign="center">
             עיכוב ממוצע
           </Typography>
@@ -49,7 +49,7 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
             {getDuration(data?.average)}
           </Typography>
         </Grid>
-        <Grid xs={12} mt={2} pt={2} borderTop={0.5} borderColor="#aaa">
+        <Grid mt={2} pt={2} borderTop={0.5} borderColor="#aaa" size={12}>
           <Stack
             direction="row"
             divider={<Divider orientation="vertical" flexItem />}
@@ -57,18 +57,18 @@ const JudgingRoomDelayChart: React.FC<JudgingRoomDelayChartProps> = ({ event }) 
             p={1}
           >
             <Stack spacing={0} textAlign="center">
-              <Typography color="text.secondary">עיכוב מינימלי</Typography>
+              <Typography color="textSecondary">עיכוב מינימלי</Typography>
               <Typography dir="ltr" fontWeight={600}>
                 {getDuration(data?.best.average)}
               </Typography>
-              <Typography color="text.secondary">חדר {data?.best.room}</Typography>
+              <Typography color="textSecondary">חדר {data?.best.room}</Typography>
             </Stack>
             <Stack spacing={0} textAlign="center">
-              <Typography color="text.secondary">עיכוב מקסימלי</Typography>
+              <Typography color="textSecondary">עיכוב מקסימלי</Typography>
               <Typography dir="ltr" fontWeight={600}>
                 {getDuration(data?.worst.average)}
               </Typography>
-              <Typography color="text.secondary">חדר {data?.worst.room}</Typography>
+              <Typography color="textSecondary">חדר {data?.worst.room}</Typography>
             </Stack>
           </Stack>
         </Grid>

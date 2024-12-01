@@ -1,7 +1,12 @@
+import { CSSProperties } from 'react';
 import Image from 'next/image';
 import { Stack } from '@mui/material';
 
-const LogoStack: React.FC = () => {
+interface LogoStackProps {
+  color?: CSSProperties['color'];
+}
+
+const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
   return (
     <Stack
       direction="row"
@@ -12,6 +17,11 @@ const LogoStack: React.FC = () => {
       width="100%"
       bgcolor="#f7f8f9"
       height={100}
+      sx={{
+        borderWidth: '10px 0 0 0',
+        borderStyle: 'solid',
+        borderColor: color ? color : undefined
+      }}
     >
       <Image
         src="/assets/audience-display/sponsors/first-israel-horizontal.svg"

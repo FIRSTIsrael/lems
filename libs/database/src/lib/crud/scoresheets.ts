@@ -10,22 +10,16 @@ export const getTeamScoresheets = (teamId: ObjectId) => {
   return db.collection<Scoresheet>('scoresheets').find({ teamId }).toArray();
 };
 
-export const getEventScoresheets = (eventId: ObjectId) => {
-  return db.collection<Scoresheet>('scoresheets').find({ eventId }).toArray();
+export const getDivisionScoresheets = (divisionId: ObjectId) => {
+  return db.collection<Scoresheet>('scoresheets').find({ divisionId }).toArray();
 };
 
 export const addScoresheet = (scoresheet: Scoresheet) => {
-  return db
-    .collection<Scoresheet>('scoresheets')
-    .insertOne(scoresheet)
-    .then(response => response);
+  return db.collection<Scoresheet>('scoresheets').insertOne(scoresheet);
 };
 
 export const addScoresheets = (scoresheets: Array<Scoresheet>) => {
-  return db
-    .collection<Scoresheet>('scoresheets')
-    .insertMany(scoresheets)
-    .then(response => response);
+  return db.collection<Scoresheet>('scoresheets').insertMany(scoresheets);
 };
 
 export const updateScoresheet = (
@@ -39,15 +33,9 @@ export const updateScoresheet = (
 };
 
 export const deleteScoresheet = (filter: Filter<Scoresheet>) => {
-  return db
-    .collection<Scoresheet>('scoresheets')
-    .deleteOne(filter)
-    .then(response => response);
+  return db.collection<Scoresheet>('scoresheets').deleteOne(filter);
 };
 
 export const deleteTeamScoresheets = (teamId: ObjectId) => {
-  return db
-    .collection<Scoresheet>('scoresheets')
-    .deleteMany({ teamId: teamId })
-    .then(response => response);
+  return db.collection<Scoresheet>('scoresheets').deleteMany({ teamId: teamId });
 };

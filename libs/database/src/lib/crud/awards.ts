@@ -6,38 +6,30 @@ export const getAward = (filter: Filter<Award>) => {
   return db.collection<Award>('awards').findOne(filter);
 };
 
-export const getEventAwards = (eventId: ObjectId) => {
-  return db.collection<Award>('awards').find({ eventId }).toArray();
+export const getDivisionAwards = (divisionId: ObjectId) => {
+  return db.collection<Award>('awards').find({ divisionId }).toArray();
 };
 
 export const addAward = (award: Award) => {
-  return db
-    .collection<Award>('awards')
-    .insertOne(award)
-    .then(response => response);
+  return db.collection<Award>('awards').insertOne(award);
 };
 
 export const addAwards = (awards: Array<Award>) => {
-  return db
-    .collection<Award>('awards')
-    .insertMany(awards)
-    .then(response => response);
+  return db.collection<Award>('awards').insertMany(awards);
 };
 
 export const updateAward = (filter: Filter<Award>, newAward: Partial<Award>, upsert = false) => {
   return db.collection<Award>('awards').updateOne(filter, { $set: newAward }, { upsert });
 };
 
-export const deleteAwards = (filter: Filter<Award>) => {
-  return db
-    .collection<Award>('awards')
-    .deleteOne(filter)
-    .then(response => response);
+export const deleteAward = (filter: Filter<Award>) => {
+  return db.collection<Award>('awards').deleteOne(filter);
 };
 
-export const deleteEventAwards = (eventId: ObjectId) => {
-  return db
-    .collection<Award>('awards')
-    .deleteMany({ eventId })
-    .then(response => response);
+export const deleteAwards = (filter: Filter<Award>) => {
+  return db.collection<Award>('awards').deleteMany(filter);
+};
+
+export const deleteDivisionAwards = (divisionId: ObjectId) => {
+  return db.collection<Award>('awards').deleteMany({ divisionId });
 };

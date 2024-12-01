@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
@@ -6,19 +6,19 @@ import { IconButton, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import { DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
-import { Event, EventState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
+import { Division, DivisionState, WSServerEmittedEvents, WSClientEmittedEvents } from '@lems/types';
 
 interface PresentationControllerProps {
-  event: WithId<Event>;
-  eventState: WithId<EventState>;
+  division: WithId<Division>;
+  divisionState: WithId<DivisionState>;
   presentationId: string;
   children: ReactElement;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const PresentationController: React.FC<PresentationControllerProps> = ({
-  event,
-  eventState,
+  division,
+  divisionState,
   presentationId,
   children,
   socket
@@ -41,7 +41,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
 
     socket.emit(
       'updatePresentation',
-      event._id.toString(),
+      division._id.toString(),
       presentationId,
       { activeView: newView },
       response => {
@@ -62,7 +62,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
           <Typography textAlign="center">שקף נוכחי</Typography>
           {React.Children.map(children, child => {
             return React.cloneElement(child, {
-              initialState: eventState.presentations[presentationId].activeView,
+              initialState: divisionState.presentations[presentationId].activeView,
               onViewUpdate: sendSlideUpdate,
               ref: deck
             });

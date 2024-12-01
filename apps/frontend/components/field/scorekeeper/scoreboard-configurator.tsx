@@ -3,28 +3,31 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
-  EventState,
+  DivisionState,
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   ScoreboardState
 } from '@lems/types';
 
 interface ScoreboardConfiguratorProps {
-  eventState: WithId<EventState>;
+  divisionState: WithId<DivisionState>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventState, socket }) => {
+const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
+  divisionState,
+  socket
+}) => {
   const [showCurrentMatch, setShowCurrentMatch] = useState<false | 'no-timer' | 'timer'>(
-    eventState.audienceDisplay.scoreboard.showCurrentMatch
+    divisionState.audienceDisplay.scoreboard.showCurrentMatch
   );
   const [showPreviousMatch, setShowPreviousMatch] = useState<boolean>(
-    eventState.audienceDisplay.scoreboard.showPreviousMatch
+    divisionState.audienceDisplay.scoreboard.showPreviousMatch
   );
   const [showSponsors, setShowSponsors] = useState<boolean>(
-    eventState.audienceDisplay.scoreboard.showSponsors
+    divisionState.audienceDisplay.scoreboard.showSponsors
   );
 
   const updateScoreboardSettings = () => {
@@ -36,16 +39,16 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
 
     socket.emit(
       'updateAudienceDisplay',
-      eventState.eventId.toString(),
+      divisionState.divisionId.toString(),
       { scoreboard: newScoreboardSettings },
       response => {
-        if (!response.ok) enqueueSnackbar('אופס, עדכון מסך הניקוד נכשל.', { variant: 'error' });
+        if (!response.ok) enqueueSnackbar('אופס, עדכון תצוגת הקהל נכשל.', { variant: 'error' });
       }
     );
   };
 
   return (
-    <Paper
+    (<Paper
       sx={{
         p: 4,
         mt: 2,
@@ -56,12 +59,12 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת מקצה נוכחי</Typography>
           <ToggleButtonGroup
             value={showCurrentMatch}
             exclusive
-            onChange={(event, value) => value !== null && setShowCurrentMatch(value)}
+            onChange={(division, value) => value !== null && setShowCurrentMatch(value)}
           >
             <ToggleButton sx={{ minWidth: 50 }} value={false}>
               לא
@@ -74,12 +77,12 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת מקצה קודם</Typography>
           <ToggleButtonGroup
             value={showPreviousMatch}
             exclusive
-            onChange={(event, value) => value !== null && setShowPreviousMatch(value)}
+            onChange={(division, value) => value !== null && setShowPreviousMatch(value)}
           >
             <ToggleButton sx={{ minWidth: 50 }} value={false}>
               לא
@@ -89,12 +92,12 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={4} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={4}>
           <Typography gutterBottom>הצגת נותני חסות</Typography>
           <ToggleButtonGroup
             value={showSponsors}
             exclusive
-            onChange={(event, value) => value !== null && setShowSponsors(value)}
+            onChange={(division, value) => value !== null && setShowSponsors(value)}
           >
             <ToggleButton sx={{ minWidth: 50 }} value={false}>
               לא
@@ -104,7 +107,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid xs={12} alignItems="center" display="flex" flexDirection="column">
+        <Grid alignItems="center" display="flex" flexDirection="column" size={12}>
           <Button
             sx={{ minWidth: 200 }}
             variant="contained"
@@ -114,7 +117,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({ eventSt
           </Button>
         </Grid>
       </Grid>
-    </Paper>
+    </Paper>)
   );
 };
 

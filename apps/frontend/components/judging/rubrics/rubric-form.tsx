@@ -21,9 +21,9 @@ import {
   Theme
 } from '@mui/material';
 import { purple } from '@mui/material/colors';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import {
-  Event,
+  Division,
   Team,
   Rubric,
   JudgingCategory,
@@ -34,20 +34,21 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
-import FormikTextField from '../../general/forms/formik-text-field';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
+import FeedbackRow from './feedback-row';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
+import CvFieldUncheckedIcon from '../../icons/CvFieldUncheckedIcon';
 
 interface RubricFormProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
-  schema: RubricsSchema<JudgingCategory>;
+  schema: RubricsSchema;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   hideTitle?: boolean;
@@ -55,7 +56,7 @@ interface RubricFormProps {
 }
 
 const RubricForm: React.FC<RubricFormProps> = ({
-  event,
+  division,
   team,
   rubric,
   schema,
@@ -77,16 +78,13 @@ const RubricForm: React.FC<RubricFormProps> = ({
     user.role === 'judge-advisor';
 
   const getEmptyRubric = () => {
-    const awardKeys = [...awardCandidates] as const;
-    const fieldKeys = [...fields] as const;
-
-    const awards: { [key in (typeof awardKeys)[number]]: boolean } = {} as {
-      [key in (typeof awardKeys)[number]]: boolean;
+    const awards: { [key in (typeof awardCandidates)[number]]: boolean } = {} as {
+      [key in (typeof awardCandidates)[number]]: boolean;
     };
     awardCandidates.map(award => (awards[award] = false));
 
-    const values: { [key in (typeof fieldKeys)[number]]: RubricValue } = {} as {
-      [key in (typeof fieldKeys)[number]]: RubricValue;
+    const values: { [key in (typeof fields)[number]]: RubricValue } = {} as {
+      [key in (typeof fields)[number]]: RubricValue;
     };
     fields.map(field => (values[field] = { value: 0 }));
 
@@ -106,7 +104,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
     socket.emit(
       'updateRubric',
-      event._id.toString(),
+      division._id.toString(),
       team._id.toString(),
       rubric._id.toString(),
       updatedRubric as Partial<Rubric<typeof rubric.category>>,
@@ -123,6 +121,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
   };
 
   const validateRubric = (formValues: FormikValues) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const errors: any = {};
 
     fields.forEach(field => {
@@ -133,9 +132,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
       }
     });
 
-    schema.feedback?.forEach(feedback => {
-      if (!formValues.feedback[feedback.id]) {
-        errors[feedback.id] = 'שדה חובה';
+    Object.entries(schema.feedback?.fields ?? {}).forEach(([key, value]) => {
+      if (!formValues.feedback[key]) {
+        errors[key] = 'שדה חובה';
       }
     });
 
@@ -193,33 +192,35 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 {schema.title}
               </Typography>
             )}
-            {(!hideDescription || (schema.awards?.length || 0) > 0) && (
+            {!hideDescription && (
               <Grid container spacing={6} sx={{ mb: 4 }}>
                 {!hideDescription && (
-                  <Grid xs={12} md={(schema.awards?.length || 0) > 0 ? 5 : 9}>
-                    <Typography color="text.secondary" fontSize="0.875rem" component="span">
-                      <Markdown skipHtml>{schema.description}</Markdown>
-                    </Typography>
-                  </Grid>
-                )}
-
-                {schema.awards && schema.awards.length > 0 && (
-                  <Grid xs={12} md={7}>
-                    <Typography variant="body2" gutterBottom>
-                      אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
-                    </Typography>
-                    {schema.awards.map(award => (
-                      <AwardCandidatureCheckbox
-                        key={award.id}
-                        name={`awards.${award.id}`}
-                        title={award.title}
-                        description={award.description}
-                        disabled={!isEditable}
-                      />
-                    ))}
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 9
+                    }}
+                  >
+                    <Markdown skipHtml>{schema.description}</Markdown>
                   </Grid>
                 )}
               </Grid>
+            )}
+            {schema.awards && schema.awards.length > 0 && (
+              <Stack>
+                <Typography variant="body2" gutterBottom>
+                  אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
+                </Typography>
+                {schema.awards.map(award => (
+                  <AwardCandidatureCheckbox
+                    key={award.id}
+                    name={`awards.${award.id}`}
+                    title={award.title}
+                    description={award.description}
+                    disabled={!isEditable}
+                  />
+                ))}
+              </Stack>
             )}
 
             <Stack
@@ -280,8 +281,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
             <Table
               sx={{
+                pb: 2,
                 tableLayout: 'fixed',
-                borderBottom: '1px solid rgba(0,0,0,0.2)',
                 '@media print': {
                   fontSize: '0.75rem'
                 }
@@ -295,41 +296,45 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   hideDescriptions={schema.category !== 'core-values'}
                 />
               </TableHead>
-              {schema.sections.map(section => (
-                <TableBody key={section.title}>
-                  <TitleRow
-                    title={section.title}
-                    description={section.description}
-                    category={schema.category}
-                  />
-                  {section.fields.map(field => (
-                    <RatingRow
-                      key={field.id}
-                      name={`values.${field.id}`}
-                      label_1={field.label_1}
-                      label_2={field.label_2}
-                      label_3={field.label_3}
-                      label_4={field.label_4}
-                      disabled={!isEditable}
+              <TableBody>
+                {schema.sections.map((section, index) => (
+                  <React.Fragment key={index}>
+                    <TitleRow
+                      title={section.title}
+                      description={section.description}
+                      category={schema.category}
                     />
-                  ))}
-                </TableBody>
-              ))}
+                    {section.fields.map(field => (
+                      <RatingRow
+                        key={field.id}
+                        name={`values.${field.id}`}
+                        label_1={field.label_1}
+                        label_2={field.label_2}
+                        label_3={field.label_3}
+                        label_4={field.label_4}
+                        disabled={!isEditable}
+                        isCoreValuesField={field.isCoreValuesField}
+                      />
+                    ))}
+                  </React.Fragment>
+                ))}
+                {schema.feedback && (
+                  <FeedbackRow
+                    description={schema.feedback.description}
+                    feedback={schema.feedback.fields}
+                    isEditable={isEditable}
+                    category={rubric.category}
+                  />
+                )}
+              </TableBody>
             </Table>
 
-            <Stack sx={{ my: 4 }} direction="row" spacing={4}>
-              {schema.feedback?.map(feedback => (
-                <FormikTextField
-                  key={feedback.id}
-                  name={`feedback.${feedback.id}`}
-                  label={feedback.title}
-                  disabled={!isEditable}
-                  spellCheck
-                  multiline
-                  minRows={4}
-                />
-              ))}
-            </Stack>
+            {schema.cvDescription && (
+              <Stack direction="row" spacing={2} sx={{ pb: 1 }}>
+                <CvFieldUncheckedIcon />
+                <Markdown>{schema.cvDescription}</Markdown>
+              </Stack>
+            )}
 
             {!isValid && (
               <Alert
@@ -354,7 +359,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     color="inherit"
                     onClick={() => {
                       handleSync(true, values, 'waiting-for-review').then(() =>
-                        router.push(`/event/${event._id}/${user.role}`)
+                        router.push(`/lems/${user.role}`)
                       );
                     }}
                     sx={actionButtonStyle}
@@ -371,7 +376,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   color="inherit"
                   onClick={() => {
                     handleSync(false, values, 'ready').then(() =>
-                      router.push(`/event/${event._id}/${user.role}`)
+                      router.push(`/lems/${user.role}`)
                     );
                   }}
                   sx={actionButtonStyle}
@@ -399,8 +404,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <DialogContent>
                     <DialogContentText id="reset-dialog-description">
                       {`איפוס המחוון ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
-                        בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
-                        של קבוצה ${localizeTeam(team)}?`}
+                      בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
+                      של קבוצה ${localizeTeam(team)}?`}
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>

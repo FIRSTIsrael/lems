@@ -42,21 +42,25 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
     return 'נגמר הזמן!';
   }, [secondsJudging]);
 
-  const { barColor, barProgress } = useMemo(() => {
+  const { barColor, barProgress, soundId } = useMemo(() => {
     let currentSeconds = secondsJudging;
 
     const stages = [
-      { duration: 60, color: 'inherit' },
-      { duration: 10 * 60, color: 'primary' },
-      { duration: 10 * 60, color: 'success' },
-      { duration: 6 * 60, color: 'error' }
+      { duration: 60, color: 'inherit', id: 1 },
+      { duration: 5 * 60, color: 'primary', id: 2 },
+      { duration: 5 * 60, color: 'primary', id: 3 },
+      { duration: 5 * 60, color: 'success', id: 4 },
+      { duration: 5 * 60, color: 'success', id: 5 },
+      { duration: 3 * 60, color: 'error', id: 6 },
+      { duration: 3 * 60, color: 'error', id: 7 }
     ];
 
     for (const stage of stages) {
       if (currentSeconds <= stage.duration) {
         return {
           barColor: stage.color,
-          barProgress: 100 - (currentSeconds / stage.duration) * 100
+          barProgress: 100 - (currentSeconds / stage.duration) * 100,
+          soundId: stage.id
         };
       }
       currentSeconds -= stage.duration;
@@ -72,8 +76,8 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
   }, [secondsJudging]);
 
   useEffect(() => {
-    if (barColor !== 'inherit') new Audio('/assets/sounds/judging/judging-change.wav').play();
-  }, [barColor]);
+    if (soundId !== 1) new Audio('/assets/sounds/judging/judging-change.wav').play();
+  }, [soundId]);
 
   return (
     <Paper
@@ -111,7 +115,13 @@ const JudgingTimer: React.FC<TimerProps> = ({ session, team }) => {
       <Typography variant="h4" fontSize="1.5rem" fontWeight={400} gutterBottom>
         {localizeTeam(team)}
       </Typography>
-      <Typography variant="body1" fontSize="1rem" fontWeight={600} color="#666" gutterBottom>
+      <Typography
+        variant="body1"
+        fontSize="1rem"
+        fontWeight={600}
+        sx={{ color: '#666' }}
+        gutterBottom
+      >
         מפגש השיפוט יסתיים בשעה {sessionEnd.format('HH:mm')}
       </Typography>
     </Paper>

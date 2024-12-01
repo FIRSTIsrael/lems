@@ -15,21 +15,21 @@ import {
   DialogTitle,
   TextField
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/';
+import Grid from '@mui/material/Grid2';
 import TaskIcon from '@mui/icons-material/Task';
-import { Event, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
 import { localizedTicketTypes } from '../../localization/tickets';
 import { useState } from 'react';
 
 interface TicketCardProps extends PaperProps {
-  event: WithId<Event>;
+  division: WithId<Division>;
   ticket: WithId<Ticket>;
-  team: WithId<Team>;
+  team: WithId<Team> | null;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ...props }) => {
+const TicketCard: React.FC<TicketCardProps> = ({ division, ticket, team, socket, ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [reasonForClose, setReasonForClose] = useState<string | undefined>(ticket.reasonForClose);
 
@@ -37,7 +37,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
     <>
       <Grid
         component={Paper}
-        xs={5}
+        size={5}
         key={ticket._id.toString()}
         p={2}
         overflow="auto"
@@ -45,11 +45,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         {...props}
       >
         <Typography fontSize="1rem" fontWeight={700} gutterBottom>
-          {localizeTeam(team)}
+          {team ? localizeTeam(team) : 'קריאה כללית'}
         </Typography>
         <Typography fontSize="1rem">{localizedTicketTypes[ticket.type]}</Typography>
         <Typography
-          color="text.secondary"
+          color="textSecondary"
           maxHeight={225}
           width="100%"
           overflow={'auto'}
@@ -57,11 +57,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
         >
           {ticket.content}
         </Typography>
-        {ticket.closed ? (ticket.reasonForClose && (
-          <Typography color="text.secondary" fontSize="0.8rem">
-            <b>סיבת הסגירה:</b> {ticket.reasonForClose}
-          </Typography>
-        )) : (
+        {ticket.closed ? (
+          ticket.reasonForClose && (
+            <Typography color="textSecondary" fontSize="0.8rem">
+              <b>סיבת הסגירה:</b> {ticket.reasonForClose}
+            </Typography>
+          )
+        ) : (
           <Box display="flex" justifyContent="flex-end">
             <IconButton onClick={() => setOpen(true)}>
               <TaskIcon />
@@ -80,7 +82,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
           <DialogContentText id="alert-dialog-description">
             שימו לב! סגירת קריאה היא סופית ולא ניתן לבטל פעולה זו. האם אתם בטוחים?
           </DialogContentText>
-          <TextField sx={{mt: 2}} label="סיבת הסגירה" fullWidth onChange={e => setReasonForClose(e.target.value)} value={reasonForClose} />
+          <TextField
+            sx={{ mt: 2 }}
+            label="סיבת הסגירה"
+            fullWidth
+            onChange={e => setReasonForClose(e.target.value)}
+            value={reasonForClose}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>
@@ -90,8 +98,8 @@ const TicketCard: React.FC<TicketCardProps> = ({ event, ticket, team, socket, ..
             onClick={() => {
               socket.emit(
                 'updateTicket',
-                event._id.toString(),
-                team._id.toString(),
+                division._id.toString(),
+                team ? team._id.toString() : null,
                 ticket._id.toString(),
                 { closed: new Date(), reasonForClose },
                 response => {

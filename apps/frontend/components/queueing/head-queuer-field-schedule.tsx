@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Socket } from 'socket.io-client';
 import {
   Team,
@@ -29,7 +29,7 @@ import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerFieldScheduleProps {
-  eventId: ObjectId;
+  divisionId: ObjectId;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -38,7 +38,7 @@ interface HeadQueuerFieldScheduleProps {
 }
 
 const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
-  eventId,
+  divisionId,
   teams,
   matches,
   tables,
@@ -51,7 +51,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
     (matchId: ObjectId, called: boolean) => {
       socket.emit(
         'updateMatchBrief',
-        eventId.toString(),
+        divisionId.toString(),
         matchId.toString(),
         { called },
         response => {
@@ -61,14 +61,14 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
         }
       );
     },
-    [eventId, socket]
+    [divisionId, socket]
   );
 
   const updateParticipantQueueStatus = useCallback(
     (match: WithId<RobotGameMatch>, teamId: ObjectId, newQueueStatus: boolean) => {
       socket.emit(
         'updateMatchParticipant',
-        eventId.toString(),
+        divisionId.toString(),
         match._id.toString(),
         {
           teamId: teamId.toString(),
@@ -81,7 +81,17 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
         }
       );
     },
-    [socket, eventId]
+    [socket, divisionId]
+  );
+
+  const availableMatches = useMemo(
+    () =>
+      matches.filter(
+        match =>
+          match.status === 'not-started' &&
+          currentTime >= dayjs(match.scheduledTime).subtract(15, 'minutes')
+      ),
+    [matches, currentTime]
   );
 
   return (
@@ -100,67 +110,57 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {matches
-            .filter(
-              m =>
-                m.status === 'not-started' &&
-                currentTime >= dayjs(m.scheduledTime).subtract(15, 'minutes')
-            )
-            .slice(0, 5)
-            .map(match => (
-              <TableRow
-                key={match.number}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row" align="center">
-                  {match.number}
-                </TableCell>
-                <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
-                {match.participants.map(({ teamId, tableName, queued }) => {
-                  const team = teamId ? teams.find(t => t._id == teamId) : undefined;
-                  const teamInJudging = sessions
-                    .filter(
-                      s =>
-                        s.status === 'in-progress' ||
-                        (s.status === 'not-started' && s.called && s.queued)
-                    )
-                    .find(s => s.teamId === teamId);
-                  return (
-                    <TableCell key={tableName} align="center">
-                      <Stack spacing={1} alignItems="center" justifyContent="center">
-                        {team && <StyledTeamTooltip team={team} />}
-                        {team &&
-                          match.called &&
-                          (teamInJudging ? (
-                            <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
-                              <WarningAmberRoundedIcon color="warning" />
-                            </Tooltip>
-                          ) : (
-                            <Checkbox
-                              checked={queued}
-                              disabled={!team.registered}
-                              onClick={e => {
-                                e.preventDefault();
-                                updateParticipantQueueStatus(match, team._id, !queued);
-                              }}
-                            />
-                          ))}
-                      </Stack>
-                    </TableCell>
-                  );
-                })}
-                <TableCell sx={{ pl: 1 }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color={match.called ? 'error' : 'primary'}
-                    onClick={() => callMatch(match._id, !match.called)}
-                  >
-                    {match.called ? 'ביטול' : 'קריאה'}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+          {availableMatches.slice(0, 5).map(match => (
+            <TableRow key={match.number} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell component="th" scope="row" align="center">
+                {match.number}
+              </TableCell>
+              <TableCell align="center">{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
+              {match.participants.map(({ teamId, tableName, queued }) => {
+                const team = teamId ? teams.find(t => t._id == teamId) : undefined;
+                const teamInJudging = sessions
+                  .filter(
+                    s =>
+                      s.status === 'in-progress' ||
+                      (s.status === 'not-started' && s.called && s.queued)
+                  )
+                  .find(s => s.teamId === teamId);
+                return (
+                  <TableCell key={tableName} align="center">
+                    <Stack spacing={1} alignItems="center" justifyContent="center">
+                      {team && <StyledTeamTooltip team={team} />}
+                      {team &&
+                        match.called &&
+                        (teamInJudging ? (
+                          <Tooltip title="הקבוצה נמצאת בחדר השיפוט כרגע!" arrow>
+                            <WarningAmberRoundedIcon color="warning" />
+                          </Tooltip>
+                        ) : (
+                          <Checkbox
+                            checked={queued}
+                            disabled={!team.registered}
+                            onClick={e => {
+                              e.preventDefault();
+                              updateParticipantQueueStatus(match, team._id, !queued);
+                            }}
+                          />
+                        ))}
+                    </Stack>
+                  </TableCell>
+                );
+              })}
+              <TableCell sx={{ pl: 1 }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  color={match.called ? 'error' : 'primary'}
+                  onClick={() => callMatch(match._id, !match.called)}
+                >
+                  {match.called ? 'ביטול' : 'קריאה'}
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
