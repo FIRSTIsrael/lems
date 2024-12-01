@@ -1,15 +1,16 @@
 import express, { Request, Response } from 'express';
 import dashboardTeamsRouter from './teams/index';
 import * as db from '@lems/database';
-import dashboardDivisionValidator from '../../../middlewares/dashboard/division-validator';
+import eventSalesforceValidator from '../../../middlewares/dashboard/event-salesforce-validator';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:eventSalesforceId', dashboardDivisionValidator);
+router.use('/:eventSalesforceId', eventSalesforceValidator);
 
 router.get('/:eventSalesforceId', (req: Request, res: Response) => {
   db.getDivisionState({ divisionId: req.division._id }).then(divisionState => {
     res.json({
+      eventName: req.event.name,
       name: req.division.name,
       color: req.division.color,
       allowTeamExports: divisionState.allowTeamExports
