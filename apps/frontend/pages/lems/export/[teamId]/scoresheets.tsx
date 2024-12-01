@@ -273,20 +273,24 @@ const Page: NextPage<Props> = ({ user, division, team, scoresheets }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests(
-    {
-      user: '/api/me',
-      division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
-      team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
-      scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
-    },
-    ctx
-  );
-  data.scoresheets = data.scoresheets.filter(
-    (scoresheet: Scoresheet) => scoresheet.stage !== 'practice'
-  );
+  try {
+    const data = await serverSideGetRequests(
+      {
+        user: '/api/me',
+        division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
+        team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
+        scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
+      },
+      ctx
+    );
+    data.scoresheets = data.scoresheets.filter(
+      (scoresheet: Scoresheet) => scoresheet.stage !== 'practice'
+    );
 
-  return { props: { ...data } };
+    return { props: { ...data } };
+  } catch {
+    return { redirect: { destination: '/login', permanent: false } };
+  }
 };
 
 export default Page;

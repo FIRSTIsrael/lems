@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import matchesRouter from './matches';
+import roleValidator from '../../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
@@ -20,6 +21,6 @@ router.get('/:tableId', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:tableId/matches', matchesRouter);
+router.use('/:tableId/matches', roleValidator('referee'), matchesRouter);
 
 export default router;

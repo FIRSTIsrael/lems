@@ -286,17 +286,21 @@ const Page: NextPage<Props> = ({ user, division, team, rubrics }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests(
-    {
-      user: '/api/me',
-      division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
-      team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
-      rubrics: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/rubrics`
-    },
-    ctx
-  );
+  try {
+    const data = await serverSideGetRequests(
+      {
+        user: '/api/me',
+        division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
+        team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
+        rubrics: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/rubrics`
+      },
+      ctx
+    );
 
-  return { props: { ...data } };
+    return { props: { ...data } };
+  } catch {
+    return { redirect: { destination: '/login', permanent: false } };
+  }
 };
 
 export default Page;
