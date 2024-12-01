@@ -13,7 +13,8 @@ import {
   RobotGameMatch,
   RoleTypes,
   JudgingSession,
-  RobotGameTable
+  RobotGameTable,
+  EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -21,11 +22,12 @@ import Countdown from '../../../components/general/countdown';
 import FieldQueueReport from '../../../components/queueing/field-queue-report';
 import ActiveMatch from '../../../components/field/scorekeeper/active-match';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/use-time';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
@@ -214,7 +216,14 @@ const Page: NextPage<Props> = ({
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מצב הזירה | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -238,16 +247,16 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        sessions: `/api/divisions/${divisionId}/sessions`
       },
       ctx
     );

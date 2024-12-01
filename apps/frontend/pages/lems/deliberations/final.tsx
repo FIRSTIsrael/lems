@@ -25,7 +25,7 @@ import {
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ChampionsDeliberationLayout from '../../../components/deliberations/final/champions/champions-deliberation-layout';
 import CoreAwardsDeliberationLayout from '../../../components/deliberations/final/core-awards/core-awards-deliberation-layout';
@@ -415,20 +415,20 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        awards: `/api/divisions/${user.divisionId}/awards`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        robotConsistency: `/api/divisions/${user.divisionId}/insights/field/scores/consistency`,
-        deliberations: `/api/divisions/${user.divisionId}/deliberations`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        awards: `/api/divisions/${divisionId}/awards`,
+        rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        robotConsistency: `/api/divisions/${divisionId}/insights/field/scores/consistency`,
+        deliberations: `/api/divisions/${divisionId}/deliberations`
       },
       ctx
     );

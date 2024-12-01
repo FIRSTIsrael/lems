@@ -24,7 +24,7 @@ import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 import { Deliberation, DeliberationRef } from '../../../../components/deliberations/deliberation';
@@ -275,26 +275,24 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
     const category = ctx.params?.judgingCategory as JudgingCategory;
 
     if (!JudgingCategoryTypes.includes(category)) {
       return { notFound: true };
     }
 
-    console.log(`/api/divisions/${user.divisionId}/deliberations/category/${category}`);
-
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`,
-        roomScores: `/api/divisions/${user.divisionId}/insights/judging/scores/rooms`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        deliberation: `/api/divisions/${divisionId}/deliberations/category/${category}`,
+        roomScores: `/api/divisions/${divisionId}/insights/judging/scores/rooms`
       },
       ctx
     );

@@ -22,7 +22,7 @@ import Message from '../../components/audience-display/message';
 import AwardsPresentation from '../../components/presentations/awards-presentation';
 import FIRSTLogo from '../../components/audience-display/first-logo';
 import AudienceDisplayContainer from '../../components/audience-display/audience-display-container';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { apiFetch, getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import useKeyboardShortcut from '../../hooks/use-keyboard-shortcut';
 import { useWebsocket } from '../../hooks/use-websocket';
 
@@ -206,15 +206,15 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`
       },
       ctx
     );

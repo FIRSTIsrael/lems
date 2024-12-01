@@ -16,7 +16,7 @@ import {
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Countdown from '../../../components/general/countdown';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/use-time';
 import Grid from '@mui/material/Grid2';
@@ -181,13 +181,13 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        matches: `/api/divisions/${user.divisionId}/matches`
+        division: `/api/divisions/${divisionId}`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        matches: `/api/divisions/${divisionId}/matches`
       },
       ctx
     );

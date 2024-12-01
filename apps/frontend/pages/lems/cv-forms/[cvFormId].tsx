@@ -10,7 +10,7 @@ import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import CVForm from '../../../components/cv-form/cv-form';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
@@ -71,12 +71,12 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        cvForm: `/api/divisions/${user.divisionId}/cv-forms/${ctx.params?.cvFormId}`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        cvForm: `/api/divisions/${divisionId}/cv-forms/${ctx.params?.cvFormId}`
       },
       ctx
     );

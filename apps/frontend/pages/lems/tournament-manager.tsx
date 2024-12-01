@@ -15,7 +15,8 @@ import {
   Team,
   Ticket,
   RobotGameTable,
-  RobotGameMatch
+  RobotGameMatch,
+  EventUserAllowedRoles
 } from '@lems/types';
 import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
@@ -30,9 +31,10 @@ import CVPanel from '../../components/cv-form/cv-panel';
 import BadgeTab from '../../components/general/badge-tab';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizedRoles } from '../../localization/roles';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
+import DivisionDropdown from '../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -49,7 +51,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({
   user,
-  division,
+  division: initialDivision,
   divisionState: initialDivisionState,
   teams: initialTeams,
   tickets: initialTickets,
@@ -61,6 +63,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
+  const [division] = useState<WithId<DivisionWithEvent>>(initialDivision);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
@@ -211,11 +214,10 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? (
-              <InsightsLink division={division} />
-            ) : (
-              <ReportLink division={division} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
             )}
+            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }
         color={division.color}
@@ -270,19 +272,19 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        tickets: `/api/divisions/${user.divisionId}/tickets`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        tickets: `/api/divisions/${divisionId}/tickets`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`
       },
       ctx
     );

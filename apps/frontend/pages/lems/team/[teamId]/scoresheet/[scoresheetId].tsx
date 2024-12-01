@@ -31,7 +31,11 @@ import {
 import Layout from '../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
+import {
+  apiFetch,
+  getUserAndDivision,
+  serverSideGetRequests
+} from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../localization/teams';
 import { localizedMatchStage } from '../../../../../localization/field';
@@ -297,21 +301,19 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        scoresheet: `/api/divisions/${user.divisionId}/scoresheets/${ctx.params?.scoresheetId}`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        scoresheet: `/api/divisions/${divisionId}/scoresheets/${ctx.params?.scoresheetId}`
       },
       ctx
     );
 
-    const matches = await apiFetch(
-      `/api/divisions/${user.divisionId}/matches`,
-      undefined,
-      ctx
-    ).then(res => res?.json());
+    const matches = await apiFetch(`/api/divisions/${divisionId}/matches`, undefined, ctx).then(
+      res => res?.json()
+    );
     const match = matches.find(
       (m: RobotGameMatch) =>
         m.participants
@@ -338,7 +340,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
 
     const table = await apiFetch(
-      `/api/divisions/${user.divisionId}/tables/${tableId}`,
+      `/api/divisions/${divisionId}/tables/${tableId}`,
       undefined,
       ctx
     ).then(res => res.json());

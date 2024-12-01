@@ -3,23 +3,25 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Switch, FormControlLabel } from '@mui/material';
+import { Switch, FormControlLabel, Stack } from '@mui/material';
 import {
   DivisionWithEvent,
   Team,
   JudgingRoom,
   SafeUser,
   JudgingSession,
-  RoleTypes
+  RoleTypes,
+  EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportJudgingSchedule from '../../../components/judging/report-judging-schedule';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -87,7 +89,14 @@ const Page: NextPage<Props> = ({
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -118,14 +127,14 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withSchedule=true&withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`
+        division: `/api/divisions/${divisionId}?withSchedule=true&withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`
       },
       ctx
     );

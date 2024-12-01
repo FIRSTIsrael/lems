@@ -23,11 +23,13 @@ import Grid from '@mui/material/Grid2';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
-import { DivisionSwatches } from '@lems/types';
+import { DivisionSwatches, EventUserAllowedRoles, EventUserAllowedRoleTypes } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import FormikTextField from '../../../components/general/forms/formik-text-field';
+import FormikCheckbox from '../../../components/general/forms/formik-checkbox';
 import ColorPickerButton from '../../../components/admin/color-picker-button';
+import { localizedRoles } from '../../../localization/roles';
 
 interface EventCreateFormValues {
   name: string;
@@ -35,6 +37,7 @@ interface EventCreateFormValues {
   enableDivisions: boolean;
   startDate: Dayjs;
   endDate: Dayjs;
+  eventUsers: Record<EventUserAllowedRoles, boolean>;
   divisions: {
     name: string;
     color: string;
@@ -52,7 +55,7 @@ const DivisionField: React.FC<{ index: number }> = ({ index }) => {
           {({ field, form }: FieldProps) => (
             <ColorPickerButton
               swatches={DivisionSwatches}
-              sx={{ width: 120 }}
+              sx={{ width: 120, minHeight: 56 }}
               value={field.value}
               setColor={newColor => form.setFieldValue(field.name, newColor)}
             />
@@ -126,6 +129,10 @@ const Page: NextPage = () => {
       name: '',
       salesforceId: '',
       enableDivisions: false,
+      eventUsers: EventUserAllowedRoleTypes.reduce(
+        (a, r) => ({ ...a, [r]: false }),
+        {} as Record<EventUserAllowedRoles, boolean>
+      ),
       startDate: getDefaultDate(),
       endDate: getDefaultDate(),
       divisions: [{ name: '', color: DivisionSwatches[0] }]
@@ -217,15 +224,38 @@ const Page: NextPage = () => {
                     fullWidth
                   />
                 </Stack>
-                <Grid size={12}>
-                  <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
-                    בתים
-                  </Typography>
-                </Grid>
                 {values.enableDivisions ? (
                   <>
+                    <Grid size={12}>
+                      <Typography fontSize="1.5rem" fontWeight={500}>
+                        משתמשי אירוע
+                      </Typography>
+                      <Typography color="textSecondary" fontSize="0.75rem">
+                        משתמשי אירוע יקבלו גישה למידע מכל הבתים ויוכלו לעבור ביניהם בלחיצת כפתור.
+                      </Typography>
+                    </Grid>
+                    <Grid size={12}>
+                      <Stack direction="row" spacing={4}>
+                        {EventUserAllowedRoleTypes.map((user, index) => (
+                          <FormikCheckbox
+                            key={index}
+                            name={`eventUsers.${user}`}
+                            label={localizedRoles[user].name}
+                          />
+                        ))}
+                      </Stack>
+                    </Grid>
+
+                    <Grid size={12}>
+                      <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                        בתים
+                      </Typography>
+                    </Grid>
+
                     {values.divisions.map((division, index) => (
-                      <DivisionField key={index} index={index} />
+                      <Grid size={12} key={index}>
+                        <DivisionField index={index} />
+                      </Grid>
                     ))}
                     <Grid size={12}>
                       <Tooltip title="הוספת בית" arrow>
@@ -251,13 +281,13 @@ const Page: NextPage = () => {
                     </Grid>
                   </>
                 ) : (
-                  <Grid size={4}>
+                  <Grid size={12}>
                     <Button
                       variant="contained"
                       startIcon={<HomeIcon />}
                       size="large"
-                      fullWidth
                       onClick={() => setFieldValue('enableDivisions', true)}
+                      sx={{ width: 350 }}
                     >
                       פיצול האירוע לבתים
                     </Button>
@@ -265,7 +295,7 @@ const Page: NextPage = () => {
                 )}
               </Grid>
               <Stack direction="row" marginTop={2} justifyContent="center">
-                <Button type="submit" variant="contained" sx={{ minWidth: 180 }}>
+                <Button type="submit" variant="contained" sx={{ minWidth: 180, mb: 2 }}>
                   צור אירוע
                 </Button>
               </Stack>

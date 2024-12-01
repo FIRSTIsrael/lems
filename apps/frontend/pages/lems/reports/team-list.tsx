@@ -12,20 +12,29 @@ import {
   TableSortLabel,
   TableRow,
   Box,
-  IconButton
+  IconButton,
+  Stack
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
-import { DivisionWithEvent, Team, SafeUser, RoleTypes, Role } from '@lems/types';
+import {
+  DivisionWithEvent,
+  Team,
+  SafeUser,
+  RoleTypes,
+  Role,
+  EventUserAllowedRoles
+} from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -103,7 +112,14 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -188,12 +204,12 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`
       },
       ctx
     );

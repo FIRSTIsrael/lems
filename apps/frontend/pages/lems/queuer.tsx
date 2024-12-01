@@ -24,7 +24,7 @@ import QueuerFieldTeamDisplay from '../../components/queueing/queuer-field-team-
 import QueuerFieldSchedule from '../../components/queueing/queuer-field-schedule';
 import QueuerPitMap from '../../components/queueing/queuer-pit-map';
 import QueuerJudgingSchedule from '../../components/queueing/queuer-judging-schedule';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles, localizedDivisionSection } from '../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-team-display';
 import { localizeDivisionTitle } from '../../localization/event';
@@ -186,17 +186,17 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}?withEvent=true`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        matches: `/api/divisions/${user.divisionId}/matches`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        matches: `/api/divisions/${divisionId}/matches`
       },
       ctx
     );
