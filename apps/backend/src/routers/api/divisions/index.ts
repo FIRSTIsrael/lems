@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { DivisionState } from '@lems/types';
+import { DivisionState, RoleTypes } from '@lems/types';
 import * as db from '@lems/database';
 import asyncHandler from 'express-async-handler';
 import divisionValidator from '../../../middlewares/division-validator';
@@ -18,6 +18,7 @@ import cvFormsRouter from './cv-forms';
 import exportRouter from './export';
 import insightsRouter from './insights';
 import deliberationsRouter from './deliberations';
+import roleValidator from '../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
@@ -60,32 +61,48 @@ router.put('/:divisionId/state', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:divisionId/awards', awardsRouter);
+router.use('/:eventId/awards', roleValidator('judge-advisor'), awardsRouter);
 
-router.use('/:divisionId/rooms', roomsRouter);
+router.use('/:eventId/rooms', roomsRouter);
 
-router.use('/:divisionId/tables', tablesRouter);
+router.use('/:eventId/tables', tablesRouter);
 
-router.use('/:divisionId/users', usersRouter);
+router.use('/:eventId/users', roleValidator([]), usersRouter);
 
-router.use('/:divisionId/sessions', sessionsRouter);
+router.use('/:eventId/sessions', roleValidator([...RoleTypes]), sessionsRouter);
 
-router.use('/:divisionId/matches', matchesRouter);
+router.use('/:eventId/matches', matchesRouter);
 
-router.use('/:divisionId/teams', teamsRouter);
+router.use('/:eventId/teams', teamsRouter);
 
-router.use('/:divisionId/rubrics', rubricsRouter);
+router.use('/:eventId/rubrics', roleValidator(['judge-advisor', 'lead-judge']), rubricsRouter);
 
-router.use('/:divisionId/scoresheets', scoresheetRouter);
+router.use(
+  '/:eventId/scoresheets',
+  roleValidator(['audience-display', 'head-referee', 'reports', 'judge']),
+  scoresheetRouter
+);
 
-router.use('/:divisionId/tickets', ticketsRouter);
+router.use('/:eventId/tickets', roleValidator(['pit-admin', 'tournament-manager']), ticketsRouter);
 
-router.use('/:divisionId/cv-forms', cvFormsRouter);
+router.use(
+  '/:eventId/cv-forms',
+  roleValidator(['judge-advisor', 'tournament-manager']),
+  cvFormsRouter
+);
 
-router.use('/:divisionId/export', exportRouter);
+router.use('/:eventId/export', roleValidator('judge-advisor'), exportRouter);
 
-router.use('/:divisionId/insights', insightsRouter);
+router.use(
+  '/:eventId/insights',
+  roleValidator(['head-referee', 'judge-advisor', 'lead-judge', 'tournament-manager']),
+  insightsRouter
+);
 
-router.use('/:divisionId/deliberations', deliberationsRouter);
+router.use(
+  '/:divisionId/deliberations',
+  roleValidator(['lead-judge', 'judge-advisor', 'tournament-manager']),
+  deliberationsRouter
+);
 
 export default router;
