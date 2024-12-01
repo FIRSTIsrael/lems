@@ -14,7 +14,6 @@ import {
   RoleTypes,
   JudgingSession,
   RobotGameTable,
-  EventUserAllowedRoleTypes,
   EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -220,7 +219,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
               <DivisionDropdown event={division.event} selected={division._id.toString()} />
             )}
           </Stack>

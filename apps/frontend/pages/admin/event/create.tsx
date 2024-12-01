@@ -129,7 +129,10 @@ const Page: NextPage = () => {
       name: '',
       salesforceId: '',
       enableDivisions: false,
-      eventUsers: { 'tournament-manager': false, 'pit-admin': false },
+      eventUsers: EventUserAllowedRoleTypes.reduce(
+        (a, r) => ({ ...a, [r]: false }),
+        {} as Record<EventUserAllowedRoles, boolean>
+      ),
       startDate: getDefaultDate(),
       endDate: getDefaultDate(),
       divisions: [{ name: '', color: DivisionSwatches[0] }]

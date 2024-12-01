@@ -12,7 +12,6 @@ import {
   SafeUser,
   Scoresheet,
   Team,
-  EventUserAllowedRoleTypes,
   EventUserAllowedRoles
 } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
@@ -156,7 +155,7 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
               <DivisionDropdown event={division.event} selected={division._id.toString()} />
             )}
           </Stack>

@@ -3,13 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {
-  SafeUser,
-  DivisionWithEvent,
-  RoleTypes,
-  EventUserAllowedRoleTypes,
-  EventUserAllowedRoles
-} from '@lems/types';
+import { SafeUser, DivisionWithEvent, RoleTypes, EventUserAllowedRoles } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -72,7 +66,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
         back={user.role !== 'reports' ? `/lems/${user.role}` : undefined}
         color={division.color}
         action={
-          EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
             <DivisionDropdown event={division.event} selected={division._id.toString()} />
           )
         }

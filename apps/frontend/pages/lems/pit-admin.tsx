@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper, Stack } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { DivisionWithEvent, Team, Ticket, SafeUser } from '@lems/types';
+import { DivisionWithEvent, Team, Ticket, SafeUser, EventUserAllowedRoles } from '@lems/types';
 import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
@@ -93,7 +93,9 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
             <ReportLink />
           </Stack>
         }

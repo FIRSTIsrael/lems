@@ -15,7 +15,8 @@ import {
   Team,
   Ticket,
   RobotGameTable,
-  RobotGameMatch
+  RobotGameMatch,
+  EventUserAllowedRoles
 } from '@lems/types';
 import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
@@ -213,7 +214,9 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
             {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }

@@ -6,13 +6,7 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import {
-  DivisionWithEvent,
-  SafeUser,
-  RoleTypes,
-  EventUserAllowedRoleTypes,
-  EventUserAllowedRoles
-} from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
@@ -49,7 +43,7 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
               <DivisionDropdown event={division.event} selected={division._id.toString()} />
             )}
           </Stack>

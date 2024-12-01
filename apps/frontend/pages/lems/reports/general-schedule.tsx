@@ -16,7 +16,6 @@ import {
   SafeUser,
   RoleTypes,
   DivisionScheduleEntry,
-  EventUserAllowedRoleTypes,
   EventUserAllowedRoles
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -68,7 +67,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
         backDisabled={false}
         color={division.color}
         action={
-          EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
             <DivisionDropdown event={division.event} selected={division._id.toString()} />
           )
         }

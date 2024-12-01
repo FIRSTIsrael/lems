@@ -9,7 +9,6 @@ import {
   DivisionState,
   SafeUser,
   Team,
-  EventUserAllowedRoleTypes,
   EventUserAllowedRoles
 } from '@lems/types';
 import Layout from '../../components/layout';
@@ -52,7 +51,7 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
         back={`/lems/${user.role}`}
         color={division.color}
         action={
-          EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
             <DivisionDropdown event={division.event} selected={division._id.toString()} />
           )
         }

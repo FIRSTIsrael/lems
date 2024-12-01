@@ -23,7 +23,6 @@ import {
   SafeUser,
   RoleTypes,
   Role,
-  EventUserAllowedRoleTypes,
   EventUserAllowedRoles
 } from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
@@ -116,7 +115,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {EventUserAllowedRoleTypes.includes(user.role as EventUserAllowedRoles) && (
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
               <DivisionDropdown event={division.event} selected={division._id.toString()} />
             )}
           </Stack>

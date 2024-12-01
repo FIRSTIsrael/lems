@@ -96,7 +96,7 @@ const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, on
           visibility: open ? 'visible' : 'hidden',
           opacity: open ? 1 : 0
         }}
-        display={'flex'}
+        display="flex"
         flexDirection="column"
         gap={1}
       >
