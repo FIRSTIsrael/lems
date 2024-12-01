@@ -13,7 +13,7 @@ export const expressLogger = expressWinston.logger({
         winston.format.timestamp(),
         winston.format.json(),
         winston.format.printf(info => {
-          const { req, res } = info.meta;
+          const { req, res } = info.meta as any;
           const error = `${info.error ? ` / ${JSON.stringify(info.error)}` : ''}`;
           return `[${info.timestamp}] ${req.method} ${req.url} ${res.statusCode}${error}`;
         })
@@ -28,7 +28,7 @@ export const expressLogger = expressWinston.logger({
   msg: 'HTTP {{req.method}} {{req.url}}',
   expressFormat: true,
   colorize: false,
-  skip: (req, res) => req.method === 'OPTIONS',
+  skip: req => req.method === 'OPTIONS',
   dynamicMeta: (req, res) => {
     const body = (res as any)?.body || {};
     return {

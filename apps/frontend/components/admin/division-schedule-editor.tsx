@@ -7,7 +7,6 @@ import {
   Paper,
   Stack,
   Typography,
-  Button,
   IconButton,
   Checkbox,
   Box,
@@ -21,18 +20,16 @@ import {
   Theme,
   useTheme,
   SelectChangeEvent,
-  FormControlLabel,
-  Modal
+  FormControlLabel
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
-import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import EventSelector from '../general/event-selector';
+import EventSelectorModal from '../general/event-selector-modal';
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
@@ -92,7 +89,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           });
 
           setSchedule(newSchedule);
-          enqueueSnackbar('הלו"ז בכללי הועתק בהצלחה!', { variant: 'success' });
+          enqueueSnackbar('הלו"ז הכללי הועתק בהצלחה!', { variant: 'success' });
           setCopyModal(false);
         } else {
           enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
@@ -298,54 +295,14 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
         >
           <AddRoundedIcon />
         </IconButton>
-        <Button
-          variant="contained"
-          sx={{ minWidth: 100 }}
-          disabled={fullMatch(schedule, sortedSchedule)}
-          onClick={() => setSchedule(sortedSchedule)}
-        >
-          מיון
-        </Button>
-        <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
-          שמירה
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ minWidth: 100 }}
-          onClick={() => setCopyModal(true)}
-          disabled={schedule.length > 0}
-        >
-          העתקה מאירוע אחר
-        </Button>
+        <EventSelectorModal
+          title="העתקת לו״ז כללי"
+          open={copyModal}
+          setOpen={setCopyModal}
+          events={events}
+          onSelect={copyScheduleFrom}
+        />
       </Stack>
-      <Modal
-        open={copyModal}
-        onClose={() => setCopyModal(false)}
-        aria-labelledby="copy-schedule-modal"
-      >
-        <Paper
-          elevation={0}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 2
-          }}
-        >
-          <Typography variant="h2" pb={2} textAlign={'center'}>
-            {'העתקת לו"ז כללי'}
-          </Typography>
-          <EventSelector
-            events={events}
-            includeDivisions
-            onChange={(eventId, divisionId) => copyScheduleFrom(eventId, divisionId)}
-          />
-        </Paper>
-      </Modal>
     </Box>
   );
 };
