@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ObjectId } from 'mongodb';
-import { Form, Formik, FastField, FieldProps } from 'formik';
+import { useEffect, useRef, useState } from 'react';
+import { WithId, ObjectId } from 'mongodb';
+import { Form, Formik, FastField, FieldProps, FormikProps, FormikValues } from 'formik';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import {
   Paper,
@@ -29,7 +29,8 @@ import {
   MandatoryAwardTypes,
   OptionalAwardTypes,
   AwardSchema,
-  AwardLimits
+  AwardLimits,
+  FllEvent
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils/arrays';
@@ -37,6 +38,7 @@ import CustomNumberInput from '../field/scoresheet/number-input';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 import FormikCheckbox from '../general/forms/formik-checkbox';
+import EventSelectorModal from '../general/event-selector-modal';
 
 interface AwardItemProps {
   name: AwardNames;
@@ -117,6 +119,15 @@ interface DivisionAwardEditorProps {
 const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, awardSchema }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [awardToAdd, setAwardToAdd] = useState<AwardNames | ''>('');
+  const [copyModal, setCopyModal] = useState(false);
+  const [events, setEvents] = useState<Array<WithId<FllEvent>>>([]);
+  const formikRef = useRef<FormikProps<FormikValues>>(null);
+
+  useEffect(() => {
+    apiFetch(`/public/events`).then(res => {
+      res.json().then(data => setEvents(data));
+    });
+  }, []);
 
   const getExistingAwards = (schema: AwardSchema): Array<AwardNames> => {
     const awards = Object.entries(schema).map(([key, value]) => {
@@ -147,6 +158,34 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     return values;
   };
 
+  const copyAwardsFrom = (eventId: string | ObjectId, selectedDivision?: string | ObjectId) => {
+    if (selectedDivision && String(divisionId) === String(selectedDivision)) return;
+    const event = events.find(e => String(e._id) === String(eventId));
+    if (!event) return;
+    if (!selectedDivision && event?.enableDivisions) return;
+    let copyFromDivision;
+    if (selectedDivision) {
+      copyFromDivision = event?.divisions?.find(d => String(d._id) === String(selectedDivision));
+    } else {
+      copyFromDivision = event?.divisions?.[0];
+    }
+    if (!copyFromDivision) return;
+
+    apiFetch(`/api/admin/divisions/${copyFromDivision._id}/awards/schema`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        if (Object.entries(data).length > 0) {
+          setAwards(getExistingAwards(data));
+          formikRef.current?.setValues(getInitialValues(data), true);
+          enqueueSnackbar('הפרסים הועתקו בהצלחה!', { variant: 'success' });
+          setCopyModal(false);
+        } else {
+          enqueueSnackbar('לאירוע שבחרתם אין פרסים', { variant: 'warning' });
+        }
+      });
+  };
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return; // Dropped outside the list
 
@@ -156,6 +195,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
 
   return (
     <Formik
+      innerRef={formikRef}
       initialValues={getInitialValues(awardSchema)}
       onSubmit={(values, actions) => {
         const schema = {} as AwardSchema;
@@ -212,14 +252,25 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
             </Droppable>
           </DragDropContext>
           <Stack component={Paper} my={2} p={2} width="100%" direction="row" spacing={2}>
-            <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 150 }}>
+            <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 120 }}>
               הוספת פרס רשות
             </Button>
-            <Button variant="contained" onClick={submitForm} sx={{ minWidth: 150 }}>
+            <Button variant="contained" onClick={submitForm} sx={{ minWidth: 120 }}>
               שמירה
             </Button>
+            <Button variant="contained" sx={{ minWidth: 100 }} onClick={() => setCopyModal(true)}>
+              העתקה מאירוע אחר
+            </Button>
+            <EventSelectorModal
+              title="העתקה מאירוע אחר"
+              open={copyModal}
+              setOpen={setCopyModal}
+              events={events}
+              onSelect={copyAwardsFrom}
+            />
             <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
           </Stack>
+
           <Dialog
             open={open}
             fullWidth

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Division, FllEvent } from '@lems/types';
 import { WithId, ObjectId } from 'mongodb';
@@ -49,9 +49,8 @@ const EventSelector: React.FC<EventSelectorProps> = ({
             getDivisionDisabled?.(event.divisions[0]));
 
         return (
-          <>
+          <React.Fragment key={String(event._id)}>
             <ListItemButton
-              key={String(event._id)}
               onClick={() => onChange(event._id)}
               disabled={disabled}
               sx={{ borderRadius: 2 }}
@@ -99,7 +98,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
                   {getDivisionDisabled?.(division) && <WarningAmberRoundedIcon />}
                 </ListItemButton>
               ))}
-          </>
+          </React.Fragment>
         );
       })}
     </List>
