@@ -4,11 +4,11 @@
 
 LEMS is fully open source and maintained by volunteers.
 
-💬 Feel free to join the [discussion]([url](https://github.com/FIRSTIsrael/lems/discussions))! Submit ideas, feedback, and share your thoughts.
+💬 Feel free to join the [discussion](https://github.com/FIRSTIsrael/lems/discussions)! Submit ideas, feedback, and share your thoughts.
 
-💻 If you can code, check out the [issues]([url](https://github.com/FIRSTIsrael/lems/issues)) tab and pick a task labelled "good first task". Submit a pull request and we will review it
+💻 If you can code, check out the [issues](https://github.com/FIRSTIsrael/lems/issues) tab and pick a task labelled "good first task". Submit a pull request and we will review it
 
-🆕 Stay updated on the latest progress and release schedule from the [LEMS Github Project]([url](https://github.com/orgs/FIRSTIsrael/projects/3)).
+🆕 Stay updated on the latest progress and release schedule from the [LEMS Github Project](https://github.com/orgs/FIRSTIsrael/projects/3).
 
 ## Running Locally
 
