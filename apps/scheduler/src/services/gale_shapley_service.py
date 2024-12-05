@@ -1,5 +1,7 @@
+import random
 from typing import List, Tuple, Callable, Optional
 
+from apps.scheduler.src.events.event import team_minimum_time
 from apps.scheduler.src.events.judging_room import JudgingRoom
 from apps.scheduler.src.events.match import Match
 from apps.scheduler.src.events.practice_match import PracticeMatch
@@ -19,6 +21,7 @@ def get_session_preference_function(session: Session) -> Callable:
 
 
 def get_best_team_match(session: Session, teams: List[Team], preference_function: Callable) -> Team:
+    random.shuffle(teams)
     best_team = teams[0]
     best_score = preference_function(session, best_team)
 
@@ -29,20 +32,6 @@ def get_best_team_match(session: Session, teams: List[Team], preference_function
             best_team = team
 
     return best_team
-
-
-def team_minimum_time(sessions: List[Session]) -> int:
-    minimum_time = 120
-    for first_session in sessions:
-        for second_session in sessions:
-            if first_session != second_session:
-                if first_session.end_time > second_session.start_time > first_session.start_time:
-                    return 0
-                current_time_difference = first_session.end_time - second_session.start_time
-                minutes_difference = current_time_difference.total_seconds() / 60
-                if 0 < minutes_difference < minimum_time:
-                    minimum_time = minutes_difference
-    return minimum_time
 
 
 def check_team_preference(team: Team, session: Session) -> Optional[Session]:
@@ -78,6 +67,7 @@ def check_team_preference(team: Team, session: Session) -> Optional[Session]:
 
 def gale_shapley(teams: List[Team], sessions: List[Session]) -> Tuple[List[Team], List[Session]]:
     sessions_left = sessions.copy()
+    random.shuffle(sessions_left)
     amount_of_sessions_left = len(sessions_left)
 
     while amount_of_sessions_left > 0:

@@ -2,7 +2,7 @@ import random
 
 from typing import List
 
-from apps.scheduler.src.events.event import Event
+from apps.scheduler.src.events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
 from apps.scheduler.src.models.event_type import EventType
 from apps.scheduler.src.models.session import Session
 from apps.scheduler.src.models.team import Team
@@ -26,6 +26,11 @@ class Match(Event):
     @staticmethod
     def calculate_preference(session: Session, team: Team) -> float:
         if team.team_number in session.rejected_teams:
+            return 0
+
+        new_sessions = team.team_events.copy()
+        new_sessions.append(session)
+        if team_minimum_time(new_sessions) < TEAM_MIN_WAIT_TIME:
             return 0
 
         times_in_table = Match.check_times_in_table(session.session_index, team.team_events)
