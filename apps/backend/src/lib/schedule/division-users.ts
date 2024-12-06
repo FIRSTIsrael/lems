@@ -21,7 +21,9 @@ export const getDivisionUsers = (
   rooms: Array<WithId<JudgingRoom>>
 ): User[] => {
   const users = [];
-  const roles = RoleTypes.filter(role => !event.eventUsers.includes(role as EventUserAllowedRoles));
+  const roles = RoleTypes.filter(
+    role => !event.eventUsers?.includes(role as EventUserAllowedRoles)
+  );
 
   roles.forEach(role => {
     const user: User = {
