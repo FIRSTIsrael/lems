@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-
-from apps.scheduler.src.routers import scheduler
+from routers import scheduler
 
 app = FastAPI()
 
