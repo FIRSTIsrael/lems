@@ -32,10 +32,6 @@ class SchedulerService:
             sessions += event.create_sessions()
 
         teams = self.lems_repository.get_teams(division_id)
-
-        if type(teams[0]) is not Team:
-            teams = [Team(team.number, []) for team in teams]
-
         matched_teams, matched_sessions = gale_shapley(teams.copy(), sessions.copy())
 
         return matched_teams, matched_sessions

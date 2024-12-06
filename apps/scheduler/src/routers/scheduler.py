@@ -35,6 +35,8 @@ EVENTS = [
 async def create_schedule() -> str:
     for i in range(1, 100):
         scheduler = SchedulerService(EVENTS, LemsRepository())
-        teams, sessions = scheduler.create_schedule(ObjectId())
+        teams, sessions = scheduler.create_schedule(
+            ObjectId("671893940eced73ac8a4d9b8")
+        )
 
     return str(teams[0].team_number)
