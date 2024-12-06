@@ -1,26 +1,28 @@
 import random
 from typing import List, Tuple, Callable, Optional
 
-from apps.scheduler.src.events.event import team_minimum_time
-from apps.scheduler.src.events.judging_room import JudgingRoom
-from apps.scheduler.src.events.match import Match
-from apps.scheduler.src.events.practice_match import PracticeMatch
-from apps.scheduler.src.models.event_type import EventType
-from apps.scheduler.src.models.session import Session
-from apps.scheduler.src.models.team import Team
+from events.event import team_minimum_time
+from events.judging_room import JudgingRoom
+from events.match import Match
+from events.practice_match import PracticeMatch
+from models.event_type import EventType
+from models.session import Session
+from models.team import Team
 
 
 def get_session_preference_function(session: Session) -> Callable:
     type_to_function = {
-        EventType.JUDGING_ROOM : JudgingRoom.calculate_preference,
-        EventType.MATCH : Match.calculate_preference,
-        EventType.PRACTICE_MATCH : PracticeMatch.calculate_preference
+        EventType.JUDGING_ROOM: JudgingRoom.calculate_preference,
+        EventType.MATCH: Match.calculate_preference,
+        EventType.PRACTICE_MATCH: PracticeMatch.calculate_preference,
     }
 
     return type_to_function[session.event_type]
 
 
-def get_best_team_match(session: Session, teams: List[Team], preference_function: Callable) -> Team:
+def get_best_team_match(
+    session: Session, teams: List[Team], preference_function: Callable
+) -> Team:
     random.shuffle(teams)
     best_team = teams[0]
     best_score = preference_function(session, best_team)
@@ -65,7 +67,9 @@ def check_team_preference(team: Team, session: Session) -> Optional[Session]:
         return session
 
 
-def gale_shapley(teams: List[Team], sessions: List[Session]) -> Tuple[List[Team], List[Session]]:
+def gale_shapley(
+    teams: List[Team], sessions: List[Session]
+) -> Tuple[List[Team], List[Session]]:
     sessions_left = sessions.copy()
     random.shuffle(sessions_left)
     amount_of_sessions_left = len(sessions_left)
@@ -73,7 +77,9 @@ def gale_shapley(teams: List[Team], sessions: List[Session]) -> Tuple[List[Team]
     while amount_of_sessions_left > 0:
         current_session = sessions_left.pop()
         session_preference_function = get_session_preference_function(current_session)
-        current_team = get_best_team_match(current_session, teams, session_preference_function)
+        current_team = get_best_team_match(
+            current_session, teams, session_preference_function
+        )
         session_left_alone = check_team_preference(current_team, current_session)
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)

@@ -1,9 +1,9 @@
 import random
 
-from apps.scheduler.src.events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
-from apps.scheduler.src.models.event_type import EventType
-from apps.scheduler.src.models.session import Session
-from apps.scheduler.src.models.team import Team
+from events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
+from models.event_type import EventType
+from models.session import Session
+from models.team import Team
 
 
 class JudgingRoom(Event):

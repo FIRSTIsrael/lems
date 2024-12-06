@@ -2,11 +2,11 @@ from typing import List, Tuple
 
 from bson import ObjectId
 
-from apps.scheduler.src.events.event import Event, MAX_MINUTES
-from apps.scheduler.src.models.session import Session
-from apps.scheduler.src.models.team import Team
-from apps.scheduler.src.repository.ilems_repoistory import ILemsRepoistory
-from apps.scheduler.src.services.gale_shapley_service import gale_shapley, team_minimum_time
+from events.event import Event, MAX_MINUTES
+from models.team import Team
+from models.session import Session
+from services.gale_shapley_service import gale_shapley, team_minimum_time
+from repository.lems_repository import LemsRepository
 
 
 def chcek_score(teams: List[Team]) -> int:
@@ -18,12 +18,15 @@ def chcek_score(teams: List[Team]) -> int:
 
     return min_score
 
+
 class SchedulerService:
-    def __init__(self, events: List[Event], lems_repository: ILemsRepoistory):
+    def __init__(self, events: List[Event], lems_repository: LemsRepository):
         self.lems_repository = lems_repository
         self.events = events
 
-    def create_schedule(self, division_id: ObjectId) -> Tuple[List[Team], List[Session]]:
+    def create_schedule(
+        self, division_id: ObjectId
+    ) -> Tuple[List[Team], List[Session]]:
         sessions = []
         for event in self.events:
             sessions += event.create_sessions()

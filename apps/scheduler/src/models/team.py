@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from ..models.session import Session
+from models.session import Session
 
 
 @dataclass

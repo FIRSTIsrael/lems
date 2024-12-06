@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from typing import List
 
-from ..models.event_type import EventType
+from models.event_type import EventType
 
 
 @dataclass
