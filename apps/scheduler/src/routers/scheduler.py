@@ -8,6 +8,7 @@ from events.match import Match
 from events.practice_match import PracticeMatch
 from repository.schemas.team import Team
 from services.scheduler_service import SchedulerService
+from repository.lems_repository import LemsRepository
 
 router = APIRouter(prefix="/scheduler")
 
