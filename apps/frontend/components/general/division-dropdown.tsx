@@ -12,12 +12,13 @@ interface DropdownOptionProps {
   id: string;
   name: string;
   color: CSSProperties['color'];
+  disabled: boolean;
 }
 
-const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color }) => {
+const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color, disabled }) => {
   const { getRootProps, highlighted } = useOption({
     value: id,
-    disabled: false,
+    disabled: disabled,
     label: name
   });
 
@@ -29,13 +30,14 @@ const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color }) => {
       display="flex"
       flexDirection="row"
       gap={1}
-      justifyContent="center"
+      justifyContent="flex-start"
       alignItems="center"
       borderRadius={1}
       paddingX={2}
-      sx={{ cursor: 'pointer', '&:hover': { bgcolor: '#e5eaf2' } }}
+      minWidth={110}
+      sx={disabled ? {} : { cursor: 'pointer', '&:hover': { bgcolor: '#e5eaf2' } }}
     >
-      <Box height={10} width={10} borderRadius="50%" bgcolor={color} />
+      <Box height={10} width={10} borderRadius="50%" bgcolor={disabled ? '#666' : color} />
       <Typography>{name}</Typography>
     </Box>
   );
@@ -107,6 +109,7 @@ const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, on
               id={division._id.toString()}
               name={division.name}
               color={division.color}
+              disabled={!division.hasState}
             />
           ))}
         </SelectProvider>

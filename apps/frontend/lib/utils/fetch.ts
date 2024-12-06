@@ -1,4 +1,6 @@
+import { ObjectId, WithId } from 'mongodb';
 import { GetServerSidePropsContext } from 'next';
+import { Division } from '@lems/types';
 
 export const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
@@ -33,13 +35,18 @@ export const apiFetch = (
 
 export const getUserAndDivision = async (ctx: GetServerSidePropsContext) => {
   const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+  const divisions: Array<WithId<Division>> = await apiFetch(`/public/divisions`).then(res =>
+    res?.json()
+  );
   let divisionId = user.divisionId;
   if (!divisionId && user.eventId && user.assignedDivisions.length > 0) {
     const idFromQuery = (ctx.query.divisionId as string) || undefined;
     if (user.assignedDivisions.includes(idFromQuery)) {
       divisionId = idFromQuery;
     } else {
-      divisionId = user.assignedDivisions[0];
+      divisionId = user.assignedDivisions.filter(
+        (id: ObjectId) => divisions.find(d => d._id === id)?.hasState
+      )[0];
     }
   }
   return { user, divisionId };
