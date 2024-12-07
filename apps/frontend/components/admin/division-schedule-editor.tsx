@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import {
   Paper,
+  Button,
   Stack,
   Typography,
   IconButton,
@@ -27,6 +28,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
+import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import EventSelectorModal from '../general/event-selector-modal';
@@ -130,12 +132,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
         router.reload();
       }}
     >
-      <Paper sx={{ p: 4 }}>
-        <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          מסגרת אירוע
-        </Typography>
-      </Paper>
-      <Stack spacing={2} mt={2}>
+      <Stack spacing={2}>
         {schedule.map((entry, index) => {
           return (
             <Stack component={Paper} spacing={2} sx={{ p: 4 }} key={index}>
@@ -295,6 +292,25 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
         >
           <AddRoundedIcon />
         </IconButton>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          disabled={fullMatch(schedule, sortedSchedule)}
+          onClick={() => setSchedule(sortedSchedule)}
+        >
+          מיון
+        </Button>
+        <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
+          שמירה
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          onClick={() => setCopyModal(true)}
+          disabled={schedule.length > 0}
+        >
+          העתקה מאירוע אחר
+        </Button>
         <EventSelectorModal
           title="העתקת לו״ז כללי"
           open={copyModal}
