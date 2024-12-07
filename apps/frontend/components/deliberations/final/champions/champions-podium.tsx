@@ -34,7 +34,7 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
   };
 
   return (
-    (<Grid
+    <Grid
       container
       component={Paper}
       height="100%"
@@ -45,7 +45,7 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
       {[...Array(places).keys()].map(index => {
         const teamId = award[index];
         return (
-          (<Grid
+          <Grid
             order={organizePodium(index)}
             key={index}
             display="flex"
@@ -81,10 +81,10 @@ const ChampionsPodium: React.FC<ChampionsPodiumProps> = ({
               height={40 + 50 * (places - index - 1)}
               mt={1}
             />
-          </Grid>)
+          </Grid>
         );
       })}
-    </Grid>)
+    </Grid>
   );
 };
 

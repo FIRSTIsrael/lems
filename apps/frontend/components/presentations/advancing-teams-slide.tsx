@@ -17,7 +17,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
   const splitTeamsIntoColumns = useMemo(() => teams.length > COLUMN_SPLIT_THRESHOLD, [teams]);
 
   return (
-    (<Slide>
+    <Slide>
       <Stack
         height="calc(100% - 100)"
         width={splitTeamsIntoColumns ? '100%' : '70%'}
@@ -54,7 +54,7 @@ const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ teams, color 
         </Box>
       </Stack>
       <LogoStack color={color} />
-    </Slide>)
+    </Slide>
   );
 };
 

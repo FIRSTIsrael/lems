@@ -13,7 +13,7 @@ interface ResultExportPaperProps {
 
 const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
   return (
-    (<Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
+    <Paper sx={{ borderRadius: 3, mb: 4, boxShadow: 2, p: 3 }}>
       <Box
         sx={{
           display: 'flex',
@@ -54,7 +54,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
           </ExportAction>
         </Grid>
       </Grid>
-    </Paper>)
+    </Paper>
   );
 };
 

@@ -31,7 +31,8 @@ const QueuerFieldSchedule: React.FC<QueuerFieldScheduleProps> = ({
         size={{
           xs: 12,
           xl: 6
-        }}>
+        }}
+      >
         <ReportRoundSchedule
           divisionSchedule={refereeGeneralSchedule}
           roundStage="practice"
@@ -49,7 +50,8 @@ const QueuerFieldSchedule: React.FC<QueuerFieldScheduleProps> = ({
           size={{
             xs: 12,
             xl: 6
-          }}>
+          }}
+        >
           <ReportRoundSchedule
             divisionSchedule={refereeGeneralSchedule}
             roundStage="ranking"

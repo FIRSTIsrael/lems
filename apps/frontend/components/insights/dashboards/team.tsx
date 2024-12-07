@@ -16,7 +16,7 @@ const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ division,
   const [team, setTeam] = useState<WithId<Team> | null>(teams.filter(t => t.registered)[0]);
 
   return (
-    (<Paper sx={{ p: 2 }}>
+    <Paper sx={{ p: 2 }}>
       <Grid container direction="row" alignItems="center" spacing={4}>
         <Grid size={3}>
           <Typography textAlign="center" fontSize="1.125rem" fontWeight={600}>
@@ -33,7 +33,7 @@ const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ division,
           <TeamInformationChart division={division} team={team} />
         </Grid>
       </Grid>
-    </Paper>)
+    </Paper>
   );
 };
 
