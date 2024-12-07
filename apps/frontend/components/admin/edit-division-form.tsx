@@ -1,11 +1,22 @@
 import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Stack,
+  Paper,
+  PaperProps,
+  Divider
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FllEvent, Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
+import UploadFileButton from '../general/upload-file';
+import DownloadUsersButton from './download-users';
 
 interface EditDivisionFormProps extends PaperProps {
   event: WithId<FllEvent>;
@@ -63,12 +74,20 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
               />
             </Grid>
           </Grid>
-
           <Box justifyContent="center" display="flex">
             <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
               שמירה
             </Button>
           </Box>
+          <Divider />
+          <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+            <UploadFileButton
+              urlPath={`/api/admin/divisions/${division?._id}/pit-map`}
+              displayName="מפת פיטים"
+              extension=".png"
+            />
+            <DownloadUsersButton division={division} disabled={!division?.hasState} />
+          </Stack>
         </Stack>
       </Box>
     </Paper>
