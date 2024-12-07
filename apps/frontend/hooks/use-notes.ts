@@ -16,7 +16,7 @@ interface NotesDb extends DBSchema {
   };
 }
 
-export const useIndexDb = () => {
+export const useNotes = () => {
   const [notes, setNotes] = useState<NotesDb['notes']['value'][]>([]);
 
   useEffect(() => {
