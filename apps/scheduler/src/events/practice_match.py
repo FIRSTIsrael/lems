@@ -1,15 +1,14 @@
 import random
 
 from events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
-from models.event_type import EventType
-from models.session import Session
+from models.activity import TeamActivity, ActivityType
 from models.team import Team
 
 
 class PracticeMatch(Event):
     @staticmethod
-    def calculate_preference(session: Session, team: Team) -> float:
-        if team.team_number in session.rejected_teams:
+    def calculate_preference(session: TeamActivity, team: Team) -> float:
+        if team.team_number in session.rejected_team_numbers:
             return 0
 
         new_sessions = team.team_events.copy()
@@ -20,5 +19,5 @@ class PracticeMatch(Event):
         return 1 - random.random()
 
     @staticmethod
-    def event_type() -> EventType:
-        return EventType.PRACTICE_MATCH
+    def event_type() -> ActivityType:
+        return ActivityType.PRACTICE_MATCH

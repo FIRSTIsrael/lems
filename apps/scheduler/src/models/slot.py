@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 from typing import List
 
-from models.event_type import EventType
-from models.session import Session
+from models.activity import TeamActivity, ActivityType
 
 
 @dataclass
 class Slot:
     name: str
-    event_type: EventType
+    event_type: ActivityType
     slot: int
     max_team_events: int
-    team_events: List[Session]
+    team_events: List[TeamActivity]

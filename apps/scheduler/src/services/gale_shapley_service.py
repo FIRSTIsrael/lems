@@ -1,27 +1,26 @@
 import random
-from typing import List, Tuple, Callable, Optional
+from typing import Callable, Optional
 
 from events.event import team_minimum_time
-from events.judging_room import JudgingRoom
-from events.match import Match
+from events.judging_session import JudgingSession
+from events.ranking_match import Match
 from events.practice_match import PracticeMatch
-from models.event_type import EventType
-from models.session import Session
+from models.activity import TeamActivity, ActivityType
 from models.team import Team
 
 
-def get_session_preference_function(session: Session) -> Callable:
+def get_session_preference_function(session: TeamActivity) -> Callable:
     type_to_function = {
-        EventType.JUDGING_ROOM: JudgingRoom.calculate_preference,
-        EventType.MATCH: Match.calculate_preference,
-        EventType.PRACTICE_MATCH: PracticeMatch.calculate_preference,
+        ActivityType.JUDGING_SESSION: JudgingSession.calculate_preference,
+        ActivityType.RANKING_MATCH: Match.calculate_preference,
+        ActivityType.PRACTICE_MATCH: PracticeMatch.calculate_preference,
     }
 
-    return type_to_function[session.event_type]
+    return type_to_function[session.activity_type]
 
 
 def get_best_team_match(
-    session: Session, teams: List[Team], preference_function: Callable
+    session: TeamActivity, teams: list[Team], preference_function: Callable
 ) -> Team:
     random.shuffle(teams)
     best_team = teams[0]
@@ -36,7 +35,7 @@ def get_best_team_match(
     return best_team
 
 
-def check_team_preference(team: Team, session: Session) -> Optional[Session]:
+def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamActivity]:
     current_event_session_index = session.event_index
     team_current_event_session = None
 
@@ -58,18 +57,18 @@ def check_team_preference(team: Team, session: Session) -> Optional[Session]:
     modified_score = team_minimum_time(modified_sessions)
 
     if modified_score > current_score:
-        team_current_event_session.rejected_teams.append(team.team_number)
+        team_current_event_session.rejected_team_numbers.append(team.team_number)
         team_current_event_session.team_number = 0
         team.team_events = modified_sessions
         return team_current_event_session
     else:
-        session.rejected_teams.append(team.team_number)
+        session.rejected_team_numbers.append(team.team_number)
         return session
 
 
 def gale_shapley(
-    teams: List[Team], sessions: List[Session]
-) -> Tuple[List[Team], List[Session]]:
+    teams: list[Team], sessions: list[TeamActivity]
+) -> tuple[list[Team], list[TeamActivity]]:
     sessions_left = sessions.copy()
     random.shuffle(sessions_left)
     amount_of_sessions_left = len(sessions_left)

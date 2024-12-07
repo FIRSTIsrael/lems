@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
-from models.session import Session
+from models.activity import TeamActivity
 
 
 @dataclass
 class Team:
     team_number: int
-    team_events: List[Session]
+    team_events: List[TeamActivity]

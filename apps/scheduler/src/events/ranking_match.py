@@ -1,10 +1,7 @@
 import random
 
-from typing import List
-
 from events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
-from models.event_type import EventType
-from models.session import Session
+from models.activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -13,19 +10,19 @@ MAX_MATCHES_PER_TABLE = 2
 
 class Match(Event):
     @staticmethod
-    def check_times_in_table(table_index: int, team_events: List[Session]) -> int:
+    def check_times_in_table(table_index: int, team_events: list[TeamActivity]) -> int:
         count = 0
 
         for session in team_events:
-            if session.event_type == Match.event_type():
+            if session.activity_type == Match.event_type():
                 if session.session_index == table_index:
                     count += 1
 
         return count
 
     @staticmethod
-    def calculate_preference(session: Session, team: Team) -> float:
-        if team.team_number in session.rejected_teams:
+    def calculate_preference(session: TeamActivity, team: Team) -> float:
+        if team.team_number in session.rejected_team_numbers:
             return 0
 
         new_sessions = team.team_events.copy()
@@ -45,5 +42,5 @@ class Match(Event):
         return preference / (times_in_table + 1)
 
     @staticmethod
-    def event_type() -> EventType:
-        return EventType.MATCH
+    def event_type() -> ActivityType:
+        return ActivityType.RANKING_MATCH

@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 
 from typing import List
 
-from models.event_type import EventType
-from models.session import Session
+from models.activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -13,7 +12,7 @@ MINUTES_PER_HOUR = 60
 TEAM_MIN_WAIT_TIME = 15
 
 
-def team_minimum_time(sessions: List[Session]) -> int:
+def team_minimum_time(sessions: List[TeamActivity]) -> int:
     minimum_time = MAX_MINUTES
     for first_session in sessions:
         for second_session in sessions:
@@ -54,15 +53,15 @@ class Event(ABC):
 
     @staticmethod
     @abstractmethod
-    def calculate_preference(session: Session, team: Team) -> float:
+    def calculate_preference(session: TeamActivity, team: Team) -> float:
         pass
 
     @staticmethod
     @abstractmethod
-    def event_type() -> EventType:
+    def event_type() -> ActivityType:
         pass
 
-    def create_sessions(self) -> List[Session]:
+    def create_sessions(self) -> List[TeamActivity]:
         sessions = []
         current_index = 0
         current_time = self.start_time
@@ -75,7 +74,7 @@ class Event(ABC):
                 end_time = current_time + timedelta(minutes=self.session_length)
 
             sessions.append(
-                Session(
+                TeamActivity(
                     self.event_type(),
                     current_time,
                     end_time,

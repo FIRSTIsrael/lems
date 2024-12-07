@@ -1,9 +1,12 @@
 import os
 from bson import ObjectId
+
 from pymongo import MongoClient
 from pymongo.collection import Collection
+
 from repository.schemas.team import Team
 from models.team import Team as TeamModel
+from models.activity import TeamActivity
 
 
 class LemsRepository:
@@ -26,3 +29,6 @@ class LemsRepository:
         collection: Collection[Team] = self.db.teams
         teams = collection.find({"divisionId": divisionId}).to_list()
         return [TeamModel(team.get("number"), []) for team in teams]
+
+    def insert_schedule(self, activities: list[TeamActivity]):
+        pass
