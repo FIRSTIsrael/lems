@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from bson import ObjectId
 from fastapi import APIRouter
@@ -13,21 +13,15 @@ from repository.lems_repository import LemsRepository
 router = APIRouter(prefix="/scheduler")
 
 
-EVENT_DATE = datetime.datetime(2020, 1, 1, 0, 0, 0)
+EVENT_DATE = datetime(2020, 1, 1, 0, 0, 0)
 
 TEAM_COUNT = 45
 EVENTS = [
-    JudgingRoom(
-        30, 10, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), TEAM_COUNT, 7, 0
-    ),
-    PracticeMatch(
-        10, 0, EVENT_DATE + datetime.timedelta(hours=8, minutes=30), TEAM_COUNT, 8, 1
-    ),
-    Match(10, 0, EVENT_DATE + datetime.timedelta(hours=10), TEAM_COUNT, 8, 2),
-    Match(
-        10, 0, EVENT_DATE + datetime.timedelta(hours=11, minutes=30), TEAM_COUNT, 8, 3
-    ),
-    Match(10, 0, EVENT_DATE + datetime.timedelta(hours=14), TEAM_COUNT, 8, 4),
+    JudgingRoom(30, 10, EVENT_DATE + timedelta(hours=8, minutes=30), TEAM_COUNT, 7, 0),
+    PracticeMatch(10, 0, EVENT_DATE + timedelta(hours=8, minutes=30), TEAM_COUNT, 8, 1),
+    Match(10, 0, EVENT_DATE + timedelta(hours=10), TEAM_COUNT, 8, 2),
+    Match(10, 0, EVENT_DATE + timedelta(hours=11, minutes=30), TEAM_COUNT, 8, 3),
+    Match(10, 0, EVENT_DATE + timedelta(hours=14), TEAM_COUNT, 8, 4),
 ]
 
 
