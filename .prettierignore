@@ -1,11 +1,15 @@
 # Add files here to ignore them from prettier formatting
+**/*.json
+**/*.md
+**/*.yml
+.next
+.vercel
+.cache/
+.venv/
+.nx/
+.vscode/
+.github/
+tmp/
 dist/
 build/
 node_modules/
-.cache/
-.next
-.vercel
-package*.json
-yarn-lock.json
-/.nx/cache
-/.nx/workspace-data
