@@ -39,7 +39,7 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
             centered
           >
             <Tab label="פרטי הבית" value="1" />
-            <Tab label="לוח זמנים" value="2" />
+            <Tab label="מסגרת אירוע" value="2" />
             <Tab label="פרסים" value="3" />
           </Tabs>
         </Paper>

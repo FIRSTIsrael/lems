@@ -64,7 +64,7 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
                       onChange={(_e, newValue: string) => setActiveTab(newValue)}
                       centered
                     >
-                      <Tab label="לוח זמנים" value="1" />
+                      <Tab label="מסגרת אירוע" value="1" />
                       <Tab label="פרסים" value="2" />
                     </Tabs>
                   </Paper>

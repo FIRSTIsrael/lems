@@ -132,7 +132,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     >
       <Paper sx={{ p: 4 }}>
         <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          לוח זמנים כללי
+          מסגרת אירוע
         </Typography>
       </Paper>
       <Stack spacing={2} mt={2}>
