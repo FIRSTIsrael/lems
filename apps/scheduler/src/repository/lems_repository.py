@@ -73,7 +73,7 @@ class LemsRepository:
         collection: Collection[JudgingSession] = self.db.sessions
         document: JudgingSession = {
             "divisionId": self.divisionId,
-            "number": activity.index,
+            "number": activity.index,  # TODO
             "teamId": self.get_team(activity.team_number)._id,
             "roomId": activity.location.id,
             "called": False,
@@ -87,11 +87,15 @@ class LemsRepository:
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
             "divisionId": self.divisionId,
-            "number": activity.index,
+            "number": activity.index,  # TODO
             "teamId": self.get_team(activity.team_number)._id,
             "tableId": activity.location.id,
             "status": "not-started",
             "scheduledTime": activity.start_time,
+            "called": False,
+            "round": activity.event_index,  # TODO,
+            "stage": "ranking",
+            "participants": [],  # TODO
         }
         collection.insert_one(document)
 
@@ -104,5 +108,9 @@ class LemsRepository:
             "tableId": activity.location.id,
             "status": "not-started",
             "scheduledTime": activity.start_time,
+            "called": False,
+            "round": activity.event_index,  # TODO,
+            "stage": "practice",
+            "participants": [],  # TODO
         }
         collection.insert_one(document)
