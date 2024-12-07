@@ -47,8 +47,6 @@ http-log.log
 .nx/cache
 .nx/workspace-data
 
-.pyc
-
 # Python
 *.pyc
 **/__pycache__/
