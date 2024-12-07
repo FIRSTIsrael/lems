@@ -7,7 +7,6 @@ import {
   Paper,
   Stack,
   Typography,
-  Button,
   IconButton,
   Checkbox,
   Box,
@@ -21,18 +20,16 @@ import {
   Theme,
   useTheme,
   SelectChangeEvent,
-  FormControlLabel,
-  Modal
+  FormControlLabel
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
-import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
-import EventSelector from '../general/event-selector';
+import EventSelectorModal from '../general/event-selector-modal';
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
@@ -60,7 +57,19 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     [schedule]
   );
 
-  const copyScheduleFrom = (eventId: string | ObjectId) => {
+  const copyScheduleFrom = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
+    if (divisionId && String(divisionId) === String(division._id)) return;
+    const event = events.find(e => String(e._id) === String(eventId));
+    if (!event) return;
+    if (!divisionId && event?.enableDivisions) return;
+    let copyFromDivision;
+    if (divisionId) {
+      copyFromDivision = event?.divisions?.find(d => String(d._id) === String(divisionId));
+    } else {
+      copyFromDivision = event?.divisions?.[0];
+    }
+    if (!copyFromDivision) return;
+
     apiFetch(`/api/events/${eventId}/divisions?withSchedule=true`)
       .then(res => res.json())
       .then(data => {
@@ -80,7 +89,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
           });
 
           setSchedule(newSchedule);
-          enqueueSnackbar('הלו"ז בכללי הועתק בהצלחה!', { variant: 'success' });
+          enqueueSnackbar('הלו"ז הכללי הועתק בהצלחה!', { variant: 'success' });
           setCopyModal(false);
         } else {
           enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
@@ -96,9 +105,9 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
       body: JSON.stringify({ schedule: sortedSchedule })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('לוח הזמנים של האירוע נשמרה בהצלחה!', { variant: 'success' });
+        enqueueSnackbar('לוח הזמנים נשמר בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת לוח הזמנים של האירוע נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, שמירת לוח הזמנים נכשלה.', { variant: 'error' });
       }
     });
   };
@@ -123,7 +132,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     >
       <Paper sx={{ p: 4 }}>
         <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          לוח זמנים כללי לאירוע
+          לוח זמנים כללי
         </Typography>
       </Paper>
       <Stack spacing={2} mt={2}>
@@ -286,55 +295,14 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
         >
           <AddRoundedIcon />
         </IconButton>
-        <Button
-          variant="contained"
-          sx={{ minWidth: 100 }}
-          disabled={fullMatch(schedule, sortedSchedule)}
-          onClick={() => setSchedule(sortedSchedule)}
-        >
-          מיון
-        </Button>
-        <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
-          שמירה
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ minWidth: 100 }}
-          onClick={() => setCopyModal(true)}
-          disabled={schedule.length > 0}
-        >
-          העתקה מאירוע אחר
-        </Button>
+        <EventSelectorModal
+          title="העתקת לו״ז כללי"
+          open={copyModal}
+          setOpen={setCopyModal}
+          events={events}
+          onSelect={copyScheduleFrom}
+        />
       </Stack>
-      <Modal
-        open={copyModal}
-        onClose={() => setCopyModal(false)}
-        aria-labelledby="copy-schedule-modal"
-      >
-        <Paper
-          elevation={0}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 2
-          }}
-        >
-          <Typography variant="h2" pb={2} textAlign={'center'}>
-            {'העתקת לו"ז כללי'}
-          </Typography>
-          <EventSelector
-            events={events.filter(
-              e => e.divisions?.[0]?._id.toString() !== division._id.toString()
-            )}
-            onChange={eventId => copyScheduleFrom(eventId)}
-          />
-        </Paper>
-      </Modal>
     </Box>
   );
 };

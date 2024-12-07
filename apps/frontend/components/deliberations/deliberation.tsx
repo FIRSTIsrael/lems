@@ -21,6 +21,7 @@ import {
 } from '../../hooks/use-deliberation-state';
 import { DeliberationTeam, useDeliberationTeams } from '../../hooks/use-deliberation-teams';
 import LockOverlay from '../../components/general/lock-overlay';
+import { getDefaultPicklistLimit } from '../../lib/utils/math';
 
 export interface DeliberationContextType {
   deliberation: WithId<JudgingDeliberation>;
@@ -37,6 +38,8 @@ export interface DeliberationContextType {
     cvForms: Array<WithId<CoreValuesForm>>;
     rubrics: Array<WithId<Rubric<JudgingCategory>>>;
     scoresheets: Array<WithId<Scoresheet>>;
+    rooms: Array<WithId<JudgingRoom>>;
+    sessions: Array<WithId<JudgingSession>>;
   };
   start: () => void;
   lock: () => void;
@@ -163,11 +166,15 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       onLock?.(lockState);
     };
 
-    const { stage, status, state, ...actions } = useDeliberationState(initialState, {
-      onStart,
-      onLock: lockWithAnomalies,
-      picklistLimits
-    });
+    const { stage, status, state, ...actions } = useDeliberationState(
+      initialState,
+      getDefaultPicklistLimit(allTeams.length),
+      {
+        onStart,
+        onLock: lockWithAnomalies,
+        picklistLimits
+      }
+    );
 
     useImperativeHandle(ref, () => ({ sync: actions.sync, stage, status }), [
       actions.sync,
@@ -294,7 +301,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             calculateAnomalies,
             onAddTeam,
             disqualifyTeam,
-            compareContextProps: { cvForms, rubrics, scoresheets },
+            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions },
             picklistLimits,
             anomalies,
             categoryRanks,

@@ -10,6 +10,24 @@ export const getDivisions = (filter: Filter<Division>) => {
   return db.collection<Division>('divisions').find(filter).toArray();
 };
 
+export const getDivisionWithEvent = (filter: Filter<Division>) => {
+  return db
+    .collection<Division>('divisions')
+    .aggregate([
+      { $match: filter },
+      {
+        $lookup: {
+          from: 'fll-events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event'
+        }
+      },
+      { $unwind: '$event' }
+    ])
+    .next();
+};
+
 export const getEventDivisions = (eventId: ObjectId) => {
   return db.collection<Division>('divisions').find({ eventId }).toArray();
 };

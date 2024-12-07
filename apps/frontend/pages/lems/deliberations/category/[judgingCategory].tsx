@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Division,
+  DivisionWithEvent,
   SafeUser,
   JudgingCategory,
   Rubric,
@@ -16,7 +16,6 @@ import {
   JudgingCategoryTypes,
   JudgingDeliberation,
   CoreValuesAwards,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly
 } from '@lems/types';
@@ -25,16 +24,18 @@ import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
 import ConnectionIndicator from '../../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
 import { Deliberation, DeliberationRef } from '../../../../components/deliberations/deliberation';
 import CategoryDeliberationLayout from '../../../../components/deliberations/category/category-deliberations-layout';
+import { getDefaultPicklistLimit } from '../../../../lib/utils/math';
+import { localizeDivisionTitle } from '../../../../localization/event';
 
 interface Props {
   category: JudgingCategory;
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -116,7 +117,7 @@ const Page: NextPage<Props> = ({
 
     for (
       let index = 0;
-      index < PRELIMINARY_DELIBERATION_PICKLIST_LENGTH - RANKING_ANOMALY_THRESHOLD;
+      index < getDefaultPicklistLimit(teams.length) - RANKING_ANOMALY_THRESHOLD;
       index++
     ) {
       const teamId = sortedTeams[index]._id;
@@ -242,7 +243,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={1900}
         back={`/lems/${user.role}`}
-        title={`דיון תחום ${localizedJudgingCategory[category].name} | בית ${division.name}`}
+        title={`דיון תחום ${localizedJudgingCategory[category].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -274,26 +275,24 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
     const category = ctx.params?.judgingCategory as JudgingCategory;
 
     if (!JudgingCategoryTypes.includes(category)) {
       return { notFound: true };
     }
 
-    console.log(`/api/divisions/${user.divisionId}/deliberations/category/${category}`);
-
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`,
-        roomScores: `/api/divisions/${user.divisionId}/insights/judging/scores/rooms`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        deliberation: `/api/divisions/${divisionId}/deliberations/category/${category}`,
+        roomScores: `/api/divisions/${divisionId}/insights/judging/scores/rooms`
       },
       ctx
     );

@@ -21,6 +21,7 @@ const ColorPickerButton: React.FC<ColorPickerButtonProps> = ({
       <Button
         {...props}
         sx={{
+          ...(props.sx ?? {}),
           backgroundColor: value,
           borderRadius: '1rem',
           height: '100%',

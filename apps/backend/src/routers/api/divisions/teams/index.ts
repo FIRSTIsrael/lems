@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import rubricsRouter from './rubrics';
 import scoresheetsRouter from './scoresheets';
+import roleValidator from '../../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,8 +22,12 @@ router.get('/:teamId', (req: Request, res: Response) => {
   });
 });
 
-router.use('/:teamId/rubrics', rubricsRouter);
+router.use(
+  '/:teamId/rubrics',
+  roleValidator(['judge', 'lead-judge', 'judge-advisor']),
+  rubricsRouter
+);
 
-router.use('/:teamId/scoresheets', scoresheetsRouter);
+router.use('/:teamId/scoresheets', roleValidator(['head-referee', 'referee']), scoresheetsRouter);
 
 export default router;

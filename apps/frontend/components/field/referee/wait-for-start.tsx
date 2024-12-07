@@ -32,8 +32,11 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({
         <Box
           sx={{
             display: 'inline-block',
-            color: '#22c55e',
-            background: 'linear-gradient(140deg, #dcfce7, #f0fdf4)',
+            color: participant.present === 'present' ? '#22c55e' : '#c45f21',
+            background:
+              participant.present === 'present'
+                ? 'linear-gradient(140deg, #dcfce7, #f0fdf4)'
+                : 'linear-gradient(140deg, #fcf3dc, #fdfaf0)',
             fontSize: '2.5rem',
             fontWeight: 900,
             textAlign: 'center',
@@ -43,7 +46,7 @@ const WaitForMatchStart: React.FC<WaitForMatchStartProps> = ({
             mb: 6
           }}
         >
-          ALL SET
+          {participant.present === 'present' ? 'ALL SET' : 'NO SHOW'}
         </Box>
         <Button
           onClick={() => updateMatchParticipant({ ready: false })}

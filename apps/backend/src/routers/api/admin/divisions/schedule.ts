@@ -97,7 +97,7 @@ router.post(
       console.log('✅ Generated scoresheets!');
 
       console.log('👤 Generating division users');
-      const users = getDivisionUsers(division, dbTables, dbRooms);
+      const users = getDivisionUsers(event, division, dbTables, dbRooms);
       if (!(await db.addUsers(users)).acknowledged) {
         res.status(500).json({ error: 'Could not create users!' });
         return;

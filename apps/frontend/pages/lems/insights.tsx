@@ -1,28 +1,36 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Division, DivisionState, SafeUser, Team } from '@lems/types';
+import {
+  DivisionWithEvent,
+  DivisionState,
+  SafeUser,
+  Team,
+  EventUserAllowedRoles
+} from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import FieldInsightsDashboard from '../../components/insights/dashboards/field';
 import JudgingInsightsDashboard from '../../components/insights/dashboards/judging';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import GeneralInsightsDashboard from '../../components/insights/dashboards/general';
+import { useQueryParam } from '../../hooks/use-query-param';
+import { localizeDivisionTitle } from '../../localization/event';
+import DivisionDropdown from '../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
 }
 
 const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   if (!divisionState.completed) {
     router.push(`/lems/${user.role}`);
@@ -39,15 +47,20 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ניתוח תחרות | ${division.name}`}
+        title={`ממשק ניתוח תחרות | ${localizeDivisionTitle(division)}`}
         back={`/lems/${user.role}`}
         color={division.color}
+        action={
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+          )
+        }
       >
         <TabContext value={activeTab}>
           <Paper sx={{ mt: 4 }}>
             <Tabs
               value={activeTab}
-              onChange={(_e: any, newValue: string) => setActiveTab(newValue)}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
               centered
             >
               <Tab label="כללי" value="1" />
@@ -72,19 +85,19 @@ const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

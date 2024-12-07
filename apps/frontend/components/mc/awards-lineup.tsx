@@ -1,39 +1,23 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useMemo, Fragment } from 'react';
 import { WithId } from 'mongodb';
 import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { Division, Team, Award } from '@lems/types';
-import { apiFetch } from '../../lib/utils/fetch';
+import { Team, Award, DivisionWithEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeTeam } from '../../localization/teams';
+import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface AwardsLineupProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   awards: Array<WithId<Award>>;
 }
 
 const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
-  const getAwardIndexFromQuery = () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    return searchParams.get('awardIndex') === null
-      ? 0
-      : parseInt(searchParams.get('awardIndex') as string);
-  };
-
-  const updateAwardIndexInUrl = (index: number) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('awardIndex', index.toString());
-    const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
-    history.pushState(null, '', newRelativePathQuery);
-  };
-
-  const [currentAward, setCurrentAwardState] = useState(getAwardIndexFromQuery());
-  const setCurrentAward = (index: number) => {
-    updateAwardIndexInUrl(index);
-    setCurrentAwardState(index);
-  };
+  const [awardIndex, setAwardIndex] = useQueryParam('awardIndex', '0');
+  const currentAward = parseInt(awardIndex);
 
   const advancingTeams: Array<WithId<Team>> = awards
     .filter(a => a.name === 'advancement')
@@ -106,18 +90,21 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
   return (
     <>
       <Typography fontSize="2.5rem" fontWeight={700} align="center" gutterBottom>
-        {division.name} | פרסים
+        {localizeDivisionTitle(division)} | פרסים
       </Typography>
       <Paper sx={{ width: '100%', p: 2, mb: 4 }}>{lineup[currentAward]}</Paper>
       <Stack direction="row" spacing={4} justifyContent="center" alignItems="center">
-        <IconButton onClick={() => setCurrentAward(Math.max(currentAward - 1, 0))} size="large">
+        <IconButton
+          onClick={() => setAwardIndex(Math.max(currentAward - 1, 0).toString())}
+          size="large"
+        >
           <EastRoundedIcon fontSize="large" />
         </IconButton>
         <Typography fontSize="1.5rem">
           {lineup.length} / {currentAward + 1}
         </Typography>
         <IconButton
-          onClick={() => setCurrentAward(Math.min(currentAward + 1, lineup.length - 1))}
+          onClick={() => setAwardIndex(Math.min(currentAward + 1, lineup.length - 1).toString())}
           size="large"
         >
           <WestRoundedIcon fontSize="large" />

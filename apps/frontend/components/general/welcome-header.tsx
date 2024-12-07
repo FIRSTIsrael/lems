@@ -1,10 +1,11 @@
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import { Division, SafeUser } from '@lems/types';
+import { DivisionWithEvent, SafeUser } from '@lems/types';
 import { localizedRoles } from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   user: SafeUser;
 }
 
@@ -22,7 +23,7 @@ const WelcomeHeader = ({ division, user }: Props) => {
       }}
     >
       <Typography variant="h1" fontSize="1.25rem" fontWeight={700} gutterBottom>
-        ברוכים הבאים ל{division.name}
+        ברוכים הבאים ל{localizeDivisionTitle(division)}
       </Typography>
       <Typography fontSize="0.875rem" sx={{ color: '#666' }}>
         יחד, אנו מעצימים את הדור הבא של מנהיגי המדע והטכנולוגיה ובונים עולם טוב יותר.

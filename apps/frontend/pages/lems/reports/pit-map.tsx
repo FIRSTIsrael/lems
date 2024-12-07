@@ -6,17 +6,19 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Division, SafeUser, RoleTypes } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
+import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   pitMapUrl: string;
 }
 
@@ -36,9 +38,16 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
     >
       <Layout
         maxWidth="xl"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -46,7 +55,7 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
         {!error ? (
           <Image
             src={`${pitMapUrl}/${division._id}.png`}
-            alt={`מפת פיטים ל${division.name}`}
+            alt={`מפת פיטים ל${localizeDivisionTitle(division)}`}
             width={0}
             height={0}
             sizes="100vw"
@@ -78,17 +87,16 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${user.divisionId}` },
+      { division: `/api/divisions/${divisionId}?withEvent=true` },
       ctx
     );
 
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 
     return { props: { user, pitMapUrl, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

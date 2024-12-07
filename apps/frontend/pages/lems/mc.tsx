@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { W, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
-  Division,
   DivisionState,
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
   Team,
-  Award
+  Award,
+  DivisionWithEvent
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -20,13 +20,15 @@ import McSchedule from '../../components/mc/mc-schedule';
 import AwardsLineup from '../../components/mc/awards-lineup';
 import AwardsNotReadyCard from '../../components/mc/awards-not-ready-card';
 import ReportLink from '../../components/general/report-link';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
+import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -44,7 +46,7 @@ const Page: NextPage<Props> = ({
   awards: initialAwards
 }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
@@ -100,8 +102,8 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="lg"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
-        action={<ReportLink division={division} />}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
+        action={<ReportLink />}
         color={division.color}
       >
         <TabContext value={activeTab}>
@@ -138,22 +140,22 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        matches: `/api/divisions/${user.divisionId}/matches`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        awards: `/api/divisions/${user.divisionId}/awards`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        matches: `/api/divisions/${divisionId}/matches`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        awards: `/api/divisions/${divisionId}/awards`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

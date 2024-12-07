@@ -5,7 +5,6 @@ import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography, Stack } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
-  Division,
   DivisionState,
   Team,
   JudgingRoom,
@@ -13,7 +12,8 @@ import {
   SafeUser,
   Rubric,
   JudgingCategory,
-  JudgingDeliberation
+  JudgingDeliberation,
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
@@ -23,15 +23,16 @@ import Layout from '../../components/layout';
 import ReportLink from '../../components/general/report-link';
 import InsightsLink from '../../components/general/insights-link';
 import WelcomeHeader from '../../components/general/welcome-header';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import CategoryDeliberationHeader from '../../components/judging/category-deliberation-header';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
@@ -134,16 +135,12 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? (
-              <InsightsLink division={division} />
-            ) : (
-              <ReportLink division={division} />
-            )}
+            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }
         color={division.color}
@@ -203,24 +200,24 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
     const category = user.roleAssociation.value;
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics/${category}`,
-        deliberation: `/api/divisions/${user.divisionId}/deliberations/category/${category}`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        rubrics: `/api/divisions/${divisionId}/rubrics/${category}`,
+        deliberation: `/api/divisions/${divisionId}/deliberations/category/${category}`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

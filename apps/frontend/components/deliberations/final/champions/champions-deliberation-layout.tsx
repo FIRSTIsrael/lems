@@ -26,7 +26,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
   const places = picklistLimits['champions'] ?? AwardLimits['champions']!;
 
   return (
-    (<Grid container pt={2} columnSpacing={4} rowSpacing={2}>
+    <Grid container pt={2} columnSpacing={4} rowSpacing={2}>
       <Grid size={7}>
         <ChampionsDeliberationsGrid
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
@@ -44,6 +44,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
           nextStageUnlocked={deliberation.awards['champions']?.length === places}
           startDeliberation={start}
           disqualifyTeam={disqualifyTeam}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           endDeliberationStage={endStage ?? (() => {})}
           compareProps={compareContextProps}
         />
@@ -60,7 +61,7 @@ const ChampionsDeliberationLayout: React.FC = () => {
       <Grid size={6}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 

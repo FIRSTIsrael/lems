@@ -3,22 +3,32 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper } from '@mui/material';
+import { Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
-import { Division, DivisionState, RoleTypes, SafeUser, Scoresheet, Team } from '@lems/types';
+import {
+  DivisionWithEvent,
+  DivisionState,
+  RoleTypes,
+  SafeUser,
+  Scoresheet,
+  Team,
+  EventUserAllowedRoles
+} from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedMatchStage } from '../../../localization/field';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeTeam } from '../../../localization/teams';
 import { compareScoreArrays } from '@lems/utils/arrays';
+import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   divisionState: DivisionState;
   scoresheets: Array<WithId<Scoresheet>>;
@@ -140,9 +150,16 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - טבלת ניקוד | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -178,21 +195,20 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

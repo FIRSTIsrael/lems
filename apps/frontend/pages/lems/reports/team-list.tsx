@@ -11,22 +11,34 @@ import {
   TableHead,
   TableSortLabel,
   TableRow,
-  Box
+  Box,
+  IconButton,
+  Stack
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Division, Team, SafeUser, RoleTypes } from '@lems/types';
+import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
+import {
+  DivisionWithEvent,
+  Team,
+  SafeUser,
+  RoleTypes,
+  Role,
+  EventUserAllowedRoles
+} from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
 }
 
@@ -36,17 +48,24 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  const headCells = useMemo(
-    () => [
-      { label: 'מספר', sort: 'number' },
-      { label: 'שם', sort: 'name' },
-      { label: 'מוסד', sort: 'institution' },
-      { label: 'עיר', sort: 'city' },
-      {
+  const headCells = useMemo<{
+    [key: string]: { label: string; sort: string; allowedRoles?: Array<Role> };
+  }>(
+    () => ({
+      number: { label: 'מספר', sort: 'number' },
+      name: { label: 'שם', sort: 'name' },
+      institution: { label: 'מוסד', sort: 'institution' },
+      city: { label: 'עיר', sort: 'city' },
+      registration: {
         label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
         sort: 'registration'
+      },
+      profileDocumentUrl: {
+        label: 'דף מידע',
+        sort: 'profileDocumentUrl',
+        allowedRoles: ['head-referee']
       }
-    ],
+    }),
     [teams]
   );
 
@@ -68,7 +87,8 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       name: (a, b) => a.name.localeCompare(b.name),
       institution: (a, b) => a.affiliation.name.localeCompare(b.affiliation.name),
       city: (a, b) => a.affiliation.city.localeCompare(b.affiliation.city),
-      registration: (a, b) => (b.registered ? 1 : -1)
+      registration: (a, b) => (b.registered ? 1 : -1),
+      profileDocumentUrl: (a, b) => (b.profileDocumentUrl ? 1 : -1)
     };
 
     const sorted = teams.sort(sortFunctions[sortBy]);
@@ -91,9 +111,16 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        action={
+          <Stack direction="row" spacing={2}>
+            <ConnectionIndicator status={connectionStatus} />
+            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+              <DivisionDropdown event={division.event} selected={division._id.toString()} />
+            )}
+          </Stack>
+        }
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}
@@ -110,25 +137,31 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
             <Table aria-label="team list">
               <TableHead>
                 <TableRow>
-                  {headCells.map((cell, index) => (
-                    <TableCell key={index} align="left">
-                      <TableSortLabel
-                        active={sortBy === cell.sort}
-                        direction={sortBy === cell.sort ? sortDirection : 'asc'}
-                        onClick={() => {
-                          const isAsc = sortBy === cell.sort && sortDirection === 'asc';
-                          setSortDirection(isAsc ? 'desc' : 'asc');
-                          setSortBy(cell.sort);
-                        }}
-                      >
-                        {cell.label}
-                        {sortBy === cell.sort ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {sortDirection === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
-                    </TableCell>
+                  {Object.values(headCells).map((cell, index) => (
+                    <RoleAuthorizer
+                      key={index}
+                      user={user}
+                      allowedRoles={cell.allowedRoles ?? [...RoleTypes]}
+                    >
+                      <TableCell align="left">
+                        <TableSortLabel
+                          active={sortBy === cell.sort}
+                          direction={sortBy === cell.sort ? sortDirection : 'asc'}
+                          onClick={() => {
+                            const isAsc = sortBy === cell.sort && sortDirection === 'asc';
+                            setSortDirection(isAsc ? 'desc' : 'asc');
+                            setSortBy(cell.sort);
+                          }}
+                        >
+                          {cell.label}
+                          {sortBy === cell.sort ? (
+                            <Box component="span" sx={visuallyHidden}>
+                              {sortDirection === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            </Box>
+                          ) : null}
+                        </TableSortLabel>
+                      </TableCell>
+                    </RoleAuthorizer>
                   ))}
                 </TableRow>
               </TableHead>
@@ -143,6 +176,21 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
                       <TableCell align="left">
                         <BooleanIcon condition={team.registered} />
                       </TableCell>
+                      <RoleAuthorizer
+                        user={user}
+                        allowedRoles={headCells.profileDocumentUrl.allowedRoles}
+                      >
+                        <TableCell align="left">
+                          <IconButton
+                            href={team.profileDocumentUrl ?? ''}
+                            disabled={!team.profileDocumentUrl}
+                            color="info"
+                            target="_blank"
+                          >
+                            <ContactPageRoundedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </RoleAuthorizer>
                     </TableRow>
                   );
                 })}
@@ -157,19 +205,18 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

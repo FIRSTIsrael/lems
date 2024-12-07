@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Team, PRELIMINARY_DELIBERATION_PICKLIST_LENGTH, AwardNames } from '@lems/types';
+import { Team, AwardNames } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
 
@@ -93,7 +93,7 @@ interface AwardListProps {
   disabled?: boolean;
   withIcons?: boolean;
   trophyCount?: number;
-  length?: number;
+  length: number;
   title?: string;
   fullWidth?: boolean;
   suggestedTeam?: WithId<Team> | null;
@@ -106,21 +106,21 @@ const AwardList: React.FC<AwardListProps> = ({
   disabled = false,
   withIcons = false,
   trophyCount = 0,
-  length = PRELIMINARY_DELIBERATION_PICKLIST_LENGTH,
+  length,
   title,
   fullWidth = false,
   suggestedTeam,
   addSuggestedTeam
 }) => {
   const awardIcons = [
-    <EmojiEventsIcon fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,
-    <EmojiEventsIcon fontSize="large" sx={{ color: '#788991', ml: 3 }} />,
-    <EmojiEventsIcon fontSize="large" sx={{ color: '#a97d4f', ml: 3 }} />,
-    <WorkspacePremiumIcon fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />
+    <EmojiEventsIcon key={'1'} fontSize="large" sx={{ color: '#fecb4d', ml: 3 }} />,
+    <EmojiEventsIcon key={'2'} fontSize="large" sx={{ color: '#788991', ml: 3 }} />,
+    <EmojiEventsIcon key={'3'} fontSize="large" sx={{ color: '#a97d4f', ml: 3 }} />,
+    <WorkspacePremiumIcon key={'4'} fontSize="large" sx={{ color: '#5ebad9', ml: 3 }} />
   ];
 
   return (
-    (<Paper sx={{ p: 2, height: '100%', width: fullWidth ? '100%' : undefined }}>
+    <Paper sx={{ p: 2, height: '100%', width: fullWidth ? '100%' : undefined }}>
       {title && (
         <Typography align="center" fontWeight={500} gutterBottom>
           {title}
@@ -171,6 +171,7 @@ const AwardList: React.FC<AwardListProps> = ({
             {[...Array(length).keys()].map(index =>
               withIcons && index < trophyCount ? (
                 <Box
+                  key={index}
                   position="relative"
                   display="inline-flex"
                   justifyContent="center"
@@ -198,7 +199,7 @@ const AwardList: React.FC<AwardListProps> = ({
           </Stack>
         </Grid>
       </Grid>
-    </Paper>)
+    </Paper>
   );
 };
 

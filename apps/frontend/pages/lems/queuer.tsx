@@ -8,14 +8,14 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import {
-  Division,
   DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
 import Layout from '../../components/layout';
@@ -24,13 +24,14 @@ import QueuerFieldTeamDisplay from '../../components/queueing/queuer-field-team-
 import QueuerFieldSchedule from '../../components/queueing/queuer-field-schedule';
 import QueuerPitMap from '../../components/queueing/queuer-pit-map';
 import QueuerJudgingSchedule from '../../components/queueing/queuer-judging-schedule';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles, localizedDivisionSection } from '../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-team-display';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -126,7 +127,7 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         color={division.color}
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
@@ -185,17 +186,17 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        matches: `/api/divisions/${user.divisionId}/matches`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        matches: `/api/divisions/${divisionId}/matches`
       },
       ctx
     );
@@ -203,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const pitMapUrl = `https://${process.env.DIGITALOCEAN_SPACE}.${process.env.DIGITALOCEAN_ENDPOINT}/pit-maps`;
 
     return { props: { user, pitMapUrl, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

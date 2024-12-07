@@ -1,47 +1,37 @@
 import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
-import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
-import { Box, Button, ButtonProps, TextField, Typography, Stack, Paper } from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FllEvent, Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
 
-interface EditDivisionFormProps extends ButtonProps {
+interface EditDivisionFormProps extends PaperProps {
   event: WithId<FllEvent>;
   division: WithId<Division>;
 }
 
-const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, onSubmit }) => {
+const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ...props }) => {
   const [name, setName] = useState<string>(division.name);
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
   const [color, setColor] = useState<CSSProperties['color']>(division.color);
 
   const updateDivision = () => {
     apiFetch(`/api/admin/divisions/${division._id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        startDate: startDate.toDate() || event.startDate,
-        endDate: endDate.toDate() || event.endDate,
-        color
-      })
+      body: JSON.stringify({ name, color })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('פרטי האירוע נשמרו בהצלחה!', { variant: 'success' });
+        enqueueSnackbar('פרטי הבית נשמרו בהצלחה!', { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת פרטי האירוע נכשלה.', { variant: 'error' });
+        enqueueSnackbar('אופס, שמירת פרטי הבית נכשלה.', { variant: 'error' });
       }
     });
   };
 
   return (
-    (<Paper sx={{ p: 4 }}>
+    <Paper sx={{ p: 4 }} {...props}>
       <Box
         component="form"
         onSubmit={e => {
@@ -51,7 +41,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
       >
         <Stack direction="column" spacing={2}>
           <Typography variant="h2" fontSize="1.25rem" fontWeight={600}>
-            פרטי האירוע
+            פרטי הבית
           </Typography>
           <Grid container spacing={2}>
             <Grid size={6}>
@@ -60,7 +50,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                label="שם אירוע"
+                label="שם בית"
                 fullWidth
               />
             </Grid>
@@ -72,32 +62,6 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
                 fullWidth
               />
             </Grid>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid size={6}>
-                <DatePicker
-                  disabled // Currently we do not support editing division dates (see LEMS-153)
-                  label="תאריך התחלה"
-                  value={startDate}
-                  onChange={newDate => {
-                    if (newDate) setStartDate(newDate);
-                  }}
-                  format="DD/MM/YYYY"
-                  slotProps={{ textField: { fullWidth: true } }}
-                />
-              </Grid>
-              <Grid size={6}>
-                <DatePicker
-                  disabled // Currently we do not support editing division dates (see LEMS-153)
-                  label="תאריך סיום"
-                  value={endDate}
-                  onChange={newDate => {
-                    if (newDate) setEndDate(newDate);
-                  }}
-                  format="DD/MM/YYYY"
-                  slotProps={{ textField: { fullWidth: true } }}
-                />
-              </Grid>
-            </LocalizationProvider>
           </Grid>
 
           <Box justifyContent="center" display="flex">
@@ -107,7 +71,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, on
           </Box>
         </Stack>
       </Box>
-    </Paper>)
+    </Paper>
   );
 };
 

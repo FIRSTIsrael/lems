@@ -1,16 +1,21 @@
-import { WithId } from 'mongodb';
 import { Tooltip, IconButton } from '@mui/material';
 import InsightsIcon from '@mui/icons-material/Insights';
-import { Division } from '@lems/types';
+import { useRouter } from 'next/router';
 
-interface InsightsLinkProps {
-  division: WithId<Division>;
-}
+const InsightsLink: React.FC = () => {
+  const router = useRouter();
 
-const InsightsLink: React.FC<InsightsLinkProps> = ({ division }) => {
+  const handleClick = () => {
+    const queryString = router.query.divisionId
+      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
+      : '';
+    const url = `/lems/reports${queryString ? `?${queryString}` : ''}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <Tooltip title="ניתוח אירוע" arrow>
-      <IconButton aria-label="ניתוח אירוע" href={`/lems/insights`}>
+      <IconButton onClick={handleClick}>
         <InsightsIcon />
       </IconButton>
     </Tooltip>
