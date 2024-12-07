@@ -190,6 +190,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     if (!result.destination) return; // Dropped outside the list
 
     // The compiler thinks destination can be none despite the if statement above
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     setAwards(awards => reorder(awards, result.source.index, result.destination!.index));
   };
 
