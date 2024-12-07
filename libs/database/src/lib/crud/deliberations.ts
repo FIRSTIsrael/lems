@@ -31,3 +31,9 @@ export const updateJudgingDeliberation = (
 export const deleteJudgingDeliberation = (filter: Filter<JudgingDeliberation>) => {
   return db.collection<JudgingDeliberation>('judging-deliberation').deleteOne(filter);
 };
+
+export const deleteDivisionDeliberations = (divisionId: ObjectId) => {
+  return db
+    .collection<JudgingDeliberation>('judging-deliberation')
+    .deleteMany({ divisionId: divisionId });
+};

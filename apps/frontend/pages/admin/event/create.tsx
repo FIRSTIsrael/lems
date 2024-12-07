@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { Formik, Form, FieldProps, Field } from 'formik';
+import { Formik, Form, FieldProps, Field, FormikHelpers, useFormikContext } from 'formik';
 import { useRouter } from 'next/router';
 import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
@@ -20,30 +20,47 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid2';
-import ImportIcon from '@mui/icons-material/UploadRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { DivisionSwatches } from '@lems/types';
+import HomeIcon from '@mui/icons-material/HomeRounded';
+import { DivisionSwatches, EventUserAllowedRoles, EventUserAllowedRoleTypes } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Layout from '../../../components/layout';
 import FormikTextField from '../../../components/general/forms/formik-text-field';
+import FormikCheckbox from '../../../components/general/forms/formik-checkbox';
 import ColorPickerButton from '../../../components/admin/color-picker-button';
+import { localizedRoles } from '../../../localization/roles';
 
-const DivisionField: React.FC<{ name: string }> = ({ name }) => {
+interface EventCreateFormValues {
+  name: string;
+  salesforceId: string;
+  enableDivisions: boolean;
+  startDate: Dayjs;
+  endDate: Dayjs;
+  eventUsers: Record<EventUserAllowedRoles, boolean>;
+  divisions: {
+    name: string;
+    color: string;
+  }[];
+}
+
+const DivisionField: React.FC<{ index: number }> = ({ index }) => {
+  const { values, setFieldValue } = useFormikContext<EventCreateFormValues>();
+  const name = `divisions[${index}]`;
+
   return (
-    (<Grid container alignItems="center" spacing={2} size={6}>
-      <Grid position="relative" height="100%" size={1.5}>
+    <Grid size={4}>
+      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" height="100%">
         <Field name={`${name}.color`}>
           {({ field, form }: FieldProps) => (
             <ColorPickerButton
               swatches={DivisionSwatches}
-              fullWidth
+              sx={{ width: 120, minHeight: 56 }}
               value={field.value}
               setColor={newColor => form.setFieldValue(field.name, newColor)}
             />
           )}
         </Field>
-      </Grid>
-      <Grid size={10.5}>
         <FormikTextField
           name={`${name}.name`}
           variant="outlined"
@@ -51,8 +68,17 @@ const DivisionField: React.FC<{ name: string }> = ({ name }) => {
           label="שם בית"
           fullWidth
         />
-      </Grid>
-    </Grid>)
+        <IconButton
+          disabled={values.divisions.length < 2}
+          onClick={() =>
+            setFieldValue('divisions', [...values.divisions.filter((item, i) => i !== index)])
+          }
+          sx={{ height: 34, width: 34 }}
+        >
+          <DeleteRoundedIcon />
+        </IconButton>
+      </Stack>
+    </Grid>
   );
 };
 
@@ -66,7 +92,10 @@ const Page: NextPage = () => {
     return dayjs();
   };
 
-  const handleSubmit = (values: any, formikHelpers: any) => {
+  const handleSubmit = (
+    values: EventCreateFormValues,
+    formikHelpers: FormikHelpers<EventCreateFormValues>
+  ) => {
     apiFetch('/api/admin/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,7 +106,11 @@ const Page: NextPage = () => {
           .toDate(),
         endDate: resetTimePart(values.endDate || getDefaultDate())
           .tz('utc', true)
-          .toDate()
+          .toDate(),
+        ...(!values.enableDivisions && {
+          color: values.divisions[0].color,
+          divisions: [{ name: values.name, color: values.divisions[0].color }]
+        })
       })
     })
       .then(res => {
@@ -91,10 +124,15 @@ const Page: NextPage = () => {
       .catch(() => enqueueSnackbar('אופס, לא הצלחנו ליצור את האירוע.', { variant: 'error' }));
   };
 
-  const getInitialValues = () => {
+  const getInitialValues = (): EventCreateFormValues => {
     return {
       name: '',
       salesforceId: '',
+      enableDivisions: false,
+      eventUsers: EventUserAllowedRoleTypes.reduce(
+        (a, r) => ({ ...a, [r]: false }),
+        {} as Record<EventUserAllowedRoles, boolean>
+      ),
       startDate: getDefaultDate(),
       endDate: getDefaultDate(),
       divisions: [{ name: '', color: DivisionSwatches[0] }]
@@ -102,116 +140,162 @@ const Page: NextPage = () => {
   };
 
   return (
-    (<Layout maxWidth="xl" title="יצירת אירוע" back="/admin">
+    <Layout maxWidth="lg" title="יצירת אירוע" back="/admin">
       <Formik initialValues={getInitialValues()} onSubmit={handleSubmit}>
         {({ values, errors, touched, setFieldValue }) => (
           <Form>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid component={Paper} container rowGap={3} columnSpacing={3} p={2} mt={2}>
+              <Grid component={Paper} container rowSpacing={3} columnSpacing={3} p={3} mt={2}>
                 <Grid size={12}>
-                  <Typography variant="h2">הגדרות כלליות</Typography>
-                </Grid>
-                <Grid size={4}>
-                  <FormikTextField
-                    variant="outlined"
-                    type="text"
-                    name="name"
-                    label="שם אירוע"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <DatePicker
-                    label="תאריך התחלה"
-                    value={values.startDate}
-                    onChange={newDate => {
-                      setFieldValue('startDate', newDate, true);
-                      setFieldValue('endDate', newDate, true);
-                    }}
-                    format="DD/MM/YYYY"
-                    sx={{ width: '100%' }}
-                    slotProps={{
-                      textField: {
-                        variant: 'outlined',
-                        error: touched.startDate && Boolean(errors.startDate)
-                        // helperText: touched.startDate && errors.startDate
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <DatePicker
-                    label="תאריך סיום"
-                    value={values.endDate}
-                    onChange={newDate => setFieldValue('endDate', newDate, true)}
-                    format="DD/MM/YYYY"
-                    readOnly
-                    sx={{ width: '100%' }}
-                    slotProps={{
-                      textField: {
-                        variant: 'outlined',
-                        error: touched.endDate && Boolean(errors.endDate)
-                        // helperText: touched.endDate && errors.endDate
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid size={4}>
-                  <Button
-                    variant="contained"
-                    startIcon={<ImportIcon />}
-                    disabled
-                    size="large"
-                    fullWidth
-                  >
-                    העלאת רשימת קבוצות
-                  </Button>
+                  <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                    כללי
+                  </Typography>
                 </Grid>
                 <Grid size={12}>
-                  <Typography variant="h2">הגדרות אינטגרציה</Typography>
-                </Grid>
-                <Grid container alignItems="center" spacing={2} size={4}>
-                  <Grid size={2}>
-                    <Avatar
-                      src="/assets/first-israel-vertical.png"
-                      alt="לוגו של פירסט ישראל"
-                      sx={{ bgcolor: grey[100], width: 56, height: 56 }}
-                    />
-                  </Grid>
-                  <Grid size={4}>
-                    <Typography>
-                      ה-Dashboard של <em>FIRST</em> ישראל
-                    </Typography>
-                  </Grid>
-                  <Grid size={2}>
-                    <FormControlLabel control={<Checkbox disabled checked />} label="פעיל" />
-                  </Grid>
-                  <Grid size={4}>
+                  <Stack direction="row" spacing={2}>
+                    {!values.enableDivisions && (
+                      <ColorPickerButton
+                        swatches={DivisionSwatches}
+                        value={values.divisions[0].color}
+                        sx={{ minHeight: 56 }}
+                        setColor={newColor => setFieldValue('divisions[0].color', newColor)}
+                      />
+                    )}
                     <FormikTextField
                       variant="outlined"
                       type="text"
-                      name="salesforceId"
-                      label="מזהה אירוע"
+                      name="name"
+                      label="שם אירוע"
                       fullWidth
                     />
-                  </Grid>
+                    <DatePicker
+                      label="תאריך התחלה"
+                      value={values.startDate}
+                      onChange={newDate => {
+                        setFieldValue('startDate', newDate, true);
+                        setFieldValue('endDate', newDate, true);
+                      }}
+                      format="DD/MM/YYYY"
+                      sx={{ width: '100%' }}
+                      slotProps={{
+                        textField: {
+                          variant: 'outlined',
+                          error: touched.startDate && Boolean(errors.startDate)
+                        }
+                      }}
+                    />
+                    <DatePicker
+                      label="תאריך סיום"
+                      value={values.endDate}
+                      onChange={newDate => setFieldValue('endDate', newDate, true)}
+                      format="DD/MM/YYYY"
+                      readOnly
+                      sx={{ width: '100%' }}
+                      slotProps={{
+                        textField: {
+                          variant: 'outlined',
+                          error: touched.endDate && Boolean(errors.endDate)
+                        }
+                      }}
+                    />
+                  </Stack>
                 </Grid>
+
                 <Grid size={12}>
-                  <Typography variant="h2">הגדרות בתים</Typography>
+                  <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                    אינטגרציות
+                  </Typography>
                 </Grid>
-                <DivisionField name="divisions[0]" />
-              </Grid>
-              <Grid size={12}>
-                <Tooltip title="הוספת בית" arrow>
-                  <span>
-                    <IconButton disabled>
-                      <AddRoundedIcon />
-                    </IconButton>
-                  </span>
-                </Tooltip>
+                <Stack direction="row" spacing={2} justifyContent="center">
+                  <Avatar
+                    src="/assets/first-israel-vertical.png"
+                    alt="לוגו של פירסט ישראל"
+                    sx={{ bgcolor: grey[100], width: 56, height: 56 }}
+                  />
+                  <Typography minWidth={120}>
+                    ה-Dashboard של <em>FIRST</em> ישראל
+                  </Typography>
+                  <FormControlLabel control={<Checkbox disabled checked />} label="פעיל" />
+                  <FormikTextField
+                    variant="outlined"
+                    type="text"
+                    name="salesforceId"
+                    label="מזהה אירוע"
+                    fullWidth
+                  />
+                </Stack>
+                {values.enableDivisions ? (
+                  <>
+                    <Grid size={12}>
+                      <Typography fontSize="1.5rem" fontWeight={500}>
+                        משתמשי אירוע
+                      </Typography>
+                      <Typography color="textSecondary" fontSize="0.75rem">
+                        משתמשי אירוע יקבלו גישה למידע מכל הבתים ויוכלו לעבור ביניהם בלחיצת כפתור.
+                      </Typography>
+                    </Grid>
+                    <Grid size={12}>
+                      <Stack direction="row" spacing={4}>
+                        {EventUserAllowedRoleTypes.map((user, index) => (
+                          <FormikCheckbox
+                            key={index}
+                            name={`eventUsers.${user}`}
+                            label={localizedRoles[user].name}
+                          />
+                        ))}
+                      </Stack>
+                    </Grid>
+
+                    <Grid size={12}>
+                      <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                        בתים
+                      </Typography>
+                    </Grid>
+
+                    {values.divisions.map((division, index) => (
+                      <Grid size={12} key={index}>
+                        <DivisionField index={index} />
+                      </Grid>
+                    ))}
+                    <Grid size={12}>
+                      <Tooltip title="הוספת בית" arrow>
+                        <span>
+                          <IconButton
+                            onClick={() =>
+                              setFieldValue('divisions', [
+                                ...values.divisions,
+                                {
+                                  name: '',
+                                  color:
+                                    DivisionSwatches.filter(
+                                      color => !values.divisions.map(d => d.color).includes(color)
+                                    )[0] ?? DivisionSwatches[0]
+                                }
+                              ])
+                            }
+                          >
+                            <AddRoundedIcon />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    </Grid>
+                  </>
+                ) : (
+                  <Grid size={12}>
+                    <Button
+                      variant="contained"
+                      startIcon={<HomeIcon />}
+                      size="large"
+                      onClick={() => setFieldValue('enableDivisions', true)}
+                      sx={{ width: 350 }}
+                    >
+                      פיצול האירוע לבתים
+                    </Button>
+                  </Grid>
+                )}
               </Grid>
               <Stack direction="row" marginTop={2} justifyContent="center">
-                <Button type="submit" variant="contained" sx={{ minWidth: 180 }}>
+                <Button type="submit" variant="contained" sx={{ minWidth: 180, mb: 2 }}>
                   צור אירוע
                 </Button>
               </Stack>
@@ -219,7 +303,7 @@ const Page: NextPage = () => {
           </Form>
         )}
       </Formik>
-    </Layout>)
+    </Layout>
   );
 };
 

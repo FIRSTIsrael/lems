@@ -5,7 +5,7 @@ import { DeliberationAnomaly } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
-import { getBackgroundColor, getHoverBackgroundColor } from 'apps/frontend/lib/utils/theme';
+import { getBackgroundColor, getHoverBackgroundColor } from '../../../../lib/utils/theme';
 
 interface ChampionsDeliberationGridProps {
   teams: Array<WithId<DeliberationTeam>>;
@@ -119,14 +119,14 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     },
     ...rankingRounds.map(
       round =>
-        (({
+        ({
           field: `gp-${round}`,
           headerName: `GP ${round}`,
           type: 'number',
           headerAlign: 'center',
           align: 'center',
           width: 60
-        }) as GridColDef)
+        }) as GridColDef
     ),
     {
       field: 'maxScore',

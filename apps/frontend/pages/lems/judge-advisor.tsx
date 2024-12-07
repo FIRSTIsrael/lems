@@ -11,7 +11,7 @@ import {
   JudgingRoom,
   JudgingSession,
   SafeUser,
-  Division,
+  DivisionWithEvent,
   Team,
   JudgingCategory,
   Rubric,
@@ -21,7 +21,7 @@ import {
   Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
@@ -33,10 +33,12 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import AwardsPanel from '../../components/judging/judge-advisor/awards-panel';
 import CVFormCard from '../../components/cv-form/cv-form-card';
 import BadgeTab from '../../components/general/badge-tab';
+import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
   teams: Array<WithId<Team>>;
@@ -68,7 +70,7 @@ const Page: NextPage<Props> = ({
   const [deliberations, setDeliberations] =
     useState<Array<WithId<JudgingDeliberation>>>(initialDeliberations);
   const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
-  const [activeTab, setActiveTab] = useState<string>('1');
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   const openCVForms = useMemo(
     () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
@@ -178,16 +180,12 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         maxWidth={800}
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? (
-              <InsightsLink division={division} />
-            ) : (
-              <ReportLink division={division} />
-            )}
+            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }
         color={division.color}
@@ -274,19 +272,19 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        deliberations: `/api/divisions/${user.divisionId}/deliberations`,
-        awards: `/api/divisions/${user.divisionId}/awards`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        rubrics: `/api/divisions/${divisionId}/rubrics`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        deliberations: `/api/divisions/${divisionId}/deliberations`,
+        awards: `/api/divisions/${divisionId}/awards`
       },
       ctx
     );

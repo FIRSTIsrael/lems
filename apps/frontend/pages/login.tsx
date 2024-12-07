@@ -5,7 +5,8 @@ import { Paper, Box, Link, Stack, Typography } from '@mui/material';
 import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/general/event-selector';
-import LoginForm from '../components/login/login-form';
+import DivisionLoginForm from '../components/login/division-login-form';
+import EventLoginForm from '../components/login/event-login-form';
 import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
@@ -17,13 +18,24 @@ interface PageProps {
 
 const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
+  const [event, setEvent] = useState<WithId<FllEvent> | undefined>(undefined);
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
 
-  const selectDivision = (eventId: string | ObjectId) => {
-    const selectedEvent = events.find(e => e._id == eventId);
-    setDivision(selectedEvent?.divisions?.[0]);
+  const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
+    const event = events.find(e => String(e._id) === String(eventId));
+    if (!event) return;
+    setEvent(event);
+
+    if (!event.enableDivisions) {
+      setDivision(event.divisions?.[0]);
+      return;
+    }
+
+    if (divisionId) {
+      setDivision(event.divisions?.find(d => String(d._id) === String(divisionId)));
+    }
   };
 
   useEffect(() => {
@@ -57,13 +69,21 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       <Paper sx={{ p: 4, mt: 4 }}>
         {isAdminLogin ? (
           <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : division && rooms && tables ? (
-          <LoginForm
+        ) : event && event.eventUsers?.length > 0 && !division ? (
+          <EventLoginForm
+            event={event}
+            onCancel={() => setEvent(undefined)}
             recaptchaRequired={recaptchaRequired}
+          />
+        ) : division && event && rooms && tables ? (
+          <DivisionLoginForm
+            recaptchaRequired={recaptchaRequired}
+            event={event}
             division={division}
             rooms={rooms}
             tables={tables}
             onCancel={() => {
+              setEvent(undefined);
               setDivision(undefined);
               setRooms(undefined);
               setTables(undefined);
@@ -76,7 +96,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
             </Typography>
             <EventSelector
               events={events}
-              getEventDisabled={event => !event.divisions?.[0]?.hasState}
+              includeDivisions
+              getEventDisabled={event =>
+                !!event.divisions && event.divisions.every(d => !d.hasState)
+              }
+              getDivisionDisabled={division => !division.hasState}
               onChange={selectDivision}
             />
           </Stack>

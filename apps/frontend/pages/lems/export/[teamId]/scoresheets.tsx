@@ -20,10 +20,11 @@ import {
   SEASON_SCORESHEET,
   localizedScoresheet
 } from '@lems/season';
-import { Division } from '@lems/types';
+import { DivisionWithEvent } from '@lems/types';
 import Markdown from 'react-markdown';
 import CustomNumberInput from '../../../../components/field/scoresheet/number-input';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
+import { localizeDivisionTitle } from '../../../../localization/event';
 
 interface ExportMissionClauseProps {
   scoresheet: WithId<Scoresheet>;
@@ -182,7 +183,7 @@ const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
 };
 
 interface ExportScoresheetPageProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   scoresheet: WithId<Scoresheet>;
 }
@@ -199,7 +200,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
           <Stack justifyContent="space-between" height="100%">
             <Typography fontSize="0.75rem" color="textSecondary">
               הופק מתוך מערכת האירועים של <em>FIRST</em> ישראל ({scoresheet._id.toString()}) |{' '}
-              {division.name} | עונת <span dir="ltr">{SEASON_NAME}</span>
+              {localizeDivisionTitle(division)} | עונת <span dir="ltr">{SEASON_NAME}</span>
             </Typography>
             <Typography fontSize="1.75rem" fontWeight={700}>
               דף ניקוד {scoresheet.round} של קבוצה #{team.number}
@@ -251,7 +252,7 @@ const ExportScoresheetPage: React.FC<ExportScoresheetPageProps> = ({
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
@@ -272,20 +273,24 @@ const Page: NextPage<Props> = ({ user, division, team, scoresheets }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data = await serverSideGetRequests(
-    {
-      user: '/api/me',
-      division: `/api/divisions/${ctx.params?.divisionId}`,
-      team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
-      scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
-    },
-    ctx
-  );
-  data.scoresheets = data.scoresheets.filter(
-    (scoresheet: Scoresheet) => scoresheet.stage !== 'practice'
-  );
+  try {
+    const data = await serverSideGetRequests(
+      {
+        user: '/api/me',
+        division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
+        team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
+        scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
+      },
+      ctx
+    );
+    data.scoresheets = data.scoresheets.filter(
+      (scoresheet: Scoresheet) => scoresheet.stage !== 'practice'
+    );
 
-  return { props: { ...data } };
+    return { props: { ...data } };
+  } catch {
+    return { redirect: { destination: '/login', permanent: false } };
+  }
 };
 
 export default Page;

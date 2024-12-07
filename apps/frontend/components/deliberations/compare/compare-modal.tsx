@@ -14,8 +14,9 @@ const CompareModal: React.FC<CompareModalProps> = props => {
   const { open, setOpen, ...compareViewProps } = props;
 
   const TIMER_LENGTH_SECONDS = 90;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const targetDate = useMemo(() => dayjs().add(TIMER_LENGTH_SECONDS, 'seconds').toDate(), [open]);
-  const [days, hours, minutes, seconds] = useCountdown(targetDate);
+  const [, , minutes, seconds] = useCountdown(targetDate);
   const time = minutes * 60 + seconds;
 
   return (

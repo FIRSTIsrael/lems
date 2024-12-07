@@ -399,7 +399,10 @@ export const handleDisqualifyTeam = async (
   teamId: string,
   callback
 ) => {
-  let team = await db.getTeam({ divisionId: new ObjectId(divisionId), _id: new ObjectId(teamId) });
+  const team = await db.getTeam({
+    divisionId: new ObjectId(divisionId),
+    _id: new ObjectId(teamId)
+  });
   if (!team) {
     callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
     return;

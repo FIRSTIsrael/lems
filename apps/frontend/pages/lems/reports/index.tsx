@@ -3,13 +3,15 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { SafeUser, Division, RoleTypes } from '@lems/types';
+import { SafeUser, DivisionWithEvent, RoleTypes, EventUserAllowedRoles } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
+import { localizeDivisionTitle } from '../../../localization/event';
+import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface GridPaperLinkProps {
   path: string;
@@ -17,24 +19,34 @@ interface GridPaperLinkProps {
 }
 
 const GridPaperLink: React.FC<GridPaperLinkProps> = ({ path, children }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    const queryString = router.query.divisionId
+      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
+      : '';
+    const url = `/lems/reports/${path}${queryString ? `?${queryString}` : ''}`;
+    router.push(url);
+  };
+
   return (
-    (<Grid size={3}>
+    <Grid size={3}>
       <Paper>
         <Button
-          href={'reports/' + path}
           fullWidth
           sx={{ py: 8, px: 10, textAlign: 'center', color: '#000' }}
+          onClick={handleClick}
         >
           {children}
         </Button>
       </Paper>
-    </Grid>)
+    </Grid>
   );
 };
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
 }
 
 const Page: NextPage<Props> = ({ user, division }) => {
@@ -50,9 +62,14 @@ const Page: NextPage<Props> = ({ user, division }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${division.name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         back={user.role !== 'reports' ? `/lems/${user.role}` : undefined}
         color={division.color}
+        action={
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+          )
+        }
       >
         <Grid container spacing={3} columns={6} direction="row" mt={4}>
           <GridPaperLink path="judging-status">
@@ -90,15 +107,15 @@ const Page: NextPage<Props> = ({ user, division }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${user.divisionId}` },
+      { division: `/api/divisions/${divisionId}?withEvent=true` },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

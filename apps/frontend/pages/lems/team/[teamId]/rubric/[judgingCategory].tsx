@@ -7,14 +7,14 @@ import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
 import {
-  Division,
   JudgingCategoryTypes,
   JudgingCategory,
   JudgingRoom,
   JudgingSession,
   SafeUser,
   Rubric,
-  Team
+  Team,
+  DivisionWithEvent
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import { rubricsSchemas } from '@lems/season';
@@ -22,13 +22,18 @@ import Layout from '../../../../../components/layout';
 import RubricForm from '../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import ConnectionIndicator from '../../../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../../../lib/utils/fetch';
+import {
+  apiFetch,
+  getUserAndDivision,
+  serverSideGetRequests
+} from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../localization/teams';
 import { enqueueSnackbar } from 'notistack';
+import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface RubricSelectorProps {
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   judgingCategory: JudgingCategory;
 }
@@ -67,7 +72,7 @@ const RubricSelector: React.FC<RubricSelectorProps> = ({ division, team, judging
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   room: WithId<JudgingRoom>;
   team: WithId<Team>;
   session: WithId<JudgingSession>;
@@ -120,7 +125,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
           maxWidth="md"
           title={`מחוון ${
             localizedJudgingCategory[judgingCategory as JudgingCategory].name
-          } של קבוצה #${team.number}, ${team.name} | ${division.name}`}
+          } של קבוצה #${team.number}, ${team.name} | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
           back={`/lems/${user.role}#${team.number.toString()}`}
@@ -157,17 +162,15 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     let roomId;
     if (user.roleAssociation && user.roleAssociation.type === 'room') {
       roomId = user.roleAssociation.value;
     } else {
-      const sessions = await apiFetch(
-        `/api/divisions/${user.divisionId}/sessions`,
-        undefined,
-        ctx
-      ).then(res => res?.json());
+      const sessions = await apiFetch(`/api/divisions/${divisionId}/sessions`, undefined, ctx).then(
+        res => res?.json()
+      );
       roomId = sessions.find(
         (session: JudgingSession) => session.teamId == new ObjectId(String(ctx.params?.teamId))
       ).roomId;
@@ -175,11 +178,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        team: `/api/divisions/${user.divisionId}/teams/${ctx.params?.teamId}`,
-        room: `/api/divisions/${user.divisionId}/rooms/${roomId}`,
-        session: `/api/divisions/${user.divisionId}/rooms/${roomId}/sessions`,
-        rubric: `/api/divisions/${user.divisionId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        team: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}`,
+        room: `/api/divisions/${divisionId}/rooms/${roomId}`,
+        session: `/api/divisions/${divisionId}/rooms/${roomId}/sessions`,
+        rubric: `/api/divisions/${divisionId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
       },
       ctx
     );

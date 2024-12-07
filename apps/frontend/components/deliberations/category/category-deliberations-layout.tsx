@@ -6,6 +6,7 @@ import AwardList from '../award-list';
 import { DeliberationContext } from '../deliberation';
 import CategoryDeliberationsGrid from './category-deliberations-grid';
 import CategoryDeliberationControlPanel from './category-deliberation-control-panel';
+import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 const CategoryDeliberationLayout: React.FC = () => {
   const {
@@ -43,6 +44,7 @@ const CategoryDeliberationLayout: React.FC = () => {
         <AwardList
           id={category}
           pickList={picklist}
+          length={getDefaultPicklistLimit(teams.length)}
           disabled={deliberation.status !== 'in-progress'}
           suggestedTeam={suggestedTeam}
           addSuggestedTeam={teamId => appendToPicklist(category, teamId)}

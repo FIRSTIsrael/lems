@@ -9,6 +9,10 @@ const divisionValidator = (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 
+  if (req.user?.assignedDivisions?.find(id => id.toString() === req.params.divisionId)) {
+    return next();
+  }
+
   return res.status(403).json({ error: 'FORBIDDEN' });
 };
 

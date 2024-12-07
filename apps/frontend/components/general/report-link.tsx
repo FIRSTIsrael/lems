@@ -1,16 +1,21 @@
-import { WithId } from 'mongodb';
 import { Tooltip, IconButton } from '@mui/material';
 import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
-import { Division } from '@lems/types';
+import { useRouter } from 'next/router';
 
-interface ReportLinkProps {
-  division: WithId<Division>;
-}
+const ReportLink: React.FC = () => {
+  const router = useRouter();
 
-const ReportLink: React.FC<ReportLinkProps> = ({ division }) => {
+  const handleClick = () => {
+    const queryString = router.query.divisionId
+      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
+      : '';
+    const url = `/lems/reports${queryString ? `?${queryString}` : ''}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <Tooltip title="דוחות" arrow>
-      <IconButton aria-label="דוחות" href={`/lems/reports`} target="_blank">
+      <IconButton onClick={handleClick}>
         <FeedRoundedIcon />
       </IconButton>
     </Tooltip>

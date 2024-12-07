@@ -5,14 +5,14 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Stack } from '@mui/material';
 import {
-  Division,
   DivisionState,
   SafeUser,
   Team,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
 import ConnectionIndicator from '../../components/connection-indicator';
@@ -23,12 +23,13 @@ import { RoleAuthorizer } from '../../components/role-authorizer';
 import HeadQueuerFieldSchedule from '../../components/queueing/head-queuer-field-schedule';
 import HeadQueuerJudgingSchedule from '../../components/queueing/head-queuer-judging-schedule';
 import JudgingStatusTimer from '../../components/judging/judging-status-timer';
-import { apiFetch, serverSideGetRequests } from '../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedDivisionSection, localizedRoles } from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   sessions: Array<WithId<JudgingSession>>;
   teams: Array<WithId<Team>>;
@@ -140,12 +141,12 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        title={`ממשק ${user.role && localizedRoles[user.role].name} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         error={connectionStatus === 'disconnected'}
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink division={division} />
+            <ReportLink />
           </Stack>
         }
         color={division.color}
@@ -192,23 +193,23 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        divisionState: `/api/divisions/${user.divisionId}/state`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        tables: `/api/divisions/${user.divisionId}/tables`,
-        matches: `/api/divisions/${user.divisionId}/matches`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        divisionState: `/api/divisions/${divisionId}/state`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        tables: `/api/divisions/${divisionId}/tables`,
+        matches: `/api/divisions/${divisionId}/matches`
       },
       ctx
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Division,
   SafeUser,
   JudgingCategory,
   Rubric,
@@ -21,12 +20,12 @@ import {
   AwardNames,
   CoreValuesAwards,
   CoreValuesAwardsTypes,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
+  DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import ConnectionIndicator from '../../../components/connection-indicator';
-import { apiFetch, serverSideGetRequests } from '../../../lib/utils/fetch';
+import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ChampionsDeliberationLayout from '../../../components/deliberations/final/champions/champions-deliberation-layout';
 import CoreAwardsDeliberationLayout from '../../../components/deliberations/final/core-awards/core-awards-deliberation-layout';
@@ -35,10 +34,12 @@ import ReviewLayout from '../../../components/deliberations/final/review-layout'
 import { Deliberation } from '../../../components/deliberations/deliberation';
 import { DeliberationRef } from '../../../components/deliberations/deliberation';
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
+import { getDefaultPicklistLimit } from '../../../lib/utils/math';
+import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  division: WithId<Division>;
+  division: WithId<DivisionWithEvent>;
   teams: Array<WithId<Team>>;
   awards: Array<WithId<Award>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
@@ -47,7 +48,7 @@ interface Props {
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberations: Array<WithId<JudgingDeliberation>>;
-  robotConsistency: { avgRelStdDev: number; rows: Array<any> };
+  robotConsistency: { avgRelStdDev: number; rows: Array<unknown> };
 }
 
 const Page: NextPage<Props> = ({
@@ -64,14 +65,16 @@ const Page: NextPage<Props> = ({
   robotConsistency
 }) => {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const deliberationId = initialDeliberations.find(d => d.isFinalDeliberation)!._id;
   const [currentStage, setCurrentStage] = useState<FinalDeliberationStage>(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     initialDeliberations.find(d => d.isFinalDeliberation)!.stage!
   ); // Store a local copy for stage changes.
   const deliberation = useRef<DeliberationRef>(null);
   const [awards, setAwards] = useState(initialAwards);
 
-  if (!initialDeliberations.find(d => d.isFinalDeliberation)!.available) {
+  if (!initialDeliberations.find(d => d.isFinalDeliberation)?.available) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הדיון טרם התחיל.', { variant: 'info' });
   }
@@ -97,13 +100,15 @@ const Page: NextPage<Props> = ({
   };
 
   const checkCoreAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
-    const _team = teams.find(t => t._id === team._id)!;
+    const _team = teams.find(t => t._id === team._id);
+    if (!_team) return false;
     const { 'robot-game': robotGame, ...ranks } = _team.ranks;
-    return Object.values(ranks).some(rank => rank <= PRELIMINARY_DELIBERATION_PICKLIST_LENGTH);
+    return Object.values(ranks).some(rank => rank <= getDefaultPicklistLimit(teams.length));
   };
 
   const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
-    const _team = teams.find(t => t._id === team._id)!;
+    const _team = teams.find(t => t._id === team._id);
+    if (!_team) return false;
     return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
   };
 
@@ -123,6 +128,7 @@ const Page: NextPage<Props> = ({
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
     .reduce(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (acc, current) => ({ ...acc, [current.category!]: current.awards[current.category!] }),
       {} as { [key in JudgingCategory]: Array<ObjectId> }
     );
@@ -140,8 +146,8 @@ const Page: NextPage<Props> = ({
     if (newDeliberation._id.toString() === deliberationId.toString()) {
       if (!deliberation.current) return;
       deliberation.current.sync(newDeliberation);
-      if (newDeliberation.stage !== currentStage) {
-        setCurrentStage(newDeliberation.stage!);
+      if (newDeliberation.stage && newDeliberation.stage !== currentStage) {
+        setCurrentStage(newDeliberation.stage);
       }
     }
   };
@@ -173,23 +179,27 @@ const Page: NextPage<Props> = ({
         }
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [deliberation.current]
   );
 
-  const startDeliberationStage = useCallback((deliberation: WithId<JudgingDeliberation>): void => {
-    socket.emit(
-      'startJudgingDeliberation',
-      deliberation.divisionId.toString(),
-      deliberation._id.toString(),
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-        } else {
-          new Audio('/assets/sounds/judging/judging-start.wav').play();
+  const startDeliberationStage = useCallback(
+    (deliberation: WithId<JudgingDeliberation>): void => {
+      socket.emit(
+        'startJudgingDeliberation',
+        deliberation.divisionId.toString(),
+        deliberation._id.toString(),
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+          } else {
+            new Audio('/assets/sounds/judging/judging-start.wav').play();
+          }
         }
-      }
-    );
-  }, []);
+      );
+    },
+    [socket]
+  );
 
   const sendEndStageEvent = (
     deliberation: WithId<JudgingDeliberation>,
@@ -262,9 +272,9 @@ const Page: NextPage<Props> = ({
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => {
-    const awardWinners = deliberation.awards['champions']!.map(
-      teamId => eligibleTeams.find(t => t._id === teamId)!
-    );
+    const awardWinners = (deliberation.awards['champions'] ?? [])
+      .map(teamId => eligibleTeams.find(t => t._id === teamId))
+      .filter(team => !!team);
 
     const robotPerformanceWinners = allTeams
       .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
@@ -284,9 +294,9 @@ const Page: NextPage<Props> = ({
   ) => {
     const newAwards = JudgingCategoryTypes.reduce(
       (acc, category) => {
-        acc[category] = deliberation.awards[category]!.map(
-          teamId => eligibleTeams.find(t => t._id === teamId)!
-        );
+        acc[category] = (deliberation.awards[category] ?? [])
+          .map(teamId => eligibleTeams.find(t => t._id === teamId))
+          .filter(team => !!team);
         return acc;
       },
       {} as { [key in JudgingCategory]: Array<DeliberationTeam> }
@@ -315,9 +325,9 @@ const Page: NextPage<Props> = ({
   ) => {
     const newAwards = CoreValuesAwardsTypes.reduce(
       (acc, awardName) => {
-        acc[awardName] = deliberation.awards[awardName]!.map(
-          teamId => eligibleTeams.find(t => t._id === teamId)!
-        );
+        acc[awardName] = (deliberation.awards[awardName] ?? [])
+          .map(teamId => eligibleTeams.find(t => t._id === teamId))
+          .filter(team => !!team);
         return acc;
       },
       {} as { [key in CoreValuesAwards]: Array<DeliberationTeam> }
@@ -353,6 +363,7 @@ const Page: NextPage<Props> = ({
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -368,7 +379,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={1900}
         back={`/lems/${user.role}`}
-        title={`דיון סופי | בית ${division.name}`}
+        title={`דיון סופי | ${localizeDivisionTitle(division)}`}
         error={connectionStatus === 'disconnected'}
         action={<ConnectionIndicator status={connectionStatus} />}
         color={division.color}
@@ -404,20 +415,20 @@ const Page: NextPage<Props> = ({
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
-    const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+    const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
       {
-        division: `/api/divisions/${user.divisionId}`,
-        teams: `/api/divisions/${user.divisionId}/teams`,
-        awards: `/api/divisions/${user.divisionId}/awards`,
-        rubrics: `/api/divisions/${user.divisionId}/rubrics?makeCvValues=true`,
-        rooms: `/api/divisions/${user.divisionId}/rooms`,
-        sessions: `/api/divisions/${user.divisionId}/sessions`,
-        scoresheets: `/api/divisions/${user.divisionId}/scoresheets`,
-        cvForms: `/api/divisions/${user.divisionId}/cv-forms`,
-        robotConsistency: `/api/divisions/${user.divisionId}/insights/field/scores/consistency`,
-        deliberations: `/api/divisions/${user.divisionId}/deliberations`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
+        awards: `/api/divisions/${divisionId}/awards`,
+        rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        robotConsistency: `/api/divisions/${divisionId}/insights/field/scores/consistency`,
+        deliberations: `/api/divisions/${divisionId}/deliberations`
       },
       ctx
     );

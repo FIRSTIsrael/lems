@@ -1,19 +1,25 @@
 import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
-import { FllEvent } from '@lems/types';
+import { FllEvent, User, Role } from '@lems/types';
 import * as db from '@lems/database';
+import { randomString } from '@lems/utils/random';
 
 const router = express.Router({ mergeParams: true });
 
 router.post(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { divisions, ...body }: any = { ...req.body };
+    const { divisions, eventUsers, ...body } = { ...req.body };
     if (!body) {
       res.status(400).json({ ok: false });
       return;
     }
+
+    // Save the created users on the event
+    body.eventUsers = Object.entries(eventUsers)
+      .filter(([, enabled]) => !!enabled)
+      .map(([role]) => role);
 
     body.startDate = new Date(body.startDate);
     body.endDate = new Date(body.endDate);
@@ -27,7 +33,8 @@ router.post(
     }
 
     console.log('⏬ Creating Event divisions...');
-    divisions.forEach(async division => {
+    const divisionIds = [];
+    for (const division of divisions) {
       const divisionResult = await db.addDivision({
         ...division,
         eventId: eventResult.insertedId,
@@ -35,12 +42,37 @@ router.post(
       });
       if (divisionResult.acknowledged) {
         console.log(`✅ Division ${divisionResult.insertedId} created!`);
+        divisionIds.push(divisionResult.insertedId);
       } else {
         console.log(`❌ Could not create division ${division.name}`);
         res.status(500).json({ ok: false });
         return;
       }
-    });
+    }
+
+    console.log('⏬ Creating event users...');
+    const users: User[] = [];
+    for (const [role, enabled] of Object.entries(eventUsers)) {
+      if (!enabled) continue;
+      users.push({
+        role: role as Role,
+        isAdmin: false,
+        eventId: eventResult.insertedId,
+        assignedDivisions: divisionIds,
+        password: randomString(4),
+        lastPasswordSetDate: new Date()
+      });
+    }
+    if (users.length > 0) {
+      const userResult = await db.addUsers(users);
+      if (userResult.acknowledged) {
+        console.log(`✅ Event users created!`);
+      } else {
+        console.log(`❌ Could not create event users for ${eventResult.insertedId}`);
+        res.status(500).json({ ok: false });
+        return;
+      }
+    }
 
     res.json({ ok: true, id: eventResult.insertedId });
   })
