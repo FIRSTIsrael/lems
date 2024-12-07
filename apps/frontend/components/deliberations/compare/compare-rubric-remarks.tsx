@@ -15,7 +15,7 @@ const CompareRubricRemarks: React.FC<CompareRubricRemarksProps> = ({ teamId }) =
   const categories = category ? [category] : [...JudgingCategoryTypes];
 
   return (
-    (<Grid container>
+    <Grid container>
       <Grid size={3.5}></Grid>
       <Grid size={4.25}>
         <Typography fontWeight={600} gutterBottom>
@@ -30,23 +30,25 @@ const CompareRubricRemarks: React.FC<CompareRubricRemarksProps> = ({ teamId }) =
       {categories.map(c => {
         const rubric = rubrics.find(r => r.teamId === teamId && r.category === c);
 
-        return (<>
-          <Grid size={3.5}>
-            <Typography fontWeight={600} gutterBottom>
-              {localizedJudgingCategory[c].name}
-            </Typography>
-          </Grid>
-          <Grid container size={8.5}>
-            <Grid size={6}>
-              <Typography align="left">{rubric?.data?.feedback.greatJob}</Typography>
+        return (
+          <>
+            <Grid size={3.5}>
+              <Typography fontWeight={600} gutterBottom>
+                {localizedJudgingCategory[c].name}
+              </Typography>
             </Grid>
-            <Grid size={6}>
-              <Typography align="left">{rubric?.data?.feedback.thinkAbout}</Typography>
+            <Grid container size={8.5}>
+              <Grid size={6}>
+                <Typography align="left">{rubric?.data?.feedback.greatJob}</Typography>
+              </Grid>
+              <Grid size={6}>
+                <Typography align="left">{rubric?.data?.feedback.thinkAbout}</Typography>
+              </Grid>
             </Grid>
-          </Grid>
-        </>);
+          </>
+        );
       })}
-    </Grid>)
+    </Grid>
   );
 };
 

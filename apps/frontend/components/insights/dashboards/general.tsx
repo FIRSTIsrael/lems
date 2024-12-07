@@ -12,7 +12,7 @@ interface GeneralInsightsDashboardProps {
 
 const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ division, teams }) => {
   return (
-    (<Grid container spacing={2}>
+    <Grid container spacing={2}>
       <Grid size={4}>
         <Stat
           title="קבוצות באירוע"
@@ -43,7 +43,7 @@ const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ div
       <Grid size={12}>
         <TeamInsightsDashboard division={division} teams={teams} />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 

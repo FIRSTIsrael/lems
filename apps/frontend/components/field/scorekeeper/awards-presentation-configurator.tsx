@@ -47,7 +47,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
   };
 
   return (
-    (<Paper
+    <Paper
       sx={{
         p: 4,
         mt: 2,
@@ -86,7 +86,7 @@ const AwardsPresentationConfigurator: React.FC<AwardsPresentationConfiguratorPro
           </Button>
         </Grid>
       </Grid>
-    </Paper>)
+    </Paper>
   );
 };
 

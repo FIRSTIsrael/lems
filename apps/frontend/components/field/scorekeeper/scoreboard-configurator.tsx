@@ -48,7 +48,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
   };
 
   return (
-    (<Paper
+    <Paper
       sx={{
         p: 4,
         mt: 2,
@@ -117,7 +117,7 @@ const ScoreboardConfigurator: React.FC<ScoreboardConfiguratorProps> = ({
           </Button>
         </Grid>
       </Grid>
-    </Paper>)
+    </Paper>
   );
 };
 

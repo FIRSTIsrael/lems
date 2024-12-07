@@ -17,7 +17,7 @@ interface FieldInsightsDashboardProps {
 
 const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ division }) => {
   return (
-    (<Grid container spacing={2}>
+    <Grid container spacing={2}>
       <Grid size={4}>
         <AverageMedianCard
           title="ניקוד משחק הרובוט"
@@ -70,7 +70,7 @@ const FieldInsightsDashboard: React.FC<FieldInsightsDashboardProps> = ({ divisio
       <Grid size={12}>
         <RobotConsistencyChart division={division} />
       </Grid>
-    </Grid>)
+    </Grid>
   );
 };
 
