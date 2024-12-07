@@ -10,10 +10,10 @@ import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fe
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
 import DivisionDropdown from '../../../components/general/division-dropdown';
+import FormikTextField from '../../../components/general/forms/formik-text-field';
 import { Note, useNotes } from '../../../hooks/use-notes';
 import { Button, Checkbox, Paper, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
-import FormikTextField from 'apps/frontend/components/general/forms/formik-text-field';
 
 interface Props {
   user: WithId<SafeUser>;
