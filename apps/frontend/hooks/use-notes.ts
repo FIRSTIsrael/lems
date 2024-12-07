@@ -3,8 +3,8 @@ import { openDB, DBSchema } from 'idb';
 
 export interface Note {
   id?: number;
-  title: string;
   text: string;
+  title?: string;
   done?: boolean;
   teamId?: string;
 }
@@ -35,6 +35,7 @@ export const useNotes = () => {
   }, []);
 
   const addNote = async (note: Note) => {
+    console.log(note);
     const db = await openDB<NotesDb>('notes-database', 1);
     const tx = db.transaction('notes', 'readwrite');
     const store = tx.objectStore('notes');
@@ -54,6 +55,16 @@ export const useNotes = () => {
     setNotes(prevNotes => prevNotes.map(prevNote => (prevNote.id === note.id ? note : prevNote)));
   };
 
+  const deleteNote = async (id: number) => {
+    const db = await openDB<NotesDb>('notes-database', 1);
+    const tx = db.transaction('notes', 'readwrite');
+    const store = tx.objectStore('notes');
+    await store.delete(id);
+    await tx.done;
+
+    setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+  };
+
   const clearNotes = async () => {
     const db = await openDB<NotesDb>('notes-database', 1);
     const tx = db.transaction('notes', 'readwrite');
@@ -64,5 +75,5 @@ export const useNotes = () => {
     setNotes([]);
   };
 
-  return { notes, addNote, updateNote, clearNotes };
+  return { notes, addNote, updateNote, deleteNote, clearNotes };
 };
