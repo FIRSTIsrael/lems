@@ -5,6 +5,7 @@ export interface Note {
   id?: number;
   title: string;
   text: string;
+  done?: boolean;
   teamId?: string;
 }
 
