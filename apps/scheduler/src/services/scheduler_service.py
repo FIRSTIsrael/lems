@@ -2,8 +2,11 @@ from bson import ObjectId
 
 from events.event import Event, MAX_MINUTES
 from models.team import Team
-from models.activity import TeamActivity
-from services.gale_shapley_service import gale_shapley, team_minimum_time
+from models.team_activity import TeamActivity
+from services.gale_shapley_service import (
+    gale_shapley,
+    team_minimum_delta,
+)
 from repository.lems_repository import LemsRepository
 
 
@@ -11,7 +14,7 @@ from repository.lems_repository import LemsRepository
 def check_score(teams: list[Team]) -> int:
     min_score = MAX_MINUTES
     for team in teams:
-        current_score = team_minimum_time(team.team_events)
+        current_score = team_minimum_delta(team.team_events)
         if current_score < min_score:
             min_score = current_score
 
@@ -32,7 +35,7 @@ class SchedulerService:
 
         sessions = []
         for event in self.events:
-            sessions += event.create_sessions()
+            sessions += event.create_activities()
 
         matched_teams, matched_sessions = gale_shapley(teams.copy(), sessions.copy())
         return matched_teams, matched_sessions

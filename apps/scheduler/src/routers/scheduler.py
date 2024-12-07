@@ -53,7 +53,7 @@ async def create_schedule() -> str:
     lems = LemsRepository()
     scheduler = SchedulerService(EVENTS, lems)
 
-    for i in range(1, 100):
+    for i in range(1, 2):
         try:
             teams, activities = scheduler.create_schedule(
                 ObjectId("674ad4973be3f0c967e853f1")

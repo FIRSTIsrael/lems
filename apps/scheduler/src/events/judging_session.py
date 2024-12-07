@@ -1,7 +1,11 @@
 import random
 
-from events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
-from models.activity import TeamActivity, ActivityType
+from events.event import (
+    Event,
+    team_minimum_delta,
+    TEAM_MIN_WAIT_TIME,
+)
+from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -13,11 +17,11 @@ class JudgingSession(Event):
 
         new_sessions = team.team_events.copy()
         new_sessions.append(session)
-        if team_minimum_time(new_sessions) < TEAM_MIN_WAIT_TIME:
+        if team_minimum_delta(new_sessions) < TEAM_MIN_WAIT_TIME:
             return 0
 
         return 1 - random.random()
 
     @staticmethod
-    def event_type() -> ActivityType:
+    def activity_type() -> ActivityType:
         return ActivityType.JUDGING_SESSION

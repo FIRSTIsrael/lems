@@ -1,11 +1,11 @@
 import random
 from typing import Callable, Optional
 
-from events.event import team_minimum_time
+from events.event import team_minimum_delta
 from events.judging_session import JudgingSession
 from events.ranking_match import Match
 from events.practice_match import PracticeMatch
-from models.activity import TeamActivity, ActivityType
+from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -49,12 +49,12 @@ def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamAct
         return
 
     current_sessions = team.team_events
-    current_score = team_minimum_time(current_sessions)
+    current_score = team_minimum_delta(current_sessions)
 
     modified_sessions = team.team_events.copy()
     modified_sessions.remove(team_current_event_session)
     modified_sessions.append(session)
-    modified_score = team_minimum_time(modified_sessions)
+    modified_score = team_minimum_delta(modified_sessions)
 
     if modified_score > current_score:
         team_current_event_session.rejected_team_numbers.append(team.team_number)

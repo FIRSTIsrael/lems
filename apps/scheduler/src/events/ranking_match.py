@@ -1,7 +1,11 @@
 import random
 
-from events.event import Event, team_minimum_time, TEAM_MIN_WAIT_TIME
-from models.activity import TeamActivity, ActivityType
+from events.event import (
+    Event,
+    team_minimum_delta,
+    TEAM_MIN_WAIT_TIME,
+)
+from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -14,8 +18,8 @@ class Match(Event):
         count = 0
 
         for session in team_events:
-            if session.activity_type == Match.event_type():
-                if session.session_index == table_index:
+            if session.activity_type == Match.activity_type():
+                if session.index == table_index:
                     count += 1
 
         return count
@@ -27,12 +31,10 @@ class Match(Event):
 
         new_sessions = team.team_events.copy()
         new_sessions.append(session)
-        if team_minimum_time(new_sessions) < TEAM_MIN_WAIT_TIME:
+        if team_minimum_delta(new_sessions) < TEAM_MIN_WAIT_TIME:
             return 0
 
-        times_in_table = Match.check_times_in_table(
-            session.session_index, team.team_events
-        )
+        times_in_table = Match.check_times_in_table(session.index, team.team_events)
 
         if times_in_table == MAX_MATCHES_PER_TABLE:
             return 0
@@ -42,5 +44,5 @@ class Match(Event):
         return preference / (times_in_table + 1)
 
     @staticmethod
-    def event_type() -> ActivityType:
+    def activity_type() -> ActivityType:
         return ActivityType.RANKING_MATCH

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from models.activity import TeamActivity, ActivityType
+from models.team_activity import TeamActivity, ActivityType
 
 
 @dataclass

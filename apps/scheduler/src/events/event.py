@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from typing import List
 
-from models.activity import TeamActivity, ActivityType
+from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
 
@@ -12,7 +12,11 @@ MINUTES_PER_HOUR = 60
 TEAM_MIN_WAIT_TIME = 15
 
 
-def team_minimum_time(sessions: List[TeamActivity]) -> int:
+def team_minimum_delta(sessions: List[TeamActivity]) -> int:
+    """
+    Calculate the minimum time between two activities for a team
+    """
+
     minimum_time = MAX_MINUTES
     for first_session in sessions:
         for second_session in sessions:
@@ -37,18 +41,18 @@ def team_minimum_time(sessions: List[TeamActivity]) -> int:
 class Event(ABC):
     def __init__(
         self,
-        session_length: int,
-        wait_time: int,
+        activity_length: int,
+        wait_time_minutes: int,
         start_time: datetime,
         total_count: int,
-        parallel_sessions: int,
+        parallel_activities: int,
         event_index: int,
     ):
-        self.session_length = session_length
-        self.wait_time = wait_time
+        self.activity_length = activity_length
+        self.wait_time_minutes = wait_time_minutes
         self.start_time = start_time
         self.total_count = total_count
-        self.parallel_sessions = parallel_sessions
+        self.parallel_activities = parallel_activities
         self.event_index = event_index
 
     @staticmethod
@@ -58,24 +62,24 @@ class Event(ABC):
 
     @staticmethod
     @abstractmethod
-    def event_type() -> ActivityType:
+    def activity_type() -> ActivityType:
         pass
 
-    def create_sessions(self) -> List[TeamActivity]:
-        sessions = []
+    def create_activities(self) -> List[TeamActivity]:
+        activities = []
         current_index = 0
         current_time = self.start_time
-        end_time = current_time + timedelta(minutes=self.session_length)
+        end_time = current_time + timedelta(minutes=self.activity_length)
 
-        while len(sessions) < self.total_count:
-            if current_index == self.parallel_sessions:
+        while len(activities) < self.total_count:
+            if current_index == self.parallel_activities:
                 current_index = 0
-                current_time = end_time + timedelta(minutes=self.wait_time)
-                end_time = current_time + timedelta(minutes=self.session_length)
+                current_time = end_time + timedelta(minutes=self.wait_time_minutes)
+                end_time = current_time + timedelta(minutes=self.activity_length)
 
-            sessions.append(
+            activities.append(
                 TeamActivity(
-                    self.event_type(),
+                    self.activity_type(),
                     current_time,
                     end_time,
                     self.event_index,
@@ -86,4 +90,4 @@ class Event(ABC):
             )
             current_index += 1
 
-        return sessions
+        return activities

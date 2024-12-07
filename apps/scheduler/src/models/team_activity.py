@@ -2,6 +2,8 @@ from datetime import datetime
 from dataclasses import dataclass
 from enum import StrEnum
 
+from models.location import Location
+
 
 class ActivityType(StrEnum):
     PRACTICE_MATCH = "PRACTICE_MATCH"
@@ -15,6 +17,7 @@ class TeamActivity:
     start_time: datetime
     end_time: datetime
     event_index: int
-    session_index: int
+    location: Location
+    index: int
     team_number: int
     rejected_team_numbers: list[int]
