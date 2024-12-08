@@ -34,6 +34,10 @@ export const getUserWithCredentials = (filter: Filter<User>) => {
   return db.collection<User>('users').findOne(filter);
 };
 
+export const getUsersWithCredentials = (filter: Filter<User>) => {
+  return db.collection<User>('users').find(filter).toArray();
+};
+
 export const getUser = (filter: Filter<User>): Promise<WithId<SafeUser> | null> => {
   return getUserWithCredentials(filter).then(user => {
     if (!user) return null;

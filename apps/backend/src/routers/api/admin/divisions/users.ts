@@ -15,7 +15,13 @@ router.get('/', (req: Request, res: Response) => {
 router.get(
   '/export',
   asyncHandler(async (req: Request, res: Response) => {
-    const users = await db.getDivisionUsersWithCredentials(new ObjectId(req.params.divisionId));
+    const divisionUsers = await db.getDivisionUsersWithCredentials(
+      new ObjectId(req.params.divisionId)
+    );
+    const eventUsers = await db.getUsersWithCredentials({
+      assignedDivisions: new ObjectId(req.params.divisionId)
+    });
+    const users = [...divisionUsers, ...eventUsers];
 
     const credentials = await Promise.all(
       users.map(async user => {
