@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
@@ -5,6 +6,7 @@ import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
 import PresentSwitch from './present-switch';
+import InspectionTimer from './inspection-timer';
 
 interface MatchPrestartProps {
   participant: RobotGameMatchParticipant;
@@ -21,6 +23,8 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
   inspectionStatus,
   updateInspectionStatus
 }) => {
+  const [inspectionStartTime, setInspectionStartTime] = useState<string | null>(null);
+
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
       {participant.team && (
@@ -40,12 +44,21 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               onChange={present => {
                 updateMatchParticipant({ present });
                 if (updateInspectionStatus) updateInspectionStatus(null);
+                if (present === 'present') {
+                  setInspectionStartTime(new Date().toISOString());
+                } else {
+                  setInspectionStartTime(null);
+                }
               }}
             />
           ) : (
             <Typography fontSize="1.125rem" fontWeight={700} sx={{ color: '#f57c00' }}>
               שימו לב: הקבוצה טרם הגיעה לאירוע
             </Typography>
+          )}
+
+          {inspectionStartTime && participant.present === 'present' && (
+            <InspectionTimer startTime={inspectionStartTime} />
           )}
 
           {updateInspectionStatus &&
