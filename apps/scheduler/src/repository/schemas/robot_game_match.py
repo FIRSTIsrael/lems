@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, TypedDict, Literal
+from typing import TypedDict, Literal
 from bson import ObjectId
 
 
@@ -20,4 +20,4 @@ class RobotGameMatch(TypedDict):
     called: Literal[False]
     status: Literal["not-started"]
     scheduledTime: datetime
-    participants: List[RobotGameMatchParticipant]
+    participants: list[RobotGameMatchParticipant]

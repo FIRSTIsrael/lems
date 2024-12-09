@@ -1,5 +1,7 @@
 import os
 from bson import ObjectId
+from functools import partial
+from typing import Literal
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
@@ -83,7 +85,9 @@ class LemsRepository:
         }
         collection.insert_one(document)
 
-    def insert_ranking_match(self, activity: TeamActivity):
+    def insert_match(
+        self, stage: Literal["practice", "ranking"], activity: TeamActivity
+    ):
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
             "divisionId": self.divisionId,
@@ -94,23 +98,20 @@ class LemsRepository:
             "scheduledTime": activity.start_time,
             "called": False,
             "round": activity.event_index,  # TODO,
-            "stage": "ranking",
-            "participants": [],  # TODO
+            "stage": stage,
+            "participants": [
+                {
+                    "teamId": self.get_team(activity.team_number)._id,
+                    "tableId": activity.location.id,
+                    "tableName": activity.location.name,
+                    "queued": False,
+                    "ready": False,
+                    "present": "no-show",
+                }
+                for table in tables
+            ],  # TODO
         }
         collection.insert_one(document)
 
-    def insert_practice_match(self, activity: TeamActivity):
-        collection: Collection[RobotGameMatch] = self.db.matches
-        document: RobotGameMatch = {
-            "divisionId": self.divisionId,
-            "number": activity.index,
-            "teamId": self.get_team(activity.team_number)._id,
-            "tableId": activity.location.id,
-            "status": "not-started",
-            "scheduledTime": activity.start_time,
-            "called": False,
-            "round": activity.event_index,  # TODO,
-            "stage": "practice",
-            "participants": [],  # TODO
-        }
-        collection.insert_one(document)
+    insert_ranking_match = partial(insert_match, stage="ranking")
+    insert_practice_match = partial(insert_match, stage="practice")

@@ -10,7 +10,6 @@ from services.gale_shapley_service import (
 from repository.lems_repository import LemsRepository
 
 
-# TODO: do we need this?
 def check_score(teams: list[Team]) -> int:
     min_score = MAX_MINUTES
     for team in teams:

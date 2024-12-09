@@ -40,6 +40,8 @@ class CreateScheduleRequest(BaseModel):
     practice_match_cycle_time_seconds: int
     ranking_match_cycle_time_seconds: int
 
+    stagger_matches: bool = True
+
     practice_rounds: int = 1
     ranking_rounds: int = 3
 
@@ -53,7 +55,7 @@ async def create_schedule() -> str:
     lems = LemsRepository()
     scheduler = SchedulerService(EVENTS, lems)
 
-    for i in range(1, 2):
+    for i in range(1, 2):  # TODO: change to have min/max and check for score
         try:
             teams, activities = scheduler.create_schedule(
                 ObjectId("674ad4973be3f0c967e853f1")
