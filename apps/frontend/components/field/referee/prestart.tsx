@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Button, ToggleButtonGroup, ToggleButton } from '@mui/material';
-import { RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
+import { RobotGameMatch, RobotGameMatchParticipant, SHOW_INSPECTION_TIMER } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
 import PresentSwitch from './present-switch';
@@ -53,7 +53,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
             </Typography>
           )}
 
-          {inspectionStartTime && (
+          {inspectionStartTime && SHOW_INSPECTION_TIMER && (
             <InspectionTimer startTime={inspectionStartTime} />
           )}
 
