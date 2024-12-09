@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { WithId, ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
-import { JUDGING_SESSION_LENGTH, Award, Team, AwardNames } from '@lems/types';
+import { JUDGING_SESSION_LENGTH, Award, Team, AwardNames, CoreValuesForm } from '@lems/types';
 
 export const handleStartSession = async (
   namespace: any,
@@ -268,6 +268,10 @@ export const handleUpdateRubric = async (
 
 export const handleCreateCvForm = async (namespace: any, divisionId: string, content, callback) => {
   console.log(`📄 Creating Core Values Form in division ${divisionId}`);
+  const { observerAffiliation, demonstratorAffiliation } = content as Partial<CoreValuesForm>;
+  if (observerAffiliation) content.observerAffiliation._id = new ObjectId(observerAffiliation._id);
+  if (demonstratorAffiliation)
+    content.demonstratorAffiliation._id = new ObjectId(demonstratorAffiliation._id);
   const cvFormId = await db
     .addCoreValuesForm({ ...content, divisionId: new ObjectId(divisionId) })
     .then(result => result.insertedId);
@@ -294,6 +298,11 @@ export const handleUpdateCvForm = async (
   }
 
   console.log(`🖊️ Updating core values form ${cvFormId} in division ${divisionId}`);
+
+  const { observerAffiliation, demonstratorAffiliation } = content as Partial<CoreValuesForm>;
+  if (observerAffiliation) content.observerAffiliation._id = new ObjectId(observerAffiliation._id);
+  if (demonstratorAffiliation)
+    content.demonstratorAffiliation._id = new ObjectId(demonstratorAffiliation._id);
 
   await db.updateCoreValuesForm(
     { _id: cvForm._id },
