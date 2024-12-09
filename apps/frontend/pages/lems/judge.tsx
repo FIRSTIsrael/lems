@@ -28,6 +28,7 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../localization/event';
+import JudgeManagementHeader from '../../components/judging/judge-management-header';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -144,6 +145,7 @@ const Page: NextPage<Props> = ({
         ) : (
           <>
             <WelcomeHeader division={division} user={user} />
+            <JudgeManagementHeader />
             <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
               <RubricStatusReferences />
             </Paper>
