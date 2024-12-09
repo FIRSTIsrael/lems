@@ -9,19 +9,21 @@ import {
   CoreValuesForm,
   Division,
   WSClientEmittedEvents,
-  WSServerEmittedEvents
+  WSServerEmittedEvents,
+  Team
 } from '@lems/types';
 import CVFormCard from './cv-form-card';
 import CVForm from './cv-form';
 
 interface CVPanelProps {
   user: WithId<SafeUser>;
+  teams: Array<WithId<Team>>;
   cvForms: Array<WithId<CoreValuesForm>>;
   division: WithId<Division>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, division, socket }) => {
+const CVPanel: React.FC<CVPanelProps> = ({ user, teams, cvForms, division, socket }) => {
   const [newForm, setNewForm] = useState<boolean>(false);
   return (
     <>
@@ -29,6 +31,7 @@ const CVPanel: React.FC<CVPanelProps> = ({ user, cvForms, division, socket }) =>
         <CVForm
           user={user}
           division={division}
+          teams={teams.filter(team => team.registered)}
           socket={socket}
           onSubmit={() => setNewForm(false)}
         />

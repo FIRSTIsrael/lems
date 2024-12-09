@@ -262,7 +262,13 @@ const Page: NextPage<Props> = ({
             />
           </TabPanel>
           <TabPanel value="5">
-            <CVPanel user={user} cvForms={cvForms} division={division} socket={socket} />
+            <CVPanel
+              user={user}
+              teams={teams}
+              cvForms={cvForms}
+              division={division}
+              socket={socket}
+            />
           </TabPanel>
         </TabContext>
       </Layout>
