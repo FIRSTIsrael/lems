@@ -1,11 +1,10 @@
 import React from 'react';
 import { WithId } from 'mongodb';
-import { FastField, FieldProps, FormikValues } from 'formik';
-import { AutocompleteRenderInputParams, Typography } from '@mui/material';
+import { FormikValues } from 'formik';
+import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Team } from '@lems/types';
 import CVFormSubjectSelect from './cv-form-subject';
-import TeamSelection from '../general/team-selection';
 import FormikTeamField from '../general/forms/formik-team-field';
 
 interface CVFormHeaderProps {
