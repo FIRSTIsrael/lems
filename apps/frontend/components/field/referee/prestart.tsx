@@ -23,7 +23,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
   inspectionStatus,
   updateInspectionStatus
 }) => {
-  const [inspectionStartTime, setInspectionStartTime] = useState<string | null>(null);
+  const [inspectionStartTime, setInspectionStartTime] = useState<Date | null>(null);
 
   return (
     <Paper sx={{ mt: 4, p: 4 }}>
@@ -44,11 +44,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               onChange={present => {
                 updateMatchParticipant({ present });
                 if (updateInspectionStatus) updateInspectionStatus(null);
-                if (present === 'present') {
-                  setInspectionStartTime(new Date().toISOString());
-                } else {
-                  setInspectionStartTime(null);
-                }
+                setInspectionStartTime(present === 'present' ? new Date() : null);
               }}
             />
           ) : (
@@ -57,7 +53,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
             </Typography>
           )}
 
-          {inspectionStartTime && participant.present === 'present' && (
+          {inspectionStartTime && (
             <InspectionTimer startTime={inspectionStartTime} />
           )}
 
