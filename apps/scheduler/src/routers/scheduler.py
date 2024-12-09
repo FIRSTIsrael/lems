@@ -12,6 +12,10 @@ from repository.lems_repository import LemsRepository
 
 router = APIRouter(prefix="/scheduler")
 
+MIN_RUNS = 25
+MAX_RUNS = 100
+MIN_SCORE = 40
+
 EVENT_DATE = datetime(2020, 1, 1, 0, 0, 0)
 
 TEAM_COUNT = 45
@@ -32,8 +36,6 @@ class CreateScheduleRequest(BaseModel):
     tables: int
     judging_rooms: int
 
-    # Question for raz: Does the schedule take into account that after the 30 minute session there is a 10 minute break
-    # that does not affect the team and can be discarded when calculating min. time? Is that the wait_time parameter?
     judging_session_length_seconds: int
     judging_cycle_time_seconds: int
     match_length_seconds: int
@@ -42,6 +44,7 @@ class CreateScheduleRequest(BaseModel):
 
     stagger_matches: bool = True
 
+    judging_rounds: int = 1
     practice_rounds: int = 1
     ranking_rounds: int = 3
 
@@ -49,13 +52,38 @@ class CreateScheduleRequest(BaseModel):
 # TODO: use the request type on the scheduler
 
 
+def create_event(event_type: str) -> Event:
+    match event_type:
+        case "practice":
+            pass
+        case "ranking":
+            pass
+        case "judging":
+            pass
+
+
+def create_events(create_schedule_request: CreateScheduleRequest) -> list[Event]:
+    events = []
+
+    for i in range(1, create_schedule_request.practice_rounds):
+        events.append(create_event("practice"))
+
+    for i in range(1, create_schedule_request.ranking_rounds):
+        events.append(create_event("ranking"))
+
+    for i in range(1, create_schedule_request.judging_rounds):
+        events.append(create_event("judging"))
+
+    return events
+
+
 @router.post("/")
-async def create_schedule() -> str:
-
+async def create_schedule(create_schedule_request: CreateScheduleRequest) -> str:
     lems = LemsRepository()
-    scheduler = SchedulerService(EVENTS, lems)
+    events = create_events(create_schedule_request)
+    scheduler = SchedulerService(events, lems)
 
-    for i in range(1, 2):  # TODO: change to have min/max and check for score
+    for i in range(1, MAX_RUNS):  # TODO: change to have min/max and check for score
         try:
             teams, activities = scheduler.create_schedule(
                 ObjectId("674ad4973be3f0c967e853f1")

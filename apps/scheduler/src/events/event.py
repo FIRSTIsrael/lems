@@ -65,7 +65,9 @@ class Event(ABC):
     def activity_type() -> ActivityType:
         pass
 
-    def create_activities(self) -> List[TeamActivity]:
+    def create_activities(
+        self, stagger_matches: bool
+    ) -> List[TeamActivity]:  # TODO: Suppot stagger
         activities = []
         current_index = 0
         current_time = self.start_time
