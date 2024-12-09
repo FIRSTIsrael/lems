@@ -1,15 +1,19 @@
 import React from 'react';
-import { FastField, FieldProps, FormikValues } from 'formik';
-import { Typography, TextField } from '@mui/material';
+import { WithId } from 'mongodb';
+import { FormikValues } from 'formik';
+import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { Team } from '@lems/types';
 import CVFormSubjectSelect from './cv-form-subject';
+import FormikTeamField from '../general/forms/formik-team-field';
 
 interface CVFormHeaderProps {
+  teams: Array<WithId<Team>>;
   values: FormikValues;
   readOnly?: boolean;
 }
 
-const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, readOnly }) => {
+const CVFormHeader: React.FC<CVFormHeaderProps> = ({ teams, values, readOnly }) => {
   return (
     <Grid container spacing={2} sx={{ my: 2 }}>
       <Grid
@@ -49,23 +53,11 @@ const CVFormHeader: React.FC<CVFormHeaderProps> = ({ values, readOnly }) => {
             </Grid>
             {values[subjectType].includes('team') && (
               <Grid sx={{ display: 'flex' }} size={6}>
-                <FastField name={`${subjectType.slice(0, -1)}Affiliation`}>
-                  {({ field, form }: FieldProps) => (
-                    <TextField
-                      fullWidth
-                      label="מספר קבוצה"
-                      sx={{
-                        '& .MuiInputBase-root': {
-                          height: '100%'
-                        }
-                      }}
-                      {...field}
-                      value={field.value}
-                      InputProps={{ readOnly }}
-                      onChange={e => form.setFieldValue(field.name, e.target.value)}
-                    />
-                  )}
-                </FastField>
+                <FormikTeamField
+                  teams={teams}
+                  name={`${subjectType.slice(0, -1)}Affiliation`}
+                  fullWidth
+                />
               </Grid>
             )}
           </React.Fragment>

@@ -129,3 +129,6 @@ export const CategoryColors: Record<JudgingCategory, string> = {
   'robot-design': '#CCE7D3',
   'core-values': '#FCD3C1'
 };
+
+export const INSPECTION_TIMER_LENGTH = 90; //seconds
+export const SHOW_INSPECTION_TIMER = true; 

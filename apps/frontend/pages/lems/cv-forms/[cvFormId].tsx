@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { CoreValuesForm, DivisionWithEvent, SafeUser } from '@lems/types';
+import { CoreValuesForm, DivisionWithEvent, SafeUser, Team } from '@lems/types';
 import ConnectionIndicator from '../../../components/connection-indicator';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
@@ -15,11 +15,12 @@ import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
+  teams: Array<WithId<Team>>;
   division: WithId<DivisionWithEvent>;
   cvForm: WithId<CoreValuesForm>;
 }
 
-const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
+const Page: NextPage<Props> = ({ user, teams, division, cvForm: initialCvForm }) => {
   const router = useRouter();
   const [cvForm, setCvForm] = useState<WithId<CoreValuesForm>>(initialCvForm);
 
@@ -58,6 +59,7 @@ const Page: NextPage<Props> = ({ user, division, cvForm: initialCvForm }) => {
           <CVForm
             user={user}
             division={division}
+            teams={teams.filter(team => team.registered)}
             socket={socket}
             cvForm={cvForm}
             readOnly={true}
@@ -76,6 +78,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`,
         cvForm: `/api/divisions/${divisionId}/cv-forms/${ctx.params?.cvFormId}`
       },
       ctx
