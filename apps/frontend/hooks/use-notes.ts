@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { WithId } from 'mongodb';
 import { openDB, DBSchema } from 'idb';
+import { Team } from '@lems/types';
 
 export interface Note {
   id?: number;
   text: string;
   title?: string;
   done?: boolean;
-  teamId?: string | null;
+  team?: WithId<Team> | null;
 }
 
 interface NotesDb extends DBSchema {

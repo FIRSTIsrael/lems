@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { green } from '@mui/material/colors';
+import { Button, Checkbox, Paper, Typography } from '@mui/material';
 import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles, Team } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
@@ -12,15 +13,17 @@ import { localizeDivisionTitle } from '../../../localization/event';
 import DivisionDropdown from '../../../components/general/division-dropdown';
 import FormikTextField from '../../../components/general/forms/formik-text-field';
 import { Note, useNotes } from '../../../hooks/use-notes';
-import { Button, Checkbox, Paper, Typography } from '@mui/material';
+import FormikTeamField from '../../../components/general/forms/formik-team-field';
 import { Form, Formik } from 'formik';
+import { localizeTeam } from 'apps/frontend/localization/teams';
 
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
+  teams: Array<WithId<Team>>;
 }
 
-const Page: NextPage<Props> = ({ user, division }) => {
+const Page: NextPage<Props> = ({ user, division, teams }) => {
   const router = useRouter();
   const { notes, addNote, updateNote, deleteNote } = useNotes();
   const initialValues: { text: string; title: string; team: WithId<Team> | null } = {
@@ -53,12 +56,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
           initialValues={initialValues}
           onSubmit={(values, actions) => {
             const { title, text, team } = values;
-            const note: Note = {
-              title: title !== '' ? title : undefined,
-              text,
-              teamId: team ? String(team._id) : undefined,
-              done: false
-            };
+            const note: Note = { title, text, team, done: false };
             addNote(note);
             actions.resetForm();
           }}
@@ -66,7 +64,9 @@ const Page: NextPage<Props> = ({ user, division }) => {
           <Form>
             <Paper sx={{ p: 2, mt: 2 }}>
               <Typography variant="h6">הוספת פתק</Typography>
+              <FormikTextField name="title" label="כותרת" />
               <FormikTextField name="text" label="טקסט" multiline />
+              <FormikTeamField name="team" teams={teams} />
               <Button variant="contained" type="submit">
                 הוסף
               </Button>
@@ -80,8 +80,9 @@ const Page: NextPage<Props> = ({ user, division }) => {
               key={note.id}
               sx={{ p: 2, mt: 2, backgroundColor: note.done ? green[100] : undefined }}
             >
-              <Typography variant="h6">{note.title}</Typography>
+              {note.title && <Typography variant="h6">{note.title}</Typography>}
               <Typography>{note.text}</Typography>
+              {note.team && <Typography>{localizeTeam(note.team)}</Typography>}
               <Checkbox
                 checked={note.done}
                 onChange={() => updateNote({ ...note, done: !note.done })}
@@ -99,7 +100,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${divisionId}?withEvent=true` },
+      {
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        teams: `/api/divisions/${divisionId}/teams`
+      },
       ctx
     );
 
