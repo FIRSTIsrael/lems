@@ -13,7 +13,8 @@ export const localizedRoles: { [key in Role]: { name: string } } = {
   queuer: { name: 'קיואר' },
   'head-queuer': { name: 'קיואר ראשי' },
   'tournament-manager': { name: 'מנהל אירוע' },
-  mc: { name: 'מנחה' }
+  mc: { name: 'מנחה' },
+  'field-manager': { name: 'מנהל זירה' }
 };
 
 export const localizedRoleAssociations: { [key in RoleAssociationType]: { name: string } } = {

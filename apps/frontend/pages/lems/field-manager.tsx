@@ -3,29 +3,24 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Tabs, Tab, Stack } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
+import { Paper, Stack } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
   Team,
-  Award,
   DivisionWithEvent
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import McSchedule from '../../components/mc/mc-schedule';
-import AwardsLineup from '../../components/mc/awards-lineup';
-import AwardsNotReadyCard from '../../components/mc/awards-not-ready-card';
 import ReportLink from '../../components/general/report-link';
+import ConnectionIndicator from '../../components/connection-indicator';
+import InsightsLink from '../../components/general/insights-link';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
-import { useQueryParam } from '../../hooks/use-query-param';
-import ConnectionIndicator from '../../components/connection-indicator';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -34,7 +29,6 @@ interface Props {
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
-  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -43,15 +37,12 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  tables,
-  awards: initialAwards
+  tables
 }) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
-  const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -92,15 +83,14 @@ const Page: NextPage<Props> = ({
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'audienceDisplayUpdated', handler: setDivisionState },
-      { name: 'presentationUpdated', handler: setDivisionState },
-      { name: 'awardsUpdated', handler: setAwards }
+      { name: 'presentationUpdated', handler: setDivisionState }
     ]
   );
 
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={['mc']}
+      allowedRoles={['field-manager']}
       onFail={() => {
         router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
@@ -112,38 +102,12 @@ const Page: NextPage<Props> = ({
         action={
           <Stack direction="row" spacing={2}>
             <ConnectionIndicator status={connectionStatus} />
-            <ReportLink />
+            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
           </Stack>
         }
         color={division.color}
       >
-        <TabContext value={activeTab}>
-          <Paper sx={{ mt: 2 }}>
-            <Tabs
-              value={activeTab}
-              onChange={(_e, newValue: string) => setActiveTab(newValue)}
-              centered
-            >
-              <Tab label='לו"ז זירה' value="1" />
-              <Tab label="פרסים" value="2" />
-            </Tabs>
-          </Paper>
-          <TabPanel value="1">
-            <McSchedule
-              divisionState={divisionState}
-              teams={teams}
-              matches={matches}
-              tables={tables}
-            />
-          </TabPanel>
-          <TabPanel value="2">
-            {divisionState.presentations['awards']?.enabled ? (
-              <AwardsLineup division={division} awards={awards} />
-            ) : (
-              <AwardsNotReadyCard />
-            )}
-          </TabPanel>
-        </TabContext>
+        <Paper sx={{ mt: 2 }}>יוזר פטא</Paper>
       </Layout>
     </RoleAuthorizer>
   );
@@ -159,8 +123,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/divisions/${divisionId}/teams`,
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
-        tables: `/api/divisions/${divisionId}/tables`,
-        awards: `/api/divisions/${divisionId}/awards`
+        tables: `/api/divisions/${divisionId}/tables`
       },
       ctx
     );
