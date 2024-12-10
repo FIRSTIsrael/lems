@@ -27,7 +27,7 @@
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "csv-parse": "^5.5.6",
+    "csv-parse": "^5.6.0",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
