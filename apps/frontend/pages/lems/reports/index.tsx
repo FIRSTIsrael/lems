@@ -99,6 +99,9 @@ const Page: NextPage<Props> = ({ user, division }) => {
           <GridPaperLink path="scoreboard">
             <Typography variant="h4">טבלת ניקוד</Typography>
           </GridPaperLink>
+          <GridPaperLink path="award-schema">
+            <Typography variant="h4">סדר הפרסים</Typography>
+          </GridPaperLink>
         </Grid>
       </Layout>
     </RoleAuthorizer>
