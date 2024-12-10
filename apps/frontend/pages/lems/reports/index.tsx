@@ -71,7 +71,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
           )
         }
       >
-        <Grid container spacing={3} columns={6} direction="row" mt={4}>
+        <Grid container spacing={3} columns={6} direction="row" my={4}>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">מצב השיפוט</Typography>
           </GridPaperLink>
