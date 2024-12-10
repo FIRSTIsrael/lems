@@ -12,7 +12,6 @@ import {
   IconButton,
   Paper,
   Stack,
-  TextField,
   Typography
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -30,8 +29,69 @@ import FormikTextField from '../../../components/general/forms/formik-text-field
 import { Note, useNotes } from '../../../hooks/use-notes';
 import FormikTeamField from '../../../components/general/forms/formik-team-field';
 import { localizeTeam } from '../../../localization/teams';
-import { useState } from 'react';
-import TeamSelection from 'apps/frontend/components/general/team-selection';
+
+interface ViewingNoteProps {
+  note: Note;
+  updateNote: (note: Note) => Promise<void>;
+}
+
+const ViewingNote: React.FC<ViewingNoteProps> = ({ note, updateNote }) => {
+  return (
+    <>
+      {note.title && (
+        <Typography fontSize="1.25rem" fontWeight={600}>
+          {note.title}
+        </Typography>
+      )}
+      {note.team && (
+        <Typography fontSize="1rem" fontWeight={500}>
+          {localizeTeam(note.team)}
+        </Typography>
+      )}
+      <Typography sx={{ whiteSpace: 'pre-line', mt: 1 }}>{note.text}</Typography>
+      <FormControlLabel
+        sx={{ mt: 2 }}
+        control={
+          <Checkbox
+            checked={note.done}
+            onChange={() => updateNote({ ...note, done: !note.done })}
+          />
+        }
+        label="טופל"
+      />
+    </>
+  );
+};
+
+interface EditingNoteProps {
+  teams: Array<WithId<Team>>;
+  note: Note;
+  updateNote: (note: Note) => Promise<void>;
+}
+
+const EditingNote: React.FC<EditingNoteProps> = ({ teams, note, updateNote }) => {
+  return (
+    <Formik
+      initialValues={{ ...note }}
+      onSubmit={values => {
+        const { title, text, team } = values;
+        const newNote: Note = { ...note, title, text, team, editing: false };
+        updateNote(newNote);
+      }}
+    >
+      <Form>
+        <Stack spacing={1} width="85%" marginBottom={1}>
+          <FormikTextField name="title" label="כותרת" fullWidth />
+          <FormikTeamField name="team" teams={teams} fullWidth />
+          <FormikTextField name="text" label="תיאור" multiline minRows={3} />
+        </Stack>
+        <Button variant="contained" type="submit">
+          שמירה
+        </Button>
+      </Form>
+    </Formik>
+  );
+};
 
 interface Props {
   user: WithId<SafeUser>;
@@ -120,57 +180,10 @@ const Page: NextPage<Props> = ({ user, division, teams }) => {
                     <DeleteOutlineIcon />
                   </IconButton>
                   {note.editing ? (
-                    <Stack spacing={1}>
-                      {note.title && (
-                        <TextField
-                          value={note.title}
-                          onChange={e => updateNote({ ...note, title: e.target.value })}
-                          label="כותרת"
-                          sx={{ width: '80%' }}
-                        />
-                      )}
-                      {note.team && (
-                        <TeamSelection
-                          teams={teams}
-                          value={note.team}
-                          setTeam={team => updateNote({ ...note, team: team })}
-                          sx={{ width: '80%' }}
-                        />
-                      )}
-                      <TextField
-                        value={note.text}
-                        onChange={e => updateNote({ ...note, text: e.target.value })}
-                        label="תיאור"
-                        multiline
-                        minRows={3}
-                        sx={{ width: '80%' }}
-                      />
-                    </Stack>
+                    <EditingNote teams={teams} note={note} updateNote={updateNote} />
                   ) : (
-                    <>
-                      {note.title && (
-                        <Typography fontSize="1.25rem" fontWeight={600}>
-                          {note.title}
-                        </Typography>
-                      )}
-                      {note.team && (
-                        <Typography fontSize="1rem" fontWeight={500}>
-                          {localizeTeam(note.team)}
-                        </Typography>
-                      )}
-                      <Typography sx={{ whiteSpace: 'pre-line', mt: 1 }}>{note.text}</Typography>
-                    </>
+                    <ViewingNote note={note} updateNote={updateNote} />
                   )}
-                  <FormControlLabel
-                    sx={{ mt: 2 }}
-                    control={
-                      <Checkbox
-                        checked={note.done}
-                        onChange={() => updateNote({ ...note, done: !note.done })}
-                      />
-                    }
-                    label="טופל"
-                  />
                 </Box>
               </Grid>
             ))}
