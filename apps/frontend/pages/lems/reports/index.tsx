@@ -71,7 +71,7 @@ const Page: NextPage<Props> = ({ user, division }) => {
           )
         }
       >
-        <Grid container spacing={3} columns={6} direction="row" mt={4}>
+        <Grid container spacing={3} columns={6} direction="row" my={4}>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">מצב השיפוט</Typography>
           </GridPaperLink>
@@ -93,11 +93,14 @@ const Page: NextPage<Props> = ({ user, division }) => {
           <GridPaperLink path="general-schedule">
             <Typography variant="h4">לו״ז כללי</Typography>
           </GridPaperLink>
-          <GridPaperLink path="field-timer">
-            <Typography variant="h4">שעון מקצים</Typography>
-          </GridPaperLink>
           <GridPaperLink path="scoreboard">
             <Typography variant="h4">טבלת ניקוד</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="notepad">
+            <Typography variant="h4">פתקים</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="field-timer">
+            <Typography variant="h4">שעון מקצים</Typography>
           </GridPaperLink>
         </Grid>
       </Layout>
