@@ -8,11 +8,9 @@ import { Paper, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
-import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../../localization/event';
 import DivisionDropdown from '../../../components/general/division-dropdown';
 
@@ -25,7 +23,6 @@ interface Props {
 const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
   const router = useRouter();
   const [error, setError] = useState<boolean>(false);
-  const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, []);
 
   return (
     <RoleAuthorizer
@@ -39,17 +36,12 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
       <Layout
         maxWidth="xl"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
         action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-              <DivisionDropdown event={division.event} selected={division._id.toString()} />
-            )}
-          </Stack>
+          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
+            <DivisionDropdown event={division.event} selected={division._id.toString()} />
+          )
         }
         back={`/lems/reports`}
-        backDisabled={connectionStatus === 'connecting'}
         color={division.color}
       >
         {!error ? (

@@ -10,6 +10,7 @@ import EventLoginForm from '../components/login/event-login-form';
 import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
+import { useNotes } from '../hooks/use-notes';
 
 interface PageProps {
   events: Array<WithId<FllEvent>>;
@@ -22,6 +23,12 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
+
+  // Clear session speficic data when user is logged out.
+  const { clearNotes } = useNotes();
+  useEffect(() => {
+    clearNotes();
+  });
 
   const selectDivision = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
     const event = events.find(e => String(e._id) === String(eventId));

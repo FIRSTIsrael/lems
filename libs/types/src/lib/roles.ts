@@ -13,11 +13,16 @@ export const RoleTypes = [
   'pit-admin',
   'audience-display',
   'tournament-manager',
-  'mc'
+  'mc',
+  'field-manager'
 ] as const;
 export type Role = (typeof RoleTypes)[number];
 
-export const EventUserAllowedRoleTypes = ['tournament-manager', 'pit-admin'] as const;
+export const EventUserAllowedRoleTypes = [
+  'tournament-manager',
+  'pit-admin',
+  'field-manager'
+] as const;
 export type EventUserAllowedRoles = (typeof EventUserAllowedRoleTypes)[number];
 
 export const RoleAssociationTypes = ['room', 'table', 'category', 'section'] as const;
