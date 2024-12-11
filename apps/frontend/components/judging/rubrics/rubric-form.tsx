@@ -376,7 +376,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   color="inherit"
                   onClick={() => {
                     handleSync(false, values, 'ready').then(() =>
-                      router.push(`/lems/${user.role}`)
+                      router.push(`/lems/${user.role}#${team.number.toString()}`)
                     );
                   }}
                   sx={actionButtonStyle}
