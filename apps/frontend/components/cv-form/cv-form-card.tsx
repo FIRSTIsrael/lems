@@ -32,11 +32,15 @@ const CVFormCard: React.FC<CVFormCardProps> = ({ division, form }) => {
         }
         title={`דיווח על ${form.demonstrators
           .map(d =>
-            d === 'team' ? `קבוצה #${form.demonstratorAffiliation}` : localizedFormSubject[d]
+            d === 'team'
+              ? `קבוצה #${form.demonstratorAffiliation?.number}`
+              : localizedFormSubject[d]
           )
           .join(', ')}`}
         subheader={`האירוע נצפה על ידי ${form.observers
-          .map(o => (o === 'team' ? `קבוצה #${form.observerAffiliation}` : localizedFormSubject[o]))
+          .map(o =>
+            o === 'team' ? `קבוצה #${form.observerAffiliation?.number}` : localizedFormSubject[o]
+          )
           .join(', ')}`}
       />
       <CardContent>

@@ -127,7 +127,7 @@ router.get(
             {
               $lookup: {
                 from: 'core-values-forms',
-                let: { divisionId: '$divisionId', teamNumber: '$number' },
+                let: { divisionId: '$divisionId', teamId: '$_id' },
                 pipeline: [
                   {
                     $match: {
@@ -137,7 +137,7 @@ router.get(
                             $eq: ['$divisionId', '$$divisionId']
                           },
                           {
-                            $eq: ['$demonstratorAffiliation', { $toString: '$$teamNumber' }]
+                            $eq: ['$demonstratorAffiliation._id', '$$teamId']
                           }
                         ]
                       }
