@@ -375,9 +375,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   variant="contained"
                   color="inherit"
                   onClick={() => {
-                    handleSync(false, values, 'ready').then(() => {
-                      router.push(`/lems/${user.role}?tab=1#${team.number.toString()}`);
-                    });
+                    handleSync(false, values, 'ready').then(() =>
+                      router.push(`/lems/${user.role}#${team.number.toString()}`)
+                    );
                   }}
                   sx={actionButtonStyle}
                   disabled={!isValid}
