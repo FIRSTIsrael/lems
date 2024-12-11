@@ -128,7 +128,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
           } של קבוצה #${team.number}, ${team.name} | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
           action={<ConnectionIndicator status={connectionStatus} />}
-          back={`/lems/${user.role}#${team.number.toString()}`}
+          back={`/lems/${user.role}?tab=1#${team.number.toString()}`}
           backDisabled={connectionStatus === 'connecting'}
           color={division.color}
         >
@@ -152,6 +152,8 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
               rubric={rubric}
               schema={rubricsSchemas[judgingCategory as JudgingCategory]}
               socket={socket}
+              sessions={[session]}
+              rooms={[room]}
             />
           </Box>
         </Layout>

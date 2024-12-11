@@ -46,9 +46,14 @@ const Layout: React.FC<LayoutProps> = ({
   const [open, setOpen] = useState<boolean>(false);
 
   const handleBack = () => {
-    const queryString = router.query.divisionId
-      ? new URLSearchParams({ divisionId: router.query.divisionId as string }).toString()
-      : '';
+    const params = new URLSearchParams();
+    if (router.query.divisionId) {
+      params.append('divisionId', router.query.divisionId as string);
+    }
+    if (router.query.tab) {
+      params.append('tab', router.query.tab as string);
+    }
+    const queryString = params.toString();
     const url = `${back}${queryString ? `?${queryString}` : ''}`;
     router.push(url);
   };

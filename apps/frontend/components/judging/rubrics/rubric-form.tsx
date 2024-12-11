@@ -30,7 +30,9 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   SafeUser,
-  RubricValue
+  RubricValue,
+  JudgingSession,
+  JudgingRoom
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
@@ -51,6 +53,8 @@ interface RubricFormProps {
   schema: RubricsSchema;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  sessions: Array<WithId<JudgingSession>>;
+  rooms: Array<WithId<JudgingRoom>>;
   hideTitle?: boolean;
   hideDescription?: boolean;
 }
@@ -62,6 +66,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
   schema,
   user,
   socket,
+  sessions,
+  rooms,
   hideTitle = false,
   hideDescription = false
 }) => {
@@ -375,9 +381,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   variant="contained"
                   color="inherit"
                   onClick={() => {
-                    handleSync(false, values, 'ready').then(() =>
-                      router.push(`/lems/${user.role}`)
-                    );
+                    handleSync(false, values, 'ready').then(() => {
+                      router.push(`/lems/${user.role}?tab=1#${team.number.toString()}`);
+                    });
                   }}
                   sx={actionButtonStyle}
                   disabled={!isValid}
