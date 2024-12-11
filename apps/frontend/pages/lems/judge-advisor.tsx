@@ -208,11 +208,7 @@ const Page: NextPage<Props> = ({
                 <RubricStatusReferences />
               </Paper>
               {rooms.map(room => (
-                <Paper
-                  key={room._id.toString()}
-                  id={`room-${room.name}`}
-                  sx={{ borderRadius: 3, mb: 4, boxShadow: 2 }}
-                >
+                <Paper key={room._id.toString()} sx={{ borderRadius: 3, mb: 4, boxShadow: 2 }}>
                   <Box
                     sx={{
                       display: 'flex',

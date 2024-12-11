@@ -152,8 +152,6 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
               rubric={rubric}
               schema={rubricsSchemas[judgingCategory as JudgingCategory]}
               socket={socket}
-              sessions={[session]}
-              rooms={[room]}
             />
           </Box>
         </Layout>

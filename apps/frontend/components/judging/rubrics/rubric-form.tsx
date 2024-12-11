@@ -30,9 +30,7 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   SafeUser,
-  RubricValue,
-  JudgingSession,
-  JudgingRoom
+  RubricValue
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
@@ -53,8 +51,6 @@ interface RubricFormProps {
   schema: RubricsSchema;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
-  sessions: Array<WithId<JudgingSession>>;
-  rooms: Array<WithId<JudgingRoom>>;
   hideTitle?: boolean;
   hideDescription?: boolean;
 }
@@ -66,8 +62,6 @@ const RubricForm: React.FC<RubricFormProps> = ({
   schema,
   user,
   socket,
-  sessions,
-  rooms,
   hideTitle = false,
   hideDescription = false
 }) => {
