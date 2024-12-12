@@ -105,5 +105,22 @@ class SchedulerService:
         teams = self.get_teams(create_schedule_request.disivion_id)
         events = create_events(create_schedule_request, len(teams))
         activities = create_activities(events)
-        _, matched_activities = gale_shapley(teams.copy(), activities.copy())
-        self.lems_repository.insert_schedule(matched_activities)
+
+        current_score = 0
+        current_run = 0
+        best_activities = []
+
+        while current_run < MAX_RUNS and not (current_score >= MIN_SCORE and current_run > MIN_RUNS):
+            current_run += 1
+
+            matched_teams, matched_activities = gale_shapley(teams.copy(), activities.copy())
+
+            score = check_score(matched_teams)
+            if score > current_score:
+                current_score = score
+                best_activities = matched_activities
+        
+        if score < MIN_SCORE:
+            raise SchedulerError("Failed to generate valid schedule after mulitple attmepts")
+        
+        self.lems_repository.insert_schedule(best_activities)
