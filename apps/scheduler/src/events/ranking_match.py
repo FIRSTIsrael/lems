@@ -46,3 +46,7 @@ class Match(Event):
     @staticmethod
     def activity_type() -> ActivityType:
         return ActivityType.RANKING_MATCH
+    
+    @staticmethod
+    def should_stagger():
+        return True

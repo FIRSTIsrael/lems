@@ -25,3 +25,8 @@ class PracticeMatch(Event):
     @staticmethod
     def activity_type() -> ActivityType:
         return ActivityType.PRACTICE_MATCH
+    
+    @staticmethod
+    def should_stagger():
+        return True
+    

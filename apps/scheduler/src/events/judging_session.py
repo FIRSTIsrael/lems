@@ -25,3 +25,7 @@ class JudgingSession(Event):
     @staticmethod
     def activity_type() -> ActivityType:
         return ActivityType.JUDGING_SESSION
+    
+    @staticmethod
+    def should_stagger():
+        return False

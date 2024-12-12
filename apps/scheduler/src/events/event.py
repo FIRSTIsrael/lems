@@ -65,19 +65,30 @@ class Event(ABC):
     def activity_type() -> ActivityType:
         pass
 
-    def create_activities(
-        self, stagger_matches: bool
-    ) -> List[TeamActivity]:  # TODO: Suppot stagger
+    @staticmethod
+    @abstractmethod
+    def should_stagger() -> bool:
+        pass
+
+    def create_activities(self) -> List[TeamActivity]:
         activities = []
         current_index = 0
         current_time = self.start_time
         end_time = current_time + timedelta(minutes=self.activity_length)
 
+        cycle_time = self.activity_length + self.wait_time_minutes
+
+        stagger = self.should_stagger()
+
         while len(activities) < self.total_count:
-            if current_index == self.parallel_activities:
+            if stagger and current_index == self.parallel_activities / 2:
                 current_index = 0
-                current_time = end_time + timedelta(minutes=self.wait_time_minutes)
-                end_time = current_time + timedelta(minutes=self.activity_length)
+                current_time += timedelta(minutes=cycle_time / 2)
+                end_time += timedelta(minutes=cycle_time / 2)
+            elif current_index == self.parallel_activities:
+                current_index = 0
+                current_time += timedelta(minutes=cycle_time)
+                end_time += timedelta(minutes=cycle_time)
 
             activities.append(
                 TeamActivity(
