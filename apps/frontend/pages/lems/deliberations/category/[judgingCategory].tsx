@@ -23,7 +23,6 @@ import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
-import ConnectionIndicator from '../../../../components/connection-indicator';
 import { getUserAndDivision, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
@@ -244,8 +243,9 @@ const Page: NextPage<Props> = ({
         maxWidth={1900}
         back={`/lems/${user.role}`}
         title={`דיון תחום ${localizedJudgingCategory[category].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
       >
         <Deliberation

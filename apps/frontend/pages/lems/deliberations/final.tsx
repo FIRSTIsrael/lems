@@ -24,7 +24,6 @@ import {
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ChampionsDeliberationLayout from '../../../components/deliberations/final/champions/champions-deliberation-layout';
@@ -380,8 +379,9 @@ const Page: NextPage<Props> = ({
         maxWidth={1900}
         back={`/lems/${user.role}`}
         title={`דיון סופי | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
       >
         <Deliberation

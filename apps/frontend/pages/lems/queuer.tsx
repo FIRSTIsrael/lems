@@ -104,17 +104,22 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  useWebsocket(division._id.toString(), ['field', 'pit-admin', 'judging'], undefined, [
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'judgingSessionStarted', handler: handleSessionEvent },
-    { name: 'judgingSessionCompleted', handler: handleSessionEvent },
-    { name: 'judgingSessionAborted', handler: handleSessionEvent },
-    { name: 'judgingSessionUpdated', handler: handleSessionEvent }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    division._id.toString(),
+    ['field', 'pit-admin', 'judging'],
+    undefined,
+    [
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+    ]
+  );
 
   return (
     <RoleAuthorizer
@@ -129,6 +134,7 @@ const Page: NextPage<Props> = ({
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
         color={division.color}
+        error={connectionStatus === 'disconnected'} // No room to actually show the indicator
       >
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
           {activeView === 0 && (

@@ -21,7 +21,6 @@ import { rubricsSchemas } from '@lems/season';
 import Layout from '../../../../../components/layout';
 import RubricForm from '../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
-import ConnectionIndicator from '../../../../../components/connection-indicator';
 import {
   apiFetch,
   getUserAndDivision,
@@ -127,7 +126,6 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
             localizedJudgingCategory[judgingCategory as JudgingCategory].name
           } של קבוצה #${team.number}, ${team.name} | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
-          action={<ConnectionIndicator status={connectionStatus} />}
           back={`/lems/${user.role}#${team.number.toString()}`}
           backDisabled={connectionStatus === 'connecting'}
           color={division.color}

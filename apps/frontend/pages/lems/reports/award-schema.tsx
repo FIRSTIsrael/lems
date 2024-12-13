@@ -11,20 +11,12 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import {
-  DivisionWithEvent,
-  SafeUser,
-  RoleTypes,
-  EventUserAllowedRoles,
-  Award,
-  AwardNames
-} from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, Award, AwardNames } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 import { localizedAward } from '@lems/season';
 
 interface Props {
@@ -49,13 +41,9 @@ const Page: NextPage<Props> = ({ user, division, awards }) => {
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - סדר הפרסים | ${localizeDivisionTitle(division)}`}
         back={`/lems/reports`}
-        backDisabled={false}
         color={division.color}
-        action={
-          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
-          )
-        }
+        user={user}
+        division={division}
       >
         <TableContainer component={Paper} sx={{ my: 4 }}>
           <Table>

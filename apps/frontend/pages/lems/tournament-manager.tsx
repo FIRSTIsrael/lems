@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab, Stack } from '@mui/material';
+import { Paper, Tabs, Tab } from '@mui/material';
 import {
   CoreValuesForm,
   DivisionWithEvent,
@@ -15,18 +15,14 @@ import {
   Team,
   Ticket,
   RobotGameTable,
-  RobotGameMatch,
-  EventUserAllowedRoles
+  RobotGameMatch
 } from '@lems/types';
 import Layout from '../../components/layout';
-import ReportLink from '../../components/general/report-link';
-import InsightsLink from '../../components/general/insights-link';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import TicketPanel from '../../components/general/ticket-panel';
 import DivisionPanel from '../../components/tournament-manager/division-panel';
 import JudgingScheduleEditor from '../../components/tournament-manager/judging-schedule-editor';
 import FieldScheduleEditor from '../../components/tournament-manager/field-schedule-editor';
-import ConnectionIndicator from '../../components/connection-indicator';
 import CVPanel from '../../components/cv-form/cv-panel';
 import BadgeTab from '../../components/general/badge-tab';
 import { useWebsocket } from '../../hooks/use-websocket';
@@ -34,7 +30,6 @@ import { localizedRoles } from '../../localization/roles';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
-import DivisionDropdown from '../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -210,16 +205,10 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-              <DivisionDropdown event={division.event} selected={division._id.toString()} />
-            )}
-            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
+        divisionState={divisionState}
         color={division.color}
       >
         <TabContext value={activeTab}>

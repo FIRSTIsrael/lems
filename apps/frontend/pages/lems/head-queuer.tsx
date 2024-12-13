@@ -15,8 +15,6 @@ import {
   DivisionWithEvent
 } from '@lems/types';
 import { useWebsocket } from '../../hooks/use-websocket';
-import ConnectionIndicator from '../../components/connection-indicator';
-import ReportLink from '../../components/general/report-link';
 import ActiveMatch from '../../components/field/scorekeeper/active-match';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -142,13 +140,9 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)} | מתחם ${localizedDivisionSection[user.roleAssociation?.value as string].name}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            <ReportLink />
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
       >
         {user.roleAssociation?.value === 'field' && (
