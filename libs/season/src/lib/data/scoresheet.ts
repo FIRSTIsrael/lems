@@ -185,7 +185,7 @@ export const scoresheet: ScoresheetSchema = {
             points += 20;
             break;
           case 2:
-            points += 10;
+            points += 30;
             break;
           default:
             break;
