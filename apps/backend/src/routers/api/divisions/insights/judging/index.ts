@@ -153,7 +153,11 @@ router.get(
   '/robot-room-correlation-to-robot-game',
   asyncHandler(async (req: Request, res: Response) => {
     const pipeline = [
-      { $match: { divisionId: new ObjectId(req.params.divisionId) } },
+      {
+        $match: { 
+          divisionId: new ObjectId(req.params.divisionId)
+        }
+      },
       {
         $lookup: {
           from: 'rubrics',
@@ -163,15 +167,9 @@ router.get(
               $match: {
                 $expr: {
                   $and: [
-                    {
-                      $eq: ['$teamId', '$$teamId']
-                    },
-                    {
-                      $in: ['$status', ['ready', 'waiting-for-review', 'completed']]
-                    },
-                    {
-                      $eq: ['$category', 'robot-design']
-                    }
+                    { $eq: ['$teamId', '$$teamId'] },
+                    { $in: ['$status', ['ready', 'waiting-for-review', 'completed']] },
+                    { $eq: ['$category', 'robot-design'] }
                   ]
                 }
               }
@@ -200,15 +198,9 @@ router.get(
               $match: {
                 $expr: {
                   $and: [
-                    {
-                      $eq: ['$teamId', '$$teamId']
-                    },
-                    {
-                      $eq: ['$stage', 'ranking']
-                    },
-                    {
-                      $eq: ['$status', 'ready']
-                    }
+                    { $eq: ['$teamId', '$$teamId'] },
+                    { $eq: ['$stage', 'ranking'] },
+                    { $eq: ['$status', 'ready'] }
                   ]
                 }
               }
@@ -221,29 +213,19 @@ router.get(
         $match: {
           $expr: {
             $and: [
-              {
-                $eq: [{ $size: '$rubric' }, 1]
-              },
-              {
-                $gt: [{ $size: '$scoresheets' }, 0]
-              }
+              { $eq: [{ $size: '$rubric' }, 1] },
+              { $gt: [{ $size: '$scoresheets' }, 0] }
             ]
           }
         }
       },
       {
         $project: {
-          rubric: { $arrayElemAt: ['$rubric', 0] },
-          topRobotGameScore: {
-            $max: '$scoresheets.data.score'
-          }
-        }
-      },
-      {
-        $project: {
           _id: false,
-          averageRobotDesignScore: '$rubric.averageRobotDesignScore',
-          topRobotGameScore: true
+          teamId: '$_id',
+          teamNumber: '$number',
+          averageRobotDesignScore: { $arrayElemAt: ['$rubric.averageRobotDesignScore', 0] },
+          topRobotGameScore: { $max: '$scoresheets.data.score' }
         }
       }
     ];
