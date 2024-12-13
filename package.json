@@ -17,7 +17,7 @@
     "@emotion/styled": "^11.14.0",
     "@json2csv/plainjs": "^7.0.6",
     "@mui/base": "^5.0.0-beta.66",
-    "@mui/icons-material": "^6.1.10",
+    "@mui/icons-material": "^6.2.0",
     "@mui/lab": "^6.0.0-beta.13",
     "@mui/material": "^6.2.0",
     "@mui/x-data-grid": "^7.23.1",
