@@ -5,6 +5,7 @@ from typing import List
 
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
+from models.location import Location
 
 
 MAX_MINUTES = 1440
@@ -70,9 +71,9 @@ class Event(ABC):
     def should_stagger() -> bool:
         pass
 
-    def create_activities(self) -> List[TeamActivity]:
+    def create_activities(self, starting_index: int = 0) -> List[TeamActivity]:
         activities = []
-        current_index = 0
+        current_index = starting_index
         current_time = self.start_time
         end_time = current_time + timedelta(minutes=self.activity_length)
 
@@ -92,13 +93,13 @@ class Event(ABC):
 
             activities.append(
                 TeamActivity(
-                    self.activity_type(),
-                    current_time,
-                    end_time,
-                    self.event_index,
-                    current_index,
-                    0,
-                    [],
+                    activity_type=self.activity_type(),
+                    start_time=current_time,
+                    end_time=end_time,
+                    location=Location(),
+                    index=current_index,
+                    event_index=self.event_index,
+                    rejected_team_numbers=[]
                 )
             )
             current_index += 1

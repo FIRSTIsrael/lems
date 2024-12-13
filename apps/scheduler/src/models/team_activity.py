@@ -13,11 +13,13 @@ class ActivityType(StrEnum):
 
 @dataclass
 class TeamActivity:
+    team_number: int
     activity_type: ActivityType
     start_time: datetime
     end_time: datetime
-    event_index: int
     location: Location
-    index: int
-    team_number: int
+    index: int # Internal identifier for the activity. Not saved to DB.
+    event_index: int # Internal identifier for a round. Not saved to DB.
+    round: int # Round number to save in DB. Currently only used for matches.
+    number: int # Match/session number to save to DB.
     rejected_team_numbers: list[int]

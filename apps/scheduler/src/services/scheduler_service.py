@@ -9,6 +9,7 @@ from exceptions.scheduler_error import SchedulerError
 from models.create_schedule_request import CreateScheduleRequest, EventRequest
 from models.team import Team
 from models.team_activity import TeamActivity
+from models.location import Location
 from services.gale_shapley_service import (
     gale_shapley,
     team_minimum_delta,
@@ -118,11 +119,11 @@ class SchedulerService:
     def __init__(self, lems_repository: LemsRepository):
         self.lems_repository = lems_repository
 
-    def get_teams(self, division_id: ObjectId) -> list[Team]:
+    def get_teams(self) -> list[Team]:
         teams = []
 
         try:
-            teams = self.lems_repository.get_teams(division_id)
+            teams = self.lems_repository.get_teams()
         except:
             raise SchedulerError("Failed to connect to MongoDB")
 
@@ -131,8 +132,23 @@ class SchedulerService:
 
         return teams
 
+    def get_rooms(self) -> list[Location]:
+        try:
+            return self.lems_repository.get_rooms()
+        except:
+            raise SchedulerError("Failed to retrieve rooms from DB")
+        
+    def get_tables(self) -> list[Location]:
+        try:
+            return self.lems_repository.get_tables()
+        except:
+            raise SchedulerError("Failed to retrieve tables from DB")
+
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
-        teams = self.get_teams(create_schedule_request.disivion_id)
+        teams = self.get_teams()
+        judging_rooms = self.get_rooms()
+        tables = self.get_tables()
+        
         events = create_events(create_schedule_request, len(teams))
         activities = create_activities(events)
 
