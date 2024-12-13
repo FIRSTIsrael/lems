@@ -51,7 +51,7 @@
     "react-markdown": "^9.0.1",
     "react-signature-canvas": "^1.0.6",
     "react-spring": "^9.7.5",
-    "recharts": "^2.13.2",
+    "recharts": "^2.15.0",
     "serve-favicon": "^2.5.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
