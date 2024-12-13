@@ -171,7 +171,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     }
     if (!copyFromDivision) return;
 
-    apiFetch(`/api/admin/divisions/${copyFromDivision._id}/awards/schema`)
+    return apiFetch(`/api/admin/divisions/${copyFromDivision._id}/awards/schema`)
       .then(res => res.json())
       .then(data => {
         console.log(data);
@@ -266,7 +266,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
               open={copyModal}
               setOpen={setCopyModal}
               events={events}
-              onSelect={copyAwardsFrom}
+              onSelect={(selectedEvent) => copyAwardsFrom(selectedEvent)?.then(() => setTimeout(() => submitForm(), 0))}
             />
             <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
           </Stack>
