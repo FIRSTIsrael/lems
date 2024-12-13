@@ -30,7 +30,6 @@ import {
 } from '@lems/types';
 import Layout from '../../../../../components/layout';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
-import ConnectionIndicator from '../../../../../components/connection-indicator';
 import {
   apiFetch,
   getUserAndDivision,
@@ -232,7 +231,6 @@ const Page: NextPage<Props> = ({
             team.name
           } | ${localizeDivisionTitle(division)}`}
           error={connectionStatus === 'disconnected'}
-          action={<ConnectionIndicator status={connectionStatus} />}
           back={`/lems/${user.role}`}
           backDisabled={connectionStatus === 'connecting'}
           color={division.color}

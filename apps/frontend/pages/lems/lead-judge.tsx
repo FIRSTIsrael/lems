@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import { Avatar, Box, Paper, Typography, Stack } from '@mui/material';
+import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   DivisionState,
@@ -18,10 +18,7 @@ import {
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../components/judging/judging-room-schedule';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
-import ReportLink from '../../components/general/report-link';
-import InsightsLink from '../../components/general/insights-link';
 import WelcomeHeader from '../../components/general/welcome-header';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
@@ -136,13 +133,10 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
+        divisionState={divisionState}
         color={division.color}
       >
         <>
@@ -201,7 +195,8 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const { user, divisionId } = await getUserAndDivision(ctx);
-    const category = user.roleAssociation.value;
+    const category = user.roleAssociation?.value;
+    if (!category) throw new Error('No category found for lead judge');
 
     const data = await serverSideGetRequests(
       {

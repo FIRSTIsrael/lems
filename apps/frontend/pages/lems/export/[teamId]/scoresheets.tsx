@@ -25,6 +25,7 @@ import Markdown from 'react-markdown';
 import CustomNumberInput from '../../../../components/field/scoresheet/number-input';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { localizeDivisionTitle } from '../../../../localization/event';
+import { getUserAndDivision } from '../../../../lib/utils/fetch';
 
 interface ExportMissionClauseProps {
   scoresheet: WithId<Scoresheet>;
@@ -273,13 +274,14 @@ const Page: NextPage<Props> = ({ user, division, team, scoresheets }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
+  const { user, divisionId } = await getUserAndDivision(ctx);
+
   try {
     const data = await serverSideGetRequests(
       {
-        user: '/api/me',
-        division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
-        team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
-        scoresheets: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/scoresheets`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        team: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}`,
+        scoresheets: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}/scoresheets`
       },
       ctx
     );
@@ -287,7 +289,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       (scoresheet: Scoresheet) => scoresheet.stage !== 'practice'
     );
 
-    return { props: { ...data } };
+    return { props: { user, ...data } };
   } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }

@@ -19,7 +19,6 @@ import { RoleAuthorizer } from '../../components/role-authorizer';
 import McSchedule from '../../components/mc/mc-schedule';
 import AwardsLineup from '../../components/mc/awards-lineup';
 import AwardsNotReadyCard from '../../components/mc/awards-not-ready-card';
-import ReportLink from '../../components/general/report-link';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
@@ -79,17 +78,22 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  useWebsocket(division._id.toString(), ['field', 'pit-admin', 'audience-display'], undefined, [
-    { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchLoaded', handler: handleMatchEvent },
-    { name: 'matchStarted', handler: handleMatchEvent },
-    { name: 'matchAborted', handler: handleMatchEvent },
-    { name: 'matchCompleted', handler: handleMatchEvent },
-    { name: 'matchUpdated', handler: handleMatchEvent },
-    { name: 'audienceDisplayUpdated', handler: setDivisionState },
-    { name: 'presentationUpdated', handler: setDivisionState },
-    { name: 'awardsUpdated', handler: setAwards }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    division._id.toString(),
+    ['field', 'pit-admin', 'audience-display'],
+    undefined,
+    [
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'matchLoaded', handler: handleMatchEvent },
+      { name: 'matchStarted', handler: handleMatchEvent },
+      { name: 'matchAborted', handler: handleMatchEvent },
+      { name: 'matchCompleted', handler: handleMatchEvent },
+      { name: 'matchUpdated', handler: handleMatchEvent },
+      { name: 'audienceDisplayUpdated', handler: setDivisionState },
+      { name: 'presentationUpdated', handler: setDivisionState },
+      { name: 'awardsUpdated', handler: setAwards }
+    ]
+  );
 
   return (
     <RoleAuthorizer
@@ -103,7 +107,8 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        action={<ReportLink />}
+        user={user}
+        connectionStatus={connectionStatus}
         color={division.color}
       >
         <TabContext value={activeTab}>

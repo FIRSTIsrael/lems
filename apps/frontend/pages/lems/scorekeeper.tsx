@@ -13,9 +13,7 @@ import {
   DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
-import ReportLink from '../../components/general/report-link';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { useTime } from '../../hooks/use-time';
@@ -131,13 +129,9 @@ const Page: NextPage<Props> = ({
     >
       <Layout
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            <ReportLink />
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
       >
         <TabContext value={activeTab}>

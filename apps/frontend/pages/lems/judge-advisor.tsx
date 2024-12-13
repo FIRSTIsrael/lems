@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Avatar, Box, Paper, Tab, Tabs, Typography, Stack } from '@mui/material';
+import { Avatar, Box, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Grid2';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
@@ -23,10 +23,7 @@ import {
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
-import ReportLink from '../../components/general/report-link';
-import InsightsLink from '../../components/general/insights-link';
 import JudgingRoomSchedule from '../../components/judging/judging-room-schedule';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
@@ -181,13 +178,10 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
+        divisionState={divisionState}
         color={division.color}
       >
         <>
