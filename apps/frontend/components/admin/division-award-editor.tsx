@@ -266,7 +266,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
               open={copyModal}
               setOpen={setCopyModal}
               events={events}
-              onSelect={(selectedEvent) => copyAwardsFrom(selectedEvent)?.then(() => setTimeout(() => submitForm(), 0))}
+              onSelect={(selectedEvent) => copyAwardsFrom(selectedEvent)?.then(() => setTimeout(() => submitForm()))}
             />
             <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
           </Stack>
