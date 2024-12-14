@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import dayjs from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
 import {
   Paper,
   Table,
@@ -11,39 +11,23 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { DivisionWithEvent, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, Award, AwardNames } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
-import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
-
-interface DivisionScheduleRowProps {
-  entry: DivisionScheduleEntry;
-}
-
-const DivisionScheduleRow: React.FC<DivisionScheduleRowProps> = ({ entry }) => {
-  return (
-    <TableRow
-      key={entry.name + entry.roles.toString()}
-      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-    >
-      <TableCell>{dayjs(entry.startTime).format('HH:mm')}</TableCell>
-      <TableCell>{dayjs(entry.endTime).format('HH:mm')}</TableCell>
-      <TableCell>{entry.name}</TableCell>
-      <TableCell>{entry.roles.map(r => localizedRoles[r].name).join(', ')}</TableCell>
-    </TableRow>
-  );
-};
+import { localizedAward } from '@lems/season';
 
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
+  awards: Array<WithId<Award>>;
 }
 
-const Page: NextPage<Props> = ({ user, division }) => {
+const Page: NextPage<Props> = ({ user, division, awards }) => {
   const router = useRouter();
+  console.log(awards);
   return (
     <RoleAuthorizer
       user={user}
@@ -55,26 +39,38 @@ const Page: NextPage<Props> = ({ user, division }) => {
     >
       <Layout
         maxWidth="md"
-        title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז כללי | ${localizeDivisionTitle(division)}`}
+        title={`ממשק ${user.role && localizedRoles[user.role].name} - סדר הפרסים | ${localizeDivisionTitle(division)}`}
         back={`/lems/reports`}
         color={division.color}
         user={user}
         division={division}
       >
-        <TableContainer component={Paper} sx={{ mt: 4 }}>
+        <TableContainer component={Paper} sx={{ my: 4 }}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>התחלה</TableCell>
-                <TableCell>סיום</TableCell>
-                <TableCell>שם האירוע</TableCell>
-                <TableCell>תפקידים</TableCell>
+                <TableCell>פרס</TableCell>
+                <TableCell>מקום</TableCell>
+                <TableCell>תיאור</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {division.schedule?.map((s, index) => {
-                return <DivisionScheduleRow key={index} entry={s} />;
-              })}
+              {awards
+                .sort((a, b) => {
+                  const indexDiff = a.index - b.index;
+                  if (indexDiff !== 0) {
+                    return indexDiff;
+                  }
+                  const placeDiff = b.place - a.place;
+                  return placeDiff;
+                })
+                .map(award => (
+                  <TableRow key={award.name}>
+                    <TableCell>{localizedAward[award.name as AwardNames].name}</TableCell>
+                    <TableCell>{award.place}</TableCell>
+                    <TableCell>{localizedAward[award.name as AwardNames].description}</TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -88,7 +84,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const { user, divisionId } = await getUserAndDivision(ctx);
 
     const data = await serverSideGetRequests(
-      { division: `/api/divisions/${divisionId}?withSchedule=true&withEvent=true` },
+      {
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        awards: `/api/divisions/${divisionId}/awards/schema`
+      },
       ctx
     );
 

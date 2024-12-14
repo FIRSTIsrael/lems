@@ -36,6 +36,7 @@ import HeaderRow from '../../../../components/judging/rubrics/header-row';
 import TitleRow from '../../../../components/judging/rubrics/title-row';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { localizeDivisionTitle } from '../../../../localization/event';
+import { getUserAndDivision } from '../../../../lib/utils/fetch';
 
 interface ExportRubricPageProps {
   division: WithId<DivisionWithEvent>;
@@ -286,18 +287,19 @@ const Page: NextPage<Props> = ({ user, division, team, rubrics }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
+  const { user, divisionId } = await getUserAndDivision(ctx);
+
   try {
     const data = await serverSideGetRequests(
       {
-        user: '/api/me',
-        division: `/api/divisions/${ctx.params?.divisionId}?withEvent=true`,
-        team: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}`,
-        rubrics: `/api/divisions/${ctx.params?.divisionId}/teams/${ctx.params?.teamId}/rubrics`
+        division: `/api/divisions/${divisionId}?withEvent=true`,
+        team: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}`,
+        rubrics: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}/rubrics`
       },
       ctx
     );
 
-    return { props: { ...data } };
+    return { props: { user, ...data } };
   } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }

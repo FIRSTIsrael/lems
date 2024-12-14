@@ -9,6 +9,7 @@ export interface Note {
   title?: string;
   done?: boolean;
   team?: WithId<Team> | null;
+  editing?: boolean;
 }
 
 interface NotesDb extends DBSchema {

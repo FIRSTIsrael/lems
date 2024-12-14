@@ -1,6 +1,6 @@
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { GetServerSidePropsContext } from 'next';
-import { Division } from '@lems/types';
+import { Division, SafeUser } from '@lems/types';
 
 export const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
@@ -34,21 +34,30 @@ export const apiFetch = (
 };
 
 export const getUserAndDivision = async (ctx: GetServerSidePropsContext) => {
-  const user = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
+  const user: SafeUser = await apiFetch(`/api/me`, undefined, ctx).then(res => res?.json());
   const divisions: Array<WithId<Division>> = await apiFetch(`/public/divisions`).then(res =>
     res?.json()
   );
-  let divisionId = user.divisionId;
-  if (!divisionId && user.eventId && user.assignedDivisions.length > 0) {
-    const idFromQuery = (ctx.query.divisionId as string) || undefined;
-    if (user.assignedDivisions.includes(idFromQuery)) {
-      divisionId = idFromQuery;
-    } else {
-      divisionId = user.assignedDivisions.filter(
-        (id: ObjectId) => divisions.find(d => d._id === id)?.hasState
-      )[0];
-    }
+
+  let divisionId = user.divisionId?.toString();
+  if (divisionId) return { user, divisionId };
+
+  const isEventUser = (user.eventId && (user.assignedDivisions?.length || 0) > 0) || user.isAdmin;
+  if (!isEventUser) return { user, divisionId };
+
+  const idFromQuery = (ctx.query.divisionId as string) || undefined;
+  if (user.isAdmin && !idFromQuery) return { user, divisionId }; //Don't know what division admin wants
+
+  const assignedDivisions = user.assignedDivisions?.map(id => id.toString()) || [];
+  if (!idFromQuery) {
+    divisionId = assignedDivisions
+      .find(id => divisions.find(d => d._id.toString() === id)?.hasState)
+      ?.toString();
+    return { user, divisionId };
   }
+
+  const canAccessDivision = assignedDivisions.includes(idFromQuery);
+  if (canAccessDivision) divisionId = idFromQuery;
   return { user, divisionId };
 };
 
@@ -56,6 +65,7 @@ export const serverSideGetRequests = async (
   toFetch: { [key: string]: string },
   ctx: GetServerSidePropsContext
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: { [key: string]: any } = {};
 
   await Promise.all(

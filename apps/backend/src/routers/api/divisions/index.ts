@@ -65,11 +65,7 @@ router.put(
   }
 );
 
-router.use(
-  '/:divisionId/awards',
-  roleValidator(['judge-advisor', 'mc', 'scorekeeper', 'audience-display']),
-  awardsRouter
-);
+router.use('/:divisionId/awards', awardsRouter);
 
 router.use('/:divisionId/rooms', roomsRouter);
 

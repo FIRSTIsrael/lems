@@ -11,7 +11,6 @@ import {
   Team
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
@@ -112,8 +111,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={800}
         title={`שולחן ${table.name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
         color={division.color}
       >
         <StrictRefereeDisplay
@@ -132,6 +130,7 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const { user, divisionId } = await getUserAndDivision(ctx);
+    if (!user.roleAssociation) throw new Error('No role association found for referee');
 
     const data = await serverSideGetRequests(
       {

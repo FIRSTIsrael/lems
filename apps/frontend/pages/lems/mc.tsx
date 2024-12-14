@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Tabs, Tab, Stack } from '@mui/material';
+import { Paper, Tabs, Tab } from '@mui/material';
 import { TabContext, TabPanel } from '@mui/lab';
 import {
   DivisionState,
@@ -19,13 +19,11 @@ import { RoleAuthorizer } from '../../components/role-authorizer';
 import McSchedule from '../../components/mc/mc-schedule';
 import AwardsLineup from '../../components/mc/awards-lineup';
 import AwardsNotReadyCard from '../../components/mc/awards-not-ready-card';
-import ReportLink from '../../components/general/report-link';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
-import ConnectionIndicator from '../../components/connection-indicator';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -109,12 +107,8 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            <ReportLink />
-          </Stack>
-        }
+        user={user}
+        connectionStatus={connectionStatus}
         color={division.color}
       >
         <TabContext value={activeTab}>
