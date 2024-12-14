@@ -46,10 +46,9 @@ export const getUserAndDivision = async (ctx: GetServerSidePropsContext) => {
   if (!isEventUser) return { user, divisionId };
 
   const idFromQuery = (ctx.query.divisionId as string) || undefined;
-  const assignedDivisions = user.isAdmin
-    ? divisions.map(d => d._id.toString())
-    : user.assignedDivisions?.map(id => id.toString()) || [];
+  if (user.isAdmin && !idFromQuery) return { user, divisionId }; //Don't know what division admin wants
 
+  const assignedDivisions = user.assignedDivisions?.map(id => id.toString()) || [];
   if (!idFromQuery) {
     divisionId = assignedDivisions
       .find(id => divisions.find(d => d._id.toString() === id)?.hasState)
