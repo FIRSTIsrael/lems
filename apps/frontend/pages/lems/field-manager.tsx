@@ -3,24 +3,22 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Stack } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
   Team,
-  DivisionWithEvent
+  DivisionWithEvent,
+  JudgingSession
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import ReportLink from '../../components/general/report-link';
-import ConnectionIndicator from '../../components/connection-indicator';
-import InsightsLink from '../../components/general/insights-link';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
+import RematchFinder from 'apps/frontend/components/field-manager/rematch-finder';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -28,6 +26,7 @@ interface Props {
   divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
+  sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
 }
 
@@ -37,11 +36,13 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
+  sessions: initialSessions,
   tables
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
+  const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -71,6 +72,22 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
+  const handleSessionEvent = (
+    session: WithId<JudgingSession>,
+    newDivisionState?: WithId<DivisionState>
+  ) => {
+    setSessions(sessions =>
+      sessions.map(s => {
+        if (s._id === session._id) {
+          return session;
+        }
+        return s;
+      })
+    );
+
+    if (newDivisionState) setDivisionState(newDivisionState);
+  };
+
   const { connectionStatus } = useWebsocket(
     division._id.toString(),
     ['field', 'pit-admin', 'audience-display'],
@@ -82,8 +99,10 @@ const Page: NextPage<Props> = ({
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchCompleted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
-      { name: 'audienceDisplayUpdated', handler: setDivisionState },
-      { name: 'presentationUpdated', handler: setDivisionState }
+      { name: 'judgingSessionStarted', handler: handleSessionEvent },
+      { name: 'judgingSessionCompleted', handler: handleSessionEvent },
+      { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 
@@ -97,17 +116,20 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth="lg"
+        maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
-          </Stack>
-        }
+        user={user}
+        division={division}
+        divisionState={divisionState}
+        connectionStatus={connectionStatus}
         color={division.color}
       >
-        <Paper sx={{ mt: 2 }}>יוזר פטא</Paper>
+        <RematchFinder
+          teams={teams}
+          matches={matches}
+          divisionState={divisionState}
+          sessions={sessions}
+        />
       </Layout>
     </RoleAuthorizer>
   );
@@ -123,6 +145,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         teams: `/api/divisions/${divisionId}/teams`,
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
+        sessions: `/api/divisions/${divisionId}/sessions`,
         tables: `/api/divisions/${divisionId}/tables`
       },
       ctx
