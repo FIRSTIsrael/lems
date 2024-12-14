@@ -177,13 +177,13 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
         console.log(data);
         if (Object.entries(data).length <= 0) {
           enqueueSnackbar('לאירוע שבחרתם אין פרסים', { variant: 'warning' });
-          return null
+          return false
         }
         setAwards(getExistingAwards(data));
         formikRef.current?.setValues(getInitialValues(data), true);
         enqueueSnackbar('הפרסים הועתקו בהצלחה!', { variant: 'success' });
         setCopyModal(false);
-        return data;
+        return true;
       });
   };
 
@@ -267,7 +267,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
               open={copyModal}
               setOpen={setCopyModal}
               events={events}
-              onSelect={(selectedEvent) => copyAwardsFrom(selectedEvent)?.then((data) => { if (data) setTimeout(() => submitForm()) })}
+              onSelect={(selectedEvent) => copyAwardsFrom(selectedEvent)?.then((isOk) => { if (isOk) setTimeout(() => submitForm()) })}
             />
             <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
           </Stack>
