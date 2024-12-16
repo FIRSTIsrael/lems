@@ -18,7 +18,7 @@ import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
-import RematchFinder from 'apps/frontend/components/field-manager/rematch-finder';
+import RematchFinder from '../../components/field-manager/rematch-finder';
 
 interface Props {
   user: WithId<SafeUser>;
