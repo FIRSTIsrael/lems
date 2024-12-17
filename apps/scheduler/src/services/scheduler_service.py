@@ -23,76 +23,6 @@ MIN_SCORE = 40
 SECONDS_PER_MINUTE = 60
 
 
-def create_event(
-    create_schedule_request: CreateScheduleRequest,
-    event_request: EventRequest,
-    team_count: int,
-    index: int,
-) -> Event:
-    match event_request.event_type:
-        case "practice":
-            return PracticeMatch(
-                activity_length=create_schedule_request.match_length_seconds
-                / SECONDS_PER_MINUTE,
-                wait_time_minutes=(
-                    create_schedule_request.practice_match_cycle_time_seconds
-                    - create_schedule_request.match_length_seconds
-                )
-                / SECONDS_PER_MINUTE,
-                start_time=datetime.strptime(event_request.start_time),
-                total_count=team_count,
-                parallel_activities=create_schedule_request.tables,
-                event_index=index,
-            )
-        case "ranking":
-            return Match(
-                activity_length=create_schedule_request.match_length_seconds
-                / SECONDS_PER_MINUTE,
-                wait_time_minutes=(
-                    create_schedule_request.ranking_match_cycle_time_seconds
-                    - create_schedule_request.match_length_seconds
-                )
-                / SECONDS_PER_MINUTE,
-                start_time=datetime.strptime(event_request.start_time),
-                total_count=team_count,
-                parallel_activities=create_schedule_request.tables,
-                event_index=index,
-            )
-        case "judging":
-            return JudgingSession(
-                activity_length=create_schedule_request.judging_session_length_seconds
-                / SECONDS_PER_MINUTE,
-                wait_time_minutes=(
-                    create_schedule_request.judging_cycle_time_seconds
-                    - create_schedule_request.judging_session_length_seconds
-                )
-                / SECONDS_PER_MINUTE,
-                start_time=datetime.strptime(event_request.start_time),
-                total_count=team_count,
-                parallel_activities=create_schedule_request.judging_rooms,
-                event_index=index,
-            )
-        case _:
-            raise SchedulerError(f"Invalid event type: {event_request.event_type}")
-
-
-def create_events(
-    create_schedule_request: CreateScheduleRequest, team_count: int
-) -> list[Event]:
-    events = []
-    event_count = 0
-
-    for event_request in create_schedule_request.events:
-        events.append(
-            create_event(
-                create_schedule_request, event_request, team_count, event_count
-            )
-        )
-        event_count += 1
-
-    return events
-
-
 def create_activities(events: list[Event]) -> list[TeamActivity]:
     activities = []
 
@@ -143,6 +73,81 @@ class SchedulerService:
             return self.lems_repository.get_tables()
         except:
             raise SchedulerError("Failed to retrieve tables from DB")
+
+    def create_events(
+        self, create_schedule_request: CreateScheduleRequest, team_count: int
+    ) -> list[Event]:
+        events = []
+        event_count = 0
+
+        for event_request in create_schedule_request.events:
+            events.append(
+                self.create_event(
+                    create_schedule_request, event_request, team_count, event_count
+                )
+            )
+            event_count += 1
+
+        return events
+
+    def create_event(
+        self,
+        create_schedule_request: CreateScheduleRequest,
+        event_request: EventRequest,
+        team_count: int,
+        index: int,
+    ) -> Event:
+        match event_request.event_type:
+            case "practice":
+                return PracticeMatch(
+                    activity_length=create_schedule_request.match_length_seconds
+                    / SECONDS_PER_MINUTE,
+                    wait_time_minutes=(
+                        create_schedule_request.practice_match_cycle_time_seconds
+                        - create_schedule_request.match_length_seconds
+                    )
+                    / SECONDS_PER_MINUTE,
+                    start_time=datetime.strptime(event_request.start_time),
+                    total_count=team_count,
+                    parallel_activities=create_schedule_request.tables,
+                    event_index=index,
+                    locations=self.get_tables(),
+                    round=event_request.round
+                )
+            case "ranking":
+                return Match(
+                    activity_length=create_schedule_request.match_length_seconds
+                    / SECONDS_PER_MINUTE,
+                    wait_time_minutes=(
+                        create_schedule_request.ranking_match_cycle_time_seconds
+                        - create_schedule_request.match_length_seconds
+                    )
+                    / SECONDS_PER_MINUTE,
+                    start_time=datetime.strptime(event_request.start_time),
+                    total_count=team_count,
+                    parallel_activities=create_schedule_request.tables,
+                    event_index=index,
+                    locations=self.get_tables(),
+                    round=event_request.round
+                )
+            case "judging":
+                return JudgingSession(
+                    activity_length=create_schedule_request.judging_session_length_seconds
+                    / SECONDS_PER_MINUTE,
+                    wait_time_minutes=(
+                        create_schedule_request.judging_cycle_time_seconds
+                        - create_schedule_request.judging_session_length_seconds
+                    )
+                    / SECONDS_PER_MINUTE,
+                    start_time=datetime.strptime(event_request.start_time),
+                    total_count=team_count,
+                    parallel_activities=create_schedule_request.judging_rooms,
+                    event_index=index,
+                    locations=self.get_rooms(),
+                    round=1
+                )
+            case _:
+                raise SchedulerError(f"Invalid event type: {event_request.event_type}")
 
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
         teams = self.get_teams()

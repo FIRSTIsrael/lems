@@ -48,6 +48,8 @@ class Event(ABC):
         total_count: int,
         parallel_activities: int,
         event_index: int,
+        locations: list[Location],
+        round: int
     ):
         self.activity_length = activity_length
         self.wait_time_minutes = wait_time_minutes
@@ -55,6 +57,8 @@ class Event(ABC):
         self.total_count = total_count
         self.parallel_activities = parallel_activities
         self.event_index = event_index
+        self.locations = locations
+        self.round = round
 
     @staticmethod
     @abstractmethod
@@ -96,10 +100,12 @@ class Event(ABC):
                     activity_type=self.activity_type(),
                     start_time=current_time,
                     end_time=end_time,
-                    location=Location(),
+                    location=self.locations[current_index],
                     index=current_index,
                     event_index=self.event_index,
-                    rejected_team_numbers=[]
+                    rejected_team_numbers=[],
+                    number=current_index,
+                    round=self.round
                 )
             )
             current_index += 1

@@ -75,7 +75,7 @@ class LemsRepository:
         collection: Collection[JudgingSession] = self.db.sessions
         document: JudgingSession = {
             "divisionId": self.divisionId,
-            "number": activity.index,  # TODO
+            "number": activity.number,
             "roomId": activity.location.id,
             "teamId": self.get_team(activity.team_number).get("._id"),
             "called": False,
@@ -92,8 +92,8 @@ class LemsRepository:
         document: RobotGameMatch = {
             "divisionId": self.divisionId,
             "stage": stage,
-            "round": activity.event_index,  # TODO,
-            "number": activity.index,  # TODO
+            "round": activity.round,
+            "number": activity.number, 
             "teamId": self.get_team(activity.team_number)._id,
             "status": "not-started",
             "scheduledTime": activity.start_time,

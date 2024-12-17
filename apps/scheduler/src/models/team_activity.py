@@ -23,3 +23,4 @@ class TeamActivity:
     round: int # Round number to save in DB. Currently only used for matches.
     number: int # Match/session number to save to DB.
     rejected_team_numbers: list[int]
+    location: Location
