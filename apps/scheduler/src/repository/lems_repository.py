@@ -86,8 +86,29 @@ class LemsRepository:
         collection.insert_one(document)
 
     def insert_match(
-        self, stage: Literal["practice", "ranking"], activity: TeamActivity
+        self, stage: Literal["practice", "ranking"], activities: list[TeamActivity]
     ):
+        participants = []
+        tables = self.get_tables()
+        
+        for table in tables:
+            team_number = None
+            for activity in activities:
+                if activity.location.id == table.id:
+                    team_number = activity.team_number
+            
+            participants.append(
+                        {
+                            "teamId": self.get_team(activity.team_number).get("_id"),
+                            "tableId": activity.location.id,
+                            "tableName": activity.location.name,
+                            "queued": False,
+                            "ready": False,
+                            "present": "no-show",
+                        }
+                    )
+            
+
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
             "divisionId": self.divisionId,
@@ -108,7 +129,7 @@ class LemsRepository:
                     "present": "no-show",
                 }
                 for table in tables
-            ],  # TODO
+            ]
         }
         collection.insert_one(document)
 
