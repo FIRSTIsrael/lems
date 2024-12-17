@@ -27,10 +27,7 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   sessions
 }) => {
   const unregisteredTeamIds = teams.filter(t => !t.registered).map(t => t._id);
-
   const judgingTime = sessions.find(session => session.teamId === rematchTeam._id)?.scheduledTime;
-  //TODO: DO SOMETHING HERE
-  if (!judgingTime) console.error('No judging time found for team', rematchTeam.number);
 
   /**
    * Very very crude implementation for detection of staggered matches.
@@ -157,6 +154,14 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   // !UI Note! Prefer non-staggered participants, if none are available take the last or 2nd last staggered participant only.
   // If no category has any option, notify FTA that running an unscheduled rematch is the only option.
   // (Reminder on how to run it is required)
+
+  if (!judgingTime) {
+    return (
+      <Paper sx={{ p: 2 }}>
+        <Typography>לא נמצא זמן שיפוט לקבוצה</Typography>
+      </Paper>
+    );
+  }
 
   return (
     <Paper sx={{ p: 2 }}>
