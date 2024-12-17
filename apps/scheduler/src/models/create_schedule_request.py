@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class Breaks(BaseModel):
@@ -8,7 +9,7 @@ class Breaks(BaseModel):
 
 
 class CreateScheduleRequest(BaseModel):
-    disivion_id: str
+    division_id: str
 
     matches_start: datetime
     tables: int
@@ -23,7 +24,7 @@ class CreateScheduleRequest(BaseModel):
     match_length_seconds: int
     practice_match_cycle_time_seconds: int
     ranking_match_cycle_time_seconds: int
-m
+
     stagger_matches: bool = True
 
     breaks: list[Breaks]

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/scheduler")
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_schedule(create_schedule_request: CreateScheduleRequest) -> str:
-    lems = LemsRepository()
+    lems = LemsRepository(create_schedule_request.division_id)
     scheduler = SchedulerService(lems)
 
     try:

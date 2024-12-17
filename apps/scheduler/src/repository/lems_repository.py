@@ -32,7 +32,7 @@ class LemsRepository:
         except Exception as err:
             print("❌ Unable to connect to mongodb: ", err)
 
-        self.divisionId = divisionId
+        self.divisionId = ObjectId(divisionId)
 
     def get_teams(self) -> list[TeamModel]:
         collection: Collection[Team] = self.db.teams
@@ -62,12 +62,17 @@ class LemsRepository:
         return team
 
     def insert_schedule(self, activities: list[TeamActivity]):
-        judging_activities = activities.filter(lambda activity: activity.activity_type == ActivityType.JUDGING_SESSION)
+        judging_activities = activities.filter(
+            lambda activity: activity.activity_type == ActivityType.JUDGING_SESSION
+        )
 
         for activity in judging_activities:
             self.insert_judging_session(activity)
 
-        match_activities = activities.filter(lambda activity: activity.activity_type == ActivityType.PRACTICE_MATCH or activity.activity_type == ActivityType.RANKING_MATCH)
+        match_activities = activities.filter(
+            lambda activity: activity.activity_type == ActivityType.PRACTICE_MATCH
+            or activity.activity_type == ActivityType.RANKING_MATCH
+        )
 
         max_team_number = 0
         for i in match_activities:
@@ -75,7 +80,9 @@ class LemsRepository:
                 max_team_number = i.number
 
         for i in range(0, max_team_number):
-            current_match_activities = match_activities.filter(lambda activity: activity.number == i)
+            current_match_activities = match_activities.filter(
+                lambda activity: activity.number == i
+            )
             if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
                 self.insert_ranking_match(current_match_activities)
             else:
@@ -100,31 +107,30 @@ class LemsRepository:
     ):
         participants = []
         tables = self.get_tables()
-        
+
         for table in tables:
             team_number = None
             for activity in activities:
                 if activity.location.id == table.id:
                     team_number = activity.team_number
-            
+
             participants.append(
-                        {
-                            "teamId": self.get_team(activity.team_number).get("_id"),
-                            "tableId": activity.location.id,
-                            "tableName": activity.location.name,
-                            "queued": False,
-                            "ready": False,
-                            "present": "no-show",
-                        }
-                    )
-            
+                {
+                    "teamId": self.get_team(activity.team_number).get("_id"),
+                    "tableId": activity.location.id,
+                    "tableName": activity.location.name,
+                    "queued": False,
+                    "ready": False,
+                    "present": "no-show",
+                }
+            )
 
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
             "divisionId": self.divisionId,
             "stage": stage,
             "round": activity.round,
-            "number": activity.number, 
+            "number": activity.number,
             "teamId": self.get_team(activity.team_number)._id,
             "status": "not-started",
             "scheduledTime": activity.start_time,
@@ -139,7 +145,7 @@ class LemsRepository:
                     "present": "no-show",
                 }
                 for table in tables
-            ]
+            ],
         }
         collection.insert_one(document)
 

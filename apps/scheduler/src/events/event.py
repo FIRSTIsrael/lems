@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from typing import List
 
+from models.create_schedule_request import Breaks
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 from models.location import Location
@@ -49,8 +50,7 @@ class Event(ABC):
         parallel_activities: int,
         event_index: int,
         locations: list[Location],
-        round: int,
-        breaks: list[Breaks]
+        breaks: list[Breaks],
     ):
         self.activity_length = activity_length
         self.wait_time_minutes = wait_time_minutes
@@ -59,7 +59,6 @@ class Event(ABC):
         self.parallel_activities = parallel_activities
         self.event_index = event_index
         self.locations = locations
-        self.round = round
         self.breaks = filter(lambda x: x.event_type == self.activity_type(), breaks)
 
     @staticmethod
@@ -77,7 +76,9 @@ class Event(ABC):
     def should_stagger() -> bool:
         pass
 
-    def create_activities(self, starting_number: int = 0) -> List[TeamActivity]:
+    def create_activities(
+        self, team_count, starting_number: int = 0
+    ) -> List[TeamActivity]:
         activities = []
         current_index = 0
         current_time = self.start_time
@@ -121,7 +122,7 @@ class Event(ABC):
                     event_index=self.event_index,
                     rejected_team_numbers=[],
                     number=number,
-                    round=self.round
+                    round=number // (team_count // self.parallel_activities + 1) + 1,
                 )
             )
             number += 1
