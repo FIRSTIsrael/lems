@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { useState } from 'react';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Stack, Paper, Typography } from '@mui/material';
 import {
   DivisionState,
@@ -29,8 +29,22 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   const unregisteredTeamIds = teams.filter(t => !t.registered).map(t => t._id);
 
   const judgingTime = sessions.find(session => session.teamId === rematchTeam._id)?.scheduledTime;
-  const earliestRematchTime = dayjs(judgingTime).add(JUDGING_SESSION_LENGTH + 10 * 60, 'seconds'); // 10 minutes after judging ends
-  const latestRematchTime = dayjs(judgingTime).subtract(15, 'minutes'); // 15 minutes before judging starts
+  //TODO: DO SOMETHING HERE
+  if (!judgingTime) console.error('No judging time found for team', rematchTeam.number);
+
+  /**
+   * Return true if:
+   * Match starts less than 15 minutes before judging starts (Team won't make it to session)
+   * AND Match starts less than 10 minutes after judging ends. (Team won't make it to match)
+   */
+  const judgingInterference = (judgingStart: Dayjs, ...matchStarts: Dayjs[]) => {
+    const judgingEnd = judgingStart.add(JUDGING_SESSION_LENGTH, 'seconds');
+    return matchStarts.some(
+      matchStart =>
+        matchStart.isAfter(judgingStart.subtract(15, 'minutes')) &&
+        matchStart.isBefore(judgingEnd.add(10, 'minutes'))
+    );
+  };
 
   const teamMatchTimes = matches
     .filter(match => !!match.participants.find(p => p.teamId === rematchTeam._id))
@@ -42,36 +56,32 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
       match.round === divisionState.currentRound &&
       match.status === 'not-started' &&
       !match.participants.find(p => p.teamId === rematchTeam._id) &&
-      dayjs(match.scheduledTime).isAfter(earliestRematchTime) &&
-      dayjs(match.scheduledTime).isBefore(latestRematchTime)
+      !judgingInterference(dayjs(judgingTime), dayjs(match.scheduledTime)) &&
+      match.participants.find(p => p.teamId === null || unregisteredTeamIds.includes(p.teamId))
   );
 
-  // Judging sessions that are available for the rematch team to swap into
-  // without causing conflicts with their matches
   const availableJudgingSlots = sessions.filter(
     session =>
       (session.teamId === null || unregisteredTeamIds.includes(session.teamId)) &&
-      !teamMatchTimes.find(
-        time =>
-          time.isBefore(
-            dayjs(session.scheduledTime).add(JUDGING_SESSION_LENGTH + 10 * 60, 'seconds')
-          ) && // Session end + 10 mins is after the scheduled time -> team will not make it to match
-          time.isAfter(dayjs(session.scheduledTime).subtract(15, 'minutes')) // Session starts less than 15 minutes after the match -> team will not make it to session
-      )
+      !judgingInterference(dayjs(judgingTime), ...teamMatchTimes)
   );
 
-  // 1. Calculate all tables in relevant matches that contain unregiereed teams (or null teams)
-  // TODO: deal with match staggering here
-
-  // 2. Null teams that can swap if the teams judging moves to another null spot, or unregistered teams that can swap both their judging and field sessions
-
-  // 3. Registered teams who can swap with the team without judging interference (but obviously need to notify them, make a popup to warn
+  // 3 Rematch categories, with up tp 3 options in each category:
+  // Category 1, move match: Match slots (table in match) that are either empty or have a null team,
+  //  that do not interfere with the rematch team's judging session.
+  // Category 2, move match and judging: Match slots (table in match) that are either empty or have a null team,
+  //  and will not interfere if the team's judging moves to an available judging slot (null or unregistered).
+  // !Note! At all times, prefer occupying an unregisterd slot over a null slot.
+  // If no category has any option, notify FTA that running an unscheduled rematch is the only option.
+  // (Reminder on how to run it is required)
 
   return (
     <Paper sx={{ p: 2 }}>
-      {availableMatches.length}
-      <br />
       {judgingTime?.toString()}
+      <br />
+      {availableMatches.map(m => `${m.number} - ${m.scheduledTime}`).join(', ')}
+      <br />
+      {availableJudgingSlots.map(s => `${s.number} - ${s.scheduledTime}`).join(', ')}
     </Paper>
   );
 };
