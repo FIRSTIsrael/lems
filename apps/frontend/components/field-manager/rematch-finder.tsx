@@ -154,7 +154,7 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
     return { session, matches: matchesWithParticipants };
   });
 
-  // !Note! At all times, prefer occupying an unregisterd slot over a null slot.
+  // !UI Note! Prefer non-staggered participants, if none are available take the last or 2nd last staggered participant only.
   // If no category has any option, notify FTA that running an unscheduled rematch is the only option.
   // (Reminder on how to run it is required)
 
