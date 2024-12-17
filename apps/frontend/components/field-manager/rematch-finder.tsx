@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { Stack, Paper, Typography } from '@mui/material';
 import {
@@ -33,6 +33,30 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   if (!judgingTime) console.error('No judging time found for team', rematchTeam.number);
 
   /**
+   * Very very crude implementation for detection of staggered matches.
+   * We assume the first match is always filled to the brim, and staggering is always equal.
+   * Even: First half of tables is full on EVEN matches
+   * Odd: First half of tables is full on ODD matches
+   */
+  const matchStaggering: null | 'even' | 'odd' = useMemo(() => {
+    const firstMatch = matches.find(m => m.number === 1);
+    if (!firstMatch) return null; // Should never happen
+
+    const halfParticipants = firstMatch.participants.length / 2;
+
+    const firstHalf = firstMatch.participants.slice(0, halfParticipants);
+    const secondHalf = firstMatch.participants.slice(halfParticipants);
+
+    const isFirstHalfEmpty = firstHalf.every(p => p.teamId === null);
+    const isSecondHalfEmpty = secondHalf.every(p => p.teamId === null);
+
+    if (isFirstHalfEmpty) return 'even';
+    if (isSecondHalfEmpty) return 'odd';
+    return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
    * Return true if:
    * Match starts less than 15 minutes before judging starts (Team won't make it to session)
    * AND Match starts less than 10 minutes after judging ends. (Team won't make it to match)
@@ -44,6 +68,35 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
         matchStart.isAfter(judgingStart.subtract(15, 'minutes')) &&
         matchStart.isBefore(judgingEnd.add(10, 'minutes'))
     );
+  };
+
+  /**
+   * Finds the specific participant slot within the match that the rematch team can occupy.
+   * Returns the participant, and a staggered flag if the participant is null due to staggering.
+   */
+  const findMatchParticipant = (match: WithId<RobotGameMatch>) => {
+    let participant = match.participants.find(
+      p => p.teamId && unregisteredTeamIds.includes(p.teamId)
+    );
+    if (participant) return { participant, staggered: false };
+
+    participant = match.participants.find(p => p.teamId === null);
+    if (!matchStaggering) return { participant, staggered: false };
+
+    const isMatchEven = match.number % 2 === 0;
+    const staggeredFirstHalf =
+      (matchStaggering === 'even' && isMatchEven) || (matchStaggering === 'odd' && !isMatchEven);
+
+    const halfIndex = match.participants.length / 2;
+    const filledSlots = staggeredFirstHalf
+      ? match.participants.slice(0, halfIndex)
+      : match.participants.slice(halfIndex);
+
+    participant = filledSlots.find(p => p.teamId === null);
+    if (participant) return { participant, staggered: false };
+
+    participant = match.participants.find(p => p.teamId === null);
+    return { participant, staggered: true };
   };
 
   const teamMatchTimes = matches
@@ -74,12 +127,15 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   );
 
   /**
-   * Category 1, move match: Match slots (table in match) that are either empty or have a null team,
+   * Category 1, move match: Match participants that are either empty or have a null team,
    * that do not interfere with the rematch team's judging session.
    */
   const categoryOne = availableMatches
     .filter(match => !judgingInterference(dayjs(judgingTime), dayjs(match.scheduledTime)))
-    .map(match => ({ match })); //TODO: Find the exact table we can compete in
+    .map(match => {
+      const { participant, staggered } = findMatchParticipant(match);
+      return { match, participant, staggered };
+    });
 
   /**
    * Category 2, move match and judging: Match slots (table in match) that are either empty or have a null team,
@@ -88,8 +144,14 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   const categoryTwo = availableJudgingSlots.map(session => {
     const matches = availableMatches.filter(
       match => !judgingInterference(dayjs(session.scheduledTime), dayjs(match.scheduledTime))
-    ); //TODO: find the exact table we can compete in;
-    return { session, matches };
+    );
+
+    const matchesWithParticipants = matches.map(match => {
+      const { participant, staggered } = findMatchParticipant(match);
+      return { match, participant, staggered };
+    });
+
+    return { session, matches: matchesWithParticipants };
   });
 
   // !Note! At all times, prefer occupying an unregisterd slot over a null slot.
