@@ -50,27 +50,48 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
     .filter(match => !!match.participants.find(p => p.teamId === rematchTeam._id))
     .map(match => dayjs(match.scheduledTime));
 
+  /**
+   * Matches containing at least one table with a null team or an unregistered team,
+   * and the rematch team is not already participating in the match.
+   */
   const availableMatches = matches.filter(
     match =>
       match.stage === 'ranking' &&
       match.round === divisionState.currentRound &&
       match.status === 'not-started' &&
       !match.participants.find(p => p.teamId === rematchTeam._id) &&
-      !judgingInterference(dayjs(judgingTime), dayjs(match.scheduledTime)) &&
       match.participants.find(p => p.teamId === null || unregisteredTeamIds.includes(p.teamId))
   );
 
+  /**
+   * Judging sessions that have a null or unregistered team,
+   * and do not interfere with the rematch team's matches.
+   */
   const availableJudgingSlots = sessions.filter(
     session =>
       (session.teamId === null || unregisteredTeamIds.includes(session.teamId)) &&
       !judgingInterference(dayjs(judgingTime), ...teamMatchTimes)
   );
 
-  // 3 Rematch categories, with up tp 3 options in each category:
-  // Category 1, move match: Match slots (table in match) that are either empty or have a null team,
-  //  that do not interfere with the rematch team's judging session.
-  // Category 2, move match and judging: Match slots (table in match) that are either empty or have a null team,
-  //  and will not interfere if the team's judging moves to an available judging slot (null or unregistered).
+  /**
+   * Category 1, move match: Match slots (table in match) that are either empty or have a null team,
+   * that do not interfere with the rematch team's judging session.
+   */
+  const categoryOne = availableMatches
+    .filter(match => !judgingInterference(dayjs(judgingTime), dayjs(match.scheduledTime)))
+    .map(match => ({ match })); //TODO: Find the exact table we can compete in
+
+  /**
+   * Category 2, move match and judging: Match slots (table in match) that are either empty or have a null team,
+   * and will not interfere if the team's judging moves to an available judging slot (null or unregistered).
+   */
+  const categoryTwo = availableJudgingSlots.map(session => {
+    const matches = availableMatches.filter(
+      match => !judgingInterference(dayjs(session.scheduledTime), dayjs(match.scheduledTime))
+    ); //TODO: find the exact table we can compete in;
+    return { session, matches };
+  });
+
   // !Note! At all times, prefer occupying an unregisterd slot over a null slot.
   // If no category has any option, notify FTA that running an unscheduled rematch is the only option.
   // (Reminder on how to run it is required)
@@ -82,6 +103,10 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
       {availableMatches.map(m => `${m.number} - ${m.scheduledTime}`).join(', ')}
       <br />
       {availableJudgingSlots.map(s => `${s.number} - ${s.scheduledTime}`).join(', ')}
+      <br />
+      {JSON.stringify(categoryOne)}
+      <br />
+      {JSON.stringify(categoryTwo)}
     </Paper>
   );
 };
