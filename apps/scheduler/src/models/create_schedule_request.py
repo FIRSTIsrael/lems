@@ -22,8 +22,8 @@ class CreateScheduleRequest(BaseModel):
     judging_cycle_time_seconds: int
     match_length_seconds: int
     practice_match_cycle_time_seconds: int
-    rankicycle_time_seconds: int
-
+    ranking_match_cycle_time_seconds: int
+m
     stagger_matches: bool = True
 
     breaks: list[Breaks]
