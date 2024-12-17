@@ -1,3 +1,5 @@
+
+
 from datetime import datetime
 from bson import ObjectId
 
@@ -23,15 +25,6 @@ MIN_SCORE = 40
 SECONDS_PER_MINUTE = 60
 
 
-def create_activities(events: list[Event]) -> list[TeamActivity]:
-    activities = []
-
-    for event in events:
-        activities += event.create_activities()
-
-    return activities
-
-
 def check_score(teams: list[Team]) -> int:
     """Checks the quality of the schedule by finding the minimum delta between the
     start times of the events for a team. Higher scores are better."""
@@ -48,6 +41,7 @@ def check_score(teams: list[Team]) -> int:
 class SchedulerService:
     def __init__(self, lems_repository: LemsRepository):
         self.lems_repository = lems_repository
+        self.match_number = 0
 
     def get_teams(self) -> list[Team]:
         teams = []
@@ -144,18 +138,32 @@ class SchedulerService:
                     parallel_activities=create_schedule_request.judging_rooms,
                     event_index=index,
                     locations=self.get_rooms(),
-                    round=1
+                    round=event_request.round
                 )
             case _:
                 raise SchedulerError(f"Invalid event type: {event_request.event_type}")
+
+    def create_activities(self, events: list[Event]) -> list[TeamActivity]:
+        activities = []
+
+        for event in events:
+            if event.activity_type() in ["ranking", "practice"]:
+                activities += event.create_activities(self.match_number)
+                for activity in activities:
+                    if activity.number > self.match_number:
+                        self.match_number = activity.number
+            else:
+                activities += event.create_activities()
+
+        return activities
 
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
         teams = self.get_teams()
         judging_rooms = self.get_rooms()
         tables = self.get_tables()
         
-        events = create_events(create_schedule_request, len(teams))
-        activities = create_activities(events)
+        events = self.create_events(create_schedule_request, len(teams))
+        activities = self.create_activities(events)
 
         current_score = 0
         current_run = 0
@@ -181,3 +189,4 @@ class SchedulerService:
             )
 
         self.lems_repository.insert_schedule(best_activities)
+

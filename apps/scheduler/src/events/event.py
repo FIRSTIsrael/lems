@@ -49,7 +49,8 @@ class Event(ABC):
         parallel_activities: int,
         event_index: int,
         locations: list[Location],
-        round: int
+        round: int,
+        breaks: list[Breaks]
     ):
         self.activity_length = activity_length
         self.wait_time_minutes = wait_time_minutes
@@ -59,6 +60,7 @@ class Event(ABC):
         self.event_index = event_index
         self.locations = locations
         self.round = round
+        self.breaks = filter(lambda x: x.event_type == self.activity_type(), breaks)
 
     @staticmethod
     @abstractmethod
@@ -75,17 +77,31 @@ class Event(ABC):
     def should_stagger() -> bool:
         pass
 
-    def create_activities(self, starting_index: int = 0) -> List[TeamActivity]:
+    def create_activities(self, starting_number: int = 0) -> List[TeamActivity]:
         activities = []
-        current_index = starting_index
+        current_index = 0
         current_time = self.start_time
         end_time = current_time + timedelta(minutes=self.activity_length)
+        number = starting_number
 
         cycle_time = self.activity_length + self.wait_time_minutes
 
         stagger = self.should_stagger()
 
+        current_break_index = 0
+
         while len(activities) < self.total_count:
+            break_after = 100
+            break_duration = 0
+            if len(self.breaks) > current_break_index:
+                current_break = self.breaks[current_break_index]
+                break_after = current_break.after
+                break_duration = current_break.duration
+
+            if number == break_after:
+                current_time += timedelta(minutes=break_duration)
+                end_time += timedelta(minutes=break_duration)
+
             if stagger and current_index == self.parallel_activities / 2:
                 current_index = 0
                 current_time += timedelta(minutes=cycle_time / 2)
@@ -104,10 +120,11 @@ class Event(ABC):
                     index=current_index,
                     event_index=self.event_index,
                     rejected_team_numbers=[],
-                    number=current_index,
+                    number=number,
                     round=self.round
                 )
             )
+            number += 1
             current_index += 1
 
         return activities
