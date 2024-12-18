@@ -30,28 +30,35 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   const judgingTime = sessions.find(session => session.teamId === rematchTeam._id)?.scheduledTime;
 
   /**
-   * Very very crude implementation for detection of staggered matches.
-   * We assume the first match is always filled to the brim, and staggering is always equal.
-   * Even: First half of tables is full on EVEN matches
-   * Odd: First half of tables is full on ODD matches
+   * Crude implementation for detection of staggered matches.
+   * We assume the first match is always filled to the brim, and staggering means 50% of tables are empty..
    */
-  const matchStaggering: null | 'even' | 'odd' = useMemo(() => {
+  const matchStaggering = useMemo(() => {
     const firstMatch = matches.find(m => m.number === 1);
     if (!firstMatch) return null; // Should never happen
-
-    const halfParticipants = firstMatch.participants.length / 2;
-
-    const firstHalf = firstMatch.participants.slice(0, halfParticipants);
-    const secondHalf = firstMatch.participants.slice(halfParticipants);
-
-    const isFirstHalfEmpty = firstHalf.every(p => p.teamId === null);
-    const isSecondHalfEmpty = secondHalf.every(p => p.teamId === null);
-
-    if (isFirstHalfEmpty) return 'even';
-    if (isSecondHalfEmpty) return 'odd';
-    return null;
+    if (
+      firstMatch.participants.filter(p => p.teamId === null).length >=
+      firstMatch.participants.length / 2
+    )
+      return true;
+    return false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * Crude implemenation for finding the match cycle time for the current round.
+   * Assumes the first two matches are consecutive with no breaks.
+   */
+  const matchCycleTime = useMemo(() => {
+    const roundMatches = matches
+      .filter(m => m.round === divisionState.currentRound)
+      .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime))); // TODO: might need to flip
+    const firstMatch = roundMatches[0];
+    const secondMatch = roundMatches[1];
+    if (!firstMatch || !secondMatch) return 0; // Should never happen
+    return dayjs(secondMatch.scheduledTime).diff(dayjs(firstMatch.scheduledTime), 'seconds');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [divisionState.currentRound]);
 
   /**
    * Return true if:
@@ -68,32 +75,39 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   };
 
   /**
-   * Finds the specific participant slot within the match that the rematch team can occupy.
-   * Returns the participant, and a staggered flag if the participant is null due to staggering.
+   * Finds all the participants in a match which are either empty or have an unregistered team.
+   * For each participant, return whether the fit is tight or not, in case of staggering.
+   * Tight in this case means that the team is slotted between two consecutive staggered matches, which halves the cycle time.
    */
-  const findMatchParticipant = (match: WithId<RobotGameMatch>) => {
-    let participant = match.participants.find(
-      p => p.teamId && unregisteredTeamIds.includes(p.teamId)
-    );
-    if (participant) return { participant, staggered: false };
+  const getAvailableParticipants = (match: WithId<RobotGameMatch>) => {
+    let nextMatch =
+      matches.find(m => m.number === match.number + 1 && m.round === match.round) ?? null;
+    if (
+      nextMatch &&
+      dayjs(nextMatch.scheduledTime).diff(dayjs(match.scheduledTime)) > matchCycleTime
+    ) {
+      nextMatch = null; // Next match is not consecutive
+    }
 
-    participant = match.participants.find(p => p.teamId === null);
-    if (!matchStaggering) return { participant, staggered: false };
+    const availableSlots = match.participants
+      .map((participant, index) => {
+        if (participant.teamId && !unregisteredTeamIds.includes(participant.teamId)) return null;
 
-    const isMatchEven = match.number % 2 === 0;
-    const staggeredFirstHalf =
-      (matchStaggering === 'even' && isMatchEven) || (matchStaggering === 'odd' && !isMatchEven);
+        let tight = false;
+        if (
+          matchStaggering &&
+          nextMatch &&
+          nextMatch.participants[index].teamId &&
+          !unregisteredTeamIds.includes(nextMatch.participants[index].teamId)
+        ) {
+          tight = true;
+        }
 
-    const halfIndex = match.participants.length / 2;
-    const filledSlots = staggeredFirstHalf
-      ? match.participants.slice(0, halfIndex)
-      : match.participants.slice(halfIndex);
+        return { index, tight };
+      })
+      .filter(element => element !== null);
 
-    participant = filledSlots.find(p => p.teamId === null);
-    if (participant) return { participant, staggered: false };
-
-    participant = match.participants.find(p => p.teamId === null);
-    return { participant, staggered: true };
+    return availableSlots;
   };
 
   const teamMatchTimes = matches
@@ -130,8 +144,8 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   const categoryOne = availableMatches
     .filter(match => !judgingInterference(dayjs(judgingTime), dayjs(match.scheduledTime)))
     .map(match => {
-      const { participant, staggered } = findMatchParticipant(match);
-      return { match, participant, staggered };
+      const participants = getAvailableParticipants(match);
+      return { match, participants };
     });
 
   /**
@@ -144,8 +158,8 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
     );
 
     const matchesWithParticipants = matches.map(match => {
-      const { participant, staggered } = findMatchParticipant(match);
-      return { match, participant, staggered };
+      const participants = getAvailableParticipants(match);
+      return { match, participants };
     });
 
     return { session, matches: matchesWithParticipants };
