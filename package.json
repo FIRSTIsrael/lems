@@ -42,7 +42,7 @@
     "node-schedule": "^2.1.1",
     "notistack": "^3.0.1",
     "promise": "^8.3.0",
-    "puppeteer": "^23.10.3",
+    "puppeteer": "^23.11.0",
     "rambda": "^9.4.0",
     "react": "18.3.1",
     "react-beautiful-dnd": "^13.1.1",
