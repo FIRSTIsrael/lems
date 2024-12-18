@@ -30,7 +30,10 @@ const TitleRow = ({ title, description, category: type }: Props) => {
           fontWeight: 500,
           '@media print': {
             py: 0,
-            px: '0.25em'
+            px: '0.25em',
+            bgcolor: colors[type],
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact'
           }
         }}
         colSpan={4}

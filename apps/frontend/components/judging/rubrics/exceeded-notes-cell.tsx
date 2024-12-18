@@ -18,7 +18,12 @@ const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder
           borderLeft: '1px solid rgba(0,0,0,0.2)',
           borderBottom: 'none',
           backgroundColor: '#f1f1f1',
-          py: 1
+          py: 1,
+          '@media print': {
+            backgroundColor: '#f1f1f1',
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact'
+          }
         }}
       >
         <Field name={`${name}.notes`}>
