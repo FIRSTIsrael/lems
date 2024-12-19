@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Stack, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
   SafeUser,
@@ -15,10 +15,7 @@ import {
   DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
-import ReportLink from '../../components/general/report-link';
-import InsightsLink from '../../components/general/insights-link';
 import WelcomeHeader from '../../components/general/welcome-header';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
@@ -187,13 +184,10 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="lg"
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {divisionState.completed ? <InsightsLink /> : <ReportLink />}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
+        divisionState={divisionState}
         color={division.color}
       >
         <WelcomeHeader division={division} user={user} />

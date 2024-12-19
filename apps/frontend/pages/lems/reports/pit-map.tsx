@@ -6,13 +6,12 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -36,11 +35,8 @@ const Page: NextPage<Props> = ({ user, division, pitMapUrl }) => {
       <Layout
         maxWidth="xl"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - מפת פיטים | ${localizeDivisionTitle(division)}`}
-        action={
-          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
-          )
-        }
+        user={user}
+        division={division}
         back={`/lems/reports`}
         color={division.color}
       >

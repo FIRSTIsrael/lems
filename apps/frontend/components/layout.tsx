@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, CSSProperties } from 'react';
+import { WithId } from 'mongodb';
 import {
   AppBar,
   Box,
@@ -12,6 +13,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Stack,
   Toolbar,
   Tooltip,
   Typography
@@ -20,8 +22,27 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { apiFetch } from '../lib/utils/fetch';
 import { errorAnimation } from '../lib/utils/animations';
+import {
+  DivisionWithEvent,
+  DivisionState,
+  SafeUser,
+  EventUserAllowedRoles,
+  ReportsAllowedRoleTypes,
+  ReportsAllowedRoles,
+  InsightsAllowedRoleTypes,
+  InsightsAllowedRoles,
+  ConnectionStatus
+} from '@lems/types';
+import ConnectionIndicator from './connection-indicator';
+import DivisionDropdown from './general/division-dropdown';
+import ReportLink from './general/report-link';
+import InsightsLink from './general/insights-link';
 
 interface LayoutProps {
+  user?: WithId<SafeUser>;
+  division?: WithId<DivisionWithEvent>;
+  divisionState?: WithId<DivisionState>;
+  connectionStatus?: ConnectionStatus;
   title?: string | React.ReactNode;
   children?: React.ReactNode;
   maxWidth?: Breakpoint | number;
@@ -33,6 +54,10 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({
+  user,
+  division,
+  divisionState,
+  connectionStatus,
   title,
   back,
   backDisabled,
@@ -44,6 +69,16 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+
+  const isError = error || connectionStatus === 'disconnected';
+  const isEventUser =
+    (division?.event && user?.isAdmin) ||
+    division?.event?.eventUsers.includes(user?.role as EventUserAllowedRoles);
+  const showReports =
+    user?.isAdmin || ReportsAllowedRoleTypes.includes(user?.role as ReportsAllowedRoles);
+  const showInsights =
+    (divisionState?.completed && user?.isAdmin) ||
+    InsightsAllowedRoleTypes.includes(user?.role as InsightsAllowedRoles);
 
   const handleBack = () => {
     const queryString = router.query.divisionId
@@ -64,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({
           <AppBar
             position="fixed"
             sx={{
-              animation: error ? `${errorAnimation} 1s linear infinite alternate` : undefined,
+              animation: isError ? `${errorAnimation} 1s linear infinite alternate` : undefined,
               borderBottom: color && `5px solid ${color}`
             }}
           >
@@ -89,11 +124,22 @@ const Layout: React.FC<LayoutProps> = ({
                 fontWeight={500}
                 sx={{ flexGrow: 1 }}
               >
-                {error && 'שגיאה - '}
+                {isError && 'שגיאה - '}
                 {title}
               </Typography>
 
-              {action}
+              <Stack direction="row" spacing={2}>
+                {isEventUser && (
+                  // isEventUser should be false if division?.event is undefined
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  <DivisionDropdown event={division!.event} selected={division!._id.toString()} />
+                )}
+                {showInsights && <InsightsLink />}
+                {showReports && <ReportLink />}
+                {connectionStatus && <ConnectionIndicator status={connectionStatus} />}
+                {action}
+              </Stack>
+
               <Tooltip title="התנתק" arrow>
                 <IconButton onClick={() => setOpen(true)} sx={{ ml: 2 }}>
                   <LogoutIcon />
@@ -131,7 +177,7 @@ const Layout: React.FC<LayoutProps> = ({
         }}
       >
         {children}
-        {error && (
+        {isError && (
           <>
             <Box height={24} />
             <Box

@@ -32,7 +32,6 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import CompareView from '../../../components/deliberations/compare/compare-view';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -97,7 +96,9 @@ const Page: NextPage<Props> = ({
         maxWidth={1900}
         back={`/lems/${user.role}`}
         title={`השוואת קבוצות | ${localizeDivisionTitle(division)}`}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
       >
         <Paper sx={{ mb: 2, width: '100%', position: 'sticky', top: 70, zIndex: 10 }}>
@@ -116,6 +117,8 @@ const Page: NextPage<Props> = ({
                 disabled={!selectedTeam}
                 sx={{ width: 36, height: 36 }}
                 onClick={() => {
+                  // Button is disabled if selectedTeam is null
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                   addTeam(selectedTeam!._id);
                   setSelectedTeam(null);
                 }}

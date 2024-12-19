@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
 import { CoreValuesForm, DivisionWithEvent, SafeUser, Team } from '@lems/types';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -50,9 +49,11 @@ const Page: NextPage<Props> = ({ user, teams, division, cvForm: initialCvForm })
       <Layout
         maxWidth="md"
         title={`טופס ערכי ליבה | ${localizeDivisionTitle(division)}`}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
         back={`/lems/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
+        user={user}
+        division={division}
         color={division.color}
       >
         <Paper sx={{ p: 4, my: 2 }}>

@@ -18,13 +18,12 @@ import Grid from '@mui/material/Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EditOffOutlinedIcon from '@mui/icons-material/EditOffOutlined';
-import { DivisionWithEvent, SafeUser, RoleTypes, EventUserAllowedRoles, Team } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, Team } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 import FormikTextField from '../../../components/general/forms/formik-text-field';
 import { Note, useNotes } from '../../../hooks/use-notes';
 import FormikTeamField from '../../../components/general/forms/formik-team-field';
@@ -120,11 +119,8 @@ const Page: NextPage<Props> = ({ user, division, teams }) => {
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - פתקים | ${localizeDivisionTitle(division)}`}
-        action={
-          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
-          )
-        }
+        user={user}
+        division={division}
         back="/lems/reports"
         color={division.color}
       >
