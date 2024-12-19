@@ -12,7 +12,7 @@ const CompareCvForms: React.FC<CompareCvFormsProps> = ({ teamId }) => {
   const { teams, cvForms } = useContext(CompareContext);
   const team = teams.find(t => t._id === teamId);
   const teamCvFormSeverities = cvForms
-    .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
+    .filter(cvform => cvform.demonstratorAffiliation?._id === team?._id)
     .map(cvForm => cvForm.severity);
 
   return (

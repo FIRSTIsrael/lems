@@ -117,7 +117,7 @@ export const useDeliberationTeams = (
       teamRubrics.find(rubric => rubric.category === 'core-values')?.data?.awards ?? {};
 
     const cvFormSeverities = cvForms
-      .filter(cvform => cvform.demonstratorAffiliation === team?.number.toString())
+      .filter(cvform => cvform.demonstratorAffiliation?._id.toString() === team?._id.toString())
       .map(cvForm => cvForm.severity);
 
     const normalizedScores = { ...scores };
