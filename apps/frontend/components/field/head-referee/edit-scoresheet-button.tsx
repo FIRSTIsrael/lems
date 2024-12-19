@@ -62,7 +62,7 @@ const mapStatus: {
     title: 'ממתין לציון מקצועיות אדיבה משופט ראשי',
     sx: {
       color: '#fff',
-      background: '#ff9800',
+      background: '#F26B0F',
       '&:hover': {
         background: '#f79300'
       }
