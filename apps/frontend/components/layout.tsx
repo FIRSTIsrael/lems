@@ -77,8 +77,9 @@ const Layout: React.FC<LayoutProps> = ({
   const showReports =
     user?.isAdmin || ReportsAllowedRoleTypes.includes(user?.role as ReportsAllowedRoles);
   const showInsights =
-    (divisionState?.completed && user?.isAdmin) ||
-    InsightsAllowedRoleTypes.includes(user?.role as InsightsAllowedRoles);
+    user?.isAdmin ||
+    (divisionState?.completed &&
+      InsightsAllowedRoleTypes.includes(user?.role as InsightsAllowedRoles));
 
   const handleBack = () => {
     const queryString = router.query.divisionId
