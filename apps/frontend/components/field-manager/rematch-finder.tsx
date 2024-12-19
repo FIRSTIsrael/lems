@@ -1,15 +1,48 @@
 import { WithId } from 'mongodb';
 import { useState, useMemo } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { Stack, Paper, Typography } from '@mui/material';
+import {
+  Stack,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  Select,
+  MenuItem,
+  IconButton,
+  Divider
+} from '@mui/material';
+import { blue } from '@mui/material/colors';
+import RocketLaunchRoundedIcon from '@mui/icons-material/RocketLaunchRounded';
 import {
   DivisionState,
   JUDGING_SESSION_LENGTH,
   JudgingSession,
+  JudgingRoom,
   RobotGameMatch,
-  Team
+  Team,
+  RobotGameMatchParticipant,
+  WSClientEmittedEvents,
+  WSServerEmittedEvents
 } from '@lems/types';
 import TeamSelection from '../general/team-selection';
+import { Socket } from 'socket.io-client';
+import { enqueueSnackbar } from 'notistack';
+
+interface RematchData {
+  categoryOne: {
+    match: string;
+    participant: string;
+  };
+  categoryTwo: {
+    session: string;
+    match: string;
+    participant: string;
+  };
+}
 
 interface RematchOptionsProps {
   teams: Array<WithId<Team>>;
@@ -17,6 +50,8 @@ interface RematchOptionsProps {
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
+  rooms: Array<WithId<JudgingRoom>>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const RematchOptions: React.FC<RematchOptionsProps> = ({
@@ -24,10 +59,70 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
   rematchTeam,
   divisionState,
   matches,
-  sessions
+  sessions,
+  rooms,
+  socket
 }) => {
   const unregisteredTeamIds = teams.filter(t => !t.registered).map(t => t._id);
   const judgingTime = sessions.find(session => session.teamId === rematchTeam._id)?.scheduledTime;
+
+  const initialRematchData = {
+    categoryOne: {
+      match: '',
+      participant: ''
+    },
+    categoryTwo: {
+      session: '',
+      match: '',
+      participant: ''
+    }
+  };
+  const [rematchData, setRematchData] = useState<RematchData>({ ...initialRematchData });
+
+  const handleSubmit = (matchId: string, participantIndexAsString: string, sessionId?: string) => {
+    const match = matches.find(m => m._id.toString() === matchId);
+    const participantIndex = Number(participantIndexAsString);
+    const session = sessionId ? sessions.find(s => s._id.toString() === sessionId) : null;
+
+    if (!match) return;
+
+    const newMatchParticipants = match.participants.map((participant, index) => {
+      const { tableId, teamId } = participant;
+      return { tableId, teamId: index === participantIndex ? rematchTeam._id : teamId };
+    }) as Array<Partial<RobotGameMatchParticipant>>;
+
+    socket.emit(
+      'updateMatchTeams',
+      match.divisionId.toString(),
+      match._id.toString(),
+      newMatchParticipants,
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+        }
+      }
+    );
+
+    if (session) {
+      socket.emit(
+        'updateJudgingSessionTeam',
+        session.divisionId.toString(),
+        session._id.toString(),
+        rematchTeam._id.toString(),
+        response => {
+          if (response.ok) {
+            enqueueSnackbar('מפגש השיפוט עודכן בהצלחה!', { variant: 'success' });
+          } else {
+            enqueueSnackbar('אופס, עדכון מפגש השיפוט נכשל.', { variant: 'error' });
+          }
+        }
+      );
+    }
+
+    setRematchData({ ...initialRematchData });
+  };
 
   /**
    * Crude implementation for detection of staggered matches.
@@ -105,7 +200,8 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
 
         return { index, tight };
       })
-      .filter(element => element !== null);
+      .filter(element => element !== null)
+      .sort((a, b) => (a === b ? 0 : a ? 1 : -1)); // Non-tight first
 
     return availableSlots;
   };
@@ -153,21 +249,17 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
    * and will not interfere if the team's judging moves to an available judging slot (null or unregistered).
    */
   const categoryTwo = availableJudgingSlots.map(session => {
-    const matches = availableMatches.filter(
+    const _matches = availableMatches.filter(
       match => !judgingInterference(dayjs(session.scheduledTime), dayjs(match.scheduledTime))
     );
 
-    const matchesWithParticipants = matches.map(match => {
+    const matchesWithParticipants = _matches.map(match => {
       const participants = getAvailableParticipants(match);
       return { match, participants };
     });
 
     return { session, matches: matchesWithParticipants };
   });
-
-  // !UI Note! Prefer non-staggered participants, if none are available take the last or 2nd last staggered participant only.
-  // If no category has any option, notify FTA that running an unscheduled rematch is the only option.
-  // (Reminder on how to run it is required)
 
   if (!judgingTime) {
     return (
@@ -177,33 +269,252 @@ const RematchOptions: React.FC<RematchOptionsProps> = ({
     );
   }
 
+  if (categoryOne.length === 0 && categoryTwo.length === 0) {
+    return (
+      <Paper sx={{ p: 2 }}>
+        <Typography>לא מצאנו אפשרות להעניק לקבוצה מקצה חוזר במסגרת לוח הזמנים.</Typography>
+        <Typography>ניתן לקיים מקצה חוזר מחוץ ללוח הזמנים באופן הבא:</Typography>
+        <List>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar sx={{ bgcolor: blue[400], height: 36, width: 36, color: '#fff' }}>1</Avatar>
+            </ListItemAvatar>
+            <ListItemText>
+              הנחו את אחד משופטי הזירה לפתוח את דף הניקוד של הקבוצה בסבב האחרון ולאפס אותו.
+            </ListItemText>
+          </ListItem>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar sx={{ bgcolor: blue[400], height: 36, width: 36, color: '#fff' }}>2</Avatar>
+            </ListItemAvatar>
+            <ListItemText>הפעילו מקצה בדיקה באמצעות ממשק ה-Scorekeeper.</ListItemText>
+          </ListItem>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar sx={{ bgcolor: blue[400], height: 36, width: 36, color: '#fff' }}>3</Avatar>
+            </ListItemAvatar>
+            <ListItemText>נקדו את תוצאות המקצה בהתאם. </ListItemText>
+          </ListItem>
+        </List>
+      </Paper>
+    );
+  }
+
   return (
     <Paper sx={{ p: 2 }}>
-      {judgingTime?.toString()}
-      <br />
-      {availableMatches.map(m => `${m.number} - ${m.scheduledTime}`).join(', ')}
-      <br />
-      {availableJudgingSlots.map(s => `${s.number} - ${s.scheduledTime}`).join(', ')}
-      <br />
-      {JSON.stringify(categoryOne)}
-      <br />
-      {JSON.stringify(categoryTwo)}
+      <Stack spacing={2}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Avatar sx={{ bgcolor: blue[400], height: 36, width: 36, color: '#fff' }}>1</Avatar>
+          <Typography>קבעו מקצה חוזר בשעה</Typography>
+          <Select
+            value={rematchData.categoryOne.match}
+            onChange={e =>
+              setRematchData(data => ({
+                ...data,
+                categoryOne: { match: e.target.value, participant: '' }
+              }))
+            }
+            variant="standard"
+            autoWidth
+            sx={{ minWidth: 100 }}
+          >
+            {categoryOne.map(x => (
+              <MenuItem key={x.match._id.toString()} value={String(x.match._id)}>
+                {dayjs(x.match.scheduledTime).format('HH:mm')}
+              </MenuItem>
+            ))}
+          </Select>
+          {rematchData.categoryOne.match !== '' && (
+            <>
+              <Typography>בשולחן</Typography>
+              <Select
+                value={rematchData.categoryOne.participant}
+                onChange={e =>
+                  setRematchData(data => ({
+                    ...data,
+                    categoryOne: {
+                      match: data.categoryOne.match,
+                      participant: e.target.value
+                    }
+                  }))
+                }
+                variant="standard"
+                autoWidth
+                sx={{ minWidth: 100 }}
+              >
+                {categoryOne
+                  .find(x => x.match._id.toString() === rematchData.categoryOne.match)
+                  ?.participants.map(p => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const _match = categoryOne.find(
+                      x => x.match._id.toString() === rematchData.categoryOne.match
+                    )!.match;
+
+                    return (
+                      <MenuItem key={p.index} value={p.index}>
+                        {_match.participants[p.index].tableName}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+              {rematchData.categoryOne.match !== '' &&
+                rematchData.categoryOne.participant !== null && (
+                  <IconButton
+                    onClick={() =>
+                      handleSubmit(
+                        rematchData.categoryOne.match,
+                        rematchData.categoryOne.participant
+                      )
+                    }
+                  >
+                    <RocketLaunchRoundedIcon />
+                  </IconButton>
+                )}
+            </>
+          )}
+        </Stack>
+        <Divider />
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Avatar sx={{ bgcolor: blue[400], height: 36, width: 36, color: '#fff' }}>2</Avatar>
+          <Typography>הזיזו את מקצה השיפוט לשעה</Typography>
+          <Select
+            value={rematchData.categoryTwo.session}
+            onChange={e =>
+              setRematchData(data => ({
+                ...data,
+                categoryTwo: { session: e.target.value, match: '', participant: '' }
+              }))
+            }
+            variant="standard"
+            autoWidth
+            sx={{ minWidth: 100 }}
+          >
+            {categoryTwo.map(x => (
+              <MenuItem key={x.session._id.toString()} value={String(x.session._id)}>
+                {dayjs(x.session.scheduledTime).format('HH:mm')}
+              </MenuItem>
+            ))}
+          </Select>
+          {rematchData.categoryTwo.session !== '' && (
+            <Typography>
+              בחדר{' '}
+              {
+                rooms.find(
+                  r =>
+                    r._id ===
+                    categoryTwo.find(
+                      x => x.session._id.toString() === rematchData.categoryTwo.session
+                    )?.session.roomId
+                )?.name
+              }{' '}
+            </Typography>
+          )}
+        </Stack>
+
+        {rematchData.categoryTwo.session !== '' && (
+          <Stack direction="row" spacing={2} alignItems="center" pl={6.5}>
+            <Typography>וקבעו מקצה חוזר בשעה</Typography>
+            <Select
+              value={rematchData.categoryTwo.match}
+              onChange={e =>
+                setRematchData(data => ({
+                  ...data,
+                  categoryTwo: {
+                    session: data.categoryTwo.session,
+                    match: e.target.value,
+                    participant: ''
+                  }
+                }))
+              }
+              variant="standard"
+              autoWidth
+              sx={{ minWidth: 100 }}
+            >
+              {categoryTwo
+                .find(x => String(x.session._id) === rematchData.categoryTwo.session)
+                ?.matches.map(x => (
+                  <MenuItem key={x.match._id.toString()} value={String(x.match._id)}>
+                    {dayjs(x.match.scheduledTime).format('HH:mm')}
+                  </MenuItem>
+                ))}
+            </Select>
+            {rematchData.categoryTwo.match !== '' && (
+              <>
+                <Typography>בשולחן</Typography>
+                <Select
+                  value={rematchData.categoryTwo.participant}
+                  onChange={e =>
+                    setRematchData(data => ({
+                      ...data,
+                      categoryTwo: {
+                        session: data.categoryTwo.session,
+                        match: data.categoryTwo.match,
+                        participant: e.target.value
+                      }
+                    }))
+                  }
+                  variant="standard"
+                  autoWidth
+                  sx={{ minWidth: 100 }}
+                >
+                  {categoryTwo
+                    .find(x => String(x.session._id) === rematchData.categoryTwo.session)
+                    ?.matches.find(x => x.match._id.toString() === rematchData.categoryTwo.match)
+                    ?.participants.map(p => {
+                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                      const _match = categoryTwo
+                        .find(x => String(x.session._id) === rematchData.categoryTwo.session)!
+                        .matches.find(
+                          x => x.match._id.toString() === rematchData.categoryTwo.match
+                        )!.match;
+
+                      return (
+                        <MenuItem key={p.index} value={p.index}>
+                          {_match.participants[p.index].tableName}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+                {rematchData.categoryTwo.session !== '' &&
+                  rematchData.categoryTwo.match !== '' &&
+                  rematchData.categoryTwo.participant !== '' && (
+                    <IconButton
+                      onClick={() =>
+                        handleSubmit(
+                          rematchData.categoryTwo.match,
+                          rematchData.categoryTwo.participant,
+                          rematchData.categoryTwo.session
+                        )
+                      }
+                    >
+                      <RocketLaunchRoundedIcon />
+                    </IconButton>
+                  )}
+              </>
+            )}
+          </Stack>
+        )}
+      </Stack>
     </Paper>
   );
 };
 
 interface RematchFinderProps {
   teams: Array<WithId<Team>>;
+  rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   divisionState: WithId<DivisionState>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
 const RematchFinder: React.FC<RematchFinderProps> = ({
   teams,
   matches,
+  rooms,
   sessions,
-  divisionState
+  divisionState,
+  socket
 }) => {
   const [rematchTeam, setRematchTeam] = useState<WithId<Team> | null>(null);
 
@@ -221,18 +532,20 @@ const RematchFinder: React.FC<RematchFinderProps> = ({
   return (
     <Stack sx={{ mt: 2 }} spacing={2}>
       <Paper sx={{ p: 2 }}>
-        <Typography variant="h2" gutterBottom>
+        <Typography variant="h2" mb={3}>
           הענקת מקצה חוזר
         </Typography>
         <TeamSelection setTeam={setRematchTeam} teams={teams} value={rematchTeam} />
       </Paper>
       {rematchTeam && (
         <RematchOptions
+          rooms={rooms}
           teams={teams}
           rematchTeam={rematchTeam}
           divisionState={divisionState}
           matches={matches}
           sessions={sessions}
+          socket={socket}
         />
       )}
     </Stack>

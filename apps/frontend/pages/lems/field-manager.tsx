@@ -10,7 +10,8 @@ import {
   SafeUser,
   Team,
   DivisionWithEvent,
-  JudgingSession
+  JudgingSession,
+  JudgingRoom
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -28,6 +29,7 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
+  rooms: Array<WithId<JudgingRoom>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -37,7 +39,7 @@ const Page: NextPage<Props> = ({
   teams: initialTeams,
   matches: initialMatches,
   sessions: initialSessions,
-  tables
+  rooms
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -88,7 +90,7 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const { connectionStatus } = useWebsocket(
+  const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['field', 'pit-admin', 'audience-display'],
     undefined,
@@ -129,6 +131,8 @@ const Page: NextPage<Props> = ({
           matches={matches}
           divisionState={divisionState}
           sessions={sessions}
+          rooms={rooms}
+          socket={socket}
         />
       </Layout>
     </RoleAuthorizer>
@@ -146,7 +150,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        tables: `/api/divisions/${divisionId}/tables`
+        tables: `/api/divisions/${divisionId}/tables`,
+        rooms: `/api/divisions/${divisionId}/rooms`
       },
       ctx
     );
