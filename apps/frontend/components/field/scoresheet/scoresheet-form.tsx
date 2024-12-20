@@ -318,7 +318,9 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                   ) : (
                     <Stack direction="row" spacing={2}>
                       {signatureRef.current &&
-                        !['ready', 'waiting-for-gp'].includes(scoresheet.status) && (
+                        !['ready', 'waiting-for-gp', 'waiting-for-head-ref-gp'].includes(
+                          scoresheet.status
+                        ) && (
                           <Box display="flex" alignItems="center">
                             <IconButton
                               onClick={() => {
