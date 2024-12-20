@@ -36,17 +36,20 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
             border: '1.5px solid #000',
             boxSizing: 'border-box',
             borderRadius: getBorderRadius(index, columns.length),
-            fontSize: '1em',
-            py: '0.875em',
-            px: '0.5em',
+            fontSize: '1.4em',
+            py: '1.5em',
+            px: '1em',
             top: theme => theme.mixins.toolbar.minHeight,
             '@media print': {
               py: '0.5em',
-              px: '0.25em'
+              px: '0.25em',
+              bgcolor: colors[type][index],
+              WebkitPrintColorAdjust: 'exact',
+              printColorAdjust: 'exact'
             }
           }}
         >
-          <Typography fontSize="1em" fontWeight={700}>
+          <Typography fontSize="1.4em" fontWeight={700}>
             {typeof column === 'object' ? column.title : column}
           </Typography>
 
