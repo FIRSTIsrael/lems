@@ -1,3 +1,4 @@
+import React from 'react';
 import { WithId } from 'mongodb';
 import {
   Box,
@@ -100,7 +101,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({ rubric, showFeedback =
                 const isCoreValuesField = field.isCoreValuesField ?? false;
 
                 return (
-                  <>
+                  <React.Fragment key={field.id}>
                     <TableRow>
                       {labels.map((label, index) => {
                         const cellValue = index + 1;
@@ -180,12 +181,12 @@ export const RubricTable: React.FC<RubricTableProps> = ({ rubric, showFeedback =
                         );
                       })}
                     </TableRow>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </TableBody>
           ))}
-          {showFeedback && <RubricFeedback rubric={rubric} />}
+          {showFeedback && <TableBody><RubricFeedback rubric={rubric} /></TableBody>}
         </Table>
       </Box>
       {rubric.data?.values &&
