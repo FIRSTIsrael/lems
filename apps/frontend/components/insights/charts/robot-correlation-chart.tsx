@@ -32,10 +32,9 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    console.log('Tooltip data:', data);
     return (
       <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
-        <p style={{ margin: 0 }}>{`קבוצה: ${data.teamNumber}`}</p>
+        <p style={{ margin: 0 }}>{`קבוצה #${data.teamNumber}`}</p>
         <p style={{ margin: 0 }}>{`ניקוד גבוה ביותר בזירה: ${data.topRobotGameScore}`}</p>
         <p style={{ margin: 0 }}>{`ציון תכנון הרובוט: ${data.averageRobotDesignScore}`}</p>
       </div>
