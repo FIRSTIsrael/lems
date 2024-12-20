@@ -1,5 +1,4 @@
-import { JudgingCategory, Rubric } from '@lems/types';
-import Grid from '@mui/material/Grid2';
+import { WithId } from 'mongodb';
 import {
   Box,
   FormControlLabel,
@@ -11,27 +10,53 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import { JudgingCategory, Rubric } from '@lems/types';
 import { rubricsSchemas } from '@lems/season';
 import RubricRadioIcon from '../../judging/rubrics/rubric-radio-icon';
 import HeaderRow from '../../judging/rubrics/header-row';
 import TitleRow from '../../judging/rubrics/title-row';
+import { RubricFeedback } from './rubric-feedback';
 
 interface RubricTableProps {
-  rubric: Rubric<JudgingCategory>;
+  rubric: WithId<Rubric<JudgingCategory>>;
+  showFeedback?: boolean;
 }
 
-export const RubricTable: React.FC<RubricTableProps> = ({ rubric }) => {
+export const RubricTable: React.FC<RubricTableProps> = ({ rubric, showFeedback = true }) => {
   return (
-    <Grid size={12}>
-      <Box dir="rtl" sx={{ width: '115%', mt: 1, mb: -2, mr: -3, ml: -7 }}>
+    <>
+      <Box
+        dir="rtl"
+        sx={{
+          width: '115%',
+          mt: 1,
+          mb: -5,
+          mr: -3,
+          ml: -7,
+          '@media print': {
+            height: 'fit-content',
+            overflow: 'hidden',
+            pageBreakInside: 'avoid !important',
+            breakInside: 'avoid !important'
+          }
+        }}
+      >
         <Table
           sx={{
             tableLayout: 'fixed',
             borderCollapse: 'collapse',
+            maxWidth: '100%',
             width: '100%',
-            transform: 'scale(0.8)',
-            transformOrigin: 'top center',
             position: 'relative',
+            border: '2px solid #000',
+            transform: 'scale(0.75)',
+            transformOrigin: 'top center',
+            '@media print': {
+              width: '100%',
+              tableLayout: 'fixed',
+              pageBreakInside: 'avoid !important',
+              breakInside: 'avoid !important'
+            },
             '& .MuiTableCell-root': {
               padding: '3px 6px',
               fontSize: '0.85rem',
@@ -55,7 +80,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({ rubric }) => {
             }
           }}
         >
-          <TableHead sx={{ border: '2px solid #000', p: '0.5rem 0.25rem' }}>
+          <TableHead sx={{ p: '0.5rem 0.25rem' }}>
             <HeaderRow
               columns={rubricsSchemas[rubric.category].columns}
               category={rubric.category}
@@ -160,39 +185,45 @@ export const RubricTable: React.FC<RubricTableProps> = ({ rubric }) => {
               })}
             </TableBody>
           ))}
-          {rubric.data?.values && rubric.category !== 'core-values' && (
-            <Box
-              sx={{
-                mt: 2,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontSize: '2rem',
-                color: 'text.secondary',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <RubricRadioIcon
-                checked={false}
-                isCoreValuesField={true}
-                sx={{ fontSize: '1.2em', color: 'rgba(0,0,0,0.24)' }}
-              />
-              <Typography
-                variant="caption"
-                sx={{
-                  whiteSpace: 'nowrap',
-                  fontSize: '0.9rem',
-                  fontStyle: 'italic',
-                  color: 'black'
-                }}
-              >
-                קריטריונים עם תיבת סימון זו מחשבים פעמיים בעת קביעת המועמדות לפרסים - גם להערכת
-                הנושא הנ׳׳ל וגם להערכת ערכי הליבה
-              </Typography>
-            </Box>
-          )}
+          {showFeedback && <RubricFeedback rubric={rubric} />}
         </Table>
       </Box>
-    </Grid>
+      {rubric.data?.values &&
+        (rubric.category === 'innovation-project' || rubric.category === 'robot-design') && (
+          <Box
+            mt={-28}
+            ml={-6}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontSize: '1.5rem',
+              color: 'text.secondary',
+              whiteSpace: 'nowrap',
+              '@media print': {
+                transform: 'scale(0.75)'
+              }
+            }}
+          >
+            <RubricRadioIcon
+              checked={false}
+              isCoreValuesField={true}
+              sx={{ fontSize: '1em', color: 'rgba(0,0,0,0.24)' }}
+            />
+            <Typography
+              variant="caption"
+              sx={{
+                whiteSpace: 'nowrap',
+                fontSize: '0.7rem',
+                fontStyle: 'italic',
+                color: 'black'
+              }}
+            >
+              קריטריונים עם תיבת סימון זו מחשבים פעמיים בעת קביעת המועמדות לפרסים - גם להערכת הנושא
+              הנ׳׳ל וגם להערכת ערכי הליבה
+            </Typography>
+          </Box>
+        )}
+    </>
   );
 };

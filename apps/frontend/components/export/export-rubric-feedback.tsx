@@ -29,7 +29,13 @@ export const ExportRubricFeedback: React.FC<ExportRubricFeedbackProps> = ({
           <Grid container sx={{ mb: 0.5 }}>
             <SessionFeedbackHeader rubric={cvrubric} division={division} team={team} />
             <SessionFeedbackTable rubrics={rubrics} />
-            <RubricAwards rubric={cvrubric} schema={rubricsSchemas[cvrubric.category]} size={12} />
+            <Box sx={{ width: '100%', '@media print': { marginTop: '1cm' } }}>
+              <RubricAwards
+                rubric={cvrubric}
+                schema={rubricsSchemas[cvrubric.category]}
+                size={12}
+              />
+            </Box>
           </Grid>
         </Stack>
       </Box>

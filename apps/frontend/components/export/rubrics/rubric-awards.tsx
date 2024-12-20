@@ -21,18 +21,29 @@ interface RubricAwardsProps {
 }
 
 export const RubricAwards: React.FC<RubricAwardsProps> = ({ size, rubric, schema }) => {
-  if (!schema.awards) return <></>;
+  const awards = schema.awards;
+  if (!awards) return <></>;
 
   return (
     <Grid size={size}>
       <Typography variant="body2" gutterBottom textAlign="left" ml={6}>
         אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
       </Typography>
-      {schema.awards.map(award => (
-        <ListItem key={award.id} disablePadding>
+      {awards.map((award, index) => (
+        <ListItem key={`award-${award.id}`} disablePadding>
           <ListItemButton
             dense
-            sx={{ borderRadius: 2, px: 2 }}
+            sx={{
+              borderRadius: 2,
+              px: 2,
+              '@media print': {
+                borderRadius: 0,
+                borderBottom:
+                  index < awards.length - 1 ? '0.5px solid rgba(0,0,0,0.2)' : 'none',
+                paddingBottom: 1,
+                paddingTop: 1
+              }
+            }}
             disabled={!rubric.data?.awards?.[award.id]}
           >
             <ListItemIcon sx={{ minWidth: 36 }}>

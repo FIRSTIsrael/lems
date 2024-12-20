@@ -6,7 +6,6 @@ import { rubricsSchemas } from '@lems/season';
 import { RubricHeader } from './rubrics/rubric-header';
 import { RubricAwards } from './rubrics/rubric-awards';
 import { RubricTable } from './rubrics/rubric-table';
-import { RubricFeedback } from './rubrics/rubric-feedback';
 
 interface ExportRubricProps {
   division: WithId<DivisionWithEvent>;
@@ -25,24 +24,37 @@ export const ExportRubric: React.FC<ExportRubricProps> = ({
 
   return (
     <>
-      <Box sx={{ pageBreakInside: 'avoid', mt: 0 }}>
-        <Box component="section" sx={{ mt: 0, position: 'relative' }}>
-          <Stack>
-            <Grid container sx={{ mb: 0.5 }}>
-              <RubricHeader
-                rubric={rubric}
-                schema={schema}
-                division={division}
-                team={{ number: team.number.toString() }}
-              />
-              <RubricAwards size={8} rubric={rubric} schema={schema} />
-              <RubricTable rubric={rubric} />
-              {showFeedback && <RubricFeedback rubric={rubric} />}
-            </Grid>
-          </Stack>
-        </Box>
+      <Box
+        component="section"
+        sx={{
+          pageBreakInside: 'avoid !important',
+          breakInside: 'avoid !important',
+          position: 'relative',
+          boxSizing: 'border-box',
+          '@media print': {
+            margin: '0',
+            padding: '0',
+            maxHeight: '100vh',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <Stack spacing={0} sx={{ height: '100%' }}>
+          <Grid container>
+            <RubricHeader
+              rubric={rubric}
+              schema={schema}
+              division={division}
+              team={{ number: team.number.toString() }}
+            />
+            <RubricAwards size={8} rubric={rubric} schema={schema} />
+          </Grid>
+          <Box sx={{ flex: 1, minHeight: 0 }}>
+            <RubricTable rubric={rubric} showFeedback={showFeedback} />
+          </Box>
+        </Stack>
       </Box>
-      <Box sx={{ '@media print': { pageBreakBefore: 'always' } }} />
+      <Box sx={{ '@media print': { pageBreakAfter: 'always' } }} />
     </>
   );
 };

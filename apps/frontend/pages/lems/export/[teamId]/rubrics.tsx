@@ -1,6 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Box } from '@mui/material';
 import { DivisionWithEvent, JudgingCategory, Rubric, SafeUser, Team } from '@lems/types';
 import { ExportRubric } from '../../../../components/export/export-rubric';
 import { ExportRubricFeedback } from '../../../../components/export/export-rubric-feedback';
@@ -17,21 +16,19 @@ interface Props {
 const ExportRubricsPage: NextPage<Props> = ({ user, division, team, rubrics }) => {
   return (
     <RoleAuthorizer user={user} allowedRoles={[]}>
-      <Box sx={{ '@media print': { pageBreakAfter: 'avoid', pageBreakInside: 'avoid' } }}>
-        {rubrics.map(rubric => {
-          // if (rubric.category === 'core-values') return;
+      {rubrics.map(rubric => {
+        if (rubric.category === 'core-values') return;
 
-          return (
-            <ExportRubric
-              key={rubric._id.toString()}
-              division={division}
-              team={team}
-              rubric={rubric}
-              showFeedback={true}
-            />
-          );
-        })}
-      </Box>
+        return (
+          <ExportRubric
+            key={rubric._id.toString()}
+            division={division}
+            team={team}
+            rubric={rubric}
+            showFeedback={true}
+          />
+        );
+      })}
       <ExportRubricFeedback rubrics={rubrics} division={division} team={team} />
     </RoleAuthorizer>
   );
