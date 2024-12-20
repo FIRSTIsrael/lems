@@ -57,7 +57,7 @@ export const getUserAndDivision = async (ctx: GetServerSidePropsContext) => {
   }
 
   const canAccessDivision = assignedDivisions.includes(idFromQuery);
-  if (canAccessDivision) divisionId = idFromQuery;
+  if (canAccessDivision || user.isAdmin) divisionId = idFromQuery;
   return { user, divisionId };
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Table, TableCell, TableRow, Typography } from '@mui/material';
+import { Box, Table, TableCell, TableRow, TableBody, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import { JudgingCategory, Rubric } from '@lems/types';
 
@@ -74,6 +74,7 @@ export const SessionFeedbackTable: React.FC<ExportCRSummaryProps> = ({ rubrics }
           }
         }}
       >
+        <TableBody>
         <TableRow>
           <TableCell
             align="center"
@@ -245,6 +246,7 @@ export const SessionFeedbackTable: React.FC<ExportCRSummaryProps> = ({ rubrics }
             </React.Fragment>
           );
         })}
+        </TableBody>
       </Table>
     </Box>
   );

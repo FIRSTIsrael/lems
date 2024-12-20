@@ -18,7 +18,6 @@ interface RubricHeaderProps {
 
 export const RubricHeader: React.FC<RubricHeaderProps> = ({ rubric, schema, division, team }) => {
   const hasAwards = Object.entries(rubric.data?.awards ?? {}).length > 0;
-  console.log(rubric.category, hasAwards);
 
   return (
     <>
@@ -43,7 +42,7 @@ export const RubricHeader: React.FC<RubricHeaderProps> = ({ rubric, schema, divi
 
       <Grid size={hasAwards ? 4 : 12}>
         <Typography fontSize="0.875rem">
-          <Markdown>{schema.description}</Markdown>
+          <Markdown components={{ p: 'span' }}>{schema.description}</Markdown>
         </Typography>
       </Grid>
     </>
