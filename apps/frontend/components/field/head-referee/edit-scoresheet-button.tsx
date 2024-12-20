@@ -58,6 +58,16 @@ const mapStatus: {
       }
     }
   },
+  'waiting-for-head-ref-gp': {
+    title: 'ממתין לציון מקצועיות אדיבה משופט ראשי',
+    sx: {
+      color: '#fff',
+      background: '#F26B0F',
+      '&:hover': {
+        background: '#f79300'
+      }
+    }
+  },
   ready: {
     title: 'הוגש',
     sx: {

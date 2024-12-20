@@ -68,7 +68,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 }) => {
   const router = useRouter();
   const [readOnly, setReadOnly] = useState<boolean>(
-    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
+    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref', 'waiting-for-head-ref-gp'].includes(scoresheet.status)
   );
 
   interface ErrorWithMessage {
@@ -88,7 +88,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [resetDialog, setResetDialog] = useState<boolean>(false);
 
   const mode = useMemo(() => {
-    return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
+    return scoresheet.status === 'waiting-for-gp' || scoresheet.status === 'waiting-for-head-ref-gp' ? 'gp' : 'scoring';
   }, [scoresheet]);
 
   const getDefaultScoresheet = () => {
@@ -302,9 +302,9 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 
                 <Stack spacing={2} alignItems="center" my={6}>
                   {readOnly ||
-                  validatorErrors.length > 0 ||
-                  missionInfo.find(mi => mi.incomplete || !!mi.errors) ||
-                  (values.signature && values.signature.length > 0) ? (
+                    validatorErrors.length > 0 ||
+                    missionInfo.find(mi => mi.incomplete || !!mi.errors) ||
+                    (values.signature && values.signature.length > 0) ? (
                     <Image
                       src={values.signature || '/assets/scoresheet/blank-signature.svg'}
                       alt={`חתימת קבוצה #${team.number}`}
@@ -472,7 +472,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       sx={{ minWidth: 200 }}
                       endIcon={<ChevronLeftIcon />}
                       disabled={!isValid}
-                      onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
+                      onClick={() => handleSync(true, values, user.role === 'head-referee' ? 'waiting-for-head-ref-gp' : 'waiting-for-gp', true)}
                     >
                       המשך
                     </Button>
