@@ -85,7 +85,7 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ division, delib
                 component="a"
                 href={`/lems/deliberations/category/${d.category}`}
                 target="_blank"
-                disabled={d.status !== 'in-progress'}
+                disabled={d.status === 'not-started'}
               >
                 <StatusIcon status={d.status} />
               </IconButton>
