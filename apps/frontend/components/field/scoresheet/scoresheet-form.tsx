@@ -404,37 +404,22 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       >
                         העברת דף הניקוד לשופט ראשי
                       </Button>
-                      <Dialog
-                        open={headRefDialog}
-                        onClose={() => setHeadRefDialog(false)}
-                        aria-labelledby="headref-dialog-title"
-                        aria-describedby="headref-dialog-description"
-                      >
-                        <DialogTitle id="headref-dialog-title">
-                          העברת דף הניקוד לשופט הראשי
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="headref-dialog-description">
-                            העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר אותך למקצה הבא.
-                            לא תוכלו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setHeadRefDialog(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleSync(true, values, 'waiting-for-head-ref');
-                              setHeadRefDialog(false);
-                            }}
-                          >
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </RoleAuthorizer>
                     <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                      {!['waiting-for-head-ref', 'ready'].includes(scoresheet.status) && (
+                        <Button
+                          variant="contained"
+                          sx={{
+                            minWidth: 200
+                          }}
+                          endIcon={<SportsScoreIcon />}
+                          onClick={() => {
+                            setHeadRefDialog(true);
+                          }}
+                        >
+                          העברת דף הניקוד לאחריותך
+                        </Button>
+                      )}
                       <Button
                         variant="contained"
                         sx={{ minWidth: 200 }}
@@ -443,34 +428,6 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       >
                         איפוס דף הניקוד
                       </Button>
-                      <Dialog
-                        open={resetDialog}
-                        onClose={() => setResetDialog(false)}
-                        aria-labelledby="reset-dialog-title"
-                        aria-describedby="reset-dialog-description"
-                      >
-                        <DialogTitle id="reset-dialog-title">איפוס דף הניקוד</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="reset-dialog-description">
-                            {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
-                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
-                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setResetDialog(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleSync(true, getDefaultScoresheet(), 'empty');
-                              setResetDialog(false);
-                            }}
-                          >
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </RoleAuthorizer>
                     <Button
                       variant="contained"
@@ -491,6 +448,63 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       המשך
                     </Button>
                   </Stack>
+
+                  <Dialog
+                    open={headRefDialog}
+                    onClose={() => setHeadRefDialog(false)}
+                    aria-labelledby="headref-dialog-title"
+                    aria-describedby="headref-dialog-description"
+                  >
+                    <DialogTitle id="headref-dialog-title">העברת דף הניקוד לשופט הראשי</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="headref-dialog-description">
+                        העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר את השולחן למקצה
+                        הבא. שופטי הזירה לא יכולו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setHeadRefDialog(false)} autoFocus>
+                        ביטול
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleSync(true, values, 'waiting-for-head-ref');
+                          setHeadRefDialog(false);
+                        }}
+                      >
+                        אישור
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+
+                  <Dialog
+                    open={resetDialog}
+                    onClose={() => setResetDialog(false)}
+                    aria-labelledby="reset-dialog-title"
+                    aria-describedby="reset-dialog-description"
+                  >
+                    <DialogTitle id="reset-dialog-title">איפוס דף הניקוד</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="reset-dialog-description">
+                        {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
+                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
+                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setResetDialog(false)} autoFocus>
+                        ביטול
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleSync(true, getDefaultScoresheet(), 'empty');
+                          setResetDialog(false);
+                        }}
+                      >
+                        אישור
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </Stack>
               </>
             ) : (
