@@ -10,8 +10,8 @@ class BrowserManager {
   private static isShuttingDown = false;
   private static initializationPromise: Promise<Browser> | null = null;
   private static pageTimeouts: Map<Page, NodeJS.Timeout> = new Map();
-  private static readonly MAX_PAGES = 25; // Limit concurrent pages
-  private static readonly PAGE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+  private static readonly MAX_PAGES = 25;
+  private static readonly PAGE_TIMEOUT = 5 * 60 * 1000;
 
   private static readonly PUPPETEER_ARGS = [
     // Security
@@ -117,20 +117,17 @@ class BrowserManager {
     this.isShuttingDown = true;
 
     try {
-      // Clear all timeouts
       for (const timeout of this.pageTimeouts.values()) {
         clearTimeout(timeout);
       }
       this.pageTimeouts.clear();
 
-      // Close all active pages
       const closePagePromises = Array.from(this.activePages).map(page =>
         this.closePage(page).catch(console.error)
       );
       await Promise.all(closePagePromises);
       this.activePages.clear();
 
-      // Close browser instance
       if (this.instance) {
         await this.instance.close().catch(console.error);
         this.instance = null;
@@ -237,16 +234,13 @@ export async function getLemsWebpageAsPdf(
       }
     });
 
-    // Wait for network to be idle and content to load
     await page.goto(url, {
       waitUntil: ['networkidle0', 'domcontentloaded'],
       timeout: 30000
     });
 
-    // Wait for fonts to load (important for PDF rendering)
     await page.evaluate(() => document.fonts.ready);
 
-    // Generate PDF with proper timeout
     const data = await withTimeout(
       page.pdf({
         ...options,
