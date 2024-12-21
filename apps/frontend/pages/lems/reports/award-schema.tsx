@@ -70,7 +70,7 @@ const Page: NextPage<Props> = ({ user, division, awards }) => {
                     <TableCell>{localizedAward[award.name as AwardNames].name}</TableCell>
                     <TableCell>{award.place}</TableCell>
                     <TableCell>
-                      <Markdown components={{ p: 'span' }}>
+                      <Markdown skipHtml components={{ p: 'span' }}>
                         {localizedAward[award.name as AwardNames].description}
                       </Markdown>
                     </TableCell>
