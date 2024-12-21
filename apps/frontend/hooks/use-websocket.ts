@@ -59,5 +59,40 @@ export const useWebsocket = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const refreshConnection = () => {
+      setConnectionStatus('connecting');
+      socket.disconnect();
+      socket.connect();
+      socket.emit('joinRoom', rooms, () => {
+        setConnectionStatus('connected');
+      });
+    };
+
+    const compareArrays = (arr1: string[], arr2: string[]) => {
+      if (arr1.length !== arr2.length) return false;
+      return arr1.every(item => arr2.includes(item));
+    };
+
+    const intervalId = setInterval(() => {
+      let gotResponse = false;
+
+      socket
+        .timeout(500)
+        .emit('pingRooms', (err: Error, res?: { rooms: string[]; ok: boolean; error?: string }) => {
+          gotResponse = true;
+          if (err || !res || !compareArrays(res.rooms, rooms)) {
+            refreshConnection();
+          }
+        });
+
+      setTimeout(() => {
+        if (!gotResponse) refreshConnection();
+      }, 800);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [socket, rooms]);
+
   return { socket, connectionStatus };
 };
