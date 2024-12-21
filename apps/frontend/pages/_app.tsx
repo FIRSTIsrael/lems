@@ -22,6 +22,10 @@ function CustomApp({
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#fff" />
+        <meta
+          name="description"
+          content="מערכת האירועים של FIRST ישראל לתוכנית FIRST LEGO League Challenge"
+        />
         <title>מערכת אירועים - FIRST ישראל</title>
       </Head>
       <ThemeProvider theme={theme}>
