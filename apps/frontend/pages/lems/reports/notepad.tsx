@@ -4,16 +4,7 @@ import { WithId } from 'mongodb';
 import { Form, Formik } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { green } from '@mui/material/colors';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  Paper,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Box, Button, Checkbox, IconButton, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -31,10 +22,9 @@ import { localizeTeam } from '../../../localization/teams';
 
 interface ViewingNoteProps {
   note: Note;
-  updateNote: (note: Note) => Promise<void>;
 }
 
-const ViewingNote: React.FC<ViewingNoteProps> = ({ note, updateNote }) => {
+const ViewingNote: React.FC<ViewingNoteProps> = ({ note }) => {
   return (
     <>
       {note.title && (
@@ -48,16 +38,6 @@ const ViewingNote: React.FC<ViewingNoteProps> = ({ note, updateNote }) => {
         </Typography>
       )}
       <Typography sx={{ whiteSpace: 'pre-line', mt: 1 }}>{note.text}</Typography>
-      <FormControlLabel
-        sx={{ mt: 2 }}
-        control={
-          <Checkbox
-            checked={note.done}
-            onChange={() => updateNote({ ...note, done: !note.done })}
-          />
-        }
-        label="טופל"
-      />
     </>
   );
 };
@@ -79,7 +59,7 @@ const EditingNote: React.FC<EditingNoteProps> = ({ teams, note, updateNote }) =>
       }}
     >
       <Form>
-        <Stack spacing={1} width="85%" marginBottom={1}>
+        <Stack spacing={1} width="80%" marginBottom={1}>
           <FormikTextField name="title" label="כותרת" fullWidth />
           <FormikTeamField name="team" teams={teams} fullWidth />
           <FormikTextField name="text" label="תיאור" multiline minRows={3} />
@@ -162,23 +142,27 @@ const Page: NextPage<Props> = ({ user, division, teams }) => {
                 mt={2}
                 sx={{ backgroundColor: note.done ? green[100] : undefined }}
               >
-                <Box position="relative">
-                  <IconButton
+                <Box position="relative" minHeight={50}>
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
                     sx={{ position: 'absolute', top: 0, right: 0 }}
-                    onClick={() => updateNote({ ...note, editing: !note.editing })}
                   >
-                    {note.editing ? <EditOffOutlinedIcon /> : <EditOutlinedIcon />}
-                  </IconButton>
-                  <IconButton
-                    sx={{ position: 'absolute', bottom: 0, right: 0 }}
-                    onClick={() => note.id && deleteNote(note.id)}
-                  >
-                    <DeleteOutlineIcon />
-                  </IconButton>
+                    <Checkbox
+                      checked={note.done}
+                      onChange={() => updateNote({ ...note, done: !note.done })}
+                    />
+                    <IconButton onClick={() => updateNote({ ...note, editing: !note.editing })}>
+                      {note.editing ? <EditOffOutlinedIcon /> : <EditOutlinedIcon />}
+                    </IconButton>
+                    <IconButton onClick={() => note.id && deleteNote(note.id)}>
+                      <DeleteOutlineIcon />
+                    </IconButton>
+                  </Stack>
                   {note.editing ? (
                     <EditingNote teams={teams} note={note} updateNote={updateNote} />
                   ) : (
-                    <ViewingNote note={note} updateNote={updateNote} />
+                    <ViewingNote note={note} />
                   )}
                 </Box>
               </Grid>
