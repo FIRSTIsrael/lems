@@ -147,9 +147,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
           description: 'הצוללת בבירור קרובה יותר לזירה השנייה:'
         }
       ],
-      remarks: [
-        'לקבוצות אסור לחסום את הקבוצה בזירה השנייה.'
-      ]
+      remarks: ['לקבוצות אסור לחסום את הקבוצה בזירה השנייה.']
     },
     {
       id: 'm11',
