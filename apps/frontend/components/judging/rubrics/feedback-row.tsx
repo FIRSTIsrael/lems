@@ -1,5 +1,4 @@
-import { Divider, Paper, Stack, Typography, Box, TableRow, TableCell } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Typography, Box, TableRow, TableCell } from '@mui/material';
 import FormikTextField from '../../general/forms/formik-text-field';
 import Markdown from 'react-markdown';
 import { JudgingCategory } from '@lems/types';
@@ -82,6 +81,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
         {Object.entries(feedback).map(([key, value], index) => (
           <TableCell key={key} colSpan={2} sx={{ borderBottom: 'none' }}>
             <FormikTextField
+              blurOnEsc
               name={`feedback.${key}`}
               disabled={!isEditable}
               spellCheck
