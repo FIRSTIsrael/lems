@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
@@ -88,11 +88,19 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [headRefDialog, setHeadRefDialog] = useState<boolean>(false);
   const [resetDialog, setResetDialog] = useState<boolean>(false);
 
-  const mode = useMemo(() => {
-    return scoresheet.status === 'waiting-for-gp' || scoresheet.status === 'waiting-for-head-ref-gp'
+  const [mode, setMode] = useState<'gp' | 'scoring'>(
+    scoresheet.status === 'waiting-for-gp' || scoresheet.status === 'waiting-for-head-ref-gp'
       ? 'gp'
-      : 'scoring';
-  }, [scoresheet]);
+      : 'scoring'
+  );
+
+  useEffect(() => {
+    if (['waiting-for-gp', 'waiting-for-headref-gp'].includes(scoresheet.status)) {
+      setMode('gp');
+    } else {
+      setMode('scoring');
+    }
+  }, [scoresheet.status]);
 
   const getDefaultScoresheet = () => {
     const missions: Array<Mission> = SEASON_SCORESHEET.missions.map(mission => {
@@ -434,7 +442,11 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       sx={{ minWidth: 200 }}
                       endIcon={<ChevronLeftIcon />}
                       disabled={!isValid}
-                      onClick={() =>
+                      onClick={() => {
+                        if (scoresheet.status === 'ready' || readOnly) {
+                          setMode('gp');
+                          return;
+                        }
                         handleSync(
                           true,
                           values,
@@ -442,8 +454,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                             ? 'waiting-for-head-ref-gp'
                             : 'waiting-for-gp',
                           true
-                        )
-                      }
+                        );
+                      }}
                     >
                       המשך
                     </Button>
@@ -511,7 +523,13 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
               <GpSelector
                 user={user}
                 scoresheetStatus={scoresheet.status}
-                onBack={() => handleSync(false, values, 'completed')}
+                onBack={() => {
+                  if (scoresheet.status === 'ready' || readOnly) {
+                    setMode('scoring');
+                    return;
+                  }
+                  handleSync(false, values, 'completed');
+                }}
                 onSubmit={() => {
                   handleSync(true, values, 'ready').then(() => router.push(`/lems/${user.role}`));
                 }}
