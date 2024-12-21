@@ -120,7 +120,7 @@ export const PRELIMINARY_DELIBERATION_PICKLIST_LENGTH = 12;
 export const ADVANCEMENT_PERCENTAGE = 0.18;
 export const SEASON_NAME = 'SUBMERGED℠';
 
-export const MATCH_AUTOLOAD_THRESHOLD = 10;
+export const MATCH_AUTOLOAD_THRESHOLD = 15;
 export const ALLOW_UNREGULATED_START = false;
 export const ALLOW_UNREGULATED_LOAD = true;
 
@@ -131,4 +131,4 @@ export const CategoryColors: Record<JudgingCategory, string> = {
 };
 
 export const INSPECTION_TIMER_LENGTH = 90; //seconds
-export const SHOW_INSPECTION_TIMER = true; 
+export const SHOW_INSPECTION_TIMER = true;
