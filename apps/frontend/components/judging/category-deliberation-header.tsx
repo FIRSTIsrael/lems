@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { Paper, Stack, Typography, Button, Box, Avatar } from '@mui/material';
+import { Paper, Typography, Button, Box, Avatar } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { Division, JUDGING_SESSION_LENGTH, JudgingDeliberation, JudgingSession } from '@lems/types';
@@ -58,7 +58,7 @@ const CategoryDeliberationHeader: React.FC<CategoryDeliberationHeaderProps> = ({
           flexDirection: 'row',
           alignItems: 'center',
           p: 3,
-          pb: 1
+          gap: 2
         }}
       >
         <Avatar
@@ -66,17 +66,15 @@ const CategoryDeliberationHeader: React.FC<CategoryDeliberationHeaderProps> = ({
             bgcolor: '#fcefdc',
             color: '#ebab2d',
             width: '2rem',
-            height: '2rem',
-            mr: 1
+            height: '2rem'
           }}
         >
           <ForumOutlinedIcon sx={{ fontSize: '1rem' }} />
         </Avatar>
-        <Typography variant="h2" fontSize="1.25rem">
+        <Typography variant="h2" fontSize="1.25rem" mr={2}>
+          {/*eslint-disable-next-line @typescript-eslint/no-non-null-assertion*/}
           דיון תחום {localizedJudgingCategory[deliberation.category!].name}
         </Typography>
-      </Box>
-      <Stack spacing={2} p={3} direction="row">
         <Button variant="contained" onClick={handleStartDeliberation} sx={{ minWidth: 150 }}>
           מעבר לדיון
         </Button>
@@ -90,7 +88,7 @@ const CategoryDeliberationHeader: React.FC<CategoryDeliberationHeaderProps> = ({
         >
           תצוגת השוואה
         </Button>
-      </Stack>
+      </Box>
     </Paper>
   );
 };
