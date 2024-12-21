@@ -36,13 +36,15 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
             border: '1.5px solid #000',
             boxSizing: 'border-box',
             borderRadius: getBorderRadius(index, columns.length),
-            fontSize: '1.4em',
-            py: '1.5em',
-            px: '1em',
+            fontSize: '1em',
+            py: '0.875em',
+            px: '0.5em',
             top: theme => theme.mixins.toolbar.minHeight,
             '@media print': {
+              fontSize: '1.4em',
               py: '0.5em',
               px: '0.25em',
+              borderRadius: '0',
               bgcolor: colors[type][index],
               WebkitPrintColorAdjust: 'exact',
               printColorAdjust: 'exact'
