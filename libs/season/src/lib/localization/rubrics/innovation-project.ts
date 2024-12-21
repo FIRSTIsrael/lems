@@ -13,7 +13,7 @@ const rubricSections: Array<RubricSchemaSection> = [
       {
         id: 'problem',
         title: 'הגדרת הבעיה',
-        label_1: 'הגדרת הבעיה אינה ברורב',
+        label_1: 'הגדרת הבעיה אינה ברורה',
         label_2: 'הגדרת הבעיה ברורה באופן חלקי',
         label_3: 'הגדרת הבעיה ברורה'
       },
