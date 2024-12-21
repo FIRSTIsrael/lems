@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
+import Markdown from 'react-markdown';
 import { enqueueSnackbar } from 'notistack';
 import {
   Paper,
@@ -68,7 +69,11 @@ const Page: NextPage<Props> = ({ user, division, awards }) => {
                   <TableRow key={award.name}>
                     <TableCell>{localizedAward[award.name as AwardNames].name}</TableCell>
                     <TableCell>{award.place}</TableCell>
-                    <TableCell>{localizedAward[award.name as AwardNames].description}</TableCell>
+                    <TableCell>
+                      <Markdown components={{ p: 'span' }}>
+                        {localizedAward[award.name as AwardNames].description}
+                      </Markdown>
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
