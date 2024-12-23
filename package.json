@@ -68,7 +68,7 @@
     "@nx/eslint": "20.2.2",
     "@nx/eslint-plugin": "20.2.2",
     "@nx/express": "20.2.2",
-    "@nx/js": "20.2.2",
+    "@nx/js": "20.3.0",
     "@nx/node": "20.2.2",
     "@nx/react": "20.2.2",
     "@nx/webpack": "20.2.2",
