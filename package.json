@@ -88,7 +88,7 @@
     "@types/react-signature-canvas": "^1.0.6",
     "@types/serve-favicon": "^2.5.7",
     "@types/webpack-env": "^1.18.5",
-    "@types/ws": "^8.5.12",
+    "@types/ws": "^8.5.13",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.18",
     "eslint-config-prettier": "^9.1.0",
