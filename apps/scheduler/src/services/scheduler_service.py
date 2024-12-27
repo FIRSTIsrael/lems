@@ -105,11 +105,6 @@ class SchedulerService:
     ) -> Event:
         match event_type:
             case "practice":
-                practice_start_time = create_schedule_request.matches_start
-
-                if start_time != None:
-                    practice_start_time = start_time
-
                 return PracticeMatch(
                     activity_length=create_schedule_request.match_length_seconds
                     / SECONDS_PER_MINUTE,
@@ -118,19 +113,13 @@ class SchedulerService:
                         - create_schedule_request.match_length_seconds
                     )
                     / SECONDS_PER_MINUTE,
-                    start_time=datetime.strptime(practice_start_time),
                     total_count=team_count,
                     parallel_activities=create_schedule_request.tables,
                     event_index=index,
                     locations=self.get_tables(),
-                    breaks=self.create_schedule_request.breaks,
+                    breaks=create_schedule_request.breaks,
                 )
             case "ranking":
-                ranking_start_time = create_schedule_request.matches_start
-
-                if start_time != None:
-                    ranking_start_time = start_time
-
                 return Match(
                     activity_length=create_schedule_request.match_length_seconds
                     / SECONDS_PER_MINUTE,
@@ -139,12 +128,11 @@ class SchedulerService:
                         - create_schedule_request.match_length_seconds
                     )
                     / SECONDS_PER_MINUTE,
-                    start_time=datetime.strptime(ranking_start_time),
                     total_count=team_count,
                     parallel_activities=create_schedule_request.tables,
                     event_index=index,
                     locations=self.get_tables(),
-                    breaks=self.create_schedule_request.breaks,
+                    breaks=create_schedule_request.breaks,
                 )
             case "judging":
                 return JudgingSession(
@@ -155,39 +143,40 @@ class SchedulerService:
                         - create_schedule_request.judging_session_length_seconds
                     )
                     / SECONDS_PER_MINUTE,
-                    start_time=datetime.strptime(create_schedule_request.judging_start),
                     total_count=team_count,
                     parallel_activities=create_schedule_request.judging_rooms,
                     event_index=index,
                     locations=self.get_rooms(),
-                    breaks=self.create_schedule_request.breaks,
+                    breaks=create_schedule_request.breaks,
                 )
             case _:
                 raise SchedulerError(f"Invalid event type")
 
     def create_activities(
-        self, team_count: int, events: list[Event]
+        self, team_count: int, events: list[Event], create_schedule_request: CreateScheduleRequest
     ) -> list[TeamActivity]:
         activities = []
 
+        current_matches_start_time = create_schedule_request.matches_start
+
         for event in events:
             if event.activity_type() in ["ranking", "practice"]:
-                activities += event.create_activities(team_count, self.match_number)
+                activities += event.create_activities(team_count, current_matches_start_time, self.match_number)
                 for activity in activities:
                     if activity.number > self.match_number:
                         self.match_number = activity.number
+                    if activity.end_time > current_matches_start_time:
+                        current_matches_start_time = activity.end_time
             else:
-                activities += event.create_activities(team_count)
+                activities += event.create_activities(team_count, create_schedule_request.judging_start)
 
         return activities
 
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
         teams = self.get_teams()
-        judging_rooms = self.get_rooms()
-        tables = self.get_tables()
 
         events = self.create_events(create_schedule_request, len(teams))
-        activities = self.create_activities(len(teams), events)
+        activities = self.create_activities(len(teams), events, create_schedule_request)
 
         current_score = 0
         current_run = 0

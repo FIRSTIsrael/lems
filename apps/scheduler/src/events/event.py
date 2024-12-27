@@ -45,7 +45,6 @@ class Event(ABC):
         self,
         activity_length: int,
         wait_time_minutes: int,
-        start_time: datetime,
         total_count: int,
         parallel_activities: int,
         event_index: int,
@@ -54,12 +53,11 @@ class Event(ABC):
     ):
         self.activity_length = activity_length
         self.wait_time_minutes = wait_time_minutes
-        self.start_time = start_time
         self.total_count = total_count
         self.parallel_activities = parallel_activities
         self.event_index = event_index
         self.locations = locations
-        self.breaks = filter(lambda x: x.event_type == self.activity_type(), breaks)
+        self.breaks = list(filter(lambda x: x.event_type == self.activity_type(), breaks))
 
     @staticmethod
     @abstractmethod
@@ -77,11 +75,11 @@ class Event(ABC):
         pass
 
     def create_activities(
-        self, team_count, starting_number: int = 0
+        self, team_count, start_time: datetime, starting_number: int = 0
     ) -> List[TeamActivity]:
         activities = []
         current_index = 0
-        current_time = self.start_time
+        current_time = start_time
         end_time = current_time + timedelta(minutes=self.activity_length)
         number = starting_number
 
@@ -123,6 +121,7 @@ class Event(ABC):
                     rejected_team_numbers=[],
                     number=number,
                     round=number // (team_count // self.parallel_activities + 1) + 1,
+                    team_number=None
                 )
             )
             number += 1
