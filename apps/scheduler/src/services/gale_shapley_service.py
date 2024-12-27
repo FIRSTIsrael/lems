@@ -57,7 +57,8 @@ def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamAct
     modified_score = team_minimum_delta(modified_sessions)
 
     if modified_score > current_score:
-        team_current_event_session.rejected_team_numbers.append(team.team_number)
+        if team.team_number is not None:
+            team_current_event_session.rejected_team_numbers.append(team.team_number)
         team_current_event_session.team_number = 0
         team.team_events = modified_sessions
         return team_current_event_session
@@ -70,10 +71,10 @@ def gale_shapley(
     teams: list[Team], sessions: list[TeamActivity]
 ) -> tuple[list[Team], list[TeamActivity]]:
     sessions_left = sessions.copy()
-    random.shuffle(sessions_left)
     amount_of_sessions_left = len(sessions_left)
 
     while amount_of_sessions_left > 0:
+        random.shuffle(sessions_left)
         current_session = sessions_left.pop()
         session_preference_function = get_session_preference_function(current_session)
         current_team = get_best_team_match(
@@ -83,5 +84,6 @@ def gale_shapley(
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
         amount_of_sessions_left = len(sessions_left)
+        #print(f"Sessions left: {amount_of_sessions_left}")
 
     return teams, sessions

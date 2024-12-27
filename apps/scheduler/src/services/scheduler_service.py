@@ -16,9 +16,9 @@ from services.gale_shapley_service import (
 )
 from repository.lems_repository import LemsRepository
 
-MIN_RUNS = 25
-MAX_RUNS = 100
-MIN_SCORE = 40
+MIN_RUNS = 1
+MAX_RUNS = 1
+MIN_SCORE = 0
 
 SECONDS_PER_MINUTE = 60
 
@@ -70,26 +70,27 @@ class SchedulerService:
         self, create_schedule_request: CreateScheduleRequest, team_count: int
     ) -> list[Event]:
         events = []
-        event_count = 0
+        event_index = 0
 
-        # TODO: Pass in start time for each event
         for _ in range(0, create_schedule_request.practice_matches_count):
             events.append(
                 self.create_event(
-                    create_schedule_request, "practice", team_count, event_count
+                    create_schedule_request, "practice", team_count, event_index
                 )
             )
+            event_index += 1
 
         for _ in range(0, create_schedule_request.ranking_matches_count):
             events.append(
                 self.create_event(
-                    create_schedule_request, "ranking", team_count, event_count
+                    create_schedule_request, "ranking", team_count, event_index
                 )
             )
+            event_index += 1
 
         events.append(
             self.create_event(
-                create_schedule_request, "judging", team_count, event_count
+                create_schedule_request, "judging", team_count, event_index
             )
         )
 
@@ -100,8 +101,7 @@ class SchedulerService:
         create_schedule_request: CreateScheduleRequest,
         event_type: str,
         team_count: int,
-        index: int,
-        start_time: datetime = None,
+        index: int
     ) -> Event:
         match event_type:
             case "practice":
@@ -178,6 +178,8 @@ class SchedulerService:
         events = self.create_events(create_schedule_request, len(teams))
         activities = self.create_activities(len(teams), events, create_schedule_request)
 
+        print(f"Created {len(activities)} activities")
+
         current_score = 0
         current_run = 0
         best_activities = []
@@ -187,11 +189,14 @@ class SchedulerService:
         ):
             current_run += 1
 
+            print(f"Starting Gale-Shapley run number: {current_run}")
             matched_teams, matched_activities = gale_shapley(
                 teams.copy(), activities.copy()
             )
 
             score = check_score(matched_teams)
+            print(f"Score for run {current_run}: {score}")
+
             if score > current_score:
                 current_score = score
                 best_activities = matched_activities

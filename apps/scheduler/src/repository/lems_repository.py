@@ -62,17 +62,15 @@ class LemsRepository:
         return team
 
     def insert_schedule(self, activities: list[TeamActivity]):
-        judging_activities = activities.filter(
-            lambda activity: activity.activity_type == ActivityType.JUDGING_SESSION
-        )
+        judging_activities = [activity for activity in activities if activity.activity_type == ActivityType.JUDGING_SESSION]
 
         for activity in judging_activities:
             self.insert_judging_session(activity)
 
-        match_activities = activities.filter(
-            lambda activity: activity.activity_type == ActivityType.PRACTICE_MATCH
-            or activity.activity_type == ActivityType.RANKING_MATCH
-        )
+        match_activities = [
+            activity for activity in activities 
+            if activity.activity_type == ActivityType.PRACTICE_MATCH or activity.activity_type == ActivityType.RANKING_MATCH
+        ]
 
         max_team_number = 0
         for i in match_activities:
@@ -80,9 +78,8 @@ class LemsRepository:
                 max_team_number = i.number
 
         for i in range(0, max_team_number):
-            current_match_activities = match_activities.filter(
-                lambda activity: activity.number == i
-            )
+            current_match_activities = [activity for activity in match_activities if activity.number == i]
+
             if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
                 self.insert_ranking_match(current_match_activities)
             else:
