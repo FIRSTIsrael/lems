@@ -13,7 +13,7 @@ export const DivisionSwatches = [
 
 export type Status = 'not-started' | 'in-progress' | 'completed';
 
-export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
+export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';
 
 export type MissionClauseType = 'boolean' | 'enum' | 'number';
 
