@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page, PDFOptions } from 'puppeteer';
+import puppeteer, { Browser, BrowserContext, Page, PDFOptions } from 'puppeteer';
 import jwt from 'jsonwebtoken';
 import * as db from '@lems/database';
 import { WithId } from 'mongodb';
@@ -7,6 +7,7 @@ import { SafeUser } from '@lems/types';
 class BrowserManager {
   private static instance: Browser | null = null;
   private static activePages: Set<Page> = new Set();
+  private static activeContexts: Set<BrowserContext> = new Set();
   private static isShuttingDown = false;
   private static initializationPromise: Promise<Browser> | null = null;
   private static pageTimeouts: Map<Page, NodeJS.Timeout> = new Map();
@@ -70,7 +71,9 @@ class BrowserManager {
     }
 
     const browser = await this.getBrowser();
-    const page = await browser.newPage();
+    const context = await browser.createBrowserContext();
+    this.activeContexts.add(context);
+    const page = await context.newPage();
 
     const timeout = setTimeout(() => {
       this.closePage(page).catch(console.error);
@@ -83,26 +86,27 @@ class BrowserManager {
   }
 
   public static async closePage(page: Page): Promise<void> {
-    try {
-      const timeout = this.pageTimeouts.get(page);
-      if (timeout) {
-        clearTimeout(timeout);
-        this.pageTimeouts.delete(page);
-      }
+    const timeout = this.pageTimeouts.get(page);
+    if (timeout) {
+      clearTimeout(timeout);
+      this.pageTimeouts.delete(page);
+    }
 
+    try {
       if (!page.isClosed()) {
+        const context = page.browserContext();
+
         await page
           .evaluate(() => {
             window.stop();
-            const elements = document.getElementsByTagName('*');
-            for (let i = 0; i < elements.length; i++) {
-              const element = elements[i];
-              element.remove();
-            }
+            document.documentElement.innerHTML = '';
           })
           .catch(console.error);
 
         await page.close();
+        await context.close();
+
+        this.activeContexts.delete(context);
       }
     } catch (error) {
       console.error('Error cleaning up page:', error);
@@ -127,6 +131,12 @@ class BrowserManager {
       );
       await Promise.all(closePagePromises);
       this.activePages.clear();
+
+      const closeContextPromises = Array.from(this.activeContexts).map(context =>
+        context.close().catch(console.error)
+      );
+      await Promise.all(closeContextPromises);
+      this.activeContexts.clear();
 
       if (this.instance) {
         await this.instance.close().catch(console.error);
@@ -180,10 +190,12 @@ const createAuthToken = async (user: WithId<SafeUser>): Promise<string> => {
   });
 };
 
-const setupPageAuthentication = async (page: Page, url: string, token: string): Promise<void> => {
+const setupPageAuthentication = async (page: Page, url: URL, token: string): Promise<void> => {
   await page.setExtraHTTPHeaders({ Authorization: `Bearer ${token}` });
-  await page.setCookie({
-    url,
+
+  const context = page.browserContext();
+  await context.setCookie({
+    domain: url.hostname,
     path: '/',
     name: 'auth-token',
     value: token,
@@ -201,14 +213,13 @@ export async function getLemsWebpageAsPdf(
   }
 ): Promise<Buffer> {
   let page: Page | null = null;
+  let pdfBuffer: Buffer | null = null;
 
   try {
     const domain = process.env.LEMS_DOMAIN;
-    if (!domain) {
-      throw new Error('LEMS_DOMAIN is not configured');
-    }
+    if (!domain) throw new Error('LEMS_DOMAIN is not configured');
 
-    const url = domain + path;
+    const url = new URL(domain + path);
     const user = await db.getUser({ username: 'admin' });
     const token = await createAuthToken(user);
 
@@ -219,22 +230,7 @@ export async function getLemsWebpageAsPdf(
 
     await setupPageAuthentication(page, url, token);
 
-    await page.setRequestInterception(true);
-    page.on('request', request => {
-      if (!page.isClosed()) {
-        // Only block media, websockets, and other non-essential resources
-        // Allow images, fonts, and stylesheets for proper PDF rendering
-        if (['media', 'websocket', 'other'].includes(request.resourceType())) {
-          request.abort();
-        } else {
-          request.continue();
-        }
-      } else {
-        request.abort();
-      }
-    });
-
-    await page.goto(url, {
+    await page.goto(url.toString(), {
       waitUntil: ['networkidle0', 'domcontentloaded'],
       timeout: 30000
     });
@@ -249,13 +245,30 @@ export async function getLemsWebpageAsPdf(
       75000
     );
 
-    return Buffer.from(data);
+    pdfBuffer = Buffer.from(data);
+    return pdfBuffer;
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw error;
   } finally {
-    if (page) {
-      await BrowserManager.closePage(page);
+    try {
+      if (page) {
+        await page
+          .evaluate(() => {
+            window.stop();
+            document.documentElement.innerHTML = '';
+          })
+          .catch(console.error);
+
+        await BrowserManager.closePage(page);
+      }
+
+      page = null;
+      pdfBuffer = null;
+
+      if (global.gc) global.gc();
+    } catch (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
     }
   }
 }
