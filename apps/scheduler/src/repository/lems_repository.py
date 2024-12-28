@@ -61,7 +61,16 @@ class LemsRepository:
         )
         return team
 
+    def get_lems_team_id(self, team_number: int) -> ObjectId:
+        lems_team_id = None
+        if team_number is not None:
+            object_id = self.get_team(team_number)
+            if object_id is not None:
+                lems_team_id = ObjectId(object_id["_id"])
+        return lems_team_id
+
     def insert_schedule(self, activities: list[TeamActivity]):
+        print("Inserting schedule to DB")
         judging_activities = [activity for activity in activities if activity.activity_type == ActivityType.JUDGING_SESSION]
 
         for activity in judging_activities:
@@ -81,9 +90,9 @@ class LemsRepository:
             current_match_activities = [activity for activity in match_activities if activity.number == i]
 
             if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
-                self.insert_ranking_match(current_match_activities)
+                self.insert_match("ranking", current_match_activities)
             else:
-                self.insert_practice_match(current_match_activities)
+                self.insert_match("practice", current_match_activities)
 
     def insert_judging_session(self, activity: TeamActivity):
         collection: Collection[JudgingSession] = self.db.sessions
@@ -91,7 +100,7 @@ class LemsRepository:
             "divisionId": self.divisionId,
             "number": activity.number,
             "roomId": activity.location.id,
-            "teamId": self.get_team(activity.team_number).get("._id"),
+            "teamId": self.get_lems_team_id(activity.team_number),
             "called": False,
             "queued": False,
             "status": "not-started",
@@ -113,7 +122,7 @@ class LemsRepository:
 
             participants.append(
                 {
-                    "teamId": self.get_team(activity.team_number).get("_id"),
+                    "teamId": self.get_lems_team_id(activity.team_number),
                     "tableId": activity.location.id,
                     "tableName": activity.location.name,
                     "queued": False,
@@ -128,13 +137,13 @@ class LemsRepository:
             "stage": stage,
             "round": activity.round,
             "number": activity.number,
-            "teamId": self.get_team(activity.team_number)._id,
+            "teamId": self.get_lems_team_id(activity.team_number),
             "status": "not-started",
             "scheduledTime": activity.start_time,
             "called": False,
             "participants": [
                 {
-                    "teamId": self.get_team(activity.team_number).get("_id"),
+                    "teamId": self.get_lems_team_id(activity.team_number),
                     "tableId": activity.location.id,
                     "tableName": activity.location.name,
                     "queued": False,
@@ -145,6 +154,3 @@ class LemsRepository:
             ],
         }
         collection.insert_one(document)
-
-    insert_ranking_match = partial(insert_match, stage="ranking")
-    insert_practice_match = partial(insert_match, stage="practice")

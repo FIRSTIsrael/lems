@@ -95,16 +95,17 @@ class Event(ABC):
             if len(self.breaks) > current_break_index:
                 current_break = self.breaks[current_break_index]
                 break_after = current_break.after
-                break_duration = current_break.duration
+                break_duration = current_break.duration_minutes
 
             if number == break_after:
                 current_time += timedelta(minutes=break_duration)
                 end_time += timedelta(minutes=break_duration)
+                current_break_index += 1
 
             if stagger and current_index == self.parallel_activities / 2:
                 current_index = 0
-                current_time += timedelta(minutes=cycle_time / 2)
-                end_time += timedelta(minutes=cycle_time / 2)
+                current_time += timedelta(minutes=cycle_time)
+                end_time += timedelta(minutes=cycle_time)
             elif current_index == self.parallel_activities:
                 current_index = 0
                 current_time += timedelta(minutes=cycle_time)

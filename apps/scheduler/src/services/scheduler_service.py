@@ -18,7 +18,7 @@ from repository.lems_repository import LemsRepository
 
 MIN_RUNS = 1
 MAX_RUNS = 1
-MIN_SCORE = 0
+MIN_SCORE = 10
 
 SECONDS_PER_MINUTE = 60
 
@@ -30,6 +30,7 @@ def check_score(teams: list[Team]) -> int:
 
     for team in teams:
         current_score = team_minimum_delta(team.team_events)
+        print(f"Team {team.team_number} has a score of {current_score}")
         if current_score < min_score:
             min_score = current_score
 
@@ -178,7 +179,7 @@ class SchedulerService:
         events = self.create_events(create_schedule_request, len(teams))
         activities = self.create_activities(len(teams), events, create_schedule_request)
 
-        print(f"Created {len(activities)} activities")
+        print(f"Created {len(activities)} activities for {len(teams)} teams")
 
         current_score = 0
         current_run = 0
@@ -190,8 +191,12 @@ class SchedulerService:
             current_run += 1
 
             print(f"Starting Gale-Shapley run number: {current_run}")
+
+            current_teams = self.get_teams()
+            current_activities = self.create_activities(len(teams), events, create_schedule_request)
+
             matched_teams, matched_activities = gale_shapley(
-                teams.copy(), activities.copy()
+                current_teams, current_activities
             )
 
             score = check_score(matched_teams)
