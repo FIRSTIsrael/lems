@@ -49,6 +49,11 @@ const websocket = (
     callback({ ok: true });
   });
 
+  socket.on('pingRooms', callback => {
+    const relevantRooms = Array.from(socket.rooms).filter(room => room !== socket.id);
+    callback({ ok: true, rooms: relevantRooms });
+  });
+
   socket.on('startJudgingSession', (...args) => handleStartSession(namespace, ...args));
 
   socket.on('abortJudgingSession', (...args) => handleAbortSession(namespace, ...args));

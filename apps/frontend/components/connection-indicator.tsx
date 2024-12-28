@@ -22,6 +22,12 @@ const config: {
     text: 'מתחבר...'
   },
   disconnected: {
+    rippleColor: '#f87171',
+    textColor: '#000000',
+    backgroundColor: '#f4f4f4',
+    text: 'מנותק'
+  },
+  error: {
     rippleColor: '#ffffff',
     textColor: '#ffffff',
     backgroundColor: '#dc2626',
