@@ -38,7 +38,6 @@ export const useWebsocket = (
     }
 
     socket.disconnect();
-    socket.disconnect();
     retryRef.current += 1;
     const delay = calculateDelay();
 
@@ -103,12 +102,11 @@ export const useWebsocket = (
       setConnectionStatus('connected');
 
       socket.emit('joinRoom', rooms, response => {
-        if (response.ok) {
-          heartbeat();
-        } else {
+        if (!response.ok) {
           setConnectionStatus('disconnected');
           reconnect();
         }
+        heartbeat();
       });
     };
 
@@ -128,7 +126,7 @@ export const useWebsocket = (
     if (wsevents) {
       for (const event of wsevents) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         socket.on(event.name, event.handler);
       }
     }
