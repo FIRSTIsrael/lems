@@ -37,7 +37,6 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({
         teams={teams}
         socket={socket}
       />
-      <ResultExportPaper division={division} />
     </>
   );
 };

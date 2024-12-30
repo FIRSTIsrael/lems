@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { Button, ButtonProps } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Division } from '@lems/types';
-import { getApiBase } from '../../../lib/utils/fetch';
+import { getApiBase } from '../../lib/utils/fetch';
 
 interface ExportActionProps extends ButtonProps {
   division: WithId<Division>;
