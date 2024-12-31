@@ -90,6 +90,10 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
+  const handleScheduleTimeChange = (match: WithId<RobotGameMatch>) => {
+    enqueueSnackbar('הלוז עודכן.', { variant: 'info' });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['field', 'pit-admin', 'audience-display'],
@@ -104,7 +108,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }, 
+      { name: 'ScheduledTimeChanged', handler: handleScheduleTimeChange },
     ]
   );
 

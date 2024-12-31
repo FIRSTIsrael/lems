@@ -130,6 +130,10 @@ const Page: NextPage<Props> = ({
     });
   };
 
+  const handleScheduleTimeChange = () => {
+    enqueueSnackbar('הלוז עודכן.', { variant: 'info' });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['judging', 'pit-admin', 'audience-display'],
@@ -162,7 +166,8 @@ const Page: NextPage<Props> = ({
         }
       },
       { name: 'presentationUpdated', handler: setDivisionState },
-      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
+      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled },
+      { name: 'ScheduledTimeChanged', handler: handleScheduleTimeChange }
     ]
   );
 

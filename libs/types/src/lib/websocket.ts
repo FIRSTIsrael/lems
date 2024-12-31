@@ -79,6 +79,8 @@ export interface WSServerEmittedEvents {
   presentationUpdated: (divisionState: DivisionState) => void;
 
   awardsUpdated: (awards: Array<WithId<Award>>) => void;
+
+  ScheduledTimeChanged: () => void;
 }
 
 export interface WSClientEmittedEvents {
