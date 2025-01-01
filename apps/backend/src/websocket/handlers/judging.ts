@@ -127,8 +127,7 @@ export const handleUpdateSessionTeam = async (
   const oldSession = { ...session };
   session = await db.getSession({ _id: new ObjectId(sessionId) });
   namespace.to('judging').emit('judgingSessionUpdated', session);
-  if (session.scheduledTime !== oldSession.scheduledTime)
-    namespace.to('judging').emit('ScheduledTimeChanged');
+  namespace.to('judging').emit('judgingSessionTeamUpdated', session);
 };
 
 export const handleUpdateSession = async (
