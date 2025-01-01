@@ -117,6 +117,8 @@ const Page: NextPage<Props> = ({
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
       { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled },
+      { name: 'judgingDeliberationStarted', handler: updateDeliberation },
+      { name: 'judgingDeliberationCompleted', handler: updateDeliberation },
       { name: 'judgingDeliberationStatusChanged', handler: updateDeliberation }
     ]
   );
