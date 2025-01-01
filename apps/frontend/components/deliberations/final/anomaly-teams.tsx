@@ -10,7 +10,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TableHead
+  TableHead,
+  Box
 } from '@mui/material';
 import { DeliberationAnomaly } from '@lems/types';
 import AnomalyIcon from './anomaly-icon';
@@ -54,11 +55,13 @@ const AnomalyTeams: React.FC<AnomalyTeamsProps> = ({ teams, anomalies }) => {
                   <TableCell align="center">{anomalies[0].team.number}</TableCell>
                   <TableCell align="center">{anomalies[0].team.totalRank}</TableCell>
                   <TableCell align="center">
-                    <Stack direction="row" flexWrap="wrap">
-                      {anomalies.map((anomaly, index) => (
-                        <AnomalyIcon key={index} anomaly={anomaly} />
-                      ))}
-                    </Stack>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                      <Stack direction="row" flexWrap="wrap">
+                        {anomalies.map((anomaly, index) => (
+                          <AnomalyIcon key={index} anomaly={anomaly} />
+                        ))}
+                      </Stack>
+                    </Box>
                   </TableCell>
                 </TableRow>
               );

@@ -1,8 +1,9 @@
 import { IconButton, Tooltip } from '@mui/material';
 import KeyboardDoubleArrowUpRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowUpRounded';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
-import { DeliberationAnomaly, CategoryColors } from '@lems/types';
+import { DeliberationAnomaly } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
+const AnomalyIconColor = '#0071e3';
 
 interface AnomalyIconProps {
   anomaly: DeliberationAnomaly;
@@ -19,7 +20,7 @@ const AnomalyIcon: React.FC<AnomalyIconProps> = ({ anomaly, redirect = true }) =
         {...(redirect
           ? { href: `/lems/team/${anomaly.teamId}/rubric/${anomaly.category}`, target: '_blank' }
           : {})}
-        sx={{ width: 26, height: 26, color: CategoryColors[anomaly.category] }}
+        sx={{ width: 26, height: 26, color: AnomalyIconColor }}
       >
         {anomaly.reason === 'low-rank' ? (
           <KeyboardDoubleArrowDownRoundedIcon />
