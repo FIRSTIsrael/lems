@@ -1,12 +1,7 @@
-import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Division, DivisionState, JudgingCategoryTypes } from '@lems/types';
-import { localizedJudgingCategory } from '@lems/season';
-import { apiFetch } from '../../lib/utils/fetch';
-import ExportAction from './export-action';
 import {
   Button,
   Paper,
@@ -14,13 +9,14 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  Typography
+  DialogTitle
 } from '@mui/material';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import PublishIcon from '@mui/icons-material/Publish';
 import Grid from '@mui/material/Grid2';
-import { red } from '@mui/material/colors';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DownloadIcon from '@mui/icons-material/Download';
+import PublishIcon from '@mui/icons-material/Publish';
+import { Division, DivisionState } from '@lems/types';
+import { apiFetch } from '../../lib/utils/fetch';
 
 interface DivisionPanelProps {
   division: WithId<Division>;
@@ -65,32 +61,47 @@ const DivisionPanel: React.FC<DivisionPanelProps> = ({
     });
   };
 
-  const handleDownloadResults = () => {
-    enqueueSnackbar('הורדת תוצאות האירוע תהיה זמינה בקרוב', { variant: 'info' });
-  };
-
   return (
     <>
-      <Paper sx={{ borderRadius: 3, boxShadow: 2, p: 3, textAlign: 'center' }}>
-        <Typography variant="h1" pb={3}>
-          ניהול האירוע
-        </Typography>
-        <Grid container spacing={2}>
-          {JudgingCategoryTypes.map(category => (
-            <React.Fragment key={category}>
-              <Grid size={6}>
-                <ExportAction division={division} path={`/rubrics/${category}`} sx={{ m: 1 }}>
-                  ייצוא מחווני {localizedJudgingCategory[category].name}
-                </ExportAction>
-              </Grid>
-            </React.Fragment>
-          ))}
-
-          <Grid size={6}>
-            <ExportAction division={division} path="/scores" sx={{ m: 1 }}>
-              ייצוא תוצאות זירה
-            </ExportAction>
-          </Grid>
+      <Grid container component={Paper} p={2} alignItems="center" spacing={4}>
+        <Grid
+          size={{
+            lg: 4,
+            md: 6,
+            xs: 12
+          }}
+        >
+          <Button
+            variant="contained"
+            startIcon={<DoneAllIcon />}
+            disabled={divisionState.completed}
+            onClick={e => {
+              e.preventDefault();
+              setEndDivisionDialogOpen(true);
+            }}
+            fullWidth
+          >
+            סיום האירוע
+          </Button>
+        </Grid>
+        <Grid
+          size={{
+            lg: 4,
+            md: 6,
+            xs: 12
+          }}
+        >
+          <Button variant="contained" startIcon={<DownloadIcon />} fullWidth disabled>
+            הורדת תוצאות האירוע
+          </Button>
+        </Grid>
+        <Grid
+          size={{
+            lg: 4,
+            md: 6,
+            xs: 12
+          }}
+        >
           <Button
             variant="contained"
             startIcon={<PublishIcon />}
@@ -103,21 +114,8 @@ const DivisionPanel: React.FC<DivisionPanelProps> = ({
           >
             פרסום התוצאות ב-Dashboard
           </Button>
-          <Button
-            variant="contained"
-            startIcon={<DoneAllIcon />}
-            disabled={divisionState.completed}
-            onClick={e => {
-              e.preventDefault();
-              setEndDivisionDialogOpen(true);
-            }}
-            fullWidth
-            sx={{ backgroundColor: red['A200'], color: 'white' }}
-          >
-            סיום האירוע
-          </Button>
         </Grid>
-      </Paper>
+      </Grid>
       <Dialog
         open={endDivisionDialogOpen}
         onClose={() => setEndDivisionDialogOpen(false)}
