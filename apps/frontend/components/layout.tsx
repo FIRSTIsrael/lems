@@ -70,7 +70,7 @@ const Layout: React.FC<LayoutProps> = ({
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
 
-  const isError = error || connectionStatus === 'disconnected';
+  const isError = error || connectionStatus === 'error';
   const isEventUser =
     (division?.event && user?.isAdmin) ||
     division?.event?.eventUsers.includes(user?.role as EventUserAllowedRoles);

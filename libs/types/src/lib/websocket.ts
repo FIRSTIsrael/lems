@@ -186,6 +186,10 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  pingRooms: (
+    callback: (response: { rooms: Array<string>; ok: boolean; error?: string }) => void
+  ) => void;
+
   createTicket: (
     divisionId: string,
     teamId: string | null,
@@ -270,7 +274,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface WSInterServerEvents {
   // ...
 }
