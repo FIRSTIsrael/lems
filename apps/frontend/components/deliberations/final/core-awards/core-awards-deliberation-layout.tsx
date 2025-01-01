@@ -9,7 +9,6 @@ import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
 import CoreAwardsDeliberationGrid from './core-awards-deliberation-grid';
 import TeamPool from '../../team-pool';
 import AwardList from '../../award-list';
-import AnomalyTeams from '../anomaly-teams';
 
 import { DeliberationContext } from '../../deliberation';
 
@@ -80,7 +79,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
         />
       </Grid>
       {/* 1.5 x number of lists*/}
-      <Grid size={4.5}>
+      <Grid size={5}>
         <Stack direction="row" spacing="2" gap={2} height="100%">
           {JudgingCategoryTypes.map((category, index) => (
             <AwardList
@@ -101,10 +100,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           ))}
         </Stack>
       </Grid>
-      <Grid size={2}>
-        <AnomalyTeams teams={teams} anomalies={anomalies ?? []} />
-      </Grid>
-      <Grid size={5.5}>
+      <Grid size={7}>
         <ScoresPerRoomChart divisionId={deliberation.divisionId} height={210} />
       </Grid>
     </Grid>

@@ -22,8 +22,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
-
-      acc[award.name] = copy.sort((a, b) => a.index - b.index);
+      acc[award.name] = copy.sort((a, b) => a.place - b.place);
       return acc;
     },
     {} as Record<AwardNames, Array<WithId<Award>>>
@@ -42,24 +41,9 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
     winners => !!winners.every(w => typeof w.winner !== 'string' && w.winner?._id)
   );
 
-  const sortedAwards = Object.keys(restAwards)
-    .sort((a, b) => awardsByName[a as AwardNames][0].index - awardsByName[b as AwardNames][0].index)
-    .map(award => {
-      const _award = award as AwardNames;
-      return (
-        <Grid key={award} size={2}>
-          <AwardList
-            title={`פרס ${localizedAward[_award].name}`}
-            length={awardsByName[_award].length}
-            withIcons
-            trophyCount={awardsByName[_award].length}
-            disabled={true}
-            pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
-            id={_award}
-          />
-        </Grid>
-      );
-    });
+  const sortedAwards = Object.keys(restAwards).sort(
+    (a, b) => awardsByName[a as AwardNames][0].index - awardsByName[b as AwardNames][0].index
+  );
 
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
@@ -72,7 +56,22 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
       </Grid>
       {awardsLoaded && (
         <>
-          {sortedAwards}
+          {sortedAwards.map(award => {
+            const _award = award as AwardNames;
+            return (
+              <Grid key={award} size={2}>
+                <AwardList
+                  title={`פרס ${localizedAward[_award].name}`}
+                  length={awardsByName[_award].length}
+                  withIcons
+                  trophyCount={awardsByName[_award].length}
+                  disabled={true}
+                  pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
+                  id={_award}
+                />
+              </Grid>
+            );
+          })}
           {advancement && advancement.length > 0 && (
             <Grid size={4}>
               <Stack component={Paper} p={2} spacing={1}>

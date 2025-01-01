@@ -134,7 +134,8 @@ export const useDeliberationTeams = (
       normalizedTotalScore = Number(normalized.toFixed(2));
     }
 
-    let consistency = robotConsistency?.find((row: any) => row.id === team._id)?.relStdDev || 0;
+    const stdDev = robotConsistency?.find((row: any) => row.id === team._id)?.relStdDev;
+    let consistency = stdDev ? 100 - stdDev : 0;
     consistency = Number(consistency.toFixed(2));
 
     return {

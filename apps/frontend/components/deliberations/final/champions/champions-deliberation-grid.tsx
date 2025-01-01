@@ -1,7 +1,7 @@
 import { ObjectId, WithId } from 'mongodb';
 import { Paper, Box, Avatar, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { DeliberationAnomaly } from '@lems/types';
+import { DeliberationAnomaly, SELECTED_TEAM_COLOR } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
 import AnomalyIcon from '../anomaly-icon';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
@@ -208,9 +208,9 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
         sx={{
           maxHeight: 500,
           '& .selected-team': {
-            backgroundColor: getBackgroundColor('#32a84c', 'light'),
+            backgroundColor: getBackgroundColor(SELECTED_TEAM_COLOR, 'light'),
             '&:hover': {
-              backgroundColor: getHoverBackgroundColor('#32a84c', 'light')
+              backgroundColor: getHoverBackgroundColor(SELECTED_TEAM_COLOR, 'light')
             }
           },
           '& .MuiDataGrid-columnHeaderTitle': {

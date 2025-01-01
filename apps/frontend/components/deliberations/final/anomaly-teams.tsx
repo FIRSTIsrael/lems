@@ -53,7 +53,9 @@ const AnomalyTeams: React.FC<AnomalyTeamsProps> = ({ teams, anomalies }) => {
               return (
                 <TableRow key={anomalies[0].teamId.toString()}>
                   <TableCell align="center">{anomalies[0].team.number}</TableCell>
-                  <TableCell align="center">{anomalies[0].team.totalRank}</TableCell>
+                  <TableCell align="center">
+                    {Number(anomalies[0].team.totalRank.toFixed(2))}
+                  </TableCell>
                   <TableCell align="center">
                     <Box display="flex" justifyContent="center" alignItems="center">
                       <Stack direction="row" flexWrap="wrap">
