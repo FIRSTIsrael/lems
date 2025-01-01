@@ -18,7 +18,9 @@ import {
   CoreValuesForm,
   DivisionState,
   JudgingDeliberation,
-  Award
+  Award,
+  RobotGameMatch,
+  RobotGameMatchParticipant
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
@@ -130,9 +132,9 @@ const Page: NextPage<Props> = ({
     });
   };
 
-  const handleScheduleTimeChange = () => {
-    enqueueSnackbar('הלוז עודכן.', { variant: 'info' });
-  };
+  const handleScheduleTimeChange = (match: WithId<RobotGameMatch>, updatedParticipant: RobotGameMatchParticipant) => {
+      enqueueSnackbar(`קבוצה במקצה ${match.number} בשולחן ${updatedParticipant.tableName} עודכנה`, { variant: 'info' });
+    };
 
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),

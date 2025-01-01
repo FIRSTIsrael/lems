@@ -204,11 +204,11 @@ export const handleUpdateMatchTeams = async (
   }
 
   console.log(`🖊️ Updating teams for match ${matchId} in division ${divisionId}`);
-
+  
   newTeams.forEach(async newTeam => {
     const participantIndex = match.participants.findIndex(
       p => p.tableId.toString() === newTeam.tableId
-    );
+    );    
     await db.updateMatch(
       { _id: match._id },
       {
@@ -224,8 +224,17 @@ export const handleUpdateMatchTeams = async (
   const oldMatch = {...match};
   match = await db.getMatch({ _id: new ObjectId(matchId) });
   namespace.to('field').emit('matchUpdated', match);
-  if (match.scheduledTime != oldMatch.scheduledTime)
-    namespace.to('field').emit('ScheduledTimeChanged');
+  if (match.scheduledTime != oldMatch.scheduledTime) {
+    const updatedParticipants = match.participants.filter((participant, index) => {
+      const oldParticipant = oldMatch.participants[index];
+      if (!participant.teamId || !oldParticipant.teamId) return false;
+      return participant.teamId.toString() !== oldParticipant.teamId.toString();
+    });
+
+    updatedParticipants.forEach(participant => {
+      namespace.to('field').emit('matchParticipantTeamUpdated', match, participant);
+    });
+  }
 };
 
 export const handleUpdateMatchParticipant = async (
