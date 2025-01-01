@@ -167,7 +167,7 @@ const Page: NextPage<Props> = ({
       },
       { name: 'presentationUpdated', handler: setDivisionState },
       { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled },
-      { name: 'ScheduledTimeChanged', handler: handleScheduleTimeChange }
+      { name: 'judgingSessionTeamUpdated', handler: handleScheduleTimeChange }
     ]
   );
 

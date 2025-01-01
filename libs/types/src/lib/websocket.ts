@@ -80,7 +80,10 @@ export interface WSServerEmittedEvents {
 
   awardsUpdated: (awards: Array<WithId<Award>>) => void;
 
-  ScheduledTimeChanged: () => void;
+  matchParticipantTeamUpdated : (match: RobotGameMatch, participants: RobotGameMatchParticipant) => void;
+
+  judgingSessionTeamUpdated : (session: JudgingSession) => void;
+
 }
 
 export interface WSClientEmittedEvents {
