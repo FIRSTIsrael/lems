@@ -1,7 +1,7 @@
 import React from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Box, Avatar, Typography } from '@mui/material';
-import ManageIcon from '@mui/icons-material/WidgetsRounded';
+import DownloadIcon from '@mui/icons-material/Download';
 import Grid from '@mui/material/Grid2';
 import { Division, JudgingCategoryTypes } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
@@ -31,10 +31,10 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
             mr: 1
           }}
         >
-          <ManageIcon sx={{ fontSize: '1rem' }} />
+          <DownloadIcon sx={{ fontSize: '1.25rem' }} />
         </Avatar>
         <Typography variant="h2" fontSize="1.25rem">
-          ניהול
+          ייצוא תוצאות האירוע
         </Typography>
       </Box>
       <Grid container spacing={2}>
@@ -42,7 +42,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
           <React.Fragment key={category}>
             <Grid size={6}>
               <ExportAction division={division} path={`/rubrics/${category}`} sx={{ m: 1 }}>
-                ייצוא מחווני {localizedJudgingCategory[category].name}
+                מחווני {localizedJudgingCategory[category].name}
               </ExportAction>
             </Grid>
           </React.Fragment>
@@ -50,7 +50,7 @@ const ResultExportPaper: React.FC<ResultExportPaperProps> = ({ division }) => {
 
         <Grid size={6}>
           <ExportAction division={division} path="/scores" sx={{ m: 1 }}>
-            ייצוא תוצאות זירה
+            תוצאות זירה
           </ExportAction>
         </Grid>
       </Grid>

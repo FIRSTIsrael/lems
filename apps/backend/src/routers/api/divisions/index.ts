@@ -99,7 +99,7 @@ router.use(
   cvFormsRouter
 );
 
-router.use('/:divisionId/export', roleValidator('judge-advisor'), exportRouter);
+router.use('/:divisionId/export', roleValidator('tournament-manager'), exportRouter);
 
 router.use(
   '/:divisionId/insights',
