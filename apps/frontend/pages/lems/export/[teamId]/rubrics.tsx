@@ -14,9 +14,11 @@ interface Props {
 }
 
 const ExportRubricsPage: NextPage<Props> = ({ user, division, team, rubrics }) => {
+  const rubricsToExport = rubrics.filter(rubric => rubric.status === 'ready');
+
   return (
     <RoleAuthorizer user={user} allowedRoles={[]}>
-      {rubrics.map(rubric => {
+      {rubricsToExport.map(rubric => {
         if (rubric.category === 'core-values') return;
 
         return (
