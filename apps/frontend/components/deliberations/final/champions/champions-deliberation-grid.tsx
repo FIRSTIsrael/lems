@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from 'mongodb';
-import { Paper, Box, Avatar, Stack } from '@mui/material';
+import { Paper, Box, Avatar, Stack, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DeliberationAnomaly, SELECTED_TEAM_COLOR } from '@lems/types';
 import { cvFormSchema } from '@lems/season';
@@ -77,10 +77,10 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       align: 'center'
     },
     {
+      ...defaultColumnSettings,
       field: 'totalRank',
       headerName: 'ממוצע דירוג',
-      cellClassName: 'total-cell',
-      ...defaultColumnSettings
+      cellClassName: 'total-cell'
     },
     {
       field: 'anomaly',
@@ -98,46 +98,55 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
       }
     },
     {
+      ...defaultColumnSettings,
       field: 'cvRank',
-      headerName: 'ערכי ליבה',
-      ...defaultColumnSettings
+      headerName: 'ערכי ליבה'
     },
     {
+      ...defaultColumnSettings,
       field: 'ipRank',
-      headerName: 'פרויקט החדשנות',
-      ...defaultColumnSettings
+      headerName: 'פרויקט החדשנות'
     },
     {
+      ...defaultColumnSettings,
       field: 'rdRank',
-      headerName: 'תכנון הרובוט',
-      ...defaultColumnSettings
+      headerName: 'תכנון הרובוט'
     },
     {
+      ...defaultColumnSettings,
       field: 'rgRank',
-      headerName: 'משחק הרובוט',
-      ...defaultColumnSettings
+      headerName: 'משחק הרובוט'
     },
     ...rankingRounds.map(
       round =>
         ({
+          ...defaultColumnSettings,
           field: `gp-${round}`,
           headerName: `GP ${round}`,
-          type: 'number',
-          headerAlign: 'center',
-          align: 'center',
-          width: 60
+          width: 60,
+          renderCell: params => {
+            return (
+              <Typography
+                component="span"
+                fontWeight={Number(params.value) === 3 ? undefined : 700}
+                fontSize="0.875rem"
+              >
+                {params.value}
+              </Typography>
+            );
+          }
         }) as GridColDef
     ),
     {
+      ...defaultColumnSettings,
       field: 'maxScore',
-      headerName: 'ניקוד מירבי',
-      ...defaultColumnSettings
+      headerName: 'ניקוד מירבי'
     },
     {
+      ...defaultColumnSettings,
       field: 'consistency',
       type: 'string',
       headerName: 'עקביות הרובוט',
-      ...defaultColumnSettings,
       width: 70,
       valueGetter: (value: number, row) => Number(value.toFixed(2)) + '%'
     },

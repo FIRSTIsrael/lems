@@ -93,25 +93,25 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ]
       : []),
     {
+      ...defaultColumnSettings,
       field: 'teamNumber',
       headerName: 'מספר קבוצה',
-      ...defaultColumnSettings,
       type: 'string',
       width: 80,
       valueGetter: (value, row) => row.team?.number
     },
     {
+      ...defaultColumnSettings,
       field: 'room',
       headerName: 'חדר',
-      ...defaultColumnSettings,
       type: 'string',
       width: 70
     },
     ...fields.map(
       field =>
         ({
-          ...field,
           ...defaultColumnSettings,
+          ...field,
           width: 75
         }) as GridColDef
     ),
@@ -137,9 +137,9 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         )
       : []),
     {
+      ...defaultColumnSettings,
       field: 'sum',
       headerName: 'סה"כ',
-      ...defaultColumnSettings,
       cellClassName: 'sum-cell'
     },
     ...(showNormalizedScores
