@@ -221,7 +221,7 @@ export const handleUpdateMatchTeams = async (
 
   callback({ ok: true });
 
-  const oldMatch = match;
+  const oldMatch = {...match};
   match = await db.getMatch({ _id: new ObjectId(matchId) });
   namespace.to('field').emit('matchUpdated', match);
   if (match.scheduledTime != oldMatch.scheduledTime)
