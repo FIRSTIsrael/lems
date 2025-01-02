@@ -9,8 +9,6 @@ interface ExportAwardProps {
   team: WithId<Team>;
 }
 
-// 43.3%
-
 const ExportAward: React.FC<ExportAwardProps> = ({ division, team }) => {
   return (
     <Box
@@ -26,10 +24,10 @@ const ExportAward: React.FC<ExportAwardProps> = ({ division, team }) => {
       }}
     >
       <Box width="100%" height="100%" display="flex">
-        <Box width="31.5%" position="relative">
+        <Box width="31%" position="relative">
           <Image
             alt=""
-            src="/assets/awards/AWARD_BG.svg"
+            src="/assets/awards/PARTICIPATION_AWARD_BG.svg"
             fill
             style={{
               objectFit: 'contain'
