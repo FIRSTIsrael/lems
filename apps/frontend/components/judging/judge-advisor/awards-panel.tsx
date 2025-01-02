@@ -8,7 +8,6 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import ResultExportPaper from './result-export-paper';
 import DeliberationsPaper from './deliberations-paper';
 import AwardsPaper from './awards-paper';
 
@@ -37,7 +36,6 @@ const AwardsPanel: React.FC<AwardsPanelProps> = ({
         teams={teams}
         socket={socket}
       />
-      <ResultExportPaper division={division} />
     </>
   );
 };
