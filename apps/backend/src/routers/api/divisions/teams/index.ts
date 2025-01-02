@@ -15,8 +15,6 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/:teamId', (req: Request, res: Response) => {
-  console.log(req.params.teamId, req.params.divisionId);
-
   db.getTeam({
     _id: new ObjectId(req.params.teamId),
     divisionId: new ObjectId(req.params.divisionId)
