@@ -47,7 +47,15 @@ router.get(
     }
 
     const pdf = await getLemsWebpageAsPdf(
-      `/lems/export/${team._id}/scoresheets?divisionId=${team.divisionId}`
+      `/lems/export/${team._id}/scoresheets?divisionId=${team.divisionId}`,
+      {
+        margin: {
+          top: '0in',
+          right: '0in',
+          bottom: '0in',
+          left: '0in'
+        }
+      }
     );
 
     res.contentType('application/pdf');
@@ -58,7 +66,21 @@ router.get(
 router.get(
   '/awards',
   asyncHandler(async (req: Request, res: Response) => {
-    res.status(501).json({ error: 'NOT IMPLEMENTED' });
+    const team = await db.getTeam({
+      divisionId: new ObjectId(req.division._id),
+      number: Number(req.teamNumber)
+    });
+    if (!team) {
+      res.status(400).json({ error: 'BAD_REQUEST' });
+      return;
+    }
+
+    const pdf = await getLemsWebpageAsPdf(
+      `/lems/export/${team._id}/awards?divisionId=${team.divisionId}`
+    );
+
+    res.contentType('application/pdf');
+    res.send(pdf);
   })
 );
 
