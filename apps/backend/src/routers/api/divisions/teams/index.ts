@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import rubricsRouter from './rubrics';
 import scoresheetsRouter from './scoresheets';
+import awardsRouter from './awards';
 import roleValidator from '../../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
@@ -14,6 +15,8 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/:teamId', (req: Request, res: Response) => {
+  console.log(req.params.teamId, req.params.divisionId);
+
   db.getTeam({
     _id: new ObjectId(req.params.teamId),
     divisionId: new ObjectId(req.params.divisionId)
@@ -27,6 +30,8 @@ router.use(
   roleValidator(['judge', 'lead-judge', 'judge-advisor']),
   rubricsRouter
 );
+
+router.use('/:teamId/awards', roleValidator([]), awardsRouter);
 
 router.use('/:teamId/scoresheets', roleValidator(['head-referee', 'referee']), scoresheetsRouter);
 

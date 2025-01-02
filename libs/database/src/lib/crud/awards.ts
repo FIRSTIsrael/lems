@@ -10,6 +10,10 @@ export const getDivisionAwards = (divisionId: ObjectId) => {
   return db.collection<Award>('awards').find({ divisionId }).toArray();
 };
 
+export const getTeamAwards = (teamId: ObjectId) => {
+  return db.collection<Award>('awards').find({ 'winner._id': teamId }).toArray();
+};
+
 export const addAward = (award: Award) => {
   return db.collection<Award>('awards').insertOne(award);
 };

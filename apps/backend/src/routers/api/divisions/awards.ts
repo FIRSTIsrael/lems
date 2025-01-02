@@ -18,10 +18,17 @@ router.get(
 );
 
 router.post('/', roleValidator(['judge-advisor']), (req: Request, res: Response) => {
-  const awards = req.body.map((award: Award) => ({
-    ...award,
-    divisionId: new ObjectId(award.divisionId)
-  }));
+  const awards = req.body.map((award: Award) => {
+    if (award.winner && typeof award.winner !== 'string') {
+      award.winner._id = new ObjectId(award.winner._id);
+    }
+
+    return {
+      ...award,
+      divisionId: new ObjectId(award.divisionId)
+    };
+  });
+
   db.addAwards(awards).then(awards => {
     res.json(awards);
   });
