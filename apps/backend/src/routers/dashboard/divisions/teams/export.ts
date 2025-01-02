@@ -47,15 +47,7 @@ router.get(
     }
 
     const pdf = await getLemsWebpageAsPdf(
-      `/lems/export/${team._id}/scoresheets?divisionId=${team.divisionId}`,
-      {
-        margin: {
-          top: '0in',
-          right: '0in',
-          bottom: '0in',
-          left: '0in'
-        }
-      }
+      `/lems/export/${team._id}/scoresheets?divisionId=${team.divisionId}`
     );
 
     res.contentType('application/pdf');
@@ -76,7 +68,18 @@ router.get(
     }
 
     const pdf = await getLemsWebpageAsPdf(
-      `/lems/export/${team._id}/awards?divisionId=${team.divisionId}`
+      `/lems/export/${team._id}/awards?divisionId=${team.divisionId}`,
+      {
+        format: 'A4',
+        landscape: true,
+        margin: {
+          top: '0in',
+          right: '0in',
+          bottom: '0in',
+          left: '0in'
+        },
+        printBackground: true
+      }
     );
 
     res.contentType('application/pdf');

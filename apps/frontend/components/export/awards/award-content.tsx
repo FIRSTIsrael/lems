@@ -33,20 +33,20 @@ const ExportAwardContent: React.FC<ExportAwardContentProps> = ({ division, team,
         <Image alt="" src="/assets/awards/FLL_CHALLENGE_LOGO.svg" width={150} height={100} />
         <Image alt="" src="/assets/awards/SUBMERGED_LOGO.svg" width={100} height={100} />
       </Stack>
-      <Typography variant="h1" align="center" fontSize="2.6rem">
-        {awardTitle}
+      <Typography align="center" fontSize="2.6rem" fontWeight={700}>
+        {`${awardTitle}`}
       </Typography>
-      <Typography align="center" fontSize="1.75rem" mb={3.5}>
+      <Typography align="center" fontSize="1.75rem" mb={3.5} fontWeight={400}>
         {award.isParticipation ? '' : 'מוענק לקבוצה'}
       </Typography>
       <Typography align="center" variant="h2" fontSize="2.25rem" mb={0.5}>
         {`${team.name} #${team.number}`}
       </Typography>
       <Box width="500px" height="2px" bgcolor="#000" />
-      <Typography variant="h2" align="center" fontSize="1.25rem" mt={1} gutterBottom>
+      <Typography align="center" fontSize="1.25rem" mt={1} gutterBottom>
         {localizeDivisionTitle(division)}
       </Typography>
-      <Typography variant="h2" align="center" fontSize="1.15rem" mb={3}>
+      <Typography align="center" fontSize="1.15rem" mb={3}>
         {`עונת ${SEASON_NAME}`}
       </Typography>
       <Stack direction="row" spacing={6} width="100%" alignItems="center" justifyContent="center">
