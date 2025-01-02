@@ -39,10 +39,10 @@ const CompareRubricRemarks: React.FC<CompareRubricRemarksProps> = ({ teamId }) =
             </Grid>
             <Grid container size={8.5}>
               <Grid size={6}>
-                <Typography align="left">{rubric?.data?.feedback.greatJob}</Typography>
+                <Typography align="right">{rubric?.data?.feedback.greatJob}</Typography>
               </Grid>
               <Grid size={6}>
-                <Typography align="left">{rubric?.data?.feedback.thinkAbout}</Typography>
+                <Typography align="right">{rubric?.data?.feedback.thinkAbout}</Typography>
               </Grid>
             </Grid>
           </>

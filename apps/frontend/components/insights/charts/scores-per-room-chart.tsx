@@ -47,8 +47,8 @@ const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ divisionId, hei
           >
             <defs>
               <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#d48794" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#d48794" stopOpacity={0} />
+                <stop offset="5%" stopColor="#C4A3BF" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#C4A3BF" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
@@ -60,7 +60,7 @@ const ScoresPerRoomChart: React.FC<ScoresPerRoomChartProps> = ({ divisionId, hei
               name="ממוצע ניקוד"
               type="monotone"
               dataKey="average"
-              stroke="#d48794"
+              stroke="#C4A3BF"
               fillOpacity={1}
               fill="url(#colorScore)"
             />

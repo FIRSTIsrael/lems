@@ -130,5 +130,15 @@ export const CategoryColors: Record<JudgingCategory, string> = {
   'core-values': '#FCD3C1'
 };
 
+export const DarkCategoryColors: Record<JudgingCategory, string> = {
+  'innovation-project': '#005ba9',
+  'robot-design': '#007533',
+  'core-values': '#e2000b'
+};
+
+// Deliberation colors
+export const SUGGESTED_TEAM_COLOR = '#90caf9';
+export const SELECTED_TEAM_COLOR = '#32a84c';
+
 export const INSPECTION_TIMER_LENGTH = 90; //seconds
 export const SHOW_INSPECTION_TIMER = true;

@@ -41,6 +41,10 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
     winners => !!winners.every(w => typeof w.winner !== 'string' && w.winner?._id)
   );
 
+  const sortedAwards = Object.keys(restAwards).sort(
+    (a, b) => awardsByName[a as AwardNames][0].index - awardsByName[b as AwardNames][0].index
+  );
+
   return (
     <Grid container pt={2} columnSpacing={4} rowSpacing={2} mx="10%">
       <Grid size={12}>
@@ -52,7 +56,7 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
       </Grid>
       {awardsLoaded && (
         <>
-          {Object.keys(restAwards).map(award => {
+          {sortedAwards.map(award => {
             const _award = award as AwardNames;
             return (
               <Grid key={award} size={2}>
