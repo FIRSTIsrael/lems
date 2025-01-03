@@ -70,10 +70,9 @@ def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamAct
 def gale_shapley(
     teams: list[Team], sessions: list[TeamActivity]
 ) -> tuple[list[Team], list[TeamActivity]]:
-    sessions_left = sessions.copy()
-    amount_of_sessions_left = len(sessions_left)
+    sessions_left = [session for session in sessions if session.team_number is None]
 
-    while amount_of_sessions_left > 0:
+    while len(sessions_left) > 0:
         random.shuffle(sessions_left)
         current_session = sessions_left.pop()
         session_preference_function = get_session_preference_function(current_session)
@@ -83,6 +82,5 @@ def gale_shapley(
         session_left_alone = check_team_preference(current_team, current_session)
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
-        amount_of_sessions_left = len(sessions_left)
 
     return teams, sessions

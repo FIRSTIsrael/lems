@@ -74,23 +74,23 @@ class Event(ABC):
     def should_stagger() -> bool:
         pass
 
-    def create_activities(
-        self, team_count, start_time: datetime, starting_number: int = 0
-    ) -> List[TeamActivity]:
+    def create_matches(self, start_time: datetime, starting_number: int = 0) -> List[TeamActivity]:
         activities = []
-        current_index = 0
         current_time = start_time
         end_time = current_time + timedelta(minutes=self.activity_length)
         number = starting_number
 
         cycle_time = self.activity_length + self.wait_time_minutes
 
-        stagger = self.should_stagger()
-
         current_break_index = 0
+        location_index = 0
+
+        active_parrellel_activities = self.parallel_activities
+        if self.should_stagger():
+            active_parrellel_activities = (int) (active_parrellel_activities / 2)
 
         while len(activities) < self.total_count:
-            break_after = 100
+            break_after = 1000
             break_duration = 0
             if len(self.breaks) > current_break_index:
                 current_break = self.breaks[current_break_index]
@@ -102,11 +102,92 @@ class Event(ABC):
                 end_time += timedelta(minutes=break_duration)
                 current_break_index += 1
 
-            if stagger and current_index == self.parallel_activities / 2:
-                current_index = 0
-                current_time += timedelta(minutes=cycle_time)
-                end_time += timedelta(minutes=cycle_time)
-            elif current_index == self.parallel_activities:
+            current_index = 0
+
+            if self.should_stagger():
+                first_team = None
+                second_team = -1
+                if number % 2 == 0:
+                    first_team = -1
+                    second_team = None
+                
+                location_index = 0
+                for _ in range(active_parrellel_activities):
+                    activities.append(
+                        TeamActivity(
+                            activity_type=self.activity_type(),
+                            start_time=current_time,
+                            end_time=end_time,
+                            location=self.locations[location_index],
+                            index=current_index,
+                            event_index=self.event_index,
+                            rejected_team_numbers=[],
+                            number=number,
+                            round=self.event_index,
+                            team_number=first_team
+                        )
+                    )
+                    current_index += 1
+                    location_index += 1
+                for _ in range(active_parrellel_activities):
+                    activities.append(
+                        TeamActivity(
+                            activity_type=self.activity_type(),
+                            start_time=current_time,
+                            end_time=end_time,
+                            location=self.locations[location_index],
+                            index=current_index,
+                            event_index=self.event_index,
+                            rejected_team_numbers=[],
+                            number=number,
+                            round=self.event_index,
+                            team_number=second_team
+                        )
+                    )
+                    current_index += 1
+                    location_index += 1
+            
+            else:
+                for _ in range(active_parrellel_activities):
+                    activities.append(
+                        TeamActivity(
+                            activity_type=self.activity_type(),
+                            start_time=current_time,
+                            end_time=end_time,
+                            location=self.locations[location_index],
+                            index=current_index,
+                            event_index=self.event_index,
+                            rejected_team_numbers=[],
+                            number=number,
+                            round=self.event_index,
+                            team_number=None
+                        )
+                    )
+                    current_index += 1
+                    location_index += 1
+            
+            number += 1
+            current_time += timedelta(minutes=cycle_time)
+            end_time += timedelta(minutes=cycle_time)
+
+        return activities
+
+    def create_activities(
+        self, start_time: datetime, starting_number: int = 0
+    ) -> List[TeamActivity]:
+        if self.activity_type() in [ActivityType.RANKING_MATCH, ActivityType.PRACTICE_MATCH]:
+            return self.create_matches(start_time, starting_number)
+        
+        activities = []
+        current_index = 0
+        current_time = start_time
+        end_time = current_time + timedelta(minutes=self.activity_length)
+        number = starting_number
+
+        cycle_time = self.activity_length + self.wait_time_minutes
+
+        while len(activities) < self.total_count:
+            if current_index == self.parallel_activities:
                 current_index = 0
                 current_time += timedelta(minutes=cycle_time)
                 end_time += timedelta(minutes=cycle_time)
@@ -121,7 +202,7 @@ class Event(ABC):
                     event_index=self.event_index,
                     rejected_team_numbers=[],
                     number=number,
-                    round=number // (team_count // self.parallel_activities + 1) + 1,
+                    round=self.event_index,
                     team_number=None
                 )
             )

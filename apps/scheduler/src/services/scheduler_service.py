@@ -31,7 +31,6 @@ def check_score(teams: list[Team]) -> int:
 
     for team in teams:
         current_score = team_minimum_delta(team.team_events)
-        print(f"Team {team.team_number} has a score of {current_score}")
         if current_score < min_score:
             min_score = current_score
 
@@ -41,7 +40,6 @@ def check_score(teams: list[Team]) -> int:
 class SchedulerService:
     def __init__(self, lems_repository: LemsRepository):
         self.lems_repository = lems_repository
-        self.match_number = 0
 
     def get_teams(self) -> list[Team]:
         teams = []
@@ -105,16 +103,15 @@ class SchedulerService:
         team_count: int,
         index: int
     ) -> Event:
+        print(f"Creating event of type: {event_type} with index: {index}")
         match event_type:
             case "practice":
                 return PracticeMatch(
-                    activity_length=create_schedule_request.match_length_seconds
-                    / SECONDS_PER_MINUTE,
+                    activity_length=create_schedule_request.match_length_seconds / SECONDS_PER_MINUTE,
                     wait_time_minutes=(
                         create_schedule_request.practice_match_cycle_time_seconds
                         - create_schedule_request.match_length_seconds
-                    )
-                    / SECONDS_PER_MINUTE,
+                    ) / SECONDS_PER_MINUTE,
                     total_count=team_count,
                     parallel_activities=create_schedule_request.tables,
                     event_index=index,
@@ -123,13 +120,11 @@ class SchedulerService:
                 )
             case "ranking":
                 return Match(
-                    activity_length=create_schedule_request.match_length_seconds
-                    / SECONDS_PER_MINUTE,
+                    activity_length=create_schedule_request.match_length_seconds / SECONDS_PER_MINUTE,
                     wait_time_minutes=(
                         create_schedule_request.ranking_match_cycle_time_seconds
                         - create_schedule_request.match_length_seconds
-                    )
-                    / SECONDS_PER_MINUTE,
+                    ) / SECONDS_PER_MINUTE,
                     total_count=team_count,
                     parallel_activities=create_schedule_request.tables,
                     event_index=index,
@@ -138,13 +133,11 @@ class SchedulerService:
                 )
             case "judging":
                 return JudgingSession(
-                    activity_length=create_schedule_request.judging_session_length_seconds
-                    / SECONDS_PER_MINUTE,
+                    activity_length=create_schedule_request.judging_session_length_seconds / SECONDS_PER_MINUTE,
                     wait_time_minutes=(
                         create_schedule_request.judging_cycle_time_seconds
                         - create_schedule_request.judging_session_length_seconds
-                    )
-                    / SECONDS_PER_MINUTE,
+                    ) / SECONDS_PER_MINUTE,
                     total_count=team_count,
                     parallel_activities=create_schedule_request.judging_rooms,
                     event_index=index,
@@ -155,36 +148,33 @@ class SchedulerService:
                 raise SchedulerError(f"Invalid event type")
 
     def create_activities(
-        self, team_count: int, events: list[Event], create_schedule_request: CreateScheduleRequest
+        self, events: list[Event], create_schedule_request: CreateScheduleRequest
     ) -> list[TeamActivity]:
         activities = []
-
         current_matches_start_time = create_schedule_request.matches_start
+        current_match_number = 0
 
         for event in events:
             if event.activity_type() in [ActivityType.RANKING_MATCH, ActivityType.PRACTICE_MATCH]:
-                activities += event.create_activities(team_count, current_matches_start_time, self.match_number)
+                activities += event.create_activities(current_matches_start_time, current_match_number)
                 for activity in activities:
-                    if activity.number > self.match_number:
-                        self.match_number = activity.number
+                    if activity.number > current_match_number:
+                        current_match_number = activity.number
                     if activity.end_time > current_matches_start_time:
                         current_matches_start_time = activity.end_time
             else:
-                activities += event.create_activities(team_count, create_schedule_request.judging_start)
+                activities += event.create_activities(create_schedule_request.judging_start)
 
         return activities
 
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
         teams = self.get_teams()
-
         events = self.create_events(create_schedule_request, len(teams))
+        activities = self.create_activities(events, create_schedule_request)
 
         current_score = 0
         current_run = 0
         best_activities = []
-
-        teams = self.get_teams()
-        activities = self.create_activities(len(teams), events, create_schedule_request)
 
         while current_run < MAX_RUNS:
             current_run += 1
