@@ -71,6 +71,7 @@ class LemsRepository:
 
     def insert_schedule(self, activities: list[TeamActivity]):
         print("Inserting schedule to DB")
+        
         judging_activities = [activity for activity in activities if activity.activity_type == ActivityType.JUDGING_SESSION]
 
         for activity in judging_activities:
@@ -81,12 +82,13 @@ class LemsRepository:
             if activity.activity_type == ActivityType.PRACTICE_MATCH or activity.activity_type == ActivityType.RANKING_MATCH
         ]
 
-        max_team_number = 0
+        max_match_number = 0
         for i in match_activities:
-            if i.number > max_team_number:
-                max_team_number = i.number
+            if i.number > max_match_number:
+                max_match_number = i.number
 
-        for i in range(0, max_team_number):
+        print(f"Max match number: {max_match_number}")
+        for i in range(0, max_match_number + 1):
             current_match_activities = [activity for activity in match_activities if activity.number == i]
 
             if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
@@ -137,7 +139,6 @@ class LemsRepository:
             "stage": stage,
             "round": activity.round,
             "number": activity.number,
-            "teamId": self.get_lems_team_id(activity.team_number),
             "status": "not-started",
             "scheduledTime": activity.start_time,
             "called": False,

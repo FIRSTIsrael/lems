@@ -1,5 +1,6 @@
 from datetime import datetime
 from bson import ObjectId
+from copy import deepcopy
 
 from events.event import Event, MAX_MINUTES
 from events.judging_session import JudgingSession
@@ -8,7 +9,7 @@ from events.ranking_match import Match
 from exceptions.scheduler_error import SchedulerError
 from models.create_schedule_request import CreateScheduleRequest, Breaks
 from models.team import Team
-from models.team_activity import TeamActivity
+from models.team_activity import ActivityType, TeamActivity
 from models.location import Location
 from services.gale_shapley_service import (
     gale_shapley,
@@ -16,8 +17,8 @@ from services.gale_shapley_service import (
 )
 from repository.lems_repository import LemsRepository
 
-MIN_RUNS = 1
-MAX_RUNS = 1
+MIN_RUNS = 10
+MAX_RUNS = 100
 MIN_SCORE = 10
 
 SECONDS_PER_MINUTE = 60
@@ -161,7 +162,7 @@ class SchedulerService:
         current_matches_start_time = create_schedule_request.matches_start
 
         for event in events:
-            if event.activity_type() in ["ranking", "practice"]:
+            if event.activity_type() in [ActivityType.RANKING_MATCH, ActivityType.PRACTICE_MATCH]:
                 activities += event.create_activities(team_count, current_matches_start_time, self.match_number)
                 for activity in activities:
                     if activity.number > self.match_number:
@@ -177,23 +178,21 @@ class SchedulerService:
         teams = self.get_teams()
 
         events = self.create_events(create_schedule_request, len(teams))
-        activities = self.create_activities(len(teams), events, create_schedule_request)
-
-        print(f"Created {len(activities)} activities for {len(teams)} teams")
 
         current_score = 0
         current_run = 0
         best_activities = []
 
-        while current_run < MAX_RUNS and not (
-            current_score >= MIN_SCORE and current_run > MIN_RUNS
-        ):
+        teams = self.get_teams()
+        activities = self.create_activities(len(teams), events, create_schedule_request)
+
+        while current_run < MAX_RUNS:
             current_run += 1
 
             print(f"Starting Gale-Shapley run number: {current_run}")
 
-            current_teams = self.get_teams()
-            current_activities = self.create_activities(len(teams), events, create_schedule_request)
+            current_teams = deepcopy(teams)
+            current_activities = deepcopy(activities)
 
             matched_teams, matched_activities = gale_shapley(
                 current_teams, current_activities
@@ -205,8 +204,11 @@ class SchedulerService:
             if score > current_score:
                 current_score = score
                 best_activities = matched_activities
+            
+            if current_score >= MIN_SCORE and current_run > MIN_RUNS:
+                break
 
-        if score < MIN_SCORE:
+        if current_score < MIN_SCORE:
             raise SchedulerError(
                 "Failed to generate valid schedule after mulitple attmepts"
             )

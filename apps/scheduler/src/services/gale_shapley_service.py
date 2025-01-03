@@ -84,6 +84,5 @@ def gale_shapley(
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
         amount_of_sessions_left = len(sessions_left)
-        #print(f"Sessions left: {amount_of_sessions_left}")
 
     return teams, sessions
