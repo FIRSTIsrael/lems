@@ -58,10 +58,10 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [scoresheet, setScoresheet] = useState<WithId<Scoresheet> | undefined>(initialScoresheet);
+
+  const isNoShow = match.participants.find(p => p.teamId === team._id)?.present === 'no-show';
   const [noShowDialogOpen, setNoShowDialogOpen] = useState(
-    user.role === 'head-referee' &&
-      match.status === 'completed' &&
-      match.participants.find(p => p.teamId === team._id)?.present === 'no-show'
+    user.role === 'head-referee' && match.status === 'completed' && isNoShow
   );
 
   if (!team.registered) {
@@ -72,15 +72,19 @@ const Page: NextPage<Props> = ({
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('המקצה טרם התחיל.', { variant: 'info' });
   }
-  if (match.participants.find(p => p.teamId === team._id)?.present === 'no-show') {
-    if (user.role !== 'head-referee') {
+
+  if (user.role !== 'head-referee') {
+    if (isNoShow) {
       router.push(`/lems/${user.role}`);
       enqueueSnackbar('הקבוצה לא נכחה במקצה.', { variant: 'info' });
     }
+    if (scoresheet?.status === 'ready') {
+      router.push(`/lems/${user.role}`);
+    }
+    if (scoresheet?.status === 'waiting-for-head-ref') {
+      router.push(`/lems/${user.role}`);
+    }
   }
-
-  if (scoresheet?.status === 'waiting-for-head-ref' && user.role !== 'head-referee')
-    router.push(`/lems/${user.role}`);
 
   const { socket, connectionStatus } = useWebsocket(division._id.toString(), ['field'], undefined, [
     {
@@ -141,75 +145,73 @@ const Page: NextPage<Props> = ({
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
       }}
     >
-      {team && (
-        <Layout
-          maxWidth="md"
-          title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
-            team.name
-          } | ${localizeDivisionTitle(division)}`}
-          error={connectionStatus === 'disconnected'}
-          back={`/lems/${user.role}`}
-          backDisabled={connectionStatus === 'connecting'}
-          color={division.color}
+      <Layout
+        maxWidth="md"
+        title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
+          team.name
+        } | ${localizeDivisionTitle(division)}`}
+        error={connectionStatus === 'disconnected'}
+        back={`/lems/${user.role}`}
+        backDisabled={connectionStatus === 'connecting'}
+        color={division.color}
+      >
+        <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
+          <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
+            {localizeTeam(team)} | שולחן {table.name}
+          </Typography>
+        </Paper>
+        <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+          <ScoresheetSelector
+            division={division}
+            team={team}
+            matchScoresheet={scoresheet as WithId<Scoresheet>}
+          />
+        </RoleAuthorizer>
+        {scoresheet && (
+          <ScoresheetForm
+            division={division}
+            team={team}
+            scoresheet={scoresheet}
+            user={user}
+            socket={socket}
+            emptyScoresheetValues={getScoresheetOverrides()}
+          />
+        )}
+        <Dialog
+          open={noShowDialogOpen}
+          onClose={(_, reason) => {
+            if (reason && reason === 'backdropClick') return;
+            setNoShowDialogOpen(false);
+          }}
+          aria-labelledby="update-present-title"
+          aria-describedby="update-present-description"
         >
-          <Paper sx={{ p: 3, mt: 4, mb: 2 }}>
-            <Typography variant="h2" fontSize="1.25rem" fontWeight={500} align="center">
-              {localizeTeam(team)} | שולחן {table.name}
-            </Typography>
-          </Paper>
-          <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-            <ScoresheetSelector
-              division={division}
-              team={team}
-              matchScoresheet={scoresheet as WithId<Scoresheet>}
-            />
-          </RoleAuthorizer>
-          {scoresheet && (
-            <ScoresheetForm
-              division={division}
-              team={team}
-              scoresheet={scoresheet}
-              user={user}
-              socket={socket}
-              emptyScoresheetValues={getScoresheetOverrides()}
-            />
-          )}
-          <Dialog
-            open={noShowDialogOpen}
-            onClose={(division, reason) => {
-              if (reason && reason === 'backdropClick') return;
-              setNoShowDialogOpen(false);
-            }}
-            aria-labelledby="update-present-title"
-            aria-describedby="update-present-description"
-          >
-            <DialogTitle id="update-present-title">רגע!</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="delete-data-description">
-                {`שופט הזירה סימן שהקבוצה לא נכחה במקצה. 
+          <DialogTitle id="update-present-title">רגע!</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-data-description">
+              {`שופט הזירה סימן שהקבוצה לא נכחה במקצה. 
                 האם אתם בטוחים שברצונכם לתת ניקוד לקבוצה ${localizeTeam(team)} 
                 ניקוד על מקצה ${
                   scoresheet && localizedMatchStage[scoresheet.stage]
                 } #${scoresheet?.round}?`}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button variant="contained" onClick={() => router.push(`/lems/${user.role}`)}>
-                ביטול
-              </Button>
-              <Button
-                onClick={e => {
-                  e.preventDefault();
-                  updateTeamPresentStatus('present');
-                  setNoShowDialogOpen(false);
-                }}
-              >
-                אישור
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Layout>
-      )}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained" onClick={() => router.push(`/lems/${user.role}`)}>
+              ביטול
+            </Button>
+            <Button
+              onClick={e => {
+                e.preventDefault();
+                updateTeamPresentStatus('present');
+                setNoShowDialogOpen(false);
+              }}
+            >
+              אישור
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Layout>
     </RoleAuthorizer>
   );
 };
