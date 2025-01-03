@@ -95,14 +95,12 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleScoresheetStatusChanged = (scoresheet: WithId<Scoresheet>) => {
-    updateScoresheet(scoresheet);
-    if (scoresheet.status === 'waiting-for-head-ref')
-      enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, {
-        variant: 'warning',
-        persist: true,
-        preventDuplicate: true
-      });
+  const handleScoresheetEscalated = (scoresheet: WithId<Scoresheet>) => {
+    enqueueSnackbar(`דף ניקוד הועבר לטיפולך!`, {
+      variant: 'warning',
+      persist: true,
+      preventDuplicate: true
+    });
   };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
@@ -132,7 +130,7 @@ const Page: NextPage<Props> = ({
       { name: 'matchAborted', handler: handleMatchEvent },
       { name: 'matchUpdated', handler: handleMatchEvent },
       { name: 'scoresheetUpdated', handler: updateScoresheet },
-      { name: 'scoresheetStatusChanged', handler: handleScoresheetStatusChanged },
+      { name: 'scoresheetEscalated', handler: handleScoresheetEscalated },
       { name: 'teamRegistered', handler: handleTeamRegistered }
     ]
   );

@@ -72,7 +72,7 @@ export interface WSServerEmittedEvents {
 
   scoresheetUpdated: (scoresheet: Scoresheet) => void;
 
-  scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
+  scoresheetEscalated: (scoresheet: Scoresheet) => void;
 
   audienceDisplayUpdated: (divisionState: DivisionState) => void;
 

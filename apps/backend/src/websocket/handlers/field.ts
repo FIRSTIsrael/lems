@@ -334,6 +334,6 @@ export const handleUpdateScoresheet = async (
   scoresheet = await db.getScoresheet({ _id: new ObjectId(scoresheetId) });
 
   namespace.to('field').emit('scoresheetUpdated', scoresheet);
-  if (scoresheetData.status !== oldScoresheet.status)
-    namespace.to('field').emit('scoresheetStatusChanged', scoresheet);
+  if (scoresheetData.escalated === true && !oldScoresheet.escalated)
+    namespace.to('field').emit('scoresheetEscalated', scoresheet);
 };

@@ -10,13 +10,15 @@ const ScoresheetStatusReferences = () => {
         לא הגיעו לאירוע
       </EditScoresheetButton>
       {ScoresheetStatusTypes.map(status => {
-        if (status === 'waiting-for-head-ref-gp') return; // Backend status only
         return (
           <EditScoresheetButton key={status} status={status} active={true}>
             {localizedScoresheetStatus[status]}
           </EditScoresheetButton>
         );
       })}
+      <EditScoresheetButton key="escalated" status="empty" active={true} escalated>
+        ממתין לשופט ראשי
+      </EditScoresheetButton>
     </Stack>
   );
 };
