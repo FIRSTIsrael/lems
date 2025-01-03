@@ -7,7 +7,6 @@ export const ScoresheetStatusTypes = [
   'completed',
   'waiting-for-gp',
   'waiting-for-head-ref',
-  'waiting-for-head-ref-gp',
   'ready'
 ] as const;
 export type ScoresheetStatus = (typeof ScoresheetStatusTypes)[number];

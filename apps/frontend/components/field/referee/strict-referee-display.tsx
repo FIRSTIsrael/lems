@@ -125,7 +125,6 @@ const StrictRefereeDisplay: React.FC<MatchPrestartProps> = ({
             if (
               lastCompletedMatchParticipant &&
               scoresheet.status !== 'waiting-for-head-ref' &&
-              scoresheet.status !== 'waiting-for-head-ref-gp' &&
               scoresheet.status !== 'ready'
             ) {
               toScoresheet(lastCompletedMatchParticipant, scoresheet);

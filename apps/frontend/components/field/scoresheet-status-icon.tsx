@@ -17,7 +17,6 @@ const ScoresheetStatusIcon: React.FC<ScoresheetStatusIconProps> = ({ status }) =
     'in-progress': <HourglassEmptyIcon sx={{ color: '#f57c00' }} />,
     completed: <CheckIcon color="primary" />,
     'waiting-for-head-ref': <SportsScoreIcon sx={{ color: '#f57c00' }} />,
-    'waiting-for-head-ref-gp': <SportsScoreIcon sx={{ color: '#f57c00' }} />,
     'waiting-for-gp': <CheckIcon color="primary" />,
     ready: <DoneAllIcon sx={{ color: '#388e3c' }} />
   };
