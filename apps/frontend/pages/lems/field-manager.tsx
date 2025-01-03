@@ -11,7 +11,8 @@ import {
   Team,
   DivisionWithEvent,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  RobotGameMatchParticipant
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -90,6 +91,10 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
+  const handleScheduleTimeChange = (match: WithId<RobotGameMatch>, updatedParticipant: RobotGameMatchParticipant) => {
+    enqueueSnackbar(`קבוצה במקצה ${match.number} בשולחן ${updatedParticipant.tableName} עודכנה`, { variant: 'info' });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['field', 'pit-admin', 'audience-display'],
@@ -104,7 +109,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }, 
+      { name: 'matchParticipantTeamUpdated', handler: handleScheduleTimeChange },
     ]
   );
 

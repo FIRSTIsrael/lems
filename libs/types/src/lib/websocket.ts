@@ -79,6 +79,11 @@ export interface WSServerEmittedEvents {
   presentationUpdated: (divisionState: DivisionState) => void;
 
   awardsUpdated: (awards: Array<WithId<Award>>) => void;
+
+  matchParticipantTeamUpdated : (match: RobotGameMatch, participants: RobotGameMatchParticipant) => void;
+
+  judgingSessionTeamUpdated : (session: JudgingSession) => void;
+
 }
 
 export interface WSClientEmittedEvents {
