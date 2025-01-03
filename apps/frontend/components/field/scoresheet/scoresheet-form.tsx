@@ -79,7 +79,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const signatureRef = useRef<SignatureCanvas | null>(null);
 
   const [readOnly, setReadOnly] = useState<boolean>(
-    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
+    user.role === 'head-referee' && scoresheet.status !== 'empty' && !scoresheet.escalated
   );
   const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>([]);
   const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
@@ -138,7 +138,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
     newStatus: ScoresheetStatus | undefined,
-    saveSignature = false
+    saveSignature = false,
+    escalate?: boolean
   ) => {
     const updatedScoresheet = {} as Partial<Scoresheet>;
     if (newStatus) updatedScoresheet.status = newStatus;
@@ -146,6 +147,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     if (formValues) (updatedScoresheet as any).data = formValues;
     if (saveSignature && signatureRef.current && updatedScoresheet.data)
       updatedScoresheet.data.signature = signatureRef.current.getCanvas().toDataURL('image/png');
+    if (escalate !== undefined) updatedScoresheet.escalated = escalate;
 
     socket.emit(
       'updateScoresheet',
@@ -355,7 +357,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                     </RoleAuthorizer>
 
                     <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
-                      {!['waiting-for-head-ref', 'ready'].includes(scoresheet.status) && (
+                      {scoresheet.status !== 'ready' && !scoresheet.escalated && (
                         <Button
                           variant="contained"
                           sx={{ minWidth: 150 }}
@@ -406,7 +408,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                       </Button>
                       <Button
                         onClick={() => {
-                          handleSync(true, values, 'waiting-for-head-ref');
+                          handleSync(true, values, undefined, false, true);
                           setHeadRefDialog(false);
                         }}
                       >
@@ -452,7 +454,9 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                   handleSync(false, values, 'completed');
                 }}
                 onSubmit={() => {
-                  handleSync(true, values, 'ready').then(() => router.push(`/lems/${user.role}`));
+                  handleSync(true, values, 'ready', false, false).then(() =>
+                    router.push(`/lems/${user.role}`)
+                  );
                 }}
               />
             )}

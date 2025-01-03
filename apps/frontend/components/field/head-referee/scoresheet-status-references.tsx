@@ -16,6 +16,9 @@ const ScoresheetStatusReferences = () => {
           </EditScoresheetButton>
         );
       })}
+      <EditScoresheetButton key="escalated" status="empty" active={true} escalated>
+        ממתין לשופט ראשי
+      </EditScoresheetButton>
     </Stack>
   );
 };

@@ -6,7 +6,6 @@ export const ScoresheetStatusTypes = [
   'in-progress',
   'completed',
   'waiting-for-gp',
-  'waiting-for-head-ref',
   'ready'
 ] as const;
 export type ScoresheetStatus = (typeof ScoresheetStatusTypes)[number];
@@ -27,6 +26,7 @@ export interface Scoresheet {
   stage: RobotGameMatchStage;
   round: number;
   status: ScoresheetStatus;
+  escalated?: boolean;
   data?: {
     missions: Array<Mission>;
     signature: string;

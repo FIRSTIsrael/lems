@@ -81,7 +81,7 @@ const Page: NextPage<Props> = ({
     if (scoresheet?.status === 'ready') {
       router.push(`/lems/${user.role}`);
     }
-    if (scoresheet?.status === 'waiting-for-head-ref') {
+    if (scoresheet?.escalated) {
       router.push(`/lems/${user.role}`);
     }
   }
@@ -135,11 +135,7 @@ const Page: NextPage<Props> = ({
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={
-        scoresheet?.status === 'waiting-for-head-ref'
-          ? ['head-referee']
-          : ['referee', 'head-referee']
-      }
+      allowedRoles={scoresheet?.escalated ? ['head-referee'] : ['referee', 'head-referee']}
       onFail={() => {
         router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
