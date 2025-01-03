@@ -68,7 +68,8 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
 }) => {
   const router = useRouter();
   const [readOnly, setReadOnly] = useState<boolean>(
-    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
+    user.role === 'head-referee' &&
+      !['empty', 'waiting-for-head-ref', 'waiting-for-head-ref-gp'].includes(scoresheet.status)
   );
 
   interface ErrorWithMessage {
@@ -88,11 +89,13 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   const [resetDialog, setResetDialog] = useState<boolean>(false);
 
   const [mode, setMode] = useState<'gp' | 'scoring'>(
-    scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring'
+    scoresheet.status === 'waiting-for-gp' || scoresheet.status === 'waiting-for-head-ref-gp'
+      ? 'gp'
+      : 'scoring'
   );
 
   useEffect(() => {
-    if (scoresheet.status === 'waiting-for-gp') {
+    if (['waiting-for-gp', 'waiting-for-headref-gp'].includes(scoresheet.status)) {
       setMode('gp');
     } else {
       setMode('scoring');
@@ -498,33 +501,22 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                         {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
                             בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
                             ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setResetDialog(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleSync(true, getDefaultScoresheet(), 'empty');
-                              setResetDialog(false);
-                            }}
-                          >
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </RoleAuthorizer>
-                    <Button
-                      variant="contained"
-                      sx={{ minWidth: 200 }}
-                      endIcon={<ChevronLeftIcon />}
-                      disabled={!isValid}
-                      onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
-                    >
-                      המשך
-                    </Button>
-                  </Stack>
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setResetDialog(false)} autoFocus>
+                        ביטול
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleSync(true, getDefaultScoresheet(), 'empty');
+                          setResetDialog(false);
+                        }}
+                      >
+                        אישור
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </Stack>
               </>
             ) : (
