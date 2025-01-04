@@ -20,6 +20,7 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
 import RematchFinder from '../../components/field-manager/rematch-finder';
+import { Typography } from '@mui/material';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -134,6 +135,10 @@ const Page: NextPage<Props> = ({
           rooms={rooms}
           socket={socket}
         />
+        <Typography>Staggered match editor</Typography>
+        <Typography>Show loaded (or next not started) +2 next matches</Typography>
+        <Typography>Arrows between rows to shift teams to later /earlier matches</Typography>
+        <Typography>Merge button that will merge loaded+next and complete loaded</Typography>
       </Layout>
     </RoleAuthorizer>
   );
