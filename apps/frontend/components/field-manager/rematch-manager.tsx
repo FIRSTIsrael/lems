@@ -1,35 +1,28 @@
 import { WithId } from 'mongodb';
 import { useState } from 'react';
-import { Socket } from 'socket.io-client';
 import { Paper, Typography } from '@mui/material';
-import {
-  DivisionState,
-  JudgingSession,
-  JudgingRoom,
-  RobotGameMatch,
-  Team,
-  WSClientEmittedEvents,
-  WSServerEmittedEvents
-} from '@lems/types';
+import { DivisionState, JudgingSession, RobotGameMatch, Team } from '@lems/types';
 import TeamSelection from '../general/team-selection';
-import RematchScheduler from './rematch-scheduler';
+import TeamRematchScheduler from './team-rematch-scheduler';
 
-interface RematchFinderProps {
+interface RematchManagerProps {
   teams: Array<WithId<Team>>;
-  rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   divisionState: WithId<DivisionState>;
-  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  onScheduleRematch: (
+    team: WithId<Team>,
+    match: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => void;
 }
 
-const RematchFinder: React.FC<RematchFinderProps> = ({
+const RematchManager: React.FC<RematchManagerProps> = ({
   teams,
   matches,
-  rooms,
   sessions,
   divisionState,
-  socket
+  onScheduleRematch
 }) => {
   const [rematchTeam, setRematchTeam] = useState<WithId<Team> | null>(null);
 
@@ -56,7 +49,18 @@ const RematchFinder: React.FC<RematchFinderProps> = ({
     )
     .flatMap(match => match.participants)
     .map(participant => teams.find(team => team._id === participant.teamId))
-    .filter(team => !!team);
+    .filter(team => !!team)
+    // Filter out teams that have a pending rematch
+    .filter(
+      team =>
+        !matches.find(
+          match =>
+            match.stage === 'ranking' &&
+            match.round === divisionState.currentRound &&
+            match.status === 'not-started' &&
+            match.participants.find(participant => participant.teamId === team._id)
+        )
+    );
 
   return (
     <Paper sx={{ p: 2, mt: 2 }}>
@@ -65,18 +69,24 @@ const RematchFinder: React.FC<RematchFinderProps> = ({
       </Typography>
       <TeamSelection setTeam={setRematchTeam} teams={eligibleTeams} value={rematchTeam} />
       {rematchTeam && (
-        <RematchScheduler
+        <TeamRematchScheduler
           team={rematchTeam}
           teams={teams}
           divisionState={divisionState}
           matches={matches}
-          rooms={rooms}
           sessions={sessions}
-          socket={socket}
+          onScheduleRematch={(
+            team: WithId<Team>,
+            match: WithId<RobotGameMatch>,
+            participantIndex: number
+          ) => {
+            onScheduleRematch(team, match, participantIndex);
+            setRematchTeam(null);
+          }}
         />
       )}
     </Paper>
   );
 };
 
-export default RematchFinder;
+export default RematchManager;

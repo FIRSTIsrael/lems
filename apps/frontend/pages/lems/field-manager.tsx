@@ -3,6 +3,7 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
+import { Typography } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
@@ -11,7 +12,8 @@ import {
   Team,
   DivisionWithEvent,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  RobotGameMatchParticipant
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -19,8 +21,7 @@ import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
-import RematchFinder from '../../components/field-manager/rematch-finder';
-import { Typography } from '@mui/material';
+import RematchManager from '../../components/field-manager/rematch-manager';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -109,6 +110,31 @@ const Page: NextPage<Props> = ({
     ]
   );
 
+  const handleScheduleRematch = (
+    team: WithId<Team>,
+    match: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => {
+    const newMatchParticipants = match.participants.map((participant, index) => {
+      const { tableId, teamId } = participant;
+      return { tableId, teamId: index === participantIndex ? team._id : teamId };
+    }) as Array<Partial<RobotGameMatchParticipant>>;
+
+    socket.emit(
+      'updateMatchTeams',
+      match.divisionId.toString(),
+      match._id.toString(),
+      newMatchParticipants,
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
   return (
     <RoleAuthorizer
       user={user}
@@ -127,13 +153,12 @@ const Page: NextPage<Props> = ({
         connectionStatus={connectionStatus}
         color={division.color}
       >
-        <RematchFinder
+        <RematchManager
           teams={teams}
           matches={matches}
           divisionState={divisionState}
           sessions={sessions}
-          rooms={rooms}
-          socket={socket}
+          onScheduleRematch={handleScheduleRematch}
         />
         <Typography>Staggered match editor</Typography>
         <Typography>Show loaded (or next not started) +2 next matches</Typography>

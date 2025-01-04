@@ -1,44 +1,72 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
-import { Socket } from 'socket.io-client';
-import { Chip, Stack, Typography, Box } from '@mui/material';
+import { Chip, Stack, Typography, Box, IconButton } from '@mui/material';
 import GavelRoundedIcon from '@mui/icons-material/GavelRounded';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import NumbersRoundedIcon from '@mui/icons-material/NumbersRounded';
 import {
   DivisionState,
   JudgingSession,
-  JudgingRoom,
   RobotGameMatch,
   Team,
-  WSClientEmittedEvents,
-  WSServerEmittedEvents,
   JUDGING_SESSION_LENGTH,
   MATCH_LENGTH
 } from '@lems/types';
 import { getBackgroundColor } from '../../lib/utils/theme';
+import RematchSelector from './rematch-selector';
 
-interface RematchSchedulerProps {
+interface TeamRematchSchedulerProps {
   team: WithId<Team>;
   teams: Array<WithId<Team>>;
   divisionState: WithId<DivisionState>;
-  rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
-  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  onScheduleRematch: (
+    team: WithId<Team>,
+    match: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => void;
 }
 
-const RematchScheduler: React.FC<RematchSchedulerProps> = ({
+const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
   team,
   teams,
   divisionState,
-  rooms,
   matches,
   sessions,
-  socket
+  onScheduleRematch
 }) => {
   const [selectedMatch, setSelectedMatch] = useState<WithId<RobotGameMatch> | null>(null);
   useEffect(() => setSelectedMatch(null), [team.number]);
+
+  const [selectedParticipant, setSelectedParticipant] = useState<number | null>(null);
+  useEffect(() => setSelectedParticipant(null), [selectedMatch]);
+
+  const beforeSelectedMatch = useMemo(() => {
+    if (!selectedMatch) return null;
+    const previous = matches.find(
+      match =>
+        match.stage === 'ranking' &&
+        match.round === selectedMatch.round &&
+        match.number === selectedMatch.number - 1
+    );
+    return previous ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMatch]);
+
+  const afterSelectedMatch = useMemo(() => {
+    if (!selectedMatch) return null;
+    const next = matches.find(
+      match =>
+        match.stage === 'ranking' &&
+        match.round === selectedMatch.round &&
+        match.number === selectedMatch.number + 1
+    );
+    return next ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMatch]);
 
   const teamSession = sessions.find(
     session => session.teamId === team._id && session.status !== 'completed'
@@ -107,6 +135,19 @@ const RematchScheduler: React.FC<RematchSchedulerProps> = ({
       !overlappingSession(match)
   );
 
+  const currentMatch = useMemo(() => {
+    const loadedMatch = matches.find(match => match._id === divisionState.loadedMatch);
+    const nextUnplayedMatch = matches
+      .filter(
+        match =>
+          match.stage === 'ranking' &&
+          match.round === divisionState.currentRound &&
+          match.status === 'not-started'
+      )
+      .sort((a, b) => a.number - b.number)[0];
+    return loadedMatch ?? nextUnplayedMatch;
+  }, [matches, divisionState.loadedMatch, divisionState.currentRound]);
+
   return (
     <Stack sx={{ py: 2 }}>
       <Box display="flex" flexDirection="row" gap={2} mb={2}>
@@ -118,13 +159,15 @@ const RematchScheduler: React.FC<RematchSchedulerProps> = ({
           label={`מקצה הבא: ${nextMatchTime ? nextMatchTime.format('HH:mm') : '-'}`}
           icon={<SportsScoreIcon />}
         />
+        <Chip label={`סבב נוכחי: ${divisionState.currentRound}`} icon={<NumbersRoundedIcon />} />
+        <Chip label={`מקצה נוכחי: ${currentMatch.number}`} icon={<NumbersRoundedIcon />} />
       </Box>
       <Box display="flex" flexDirection="row" gap={1}>
         {availableMatches.length === 0 && (
           <Typography>
             {'לא נמצא זמן למקצה חוזר בסבב הנוכחי.'}
             <br />
-            {'ניתן להריץ מקצה בדיקה ונקד אותו בעזרת שופט הזירה הראשי.'}
+            {'ניתן להריץ מקצה בדיקה ולנקד אותו בעזרת שופט הזירה הראשי.'}
           </Typography>
         )}
         {availableMatches.map((match, index) => {
@@ -146,18 +189,34 @@ const RematchScheduler: React.FC<RematchSchedulerProps> = ({
         })}
       </Box>
 
-      <br />
-
       {selectedMatch && (
-        <Typography>{dayjs(selectedMatch?.scheduledTime).format('HH:mm')}</Typography>
+        <RematchSelector
+          teams={teams}
+          previousMatch={beforeSelectedMatch}
+          match={selectedMatch}
+          nextMatch={afterSelectedMatch}
+          onSelect={participantIndex => setSelectedParticipant(participantIndex)}
+        />
       )}
 
-      <Typography>כשבוחרים כפתור יהיה פה לוז של לפני בזמן אחרי של המקצה</Typography>
-      <Typography>בלוז עצמו, לחיצה על שולחן תסמן אותו</Typography>
-      <Typography> לבסוף, יהיה כתוב המשפט "קביעת מקצה חוזר בשעה X בשולחן Y"</Typography>
-      <Typography>וכפתור אישור סופי שיאפס את כל הUI</Typography>
+      {selectedMatch && selectedParticipant && (
+        <Stack direction="row" spacing={2} mt={2} alignItems="center">
+          <Typography>
+            {`תיאום מקצה חוזר לקבוצה #${team.number} בשעה ${dayjs(selectedMatch?.scheduledTime).format('HH:mm')} בשולחן ${selectedMatch?.participants[selectedParticipant].tableName}`}
+          </Typography>
+          <IconButton
+            onClick={() => {
+              onScheduleRematch(team, selectedMatch, selectedParticipant);
+              setSelectedMatch(null);
+              setSelectedParticipant(null);
+            }}
+          >
+            <CheckRoundedIcon />
+          </IconButton>
+        </Stack>
+      )}
     </Stack>
   );
 };
 
-export default RematchScheduler;
+export default TeamRematchScheduler;
