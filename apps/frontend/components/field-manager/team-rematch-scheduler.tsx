@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
-import { Chip, Stack, Typography, Box, IconButton } from '@mui/material';
+import { Chip, Stack, Typography, Box, Button } from '@mui/material';
 import GavelRoundedIcon from '@mui/icons-material/GavelRounded';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
@@ -206,7 +206,9 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
             {`בשעה ${selectedMatch ? dayjs(selectedMatch.scheduledTime).format('HH:mm') : ' _____ '} `}
             {`בשולחן ${selectedMatch && selectedParticipant ? selectedMatch.participants[selectedParticipant].tableName : ' _____ '}`}
           </Typography>
-          <IconButton
+          <Button
+            variant="contained"
+            startIcon={<CheckRoundedIcon />}
             disabled={selectedMatch === null || selectedParticipant === null}
             onClick={() => {
               // Cannot be null since button is disabled when it's null
@@ -216,8 +218,8 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
               setSelectedParticipant(null);
             }}
           >
-            <CheckRoundedIcon />
-          </IconButton>
+            שמירה
+          </Button>
         </Stack>
       )}
     </Stack>
