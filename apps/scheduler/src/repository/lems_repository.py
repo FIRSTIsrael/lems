@@ -114,14 +114,8 @@ class LemsRepository:
         self, stage: Literal["practice", "ranking"], activities: list[TeamActivity]
     ):
         participants = []
-        tables = self.get_tables()
 
-        for table in tables:
-            team_number = None
-            for activity in activities:
-                if activity.location.id == table.id:
-                    team_number = activity.team_number
-
+        for activity in activities:
             participants.append(
                 {
                     "teamId": self.get_lems_team_id(activity.team_number),
@@ -131,7 +125,7 @@ class LemsRepository:
                     "ready": False,
                     "present": "no-show",
                 }
-            )
+            )     
 
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
@@ -142,16 +136,6 @@ class LemsRepository:
             "status": "not-started",
             "scheduledTime": activity.start_time,
             "called": False,
-            "participants": [
-                {
-                    "teamId": self.get_lems_team_id(activity.team_number),
-                    "tableId": activity.location.id,
-                    "tableName": activity.location.name,
-                    "queued": False,
-                    "ready": False,
-                    "present": "no-show",
-                }
-                for table in tables
-            ],
+            "participants": participants,
         }
         collection.insert_one(document)

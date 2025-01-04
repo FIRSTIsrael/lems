@@ -107,7 +107,7 @@ class Event(ABC):
             if self.should_stagger():
                 first_team = None
                 second_team = -1
-                if number % 2 == 0:
+                if number % 2 == 1:
                     first_team = -1
                     second_team = None
                 
