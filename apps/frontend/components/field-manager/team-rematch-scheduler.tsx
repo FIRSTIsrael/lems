@@ -199,14 +199,19 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
         />
       )}
 
-      {selectedMatch && selectedParticipant && (
+      {availableMatches.length > 0 && (
         <Stack direction="row" spacing={2} mt={2} alignItems="center">
           <Typography>
-            {`תיאום מקצה חוזר לקבוצה #${team.number} בשעה ${dayjs(selectedMatch?.scheduledTime).format('HH:mm')} בשולחן ${selectedMatch?.participants[selectedParticipant].tableName}`}
+            {`תיאום מקצה חוזר לקבוצה #${team.number} `}
+            {`בשעה ${selectedMatch ? dayjs(selectedMatch.scheduledTime).format('HH:mm') : ' _____ '} `}
+            {`בשולחן ${selectedMatch && selectedParticipant ? selectedMatch.participants[selectedParticipant].tableName : ' _____ '}`}
           </Typography>
           <IconButton
+            disabled={selectedMatch === null || selectedParticipant === null}
             onClick={() => {
-              onScheduleRematch(team, selectedMatch, selectedParticipant);
+              // Cannot be null since button is disabled when it's null
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              onScheduleRematch(team, selectedMatch!, selectedParticipant!);
               setSelectedMatch(null);
               setSelectedParticipant(null);
             }}

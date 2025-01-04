@@ -3,7 +3,6 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { Typography } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
@@ -95,7 +94,7 @@ const Page: NextPage<Props> = ({
 
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
-    ['field', 'pit-admin', 'audience-display'],
+    ['field', 'judging', 'pit-admin', 'audience-display'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
@@ -162,10 +161,6 @@ const Page: NextPage<Props> = ({
           onScheduleRematch={handleScheduleRematch}
         />
         <StaggerEditor />
-        {/* <Typography>Staggered match editor</Typography>
-        <Typography>Show loaded (or next not started) +2 next matches</Typography>
-        <Typography>Arrows between rows to shift teams to later /earlier matches</Typography>
-        <Typography>Merge button that will merge loaded+next and complete loaded</Typography> */}
       </Layout>
     </RoleAuthorizer>
   );
