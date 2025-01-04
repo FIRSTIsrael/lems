@@ -44,6 +44,7 @@ def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamAct
         if team_session.event_index == current_event_session_index:
             team_current_event_session = team_session
 
+    # The team doesn't have a match of this type yet
     if team_current_event_session is None:
         team.team_events.append(session)
         session.team_number = team.team_number
@@ -58,12 +59,15 @@ def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamAct
     modified_score = team_minimum_delta(modified_sessions)
 
     if modified_score > current_score:
+        # The team prefers the new session
         if team.team_number is not None:
             team_current_event_session.rejected_team_numbers.append(team.team_number)
         team_current_event_session.team_number = 0
         team.team_events = modified_sessions
+        session.team_number = team.team_number
         return team_current_event_session
     else:
+        # The team prefers the old session
         session.rejected_team_numbers.append(team.team_number)
         return session
 
