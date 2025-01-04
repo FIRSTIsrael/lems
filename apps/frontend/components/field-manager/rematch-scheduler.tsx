@@ -51,6 +51,7 @@ const RematchScheduler: React.FC<RematchSchedulerProps> = ({
       <Typography fontSize="1.25rem" fontWeight={500} gutterBottom>
         מידע כללי
       </Typography>
+      <Typography>Switch to only judging and next match</Typography>
       <Grid container columnSpacing={1}>
         <EventWidget eventType="judging" event={teamSession} />
         {teamMatches.map(({ match }, index) => (
