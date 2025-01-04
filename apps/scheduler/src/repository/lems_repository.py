@@ -125,7 +125,10 @@ class LemsRepository:
                     "ready": False,
                     "present": "no-show",
                 }
-            )     
+            )
+
+        if len(participants) > 8:
+            participants = participants[:8]
 
         collection: Collection[RobotGameMatch] = self.db.matches
         document: RobotGameMatch = {
