@@ -67,6 +67,7 @@ const RematchFinder: React.FC<RematchFinderProps> = ({
       {rematchTeam && (
         <RematchScheduler
           team={rematchTeam}
+          teams={teams}
           divisionState={divisionState}
           matches={matches}
           rooms={rooms}
