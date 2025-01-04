@@ -85,11 +85,13 @@ class Event(ABC):
         current_break_index = 0
         location_index = 0
 
+        activities_created = 0
+
         active_parrellel_activities = self.parallel_activities
         if self.should_stagger():
             active_parrellel_activities = (int) (active_parrellel_activities / 2)
 
-        while len(activities) < self.total_count:
+        while activities_created < self.total_count:
             break_after = 1000
             break_duration = 0
             if len(self.breaks) > current_break_index:
@@ -169,6 +171,7 @@ class Event(ABC):
             number += 1
             current_time += timedelta(minutes=cycle_time)
             end_time += timedelta(minutes=cycle_time)
+            activities_created += active_parrellel_activities
 
         return activities
 

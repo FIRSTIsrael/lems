@@ -8,6 +8,7 @@ from events.practice_match import PracticeMatch
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
+NUMBER_OF_EVENTS = 5
 
 def get_session_preference_function(session: TeamActivity) -> Callable:
     type_to_function = {
@@ -71,8 +72,9 @@ def gale_shapley(
     teams: list[Team], sessions: list[TeamActivity]
 ) -> tuple[list[Team], list[TeamActivity]]:
     sessions_left = [session for session in sessions if session.team_number is None]
+    teams_left = [team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS]
 
-    while len(sessions_left) > 0:
+    while len(teams_left) > 0:
         random.shuffle(sessions_left)
         current_session = sessions_left.pop()
         session_preference_function = get_session_preference_function(current_session)
@@ -82,5 +84,6 @@ def gale_shapley(
         session_left_alone = check_team_preference(current_team, current_session)
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
+        teams_left = [team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS]
 
     return teams, sessions
