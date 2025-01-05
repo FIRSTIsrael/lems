@@ -1,6 +1,6 @@
 import os
+import logging
 from bson import ObjectId
-from functools import partial
 from typing import Literal
 
 from pymongo import MongoClient
@@ -15,10 +15,13 @@ from repository.schemas.robot_game_match import RobotGameMatch
 from repository.schemas.judging_room import JudgingRoom
 from repository.schemas.robot_game_table import RobotGameTable
 
+logger = logging.getLogger(__name__)
+
 
 class LemsRepository:
     def __init__(self, divisionId: ObjectId):
         connection_string = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
+        self.divisionId = ObjectId(divisionId)
         self.client = MongoClient(
             connection_string,
             tls=False,  # TODO: fix this
@@ -31,8 +34,6 @@ class LemsRepository:
             print("🚀 MongoDB Client connected.")
         except Exception as err:
             print("❌ Unable to connect to mongodb: ", err)
-
-        self.divisionId = ObjectId(divisionId)
 
     def get_teams(self) -> list[TeamModel]:
         collection: Collection[Team] = self.db.teams
@@ -70,26 +71,35 @@ class LemsRepository:
         return lems_team_id
 
     def insert_schedule(self, activities: list[TeamActivity]):
-        print("Inserting schedule to DB")
-        
-        judging_activities = [activity for activity in activities if activity.activity_type == ActivityType.JUDGING_SESSION]
+        logger.info("Inserting schedule into LEMS database")
+        judging_activities = [
+            activity
+            for activity in activities
+            if activity.activity_type == ActivityType.JUDGING_SESSION
+        ]
 
         for activity in judging_activities:
             self.insert_judging_session(activity)
 
         match_activities = [
-            activity for activity in activities 
-            if activity.activity_type == ActivityType.PRACTICE_MATCH or activity.activity_type == ActivityType.RANKING_MATCH
+            activity
+            for activity in activities
+            if activity.activity_type == ActivityType.PRACTICE_MATCH
+            or activity.activity_type == ActivityType.RANKING_MATCH
         ]
 
         max_match_number = 0
-        for i in match_activities:
-            if i.number > max_match_number:
-                max_match_number = i.number
+        for team_match_activity in match_activities:
+            if team_match_activity.number > max_match_number:
+                max_match_number = team_match_activity.number
 
-        print(f"Max match number: {max_match_number}")
-        for i in range(0, max_match_number + 1):
-            current_match_activities = [activity for activity in match_activities if activity.number == i]
+        logger.debug(f"Max match number: {max_match_number}")
+        for match_index in range(0, max_match_number + 1):
+            current_match_activities = [
+                activity
+                for activity in match_activities
+                if activity.number == match_index
+            ]
 
             if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
                 self.insert_match("ranking", current_match_activities)
@@ -111,10 +121,11 @@ class LemsRepository:
         collection.insert_one(document)
 
     def insert_match(
-        self, stage: Literal["practice", "ranking"], activities: list[TeamActivity]
+        self,
+        stage: Literal["practice", "ranking"],
+        activities: list[TeamActivity],
     ):
         participants = []
-
         for activity in activities:
             participants.append(
                 {

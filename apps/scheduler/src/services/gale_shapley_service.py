@@ -1,5 +1,5 @@
 import random
-from typing import Callable, Optional
+from typing import Callable
 
 from events.event import team_minimum_delta
 from events.judging_session import JudgingSession
@@ -10,7 +10,8 @@ from models.team import Team
 
 NUMBER_OF_EVENTS = 5
 
-def get_session_preference_function(session: TeamActivity) -> Callable:
+
+def get_session_preference_function(session: TeamActivity):
     type_to_function = {
         ActivityType.JUDGING_SESSION: JudgingSession.calculate_preference,
         ActivityType.RANKING_MATCH: Match.calculate_preference,
@@ -36,7 +37,7 @@ def get_best_team_match(
     return best_team
 
 
-def check_team_preference(team: Team, session: TeamActivity) -> Optional[TeamActivity]:
+def check_team_preference(team: Team, session: TeamActivity) -> TeamActivity | None:
     current_event_session_index = session.event_index
     team_current_event_session = None
 
@@ -88,6 +89,8 @@ def gale_shapley(
         session_left_alone = check_team_preference(current_team, current_session)
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
-        teams_left = [team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS]
+        teams_left = [
+            team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS
+        ]
 
     return teams, sessions
