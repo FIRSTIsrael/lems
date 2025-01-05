@@ -45,8 +45,8 @@ const ActionRow: React.FC<ActionRowProps> = ({ teams, fromMatch, toMatch, allowM
 
         return (
           <TableCell key={index} align="center">
-            {moving && canMove && (
-              <IconButton size="small" color="primary">
+            {moving && (
+              <IconButton size="small" color="primary" disabled={!canMove}>
                 <SouthRoundedIcon />
               </IconButton>
             )}
