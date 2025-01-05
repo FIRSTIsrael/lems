@@ -1,5 +1,4 @@
 import { WithId } from 'mongodb';
-import { RobotGameMatch } from '@lems/types';
 import {
   Typography,
   Table,
@@ -9,16 +8,19 @@ import {
   TableCell,
   TableContainer
 } from '@mui/material';
+import { Team, RobotGameMatch } from '@lems/types';
 import MatchRow from './stagger-schedule-match-row';
 import ActionRow from './stagger-schedule-action-row';
 
 interface StaggerScheduleProps {
+  teams: Array<WithId<Team>>;
   currentMatch: WithId<RobotGameMatch> | null;
   nextMatch: WithId<RobotGameMatch> | null;
   nextNextMatch: WithId<RobotGameMatch> | null;
 }
 
 const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
+  teams,
   currentMatch,
   nextMatch,
   nextNextMatch
@@ -45,9 +47,11 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
         </TableHead>
         <TableBody>
           <MatchRow match={currentMatch} />
-          <ActionRow fromMatch={currentMatch} toMatch={nextMatch} />
+          <ActionRow fromMatch={currentMatch} toMatch={nextMatch} teams={teams} allowMerge />
           <MatchRow match={nextMatch} />
-          {nextNextMatch && <ActionRow fromMatch={nextMatch} toMatch={nextNextMatch} />}
+          {nextNextMatch && (
+            <ActionRow fromMatch={nextMatch} toMatch={nextNextMatch} teams={teams} />
+          )}
           {nextNextMatch && <MatchRow match={nextNextMatch} />}
         </TableBody>
       </Table>

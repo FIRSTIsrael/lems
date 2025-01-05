@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import { DivisionState, RobotGameMatch } from '@lems/types';
+import { Team, DivisionState, RobotGameMatch } from '@lems/types';
 import StaggerSchedule from './stagger-schedule';
 
 interface StaggerEditorProps {
+  teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   divisionState: WithId<DivisionState>;
 }
 
-const StaggerEditor: React.FC<StaggerEditorProps> = ({ matches, divisionState }) => {
+const StaggerEditor: React.FC<StaggerEditorProps> = ({ teams, matches, divisionState }) => {
   /* <Typography>Staggered match editor</Typography>
         <Typography>Show loaded (or next not started) +2 next matches</Typography>
         <Typography>Arrows between rows to shift teams to later /earlier matches</Typography>
@@ -44,6 +45,7 @@ const StaggerEditor: React.FC<StaggerEditorProps> = ({ matches, divisionState })
         עריכה מהירה
       </Typography>
       <StaggerSchedule
+        teams={teams}
         currentMatch={currentMatch}
         nextMatch={nextMatch}
         nextNextMatch={nextNextMatch}

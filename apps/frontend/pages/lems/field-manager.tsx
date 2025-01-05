@@ -157,7 +157,7 @@ const Page: NextPage<Props> = ({
           sessions={sessions}
           onScheduleRematch={handleScheduleRematch}
         />
-        <StaggerEditor divisionState={divisionState} matches={matches} />
+        <StaggerEditor divisionState={divisionState} matches={matches} teams={teams} />
       </Layout>
     </RoleAuthorizer>
   );
