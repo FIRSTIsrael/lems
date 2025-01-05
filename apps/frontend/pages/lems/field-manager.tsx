@@ -11,7 +11,6 @@ import {
   Team,
   DivisionWithEvent,
   JudgingSession,
-  JudgingRoom,
   RobotGameMatchParticipant
 } from '@lems/types';
 import Layout from '../../components/layout';
@@ -21,7 +20,7 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
 import RematchManager from '../../components/field-manager/rematch-manager';
-import StaggerEditor from '../../components/field-manager/stagger-editor';
+import StaggerEditor from '../../components/field-manager/stagger-editor/stagger-editor';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -31,7 +30,6 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
-  rooms: Array<WithId<JudgingRoom>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -40,8 +38,7 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  sessions: initialSessions,
-  rooms
+  sessions: initialSessions
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -160,7 +157,7 @@ const Page: NextPage<Props> = ({
           sessions={sessions}
           onScheduleRematch={handleScheduleRematch}
         />
-        <StaggerEditor />
+        <StaggerEditor divisionState={divisionState} matches={matches} />
       </Layout>
     </RoleAuthorizer>
   );
@@ -177,8 +174,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        tables: `/api/divisions/${divisionId}/tables`,
-        rooms: `/api/divisions/${divisionId}/rooms`
+        tables: `/api/divisions/${divisionId}/tables`
       },
       ctx
     );

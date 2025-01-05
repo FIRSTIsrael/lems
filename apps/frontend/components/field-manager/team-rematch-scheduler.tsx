@@ -204,7 +204,7 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
           <Typography>
             {`תיאום מקצה חוזר לקבוצה #${team.number} `}
             {`בשעה ${selectedMatch ? dayjs(selectedMatch.scheduledTime).format('HH:mm') : ' _____ '} `}
-            {`בשולחן ${selectedMatch && selectedParticipant ? selectedMatch.participants[selectedParticipant].tableName : ' _____ '}`}
+            {`בשולחן ${selectedMatch && selectedParticipant !== null ? selectedMatch.participants[selectedParticipant].tableName : ' _____ '}`}
           </Typography>
           <Button
             variant="contained"

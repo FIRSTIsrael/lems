@@ -37,6 +37,15 @@ const RematchManager: React.FC<RematchManagerProps> = ({
     );
   }
 
+  const doesTeamHavePendingMatch = (team: WithId<Team>) =>
+    matches.find(
+      match =>
+        match.stage === 'ranking' &&
+        match.round === divisionState.currentRound &&
+        match.status === 'not-started' &&
+        match.participants.find(participant => participant.teamId === team._id)
+    );
+
   /**
    * Teams that have already played in the current round
    */
@@ -50,17 +59,7 @@ const RematchManager: React.FC<RematchManagerProps> = ({
     .flatMap(match => match.participants)
     .map(participant => teams.find(team => team._id === participant.teamId))
     .filter(team => !!team)
-    // Filter out teams that have a pending rematch
-    .filter(
-      team =>
-        !matches.find(
-          match =>
-            match.stage === 'ranking' &&
-            match.round === divisionState.currentRound &&
-            match.status === 'not-started' &&
-            match.participants.find(participant => participant.teamId === team._id)
-        )
-    );
+    .filter(team => !doesTeamHavePendingMatch(team));
 
   return (
     <Paper sx={{ p: 2, mt: 2 }}>
