@@ -8,8 +8,6 @@ from events.practice_match import PracticeMatch
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 
-NUMBER_OF_EVENTS = 5
-
 
 def get_session_preference_function(session: TeamActivity):
     type_to_function = {
