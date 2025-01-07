@@ -224,6 +224,100 @@ export const handleUpdateMatchTeams = async (
   namespace.to('field').emit('matchUpdated', match);
 };
 
+export const handleSwitchMatchTeams = async (
+  namespace,
+  divisionId: string,
+  fromMatchId: string,
+  toMatchId: string,
+  participantIndex: number,
+  callback
+) => {
+  let fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  let toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+
+  if (!fromMatch || !toMatch) {
+    callback({ ok: false, error: `Could not find match(es) ${fromMatchId}/${toMatchId}!` });
+    return;
+  }
+
+  if (fromMatch.status !== 'not-started' || toMatch.status !== 'not-started') {
+    callback({ ok: false, error: `Match(es) ${fromMatchId}/${toMatchId} are not editable!` });
+    return;
+  }
+
+  console.log(
+    `🖊️ Switching teams with index ${participantIndex} from match ${fromMatchId} to match ${toMatchId} in division ${divisionId}`
+  );
+
+  await db.updateMatch(
+    { _id: new ObjectId(fromMatchId) },
+    { [`participants.${participantIndex}.teamId`]: toMatch.participants[participantIndex].teamId }
+  );
+
+  await db.updateMatch(
+    { _id: new ObjectId(toMatchId) },
+    { [`participants.${participantIndex}.teamId`]: fromMatch.participants[participantIndex].teamId }
+  );
+
+  callback({ ok: true });
+  fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+  namespace.to('field').emit('matchUpdated', fromMatch);
+  namespace.to('field').emit('matchUpdated', toMatch);
+};
+
+export const handleMergeMatches = async (
+  namespace,
+  divisionId: string,
+  fromMatchId: string,
+  toMatchId: string,
+  callback
+) => {
+  let fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  let toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+
+  if (!fromMatch || !toMatch) {
+    callback({ ok: false, error: `Could not find match(es) ${fromMatchId}/${toMatchId}!` });
+    return;
+  }
+
+  if (fromMatch.status !== 'not-started' || toMatch.status !== 'not-started') {
+    callback({ ok: false, error: `Match(es) ${fromMatchId}/${toMatchId} are not editable!` });
+    return;
+  }
+
+  console.log(`🔄 Merging match ${fromMatchId} into match ${toMatchId} in division ${divisionId}`);
+
+  const fromMatchNewParticipants = fromMatch.participants.map(participant => ({
+    ...participant,
+    teamId: null
+  }));
+
+  const toMatchNewParticipants = toMatch.participants.map((participant, index) => {
+    const fromMatchParticipant = fromMatch.participants[index];
+    if (fromMatchParticipant.teamId !== null && fromMatchParticipant.team?.registered) {
+      return {
+        ...participant,
+        teamId: fromMatchParticipant.teamId
+      };
+    }
+    return participant;
+  });
+
+  await db.updateMatch(
+    { _id: new ObjectId(fromMatchId) },
+    { participants: fromMatchNewParticipants, status: 'completed' }
+  );
+
+  await db.updateMatch({ _id: new ObjectId(toMatchId) }, { participants: toMatchNewParticipants });
+
+  callback({ ok: true });
+  fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+  namespace.to('field').emit('matchUpdated', fromMatch);
+  namespace.to('field').emit('matchUpdated', toMatch);
+};
+
 export const handleUpdateMatchParticipant = async (
   namespace,
   divisionId: string,

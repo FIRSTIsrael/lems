@@ -17,13 +17,21 @@ interface StaggerScheduleProps {
   currentMatch: WithId<RobotGameMatch> | null;
   nextMatch: WithId<RobotGameMatch> | null;
   nextNextMatch: WithId<RobotGameMatch> | null;
+  onSwitchParticipants: (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatchId: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => void;
+  onMergeMatches: (fromMatch: WithId<RobotGameMatch>, toMatch: WithId<RobotGameMatch>) => void;
 }
 
 const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
   teams,
   currentMatch,
   nextMatch,
-  nextNextMatch
+  nextNextMatch,
+  onSwitchParticipants,
+  onMergeMatches
 }) => {
   if (!currentMatch || !nextMatch) {
     return <Typography>לא נותרו מספיק מקצים בסבב הנוכחי.</Typography>;
@@ -47,10 +55,23 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
         </TableHead>
         <TableBody>
           <MatchRow match={currentMatch} />
-          <ActionRow fromMatch={currentMatch} toMatch={nextMatch} teams={teams} allowMerge />
+          <ActionRow
+            fromMatch={currentMatch}
+            toMatch={nextMatch}
+            teams={teams}
+            allowMerge
+            onSwitchParticipants={onSwitchParticipants}
+            onMergeMatches={onMergeMatches}
+          />
           <MatchRow match={nextMatch} />
           {nextNextMatch && (
-            <ActionRow fromMatch={nextMatch} toMatch={nextNextMatch} teams={teams} />
+            <ActionRow
+              fromMatch={nextMatch}
+              toMatch={nextNextMatch}
+              teams={teams}
+              onSwitchParticipants={onSwitchParticipants}
+              onMergeMatches={onMergeMatches}
+            />
           )}
           {nextNextMatch && <MatchRow match={nextNextMatch} />}
         </TableBody>

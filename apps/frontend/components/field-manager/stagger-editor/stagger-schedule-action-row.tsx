@@ -9,9 +9,22 @@ interface ActionRowProps {
   fromMatch: WithId<RobotGameMatch>;
   toMatch: WithId<RobotGameMatch>;
   allowMerge?: boolean;
+  onSwitchParticipants: (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatchId: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => void;
+  onMergeMatches: (fromMatch: WithId<RobotGameMatch>, toMatch: WithId<RobotGameMatch>) => void;
 }
 
-const ActionRow: React.FC<ActionRowProps> = ({ teams, fromMatch, toMatch, allowMerge }) => {
+const ActionRow: React.FC<ActionRowProps> = ({
+  teams,
+  fromMatch,
+  toMatch,
+  allowMerge,
+  onSwitchParticipants,
+  onMergeMatches
+}) => {
   const canMerge = fromMatch.participants
     .map((participant, index) => {
       const moving = participant.teamId && teams.find(team => team._id === participant.teamId);
@@ -32,6 +45,7 @@ const ActionRow: React.FC<ActionRowProps> = ({ teams, fromMatch, toMatch, allowM
             color="primary"
             sx={{ px: 2 }}
             disabled={!canMerge}
+            onClick={() => onMergeMatches(fromMatch, toMatch)}
           >
             מיזוג
           </Button>
@@ -46,7 +60,12 @@ const ActionRow: React.FC<ActionRowProps> = ({ teams, fromMatch, toMatch, allowM
         return (
           <TableCell key={index} align="center">
             {moving && (
-              <IconButton size="small" color="primary" disabled={!canMove}>
+              <IconButton
+                size="small"
+                color="primary"
+                disabled={!canMove}
+                onClick={() => onSwitchParticipants(fromMatch, toMatch, index)}
+              >
                 <SouthRoundedIcon />
               </IconButton>
             )}

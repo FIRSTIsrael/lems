@@ -132,6 +132,46 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const handleSwitchParticipants = (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatch: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => {
+    socket.emit(
+      'switchMatchTeams',
+      fromMatch.divisionId.toString(),
+      fromMatch._id.toString(),
+      toMatch._id.toString(),
+      participantIndex,
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const handleMergeMatches = (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatch: WithId<RobotGameMatch>
+  ) => {
+    socket.emit(
+      'mergeMatches',
+      fromMatch.divisionId.toString(),
+      fromMatch._id.toString(),
+      toMatch._id.toString(),
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצים מוזגו בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, מיזוג המקצים נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
   return (
     <RoleAuthorizer
       user={user}
@@ -157,7 +197,13 @@ const Page: NextPage<Props> = ({
           sessions={sessions}
           onScheduleRematch={handleScheduleRematch}
         />
-        <StaggerEditor divisionState={divisionState} matches={matches} teams={teams} />
+        <StaggerEditor
+          divisionState={divisionState}
+          matches={matches}
+          teams={teams}
+          onSwitchParticipants={handleSwitchParticipants}
+          onMergeMatches={handleMergeMatches}
+        />
       </Layout>
     </RoleAuthorizer>
   );
