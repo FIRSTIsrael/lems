@@ -74,10 +74,10 @@ def check_team_preference(team: Team, session: TeamActivity) -> TeamActivity | N
 
 
 def gale_shapley(
-    teams: list[Team], sessions: list[TeamActivity]
+    teams: list[Team], sessions: list[TeamActivity], number_of_events: int
 ) -> tuple[list[Team], list[TeamActivity]]:
     sessions_left = [session for session in sessions if session.team_number is None]
-    teams_left = [team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS]
+    teams_left = [team for team in teams if len(team.team_events) != number_of_events]
 
     while len(teams_left) > 0:
         random.shuffle(sessions_left)
@@ -90,7 +90,7 @@ def gale_shapley(
         if session_left_alone is not None:
             sessions_left.append(session_left_alone)
         teams_left = [
-            team for team in teams if len(team.team_events) != NUMBER_OF_EVENTS
+            team for team in teams if len(team.team_events) != number_of_events
         ]
 
     return teams, sessions

@@ -198,8 +198,9 @@ class SchedulerService:
             current_teams = deepcopy(teams)
             current_activities = deepcopy(activities)
 
+            number_of_events = create_schedule_request.ranking_matches_count + create_schedule_request.practice_matches_count + 1
             matched_teams, matched_activities = gale_shapley(
-                current_teams, current_activities
+                current_teams, current_activities, number_of_events
             )
 
             score = check_score(matched_teams)
