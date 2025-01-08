@@ -299,6 +299,8 @@ export const handleMergeMatches = async (
 
   const toMatchNewParticipants = toMatch.participants.map(participant => {
     if (!participant.teamId || !participant.team.registered) {
+      // Destructure out some properties, should be unused
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { team, teamId, ...rest } = participant;
       return {
         ...rest,
