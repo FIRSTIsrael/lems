@@ -48,7 +48,7 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
             <TableCell align="center">התחלה</TableCell>
             {tables.map((tableName, index) => (
               <TableCell key={index} align="center">
-                {`שולחן ${tableName}`}
+                שולחן {tableName}
               </TableCell>
             ))}
           </TableRow>
@@ -63,7 +63,7 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
             onSwitchParticipants={onSwitchParticipants}
             onMergeMatches={onMergeMatches}
           />
-          <MatchRow match={nextMatch} />
+          <MatchRow match={nextMatch} teams={teams} />
           {nextNextMatch && (
             <ActionRow
               fromMatch={nextMatch}
