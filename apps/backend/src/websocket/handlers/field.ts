@@ -205,7 +205,7 @@ export const handleUpdateMatchTeams = async (
 
   console.log(`🖊️ Updating teams for match ${matchId} in division ${divisionId}`);
 
-  newTeams.forEach(async newTeam => {
+  for (const newTeam of newTeams) {
     const participantIndex = match.participants.findIndex(
       p => p.tableId.toString() === newTeam.tableId
     );
@@ -217,7 +217,7 @@ export const handleUpdateMatchTeams = async (
           : null
       }
     );
-  });
+  }
 
   callback({ ok: true });
   match = await db.getMatch({ _id: new ObjectId(matchId) });
