@@ -205,7 +205,7 @@ export const handleUpdateMatchTeams = async (
 
   console.log(`🖊️ Updating teams for match ${matchId} in division ${divisionId}`);
 
-  newTeams.forEach(async newTeam => {
+  for (const newTeam of newTeams) {
     const participantIndex = match.participants.findIndex(
       p => p.tableId.toString() === newTeam.tableId
     );
@@ -217,11 +217,111 @@ export const handleUpdateMatchTeams = async (
           : null
       }
     );
-  });
+  }
 
   callback({ ok: true });
   match = await db.getMatch({ _id: new ObjectId(matchId) });
   namespace.to('field').emit('matchUpdated', match);
+};
+
+export const handleSwitchMatchTeams = async (
+  namespace,
+  divisionId: string,
+  fromMatchId: string,
+  toMatchId: string,
+  participantIndex: number,
+  callback
+) => {
+  let fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  let toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+
+  if (!fromMatch || !toMatch) {
+    callback({ ok: false, error: `Could not find match(es) ${fromMatchId}/${toMatchId}!` });
+    return;
+  }
+
+  if (fromMatch.status !== 'not-started' || toMatch.status !== 'not-started') {
+    callback({ ok: false, error: `Match(es) ${fromMatchId}/${toMatchId} are not editable!` });
+    return;
+  }
+
+  console.log(
+    `🖊️ Switching teams with index ${participantIndex} from match ${fromMatchId} to match ${toMatchId} in division ${divisionId}`
+  );
+
+  await db.updateMatch(
+    { _id: new ObjectId(fromMatchId) },
+    { [`participants.${participantIndex}.teamId`]: toMatch.participants[participantIndex].teamId }
+  );
+
+  await db.updateMatch(
+    { _id: new ObjectId(toMatchId) },
+    { [`participants.${participantIndex}.teamId`]: fromMatch.participants[participantIndex].teamId }
+  );
+
+  callback({ ok: true });
+  fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+  namespace.to('field').emit('matchUpdated', fromMatch);
+  namespace.to('field').emit('matchUpdated', toMatch);
+};
+
+export const handleMergeMatches = async (
+  namespace,
+  divisionId: string,
+  fromMatchId: string,
+  toMatchId: string,
+  callback
+) => {
+  let fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  let toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+
+  if (!fromMatch || !toMatch) {
+    callback({ ok: false, error: `Could not find match(es) ${fromMatchId}/${toMatchId}!` });
+    return;
+  }
+
+  if (fromMatch.status !== 'not-started' || toMatch.status !== 'not-started') {
+    callback({ ok: false, error: `Match(es) ${fromMatchId}/${toMatchId} are not editable!` });
+    return;
+  }
+
+  console.log(`🔄 Merging match ${fromMatchId} into match ${toMatchId} in division ${divisionId}`);
+
+  const fromMatchNewParticipants = fromMatch.participants.map(participant => ({
+    ...participant,
+    teamId: null
+  }));
+
+  const teamsToMerge = fromMatch.participants.filter(
+    participant => participant.teamId && participant.team.registered
+  );
+
+  const toMatchNewParticipants = toMatch.participants.map(participant => {
+    if (!participant.teamId || !participant.team.registered) {
+      // Destructure out some properties, should be unused
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { team, teamId, ...rest } = participant;
+      return {
+        ...rest,
+        teamId: teamsToMerge.shift()?.teamId ?? null
+      };
+    }
+    return participant;
+  });
+
+  await db.updateMatch(
+    { _id: new ObjectId(fromMatchId) },
+    { participants: fromMatchNewParticipants, status: 'completed' }
+  );
+
+  await db.updateMatch({ _id: new ObjectId(toMatchId) }, { participants: toMatchNewParticipants });
+
+  callback({ ok: true });
+  fromMatch = await db.getMatch({ _id: new ObjectId(fromMatchId) });
+  toMatch = await db.getMatch({ _id: new ObjectId(toMatchId) });
+  namespace.to('field').emit('matchUpdated', fromMatch);
+  namespace.to('field').emit('matchUpdated', toMatch);
 };
 
 export const handleUpdateMatchParticipant = async (

@@ -243,6 +243,21 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  switchMatchTeams: (
+    divisionId: string,
+    fromMatchId: string,
+    toMatchId: string,
+    participantIndex: number,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  mergeMatches: (
+    divisionId: string,
+    fromMatchId: string,
+    toMatchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   updateMatchParticipant: (
     divisionId: string,
     matchId: string,

@@ -15,6 +15,7 @@ export interface Division {
   eventId: ObjectId;
   color: CSSProperties['color'];
   hasState: boolean;
+  staggered?: boolean;
   schedule?: Array<DivisionScheduleEntry>;
   enableAdvancement?: boolean;
 }
