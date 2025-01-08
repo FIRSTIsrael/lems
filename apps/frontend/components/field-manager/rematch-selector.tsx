@@ -6,8 +6,10 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  Button
+  Button,
+  IconButton
 } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Team, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import dayjs from 'dayjs';
 import { getBackgroundColor } from '../../lib/utils/theme';
@@ -39,29 +41,38 @@ const RematchSelectorRow: React.FC<RematchSelectorRowProps> = ({
     <TableRow sx={{ backgroundColor: canSelect ? canSelectBg : undefined }}>
       <TableCell align="center">{match.number}</TableCell>
       <TableCell align="center">{matchStart}</TableCell>
-      {match.participants.map((participant, index) => (
-        <TableCell key={index} align="center">
-          {canSelect && tableIsEmpty(participant) ? (
-            <Button
-              variant="outlined"
-              onClick={() => onSelect?.(index)}
-              sx={{
-                color: 'grey.700',
-                borderColor: 'grey.500',
-                '&:hover': {
-                  borderColor: 'grey.700'
-                }
-              }}
-            >
-              {participant.team ? <StyledTeamTooltip team={participant.team} /> : '-'}
-            </Button>
-          ) : participant.team ? (
-            <StyledTeamTooltip team={participant.team} />
-          ) : (
-            '-'
-          )}
-        </TableCell>
-      ))}
+      {match.participants.map((participant, index) => {
+        const team = teams?.find(team => team._id === participant.teamId);
+        return (
+          <TableCell key={index} align="center">
+            {canSelect && tableIsEmpty(participant) ? (
+              team ? (
+                <Button
+                  variant="outlined"
+                  onClick={() => onSelect?.(index)}
+                  sx={{
+                    color: 'grey.700',
+                    borderColor: 'grey.500',
+                    '&:hover': {
+                      borderColor: 'grey.700'
+                    }
+                  }}
+                >
+                  <StyledTeamTooltip team={team} />
+                </Button>
+              ) : (
+                <IconButton onClick={() => onSelect?.(index)}>
+                  <AddCircleOutlineIcon />
+                </IconButton>
+              )
+            ) : team ? (
+              <StyledTeamTooltip team={team} />
+            ) : (
+              '-'
+            )}
+          </TableCell>
+        );
+      })}
     </TableRow>
   );
 };
@@ -92,7 +103,7 @@ const RematchSelector: React.FC<RematchSelectorProps> = ({
             <TableCell align="center">התחלה</TableCell>
             {tables.map((tableName, index) => (
               <TableCell key={index} align="center">
-                {`שולחן ${tableName}`}
+                שולחן {tableName}
               </TableCell>
             ))}
           </TableRow>

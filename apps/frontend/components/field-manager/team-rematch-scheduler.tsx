@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
-import { Chip, Stack, Typography, Box, Button } from '@mui/material';
+import { Chip, Stack, Typography, Box, Button, Skeleton } from '@mui/material';
 import GavelRoundedIcon from '@mui/icons-material/GavelRounded';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
@@ -237,11 +237,18 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
 
       {availableMatches.length > 0 && (
         <Stack direction="row" spacing={2} mt={2} alignItems="center">
-          <Typography>
-            {`תיאום מקצה חוזר לקבוצה #${team.number} `}
-            {`בשעה ${selectedMatch ? dayjs(selectedMatch.scheduledTime).format('HH:mm') : ' _____ '} `}
-            {`בשולחן ${selectedMatch && selectedParticipant !== null ? selectedMatch.participants[selectedParticipant].tableName : ' _____ '}`}
-          </Typography>
+          <Typography>תיאום מקצה חוזר לקבוצה #{team.number} בשעה</Typography>
+          {selectedMatch ? (
+            <Typography>{dayjs(selectedMatch.scheduledTime).format('HH:mm')}</Typography>
+          ) : (
+            <Skeleton variant="text" width="10%" />
+          )}
+          <Typography>בשולחן</Typography>
+          {selectedMatch && selectedParticipant !== null ? (
+            <Typography>{selectedMatch.participants[selectedParticipant].tableName}</Typography>
+          ) : (
+            <Skeleton variant="text" width="10%" />
+          )}
           <Button
             variant="contained"
             startIcon={<CheckRoundedIcon />}
