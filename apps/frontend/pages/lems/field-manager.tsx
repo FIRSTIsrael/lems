@@ -195,7 +195,7 @@ const Page: NextPage<Props> = ({
           matches={matches}
           divisionState={divisionState}
           sessions={sessions}
-          isStaggered={division.staggered}
+          isStaggered={!!division.staggered}
           onScheduleRematch={handleScheduleRematch}
         />
         {division.staggered && (
