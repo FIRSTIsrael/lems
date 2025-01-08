@@ -293,12 +293,16 @@ export const handleMergeMatches = async (
     teamId: null
   }));
 
-  const toMatchNewParticipants = toMatch.participants.map((participant, index) => {
-    const fromMatchParticipant = fromMatch.participants[index];
-    if (fromMatchParticipant.teamId !== null && fromMatchParticipant.team?.registered) {
+  const teamsToMerge = fromMatch.participants.filter(
+    participant => participant.teamId && participant.team.registered
+  );
+
+  const toMatchNewParticipants = toMatch.participants.map(participant => {
+    if (!participant.teamId || !participant.team.registered) {
+      const { team, teamId, ...rest } = participant;
       return {
-        ...participant,
-        teamId: fromMatchParticipant.teamId
+        ...rest,
+        teamId: teamsToMerge.shift()?.teamId ?? null
       };
     }
     return participant;

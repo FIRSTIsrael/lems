@@ -1,5 +1,6 @@
+import { useCallback, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Team, RobotGameMatch } from '@lems/types';
+import { Team, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import SouthRoundedIcon from '@mui/icons-material/SouthRounded';
 import JoinFullRoundedIcon from '@mui/icons-material/JoinFullRounded';
 import { TableRow, TableCell, IconButton, Button } from '@mui/material';
@@ -25,15 +26,20 @@ const ActionRow: React.FC<ActionRowProps> = ({
   onSwitchParticipants,
   onMergeMatches
 }) => {
-  const canMerge = fromMatch.participants
-    .map((participant, index) => {
-      const moving = participant.teamId && teams.find(team => team._id === participant.teamId);
-      const canMove =
-        toMatch.participants[index].teamId === null ||
-        !teams.find(team => team._id === toMatch.participants[index].teamId)?.registered;
-      return (moving && canMove) || !moving;
-    })
-    .every(Boolean);
+  const isEmptySlot = useCallback(
+    (participant: RobotGameMatchParticipant) => {
+      if (!participant.teamId) return true;
+      const team = teams.find(team => team._id === participant.teamId);
+      return !team?.registered;
+    },
+    [teams]
+  );
+
+  const canMerge = useMemo(() => {
+    const fromMatchEmptySlots = fromMatch.participants.filter(isEmptySlot).length;
+    const toMatchEmptySlots = toMatch.participants.filter(isEmptySlot).length;
+    return toMatchEmptySlots >= fromMatchEmptySlots && toMatchEmptySlots > 0;
+  }, [fromMatch.participants, isEmptySlot, toMatch.participants]);
 
   return (
     <TableRow>
@@ -52,10 +58,8 @@ const ActionRow: React.FC<ActionRowProps> = ({
         )}
       </TableCell>
       {fromMatch.participants.map((participant, index) => {
-        const moving = participant.teamId && teams.find(team => team._id === participant.teamId);
-        const canMove =
-          toMatch.participants[index].teamId === null ||
-          !teams.find(team => team._id === toMatch.participants[index].teamId)?.registered;
+        const moving = !isEmptySlot(participant);
+        const canMove = isEmptySlot(toMatch.participants[index]);
 
         return (
           <TableCell key={index} align="center">
