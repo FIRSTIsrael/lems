@@ -195,15 +195,18 @@ const Page: NextPage<Props> = ({
           matches={matches}
           divisionState={divisionState}
           sessions={sessions}
+          isStaggered={division.staggered}
           onScheduleRematch={handleScheduleRematch}
         />
-        <StaggerEditor
-          divisionState={divisionState}
-          matches={matches}
-          teams={teams}
-          onSwitchParticipants={handleSwitchParticipants}
-          onMergeMatches={handleMergeMatches}
-        />
+        {division.staggered && (
+          <StaggerEditor
+            divisionState={divisionState}
+            matches={matches}
+            teams={teams}
+            onSwitchParticipants={handleSwitchParticipants}
+            onMergeMatches={handleMergeMatches}
+          />
+        )}
       </Layout>
     </RoleAuthorizer>
   );

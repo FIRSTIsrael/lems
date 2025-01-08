@@ -23,6 +23,7 @@ interface TeamRematchSchedulerProps {
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
+  isStaggered: boolean;
   onScheduleRematch: (
     team: WithId<Team>,
     match: WithId<RobotGameMatch>,
@@ -36,6 +37,7 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
   divisionState,
   matches,
   sessions,
+  isStaggered,
   onScheduleRematch
 }) => {
   const [selectedMatch, setSelectedMatch] = useState<WithId<RobotGameMatch> | null>(null);
@@ -99,6 +101,30 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
     const matchEndTime = matchStartTime.add(MATCH_LENGTH, 'seconds');
     const endOverlap = sessionStart && matchEndTime.isBetween(sessionStart, sessionEnd);
     return startOverlap || endOverlap;
+  };
+
+  const isPreferred = (match: RobotGameMatch) => {
+    if (!isStaggered) return false;
+
+    const nextMatchInRound = matches.find(
+      m =>
+        m.stage === 'ranking' &&
+        m.round === match.round &&
+        m.number === match.number + 1 &&
+        m.status === 'not-started'
+    );
+    if (!nextMatchInRound) return true;
+
+    for (const [index, participant] of match.participants.entries()) {
+      if (!participant.teamId || !isTeamRegistered(participant.teamId)) {
+        const nextParticipant = nextMatchInRound.participants[index];
+        if (!nextParticipant.teamId || !isTeamRegistered(nextParticipant.teamId)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   };
 
   const teamMatches = matches
@@ -165,18 +191,28 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
       <Box display="flex" flexDirection="row" gap={1}>
         {availableMatches.length === 0 && (
           <Typography>
-            {'לא נמצא זמן למקצה חוזר בסבב הנוכחי.'}
+            לא נמצא זמן למקצה חוזר בסבב הנוכחי.
             <br />
-            {'ניתן להריץ מקצה בדיקה ולנקד אותו בעזרת שופט הזירה הראשי.'}
+            ניתן להריץ מקצה בדיקה ולנקד אותו בעזרת שופט הזירה הראשי.
           </Typography>
         )}
         {availableMatches.map((match, index) => {
-          const bgColor = closeToSession(match)
-            ? getBackgroundColor('#fd7036', 'light')
-            : undefined;
-          const hoverBgColor = closeToSession(match)
-            ? getBackgroundColor('#ff4a00', 'main')
-            : undefined;
+          let bgColor: string | undefined;
+          let hoverBgColor: string | undefined;
+
+          const colors = {
+            default: { background: undefined, hover: undefined },
+            close: { background: '#fd7036', hover: '#ff4a00' },
+            preferred: { background: '#4caf50', hover: '#388e3c' }
+          };
+
+          if (closeToSession(match)) {
+            bgColor = colors.close.background;
+            hoverBgColor = colors.close.hover;
+          } else if (isPreferred(match)) {
+            bgColor = getBackgroundColor(colors.preferred.background, 'light');
+            hoverBgColor = getBackgroundColor(colors.preferred.hover, 'light');
+          }
 
           return (
             <Chip

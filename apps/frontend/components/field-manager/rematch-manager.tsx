@@ -10,6 +10,7 @@ interface RematchManagerProps {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   divisionState: WithId<DivisionState>;
+  isStaggered: boolean;
   onScheduleRematch: (
     team: WithId<Team>,
     match: WithId<RobotGameMatch>,
@@ -22,6 +23,7 @@ const RematchManager: React.FC<RematchManagerProps> = ({
   matches,
   sessions,
   divisionState,
+  isStaggered,
   onScheduleRematch
 }) => {
   const [rematchTeam, setRematchTeam] = useState<WithId<Team> | null>(null);
@@ -74,6 +76,7 @@ const RematchManager: React.FC<RematchManagerProps> = ({
           divisionState={divisionState}
           matches={matches}
           sessions={sessions}
+          isStaggered={isStaggered}
           onScheduleRematch={(
             team: WithId<Team>,
             match: WithId<RobotGameMatch>,
