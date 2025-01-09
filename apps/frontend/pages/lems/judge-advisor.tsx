@@ -34,6 +34,7 @@ import CVFormCard from '../../components/cv-form/cv-form-card';
 import BadgeTab from '../../components/general/badge-tab';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
+import dayjs from 'dayjs';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -132,9 +133,15 @@ const Page: NextPage<Props> = ({
     });
   };
 
-  const handleScheduleTimeChange = (match: WithId<RobotGameMatch>, updatedParticipant: RobotGameMatchParticipant) => {
-      enqueueSnackbar(`קבוצה במקצה ${match.number} בשולחן ${updatedParticipant.tableName} עודכנה`, { variant: 'info' });
-    };
+  const handleScheduleTimeChange = (session: WithId<JudgingSession>) => {
+    console.log('session', session);
+    enqueueSnackbar(`קבוצה בשיפוט בשעה ${dayjs(session.scheduledTime).format('HH:mm')} עודכנה`, {
+      variant: 'info'
+    });
+    // enqueueSnackbar(`קבוצה בשיפוט בחדר ${session.roomId?} בשעה ${dayjs(session.scheduledTime).format('HH:mm')} עודכנה`, {
+    //   variant: 'info'
+    // });
+  };
 
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
