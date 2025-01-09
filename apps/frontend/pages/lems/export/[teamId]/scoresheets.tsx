@@ -16,9 +16,11 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ user, division, team, scoresheets }) => {
+  const scoresheetsToExport = scoresheets.filter(scoresheet => scoresheet.status === 'ready');
+
   return (
     <RoleAuthorizer user={user} allowedRoles={[]}>
-      {scoresheets.map((scoresheet, index) => {
+      {scoresheetsToExport.map((scoresheet, index) => {
         const isLastScoresheet = index === scoresheets.length - 1;
         return (
           <Box

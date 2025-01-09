@@ -4,9 +4,10 @@ import Grid from '@mui/material/Grid2';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Team, AwardNames } from '@lems/types';
+import { Team, AwardNames, SUGGESTED_TEAM_COLOR } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
+import { getBackgroundColor } from 'apps/frontend/lib/utils/theme';
 
 interface AwardListItemProps {
   droppableId: string;
@@ -73,7 +74,10 @@ const SuggestedTeamItem: React.FC<SuggestedTeamItem> = ({ team, addTeam, disable
       minHeight={35}
       alignItems="center"
       justifyContent="space-evenly"
-      sx={{ border: '1px dashed #999' }}
+      sx={{
+        border: '1px dashed #999',
+        backgroundColor: getBackgroundColor(SUGGESTED_TEAM_COLOR, 'light')
+      }}
       borderRadius={1}
       direction="row"
     >

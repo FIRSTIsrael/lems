@@ -106,7 +106,7 @@ export const RANKING_ANOMALY_THRESHOLD = 3;
 export const AnomalyReasonTypes = ['low-rank', 'high-rank'];
 export type AnomalyReasons = (typeof AnomalyReasonTypes)[number];
 
-export const JUDGING_SESSION_LENGTH = 27 * 60;
+export const JUDGING_SESSION_LENGTH = 28 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const CATEGORY_DELIBERATION_LENGTH = 20 * 60;
 export const CHAMPIONS_DELIBERATION_STAGE_LENGTH = 5 * 60;
@@ -129,6 +129,16 @@ export const CategoryColors: Record<JudgingCategory, string> = {
   'robot-design': '#CCE7D3',
   'core-values': '#FCD3C1'
 };
+
+export const DarkCategoryColors: Record<JudgingCategory, string> = {
+  'innovation-project': '#005ba9',
+  'robot-design': '#007533',
+  'core-values': '#e2000b'
+};
+
+// Deliberation colors
+export const SUGGESTED_TEAM_COLOR = '#90caf9';
+export const SELECTED_TEAM_COLOR = '#32a84c';
 
 export const INSPECTION_TIMER_LENGTH = 90; //seconds
 export const SHOW_INSPECTION_TIMER = true;

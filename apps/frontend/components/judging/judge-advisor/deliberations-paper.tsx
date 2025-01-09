@@ -106,12 +106,7 @@ const DeliberationsPaper: React.FC<DeliberationsPaperProps> = ({ division, delib
             </IconButton>
           ) : (
             <Stack width="100%" spacing={2} alignItems="center">
-              <IconButton
-                component="a"
-                href={`/lems/deliberations/final`}
-                target="_blank"
-                disabled={finalDeliberation.status !== 'in-progress'}
-              >
+              <IconButton component="a" href={`/lems/deliberations/final`} target="_blank">
                 <StatusIcon status={finalDeliberation.status} />
               </IconButton>
               {finalDeliberation.status === 'in-progress' && (

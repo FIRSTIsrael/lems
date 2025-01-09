@@ -30,7 +30,9 @@ import {
   handleStartMatch,
   handleStartTestMatch,
   handleUpdateScoresheet,
-  handleUpdateMatchTeams
+  handleUpdateMatchTeams,
+  handleSwitchMatchTeams,
+  handleMergeMatches
 } from './handlers/field';
 import { handleUpdateAudienceDisplay, handleUpdatePresentation } from './handlers/audience-display';
 
@@ -99,6 +101,10 @@ const websocket = (
   socket.on('abortMatch', (...args) => handleAbortMatch(namespace, ...args));
 
   socket.on('updateMatchTeams', (...args) => handleUpdateMatchTeams(namespace, ...args));
+
+  socket.on('switchMatchTeams', (...args) => handleSwitchMatchTeams(namespace, ...args));
+
+  socket.on('mergeMatches', (...args) => handleMergeMatches(namespace, ...args));
 
   socket.on('updateMatchParticipant', (...args) =>
     handleUpdateMatchParticipant(namespace, ...args)

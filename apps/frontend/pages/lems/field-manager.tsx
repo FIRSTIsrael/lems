@@ -20,7 +20,8 @@ import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
-import RematchFinder from '../../components/field-manager/rematch-finder';
+import RematchManager from '../../components/field-manager/rematch-manager';
+import StaggerEditor from '../../components/field-manager/stagger-editor/stagger-editor';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,7 +31,6 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
-  rooms: Array<WithId<JudgingRoom>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -39,8 +39,7 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  sessions: initialSessions,
-  rooms
+  sessions: initialSessions
 }) => {
   const router = useRouter();
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
@@ -97,7 +96,7 @@ const Page: NextPage<Props> = ({
 
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
-    ['field', 'pit-admin', 'audience-display'],
+    ['field', 'judging', 'pit-admin', 'audience-display'],
     undefined,
     [
       { name: 'teamRegistered', handler: handleTeamRegistered },
@@ -113,6 +112,71 @@ const Page: NextPage<Props> = ({
       { name: 'matchParticipantTeamUpdated', handler: handleScheduleTimeChange },
     ]
   );
+
+  const handleScheduleRematch = (
+    team: WithId<Team>,
+    match: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => {
+    const newMatchParticipants = match.participants.map((participant, index) => {
+      const { tableId, teamId } = participant;
+      return { tableId, teamId: index === participantIndex ? team._id : teamId };
+    }) as Array<Partial<RobotGameMatchParticipant>>;
+
+    socket.emit(
+      'updateMatchTeams',
+      match.divisionId.toString(),
+      match._id.toString(),
+      newMatchParticipants,
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const handleSwitchParticipants = (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatch: WithId<RobotGameMatch>,
+    participantIndex: number
+  ) => {
+    socket.emit(
+      'switchMatchTeams',
+      fromMatch.divisionId.toString(),
+      fromMatch._id.toString(),
+      toMatch._id.toString(),
+      participantIndex,
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצה עודכן בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, עדכון המקצה נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  const handleMergeMatches = (
+    fromMatch: WithId<RobotGameMatch>,
+    toMatch: WithId<RobotGameMatch>
+  ) => {
+    socket.emit(
+      'mergeMatches',
+      fromMatch.divisionId.toString(),
+      fromMatch._id.toString(),
+      toMatch._id.toString(),
+      response => {
+        if (response.ok) {
+          enqueueSnackbar('המקצים מוזגו בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, מיזוג המקצים נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
 
   return (
     <RoleAuthorizer
@@ -132,14 +196,23 @@ const Page: NextPage<Props> = ({
         connectionStatus={connectionStatus}
         color={division.color}
       >
-        <RematchFinder
+        <RematchManager
           teams={teams}
           matches={matches}
           divisionState={divisionState}
           sessions={sessions}
-          rooms={rooms}
-          socket={socket}
+          isStaggered={!!division.staggered}
+          onScheduleRematch={handleScheduleRematch}
         />
+        {division.staggered && (
+          <StaggerEditor
+            divisionState={divisionState}
+            matches={matches}
+            teams={teams}
+            onSwitchParticipants={handleSwitchParticipants}
+            onMergeMatches={handleMergeMatches}
+          />
+        )}
       </Layout>
     </RoleAuthorizer>
   );
@@ -156,8 +229,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        tables: `/api/divisions/${divisionId}/tables`,
-        rooms: `/api/divisions/${divisionId}/rooms`
+        tables: `/api/divisions/${divisionId}/tables`
       },
       ctx
     );

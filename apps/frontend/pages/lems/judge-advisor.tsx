@@ -154,6 +154,8 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
       { name: 'teamRegistered', handler: handleTeamRegistered },
       { name: 'rubricStatusChanged', handler: updateRubric },
+      { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
+      { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationStatusChanged', handler: handleDeliberationEvent },
       { name: 'awardsUpdated', handler: setAwards },
       {

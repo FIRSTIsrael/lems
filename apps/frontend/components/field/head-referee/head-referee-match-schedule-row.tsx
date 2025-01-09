@@ -69,6 +69,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                     <EditScoresheetButton
                       active={!!participant.team?.registered}
                       status={scoresheet.status}
+                      escalated={scoresheet.escalated}
                       score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
                       gp={scoresheet.data?.gp?.value}
                       href={`/lems/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
