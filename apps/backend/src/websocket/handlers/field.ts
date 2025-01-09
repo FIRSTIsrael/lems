@@ -312,7 +312,7 @@ export const handleMergeMatches = async (
 
   await db.updateMatch(
     { _id: new ObjectId(fromMatchId) },
-    { participants: fromMatchNewParticipants, status: 'completed' }
+    { participants: fromMatchNewParticipants, status: 'completed', startTime: new Date() }
   );
 
   await db.updateMatch({ _id: new ObjectId(toMatchId) }, { participants: toMatchNewParticipants });
