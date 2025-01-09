@@ -73,7 +73,7 @@ class SchedulerService:
         events = []
         event_index = 0
 
-        for _ in range(0, create_schedule_request.practice_matches_count):
+        for _ in range(0, create_schedule_request.practice_rounds):
             events.append(
                 self.create_event(
                     create_schedule_request, "practice", team_count, event_index
@@ -81,7 +81,7 @@ class SchedulerService:
             )
             event_index += 1
 
-        for _ in range(0, create_schedule_request.ranking_matches_count):
+        for _ in range(0, create_schedule_request.ranking_rounds):
             events.append(
                 self.create_event(
                     create_schedule_request, "ranking", team_count, event_index
@@ -107,6 +107,7 @@ class SchedulerService:
         print(f"Creating event of type: {event_type} with index: {index}")
         match event_type:
             case "practice":
+                tables = self.get_tables()
                 return PracticeMatch(
                     activity_length=create_schedule_request.match_length_seconds
                     / SECONDS_PER_MINUTE,
@@ -116,12 +117,13 @@ class SchedulerService:
                     )
                     / SECONDS_PER_MINUTE,
                     total_count=team_count,
-                    parallel_activities=create_schedule_request.tables,
+                    parallel_activities=len(tables),
                     event_index=index,
-                    locations=self.get_tables(),
+                    locations=tables,
                     breaks=create_schedule_request.breaks,
                 )
             case "ranking":
+                tables = self.get_tables()
                 return Match(
                     activity_length=create_schedule_request.match_length_seconds
                     / SECONDS_PER_MINUTE,
@@ -131,12 +133,13 @@ class SchedulerService:
                     )
                     / SECONDS_PER_MINUTE,
                     total_count=team_count,
-                    parallel_activities=create_schedule_request.tables,
+                    parallel_activities=len(tables),
                     event_index=index,
-                    locations=self.get_tables(),
+                    locations=tables,
                     breaks=create_schedule_request.breaks,
                 )
             case "judging":
+                rooms = self.get_rooms()
                 return JudgingSession(
                     activity_length=create_schedule_request.judging_session_length_seconds
                     / SECONDS_PER_MINUTE,
@@ -146,9 +149,9 @@ class SchedulerService:
                     )
                     / SECONDS_PER_MINUTE,
                     total_count=team_count,
-                    parallel_activities=create_schedule_request.judging_rooms,
+                    parallel_activities=len(rooms),
                     event_index=index,
-                    locations=self.get_rooms(),
+                    locations=rooms,
                     breaks=create_schedule_request.breaks,
                 )
             case _:
@@ -199,8 +202,8 @@ class SchedulerService:
             current_activities = deepcopy(activities)
 
             number_of_events = (
-                create_schedule_request.ranking_matches_count
-                + create_schedule_request.practice_matches_count
+                create_schedule_request.ranking_rounds
+                + create_schedule_request.practice_rounds
                 + 1
             )
             matched_teams, matched_activities = gale_shapley(
