@@ -25,6 +25,8 @@ interface GenerateScheduleFormValues {
   isStaggered: boolean;
   practiceRounds: number;
   rankingRounds: number;
+  matchesStart: Date | null;
+  judgingStart: Date | null;
 }
 
 interface GenerateScheduleFormikFormProps {
@@ -159,7 +161,6 @@ const GenerateScheduleForm: React.FC<GenerateScheduleFormProps> = ({ division })
 
       <Formik
         validate={values => {
-          console.log(values);
           const errors: Record<string, string> = {};
           if (activeStep === 0 && !values.teamsUploaded) {
             errors.teamsUploaded = 'יש להעלות קבוצות';
@@ -169,6 +170,12 @@ const GenerateScheduleForm: React.FC<GenerateScheduleFormProps> = ({ division })
           }
           if (activeStep === 1 && !values.tablesLoaded) {
             errors.tablesUploaded = 'יש להגדיר שולחנות';
+          }
+          if (activeStep === 2 && !values.matchesStart) {
+            errors.matchesStart = 'יש להגדיר זמן התחלת מקצים';
+          }
+          if (activeStep === 2 && !values.judgingStart) {
+            errors.judgingStart = 'יש להגדיר זמן התחלת שיפוט';
           }
           return errors;
         }}
@@ -180,6 +187,8 @@ const GenerateScheduleForm: React.FC<GenerateScheduleFormProps> = ({ division })
             roomsLoaded: false,
             tablesLoaded: false,
             isStaggered: true,
+            matchesStart: null,
+            judgingStart: null,
             practiceRounds: 1,
             rankingRounds: 3
           } as GenerateScheduleFormValues

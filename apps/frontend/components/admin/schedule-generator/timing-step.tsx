@@ -1,5 +1,7 @@
 import { WithId } from 'mongodb';
+import { Stack } from '@mui/material';
 import { Division } from '@lems/types';
+import FormikTimePicker from '../../general/forms/formik-time-picker';
 
 interface TimingStepProps {
   division: WithId<Division>;
@@ -7,9 +9,10 @@ interface TimingStepProps {
 
 const TimingStep: React.FC<TimingStepProps> = ({ division }) => {
   return (
-    <>
-      <p>Do something here</p>
-    </>
+    <Stack spacing={2} direction="row">
+      <FormikTimePicker name="matchesStart" label="תחילת מקצים" />
+      <FormikTimePicker name="judgingStart" label="תחילת שיפוט" />
+    </Stack>
   );
 };
 
