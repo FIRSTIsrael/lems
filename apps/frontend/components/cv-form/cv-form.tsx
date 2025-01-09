@@ -249,21 +249,29 @@ const CVForm: React.FC<CVFormProps> = ({
               <FormikTextField
                 minRows={3}
                 multiline
-                InputProps={{ readOnly }}
                 name="details"
                 label="תיאור ההתרחשות"
+                slotProps={{ input: { readOnly } }}
               />
               <Divider />
               <Typography fontSize="1.25rem" fontWeight={700}>
                 פרטי ממלא הטופס
               </Typography>
               <Stack direction="row" spacing={2}>
-                <FormikTextField name="completedBy.name" label="שם" InputProps={{ readOnly }} />
-                <FormikTextField name="completedBy.phone" label="טלפון" InputProps={{ readOnly }} />
+                <FormikTextField
+                  name="completedBy.name"
+                  label="שם"
+                  slotProps={{ input: { readOnly } }}
+                />
+                <FormikTextField
+                  name="completedBy.phone"
+                  label="טלפון"
+                  slotProps={{ input: { readOnly } }}
+                />
                 <FormikTextField
                   name="completedBy.affiliation"
                   label="תפקיד"
-                  InputProps={{ readOnly }}
+                  slotProps={{ input: { readOnly } }}
                 />
               </Stack>
               <Divider />
@@ -272,7 +280,7 @@ const CVForm: React.FC<CVFormProps> = ({
                 multiline
                 name="actionTaken"
                 label="פעולות שננקטו"
-                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                slotProps={{ input: { readOnly: !(user.role === 'judge-advisor') } }}
                 {...(initialCvForm?.actionTaken || user.role === 'tournament-manager'
                   ? {}
                   : { color: 'warning', autoFocus: true })}
@@ -280,7 +288,7 @@ const CVForm: React.FC<CVFormProps> = ({
               <FormikTextField
                 name="actionTakenBy"
                 label="טופל על ידי"
-                InputProps={{ readOnly: !(user.role === 'judge-advisor') }}
+                slotProps={{ input: { readOnly: !(user.role === 'judge-advisor') } }}
                 {...(initialCvForm?.actionTakenBy || user.role === 'tournament-manager'
                   ? {}
                   : { color: 'warning' })}
