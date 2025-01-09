@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from typing import List
 
-from models.create_schedule_request import Breaks
+from models.create_schedule_request import Break
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 from models.location import Location
@@ -49,7 +49,7 @@ class Event(ABC):
         parallel_activities: int,
         event_index: int,
         locations: list[Location],
-        breaks: list[Breaks],
+        breaks: list[Break],
     ):
         self.activity_length = activity_length
         self.wait_time_minutes = wait_time_minutes

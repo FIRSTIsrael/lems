@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from typing import Literal
 from datetime import datetime
+from pydantic import BaseModel
 
 
-class Breaks(BaseModel):
-    event_type: str
+class Break(BaseModel):
+    event_type: Literal["judging", "match"]
     after: int
     duration_seconds: int
 
@@ -27,4 +28,4 @@ class CreateScheduleRequest(BaseModel):
 
     stagger_matches: bool = True
 
-    breaks: list[Breaks]
+    breaks: list[Break]

@@ -6,7 +6,7 @@ from events.judging_session import JudgingSession
 from events.practice_match import PracticeMatch
 from events.ranking_match import Match
 from exceptions.scheduler_error import SchedulerError
-from models.create_schedule_request import CreateScheduleRequest, Breaks
+from models.create_schedule_request import CreateScheduleRequest, Break
 from models.team import Team
 from models.team_activity import ActivityType, TeamActivity
 from models.location import Location
@@ -198,7 +198,11 @@ class SchedulerService:
             current_teams = deepcopy(teams)
             current_activities = deepcopy(activities)
 
-            number_of_events = create_schedule_request.ranking_matches_count + create_schedule_request.practice_matches_count + 1
+            number_of_events = (
+                create_schedule_request.ranking_matches_count
+                + create_schedule_request.practice_matches_count
+                + 1
+            )
             matched_teams, matched_activities = gale_shapley(
                 current_teams, current_activities, number_of_events
             )
