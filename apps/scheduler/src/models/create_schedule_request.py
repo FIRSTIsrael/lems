@@ -5,7 +5,7 @@ from datetime import datetime
 class Breaks(BaseModel):
     event_type: str
     after: int
-    duration_minutes: int
+    duration_seconds: int
 
 
 class CreateScheduleRequest(BaseModel):
