@@ -1,10 +1,8 @@
 import { WithId } from 'mongodb';
-import dayjs from 'dayjs';
 import { Paper, Stack } from '@mui/material';
 import { FllEvent, Division } from '@lems/types';
-import GenerateScheduleButton from './generate-schedule';
 import DeleteDivisionData from './delete-division-data';
-import UploadFileButton from '../../components/general/upload-file';
+import GenerateScheduleForm from './schedule-generator/generate-schedule-form';
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
@@ -16,14 +14,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, 
     <Paper sx={{ p: 4 }}>
       <Stack justifyContent="center" direction="row" spacing={2}>
         {division?.hasState && <DeleteDivisionData division={{ ...division, event }} />}
-        <UploadFileButton
-          urlPath={`/api/admin/divisions/${division?._id}/schedule/parse`}
-          displayName="לוח זמנים"
-          extension=".csv"
-          disabled={division?.hasState}
-          requestData={{ timezone: dayjs.tz.guess() }}
-        />
-        <GenerateScheduleButton division={division} />
+        <GenerateScheduleForm division={division} />
       </Stack>
     </Paper>
   );

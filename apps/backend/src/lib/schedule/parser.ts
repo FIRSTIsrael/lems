@@ -84,7 +84,10 @@ export const parseDivisionData = (
 ): { teams: Array<Team>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
   const file = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); // Version number: 2nd cell of 1st row.
-  if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
+  if (version !== 2) {
+    console.error('LEMS can only parse version 2 schedules');
+    return { teams: [], tables: [], rooms: [] };
+  }
 
   const blocks = extractBlocksFromFile(file);
   const teams = extractTeamsFromBlock(getBlock(blocks, TEAMS_BLOCK_ID), division);

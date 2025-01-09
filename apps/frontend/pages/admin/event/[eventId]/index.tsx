@@ -8,7 +8,8 @@ import DivisionLink from '../../../../components/admin/division-link';
 import { Paper, Stack } from '@mui/material';
 import DownloadUsersButton from '../../../../components/admin/download-users';
 import UploadFileButton from '../../../../components/general/upload-file';
-import DivisionTabEditor from 'apps/frontend/components/admin/division-tab-editor';
+import DivisionTabEditor from '../../../../components/admin/division-tab-editor';
+import dayjs from 'dayjs';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -31,9 +32,17 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
                 <Paper sx={{ p: 4 }}>
                   <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
                     <UploadFileButton
+                      urlPath={`/api/admin/divisions/${division?._id}/schedule/parse`}
+                      displayName="לוח זמנים"
+                      extension=".csv"
+                      disabled={division?.hasState}
+                      requestData={{ timezone: dayjs.tz.guess() }}
+                    />
+                    <UploadFileButton
                       urlPath={`/api/admin/divisions/${division?._id}/pit-map`}
                       displayName="מפת פיטים"
                       extension=".png"
+                      reload={false}
                     />
                     <DownloadUsersButton division={division} disabled={!division?.hasState} />
                   </Stack>
