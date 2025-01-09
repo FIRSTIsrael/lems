@@ -27,6 +27,7 @@ interface GenerateScheduleFormValues {
   rankingRounds: number;
   matchesStart: Date | null;
   judgingStart: Date | null;
+  breaks: Array<{ eventType: 'match' | 'judging'; after: number; durationSeconds: number }>;
 }
 
 interface GenerateScheduleFormikFormProps {
@@ -190,7 +191,8 @@ const GenerateScheduleForm: React.FC<GenerateScheduleFormProps> = ({ division })
             matchesStart: null,
             judgingStart: null,
             practiceRounds: 1,
-            rankingRounds: 3
+            rankingRounds: 3,
+            breaks: []
           } as GenerateScheduleFormValues
         }
         onSubmit={async values => {
