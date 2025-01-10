@@ -40,7 +40,7 @@ const Page: NextPage<Props> = ({ user, teams, division, cvForm: initialCvForm })
   return (
     <RoleAuthorizer
       user={user}
-      allowedRoles={['judge-advisor', 'tournament-manager', 'head-referee']}
+      allowedRoles={['judge-advisor', 'tournament-manager', 'head-referee', 'field-manager']}
       onFail={() => {
         router.push(`/lems/${user.role}`);
         enqueueSnackbar('לא נמצאו הרשאות מתאימות.', { variant: 'error' });
