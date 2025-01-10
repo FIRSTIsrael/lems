@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Division } from '@lems/types';
-import { Chip, IconButton, Stack, TextField } from '@mui/material';
+import { Chip, IconButton, Stack, TextField, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import FormikSwitch from '../../general/forms/formik-switch';
 import FormikNumberInput from '../../general/forms/formik-number-input';
@@ -23,24 +23,25 @@ const LocationManager: React.FC<LocationManagerProps> = ({
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" spacing={2}>
-        <TextField
-          label={`הוסף ${title}`}
-          value={name}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setName(event.target.value);
-          }}
-        />
-        <IconButton
-          sx={{ ml: 2 }}
-          onClick={() => {
-            addEntity(name);
-            setName(name => String(Number(name) + 1));
-          }}
-        >
-          <AddRoundedIcon />
-        </IconButton>
-      </Stack>
+        <Stack direction="row" spacing={2}>
+          <TextField
+            label={`הוסף ${title}`}
+            value={name}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setName(event.target.value);
+            }}
+          />
+          <IconButton
+            sx={{ ml: 2 }}
+            onClick={() => {
+              addEntity(name);
+              if (!isNaN(Number(name))) setName(String(Number(name) + 1));
+              else setName(`1 ${name}`);
+            }}
+          >
+            <AddRoundedIcon />
+          </IconButton>
+        </Stack>
       <Stack direction="row" spacing={2}>
         {entities.map((entity, index) => (
           <Chip key={index} label={entity} onDelete={removeEntity} />
@@ -101,10 +102,16 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
           removeEntity={removeTable}
         />
         <Stack direction="row" spacing={2}>
-          <FormikNumberInput name="practiceRounds" label="מספר סבבי אימונים" min={1} max={5} />
-          <FormikNumberInput name="rankingRounds" label="מספר סבבי דירוג" min={1} max={5} />
-          <FormikSwitch name="isStaggered" label="הרצה מדורגת" />
+          <Stack direction="column" spacing={1}>
+            <Typography variant="caption">מספר סבבי אימונים</Typography>
+            <FormikNumberInput name="practiceRounds" label="מספר סבבי אימונים" min={1} max={5} />
+          </Stack>
+          <Stack direction="column" spacing={1}>
+            <Typography variant="caption">מספר סבבי דירוג</Typography>
+            <FormikNumberInput name="rankingRounds" label="מספר סבבי דירוג" min={1} max={5} />
+          </Stack>
         </Stack>
+        <FormikSwitch name="isStaggered" label="הרצה מדורגת" />
       </Stack>
     </>
   );

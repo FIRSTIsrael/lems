@@ -5,7 +5,7 @@ import { Box, Button, Stack, Step, StepLabel, Stepper } from '@mui/material';
 import { Division, Team, JudgingRoom, RobotGameTable } from '@lems/types';
 import UploadTeamsStep from './upload-teams-step';
 import VenueSetupStep from './venue-setup-step';
-import TimingStep from './timing-step';
+import TimingStep, { Break } from './timing-step';
 import { apiFetch } from '../../../lib/utils/fetch';
 
 const SchedulerStages = ['upload-teams', 'venue-setup', 'timing', 'review'];
@@ -48,6 +48,9 @@ const GenerateScheduleFormikForm: React.FC<GenerateScheduleFormikFormProps> = ({
   const [teams, _setTeams] = useState<Array<WithId<Team>>>([]);
   const [roomNames, _setRoomNames] = useState<Array<string>>([]);
   const [tableNames, _setTableNames] = useState<Array<string>>([]);
+  const [judgingStart, _setJudgingStart] = useState<Date>(new Date());
+  const [matchesStart, _setMatchesStart] = useState<Date>(new Date());
+  const [breaks, _setBreaks] = useState<Array<Break>>([]);
 
   const setTeams = (teams: Array<WithId<Team>>) => {
     _setTeams(teams);
@@ -62,6 +65,21 @@ const GenerateScheduleFormikForm: React.FC<GenerateScheduleFormikFormProps> = ({
   const setTableNames = (tables: Array<string>) => {
     _setTableNames(tables);
     setFieldValue('tablesLoaded', tables.length > 0);
+  };
+
+  const setJudgingStart = (time: Date) => {
+    _setJudgingStart(time);
+    setFieldValue('judgingStart', time);
+  };
+
+  const setMatchesStart = (time: Date) => {
+    _setMatchesStart(time);
+    setFieldValue('matchesStart', time);
+  };
+
+  const setBreaks = (breaks: Array<Break>) => {
+    _setBreaks(breaks);
+    setFieldValue('breaks', breaks); //TODO: is this also supposed to be boolean?
   };
 
   useEffect(() => {
@@ -119,7 +137,16 @@ const GenerateScheduleFormikForm: React.FC<GenerateScheduleFormikFormProps> = ({
             setTables={setTableNames}
           />
         )}
-        {activeStep === 2 && <TimingStep division={division} />}
+        {activeStep === 2 && (
+          <TimingStep
+            division={division}
+            judgingStart={judgingStart}
+            setJudgingStart={setJudgingStart}
+            matchesStart={matchesStart}
+            setMatchesStart={setMatchesStart}
+            breaks={breaks}
+            setBreaks={setBreaks}
+          />)}
       </Box>
       <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
         <Button variant="contained" onClick={handleBack} disabled={activeStep === 0}>

@@ -24,8 +24,8 @@ const FormikTimePicker: React.FC<FormikTimePickerProps> = ({ name, label, ...pro
               }
             }}
             ampm={false}
-            format="HH:mm"
-            views={['minutes', 'hours']}
+            format={props.format ?? "HH:mm"}
+            views={props.views ?? ['minutes', 'hours']}
           />
         </LocalizationProvider>
       )}
