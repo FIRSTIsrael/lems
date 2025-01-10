@@ -95,7 +95,7 @@ router.use(
 
 router.use(
   '/:divisionId/cv-forms',
-  roleValidator(['judge-advisor', 'tournament-manager', 'lead-judge']),
+  roleValidator(['judge-advisor', 'tournament-manager', 'lead-judge', 'head-referee']),
   cvFormsRouter
 );
 
