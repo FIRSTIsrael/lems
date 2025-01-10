@@ -26,6 +26,7 @@ const CategoryDeliberationLayout: React.FC = () => {
   const picklist = (deliberation.awards[category] ?? []).map(
     teamId => teams.find(team => team._id === teamId)!
   );
+  const picklistLimit = getDefaultPicklistLimit(teams.length);
 
   return (
     <Grid container sx={{ pt: 2 }} columnSpacing={4} rowSpacing={2}>
@@ -38,13 +39,14 @@ const CategoryDeliberationLayout: React.FC = () => {
           disabled={deliberation.status !== 'in-progress'}
           showNormalizedScores={true}
           showRanks={true}
+          suggestedTeam={picklist.length < picklistLimit ? suggestedTeam : null}
         />
       </Grid>
       <Grid size={1.5}>
         <AwardList
           id={category}
           pickList={picklist}
-          length={getDefaultPicklistLimit(teams.length)}
+          length={picklistLimit}
           disabled={deliberation.status !== 'in-progress'}
           suggestedTeam={suggestedTeam}
           addSuggestedTeam={teamId => appendToPicklist(category, teamId)}

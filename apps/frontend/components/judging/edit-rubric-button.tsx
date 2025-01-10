@@ -29,7 +29,7 @@ const mapStatus: {
     }
   },
   completed: {
-    title: 'ממתין להגשה סופית',
+    title: 'מלא',
     sx: {
       color: '#fff',
       background: '#0284c7',
@@ -39,7 +39,7 @@ const mapStatus: {
     }
   },
   'waiting-for-review': {
-    title: 'ממתין לשופט מוביל',
+    title: 'נעול',
     sx: {
       color: '#fff',
       background: '#4338ca',

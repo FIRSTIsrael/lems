@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
@@ -6,9 +6,7 @@ import { Form, Formik, FormikValues } from 'formik';
 import {
   Typography,
   Button,
-  Alert,
   Stack,
-  Box,
   Paper,
   Dialog,
   DialogActions,
@@ -21,9 +19,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import SignatureCanvas from 'react-signature-canvas';
-import Image from 'next/image';
 import {
   Division,
   Team,
@@ -44,10 +40,23 @@ import {
 } from '@lems/season';
 import { enqueueSnackbar } from 'notistack';
 import ScoresheetMission from './scoresheet-mission';
+import ScoresheetAlert from './scoresheet-alert';
 import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
+import ScoresheetSignature from './scoresheet-signature';
+
+interface ErrorWithMessage {
+  id: string;
+  description: string;
+}
+
+interface MissionInfo {
+  id: string;
+  incomplete?: boolean;
+  errors?: Array<ErrorWithMessage>;
+}
 
 interface ScoresheetFormProps {
   division: WithId<Division>;
@@ -67,29 +76,27 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   emptyScoresheetValues
 }) => {
   const router = useRouter();
+  const signatureRef = useRef<SignatureCanvas | null>(null);
+
   const [readOnly, setReadOnly] = useState<boolean>(
-    user.role === 'head-referee' && !['empty', 'waiting-for-head-ref'].includes(scoresheet.status)
+    user.role === 'head-referee' && scoresheet.status !== 'empty' && !scoresheet.escalated
   );
-
-  interface ErrorWithMessage {
-    id: string;
-    description: string;
-  }
-
-  interface MissionInfo {
-    id: string;
-    incomplete?: boolean;
-    errors?: Array<ErrorWithMessage>;
-  }
   const [missionInfo, setMissionInfo] = useState<Array<MissionInfo>>([]);
   const [validatorErrors, setValidatorErrors] = useState<Array<ErrorWithMessage>>([]);
-  const signatureRef = useRef<SignatureCanvas | null>(null);
   const [headRefDialog, setHeadRefDialog] = useState<boolean>(false);
   const [resetDialog, setResetDialog] = useState<boolean>(false);
 
-  const mode = useMemo(() => {
-    return scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring';
-  }, [scoresheet]);
+  const [mode, setMode] = useState<'gp' | 'scoring'>(
+    scoresheet.status === 'waiting-for-gp' ? 'gp' : 'scoring'
+  );
+
+  useEffect(() => {
+    if (scoresheet.status === 'waiting-for-gp') {
+      setMode('gp');
+    } else {
+      setMode('scoring');
+    }
+  }, [scoresheet.status]);
 
   const getDefaultScoresheet = () => {
     const missions: Array<Mission> = SEASON_SCORESHEET.missions.map(mission => {
@@ -114,7 +121,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       const clauses = values.missions[missionIndex].clauses;
       try {
         score += mission.calculation(...clauses.map((clause: MissionClause) => clause.value));
-      } catch (error: any) {
+      } catch (error) {
         if (error instanceof ScoresheetError) {
           const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
           if (localizedErrors && localizedErrors.length > 0) {
@@ -131,13 +138,16 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
     newStatus: ScoresheetStatus | undefined,
-    saveSignature = false
+    saveSignature = false,
+    escalate?: boolean
   ) => {
     const updatedScoresheet = {} as Partial<Scoresheet>;
     if (newStatus) updatedScoresheet.status = newStatus;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (formValues) (updatedScoresheet as any).data = formValues;
     if (saveSignature && signatureRef.current && updatedScoresheet.data)
       updatedScoresheet.data.signature = signatureRef.current.getCanvas().toDataURL('image/png');
+    if (escalate !== undefined) updatedScoresheet.escalated = escalate;
 
     socket.emit(
       'updateScoresheet',
@@ -163,7 +173,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
   };
 
   const validateScoresheet = (formValues: FormikValues) => {
-    const errors: any = {};
+    const errors: Record<string, string> = {};
     const newMissionInfo: Array<MissionInfo> = SEASON_SCORESHEET.missions.map(m => {
       return { id: m.id };
     });
@@ -176,7 +186,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       const index = newMissionInfo.findIndex(mi => mi.id === missionId);
       if (index > -1) {
         if (!newMissionInfo[index].errors) newMissionInfo[index].errors = [];
-        newMissionInfo[index].errors!.push(e);
+        newMissionInfo[index].errors?.push(e);
       }
     });
 
@@ -201,7 +211,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     SEASON_SCORESHEET.validators.forEach(validator => {
       try {
         validator(toValidate);
-      } catch (error: any) {
+      } catch (error) {
         if (error instanceof ScoresheetError) {
           const description =
             localizedScoresheet.errors.find(e => e.id == error.id)?.description || '';
@@ -301,191 +311,152 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
                 </Stack>
 
                 <Stack spacing={2} alignItems="center" my={6}>
-                  {readOnly ||
-                  validatorErrors.length > 0 ||
-                  missionInfo.find(mi => mi.incomplete || !!mi.errors) ||
-                  (values.signature && values.signature.length > 0) ? (
-                    <Image
-                      src={values.signature || '/assets/scoresheet/blank-signature.svg'}
-                      alt={`חתימת קבוצה #${team.number}`}
-                      width={400}
-                      height={200}
-                      style={{ borderRadius: '8px', border: '1px solid #f1f1f1' }}
-                    />
-                  ) : (
-                    <Stack direction="row" spacing={2}>
-                      {signatureRef.current &&
-                        !['ready', 'waiting-for-gp'].includes(scoresheet.status) && (
-                          <Box display="flex" alignItems="center">
-                            <IconButton
-                              onClick={() => {
-                                signatureRef.current?.clear();
-                                validateForm();
-                              }}
-                            >
-                              <RestartAltRoundedIcon />
-                            </IconButton>
-                          </Box>
-                        )}
-                      <SignatureCanvas
-                        canvasProps={{
-                          width: 400,
-                          height: 200,
-                          style: { borderRadius: '8px', border: '1px solid #f1f1f1' }
-                        }}
-                        backgroundColor="#fff"
-                        ref={ref => {
-                          signatureRef.current = ref;
-                        }}
-                        onEnd={() => validateForm()}
-                      />
-                    </Stack>
-                  )}
+                  <ScoresheetSignature
+                    canvasRef={signatureRef}
+                    signature={values.signature}
+                    allowEdit={
+                      !readOnly &&
+                      validatorErrors.length === 0 &&
+                      missionInfo.every(mi => !mi.incomplete && !mi.errors) &&
+                      (!values.signature || values.signature.length === 0)
+                    }
+                    allowReset={!['ready', 'waiting-for-gp'].includes(scoresheet.status)}
+                    onUpdate={() => validateForm()}
+                  />
+
                   {!isValid && (
-                    <Alert
+                    <ScoresheetAlert
                       severity="warning"
-                      sx={{
-                        fontWeight: 500,
-                        mb: 4,
-                        maxWidth: '20rem',
-                        mx: 'auto',
-                        border: '1px solid #ff9800',
-                        transition: theme =>
-                          theme.transitions.create(['background-color'], {
-                            duration: theme.transitions.duration.standard
-                          }),
-                        '&:hover': {
-                          cursor: 'pointer',
-                          backgroundColor: '#ffe3a6'
-                        }
-                      }}
                       onClick={e => {
                         e.preventDefault();
                         const invalidMission = missionInfo.find(mi => mi.incomplete || mi.errors);
                         if (invalidMission) window.location.href = `#${invalidMission.id}`;
                       }}
-                    >
-                      {Object.keys(errors).length === 1 && !!errors.signature
-                        ? 'הקבוצה טרם חתמה על דף הניקוד.'
-                        : 'דף הניקוד אינו מלא.'}
-                    </Alert>
+                      text={
+                        Object.keys(errors).length === 1 && !!errors.signature
+                          ? 'הקבוצה טרם חתמה על דף הניקוד.'
+                          : 'דף הניקוד אינו מלא.'
+                      }
+                    />
                   )}
+
                   {validatorErrors.map((e: ErrorWithMessage) => (
-                    <Alert
-                      severity="error"
-                      key={e.id}
-                      sx={{
-                        fontWeight: 500,
-                        mb: 4,
-                        maxWidth: '20rem',
-                        mx: 'auto',
-                        border: '1px solid #ff2f00'
-                      }}
-                    >
-                      {e.description}
-                    </Alert>
+                    <ScoresheetAlert key={e.id} text={e.description} severity="error" />
                   ))}
+
                   <Stack direction="row" spacing={2}>
                     <RoleAuthorizer user={user} allowedRoles={['referee']}>
                       <Button
                         variant="contained"
-                        sx={{
-                          minWidth: 200
-                        }}
+                        sx={{ minWidth: 200 }}
                         endIcon={<SportsScoreIcon />}
-                        onClick={() => {
-                          setHeadRefDialog(true);
-                        }}
+                        onClick={() => setHeadRefDialog(true)}
                       >
                         העברת דף הניקוד לשופט ראשי
                       </Button>
-                      <Dialog
-                        open={headRefDialog}
-                        onClose={() => setHeadRefDialog(false)}
-                        aria-labelledby="headref-dialog-title"
-                        aria-describedby="headref-dialog-description"
-                      >
-                        <DialogTitle id="headref-dialog-title">
-                          העברת דף הניקוד לשופט הראשי
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="headref-dialog-description">
-                            העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר אותך למקצה הבא.
-                            לא תוכלו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setHeadRefDialog(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleSync(true, values, 'waiting-for-head-ref');
-                              setHeadRefDialog(false);
-                            }}
-                          >
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </RoleAuthorizer>
+
                     <RoleAuthorizer user={user} allowedRoles={['head-referee']}>
+                      {scoresheet.status !== 'ready' && !scoresheet.escalated && (
+                        <Button
+                          variant="contained"
+                          sx={{ minWidth: 150 }}
+                          endIcon={<SportsScoreIcon />}
+                          onClick={() => setHeadRefDialog(true)}
+                        >
+                          העברת דף הניקוד לאחריותך
+                        </Button>
+                      )}
                       <Button
                         variant="contained"
-                        sx={{ minWidth: 200 }}
+                        sx={{ minWidth: 150 }}
                         disabled={scoresheet.status === 'empty'}
                         onClick={() => setResetDialog(true)}
                       >
                         איפוס דף הניקוד
                       </Button>
-                      <Dialog
-                        open={resetDialog}
-                        onClose={() => setResetDialog(false)}
-                        aria-labelledby="reset-dialog-title"
-                        aria-describedby="reset-dialog-description"
-                      >
-                        <DialogTitle id="reset-dialog-title">איפוס דף הניקוד</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="reset-dialog-description">
-                            {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
-                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
-                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setResetDialog(false)} autoFocus>
-                            ביטול
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleSync(true, getDefaultScoresheet(), 'empty');
-                              setResetDialog(false);
-                            }}
-                          >
-                            אישור
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </RoleAuthorizer>
+
                     <Button
                       variant="contained"
-                      sx={{ minWidth: 200 }}
+                      sx={{ minWidth: 150 }}
                       endIcon={<ChevronLeftIcon />}
                       disabled={!isValid}
-                      onClick={() => handleSync(true, values, 'waiting-for-gp', true)}
+                      onClick={() => {
+                        if (scoresheet.status === 'ready' || readOnly) {
+                          setMode('gp');
+                          return;
+                        }
+                        handleSync(true, values, 'waiting-for-gp', true);
+                      }}
                     >
                       המשך
                     </Button>
                   </Stack>
+
+                  <Dialog open={headRefDialog} onClose={() => setHeadRefDialog(false)}>
+                    <DialogTitle>העברת דף הניקוד לשופט הראשי</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        העברת דף הניקוד לשופט זירה ראשי תנעל את דף הניקוד ותעביר את השולחן למקצה
+                        הבא. שופטי הזירה לא יכולו להמשיך את תהליך הניקוד עם הקבוצה. האם אתם בטוחים?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setHeadRefDialog(false)} autoFocus>
+                        ביטול
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleSync(true, values, undefined, false, true);
+                          setHeadRefDialog(false);
+                        }}
+                      >
+                        אישור
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+
+                  <Dialog open={resetDialog} onClose={() => setResetDialog(false)}>
+                    <DialogTitle>איפוס דף הניקוד</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        {`איפוס דף הניקוד ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
+                            בטוחים שברצונכם למחוק את דף הניקוד של קבוצה ${localizeTeam(team)} במקצה
+                            ${localizedMatchStage[scoresheet.stage]} #${scoresheet.round}?`}
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setResetDialog(false)} autoFocus>
+                        ביטול
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleSync(true, getDefaultScoresheet(), 'empty');
+                          setResetDialog(false);
+                        }}
+                      >
+                        אישור
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </Stack>
               </>
             ) : (
               <GpSelector
                 user={user}
                 scoresheetStatus={scoresheet.status}
-                onBack={() => handleSync(false, values, 'completed')}
+                onBack={() => {
+                  if (scoresheet.status === 'ready' || readOnly) {
+                    setMode('scoring');
+                    return;
+                  }
+                  handleSync(false, values, 'completed');
+                }}
                 onSubmit={() => {
-                  handleSync(true, values, 'ready').then(() => router.push(`/lems/${user.role}`));
+                  handleSync(true, values, 'ready', false, false).then(() =>
+                    router.push(`/lems/${user.role}`)
+                  );
                 }}
               />
             )}

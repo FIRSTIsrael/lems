@@ -3,25 +3,22 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Switch, FormControlLabel, Stack } from '@mui/material';
+import { Switch, FormControlLabel } from '@mui/material';
 import {
   DivisionWithEvent,
   Team,
   JudgingRoom,
   SafeUser,
   JudgingSession,
-  RoleTypes,
-  EventUserAllowedRoles
+  RoleTypes
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import ReportJudgingSchedule from '../../../components/judging/report-judging-schedule';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -88,15 +85,9 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - לו״ז שיפוט | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-              <DivisionDropdown event={division.event} selected={division._id.toString()} />
-            )}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

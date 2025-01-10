@@ -1,6 +1,6 @@
 import { Form, Formik, FormikValues } from 'formik';
 import { Socket } from 'socket.io-client';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
   Table,
@@ -25,7 +25,8 @@ import {
   Division,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
-  SafeUser
+  SafeUser,
+  Team
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { cvFormSchema } from '@lems/season';
@@ -36,6 +37,7 @@ import CVFormCategoryRow from './cv-form-category-row';
 interface CVFormProps {
   user: WithId<SafeUser>;
   division: WithId<Division>;
+  teams: Array<WithId<Team>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;
@@ -45,6 +47,7 @@ interface CVFormProps {
 const CVForm: React.FC<CVFormProps> = ({
   user,
   division,
+  teams,
   socket,
   cvForm: initialCvForm,
   readOnly = false,
@@ -58,9 +61,9 @@ const CVForm: React.FC<CVFormProps> = ({
   const getEmptyCVForm = () => {
     const divisionId = division._id;
     const observers: Array<CVFormSubject> = [];
-    const observerAffiliation = '';
+    const observerAffiliation: WithId<Team> | null = null;
     const demonstrators: Array<CVFormSubject> = [];
-    const demonstratorAffiliation = '';
+    const demonstratorAffiliation: WithId<Team> | null = null;
     const data: { [key in CVFormCategoryNames]: CVFormCategory } = {} as {
       [key in CVFormCategoryNames]: CVFormCategory;
     };
@@ -223,7 +226,7 @@ const CVForm: React.FC<CVFormProps> = ({
     >
       {({ values, isValid, submitForm }) => (
         <Form>
-          <CVFormHeader values={values} readOnly={readOnly} />
+          <CVFormHeader teams={teams} values={values} readOnly={readOnly} />
           <TableContainer component={Paper} sx={{ mt: 4, height: 600, overflowY: 'scroll' }}>
             <Table stickyHeader>
               <TableHead>

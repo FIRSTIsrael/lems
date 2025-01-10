@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import dayjs, { Dayjs } from 'dayjs';
+import { useState, useMemo } from 'react';
+import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import {
   Button,
@@ -58,6 +57,7 @@ const Timer: React.FC<TimerProps> = ({ participant, match, getScoresheet, toScor
             {localizeTeam(participant.team)}
           </Typography>
         )}
+        {participant.present === 'no-show' && <Typography>.הקבוצה לא הגיעה למקצה</Typography>}
       </Paper>
       <LinearProgress
         variant="determinate"

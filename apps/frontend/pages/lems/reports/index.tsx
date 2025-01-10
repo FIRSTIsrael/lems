@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { SafeUser, DivisionWithEvent, RoleTypes, EventUserAllowedRoles } from '@lems/types';
+import { SafeUser, DivisionWithEvent, RoleTypes } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -11,7 +11,6 @@ import { localizedRoles } from '../../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface GridPaperLinkProps {
   path: string;
@@ -65,13 +64,10 @@ const Page: NextPage<Props> = ({ user, division }) => {
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         back={user.role !== 'reports' ? `/lems/${user.role}` : undefined}
         color={division.color}
-        action={
-          division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-            <DivisionDropdown event={division.event} selected={division._id.toString()} />
-          )
-        }
+        user={user}
+        division={division}
       >
-        <Grid container spacing={3} columns={6} direction="row" mt={4}>
+        <Grid container spacing={3} columns={6} direction="row" my={4}>
           <GridPaperLink path="judging-status">
             <Typography variant="h4">מצב השיפוט</Typography>
           </GridPaperLink>
@@ -93,11 +89,17 @@ const Page: NextPage<Props> = ({ user, division }) => {
           <GridPaperLink path="general-schedule">
             <Typography variant="h4">לו״ז כללי</Typography>
           </GridPaperLink>
-          <GridPaperLink path="field-timer">
-            <Typography variant="h4">שעון מקצים</Typography>
-          </GridPaperLink>
           <GridPaperLink path="scoreboard">
             <Typography variant="h4">טבלת ניקוד</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="award-schema">
+            <Typography variant="h4">סדר הפרסים</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="notepad">
+            <Typography variant="h4">פתקים</Typography>
+          </GridPaperLink>
+          <GridPaperLink path="field-timer">
+            <Typography variant="h4">שעון מקצים</Typography>
           </GridPaperLink>
         </Grid>
       </Layout>

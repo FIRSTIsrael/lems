@@ -12,29 +12,19 @@ import {
   TableSortLabel,
   TableRow,
   Box,
-  IconButton,
-  Stack
+  IconButton
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
-import {
-  DivisionWithEvent,
-  Team,
-  SafeUser,
-  RoleTypes,
-  Role,
-  EventUserAllowedRoles
-} from '@lems/types';
+import { DivisionWithEvent, Team, SafeUser, RoleTypes, Role } from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
-import DivisionDropdown from '../../../components/general/division-dropdown';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -112,15 +102,9 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - רשימת קבוצות | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={
-          <Stack direction="row" spacing={2}>
-            <ConnectionIndicator status={connectionStatus} />
-            {division.event.eventUsers.includes(user.role as EventUserAllowedRoles) && (
-              <DivisionDropdown event={division.event} selected={division._id.toString()} />
-            )}
-          </Stack>
-        }
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         back={`/lems/reports`}
         backDisabled={connectionStatus === 'connecting'}
         color={division.color}

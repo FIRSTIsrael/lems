@@ -61,7 +61,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
         <Grid
           container
           columns={match?.participants.filter(p => p.teamId).length}
-          columnSpacing={3}
+          columnSpacing={1.5}
           mt={2}
         >
           {match &&
@@ -76,19 +76,17 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                   )
                   .find(s => s.teamId === participant.teamId);
                 return (
-                  <Grid key={index} size={1}>
-                    <Grid
-                      container
-                      spacing={2}
-                      sx={{
-                        backgroundColor: participant.ready ? green[100] : red[100],
-                        border: `1px solid ${participant.ready ? green[300] : red[300]}`,
-                        borderRadius: '0.5rem',
-                        height: '100%',
-                        pb: 2
-                      }}
-                      size={2}
-                    >
+                  <Grid
+                    key={index}
+                    size={1}
+                    sx={{
+                      backgroundColor: participant.ready ? green[100] : red[100],
+                      border: `1px solid ${participant.ready ? green[300] : red[300]}`,
+                      borderRadius: '0.5rem',
+                      height: '100%'
+                    }}
+                  >
+                    <Grid container spacing={1} columns={2} px={2} py={1}>
                       <Grid size={1}>
                         <Typography fontWeight={500}>#{participant.team?.number}</Typography>
                         <Typography fontSize="0.875rem" color="textSecondary">

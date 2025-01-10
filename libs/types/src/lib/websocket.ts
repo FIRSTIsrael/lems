@@ -72,7 +72,7 @@ export interface WSServerEmittedEvents {
 
   scoresheetUpdated: (scoresheet: Scoresheet) => void;
 
-  scoresheetStatusChanged: (scoresheet: Scoresheet) => void;
+  scoresheetEscalated: (scoresheet: Scoresheet) => void;
 
   audienceDisplayUpdated: (divisionState: DivisionState) => void;
 
@@ -186,6 +186,10 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  pingRooms: (
+    callback: (response: { rooms: Array<string>; ok: boolean; error?: string }) => void
+  ) => void;
+
   createTicket: (
     divisionId: string,
     teamId: string | null,
@@ -239,6 +243,21 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
+  switchMatchTeams: (
+    divisionId: string,
+    fromMatchId: string,
+    toMatchId: string,
+    participantIndex: number,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
+  mergeMatches: (
+    divisionId: string,
+    fromMatchId: string,
+    toMatchId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
   updateMatchParticipant: (
     divisionId: string,
     matchId: string,
@@ -270,7 +289,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
 export interface WSInterServerEvents {
   // ...
 }

@@ -1,3 +1,4 @@
+import { KeyboardEventHandler, useRef } from 'react';
 import { Field, FieldProps } from 'formik';
 import { TableCell, Typography, TableRow, Box, TextField } from '@mui/material';
 
@@ -5,9 +6,23 @@ interface ExceededNotesCellProps {
   name: string;
   placeholder?: string;
   disabled?: boolean;
+  blurOnEsc?: boolean;
 }
 
-const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder, disabled }) => {
+const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({
+  name,
+  placeholder,
+  disabled,
+  blurOnEsc
+}) => {
+  const textFieldRef = useRef<HTMLInputElement>(null);
+
+  const handleKeyDown: KeyboardEventHandler = e => {
+    if (blurOnEsc && e.key === 'Escape') {
+      textFieldRef.current?.blur();
+    }
+  };
+
   return (
     <TableRow>
       <TableCell
@@ -18,7 +33,12 @@ const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder
           borderLeft: '1px solid rgba(0,0,0,0.2)',
           borderBottom: 'none',
           backgroundColor: '#f1f1f1',
-          py: 1
+          py: 1,
+          '@media print': {
+            backgroundColor: '#f1f1f1',
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact'
+          }
         }}
       >
         <Field name={`${name}.notes`}>
@@ -39,6 +59,7 @@ const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder
                 נימוק:
               </Typography>
               <TextField
+                inputRef={textFieldRef}
                 onBlur={e => fieldOnBlur(e ?? field.name)}
                 disabled={disabled || form.isSubmitting}
                 fullWidth
@@ -46,9 +67,10 @@ const ExceededNotesCell: React.FC<ExceededNotesCellProps> = ({ name, placeholder
                 multiline
                 variant="standard"
                 placeholder={placeholder || 'כיצד הקבוצה התבלטה כמצטיינת?'}
-                InputProps={{ disableUnderline: true }}
+                slotProps={{ input: { disableUnderline: true } }}
                 {...field}
                 onChange={e => form.setFieldValue(field.name, e.target.value, false)}
+                onKeyDown={handleKeyDown}
               />
             </Box>
           )}

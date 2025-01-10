@@ -23,24 +23,29 @@ const TitleRow = ({ title, description, category: type }: Props) => {
         sx={{
           border: '2px solid #000',
           bgcolor: colors[type],
-          py: '1em',
+          py: '0.75em',
           px: '1.5em',
           textAlign: 'start',
           fontSize: '0.875em',
           fontWeight: 500,
           '@media print': {
             py: 0,
-            px: '0.25em'
+            px: '0.25em',
+            bgcolor: colors[type],
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact'
           }
         }}
         colSpan={4}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography fontSize="1em" fontWeight={700} component="span">
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Typography fontSize="1em" fontWeight={700} component="span" maxWidth="10%">
             {title}
           </Typography>
           <Box sx={{ whiteSpace: 'pre' }}> - </Box>
-          <Markdown skipHtml>{description}</Markdown>
+          <Box maxWidth="85%">
+            <Markdown skipHtml>{description}</Markdown>
+          </Box>
         </Box>
       </TableCell>
     </TableRow>

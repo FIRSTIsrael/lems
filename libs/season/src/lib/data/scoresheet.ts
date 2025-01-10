@@ -185,7 +185,7 @@ export const scoresheet: ScoresheetSchema = {
             points += 20;
             break;
           case 2:
-            points += 10;
+            points += 30;
             break;
           default:
             break;
@@ -249,12 +249,12 @@ export const scoresheet: ScoresheetSchema = {
   ],
   validators: [
     missions => {
-      const planktonInBoat = ensureArray(missions['m15'][0]).includes('plankton-sample');
-      if (planktonInBoat && !missions['m14'][1]) throw new ScoresheetError('e1');
+      const seabedInBoat = ensureArray(missions['m15'][0]).includes('seabed-sample');
+      if (seabedInBoat && missions['m14'][1] === false) throw new ScoresheetError('e1');
     },
     missions => {
-      const seabedInBoat = ensureArray(missions['m15'][0]).includes('seabed-sample');
-      if (seabedInBoat && !missions['m14'][2]) throw new ScoresheetError('e2');
+      const planktonInBoat = ensureArray(missions['m15'][0]).includes('plankton-sample');
+      if (planktonInBoat && missions['m14'][2] === false) throw new ScoresheetError('e2');
     },
     missions => {
       const tridentPartsInBoat = ensureArray(missions['m15'][0]).filter(item =>
@@ -264,7 +264,7 @@ export const scoresheet: ScoresheetSchema = {
     },
     missions => {
       const treasureChestInBoat = ensureArray(missions['m15'][0]).includes('treasure-chest');
-      if (treasureChestInBoat && !missions['m07'][0]) throw new ScoresheetError('e4');
+      if (treasureChestInBoat && missions['m07'][0] === false) throw new ScoresheetError('e4');
     }
   ]
 };

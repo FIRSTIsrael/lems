@@ -41,12 +41,17 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
             px: '0.5em',
             top: theme => theme.mixins.toolbar.minHeight,
             '@media print': {
+              fontSize: '1.4em',
               py: '0.5em',
-              px: '0.25em'
+              px: '0.25em',
+              borderRadius: '0',
+              bgcolor: colors[type][index],
+              WebkitPrintColorAdjust: 'exact',
+              printColorAdjust: 'exact'
             }
           }}
         >
-          <Typography fontSize="1em" fontWeight={700}>
+          <Typography fontSize="1.4em" fontWeight={700}>
             {typeof column === 'object' ? column.title : column}
           </Typography>
 

@@ -61,9 +61,7 @@ const CompareView: React.FC<CompareViewProps> = ({
   const compareTeams = teams.filter(t => compareTeamIds.includes(t._id));
   const compareRubrics = rubricsWithCvScores.filter(r => compareTeamIds.includes(r.teamId));
   const compareCvForms = cvForms.filter(
-    cvf =>
-      cvf.demonstratorAffiliation &&
-      compareTeams.map(t => t.number.toString()).includes(cvf.demonstratorAffiliation)
+    cvf => cvf.demonstratorAffiliation && compareTeams.includes(cvf.demonstratorAffiliation)
   );
   const compareScoresheets = scoresheets.filter(
     s => compareTeamIds.includes(s.teamId) && s.stage !== 'practice'

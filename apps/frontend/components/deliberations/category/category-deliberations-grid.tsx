@@ -1,9 +1,15 @@
 import { ObjectId } from 'mongodb';
-import { Paper, Box, IconButton, Avatar, Stack } from '@mui/material';
+import { Paper, Box, IconButton, Avatar, Stack, Typography } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { JudgingCategory, CoreValuesAwardsTypes, CoreValuesAwards } from '@lems/types';
+import {
+  JudgingCategory,
+  CoreValuesAwardsTypes,
+  CoreValuesAwards,
+  SELECTED_TEAM_COLOR,
+  SUGGESTED_TEAM_COLOR
+} from '@lems/types';
 import {
   rubricsSchemas,
   RubricSchemaSection,
@@ -27,6 +33,7 @@ interface CategoryDeliberationsGridProps {
   disabled?: boolean;
   showRanks?: boolean;
   showNormalizedScores?: boolean;
+  suggestedTeam?: DeliberationTeam | null;
 }
 
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
@@ -36,7 +43,8 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   updateTeamAwards,
   disabled = false,
   showRanks = false,
-  showNormalizedScores = false
+  showNormalizedScores = false,
+  suggestedTeam = null
 }) => {
   let schema = rubricsSchemas[category];
   if (category === 'core-values') schema = inferCvrubricSchema();
@@ -85,25 +93,25 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         ]
       : []),
     {
+      ...defaultColumnSettings,
       field: 'teamNumber',
       headerName: 'מספר קבוצה',
-      ...defaultColumnSettings,
       type: 'string',
       width: 80,
       valueGetter: (value, row) => row.team?.number
     },
     {
+      ...defaultColumnSettings,
       field: 'room',
       headerName: 'חדר',
-      ...defaultColumnSettings,
       type: 'string',
       width: 70
     },
     ...fields.map(
       field =>
         ({
-          ...field,
           ...defaultColumnSettings,
+          ...field,
           width: 75
         }) as GridColDef
     ),
@@ -113,14 +121,25 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
             ({
               field: `gp-${round}`,
               headerName: `GP ${round}`,
+              renderCell: params => {
+                return (
+                  <Typography
+                    component="span"
+                    fontWeight={Number(params.value) === 3 ? undefined : 700}
+                    fontSize="0.875rem"
+                  >
+                    {params.value}
+                  </Typography>
+                );
+              },
               ...defaultColumnSettings
             }) as GridColDef
         )
       : []),
     {
+      ...defaultColumnSettings,
       field: 'sum',
       headerName: 'סה"כ',
-      ...defaultColumnSettings,
       cellClassName: 'sum-cell'
     },
     ...(showNormalizedScores
@@ -240,9 +259,11 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         rowHeight={40}
         disableRowSelectionOnClick
         hideFooter
-        getRowClassName={params =>
-          selectedTeams.includes(params.row.team._id) ? 'selected-team' : ''
-        }
+        getRowClassName={params => {
+          const isSelected = selectedTeams.includes(params.row.team._id) ? 'selected-team' : '';
+          const isSuggested = suggestedTeam?._id === params.row.team._id ? 'suggested-team' : '';
+          return `${isSelected} ${isSuggested}`;
+        }}
         initialState={{
           pagination: {
             paginationModel: {
@@ -273,9 +294,15 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
         sx={{
           maxHeight: 696,
           '& .selected-team': {
-            backgroundColor: getBackgroundColor('#32a84c', 'light'),
+            backgroundColor: getBackgroundColor(SELECTED_TEAM_COLOR, 'light'),
             '&:hover': {
-              backgroundColor: getHoverBackgroundColor('#32a84c', 'light')
+              backgroundColor: getHoverBackgroundColor(SELECTED_TEAM_COLOR, 'light')
+            }
+          },
+          '& .suggested-team': {
+            backgroundColor: getBackgroundColor(SUGGESTED_TEAM_COLOR, 'light'),
+            '&:hover': {
+              backgroundColor: getHoverBackgroundColor(SUGGESTED_TEAM_COLOR, 'light')
             }
           },
           '& .MuiDataGrid-columnHeaderTitle': {

@@ -24,14 +24,12 @@ import React from 'react';
 
 interface TableScheduleRowProps {
   match: WithId<RobotGameMatch>;
-  table: WithId<RobotGameTable>;
   team: WithId<Team> | undefined;
   extendedTeamInfo?: boolean;
 }
 
 export const TableScheduleRow: React.FC<TableScheduleRowProps> = ({
   match,
-  table,
   team,
   extendedTeamInfo = false
 }) => {
@@ -94,12 +92,13 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
 }) => {
   const upcomingTableMatches = matches
     .filter(
-      m =>
-        m.participants.find(p => p.tableId === table._id)?.teamId != null && m.status != 'completed'
+      match =>
+        match.participants.find(p => p.tableId === table._id)?.teamId !== null &&
+        match.status !== 'completed'
     )
     .slice(0, limit)
-    .sort(m => m.round)
-    .sort(m => RobotGameMatchStages.indexOf(m.stage));
+    .sort(match => match.round)
+    .sort(match => RobotGameMatchStages.indexOf(match.stage));
 
   const displayedTableRows = upcomingTableMatches.reduce(
     (result: Array<React.ReactElement>, currentMatch, currentMatchIndex) => {
@@ -114,9 +113,9 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
       result.push(
         <TableScheduleRow
           match={currentMatch}
-          table={table}
           team={teams.find(
-            t => t._id === currentMatch.participants.find(p => p.tableId === table._id)?.teamId
+            team =>
+              team._id === currentMatch.participants.find(p => p.tableId === table._id)?.teamId
           )}
           extendedTeamInfo={extendedTeamInfo}
           key={currentMatch.number}
@@ -146,13 +145,13 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
         </TableHead>
         <TableBody>
           {...displayedTableRows.slice(0, limit)}
-          {limit && displayedTableRows.length > limit ? (
+          {limit && displayedTableRows.length > limit && (
             <TableRow>
               <TableCell colSpan={5} align="center">
                 ···
               </TableCell>
             </TableRow>
-          ) : null}
+          )}
         </TableBody>
       </Table>
     </TableContainer>

@@ -75,3 +75,11 @@ export const localizedAward: {
     description: 'קבוצות המעפילות לתחרות האליפות'
   }
 };
+
+export const localizedAwardPlace: Record<number, string> = {
+  1: 'ראשון',
+  2: 'שני',
+  3: 'שלישי',
+  4: 'רביעי',
+  5: 'חמישי'
+};

@@ -13,7 +13,7 @@ export const DivisionSwatches = [
 
 export type Status = 'not-started' | 'in-progress' | 'completed';
 
-export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
+export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';
 
 export type MissionClauseType = 'boolean' | 'enum' | 'number';
 
@@ -106,7 +106,7 @@ export const RANKING_ANOMALY_THRESHOLD = 3;
 export const AnomalyReasonTypes = ['low-rank', 'high-rank'];
 export type AnomalyReasons = (typeof AnomalyReasonTypes)[number];
 
-export const JUDGING_SESSION_LENGTH = 27 * 60;
+export const JUDGING_SESSION_LENGTH = 28 * 60;
 export const MATCH_LENGTH = 2.5 * 60;
 export const CATEGORY_DELIBERATION_LENGTH = 20 * 60;
 export const CHAMPIONS_DELIBERATION_STAGE_LENGTH = 5 * 60;
@@ -120,7 +120,7 @@ export const PRELIMINARY_DELIBERATION_PICKLIST_LENGTH = 12;
 export const ADVANCEMENT_PERCENTAGE = 0.18;
 export const SEASON_NAME = 'SUBMERGED℠';
 
-export const MATCH_AUTOLOAD_THRESHOLD = 10;
+export const MATCH_AUTOLOAD_THRESHOLD = 15;
 export const ALLOW_UNREGULATED_START = false;
 export const ALLOW_UNREGULATED_LOAD = true;
 
@@ -129,3 +129,16 @@ export const CategoryColors: Record<JudgingCategory, string> = {
   'robot-design': '#CCE7D3',
   'core-values': '#FCD3C1'
 };
+
+export const DarkCategoryColors: Record<JudgingCategory, string> = {
+  'innovation-project': '#005ba9',
+  'robot-design': '#007533',
+  'core-values': '#e2000b'
+};
+
+// Deliberation colors
+export const SUGGESTED_TEAM_COLOR = '#90caf9';
+export const SELECTED_TEAM_COLOR = '#32a84c';
+
+export const INSPECTION_TIMER_LENGTH = 90; //seconds
+export const SHOW_INSPECTION_TIMER = true;

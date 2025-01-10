@@ -65,11 +65,7 @@ router.put(
   }
 );
 
-router.use(
-  '/:divisionId/awards',
-  roleValidator(['judge-advisor', 'mc', 'scorekeeper', 'audience-display']),
-  awardsRouter
-);
+router.use('/:divisionId/awards', awardsRouter);
 
 router.use('/:divisionId/rooms', roomsRouter);
 
@@ -103,7 +99,7 @@ router.use(
   cvFormsRouter
 );
 
-router.use('/:divisionId/export', roleValidator('judge-advisor'), exportRouter);
+router.use('/:divisionId/export', roleValidator('tournament-manager'), exportRouter);
 
 router.use(
   '/:divisionId/insights',

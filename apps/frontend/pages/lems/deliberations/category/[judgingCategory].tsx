@@ -17,13 +17,13 @@ import {
   JudgingDeliberation,
   CoreValuesAwards,
   RANKING_ANOMALY_THRESHOLD,
-  DeliberationAnomaly
+  DeliberationAnomaly,
+  DivisionState
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import Layout from '../../../../components/layout';
-import ConnectionIndicator from '../../../../components/connection-indicator';
 import { getUserAndDivision, serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../hooks/use-websocket';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';
@@ -36,6 +36,7 @@ interface Props {
   category: JudgingCategory;
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -50,6 +51,7 @@ const Page: NextPage<Props> = ({
   category,
   user,
   division,
+  divisionState,
   teams,
   rubrics: initialRubrics,
   rooms,
@@ -244,9 +246,11 @@ const Page: NextPage<Props> = ({
         maxWidth={1900}
         back={`/lems/${user.role}`}
         title={`דיון תחום ${localizedJudgingCategory[category].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
+        divisionState={divisionState}
       >
         <Deliberation
           ref={deliberation}
@@ -285,6 +289,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
         teams: `/api/divisions/${divisionId}/teams`,
         rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,
         rooms: `/api/divisions/${divisionId}/rooms`,

@@ -3,8 +3,8 @@ import { RubricStatus, CoreValuesAwards } from '@lems/types';
 export const localizedRubricStatus: { [key in RubricStatus]: string } = {
   empty: 'לא מולא',
   'in-progress': 'בתהליך',
-  completed: 'ממתין להגשה סופית',
-  'waiting-for-review': 'ממתין לשופט מוביל',
+  completed: 'מלא',
+  'waiting-for-review': 'נעול',
   ready: 'אושר סופית'
 };
 

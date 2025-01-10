@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const ensureArray = (value: any | Array<any>) => {
+export const ensureArray = (value: any | Array<any>, allowNull = false) => {
+  if ((!allowNull && value === null) || value === undefined) return [];
   return Array.isArray(value) ? value : [value];
 };
 

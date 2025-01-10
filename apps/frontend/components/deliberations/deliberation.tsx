@@ -185,7 +185,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
     useEffect(() => {
       const { _id, divisionId, ...rest } = state;
       onChange(rest);
-    }, [state]);
+    }, [onChange, state]);
 
     const handleDragEnd: OnDragEndResponder = result => {
       if (!result.destination) return;
@@ -243,7 +243,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
                 state.manualEligibility?.includes(team._id))
           )
           .map(team => team._id),
-      [state.stage, awards, ineligibleTeams]
+      [teams, ineligibleTeams, checkEligibility, state.disqualifications, state.manualEligibility]
     );
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];

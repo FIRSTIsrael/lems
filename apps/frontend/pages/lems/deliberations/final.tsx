@@ -20,11 +20,11 @@ import {
   AwardNames,
   CoreValuesAwards,
   CoreValuesAwardsTypes,
-  DivisionWithEvent
+  DivisionWithEvent,
+  DivisionState
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
-import ConnectionIndicator from '../../../components/connection-indicator';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import ChampionsDeliberationLayout from '../../../components/deliberations/final/champions/champions-deliberation-layout';
@@ -40,6 +40,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
+  divisionState: WithId<DivisionState>;
   teams: Array<WithId<Team>>;
   awards: Array<WithId<Award>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
@@ -54,6 +55,7 @@ interface Props {
 const Page: NextPage<Props> = ({
   user,
   division,
+  divisionState,
   teams,
   awards: initialAwards,
   rubrics,
@@ -380,9 +382,11 @@ const Page: NextPage<Props> = ({
         maxWidth={1900}
         back={`/lems/${user.role}`}
         title={`דיון סופי | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
+        user={user}
+        division={division}
         color={division.color}
+        divisionState={divisionState}
       >
         <Deliberation
           ref={deliberation}
@@ -420,6 +424,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await serverSideGetRequests(
       {
         division: `/api/divisions/${divisionId}?withEvent=true`,
+        divisionState: `/api/divisions/${divisionId}/state`,
         teams: `/api/divisions/${divisionId}/teams`,
         awards: `/api/divisions/${divisionId}/awards`,
         rubrics: `/api/divisions/${divisionId}/rubrics?makeCvValues=true`,

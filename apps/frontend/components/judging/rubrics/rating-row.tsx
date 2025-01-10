@@ -95,7 +95,7 @@ const RatingRow = ({
               );
             })}
           </TableRow>
-          {field.value === 4 && <ExceededNotesCell name={name} disabled={disabled} />}
+          {field.value === 4 && <ExceededNotesCell name={name} disabled={disabled} blurOnEsc />}
         </>
       )}
     </Field>

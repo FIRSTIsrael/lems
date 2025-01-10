@@ -18,13 +18,42 @@ interface RobotCorrelationChartProps {
   division: WithId<Division>;
 }
 
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      teamNumber: number;
+      topRobotGameScore: number;
+      averageRobotDesignScore: number;
+    };
+  }>;
+}
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc' }}>
+        <p style={{ margin: 0 }}>{`קבוצה #${data.teamNumber}`}</p>
+        <p style={{ margin: 0 }}>{`ניקוד גבוה ביותר בזירה: ${data.topRobotGameScore}`}</p>
+        <p style={{ margin: 0 }}>{`ציון תכנון הרובוט: ${data.averageRobotDesignScore}`}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const RobotCorrelationChart: React.FC<RobotCorrelationChartProps> = ({ division }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     apiFetch(
       `/api/divisions/${division._id}/insights/judging/robot-room-correlation-to-robot-game`
-    ).then(res => res.json().then(data => setData(data)));
+    ).then(res =>
+      res.json().then(data => {
+        setData(data);
+      })
+    );
   }, [division._id]);
 
   return (
@@ -50,7 +79,7 @@ const RobotCorrelationChart: React.FC<RobotCorrelationChartProps> = ({ division 
               textAnchor="left"
               domain={[0, 4]}
             />
-            <Tooltip formatter={(value, name, props) => Number(Number(value).toFixed(2))} />
+            <Tooltip content={<CustomTooltip />} />
             <Scatter name="teams" data={data} fill={red[500]} />
           </ScatterChart>
         ) : (

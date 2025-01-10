@@ -3,36 +3,64 @@ import { WithId, ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import asyncHandler from 'express-async-handler';
 import { Award, Team, AwardNames } from '@lems/types';
+import roleValidator from '../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', (req: Request, res: Response) => {
-  db.getDivisionAwards(new ObjectId(req.params.divisionId)).then(awards => {
-    res.json(awards);
-  });
-});
+router.get(
+  '/',
+  roleValidator(['judge-advisor', 'mc', 'scorekeeper', 'audience-display']),
+  (req: Request, res: Response) => {
+    db.getDivisionAwards(new ObjectId(req.params.divisionId)).then(awards => {
+      res.json(awards);
+    });
+  }
+);
 
-router.post('/', (req: Request, res: Response) => {
-  const awards = req.body.map((award: Award) => ({
-    ...award,
-    divisionId: new ObjectId(award.divisionId)
-  }));
+router.post('/', roleValidator(['judge-advisor']), (req: Request, res: Response) => {
+  const awards = req.body.map((award: Award) => {
+    if (award.winner && typeof award.winner !== 'string') {
+      award.winner._id = new ObjectId(award.winner._id);
+    }
+
+    return {
+      ...award,
+      divisionId: new ObjectId(award.divisionId)
+    };
+  });
+
   db.addAwards(awards).then(awards => {
     res.json(awards);
   });
 });
 
-router.get('/:awardId', (req: Request, res: Response) => {
-  db.getAward({
-    _id: new ObjectId(req.params.awardId),
-    divisionId: new ObjectId(req.params.divisionId)
-  }).then(award => {
-    res.json(award);
+router.get('/schema', (req: Request, res: Response) => {
+  db.getDivisionAwards(new ObjectId(req.params.divisionId)).then(awards => {
+    res.json(
+      awards.map(award => {
+        const { winner, ...rest } = award;
+        return rest;
+      })
+    );
   });
 });
 
+router.get(
+  '/:awardId',
+  roleValidator(['judge-advisor', 'mc', 'scorekeeper', 'audience-display']),
+  (req: Request, res: Response) => {
+    db.getAward({
+      _id: new ObjectId(req.params.awardId),
+      divisionId: new ObjectId(req.params.divisionId)
+    }).then(award => {
+      res.json(award);
+    });
+  }
+);
+
 router.put(
   '/winners',
+  roleValidator(['judge-advisor']),
   asyncHandler(async (req: Request, res: Response) => {
     const body = req.body as Record<AwardNames, Array<WithId<Team> | string>>;
     const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));

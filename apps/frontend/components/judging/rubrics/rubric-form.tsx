@@ -352,31 +352,13 @@ const RubricForm: React.FC<RubricFormProps> = ({
             )}
 
             <Stack direction="row" spacing={4} justifyContent="center">
-              <RoleAuthorizer user={user} allowedRoles={['judge']}>
-                {['empty', 'in-progress', 'completed'].includes(rubric.status) && (
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    onClick={() => {
-                      handleSync(true, values, 'waiting-for-review').then(() =>
-                        router.push(`/lems/${user.role}`)
-                      );
-                    }}
-                    sx={actionButtonStyle}
-                    disabled={!isValid}
-                  >
-                    נעילה ושליחה לשופט מוביל
-                  </Button>
-                )}
-              </RoleAuthorizer>
-
               <RoleAuthorizer user={user} allowedRoles={['judge-advisor', 'lead-judge']}>
                 <Button
                   variant="contained"
                   color="inherit"
                   onClick={() => {
                     handleSync(false, values, 'ready').then(() =>
-                      router.push(`/lems/${user.role}`)
+                      router.push(`/lems/${user.role}#${team.number.toString()}`)
                     );
                   }}
                   sx={actionButtonStyle}
@@ -424,6 +406,20 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     </Button>
                   </DialogActions>
                 </Dialog>
+
+                {['empty', 'in-progress', 'completed'].includes(rubric.status) && (
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    onClick={() => {
+                      handleSync(false, values, 'waiting-for-review');
+                    }}
+                    sx={actionButtonStyle}
+                    disabled={!isValid}
+                  >
+                    נעילת המחוון
+                  </Button>
+                )}
 
                 {rubric.status === 'waiting-for-review' && (
                   <Button

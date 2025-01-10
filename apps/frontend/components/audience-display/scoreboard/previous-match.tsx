@@ -11,26 +11,34 @@ interface TeamScoreBoxProps {
 }
 
 const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
+  let styles;
+  if (scoresheet.status === 'in-progress' || scoresheet.escalated) {
+    styles = {
+      color: yellow[800],
+      border: `1px solid ${yellow[300]}`,
+      backgroundColor: yellow[100]
+    };
+  } else if (scoresheet.status === 'empty') {
+    styles = {
+      color: grey[800],
+      border: `1px solid ${grey[300]}`,
+      backgroundColor: grey[100]
+    };
+  } else {
+    // Completed, Ready, Waiting for GP
+    styles = {
+      color: green[800],
+      border: `1px solid ${green[300]}`,
+      backgroundColor: green[100]
+    };
+  }
+
   return (
     <Stack
       sx={{
-        color: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
-          ? yellow[800]
-          : scoresheet.status === 'empty'
-            ? grey[800]
-            : green[800],
-        border: `1px solid ${
-          ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
-            ? yellow[300]
-            : scoresheet.status === 'empty'
-              ? grey[300]
-              : green[300]
-        }`,
-        backgroundColor: ['in-progress', 'waiting-for-head-ref'].includes(scoresheet.status)
-          ? yellow[100]
-          : scoresheet.status === 'empty'
-            ? grey[100]
-            : green[100],
+        color: styles.color,
+        border: styles.border,
+        backgroundColor: styles.backgroundColor,
         borderRadius: '0.5rem',
         px: 1.5,
         py: 0.5
@@ -43,7 +51,7 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
     >
       <Typography fontSize="2rem">#{team.number}</Typography>
       <Typography fontWeight={700} fontSize="2rem" color="textSecondary">
-        {scoresheet.status === 'waiting-for-head-ref' ? 'בבדיקה' : scoresheet.data?.score || '-'}
+        {scoresheet.escalated ? 'בבדיקה' : scoresheet.data?.score || '-'}
       </Typography>
     </Stack>
   );

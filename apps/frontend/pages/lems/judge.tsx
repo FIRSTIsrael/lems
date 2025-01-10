@@ -17,7 +17,6 @@ import {
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../components/judging/judging-room-schedule';
-import ConnectionIndicator from '../../components/connection-indicator';
 import Layout from '../../components/layout';
 import WelcomeHeader from '../../components/general/welcome-header';
 import JudgingTimer from '../../components/judging/judging-timer';
@@ -28,6 +27,7 @@ import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../localization/event';
+import JudgeManagementHeader from '../../components/judging/judge-management-header';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -124,8 +124,7 @@ const Page: NextPage<Props> = ({
       <Layout
         maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
-        error={connectionStatus === 'disconnected'}
-        action={<ConnectionIndicator status={connectionStatus} />}
+        connectionStatus={connectionStatus}
         color={division.color}
       >
         {currentSession && activeTeam ? (
@@ -144,6 +143,7 @@ const Page: NextPage<Props> = ({
         ) : (
           <>
             <WelcomeHeader division={division} user={user} />
+            <JudgeManagementHeader />
             <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
               <RubricStatusReferences />
             </Paper>
@@ -198,6 +198,7 @@ const Page: NextPage<Props> = ({
 export const getServerSideProps: GetServerSideProps = async ctx => {
   try {
     const { user, divisionId } = await getUserAndDivision(ctx);
+    if (!user.roleAssociation) throw new Error('No role association found for judge.');
 
     const data = await serverSideGetRequests(
       {
