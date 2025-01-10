@@ -48,7 +48,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-color": "^2.19.3",
     "react-dom": "^18.3.1",
-    "react-markdown": "^9.0.1",
+    "react-markdown": "^9.0.3",
     "react-signature-canvas": "^1.0.6",
     "react-spring": "^9.7.5",
     "recharts": "^2.15.0",
