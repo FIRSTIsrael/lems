@@ -182,7 +182,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                     }}
                     ampm={false}
                     format="HH:mm"
-                    views={['minutes', 'hours']}
+                    views={['hours', 'minutes']}
                   />
                   <TimePicker
                     label="שעת סיום"
@@ -202,7 +202,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                     }}
                     ampm={false}
                     format="HH:mm"
-                    views={['minutes', 'hours']}
+                    views={['hours', 'minutes']}
                   />
                 </LocalizationProvider>
                 <FormControlLabel

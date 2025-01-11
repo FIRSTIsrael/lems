@@ -3,16 +3,16 @@ import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
 import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
-import { getDivisionUsers } from '../../../../lib/schedule/division-users';
-import { getDivisionRubrics } from '../../../../lib/schedule/division-rubrics';
-import {
-  parseDivisionData,
-  parseSessionsAndMatches,
-  getInitialDivisionState,
-  getDefaultDeliberations
-} from '../../../../lib/schedule/parser';
-import { getDivisionScoresheets } from '../../../../lib/schedule/division-scoresheets';
+import { parseDivisionData, parseSessionsAndMatches } from '../../../../lib/schedule/parser';
 import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
+import {
+  JUDGING_SESSION_LENGTH,
+  MATCH_LENGTH,
+  ScheduleGenerationSettings,
+  SchedulerRequest
+} from '@lems/types';
+import dayjs from 'dayjs';
+import { initializeDivision } from 'apps/backend/src/lib/schedule/initializer';
 
 const router = express.Router({ mergeParams: true });
 
@@ -37,18 +37,9 @@ router.post(
 
       console.log('📄 Inserting teams, tables, and rooms');
 
-      if (!(await db.addTeams(teams)).acknowledged) {
-        res.status(500).json({ error: 'Could not insert teams!' });
-        return;
-      }
-      if (!(await db.addTables(tables)).acknowledged) {
-        res.status(500).json({ error: 'Could not insert tables!' });
-        return;
-      }
-      if (!(await db.addRooms(rooms)).acknowledged) {
-        res.status(500).json({ error: 'Could not insert rooms!' });
-        return;
-      }
+      if (!(await db.addTeams(teams)).acknowledged) throw new Error('Could not insert teams!');
+      if (!(await db.addTables(tables)).acknowledged) throw new Error('Could not insert tables!');
+      if (!(await db.addRooms(rooms)).acknowledged) throw new Error('Could not insert rooms!');
 
       const dbTeams = await db.getDivisionTeams(division._id);
       const dbTables = await db.getDivisionTables(division._id);
@@ -66,57 +57,14 @@ router.post(
         timezone
       );
 
-      if (!(await db.addSessions(sessions)).acknowledged) {
-        res.status(500).json({ error: 'Could not insert sessions!' });
-        return;
-      }
-      if (!(await db.addMatches(matches)).acknowledged) {
-        res.status(500).json({ error: 'Could not insert matches!' });
-        return;
-      }
+      if (!(await db.addSessions(sessions)).acknowledged)
+        throw new Error('Could not insert sessions!');
+      if (!(await db.addMatches(matches)).acknowledged)
+        throw new Error('Could not insert matches!');
 
       console.log('✅ Finished parsing schedule!');
 
-      const dbMatches = await db.getDivisionMatches(division._id.toString());
-
-      console.log('📄 Generating rubrics');
-      const rubrics = getDivisionRubrics(division, dbTeams);
-      if (!(await db.addRubrics(rubrics)).acknowledged) {
-        res.status(500).json({ error: 'Could not create rubrics!' });
-        return;
-      }
-      console.log('✅ Generated rubrics');
-
-      console.log('📄 Generating scoresheets');
-      const scoresheets = getDivisionScoresheets(division, dbTeams, dbMatches);
-
-      if (!(await db.addScoresheets(scoresheets)).acknowledged) {
-        res.status(500).json({ error: 'Could not create scoresheets!' });
-        return;
-      }
-      console.log('✅ Generated scoresheets!');
-
-      console.log('👤 Generating division users');
-      const users = getDivisionUsers(event, division, dbTables, dbRooms);
-      if (!(await db.addUsers(users)).acknowledged) {
-        res.status(500).json({ error: 'Could not create users!' });
-        return;
-      }
-      console.log('✅ Generated division users');
-
-      console.log('📄 Generating deliberations');
-      const deliberations = getDefaultDeliberations(division);
-      if (!(await db.addJudgingDeliberations(deliberations)).acknowledged) {
-        res.status(500).json({ error: 'Could not create deliberations!' });
-        return;
-      }
-      console.log('✅ Generated deliberations');
-
-      console.log('🔐 Creating division state');
-      await db.addDivisionState(getInitialDivisionState(division));
-      console.log('✅ Created division state');
-
-      await db.updateDivision({ _id: division._id }, { hasState: true });
+      await initializeDivision(division, event);
 
       res.status(200).json({ ok: true });
     } catch (error) {
@@ -129,8 +77,68 @@ router.post(
   })
 );
 
-router.post('/generate', (req: Request, res: Response) => {
-  res.status(501).json({ error: 'NOT_IMPLEMENTED' });
-});
+router.post(
+  '/generate',
+  asyncHandler(async (req: Request, res: Response) => {
+    const settings: ScheduleGenerationSettings = req.body;
+
+    const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
+    const event = await db.getFllEvent({ _id: division.eventId });
+    const divisionState = await db.getDivisionState({ divisionId: division._id });
+    if (divisionState) {
+      res.status(400).json({ error: 'Could not parse schedule: Division has data' });
+      return;
+    }
+
+    try {
+      const matchesStart = dayjs(settings.matchesStart);
+      settings.matchesStart = dayjs(event.startDate)
+        .set('minutes', matchesStart.get('minutes'))
+        .set('seconds', matchesStart.get('seconds'))
+        .toDate();
+
+      const judgingStart = dayjs(settings.judgingStart);
+      settings.judgingStart = dayjs(event.startDate)
+        .set('minutes', judgingStart.get('minutes'))
+        .set('seconds', judgingStart.get('seconds'))
+        .toDate();
+
+      const schedulerRequest: SchedulerRequest = {
+        division_id: String(division._id),
+
+        matches_start: settings.matchesStart,
+        practice_rounds: settings.practiceRounds,
+        ranking_rounds: settings.rankingRounds,
+        match_lenth_seconds: MATCH_LENGTH,
+        practice_match_cycle_time_seconds: settings.practiceCycleTimeSeconds,
+        ranking_match_cycle_time_seconds: settings.rankingCycleTimeSeconds,
+        stagger_matches: settings.isStaggered,
+
+        judging_start: settings.judgingStart,
+        judging_session_length_seconds: JUDGING_SESSION_LENGTH,
+        judging_cycle_time_seconds: settings.judgingCycleTimeSeconds,
+
+        breaks: settings.breaks.map(({ eventType, after, durationSeconds }) => ({
+          event_type: eventType,
+          after: after,
+          duration_seconds: durationSeconds
+        }))
+      };
+
+      console.log(schedulerRequest);
+
+      // TODO: await send request, validate response
+      // await initializeDivision(division, event);
+
+      res.json({ ok: true });
+    } catch (error) {
+      console.log('❌ Error generating schedule');
+      console.debug(error);
+      await cleanDivisionData(division);
+      console.log('✅ Deleted division data!');
+      res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+    }
+  })
+);
 
 export default router;
