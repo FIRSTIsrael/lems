@@ -94,13 +94,13 @@ router.post(
       const matchesStart = dayjs(settings.matchesStart);
       settings.matchesStart = dayjs(event.startDate)
         .set('minutes', matchesStart.get('minutes'))
-        .set('seconds', matchesStart.get('seconds'))
+        .set('hours', matchesStart.get('hours'))
         .toDate();
 
       const judgingStart = dayjs(settings.judgingStart);
       settings.judgingStart = dayjs(event.startDate)
         .set('minutes', judgingStart.get('minutes'))
-        .set('seconds', judgingStart.get('seconds'))
+        .set('hours', judgingStart.get('hours'))
         .toDate();
 
       const schedulerRequest: SchedulerRequest = {
@@ -109,7 +109,7 @@ router.post(
         matches_start: settings.matchesStart,
         practice_rounds: settings.practiceRounds,
         ranking_rounds: settings.rankingRounds,
-        match_lenth_seconds: MATCH_LENGTH,
+        match_length_seconds: MATCH_LENGTH,
         practice_match_cycle_time_seconds: settings.practiceCycleTimeSeconds,
         ranking_match_cycle_time_seconds: settings.rankingCycleTimeSeconds,
         stagger_matches: settings.isStaggered,
@@ -125,10 +125,13 @@ router.post(
         }))
       };
 
-      console.log(schedulerRequest);
+      console.log(JSON.stringify(schedulerRequest));
 
       // TODO: await send request, validate response
-      // await initializeDivision(division, event);
+      await fetch('http://localhost:8000/scheduler', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify( schedulerRequest )}).then(res=>{
+        if (!res.ok) throw new Error("Scheduler failed to run")
+        });
+      await initializeDivision(division, event);
 
       res.json({ ok: true });
     } catch (error) {
