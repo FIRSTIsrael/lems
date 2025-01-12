@@ -184,8 +184,6 @@ class SchedulerService:
                     create_schedule_request.judging_start
                 )
 
-        print(f"Created {len(activities)} activities")
-
         return activities
 
     def create_schedule(self, create_schedule_request: CreateScheduleRequest) -> None:
@@ -215,7 +213,7 @@ class SchedulerService:
             )
 
             score = check_score(matched_teams)
-            print(f"Score for run {current_run}: {score}")
+            logger.debug(f"Score for run {current_run}: {score}")
 
             if score > current_score:
                 current_score = score
@@ -228,5 +226,6 @@ class SchedulerService:
             raise SchedulerError(
                 "Failed to generate valid schedule after mulitple attmepts"
             )
-
+        
+        logger.info(f"Inserting schedule into LEMS database with score of {current_score}")
         self.lems_repository.insert_schedule(best_activities)

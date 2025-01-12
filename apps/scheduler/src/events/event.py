@@ -189,18 +189,15 @@ class Event(ABC):
         cycle_time = self.activity_length + self.wait_time_minutes
 
         self.breaks = [judging_break for judging_break in self.breaks if judging_break.event_type == "judging"]
-        added_break = False
 
         while len(activities) < self.total_count:
             for judging_break in self.breaks:
-                if number - 1 == judging_break.after and not added_break:
+                if number - 1 == judging_break.after:
                     current_time += timedelta(seconds=judging_break.duration_seconds)
                     end_time += timedelta(seconds=judging_break.duration_seconds)
-                    added_break = True
             
             current_index = 0
             for _ in range(self.parallel_activities):
-                print(current_time)
                 activities.append(
                     TeamActivity(
                         activity_type=self.activity_type(),
@@ -220,6 +217,5 @@ class Event(ABC):
             number += 1
             current_time += timedelta(minutes=cycle_time)
             end_time += timedelta(minutes=cycle_time)
-            added_break = False
 
         return activities[:self.total_count]
