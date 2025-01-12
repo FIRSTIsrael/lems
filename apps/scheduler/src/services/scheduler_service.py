@@ -104,7 +104,7 @@ class SchedulerService:
         team_count: int,
         index: int,
     ) -> Event:
-        print(f"Creating event of type: {event_type} with index: {index}")
+        print(f"Creating event of type: {event_type} with index: {index} with {len(create_schedule_request.breaks)} breaks")
         match event_type:
             case "practice":
                 tables = self.get_tables()
@@ -169,9 +169,11 @@ class SchedulerService:
                 ActivityType.RANKING_MATCH,
                 ActivityType.PRACTICE_MATCH,
             ]:
-                activities += event.create_activities(
-                    current_matches_start_time, current_match_number
+                new_activities = event.create_activities(
+                    current_matches_start_time, current_match_number + 1
                 )
+                
+                activities += new_activities
                 for activity in activities:
                     if activity.number > current_match_number:
                         current_match_number = activity.number
@@ -181,6 +183,8 @@ class SchedulerService:
                 activities += event.create_activities(
                     create_schedule_request.judging_start
                 )
+
+        print(f"Created {len(activities)} activities")
 
         return activities
 
@@ -211,7 +215,7 @@ class SchedulerService:
             )
 
             score = check_score(matched_teams)
-            logger.debug(f"Score for run {current_run}: {score}")
+            print(f"Score for run {current_run}: {score}")
 
             if score > current_score:
                 current_score = score
