@@ -304,15 +304,19 @@ const Page: NextPage<Props> = ({
       {} as { [key in JudgingCategory]: Array<DeliberationTeam> }
     );
 
-    const excellenceInEngineeringWinners = eligibleTeams
-      .sort((a, b) => a.totalRank - b.totalRank)
-      .filter(
-        team =>
-          !Object.values(newAwards)
-            .flat(1)
-            .find(t => t._id === team._id)
-      )
-      .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+    let excellenceInEngineeringWinners: Array<DeliberationTeam> = [];
+    // If there is an excellence in engineering award, give it to the top teams that haven't won anything yet.
+    if (awards.find(award => award.name === 'excellence-in-engineering')) {
+      excellenceInEngineeringWinners = eligibleTeams
+        .sort((a, b) => a.totalRank - b.totalRank)
+        .filter(
+          team =>
+            !Object.values(newAwards)
+              .flat(1)
+              .find(t => t._id === team._id)
+        )
+        .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+    }
 
     return updateAwardWinners({
       ...newAwards,

@@ -355,6 +355,7 @@ export const handleUpdateAwardWinners = async (
   const newAwards = [];
   Object.entries(body).forEach(([awardName, winners]) => {
     const updatedAward = [...awards].filter(a => a.name === awardName);
+    if (updatedAward.length === 0) return; // Award isn't handed out in this division
     updatedAward
       .sort((a, b) => a.place - b.place)
       .forEach((award, index) => newAwards.push({ ...award, winner: winners[index] }));
