@@ -135,7 +135,7 @@ export const useDeliberationTeams = (
     }
 
     const stdDev = robotConsistency?.find((row: any) => row.id === team._id)?.relStdDev;
-    let consistency = stdDev ? 100 - stdDev : 0;
+    let consistency = stdDev === undefined ? 0 : 100 - stdDev;
     consistency = Number(consistency.toFixed(2));
 
     return {
@@ -184,10 +184,12 @@ export const useDeliberationTeams = (
           i => i.scores[_category],
           'categoryRank'
         );
-        acc[_category] = ranksWithCategory.map(team => ({
-          teamId: team._id,
-          rank: team.categoryRank + categoryRanks[_category].length
-        }));
+        acc[_category] = ranksWithCategory.map(team => {
+          const teamRank =
+            ranks.findIndex(rankedTeam => rankedTeam._id === team._id) +
+            categoryRanks[_category].length;
+          return { teamId: team._id, rank: teamRank };
+        });
       }
       return acc;
     },
@@ -207,12 +209,14 @@ export const useDeliberationTeams = (
           return acc;
         }
 
-        const rank = categoryRanks[_category].findIndex(id => id === team._id);
-        if (rank >= 0) {
-          acc[_category] = rank + 1;
+        const deliberationRank = categoryRanks[_category].findIndex(id => id === team._id);
+        if (deliberationRank >= 0) {
+          acc[_category] = deliberationRank + 1;
           return acc;
         }
 
+        const rank = nonDeliberatedRanks[_category].find(entry => entry.teamId === team._id)?.rank;
+        if (rank) acc[_category] = rank + 1;
         return acc;
       },
       {} as { [key in JudgingCategory | 'robot-game']: number }

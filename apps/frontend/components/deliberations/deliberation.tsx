@@ -1,4 +1,11 @@
-import React, { useEffect, createContext, forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, {
+  useEffect,
+  createContext,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useCallback
+} from 'react';
 import { ObjectId, WithId } from 'mongodb';
 import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd';
 import {
@@ -215,37 +222,55 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       }
     };
 
-    const teamWonAward = (team: WithId<Team>) =>
-      awards.find(
-        award =>
-          typeof award.winner !== 'string' &&
-          award.name !== 'robot-performance' &&
-          award.name !== 'advancement' &&
-          award.winner?._id === team._id
-      );
+    const teamWonAward = useCallback(
+      (team: WithId<Team>) =>
+        awards.find(
+          award =>
+            typeof award.winner !== 'string' &&
+            award.name !== 'robot-performance' &&
+            award.name !== 'advancement' &&
+            award.winner?._id === team._id
+        ),
+      [awards]
+    );
 
-    const ineligibleTeams = teams
-      .filter(
-        team =>
-          !team.registered ||
-          state.disqualifications.includes(team._id) ||
-          teamWonAward(team) ||
-          !!rubrics.find(r => r.teamId === team._id && ['empty', 'in-progress'].includes(r.status))
-      )
-      .map(team => team._id);
-
-    const eligibleTeams = useMemo(
+    const ineligibleTeams = useMemo(
       () =>
         teams
           .filter(
             team =>
-              !ineligibleTeams.includes(team._id) &&
-              (checkEligibility(team, teams, state.disqualifications) ||
-                state.manualEligibility?.includes(team._id))
+              !team.registered ||
+              state.disqualifications.includes(team._id) ||
+              teamWonAward(team) ||
+              !!rubrics.find(
+                r => r.teamId === team._id && ['empty', 'in-progress'].includes(r.status)
+              )
           )
           .map(team => team._id),
-      [teams, ineligibleTeams, checkEligibility, state.disqualifications, state.manualEligibility]
+      [rubrics, state.disqualifications, teamWonAward, teams]
     );
+
+    const eligibleTeams = useMemo(() => {
+      // HACK: For some reason, if checkEligibility is not called once before actually using it, it will not work,
+      // and return the 2nd team twice, eliminating the 1st team from the list of eligible teams.
+      // Since this is a terrible idea to just throw out the best team from champions award, we call it once here.
+      checkEligibility(teams[0], teams, state.disqualifications);
+
+      return teams
+        .filter(
+          team =>
+            !ineligibleTeams.includes(team._id) &&
+            (checkEligibility(team, teams, state.disqualifications) ||
+              state.manualEligibility?.includes(team._id))
+        )
+        .map(team => team._id);
+    }, [
+      teams,
+      ineligibleTeams,
+      checkEligibility,
+      state.disqualifications,
+      state.manualEligibility
+    ]);
 
     const selectedTeams = [...new Set(Object.values(state.awards).flat(1))];
     const availableTeams = eligibleTeams.filter(teamId => !selectedTeams.includes(teamId));

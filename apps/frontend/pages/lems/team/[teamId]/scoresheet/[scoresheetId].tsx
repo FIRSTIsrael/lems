@@ -259,8 +259,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     ).then(res => res.json());
 
     return { props: { user, match, team, table, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };

@@ -38,7 +38,6 @@ export const useNotes = () => {
   }, []);
 
   const addNote = async (note: Note) => {
-    console.log(note);
     const db = await openDB<NotesDb>('notes-database', 1);
     const tx = db.transaction('notes', 'readwrite');
     const store = tx.objectStore('notes');

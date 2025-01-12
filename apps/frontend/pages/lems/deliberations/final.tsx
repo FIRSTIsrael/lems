@@ -97,7 +97,7 @@ const Page: NextPage<Props> = ({
         return place;
       })
       .filter(t => !disqualifications.includes(t._id))
-      .slice(0, advancingTeams + 1);
+      .slice(0, advancingTeams);
     return !!shouldBeElegibile.find(t => t._id === team._id);
   };
 
@@ -127,6 +127,7 @@ const Page: NextPage<Props> = ({
       default:
         return () => true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStage]);
 
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations

@@ -54,6 +54,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
           selectedTeams={selectedTeams}
           showNormalizedScores={false}
           showRanks={false}
+          disabled
         />
       </Grid>
       <Grid size={3}>

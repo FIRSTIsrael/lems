@@ -202,8 +202,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     );
 
     return { props: { user, ...data } };
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { redirect: { destination: '/login', permanent: false } };
   }
 };
