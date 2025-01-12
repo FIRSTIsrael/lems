@@ -14,6 +14,7 @@ import { DeliberationContext } from '../../deliberation';
 const OptionalAwardsDeliberationLayout: React.FC = () => {
   const {
     teams,
+    awards,
     selectedTeams,
     additionalTeams,
     deliberation,
@@ -27,7 +28,11 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
     disqualifyTeam
   } = useContext(DeliberationContext);
 
-  const limits = CoreValuesAwardsTypes.reduce(
+  const cvAwards = CoreValuesAwardsTypes.filter(awardName =>
+    awards.find(award => award.name === awardName)
+  );
+
+  const limits = cvAwards.reduce(
     (acc, award) => {
       acc[award] = picklistLimits[award as AwardNames] ?? AwardLimits[award as AwardNames]!;
       return acc;
@@ -35,7 +40,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
     {} as { [key in AwardNames]?: number }
   );
 
-  const nextStageUnlocked = CoreValuesAwardsTypes.every(
+  const nextStageUnlocked = cvAwards.every(
     award => deliberation.awards[award]!.length === limits[award]
   );
 
@@ -45,6 +50,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
         <CategoryDeliberationsGrid
           category="core-values"
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
+          divisionAwards={awards}
           selectedTeams={selectedTeams}
           showNormalizedScores={false}
           showRanks={false}
@@ -77,7 +83,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
       {/* 1.5 x number of lists*/}
       <Grid size={4.5}>
         <Stack direction="row" spacing="2" gap={2} height="100%">
-          {CoreValuesAwardsTypes.map((award, index) => (
+          {cvAwards.map((award, index) => (
             <AwardList
               key={index}
               title={localizedAward[award].name}

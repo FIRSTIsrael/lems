@@ -26,6 +26,7 @@ import { getDefaultPicklistLimit } from '../../lib/utils/math';
 export interface DeliberationContextType {
   deliberation: WithId<JudgingDeliberation>;
   teams: Array<DeliberationTeam>;
+  awards: Array<WithId<Award>>;
   eligibleTeams: Array<ObjectId>;
   selectedTeams: Array<ObjectId>;
   availableTeams: Array<ObjectId>;
@@ -278,6 +279,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
           value={{
             deliberation: state,
             teams,
+            awards,
             eligibleTeams,
             selectedTeams,
             availableTeams,

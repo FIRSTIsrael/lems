@@ -111,7 +111,9 @@ const Page: NextPage<Props> = ({
   const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
     const _team = teams.find(t => t._id === team._id);
     if (!_team) return false;
-    return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
+    return Object.entries(_team.optionalAwardNominations).some(
+      ([awardName, nomination]) => awards.find(award => award.name === awardName) && nomination
+    );
   };
 
   const checkElegibility = useMemo(() => {
@@ -329,7 +331,9 @@ const Page: NextPage<Props> = ({
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => {
-    const newAwards = CoreValuesAwardsTypes.reduce(
+    const newAwards = CoreValuesAwardsTypes.filter(awardName =>
+      awards.find(award => award.name === awardName)
+    ).reduce(
       (acc, awardName) => {
         acc[awardName] = (deliberation.awards[awardName] ?? [])
           .map(teamId => eligibleTeams.find(t => t._id === teamId))

@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Box, Stack } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { rubricsSchemas } from '@lems/season';
-import { Rubric, JudgingCategory, DivisionWithEvent, Team } from '@lems/types';
+import { Rubric, JudgingCategory, DivisionWithEvent, Team, Award } from '@lems/types';
 import { RubricAwards } from './rubrics/rubric-awards';
 import { SessionFeedbackHeader } from './rubrics/feedback-page/session-feedback-header';
 import SessionFeedbackTable from './rubrics/feedback-page/session-feedback-table';
@@ -12,12 +12,14 @@ interface ExportRubricFeedbackProps {
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
+  awards: Array<WithId<Award>>;
 }
 
 export const ExportRubricFeedback: React.FC<ExportRubricFeedbackProps> = ({
   rubrics,
   division,
-  team
+  team,
+  awards
 }) => {
   const cvrubric = rubrics.find(r => r.category === 'core-values');
   if (!cvrubric) return null;
@@ -33,6 +35,7 @@ export const ExportRubricFeedback: React.FC<ExportRubricFeedbackProps> = ({
               <RubricAwards
                 rubric={cvrubric}
                 schema={rubricsSchemas[cvrubric.category]}
+                divisionAwards={awards}
                 size={12}
               />
             </Box>

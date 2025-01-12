@@ -14,7 +14,8 @@ import {
   SafeUser,
   Rubric,
   Team,
-  DivisionWithEvent
+  DivisionWithEvent,
+  Award
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import { rubricsSchemas } from '@lems/season';
@@ -76,9 +77,18 @@ interface Props {
   team: WithId<Team>;
   session: WithId<JudgingSession>;
   rubric: WithId<Rubric<JudgingCategory>>;
+  awards: Array<WithId<Award>>;
 }
 
-const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: initialRubric }) => {
+const Page: NextPage<Props> = ({
+  user,
+  division,
+  room,
+  team,
+  session,
+  rubric: initialRubric,
+  awards
+}) => {
   const router = useRouter();
   if (!team.registered) {
     router.push(`/lems/${user.role}`);
@@ -150,6 +160,7 @@ const Page: NextPage<Props> = ({ user, division, room, team, session, rubric: in
               rubric={rubric}
               schema={rubricsSchemas[judgingCategory as JudgingCategory]}
               socket={socket}
+              awards={awards}
             />
           </Box>
         </Layout>
@@ -180,7 +191,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         team: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}`,
         room: `/api/divisions/${divisionId}/rooms/${roomId}`,
         session: `/api/divisions/${divisionId}/rooms/${roomId}/sessions`,
-        rubric: `/api/divisions/${divisionId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`
+        rubric: `/api/divisions/${divisionId}/teams/${ctx.query.teamId}/rubrics/${ctx.query.judgingCategory}`,
+        awards: `/api/divisions/${divisionId}/awards/schema`
       },
       ctx
     );
