@@ -57,9 +57,7 @@ class Event(ABC):
         self.parallel_activities = parallel_activities
         self.event_index = event_index
         self.locations = locations
-        self.breaks = list(
-            filter(lambda x: x.event_type == self.activity_type(), breaks)
-        )
+        self.breaks = breaks
 
     @staticmethod
     @abstractmethod
@@ -77,7 +75,7 @@ class Event(ABC):
         pass
 
     def create_matches(
-        self, start_time: datetime, starting_number: int = 0
+        self, start_time: datetime, starting_number: int = 1
     ) -> List[TeamActivity]:
         activities = []
         current_time = start_time
@@ -85,8 +83,8 @@ class Event(ABC):
         number = starting_number
 
         cycle_time = self.activity_length + self.wait_time_minutes
+        self.breaks = [field_break for field_break in self.breaks if field_break.event_type == "match"]
 
-        current_break_index = 0
         location_index = 0
 
         activities_created = 0
@@ -96,17 +94,10 @@ class Event(ABC):
             active_parrellel_activities = (int)(active_parrellel_activities / 2)
 
         while activities_created < self.total_count:
-            break_after = 1000
-            break_duration = 0
-            if len(self.breaks) > current_break_index:
-                current_break = self.breaks[current_break_index]
-                break_after = current_break.after
-                break_duration = current_break.duration_seconds
-
-            if number == break_after:
-                current_time += timedelta(minutes=break_duration)
-                end_time += timedelta(minutes=break_duration)
-                current_break_index += 1
+            for field_break in self.breaks:
+                if number - 1 == field_break.after:
+                    current_time += timedelta(seconds=field_break.duration_seconds)
+                    end_time += timedelta(seconds=field_break.duration_seconds)
 
             current_index = 0
 
@@ -172,15 +163,16 @@ class Event(ABC):
                     current_index += 1
                     location_index += 1
 
-            number += 1
+
             current_time += timedelta(minutes=cycle_time)
             end_time += timedelta(minutes=cycle_time)
             activities_created += active_parrellel_activities
+            number += 1
 
         return activities
 
     def create_activities(
-        self, start_time: datetime, starting_number: int = 0
+        self, start_time: datetime, starting_number: int = 1
     ) -> List[TeamActivity]:
         if self.activity_type() in [
             ActivityType.RANKING_MATCH,
@@ -196,27 +188,34 @@ class Event(ABC):
 
         cycle_time = self.activity_length + self.wait_time_minutes
 
+        self.breaks = [judging_break for judging_break in self.breaks if judging_break.event_type == "judging"]
+
         while len(activities) < self.total_count:
-            if current_index == self.parallel_activities:
-                current_index = 0
-                current_time += timedelta(minutes=cycle_time)
-                end_time += timedelta(minutes=cycle_time)
-
-            activities.append(
-                TeamActivity(
-                    activity_type=self.activity_type(),
-                    start_time=current_time,
-                    end_time=end_time,
-                    location=self.locations[current_index],
-                    index=current_index,
-                    event_index=self.event_index,
-                    rejected_team_numbers=[],
-                    number=number,
-                    round=self.event_index,
-                    team_number=None,
+            for judging_break in self.breaks:
+                if number - 1 == judging_break.after:
+                    current_time += timedelta(seconds=judging_break.duration_seconds)
+                    end_time += timedelta(seconds=judging_break.duration_seconds)
+            
+            current_index = 0
+            for _ in range(self.parallel_activities):
+                activities.append(
+                    TeamActivity(
+                        activity_type=self.activity_type(),
+                        start_time=current_time,
+                        end_time=end_time,
+                        location=self.locations[current_index],
+                        index=current_index,
+                        event_index=self.event_index,
+                        rejected_team_numbers=[],
+                        number=number,
+                        round=self.event_index,
+                        team_number=None,
+                    )
                 )
-            )
-            number += 1
-            current_index += 1
+                current_index += 1
 
-        return activities
+            number += 1
+            current_time += timedelta(minutes=cycle_time)
+            end_time += timedelta(minutes=cycle_time)
+
+        return activities[:self.total_count]

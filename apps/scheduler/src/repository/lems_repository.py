@@ -94,7 +94,7 @@ class LemsRepository:
                 max_match_number = team_match_activity.number
 
         logger.debug(f"Max match number: {max_match_number}")
-        for match_index in range(0, max_match_number + 1):
+        for match_index in range(1, max_match_number + 1):
             current_match_activities = [
                 activity
                 for activity in match_activities

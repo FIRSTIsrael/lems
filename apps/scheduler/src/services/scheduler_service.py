@@ -29,13 +29,15 @@ def check_score(teams: list[Team]) -> int:
     """Checks the quality of the schedule by finding the minimum delta between the
     start times of the events for a team. Higher scores are better."""
     min_score = MAX_MINUTES
+    total_score = 0
 
     for team in teams:
         current_score = team_minimum_delta(team.team_events)
+        total_score += current_score
         if current_score < min_score:
             min_score = current_score
 
-    return min_score
+    return min_score, total_score / len(teams)
 
 
 class SchedulerService:
@@ -104,7 +106,7 @@ class SchedulerService:
         team_count: int,
         index: int,
     ) -> Event:
-        print(f"Creating event of type: {event_type} with index: {index}")
+        print(f"Creating event of type: {event_type} with index: {index} with {len(create_schedule_request.breaks)} breaks")
         match event_type:
             case "practice":
                 tables = self.get_tables()
@@ -169,9 +171,11 @@ class SchedulerService:
                 ActivityType.RANKING_MATCH,
                 ActivityType.PRACTICE_MATCH,
             ]:
-                activities += event.create_activities(
-                    current_matches_start_time, current_match_number
+                new_activities = event.create_activities(
+                    current_matches_start_time, current_match_number + 1
                 )
+                
+                activities += new_activities
                 for activity in activities:
                     if activity.number > current_match_number:
                         current_match_number = activity.number
@@ -210,11 +214,12 @@ class SchedulerService:
                 current_teams, current_activities, number_of_events
             )
 
-            score = check_score(matched_teams)
-            logger.debug(f"Score for run {current_run}: {score}")
+            score, avg_score = check_score(matched_teams)
+            print(f"Score for run {current_run}: min - {score}, avg - {avg_score}")
 
             if score > current_score:
                 current_score = score
+                current_average_score = avg_score
                 best_activities = matched_activities
 
             if current_score >= MIN_SCORE and current_run > MIN_RUNS:
@@ -224,5 +229,6 @@ class SchedulerService:
             raise SchedulerError(
                 "Failed to generate valid schedule after mulitple attmepts"
             )
-
+        
+        logger.info(f"Inserting schedule into LEMS database with score of {current_score} and avg of: {current_average_score}")
         self.lems_repository.insert_schedule(best_activities)
