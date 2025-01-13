@@ -19,25 +19,20 @@ def team_minimum_delta(sessions: List[TeamActivity]) -> int:
     Calculate the minimum time between two activities for a team
     """
 
-    minimum_time = MAX_MINUTES
-    for first_session in sessions:
-        for second_session in sessions:
-            if first_session != second_session:
-                if (
-                    first_session.end_time
-                    > second_session.start_time
-                    > first_session.start_time
-                ):
-                    return 0
-                current_time_difference = (
-                    first_session.end_time - second_session.start_time
-                )
-                minutes_difference = (
-                    current_time_difference.total_seconds() / MINUTES_PER_HOUR
-                )
-                if 0 < minutes_difference < minimum_time:
-                    minimum_time = minutes_difference
-    return minimum_time
+    sessions_sorted = sorted(sessions, key=lambda s: s.start_time)
+    min_gap = MAX_MINUTES
+
+    for idx, current_session in enumerate(sessions_sorted[:-1]):
+        next_session = sessions_sorted[idx + 1]
+        gap_seconds = (
+            next_session.start_time - current_session.end_time
+        ).total_seconds()
+        # If there's overlap, treat it as 0
+        gap_minutes = max(0, gap_seconds / MINUTES_PER_HOUR)
+        if gap_minutes < min_gap:
+            min_gap = gap_minutes
+
+    return int(min_gap) if min_gap != MAX_MINUTES else 0
 
 
 class Event(ABC):
@@ -83,7 +78,11 @@ class Event(ABC):
         number = starting_number
 
         cycle_time = self.activity_length + self.wait_time_minutes
-        self.breaks = [field_break for field_break in self.breaks if field_break.event_type == "match"]
+        self.breaks = [
+            field_break
+            for field_break in self.breaks
+            if field_break.event_type == "match"
+        ]
 
         location_index = 0
 
@@ -163,7 +162,6 @@ class Event(ABC):
                     current_index += 1
                     location_index += 1
 
-
             current_time += timedelta(minutes=cycle_time)
             end_time += timedelta(minutes=cycle_time)
             activities_created += active_parrellel_activities
@@ -188,14 +186,18 @@ class Event(ABC):
 
         cycle_time = self.activity_length + self.wait_time_minutes
 
-        self.breaks = [judging_break for judging_break in self.breaks if judging_break.event_type == "judging"]
+        self.breaks = [
+            judging_break
+            for judging_break in self.breaks
+            if judging_break.event_type == "judging"
+        ]
 
         while len(activities) < self.total_count:
             for judging_break in self.breaks:
                 if number - 1 == judging_break.after:
                     current_time += timedelta(seconds=judging_break.duration_seconds)
                     end_time += timedelta(seconds=judging_break.duration_seconds)
-            
+
             current_index = 0
             for _ in range(self.parallel_activities):
                 activities.append(
@@ -218,4 +220,4 @@ class Event(ABC):
             current_time += timedelta(minutes=cycle_time)
             end_time += timedelta(minutes=cycle_time)
 
-        return activities[:self.total_count]
+        return activities[: self.total_count]

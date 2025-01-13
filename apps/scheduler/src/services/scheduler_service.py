@@ -17,8 +17,8 @@ from services.gale_shapley_service import (
 from repository.lems_repository import LemsRepository
 
 MIN_RUNS = 10
-MAX_RUNS = 100
-MIN_SCORE = 10
+MAX_RUNS = 1000
+MIN_SCORE = 15
 
 SECONDS_PER_MINUTE = 60
 
