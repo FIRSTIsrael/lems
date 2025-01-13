@@ -22,7 +22,7 @@ MIN_SCORE = 10
 
 SECONDS_PER_MINUTE = 60
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("lems.scheduler")
 
 
 def check_score(teams: list[Team]) -> int:
@@ -106,7 +106,9 @@ class SchedulerService:
         team_count: int,
         index: int,
     ) -> Event:
-        print(f"Creating event of type: {event_type} with index: {index} with {len(create_schedule_request.breaks)} breaks")
+        logger.info(
+            f"Creating event of type: {event_type} with index: {index} with {len(create_schedule_request.breaks)} breaks"
+        )
         match event_type:
             case "practice":
                 tables = self.get_tables()
@@ -174,7 +176,7 @@ class SchedulerService:
                 new_activities = event.create_activities(
                     current_matches_start_time, current_match_number + 1
                 )
-                
+
                 activities += new_activities
                 for activity in activities:
                     if activity.number > current_match_number:
@@ -215,7 +217,9 @@ class SchedulerService:
             )
 
             score, avg_score = check_score(matched_teams)
-            print(f"Score for run {current_run}: min - {score}, avg - {avg_score}")
+            logger.debug(
+                f"Score for run {current_run}: min - {score}, avg - {avg_score}"
+            )
 
             if score > current_score:
                 current_score = score
@@ -229,6 +233,8 @@ class SchedulerService:
             raise SchedulerError(
                 "Failed to generate valid schedule after mulitple attmepts"
             )
-        
-        logger.info(f"Inserting schedule into LEMS database with score of {current_score} and avg of: {current_average_score}")
+
+        logger.info(
+            f"Inserting schedule into LEMS database with score of {current_score} and avg of: {current_average_score}"
+        )
         self.lems_repository.insert_schedule(best_activities)

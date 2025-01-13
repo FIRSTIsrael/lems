@@ -6,7 +6,7 @@ from models.create_schedule_request import CreateScheduleRequest
 from services.scheduler_service import SchedulerService, SchedulerError
 from repository.lems_repository import LemsRepository
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("lems.scheduler")
 router = APIRouter(prefix="/scheduler")
 
 

@@ -15,7 +15,7 @@ from repository.schemas.robot_game_match import RobotGameMatch
 from repository.schemas.judging_room import JudgingRoom
 from repository.schemas.robot_game_table import RobotGameTable
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("lems.scheduler")
 
 
 class LemsRepository:
@@ -28,12 +28,12 @@ class LemsRepository:
             # tlsAllowInvalidCertificates=os.getenv("PYTHON_ENV") == "production",
         )
         self.db = self.client["lems"]
-        print(f"🔗 Connecting to MongoDB server at {connection_string}")
+        logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")
         try:
             self.client.admin.command("ping")
-            print("🚀 MongoDB Client connected.")
+            logger.info("🚀 MongoDB Client connected.")
         except Exception as err:
-            print("❌ Unable to connect to mongodb: ", err)
+            logger.error("❌ Unable to connect to mongodb: ", err)
 
     def get_teams(self) -> list[TeamModel]:
         collection: Collection[Team] = self.db.teams
