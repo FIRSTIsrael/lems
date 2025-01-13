@@ -64,7 +64,7 @@ const Page: NextPage<Props> = ({ user, teams, division, cvForm: initialCvForm })
             socket={socket}
             cvForm={cvForm}
             readOnly={true}
-            onSubmit={() => setTimeout(() => router.push(`/lems/${user.role}`), 1000)}
+            onSubmit={() => setTimeout(() => router.push(`/lems/${user.role}`), 100)}
           />
         </Paper>
       </Layout>
