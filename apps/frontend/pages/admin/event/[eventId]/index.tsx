@@ -5,16 +5,11 @@ import { apiFetch } from '../../../../lib/utils/fetch';
 import Layout from '../../../../components/layout';
 import EditEventForm from '../../../../components/admin/edit-event-form';
 import DivisionLink from '../../../../components/admin/division-link';
-import dayjs from 'dayjs';
-import { TabContext, TabPanel } from '@mui/lab';
-import { Paper, Tabs, Tab, Stack } from '@mui/material';
-import GenerateScheduleButton from '../../../../components/admin/generate-schedule';
-import DivisionAwardEditor from '../../../../components/admin/division-award-editor';
-import DeleteDivisionData from '../../../../components/admin/delete-division-data';
-import DivisionScheduleEditor from '../../../../components/admin/division-schedule-editor';
+import { Paper, Stack } from '@mui/material';
 import DownloadUsersButton from '../../../../components/admin/download-users';
 import UploadFileButton from '../../../../components/general/upload-file';
-import { useQueryParam } from '../../../../hooks/use-query-param';
+import DivisionTabEditor from '../../../../components/admin/division-tab-editor';
+import dayjs from 'dayjs';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -23,10 +18,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
-  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
-
   return (
-    <Layout maxWidth="md" title={`ניהול אירוע: ${event.name}`} back="/admin">
+    <Layout maxWidth="lg" title={`ניהול אירוע: ${event.name}`} back="/admin">
       <Stack spacing={2} sx={{ mt: 2 }}>
         <EditEventForm sx={{ p: 4 }} event={event} />
         {event.enableDivisions && event.divisions && event.divisions?.length > 1
@@ -37,8 +30,7 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
             awardSchema && (
               <>
                 <Paper sx={{ p: 4 }}>
-                  {division?.hasState && <DeleteDivisionData division={{ ...division, event }} />}
-                  <Stack justifyContent="center" direction="row" spacing={2}>
+                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
                     <UploadFileButton
                       urlPath={`/api/admin/divisions/${division?._id}/schedule/parse`}
                       displayName="לוח זמנים"
@@ -46,35 +38,16 @@ const Page: NextPage<Props> = ({ event, division, awardSchema }) => {
                       disabled={division?.hasState}
                       requestData={{ timezone: dayjs.tz.guess() }}
                     />
-                    <GenerateScheduleButton division={division} />
+                    <UploadFileButton
+                      urlPath={`/api/admin/divisions/${division?._id}/pit-map`}
+                      displayName="מפת פיטים"
+                      extension=".png"
+                      reload={false}
+                    />
                     <DownloadUsersButton division={division} disabled={!division?.hasState} />
                   </Stack>
                 </Paper>
-                <Paper sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-                  <UploadFileButton
-                    urlPath={`/api/admin/divisions/${division?._id}/pit-map`}
-                    displayName="מפת פיטים"
-                    extension=".png"
-                  />
-                </Paper>
-                <TabContext value={activeTab}>
-                  <Paper sx={{ mt: 2 }}>
-                    <Tabs
-                      value={activeTab}
-                      onChange={(_e, newValue: string) => setActiveTab(newValue)}
-                      centered
-                    >
-                      <Tab label="לוח זמנים" value="1" />
-                      <Tab label="פרסים" value="2" />
-                    </Tabs>
-                  </Paper>
-                  <TabPanel value="1">
-                    <DivisionScheduleEditor event={event} division={division} />
-                  </TabPanel>
-                  <TabPanel value="2">
-                    <DivisionAwardEditor divisionId={division?._id} awardSchema={awardSchema} />
-                  </TabPanel>
-                </TabContext>
+                <DivisionTabEditor event={event} division={division} awardSchema={awardSchema} />
               </>
             )}
       </Stack>

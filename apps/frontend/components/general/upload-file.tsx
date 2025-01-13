@@ -23,6 +23,9 @@ interface UploadFileButtonProps extends ButtonProps {
   displayName: string;
   extension?: string;
   requestData?: object;
+  onSuccess?: () => void;
+  onError?: () => void;
+  reload?: boolean;
 }
 
 const UploadFileButton: React.FC<UploadFileButtonProps> = ({
@@ -30,6 +33,9 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
   displayName,
   extension,
   requestData,
+  onSuccess,
+  onError,
+  reload = true,
   ...props
 }) => {
   const router = useRouter();
@@ -60,12 +66,16 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
           enqueueSnackbar(`קובץ ${displayName} עודכן בהצלחה.`, { variant: 'success' });
           setDialogOpen(false);
           setFile(null);
-          router.reload();
+          onSuccess?.();
+          if (reload) router.reload();
         } else {
           throw new Error('HTTP-ERROR');
         }
       })
-      .catch(e => setIsError(true))
+      .catch(e => {
+        setIsError(true);
+        onError?.();
+      })
       .finally(() => setIsProcessing(false));
   };
 

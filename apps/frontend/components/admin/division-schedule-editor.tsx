@@ -1,309 +1,115 @@
-import { useState, useEffect, useMemo } from 'react';
-import { WithId, ObjectId } from 'mongodb';
+import { useState } from 'react';
+import { WithId } from 'mongodb';
 import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
+import { Box, Stack, Step, StepLabel, Stepper, Paper } from '@mui/material';
+import { Division, FllEvent, ScheduleGenerationSettings } from '@lems/types';
+import UploadTeamsStep from './schedule-generator/upload-teams-step';
+import VenueSetupStep from './schedule-generator/venue-setup-step';
+import TimingStep from './schedule-generator/timing-step';
+import DeleteDivisionData from './delete-division-data';
+import ReviewStep from './schedule-generator/review-step';
+import { apiFetch } from 'apps/frontend/lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
-import {
-  Paper,
-  Stack,
-  Typography,
-  IconButton,
-  Checkbox,
-  Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Chip,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Theme,
-  useTheme,
-  SelectChangeEvent,
-  FormControlLabel
-} from '@mui/material';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { FllEvent, Division, DivisionScheduleEntry, Role, RoleTypes } from '@lems/types';
-import { localizedRoles } from '../../localization/roles';
-import { apiFetch } from '../../lib/utils/fetch';
-import EventSelectorModal from '../general/event-selector-modal';
+
+const SchedulerStages = ['upload-teams', 'venue-setup', 'timing', 'review'];
+export type SchedulerStage = (typeof SchedulerStages)[number];
+
+const localizedStages: Record<SchedulerStage, string> = {
+  'upload-teams': 'העלאת קבוצות',
+  'venue-setup': 'פרטי תחרות',
+  timing: 'הגדרת זמנים',
+  review: 'סיכום'
+};
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
   division: WithId<Division>;
 }
 
-const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ event, division }) => {
-  const theme = useTheme();
+const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ division, event }) => {
   const router = useRouter();
-  const [schedule, setSchedule] = useState<Array<DivisionScheduleEntry>>(division.schedule || []);
-  const [copyModal, setCopyModal] = useState(false);
-  const [events, setEvents] = useState<Array<WithId<FllEvent>>>([]);
+  const [activeStep, setActiveStep] = useState(0);
+  const [settings, setSettings] = useState<ScheduleGenerationSettings>({
+    practiceRounds: 1,
+    rankingRounds: 3,
+    isStaggered: true,
+    matchesStart: null,
+    judgingStart: null,
+    practiceCycleTimeSeconds: null,
+    rankingCycleTimeSeconds: null,
+    judgingCycleTimeSeconds: null,
+    breaks: []
+  });
 
-  useEffect(() => {
-    apiFetch(`/public/events`).then(res => {
-      res.json().then(data => setEvents(data));
-    });
-  }, []);
-
-  const sortedSchedule = useMemo(
-    () =>
-      [...schedule].sort(
-        (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-      ),
-    [schedule]
-  );
-
-  const copyScheduleFrom = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
-    if (divisionId && String(divisionId) === String(division._id)) return;
-    const event = events.find(e => String(e._id) === String(eventId));
-    if (!event) return;
-    if (!divisionId && event?.enableDivisions) return;
-    let copyFromDivision;
-    if (divisionId) {
-      copyFromDivision = event?.divisions?.find(d => String(d._id) === String(divisionId));
-    } else {
-      copyFromDivision = event?.divisions?.[0];
-    }
-    if (!copyFromDivision) return;
-
-    apiFetch(`/api/events/${eventId}/divisions?withSchedule=true`)
-      .then(res => res.json())
-      .then(data => {
-        if (data[0]?.schedule?.length > 0) {
-          const getNewDate = (date: Date): Date => {
-            const hour = dayjs(date).get('hours');
-            const minute = dayjs(date).get('minutes');
-            return dayjs(event.startDate).set('hours', hour).set('minutes', minute).toDate();
-          };
-
-          const newSchedule = data[0]?.schedule.map((entry: DivisionScheduleEntry) => {
-            return {
-              ...entry,
-              startTime: getNewDate(entry.startTime),
-              endTime: getNewDate(entry.endTime)
-            };
-          });
-
-          setSchedule(newSchedule);
-          enqueueSnackbar('הלו"ז הכללי הועתק בהצלחה!', { variant: 'success' });
-          setCopyModal(false);
-        } else {
-          enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
-        }
-      });
-  };
-
-  const updateDivision = () => {
-    setSchedule(sortedSchedule);
-    apiFetch(`/api/admin/divisions/${division._id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ schedule: sortedSchedule })
-    }).then(res => {
-      if (res.ok) {
-        enqueueSnackbar('לוח הזמנים נשמר בהצלחה!', { variant: 'success' });
-      } else {
-        enqueueSnackbar('אופס, שמירת לוח הזמנים נכשלה.', { variant: 'error' });
-      }
-    });
-  };
-
-  const getStyles = (name: string, roleList: readonly string[], theme: Theme) => {
-    return {
-      fontWeight:
-        roleList.indexOf(name) === -1
-          ? theme.typography.fontWeightRegular
-          : theme.typography.fontWeightMedium
-    };
-  };
+  if (division.hasState) {
+    return (
+      <Paper sx={{ p: 4 }}>
+        <DeleteDivisionData division={{ ...division, event }} />
+      </Paper>
+    );
+  }
 
   return (
-    <Box
-      component="form"
-      onSubmit={e => {
-        e.preventDefault();
-        updateDivision();
-        router.reload();
-      }}
-    >
-      <Paper sx={{ p: 4 }}>
-        <Typography variant="h1" fontSize="1.25rem" fontWeight={600}>
-          לוח זמנים כללי
-        </Typography>
-      </Paper>
-      <Stack spacing={2} mt={2}>
-        {schedule.map((entry, index) => {
-          return (
-            <Stack component={Paper} spacing={2} sx={{ p: 4 }} key={index}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <IconButton
-                  onClick={() =>
-                    setSchedule(schedule => {
-                      const newSchedule = [...schedule];
-                      newSchedule.splice(index, 1);
-                      return newSchedule;
-                    })
-                  }
-                >
-                  <DeleteOutlineIcon />
-                </IconButton>
-                <TextField
-                  label="שם"
-                  fullWidth
-                  value={entry.name}
-                  onChange={e =>
-                    setSchedule(schedule => {
-                      const newSchedule = [...schedule];
-                      newSchedule[index] = {
-                        ...entry,
-                        name: e.target.value
-                      };
-                      return newSchedule;
-                    })
-                  }
-                />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker
-                    label="שעת התחלה"
-                    value={dayjs(entry.startTime)}
-                    sx={{ minWidth: 150 }}
-                    onChange={newTime => {
-                      if (newTime) {
-                        setSchedule(schedule => {
-                          const newSchedule = [...schedule];
-                          newSchedule[index] = {
-                            ...entry,
-                            startTime: newTime.set('seconds', 0).toDate()
-                          };
-                          return newSchedule;
-                        });
-                      }
-                    }}
-                    ampm={false}
-                    format="HH:mm"
-                    views={['minutes', 'hours']}
-                  />
-                  <TimePicker
-                    label="שעת סיום"
-                    value={dayjs(entry.endTime)}
-                    sx={{ minWidth: 150 }}
-                    onChange={newTime => {
-                      if (newTime) {
-                        setSchedule(schedule => {
-                          const newSchedule = [...schedule];
-                          newSchedule[index] = {
-                            ...entry,
-                            endTime: newTime.set('seconds', 0).toDate()
-                          };
-                          return newSchedule;
-                        });
-                      }
-                    }}
-                    ampm={false}
-                    format="HH:mm"
-                    views={['minutes', 'hours']}
-                  />
-                </LocalizationProvider>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={schedule[index].showOnDashboard}
-                      onChange={e =>
-                        setSchedule(schedule => {
-                          const newSchedule = [...schedule];
-                          newSchedule[index] = {
-                            ...entry,
-                            showOnDashboard: e.target.checked
-                          };
-                          return newSchedule;
-                        })
-                      }
-                    />
-                  }
-                  label={<Typography fontSize="0.85rem">הצגה ב-Dashboard</Typography>}
-                />
-              </Stack>
-              <FormControl fullWidth>
-                <InputLabel id="role-chip-label">תפקידים</InputLabel>
-                <Select
-                  labelId="role-chip-label"
-                  id="role-chip"
-                  multiple
-                  value={entry.roles}
-                  onChange={(e: SelectChangeEvent<Array<Role>>) => {
-                    const {
-                      target: { value }
-                    } = e;
-                    setSchedule(schedule => {
-                      const newSchedule = [...schedule];
-                      newSchedule[index] = {
-                        ...entry,
-                        roles:
-                          typeof value === 'string'
-                            ? (value.split(',') as Array<Role>)
-                            : (value as Array<Role>)
-                      };
-                      return newSchedule;
-                    });
-                  }}
-                  input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
-                  renderValue={selected => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map(value => (
-                        <Chip key={value} label={localizedRoles[value].name} />
-                      ))}
-                    </Box>
-                  )}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 48 * 4.5 + 8,
-                        width: 250
-                      }
-                    }
-                  }}
-                >
-                  {RoleTypes.map(role => (
-                    <MenuItem key={role} value={role} style={getStyles(role, entry.roles, theme)}>
-                      {localizedRoles[role].name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-          );
-        })}
-      </Stack>
+    <Paper sx={{ p: 4 }}>
+      <Stack width="100%" spacing={5} justifyContent="center" px={3}>
+        <Stepper alternativeLabel activeStep={activeStep} sx={{ width: '100%', pt: 2 }}>
+          {SchedulerStages.map((label, index) => {
+            return (
+              <Step key={label} completed={index < activeStep}>
+                <StepLabel>{localizedStages[label]}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
 
-      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-        <IconButton
-          onClick={() =>
-            setSchedule(schedule => [
-              ...schedule,
-              {
-                name: `מרכיב לו״ז ${schedule.length + 1}`,
-                startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
-                endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
-                roles: []
-              }
-            ])
-          }
-        >
-          <AddRoundedIcon />
-        </IconButton>
-        <EventSelectorModal
-          title="העתקת לו״ז כללי"
-          open={copyModal}
-          setOpen={setCopyModal}
-          events={events}
-          onSelect={copyScheduleFrom}
-        />
+        <Stack width="100%" alignItems="center" spacing={5}>
+          <Box width="80%" justifyContent="center">
+            {activeStep === 0 && (
+              <UploadTeamsStep division={division} advanceStep={() => setActiveStep(1)} />
+            )}
+            {activeStep === 1 && (
+              <VenueSetupStep
+                division={division}
+                settings={settings}
+                updateSettings={setSettings}
+                advanceStep={() => setActiveStep(2)}
+                goBack={() => setActiveStep(0)}
+              />
+            )}
+            {activeStep === 2 && (
+              <TimingStep
+                division={division}
+                settings={settings}
+                updateSettings={setSettings}
+                advanceStep={() => setActiveStep(3)}
+                goBack={() => setActiveStep(1)}
+              />
+            )}
+            {activeStep === 3 && (
+              <ReviewStep
+                division={division}
+                settings={settings}
+                advanceStep={() => {
+                  apiFetch(`/api/admin/divisions/${division._id}/schedule/generate`, {
+                    method: 'POST',
+                    body: JSON.stringify(settings),
+                    headers: { 'Content-Type': 'application/json' }
+                  }).then(res => {
+                    if (res.ok) {
+                      enqueueSnackbar('לו"ז נוצר בהצלחה', { variant: 'success' });
+                      router.reload();
+                    } else {
+                      enqueueSnackbar('שגיאה ביצירת הלו"ז', { variant: 'error' });
+                    }
+                  });
+                }}
+                goBack={() => setActiveStep(2)}
+              />
+            )}
+          </Box>
+        </Stack>
       </Stack>
-    </Box>
+    </Paper>
   );
 };
 

@@ -1,0 +1,2 @@
+class SchedulerError(Exception):
+    pass

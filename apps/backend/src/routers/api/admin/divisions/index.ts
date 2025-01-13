@@ -7,6 +7,7 @@ import divisionScheduleRouter from './schedule';
 import divisionUsersRouter from './users';
 import divisionAwardsRouter from './awards';
 import divisionPitMapRouter from './pit-map';
+import divisionTeamListRouter from './team-list';
 import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
@@ -52,6 +53,7 @@ router.delete(
 
 router.use('/:divisionId/schedule', divisionScheduleRouter);
 router.use('/:divisionId/pit-map', divisionPitMapRouter);
+router.use('/:divisionId/team-list', divisionTeamListRouter);
 router.use('/:divisionId/users', divisionUsersRouter);
 router.use('/:divisionId/awards', divisionAwardsRouter);
 
