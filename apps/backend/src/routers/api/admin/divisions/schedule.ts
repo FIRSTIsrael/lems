@@ -91,8 +91,8 @@ router.post(
     }
 
     try {
-      const domain = process.env.SCHEDULER_DOMAIN;
-      if (!domain) throw new Error('SCHEDULER_DOMAIN is not configured');
+      const domain = process.env.SCHEDULER_URL;
+      if (!domain) throw new Error('SCHEDULER_URL is not configured');
 
       const matchesStart = dayjs(settings.matchesStart);
       settings.matchesStart = dayjs(event.startDate)
