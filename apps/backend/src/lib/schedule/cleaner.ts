@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import * as db from '@lems/database';
 import { Division, JudgingRoom, Team } from '@lems/types';
 
-export const cleanDivisionData = async (division: WithId<Division>) => {
+export const cleanDivisionData = async (division: WithId<Division>, scheduleOnly = false) => {
   if (!(await db.deleteDivisionUsers(division._id)).acknowledged)
     throw new Error('Could not delete users!');
 
@@ -32,16 +32,10 @@ export const cleanDivisionData = async (division: WithId<Division>) => {
   await Promise.all(
     oldTeams.map(async (team: WithId<Team>) => {
       if (!(await db.deleteTeamScoresheets(team._id)).acknowledged)
-        throw new Error('Could not delete teams!');
+        throw new Error('Could not delete scoresheets!');
     })
   );
 
-  if (!(await db.deleteDivisionTeams(division._id)).acknowledged)
-    throw new Error('Could not delete teams!');
-  if (!(await db.deleteDivisionTables(division._id)).acknowledged)
-    throw new Error('Could not delete tables!');
-  if (!(await db.deleteDivisionRooms(division._id)).acknowledged)
-    throw new Error('Could not delete rooms!');
   if (!(await db.deleteDivisionMatches(division._id)).acknowledged)
     throw new Error('Could not delete matches!');
   if (!(await db.deleteDivisionUsers(division._id)).acknowledged)
@@ -52,4 +46,13 @@ export const cleanDivisionData = async (division: WithId<Division>) => {
     throw new Error('Could not delete tickets!');
   if (!(await db.deleteDivisionDeliberations(division._id)).acknowledged)
     throw new Error('Could not delete deliberations!');
+
+  if (!scheduleOnly) {
+    if (!(await db.deleteDivisionTeams(division._id)).acknowledged)
+      throw new Error('Could not delete teams!');
+    if (!(await db.deleteDivisionTables(division._id)).acknowledged)
+      throw new Error('Could not delete tables!');
+    if (!(await db.deleteDivisionRooms(division._id)).acknowledged)
+      throw new Error('Could not delete rooms!');
+  }
 };

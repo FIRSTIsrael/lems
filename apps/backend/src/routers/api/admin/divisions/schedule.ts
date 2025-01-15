@@ -141,7 +141,7 @@ router.post(
     } catch (error) {
       console.log('❌ Error generating schedule');
       console.debug(error);
-      await cleanDivisionData(division);
+      await cleanDivisionData(division, true);
       console.log('✅ Deleted division data!');
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }

@@ -6,7 +6,11 @@ import { getDivisionRubrics } from './division-rubrics';
 import { getInitialDivisionState, getDefaultDeliberations } from './parser';
 import { getDivisionScoresheets } from './division-scoresheets';
 
-export const initializeDivision = async (division: WithId<Division>, event: WithId<FllEvent>) => {
+export const initializeDivision = async (
+  division: WithId<Division>,
+  event: WithId<FllEvent>,
+  isStaggered = true
+) => {
   const dbTeams = await db.getDivisionTeams(division._id);
   const dbTables = await db.getDivisionTables(division._id);
   const dbRooms = await db.getDivisionRooms(division._id);
@@ -39,5 +43,5 @@ export const initializeDivision = async (division: WithId<Division>, event: With
     throw new Error('Could not create division state!');
   console.log('✅ Created division state');
 
-  await db.updateDivision({ _id: division._id }, { hasState: true });
+  await db.updateDivision({ _id: division._id }, { hasState: true, staggered: isStaggered });
 };
