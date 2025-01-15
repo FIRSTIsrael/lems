@@ -12,7 +12,7 @@ import {
   SchedulerRequest
 } from '@lems/types';
 import dayjs from 'dayjs';
-import { initializeDivision } from 'apps/backend/src/lib/schedule/initializer';
+import { initializeDivision } from '../../../../lib/schedule/initializer';
 
 const router = express.Router({ mergeParams: true });
 
@@ -91,6 +91,9 @@ router.post(
     }
 
     try {
+      const domain = process.env.SCHEDULER_DOMAIN;
+      if (!domain) throw new Error('SCHEDULER_DOMAIN is not configured');
+
       const matchesStart = dayjs(settings.matchesStart);
       settings.matchesStart = dayjs(event.startDate)
         .set('minutes', matchesStart.get('minutes'))
@@ -125,12 +128,13 @@ router.post(
         }))
       };
 
-      console.log(JSON.stringify(schedulerRequest));
-
-      // TODO: await send request, validate response
-      await fetch('http://localhost:8000/scheduler', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify( schedulerRequest )}).then(res=>{
-        if (!res.ok) throw new Error("Scheduler failed to run")
-        });
+      await fetch(`${domain}/scheduler`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(schedulerRequest)
+      }).then(res => {
+        if (!res.ok) throw new Error('Scheduler failed to run');
+      });
       await initializeDivision(division, event);
 
       res.json({ ok: true });

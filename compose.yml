@@ -5,6 +5,7 @@ services:
       context: .
       args:
         LEMS_DOMAIN: ${LEMS_DOMAIN}
+        SCHEDULER_DOMAIN: ${SCHEDULER_DOMAIN}
         DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
