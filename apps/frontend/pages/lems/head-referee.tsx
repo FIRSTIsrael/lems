@@ -52,7 +52,7 @@ const Page: NextPage<Props> = ({
 
   useEffect(() => {
     setTimeout(() => {
-      const currentMatch = matches.find(m => m._id == divisionState.loadedMatch);
+      const currentMatch = matches.find(m => m._id === divisionState.loadedMatch);
       if (currentMatch) scrollToSelector(`match-${currentMatch.number}`);
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps

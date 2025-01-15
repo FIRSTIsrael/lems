@@ -12,6 +12,7 @@ const CategoryDeliberationLayout: React.FC = () => {
   const {
     deliberation,
     teams,
+    awards,
     selectedTeams,
     availableTeams,
     eligibleTeams,
@@ -40,6 +41,7 @@ const CategoryDeliberationLayout: React.FC = () => {
           showNormalizedScores={true}
           showRanks={true}
           suggestedTeam={picklist.length < picklistLimit ? suggestedTeam : null}
+          divisionAwards={awards}
         />
       </Grid>
       <Grid size={1.5}>

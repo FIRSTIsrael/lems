@@ -174,7 +174,6 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     apiFetch(`/api/admin/divisions/${copyFromDivision._id}/awards/schema`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         if (Object.entries(data).length > 0) {
           setAwards(getExistingAwards(data));
           formikRef.current?.setValues(getInitialValues(data), true);

@@ -28,7 +28,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({ user, division, awards }) => {
   const router = useRouter();
-  console.log(awards);
+  const filteredAwards = awards.filter(award => award.name !== 'advancement');
+
   return (
     <RoleAuthorizer
       user={user}
@@ -41,7 +42,7 @@ const Page: NextPage<Props> = ({ user, division, awards }) => {
       <Layout
         maxWidth="md"
         title={`ממשק ${user.role && localizedRoles[user.role].name} - סדר הפרסים | ${localizeDivisionTitle(division)}`}
-        back={`/lems/reports`}
+        back="/lems/reports"
         color={division.color}
         user={user}
         division={division}
@@ -56,7 +57,7 @@ const Page: NextPage<Props> = ({ user, division, awards }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {awards
+              {filteredAwards
                 .sort((a, b) => {
                   const indexDiff = a.index - b.index;
                   if (indexDiff !== 0) {

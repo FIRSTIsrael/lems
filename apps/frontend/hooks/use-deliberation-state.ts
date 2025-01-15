@@ -1,10 +1,6 @@
 import { useReducer, useMemo } from 'react';
 import { WithId, ObjectId } from 'mongodb';
-import {
-  JudgingDeliberation,
-  AwardNames,
-  PRELIMINARY_DELIBERATION_PICKLIST_LENGTH
-} from '@lems/types';
+import { JudgingDeliberation, AwardNames } from '@lems/types';
 import { reorder } from '@lems/utils/arrays';
 import { fullMatch } from '@lems/utils/objects';
 

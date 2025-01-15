@@ -1,5 +1,5 @@
 import { ResponsiveStyleValue } from '@mui/system';
-import { JudgingCategory, Rubric } from '@lems/types';
+import { Award, JudgingCategory, Rubric } from '@lems/types';
 import Grid, { GridSize } from '@mui/material/Grid2';
 import {
   Checkbox,
@@ -13,16 +13,25 @@ import { RubricsSchema } from '@lems/season';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import Markdown from 'react-markdown';
+import { WithId } from 'mongodb';
 
 interface RubricAwardsProps {
   size: ResponsiveStyleValue<GridSize>;
   rubric: Rubric<JudgingCategory>;
+  divisionAwards: Array<WithId<Award>>;
   schema: RubricsSchema;
 }
 
-export const RubricAwards: React.FC<RubricAwardsProps> = ({ size, rubric, schema }) => {
-  const awards = schema.awards;
-  if (!awards) return <></>;
+export const RubricAwards: React.FC<RubricAwardsProps> = ({
+  size,
+  rubric,
+  divisionAwards,
+  schema
+}) => {
+  const awards = schema.awards?.filter(schemaAward =>
+    divisionAwards?.find(award => award.name === schemaAward.id)
+  );
+  if (!awards) return null;
 
   return (
     <Grid size={size}>
@@ -38,8 +47,7 @@ export const RubricAwards: React.FC<RubricAwardsProps> = ({ size, rubric, schema
               px: 2,
               '@media print': {
                 borderRadius: 0,
-                borderBottom:
-                  index < awards.length - 1 ? '0.5px solid rgba(0,0,0,0.2)' : 'none',
+                borderBottom: index < awards.length - 1 ? '0.5px solid rgba(0,0,0,0.2)' : 'none',
                 paddingBottom: 1,
                 paddingTop: 1
               }

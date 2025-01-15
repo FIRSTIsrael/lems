@@ -193,7 +193,7 @@ const Page: NextPage<Props> = ({
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
       teams.map(t => {
-        if (t._id == team._id) {
+        if (t._id === team._id) {
           return team;
         }
         return t;
