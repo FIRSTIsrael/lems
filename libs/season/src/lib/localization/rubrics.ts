@@ -29,5 +29,10 @@ export const localizedOptionalAward: {
     name: 'המניעים',
     description:
       'קבוצה שמטמיעה את התרבות של _FIRST®_ LEGO® League על ידי גיבוש  קבוצתי, רוח צוות והתלהבות.'
+  },
+  'judges-award': {
+    name: 'השופטים',
+    description:
+      'קבוצה אשר הפנימה את התרבות של _FIRST®_ LEGO® League והתמודדה בהצלחה עם אתגרים ייחודיים.'
   }
 };

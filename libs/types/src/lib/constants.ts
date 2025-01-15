@@ -30,6 +30,7 @@ export type JudgingCategory = (typeof JudgingCategoryTypes)[number];
 export const CoreValuesAwardsTypes = [
   'breakthrough',
   'rising-all-star',
+  'judges-award',
   'motivate',
   'impact'
 ] as const;
@@ -75,7 +76,8 @@ export const AwardLimits: { [key in AwardNames]?: number } = {
   breakthrough: 3,
   'excellence-in-engineering': 3,
   motivate: 3,
-  'rising-all-star': 3
+  'rising-all-star': 3,
+  'judges-award': 3
 };
 
 export const RubricStatusTypes = [
