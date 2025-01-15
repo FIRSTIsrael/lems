@@ -66,10 +66,15 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const { connectionStatus } = useWebsocket(division._id.toString(), ['pit-admin'], undefined, [
-    { name: 'teamRegistered', handler: handleTeamRegistered },
-    { name: 'matchUpdated', handler: handleMatchEvent }
-  ]);
+  const { connectionStatus } = useWebsocket(
+    division._id.toString(),
+    ['field', 'pit-admin'],
+    undefined,
+    [
+      { name: 'teamRegistered', handler: handleTeamRegistered },
+      { name: 'matchUpdated', handler: handleMatchEvent }
+    ]
+  );
 
   const roundMatches = matches
     .filter(m => m.stage !== 'test')
