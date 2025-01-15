@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { DivisionWithEvent, JudgingCategory, Rubric, Team } from '@lems/types';
+import { Award, DivisionWithEvent, JudgingCategory, Rubric, Team } from '@lems/types';
 import Grid from '@mui/material/Grid2';
 import { Box, Stack } from '@mui/material';
 import { rubricsSchemas } from '@lems/season';
@@ -11,6 +11,7 @@ interface ExportRubricProps {
   division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
+  awards: Array<WithId<Award>>;
   showFeedback?: boolean;
 }
 
@@ -18,6 +19,7 @@ export const ExportRubric: React.FC<ExportRubricProps> = ({
   division,
   team,
   rubric,
+  awards,
   showFeedback = true
 }) => {
   const schema = rubricsSchemas[rubric.category];
@@ -47,7 +49,7 @@ export const ExportRubric: React.FC<ExportRubricProps> = ({
               division={division}
               team={{ number: team.number.toString() }}
             />
-            <RubricAwards size={8} rubric={rubric} schema={schema} />
+            <RubricAwards size={8} rubric={rubric} schema={schema} divisionAwards={awards} />
           </Grid>
           <Box sx={{ flex: 1, minHeight: 0 }}>
             <RubricTable rubric={rubric} showFeedback={showFeedback} />

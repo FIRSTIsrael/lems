@@ -48,7 +48,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
       .map(award => award.winner) as Array<WithId<Team>>;
     const awardSlides = useMemo(() => {
       const awardIndices = [
-        ...new Set(awards.filter(award => award.index > 0).flatMap(a => a.index))
+        ...new Set(awards.filter(award => award.index >= 0).flatMap(a => a.index))
       ].sort((a, b) => a - b);
 
       const slides = awardIndices.map(index => {

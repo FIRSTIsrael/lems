@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { Paper, Box, IconButton, Avatar, Stack, Typography } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
@@ -8,7 +8,8 @@ import {
   CoreValuesAwardsTypes,
   CoreValuesAwards,
   SELECTED_TEAM_COLOR,
-  SUGGESTED_TEAM_COLOR
+  SUGGESTED_TEAM_COLOR,
+  Award
 } from '@lems/types';
 import {
   rubricsSchemas,
@@ -24,6 +25,7 @@ import { rankArray } from '@lems/utils/arrays';
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;
   teams: Array<DeliberationTeam>;
+  divisionAwards: Array<WithId<Award>>;
   selectedTeams: Array<ObjectId>;
   updateTeamAwards?: (
     teamId: ObjectId,
@@ -39,6 +41,7 @@ interface CategoryDeliberationsGridProps {
 const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
   category,
   teams,
+  divisionAwards,
   selectedTeams,
   updateTeamAwards,
   disabled = false,
@@ -53,7 +56,10 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     section.fields.map(field => ({ field: field.id, headerName: field.title }))
   );
 
-  const awards = schema.awards?.map(award => ({ field: award.id, headerName: award.title })) || [];
+  const awards =
+    schema.awards
+      ?.filter(schemaAward => divisionAwards.find(award => award.name === schemaAward.id))
+      .map(award => ({ field: award.id, headerName: award.title })) || [];
   const rankingRounds = [teams[0]?.gpScores.map(gp => gp.round)].flat();
 
   let rows = teams

@@ -30,7 +30,8 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   SafeUser,
-  RubricValue
+  RubricValue,
+  Award
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
@@ -49,6 +50,7 @@ interface RubricFormProps {
   team: WithId<Team>;
   rubric: WithId<Rubric<JudgingCategory>>;
   schema: RubricsSchema;
+  awards: Array<WithId<Award>>;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   hideTitle?: boolean;
@@ -60,6 +62,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
   team,
   rubric,
   schema,
+  awards,
   user,
   socket,
   hideTitle = false,
@@ -69,7 +72,10 @@ const RubricForm: React.FC<RubricFormProps> = ({
   const [resetDialog, setResetDialog] = useState<boolean>(false);
 
   const fields = schema.sections.flatMap(section => section.fields.map(field => field.id));
-  const awardCandidates = schema.awards?.map(award => award.id) || [];
+  const optinalAwards = schema.awards?.filter(schemaAward =>
+    awards.find(award => award.name === schemaAward.id)
+  );
+  const awardCandidates = optinalAwards?.map(schemaAward => schemaAward.id) || [];
 
   const isEditable =
     (user.role === 'judge' && ['empty', 'in-progress', 'completed'].includes(rubric.status)) ||
@@ -211,7 +217,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 <Typography variant="body2" gutterBottom>
                   אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:
                 </Typography>
-                {schema.awards.map(award => (
+                {optinalAwards?.map(award => (
                   <AwardCandidatureCheckbox
                     key={award.id}
                     name={`awards.${award.id}`}

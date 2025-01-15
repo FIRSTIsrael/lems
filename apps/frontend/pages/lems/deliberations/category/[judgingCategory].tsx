@@ -18,7 +18,8 @@ import {
   CoreValuesAwards,
   RANKING_ANOMALY_THRESHOLD,
   DeliberationAnomaly,
-  DivisionState
+  DivisionState,
+  Award
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { localizedJudgingCategory, makeCvValuesForRubric } from '@lems/season';
@@ -45,6 +46,7 @@ interface Props {
   cvForms: Array<WithId<CoreValuesForm>>;
   deliberation: WithId<JudgingDeliberation>;
   roomScores: Array<unknown>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -59,7 +61,8 @@ const Page: NextPage<Props> = ({
   cvForms,
   scoresheets,
   deliberation: initialDeliberation,
-  roomScores
+  roomScores,
+  awards
 }) => {
   const router = useRouter();
   const deliberationId = initialDeliberation._id;
@@ -269,6 +272,7 @@ const Page: NextPage<Props> = ({
           suggestTeam={suggestTeam}
           updateTeamAwards={updateTeamAwards}
           calculateAnomalies={calculateAnomalies}
+          awards={awards}
         >
           <CategoryDeliberationLayout />
         </Deliberation>
@@ -297,7 +301,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         scoresheets: `/api/divisions/${divisionId}/scoresheets`,
         cvForms: `/api/divisions/${divisionId}/cv-forms`,
         deliberation: `/api/divisions/${divisionId}/deliberations/category/${category}`,
-        roomScores: `/api/divisions/${divisionId}/insights/judging/scores/rooms`
+        roomScores: `/api/divisions/${divisionId}/insights/judging/scores/rooms`,
+        awards: `/api/divisions/${divisionId}/awards/schema`
       },
       ctx
     );

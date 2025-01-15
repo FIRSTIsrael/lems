@@ -97,7 +97,7 @@ const Page: NextPage<Props> = ({
         return place;
       })
       .filter(t => !disqualifications.includes(t._id))
-      .slice(0, advancingTeams + 1);
+      .slice(0, advancingTeams);
     return !!shouldBeElegibile.find(t => t._id === team._id);
   };
 
@@ -111,7 +111,9 @@ const Page: NextPage<Props> = ({
   const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
     const _team = teams.find(t => t._id === team._id);
     if (!_team) return false;
-    return Object.values(_team.optionalAwardNominations).some(nomination => nomination);
+    return Object.entries(_team.optionalAwardNominations).some(
+      ([awardName, nomination]) => awards.find(award => award.name === awardName) && nomination
+    );
   };
 
   const checkElegibility = useMemo(() => {
@@ -125,6 +127,7 @@ const Page: NextPage<Props> = ({
       default:
         return () => true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStage]);
 
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
@@ -304,15 +307,19 @@ const Page: NextPage<Props> = ({
       {} as { [key in JudgingCategory]: Array<DeliberationTeam> }
     );
 
-    const excellenceInEngineeringWinners = eligibleTeams
-      .sort((a, b) => a.totalRank - b.totalRank)
-      .filter(
-        team =>
-          !Object.values(newAwards)
-            .flat(1)
-            .find(t => t._id === team._id)
-      )
-      .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+    let excellenceInEngineeringWinners: Array<DeliberationTeam> = [];
+    // If there is an excellence in engineering award, give it to the top teams that haven't won anything yet.
+    if (awards.find(award => award.name === 'excellence-in-engineering')) {
+      excellenceInEngineeringWinners = eligibleTeams
+        .sort((a, b) => a.totalRank - b.totalRank)
+        .filter(
+          team =>
+            !Object.values(newAwards)
+              .flat(1)
+              .find(t => t._id === team._id)
+        )
+        .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+    }
 
     return updateAwardWinners({
       ...newAwards,
@@ -325,7 +332,9 @@ const Page: NextPage<Props> = ({
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => {
-    const newAwards = CoreValuesAwardsTypes.reduce(
+    const newAwards = CoreValuesAwardsTypes.filter(awardName =>
+      awards.find(award => award.name === awardName)
+    ).reduce(
       (acc, awardName) => {
         acc[awardName] = (deliberation.awards[awardName] ?? [])
           .map(teamId => eligibleTeams.find(t => t._id === teamId))
