@@ -30,7 +30,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
             textAlign: 'center',
             mx: '50px',
             borderRadius: 8,
-            border: `1rem solid #d22e92`,
+            border: `1rem solid rgb(48, 89, 191)`,
             minWidth: '30%'
           }}
         >
