@@ -58,6 +58,9 @@ jobs:
           if doctl registry repository list-tags lems-backend | grep -o "sha.*"; then
             doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
           fi
+          if doctl registry repository list-tags lems-scheduler | grep -o "sha.*"; then
+            doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "sha.*") --force
+          fi
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
