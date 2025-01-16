@@ -2,7 +2,8 @@ import { useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
-import { Typography, Paper, LinearProgress, LinearProgressProps, Stack, Box } from '@mui/material';
+import { animated, useTransition } from 'react-spring';
+import { Typography, Paper, LinearProgress, Stack, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { blue, green, purple } from '@mui/material/colors';
 import {
@@ -95,6 +96,7 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
             }
           ];
       }, [] as Array<TimedJudgingStage>),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -133,6 +135,17 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
     if (currentStage.id !== 0) new Audio('/assets/sounds/judging/judging-change.wav').play();
   }, [currentStage]);
 
+  const transitions = useTransition(stagesToDisplay, {
+    keys: stage => stage.id,
+    from: { opacity: 0, transform: 'translateY(50px)' },
+    enter: { opacity: 1, transform: 'translateY(0px)' },
+    leave: { opacity: 0, transform: 'translateY(-50px)' },
+    config: item => {
+      // Fade out top box in 0.2s, shift others for 0.5s, fade in new for 0.2s
+      return { duration: item === stagesToDisplay[0] ? 200 : 500 };
+    }
+  });
+
   return (
     <Box
       sx={{
@@ -155,15 +168,17 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
       >
         <Grid size={4}>
           <Stack spacing={3}>
-            {stagesToDisplay.map(stage => (
-              <JudgingStageBox
-                key={stage.id}
-                primaryText={stage.primaryText}
-                secondaryText={stage.secondaryText}
-                iconColor={stage.iconColor}
-                stageDuration={stage.duration}
-                targetDate={stage.id === currentStage.id ? stage.endTime : undefined}
-              />
+            {transitions((style, stage) => (
+              <animated.div style={style}>
+                <JudgingStageBox
+                  key={stage.id}
+                  primaryText={stage.primaryText}
+                  secondaryText={stage.secondaryText}
+                  iconColor={stage.iconColor}
+                  stageDuration={stage.duration}
+                  targetDate={stage.id === currentStage.id ? stage.endTime : undefined}
+                />
+              </animated.div>
             ))}
           </Stack>
         </Grid>
