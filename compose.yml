@@ -45,7 +45,7 @@ services:
 
   scheduler:
     build:
-      dockerfile: apps/scheduler/Dockerfile
+      dockerfile: Dockerfile
       context: ./apps/scheduler
       args:
         PYTHON_ENV: production
