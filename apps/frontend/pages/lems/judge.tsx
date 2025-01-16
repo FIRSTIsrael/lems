@@ -20,7 +20,6 @@ import JudgingRoomSchedule from '../../components/judging/judging-room-schedule'
 import Layout from '../../components/layout';
 import WelcomeHeader from '../../components/general/welcome-header';
 import JudgingTimer from '../../components/judging/judging-timer';
-import AbortJudgingSessionButton from '../../components/judging/abort-judging-session-button';
 import AssistanceButton from '../../components/judging/assistance-button';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
@@ -122,24 +121,19 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth={800}
+        maxWidth={1800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         connectionStatus={connectionStatus}
         color={division.color}
       >
         {currentSession && activeTeam ? (
-          <>
-            <JudgingTimer session={currentSession} team={activeTeam} />
-            <Box display="flex" justifyContent="center">
-              <AbortJudgingSessionButton
-                division={division}
-                room={room}
-                session={currentSession}
-                socket={socket}
-                sx={{ mt: 2.5 }}
-              />
-            </Box>
-          </>
+          <JudgingTimer
+            session={currentSession}
+            team={activeTeam}
+            division={division}
+            room={room}
+            socket={socket}
+          />
         ) : (
           <>
             <WelcomeHeader division={division} user={user} />
