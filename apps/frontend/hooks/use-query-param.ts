@@ -1,17 +1,26 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export const useQueryParam = (
   param: string,
-  initialState: string
-): [string, (newValue: string) => Promise<boolean>] => {
+  initialState: string,
+  refresh = false,
+  shallow = false
+): [string, (newValue: string) => void] => {
   const router = useRouter();
   const { [param]: value } = router.query;
-  const anchor = router.asPath.split('#')[1];
-  const setValue = (newValue: string) =>
-    router.push({
-      query: { ...router.query, [param]: newValue },
-      hash: anchor,
-    });
-  if (!value) setValue(initialState);
-  return [(value ?? initialState) as string, setValue];
+  const [_value, _setValue] = useState(value ?? initialState);
+
+  const setValue = (newValue: string) => {
+    if (refresh || !('URLSearchParams' in window)) {
+      router.push({ query: { ...router.query, [param]: newValue } }, undefined, { shallow });
+    } else {
+      const url = new URL(window.location.toString());
+      url.searchParams.set(param, newValue);
+      history.pushState(null, '', url);
+    }
+    _setValue(newValue);
+  };
+
+  return [_value as string, setValue];
 };

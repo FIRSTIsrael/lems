@@ -46,3 +46,9 @@ http-log.log
 
 .nx/cache
 .nx/workspace-data
+
+# Python
+*.pyc
+**/__pycache__/
+**/.pytest_cache/
+**/.venv

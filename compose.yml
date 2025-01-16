@@ -5,6 +5,7 @@ services:
       context: .
       args:
         LEMS_DOMAIN: ${LEMS_DOMAIN}
+        SCHEDULER_URL: ${SCHEDULER_URL}
         DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
         DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
         JWT_SECRET: ${JWT_SECRET}
@@ -38,6 +39,21 @@ services:
     image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
     ports:
       - '4200:4200'
+    networks:
+      - lems-network
+    restart: always
+
+  scheduler:
+    build:
+      dockerfile: apps/scheduler/Dockerfile
+      context: ./apps/scheduler
+      args:
+        PYTHON_ENV: production
+        MONGODB_URI: ${MONGODB_URI}
+        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
+    image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
+    ports:
+      - '8000:8000'
     networks:
       - lems-network
     restart: always

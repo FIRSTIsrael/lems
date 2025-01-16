@@ -13,3 +13,4 @@ tmp/
 dist/
 build/
 node_modules/
+apps/scheduler/

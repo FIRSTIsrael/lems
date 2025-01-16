@@ -1,4 +1,9 @@
 {
   "editor.tabSize": 2,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "python.autoComplete.extraPaths":["${workspaceFolder}/apps/scheduler/src"],
+  "python.analysis.extraPaths":["${workspaceFolder}/apps/scheduler/src"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+  },
 }
