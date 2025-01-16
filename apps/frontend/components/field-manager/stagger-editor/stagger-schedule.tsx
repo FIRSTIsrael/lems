@@ -54,7 +54,7 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          <MatchRow match={currentMatch} />
+          <MatchRow match={currentMatch} teams={teams} />
           <ActionRow
             fromMatch={currentMatch}
             toMatch={nextMatch}
@@ -73,7 +73,7 @@ const StaggerSchedule: React.FC<StaggerScheduleProps> = ({
               onMergeMatches={onMergeMatches}
             />
           )}
-          {nextNextMatch && <MatchRow match={nextNextMatch} />}
+          {nextNextMatch && <MatchRow match={nextNextMatch} teams={teams} />}
         </TableBody>
       </Table>
     </TableContainer>
