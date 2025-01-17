@@ -134,7 +134,7 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
     return { score, missionErrors };
   };
 
-  const handleSync = async (
+  const handleSync = (
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
     newStatus: ScoresheetStatus | undefined,
@@ -149,27 +149,31 @@ const ScoresheetForm: React.FC<ScoresheetFormProps> = ({
       updatedScoresheet.data.signature = signatureRef.current.getCanvas().toDataURL('image/png');
     if (escalate !== undefined) updatedScoresheet.escalated = escalate;
 
-    socket.emit(
-      'updateScoresheet',
-      division._id.toString(),
-      team._id.toString(),
-      scoresheet._id.toString(),
-      updatedScoresheet as Partial<Scoresheet>,
-      response => {
-        if (response.ok) {
-          if (showSnackbar) {
-            enqueueSnackbar(
-              updatedScoresheet.data?.gp
-                ? 'דירוג המקצועיות האדיבה נשמר בהצלחה.'
-                : 'דף הניקוד נשמר בהצלחה.',
-              { variant: 'success' }
-            );
+    return new Promise<void>((resolve, reject) => {
+      socket.emit(
+        'updateScoresheet',
+        division._id.toString(),
+        team._id.toString(),
+        scoresheet._id.toString(),
+        updatedScoresheet,
+        (response: { ok: boolean }) => {
+          if (response.ok) {
+            if (showSnackbar) {
+              enqueueSnackbar(
+                updatedScoresheet.data?.gp
+                  ? 'דירוג המקצועיות האדיבה נשמר בהצלחה.'
+                  : 'דף הניקוד נשמר בהצלחה.',
+                { variant: 'success' }
+              );
+            }
+            resolve();
+          } else {
+            enqueueSnackbar('אופס, שמירת דף הניקוד נכשלה.', { variant: 'error' });
+            reject(new Error('Scoresheet update failed'));
           }
-        } else {
-          enqueueSnackbar('אופס, שמירת דף הניקוד נכשלה.', { variant: 'error' });
         }
-      }
-    );
+      );
+    });
   };
 
   const validateScoresheet = (formValues: FormikValues) => {
