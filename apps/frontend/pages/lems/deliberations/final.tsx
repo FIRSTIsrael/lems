@@ -285,7 +285,9 @@ const Page: NextPage<Props> = ({
       .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
       .slice(0, awards.filter(award => award.name === 'robot-performance').length);
 
-    advanceTeams(eligibleTeams.filter(team => !awardWinners.find(w => w._id === team._id)));
+    if (division.enableAdvancement) {
+      advanceTeams(eligibleTeams.filter(team => !awardWinners.find(w => w._id === team._id)));
+    }
     updateAwardWinners({
       champions: awardWinners,
       'robot-performance': robotPerformanceWinners

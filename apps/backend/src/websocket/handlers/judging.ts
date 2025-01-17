@@ -381,9 +381,20 @@ export const handleAdvanceTeams = async (
   teams: Array<WithId<Team>>,
   callback
 ) => {
+  const division = await db.getDivision({ _id: new ObjectId(divisionId) });
+  if (!division) {
+    callback({ ok: false, error: `Could not find division ${divisionId}!` });
+    return;
+  }
+
   let awards = await db.getDivisionAwards(new ObjectId(divisionId));
   if (!awards) {
     callback({ ok: false, error: `Error getting awards for division ${divisionId}!` });
+    return;
+  }
+
+  if (!division.enableAdvancement) {
+    callback({ ok: false, error: `Advancement is disabled for division ${divisionId}!` });
     return;
   }
 
