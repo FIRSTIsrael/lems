@@ -146,6 +146,7 @@ const Page: NextPage<Props> = ({
         title={`מקצה ${localizedMatchStage[match.stage]} #${match.round} של קבוצה #${team.number}, ${
           team.name
         } | ${localizeDivisionTitle(division)}`}
+        connectionStatus={connectionStatus}
         error={connectionStatus === 'disconnected'}
         back={`/lems/${user.role}`}
         backDisabled={connectionStatus === 'connecting'}
