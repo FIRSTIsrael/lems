@@ -48,6 +48,7 @@ export interface DeliberationContextType {
     scoresheets: Array<WithId<Scoresheet>>;
     rooms: Array<WithId<JudgingRoom>>;
     sessions: Array<WithId<JudgingSession>>;
+    awards: Array<WithId<Award>>;
   };
   start: () => void;
   lock: () => void;
@@ -105,7 +106,7 @@ interface DeliberationProps {
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => void;
-  awards?: Array<WithId<Award>>;
+  awards: Array<WithId<Award>>;
   roomScores?: Array<any>;
   categoryRanks?: { [key in JudgingCategory]: Array<ObjectId> };
   robotConsistency?: Array<any>;
@@ -123,6 +124,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       rubrics,
       scoresheets,
       cvForms,
+      awards,
       onChange,
       onStart,
       onLock,
@@ -131,7 +133,6 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       endStage,
       updateTeamAwards,
       calculateAnomalies,
-      awards = [],
       roomScores = [],
       anomalies = [],
       categoryRanks,
@@ -333,7 +334,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             calculateAnomalies,
             onAddTeam,
             disqualifyTeam,
-            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions },
+            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions, awards },
             picklistLimits,
             anomalies,
             categoryRanks,

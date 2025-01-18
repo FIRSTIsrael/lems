@@ -8,7 +8,8 @@ import {
   CoreValuesForm,
   Rubric,
   JudgingRoom,
-  JudgingSession
+  JudgingSession,
+  Award
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -32,6 +33,7 @@ interface DeliberationControlPanelProps {
     scoresheets: Array<WithId<Scoresheet>>;
     rooms: Array<WithId<JudgingRoom>>;
     sessions: Array<WithId<JudgingSession>>;
+    awards: Array<WithId<Award>>;
   };
 }
 
@@ -41,7 +43,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
   startDeliberation,
   lockDeliberation,
   category,
-  compareProps: { cvForms, rubrics, scoresheets, sessions, rooms }
+  compareProps: { cvForms, rubrics, scoresheets, sessions, rooms, awards }
 }) => {
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -118,6 +120,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
           sessions={sessions}
           rooms={rooms}
           category={category}
+          awards={awards}
         />
       )}
     </>
