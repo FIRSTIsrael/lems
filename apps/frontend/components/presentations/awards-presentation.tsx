@@ -114,7 +114,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           ref={ref}
           enableReinitialize={enableReinitialize}
         >
-          <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
+          <ImageSlide src="/assets/audience-display/sponsors/FIRST-DIVE.svg" />
           <TitleSlide
             primary={`טקס סיום - ${localizeDivisionTitle(division)}`}
             color={division.color}
