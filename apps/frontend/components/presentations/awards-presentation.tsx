@@ -122,7 +122,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"
-            secondary="להתראות בעונות הבאות!"
+            secondary="נתראה בתחרות האליפות!"
             color={division.color}
           />
         </Deck>
