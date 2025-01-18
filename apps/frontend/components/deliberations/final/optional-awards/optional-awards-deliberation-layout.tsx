@@ -41,7 +41,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
   );
 
   const nextStageUnlocked = cvAwards.every(
-    award => deliberation.awards[award]!.length === limits[award]
+    award => deliberation.awards[award]?.length === limits[award]
   );
 
   return (
