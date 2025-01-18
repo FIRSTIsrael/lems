@@ -152,10 +152,15 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       robotConsistency
     );
 
-    // limit is the number of awards with the same name for each award name
     const picklistLimits: { [key in AwardNames]?: number } = awards.reduce(
       (acc, award) => {
+        // Category deliberations always return the default limit.
+        // Don't calculate the limit for the category being deliberated.
+        if (award.name === initialState.category) return acc;
+
         if (!acc[award.name]) acc[award.name] = 0;
+        // Literally defined as 0 in the line above...
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         acc[award.name]! += 1;
         return acc;
       },
