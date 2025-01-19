@@ -22,7 +22,7 @@ const CompareRubricScores: React.FC<CompareRubricScoresProps> = ({ teamId }) => 
 
   return teamRubrics.map((rubric, index) => {
     let schema = rubricsSchemas[rubric.category];
-    if (category === 'core-values') schema = inferCvrubricSchema();
+    if (rubric.category === 'core-values') schema = inferCvrubricSchema();
 
     const localizationMap = schema.sections
       .flatMap(section => section.fields)

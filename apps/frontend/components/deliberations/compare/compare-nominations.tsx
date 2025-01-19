@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
-import { Stack, Checkbox, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { CoreValuesAwardsTypes } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { CompareContext } from './compare-view';
@@ -12,12 +12,12 @@ interface CompareNominationsProps {
 }
 
 const CompareNominations: React.FC<CompareNominationsProps> = ({ teamId }) => {
-  const { rubrics } = useContext(CompareContext);
+  const { rubrics, optionalAwardNames } = useContext(CompareContext);
   const rubric = rubrics.find(r => r.teamId === teamId && r.category === 'core-values');
 
   return (
     <Stack direction="row">
-      {CoreValuesAwardsTypes.map((award, index) => (
+      {optionalAwardNames.map((award, index) => (
         <Stack width="100%" alignItems="center" key={index}>
           <Typography>{localizedAward[award].name}</Typography>
           {rubric?.data?.awards?.[award] ? (

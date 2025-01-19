@@ -10,7 +10,10 @@ import {
   CoreValuesForm,
   Scoresheet,
   JudgingRoom,
-  JudgingSession
+  JudgingSession,
+  Award,
+  CoreValuesAwardsTypes,
+  CoreValuesAwards
 } from '@lems/types';
 import CompareRubricRemarks from './compare-rubric-remarks';
 import CompareNominations from './compare-nominations';
@@ -29,10 +32,11 @@ export interface CompareContextType {
   cvForms: Array<WithId<CoreValuesForm>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
+  optionalAwardNames: Array<CoreValuesAwards>;
   category?: JudgingCategory;
 }
 
-export const CompareContext = createContext<CompareContextType>(null as any);
+export const CompareContext = createContext<CompareContextType>(null as never);
 
 export interface CompareViewProps {
   compareTeamIds: Array<ObjectId>;
@@ -43,6 +47,7 @@ export interface CompareViewProps {
   cvForms: Array<WithId<CoreValuesForm>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
+  awards: Array<WithId<Award>>;
   removeTeam?: (teamId: ObjectId) => void;
 }
 
@@ -55,6 +60,7 @@ const CompareView: React.FC<CompareViewProps> = ({
   rooms,
   sessions,
   category,
+  awards,
   removeTeam
 }) => {
   const rubricsWithCvScores = makeCvValuesForAllRubrics(rubrics);
@@ -69,6 +75,12 @@ const CompareView: React.FC<CompareViewProps> = ({
   const comapreSessions = sessions.filter(s => s.teamId && compareTeamIds.includes(s.teamId));
   const compareRooms = rooms.filter(r => comapreSessions.find(s => s.roomId == r._id));
 
+  const optionalAwardNames = awards
+    .filter(
+      award => CoreValuesAwardsTypes.includes(award.name as CoreValuesAwards) && award.place === 1
+    )
+    .map(award => award.name as CoreValuesAwards);
+
   return (
     <CompareContext.Provider
       value={{
@@ -78,6 +90,7 @@ const CompareView: React.FC<CompareViewProps> = ({
         cvForms: compareCvForms,
         rooms: compareRooms,
         sessions: comapreSessions,
+        optionalAwardNames,
         category
       }}
     >

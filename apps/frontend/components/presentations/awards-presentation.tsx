@@ -114,7 +114,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           ref={ref}
           enableReinitialize={enableReinitialize}
         >
-          <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
+          <ImageSlide src="/assets/audience-display/sponsors/FIRST-DIVE.svg" />
           <TitleSlide
             primary={`טקס סיום - ${localizeDivisionTitle(division)}`}
             color={division.color}
@@ -122,7 +122,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"
-            secondary="להתראות בעונות הבאות!"
+            secondary="נתראה בתחרות האליפות!"
             color={division.color}
           />
         </Deck>

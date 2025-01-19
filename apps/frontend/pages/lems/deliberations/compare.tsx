@@ -27,7 +27,8 @@ import {
   Scoresheet,
   JudgingCategoryTypes,
   JudgingSession,
-  JudgingRoom
+  JudgingRoom,
+  Award
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import Layout from '../../../components/layout';
@@ -48,6 +49,7 @@ interface Props {
   cvForms: Array<WithId<CoreValuesForm>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
+  awards: Array<WithId<Award>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -58,7 +60,8 @@ const Page: NextPage<Props> = ({
   scoresheets,
   cvForms,
   sessions,
-  rooms
+  rooms,
+  awards
 }) => {
   const router = useRouter();
   const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
@@ -169,6 +172,7 @@ const Page: NextPage<Props> = ({
           scoresheets={scoresheets}
           removeTeam={removeTeam}
           category={category === 'general' ? undefined : category}
+          awards={awards}
         />
       </Layout>
     </RoleAuthorizer>
@@ -187,7 +191,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         scoresheets: `/api/divisions/${divisionId}/scoresheets`,
         cvForms: `/api/divisions/${divisionId}/cv-forms`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        rooms: `/api/divisions/${divisionId}/rooms`
+        rooms: `/api/divisions/${divisionId}/rooms`,
+        awards: `/api/divisions/${divisionId}/awards/schema`
       },
       ctx
     );
