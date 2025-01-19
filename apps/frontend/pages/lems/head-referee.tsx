@@ -3,8 +3,9 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
-import { Paper, Typography } from '@mui/material';
+import { Paper, Tab, Tabs, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { TabPanel, TabContext } from '@mui/lab';
 import {
   SafeUser,
   Scoresheet,
@@ -12,17 +13,20 @@ import {
   RobotGameTable,
   DivisionState,
   Team,
-  DivisionWithEvent
+  DivisionWithEvent,
+  CoreValuesForm
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import Layout from '../../components/layout';
 import WelcomeHeader from '../../components/general/welcome-header';
+import CVPanel from '../../components/cv-form/cv-panel';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
 import HeadRefereeRoundSchedule from '../../components/field/head-referee/head-referee-round-schedule';
 import ScoresheetStatusReferences from '../../components/field/head-referee/scoresheet-status-references';
 import { localizeDivisionTitle } from '../../localization/event';
+import { useQueryParam } from '../../hooks/use-query-param';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -31,6 +35,8 @@ interface Props {
   tables: Array<WithId<RobotGameTable>>;
   scoresheets: Array<WithId<Scoresheet>>;
   matches: Array<WithId<RobotGameMatch>>;
+  teams: Array<WithId<Team>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -39,13 +45,18 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   tables,
   scoresheets: initialScoresheets,
-  matches: initialMatches
+  matches: initialMatches,
+  teams: initialTeams,
+  cvForms: initialCvForms
 }) => {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
   const [showGeneralSchedule] = useState<boolean>(true);
+  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
 
   const headRefereeGeneralSchedule =
     (showGeneralSchedule && division.schedule?.filter(s => s.roles.includes('head-referee'))) || [];
@@ -119,7 +130,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const { connectionStatus } = useWebsocket(
+  const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['field', 'pit-admin'],
     undefined,
@@ -188,17 +199,45 @@ const Page: NextPage<Props> = ({
         divisionState={divisionState}
         color={division.color}
       >
-        <WelcomeHeader division={division} user={user} />
-        <Paper sx={{ p: 2 }}>
-          <ScoresheetStatusReferences />
-          <Typography textAlign="center" fontSize="0.85rem" sx={{ pt: 1 }} color="textSecondary">
-            הניקוד במקצה יופיע מעל הכפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
-            הקבוצה.
-          </Typography>
-        </Paper>
-        <Grid container spacing={2} my={4}>
-          {...roundSchedules}
-        </Grid>
+        <TabContext value={activeTab}>
+          <Paper sx={{ mt: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
+              centered
+            >
+              <Tab label="זירה" value="1" />
+              <Tab label="טפסי CV" value="2" />
+            </Tabs>
+          </Paper>
+          <WelcomeHeader division={division} user={user} />
+          <TabPanel value="1">
+            <Paper sx={{ p: 2 }}>
+              <ScoresheetStatusReferences />
+              <Typography
+                textAlign="center"
+                fontSize="0.85rem"
+                sx={{ pt: 1 }}
+                color="textSecondary"
+              >
+                הניקוד במקצה יופיע מעל הכפתור. צבע הרקע של הניקוד מעיד על ציון המקצועיות האדיבה של
+                הקבוצה.
+              </Typography>
+            </Paper>
+            <Grid container spacing={2} my={4}>
+              {...roundSchedules}
+            </Grid>
+          </TabPanel>
+          <TabPanel value="2">
+            <CVPanel
+              user={user}
+              teams={teams}
+              cvForms={cvForms}
+              division={division}
+              socket={socket}
+            />
+          </TabPanel>
+        </TabContext>
       </Layout>
     </RoleAuthorizer>
   );
@@ -214,7 +253,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         tables: `/api/divisions/${divisionId}/tables`,
         matches: `/api/divisions/${divisionId}/matches`,
-        scoresheets: `/api/divisions/${divisionId}/scoresheets`
+        scoresheets: `/api/divisions/${divisionId}/scoresheets`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`,
+        teams: `/api/divisions/${divisionId}/teams`
       },
       ctx
     );
