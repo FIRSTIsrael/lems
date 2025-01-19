@@ -124,8 +124,10 @@ export const handleUpdateSessionTeam = async (
   await db.updateSession({ _id: session._id }, { teamId: teamId ? new ObjectId(teamId) : null });
 
   callback({ ok: true });
+  const oldSession = { ...session };
   session = await db.getSession({ _id: new ObjectId(sessionId) });
   namespace.to('judging').emit('judgingSessionUpdated', session);
+  namespace.to('judging').emit('judgingSessionTeamUpdated', session);
 };
 
 export const handleUpdateSession = async (

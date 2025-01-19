@@ -18,7 +18,9 @@ import {
   CoreValuesForm,
   DivisionState,
   JudgingDeliberation,
-  Award
+  Award,
+  RobotGameMatch,
+  RobotGameMatchParticipant
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
@@ -32,6 +34,7 @@ import CVFormCard from '../../components/cv-form/cv-form-card';
 import BadgeTab from '../../components/general/badge-tab';
 import { localizeDivisionTitle } from '../../localization/event';
 import { useQueryParam } from '../../hooks/use-query-param';
+import dayjs from 'dayjs';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -130,6 +133,16 @@ const Page: NextPage<Props> = ({
     });
   };
 
+  const handleScheduleTimeChange = (session: WithId<JudgingSession>) => {
+    console.log('session', session);
+    enqueueSnackbar(`קבוצה בשיפוט בשעה ${dayjs(session.scheduledTime).format('HH:mm')} עודכנה`, {
+      variant: 'info'
+    });
+    // enqueueSnackbar(`קבוצה בשיפוט בחדר ${session.roomId?} בשעה ${dayjs(session.scheduledTime).format('HH:mm')} עודכנה`, {
+    //   variant: 'info'
+    // });
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
     ['judging', 'pit-admin', 'audience-display'],
@@ -164,7 +177,8 @@ const Page: NextPage<Props> = ({
         }
       },
       { name: 'presentationUpdated', handler: setDivisionState },
-      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled }
+      { name: 'leadJudgeCalled', handler: handleLeadJudgeCalled },
+      { name: 'judgingSessionTeamUpdated', handler: handleScheduleTimeChange }
     ]
   );
 
