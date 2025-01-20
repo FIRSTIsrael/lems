@@ -4,8 +4,8 @@ import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/events', (req: Request, res: Response) => {
-  // get all events (For homepage)
+router.get('/', (req: Request, res: Response) => {
+  // get division scoreboard
 });
 
 export default router;
