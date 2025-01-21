@@ -90,7 +90,6 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
               title={localizedAward[award].name}
               length={limits[award]!}
               withIcons
-              trophyCount={limits[award]!}
               id={award}
               pickList={
                 deliberation.awards[award]?.map(

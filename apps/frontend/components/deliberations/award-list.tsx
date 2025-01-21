@@ -7,7 +7,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Team, AwardNames, SUGGESTED_TEAM_COLOR } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
-import { getBackgroundColor } from 'apps/frontend/lib/utils/theme';
+import { getBackgroundColor } from '../../lib/utils/theme';
 
 interface AwardListItemProps {
   droppableId: string;
