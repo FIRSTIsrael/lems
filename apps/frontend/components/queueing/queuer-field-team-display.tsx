@@ -38,8 +38,7 @@ const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
               team={team}
               location={tableName}
               scheduledTime={match.scheduledTime}
-              isBusy={teamInJudging}
-              section="judging"
+              isBusy={teamInJudging ? 'judging' : undefined}
               urgent={divisionState.loadedMatch === match._id}
               urgencyThresholdMinutes={7}
             />

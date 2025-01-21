@@ -39,8 +39,7 @@ const QueuerJudgingTeamDisplay: React.FC<QueuerJudgingTeamDisplayProps> = ({
             key={session._id.toString()}
             team={team}
             location={room?.name}
-            isBusy={teamOnField}
-            section="field"
+            isBusy={teamOnField ? 'field' : undefined}
             scheduledTime={session.scheduledTime}
             urgencyThresholdMinutes={10}
           />

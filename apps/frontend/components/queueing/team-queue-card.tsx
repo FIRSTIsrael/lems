@@ -12,8 +12,7 @@ interface TeamQueueCardProps {
   team: WithId<Team>;
   location?: string;
   scheduledTime?: Date;
-  isBusy?: boolean;
-  section?: DivisionSection;
+  isBusy?: DivisionSection;
   urgent?: boolean;
   urgencyThresholdMinutes?: number;
 }
@@ -22,8 +21,7 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
   team,
   location,
   scheduledTime,
-  isBusy = false,
-  section,
+  isBusy,
   urgent = false,
   urgencyThresholdMinutes = -Infinity
 }) => {
@@ -73,9 +71,9 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
               {totalMinutes >= 0 ? `בעוד ${totalMinutes}` : `לפני ${totalUpMinutes}`} דק&apos;)
             </Typography>
           )}
-          {isBusy && section && (
+          {isBusy && (
             <Tooltip
-              title={`הקבוצה נמצאת ב${section === 'field' ? 'זירה' : 'חדר השיפוט'} כרגע!`}
+              title={`הקבוצה נמצאת ב${isBusy === 'field' ? 'זירה' : 'חדר השיפוט'} כרגע!`}
               arrow
             >
               <WarningAmberRoundedIcon color="warning" />
