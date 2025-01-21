@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -60,6 +60,15 @@ const Page: NextPage<Props> = ({
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
+
+  const activeMatch = useMemo(
+    () => matches.find(match => match._id === divisionState.activeMatch) || null,
+    [divisionState.activeMatch, matches]
+  );
+  const loadedMatch = useMemo(
+    () => matches.find(match => match._id === divisionState.loadedMatch) || null,
+    [divisionState.loadedMatch, matches]
+  );
 
   const handleMatchEvent = (
     match: WithId<RobotGameMatch>,
@@ -144,10 +153,18 @@ const Page: NextPage<Props> = ({
                   divisionState={divisionState}
                   teams={teams}
                   matches={matches}
+                  sessions={sessions}
                 />
               )}
               {user.roleAssociation?.value === 'judging' && (
-                <QueuerJudgingTeamDisplay teams={teams} sessions={sessions} rooms={rooms} />
+                <QueuerJudgingTeamDisplay
+                  teams={teams}
+                  sessions={sessions}
+                  rooms={rooms}
+                  matches={matches}
+                  activeMatch={activeMatch}
+                  loadedMatch={loadedMatch}
+                />
               )}
             </>
           )}

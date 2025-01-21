@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Paper, Stack, Typography } from '@mui/material';
+import { Paper, Stack, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { red } from '@mui/material/colors';
-import { Team } from '@lems/types';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import { DivisionSection, Team } from '@lems/types';
 import dayjs from 'dayjs';
 import useCountdown from '../../hooks/use-countdown';
 import useStopwatch from '../../hooks/use-stopwatch';
@@ -11,6 +12,8 @@ interface TeamQueueCardProps {
   team: WithId<Team>;
   location?: string;
   scheduledTime?: Date;
+  isBusy?: boolean;
+  section?: DivisionSection;
   urgent?: boolean;
   urgencyThresholdMinutes?: number;
 }
@@ -19,6 +22,8 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
   team,
   location,
   scheduledTime,
+  isBusy = false,
+  section,
   urgent = false,
   urgencyThresholdMinutes = -Infinity
 }) => {
@@ -61,14 +66,22 @@ const TeamQueueCard: React.FC<TeamQueueCardProps> = ({
         <Typography fontWeight={500} fontSize="1.25rem">
           {location}
         </Typography>
-        {scheduledTime && (
-          <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2}>
+          {scheduledTime && (
             <Typography fontSize="1rem" color="textSecondary">
               {dayjs(scheduledTime).format('HH:mm')} (
               {totalMinutes >= 0 ? `בעוד ${totalMinutes}` : `לפני ${totalUpMinutes}`} דק&apos;)
             </Typography>
-          </Stack>
-        )}
+          )}
+          {isBusy && section && (
+            <Tooltip
+              title={`הקבוצה נמצאת ב${section === 'field' ? 'זירה' : 'חדר השיפוט'} כרגע!`}
+              arrow
+            >
+              <WarningAmberRoundedIcon color="warning" />
+            </Tooltip>
+          )}
+        </Stack>
       </Grid>
     </Grid>
   );
