@@ -113,13 +113,14 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
       currentTime.isBetween(stage.startTime, stage.endTime, 'seconds', '[]')
     );
 
-    return _currentStage ? _currentStage : STAGES[STAGES.length - 1];
+    return _currentStage ? _currentStage : timedStages[STAGES.length - 1];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsJudging]);
 
   const stagesToDisplay = useMemo(() => {
     if (currentStage.id === 0) return timedStages.slice(0, 4);
     return timedStages.slice(currentStage.id - 1, currentStage.id + 3);
-  }, [currentStage]);
+  }, [currentStage.id, timedStages]);
 
   const barProgress = useMemo(() => {
     return 100 - (secondsJudging / JUDGING_SESSION_LENGTH) * 100;
@@ -137,13 +138,23 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
 
   const transitions = useTransition(stagesToDisplay, {
     keys: stage => stage.id,
-    from: { opacity: 0, transform: 'translateY(50px)' },
-    enter: { opacity: 1, transform: 'translateY(0px)' },
-    leave: { opacity: 0, transform: 'translateY(-50px)' },
-    config: item => {
-      // Fade out top box in 0.2s, shift others for 0.5s, fade in new for 0.2s
-      return { duration: item === stagesToDisplay[0] ? 200 : 500 };
-    }
+    from: {
+      opacity: 0,
+      innerHeight: 0,
+      transform: 'translateY(50px)',
+      borderRadius: '16px'
+    },
+    enter: stage => ({
+      opacity: 1,
+      innerHeight: 105,
+      transform: 'translateY(0px)'
+    }),
+    leave: {
+      opacity: 0,
+      innerHeight: 0,
+      transform: 'translateY(-50px)'
+    },
+    config: { duration: 400 }
   });
 
   return (
@@ -155,21 +166,17 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
         top: 0,
         left: 0,
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'
       }}
     >
-      <Grid
-        container
-        width="80%"
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-        columnSpacing={8}
-      >
+      <Grid container width="80%" alignItems="flex-top" columnSpacing={4}>
         <Grid size={4}>
           <Stack spacing={3}>
-            {transitions((style, stage) => (
-              <animated.div style={style}>
+            {transitions(({ innerHeight, ...style }, stage) => (
+              <animated.div
+                style={{ ...style, height: innerHeight, backgroundColor: 'transparent' }}
+              >
                 <JudgingStageBox
                   key={stage.id}
                   primaryText={stage.primaryText}

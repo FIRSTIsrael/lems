@@ -2,7 +2,41 @@ import { useMemo } from 'react';
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Countdown from '../general/countdown';
-import useCountdown from 'apps/frontend/hooks/use-countdown';
+import useCountdown from '../../hooks/use-countdown';
+
+interface JudgingStageProgressProps {
+  stageDuration: number;
+  targetDate: Date;
+}
+
+const JudgingStageProgress: React.FC<JudgingStageProgressProps> = ({
+  stageDuration,
+  targetDate
+}) => {
+  let barColor: 'primary' | 'error' = 'primary';
+  let barProgress = 0;
+  const [, , minutes, seconds] = useCountdown(targetDate);
+
+  const stageSeconds: number = useMemo(() => {
+    return stageDuration - (minutes * 60 + seconds);
+  }, [minutes, seconds, stageDuration]);
+
+  ({ barColor, barProgress } = useMemo(() => {
+    const stageProgress = 100 - (stageSeconds / stageDuration) * 100;
+
+    return { barColor: stageProgress <= 20 ? 'error' : 'primary', barProgress: stageProgress };
+  }, [stageDuration, stageSeconds]));
+  return (
+    <Grid size={12} display="flex" justifyContent="center" mt={1}>
+      <LinearProgress
+        variant="determinate"
+        value={barProgress}
+        color={barColor}
+        sx={{ width: '100%', borderRadius: 16, height: 8 }}
+      />
+    </Grid>
+  );
+};
 
 interface JudgingStageBoxProps {
   primaryText: string;
@@ -19,22 +53,6 @@ const JudgingStageBox: React.FC<JudgingStageBoxProps> = ({
   stageDuration,
   targetDate
 }) => {
-  let barColor: 'primary' | 'error' = 'primary';
-  let barProgress: number = 0;
-  if (targetDate) {
-    const [, , minutes, seconds] = useCountdown(targetDate);
-
-    const stageSeconds: number = useMemo(() => {
-      return stageDuration - (minutes * 60 + seconds);
-    }, [minutes, seconds]);
-
-    ({ barColor, barProgress } = useMemo(() => {
-      const stageProgress = 100 - (stageSeconds / stageDuration) * 100;
-
-      return { barColor: stageProgress <= 20 ? 'error' : 'primary', barProgress: stageProgress };
-    }, [stageDuration, stageSeconds]));
-  }
-
   return (
     <Stack
       spacing={4}
@@ -44,11 +62,11 @@ const JudgingStageBox: React.FC<JudgingStageBoxProps> = ({
       bgcolor={targetDate ? '#e3effb' : '#f0f4f8'}
       alignItems="center"
       p={3}
-      flexGrow={1}
+      height="100%"
     >
-      <Box borderRadius="50%" width={52} height={52} bgcolor={iconColor} />
-      <Grid container flexGrow={1}>
-        <Grid size={8}>
+      <Box borderRadius="50%" minWidth={52} minHeight={52} bgcolor={iconColor} />
+      <Grid container width="100%" justifyContent="flex-start">
+        <Grid size={8} display="flex" alignItems="center">
           <Typography>
             <Typography fontSize="1.25rem" fontWeight={600}>
               {primaryText}
@@ -61,24 +79,17 @@ const JudgingStageBox: React.FC<JudgingStageBoxProps> = ({
             <Countdown
               targetDate={targetDate}
               fontFamily="Roboto Mono"
-              fontSize="2.5rem"
+              fontSize="1.75rem"
               fontWeight={700}
               dir="ltr"
               ml="auto"
               flexGrow={1}
-              expiredText=""
+              expiredText="00:00"
             />
           )}
         </Grid>
         {targetDate && (
-          <Grid size={12} display="flex" justifyContent="center">
-            <LinearProgress
-              variant="determinate"
-              value={barProgress}
-              color={barColor}
-              sx={{ width: '100%', borderRadius: 16, height: 8 }}
-            />
-          </Grid>
+          <JudgingStageProgress stageDuration={stageDuration} targetDate={targetDate} />
         )}
       </Grid>
     </Stack>
