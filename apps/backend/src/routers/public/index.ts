@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import * as db from '@lems/database';
 import divisionsRouter from './divisions';
+import portalRouter from './portal';
 
 const router = express.Router({ mergeParams: true });
 
@@ -19,5 +20,7 @@ router.get('/events', (req: Request, res: Response) => {
 });
 
 router.use('/divisions', divisionsRouter);
+
+router.use('/portal', portalRouter);
 
 export default router;
