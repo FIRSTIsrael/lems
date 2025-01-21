@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { PortalAward, PortalTeam } from '@lems/types';
 import teamValidator from '../../../../middlewares/portal/team-validator';
+import divisionCompleted from '../../../../middlewares/portal/division-completed';
 
 const router = express.Router({ mergeParams: true });
 
@@ -46,20 +47,8 @@ router.get('/:teamNumber/schedule', (req: Request, res: Response) => {
 
 router.get(
   '/:teamNumber/awards',
+  divisionCompleted,
   asyncHandler(async (req: Request, res: Response) => {
-    const divisionState = await db.getDivisionState({
-      divisionId: new ObjectId(req.params.divisionId)
-    });
-    if (!divisionState) {
-      res.status(404).send('Event/Division state not found');
-      return;
-    }
-
-    if (!divisionState.completed) {
-      res.status(403).send('Event/Division not completed');
-      return;
-    }
-
     const awards = await db.getTeamAwards(new ObjectId(req.team._id));
     const result: Array<PortalAward> = awards.map(award => {
       const { name, place } = award;

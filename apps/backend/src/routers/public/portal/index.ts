@@ -28,11 +28,12 @@ router.get(
       }
 
       const { _id, name, color } = event;
-      const eventDivisions = divisions.map(({ _id, name, color }) => ({
-        id: String(_id),
-        name,
-        color
-      }));
+      const eventDivisions = divisions
+        .map(({ _id, name, color, hasState }) => {
+          if (!hasState) return null;
+          return { id: String(_id), name, color };
+        })
+        .filter(division => division !== null);
       return { id: String(_id), name, date: startDate, color: color, divisions: eventDivisions };
     });
 
