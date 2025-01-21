@@ -121,7 +121,7 @@ const Page: NextPage<Props> = ({
       }}
     >
       <Layout
-        maxWidth={1800}
+        maxWidth={800}
         title={`ממשק ${user.role && localizedRoles[user.role].name} | ${localizeDivisionTitle(division)}`}
         connectionStatus={connectionStatus}
         color={division.color}
