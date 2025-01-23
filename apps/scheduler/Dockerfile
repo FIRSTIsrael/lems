@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+ARG MONGODB_URI
+ENV MONGODB_URI=$MONGODB_URI
+
 RUN apt-get update
 
 WORKDIR /src

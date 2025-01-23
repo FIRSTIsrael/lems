@@ -48,6 +48,7 @@ export interface DeliberationContextType {
     scoresheets: Array<WithId<Scoresheet>>;
     rooms: Array<WithId<JudgingRoom>>;
     sessions: Array<WithId<JudgingSession>>;
+    awards: Array<WithId<Award>>;
   };
   start: () => void;
   lock: () => void;
@@ -105,7 +106,7 @@ interface DeliberationProps {
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
   ) => void;
-  awards?: Array<WithId<Award>>;
+  awards: Array<WithId<Award>>;
   roomScores?: Array<any>;
   categoryRanks?: { [key in JudgingCategory]: Array<ObjectId> };
   robotConsistency?: Array<any>;
@@ -123,6 +124,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       rubrics,
       scoresheets,
       cvForms,
+      awards,
       onChange,
       onStart,
       onLock,
@@ -131,7 +133,6 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       endStage,
       updateTeamAwards,
       calculateAnomalies,
-      awards = [],
       roomScores = [],
       anomalies = [],
       categoryRanks,
@@ -152,10 +153,15 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       robotConsistency
     );
 
-    // limit is the number of awards with the same name for each award name
     const picklistLimits: { [key in AwardNames]?: number } = awards.reduce(
       (acc, award) => {
+        // Category deliberations always return the default limit.
+        // Don't calculate the limit for the category being deliberated.
+        if (award.name === initialState.category) return acc;
+
         if (!acc[award.name]) acc[award.name] = 0;
+        // Literally defined as 0 in the line above...
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         acc[award.name]! += 1;
         return acc;
       },
@@ -328,7 +334,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             calculateAnomalies,
             onAddTeam,
             disqualifyTeam,
-            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions },
+            compareContextProps: { cvForms, rubrics, scoresheets, rooms, sessions, awards },
             picklistLimits,
             anomalies,
             categoryRanks,

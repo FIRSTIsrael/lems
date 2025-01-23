@@ -41,7 +41,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
   );
 
   const nextStageUnlocked = cvAwards.every(
-    award => deliberation.awards[award]!.length === limits[award]
+    award => deliberation.awards[award]?.length === limits[award]
   );
 
   return (
@@ -90,7 +90,6 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
               title={localizedAward[award].name}
               length={limits[award]!}
               withIcons
-              trophyCount={limits[award]!}
               id={award}
               pickList={
                 deliberation.awards[award]?.map(

@@ -10,7 +10,8 @@ import {
   FinalDeliberationStage,
   FinalDeliberationStages,
   JudgingRoom,
-  JudgingSession
+  JudgingSession,
+  Award
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider, Stepper, Step, StepLabel } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -39,6 +40,7 @@ interface FinalDeliberationControlPanelProps {
     scoresheets: Array<WithId<Scoresheet>>;
     rooms: Array<WithId<JudgingRoom>>;
     sessions: Array<WithId<JudgingSession>>;
+    awards: Array<WithId<Award>>;
   };
 }
 
@@ -60,7 +62,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   onAddTeam,
   disqualifyTeam,
   enableTrash = false,
-  compareProps: { cvForms, rubrics, scoresheets, sessions, rooms }
+  compareProps: { cvForms, rubrics, scoresheets, sessions, rooms, awards }
 }) => {
   const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -163,6 +165,7 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
           rooms={rooms}
           scoresheets={scoresheets}
           teams={teams}
+          awards={awards}
         />
       )}
     </>

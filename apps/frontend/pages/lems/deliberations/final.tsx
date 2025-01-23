@@ -306,7 +306,7 @@ const Page: NextPage<Props> = ({
           .filter(team => !!team);
         return acc;
       },
-      {} as { [key in JudgingCategory]: Array<DeliberationTeam> }
+      {} as { [key in AwardNames]: Array<DeliberationTeam> }
     );
 
     let excellenceInEngineeringWinners: Array<DeliberationTeam> = [];
@@ -321,12 +321,10 @@ const Page: NextPage<Props> = ({
               .find(t => t._id === team._id)
         )
         .slice(0, awards.filter(award => award.name === 'excellence-in-engineering').length);
+      newAwards['excellence-in-engineering'] = excellenceInEngineeringWinners;
     }
 
-    return updateAwardWinners({
-      ...newAwards,
-      'excellence-in-engineering': excellenceInEngineeringWinners
-    });
+    return updateAwardWinners(newAwards);
   };
 
   const endOptionalAwardsStage = (

@@ -1,7 +1,13 @@
 import React, { Fragment, forwardRef, useMemo, useState, useEffect } from 'react';
 import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
-import { Award, Team, DivisionWithEvent } from '@lems/types';
+import {
+  Award,
+  Team,
+  DivisionWithEvent,
+  CoreValuesAwardsTypes,
+  CoreValuesAwards
+} from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
 import TitleSlide from './title-slide';
@@ -58,6 +64,9 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
         const { name: awardName } = sortedAwards[0];
         const localized = localizedAward[awardName];
 
+        const showPlace =
+          sortedAwards.length > 1 && !CoreValuesAwardsTypes.includes(awardName as CoreValuesAwards);
+
         return (
           <Fragment key={awardName}>
             <TitleSlide primary={`פרס ${localized.name}`} color={division.color} />
@@ -72,7 +81,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                   {['chroma', 'both'].includes(awardWinnerSlideStyle) && (
                     <AwardWinnerChromaSlide
                       name={`פרס ${localized.name}`}
-                      place={sortedAwards.length > 1 ? award.place : undefined}
+                      place={showPlace ? award.place : undefined}
                       winner={award.winner || ''}
                       color={division.color}
                     />
@@ -80,7 +89,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
                   {['full', 'both'].includes(awardWinnerSlideStyle) && (
                     <AwardWinnerSlide
                       name={`פרס ${localized.name}`}
-                      place={sortedAwards.length > 1 ? award.place : undefined}
+                      place={showPlace ? award.place : undefined}
                       winner={award.winner || ''}
                       color={division.color}
                       hideWinner={awardWinnerSlideStyle === 'full'}
@@ -114,7 +123,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           ref={ref}
           enableReinitialize={enableReinitialize}
         >
-          <ImageSlide src="/assets/audience-display/sponsors/first-in-show.svg" />
+          <ImageSlide src="/assets/audience-display/sponsors/FIRST-DIVE.svg" />
           <TitleSlide
             primary={`טקס סיום - ${localizeDivisionTitle(division)}`}
             color={division.color}
@@ -122,7 +131,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
           {awardSlides}
           <TitleSlide
             primary="כל הכבוד לקבוצות!"
-            secondary="להתראות בעונות הבאות!"
+            secondary="נתראה בתחרות האליפות!"
             color={division.color}
           />
         </Deck>
