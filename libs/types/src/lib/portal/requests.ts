@@ -6,7 +6,7 @@ export interface PortalEvent {
   date: Date;
   // location?: string
   color: string;
-  divisions?: Array<PortalDivision>;
+  divisions?: PortalDivision[];
 }
 
 export interface PortalDivision {
@@ -29,4 +29,10 @@ export interface PortalAward {
   name: AwardNames;
   place?: number;
   winner?: PortalTeam | string;
+}
+
+export interface PortalScore {
+  scores: number[];
+  maxScore: number;
+  team: PortalTeam;
 }

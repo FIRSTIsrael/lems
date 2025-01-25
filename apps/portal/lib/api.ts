@@ -1,4 +1,4 @@
-import { PortalEvent, PortalTeam } from '@lems/types';
+import { PortalAward, PortalEvent, PortalScore, PortalTeam } from '@lems/types';
 
 const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
@@ -28,4 +28,22 @@ export const fetchEvent = async (id: string) => {
   const event: PortalEvent = await apiFetch(`/events/${id}`);
   const teams: PortalTeam[] = await apiFetch(`/events/${id}/teams`);
   return { event, teams };
+};
+
+export const fetchTeam = async (eventId: string, teamNumber: string) => {
+  const team: PortalTeam = await apiFetch(`/events/${eventId}/teams/${teamNumber}`);
+
+  let awards: PortalAward[] | null = null;
+  try {
+    awards = await apiFetch(`/events/${eventId}/teams/${teamNumber}/awards`);
+  } catch (e) {
+    // Event not yet completed
+  }
+
+  return { team, awards };
+};
+
+export const fetchScoreboard = async (eventId: string) => {
+  const scoreboard: PortalScore[] = await apiFetch(`/events/${eventId}/scoreboard`);
+  return scoreboard;
 };
