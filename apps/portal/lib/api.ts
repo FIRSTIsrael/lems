@@ -1,4 +1,4 @@
-import { PortalEvent } from '@lems/types';
+import { PortalEvent, PortalTeam } from '@lems/types';
 
 const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
@@ -6,7 +6,7 @@ const getApiBase = (forceClient = false) => {
   return url + '/public/portal';
 };
 
-const apiFetch = async (path: string, init?: RequestInit | undefined): Promise<Response> => {
+const apiFetch = async (path: string, init?: RequestInit | undefined) => {
   const headers = { ...init?.headers };
   const response = await fetch(getApiBase() + path, {
     headers,
@@ -15,11 +15,17 @@ const apiFetch = async (path: string, init?: RequestInit | undefined): Promise<R
 
   if (!response.ok) throw new Error(`Failed to fetch ${path}`);
 
-  return response;
+  const data = await response.json();
+  return data;
 };
 
 export const fetchEvents = async (): Promise<PortalEvent[]> => {
-  const res = await apiFetch('/events');
-  const data = await res.json();
-  return data as PortalEvent[];
+  const events: PortalEvent[] = await apiFetch('/events');
+  return events;
+};
+
+export const fetchEvent = async (id: string) => {
+  const event: PortalEvent = await apiFetch(`/events/${id}`);
+  const teams: PortalTeam[] = await apiFetch(`/events/${id}/teams`);
+  return { event, teams };
 };
