@@ -1,6 +1,5 @@
 import { Container, Paper, Typography } from '@mui/material';
 import { NextPage } from 'next';
-import Image from 'next/image';
 
 const Custom404: NextPage = () => {
   return (
@@ -14,7 +13,6 @@ const Custom404: NextPage = () => {
       }}
     >
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Image width={96} height={96} src="/assets/emojis/dizzy-face.png" alt="אימוג׳י עצוב" />
         <Typography variant="h1" gutterBottom>
           הדף אליו נכנסתם לא נמצא
         </Typography>

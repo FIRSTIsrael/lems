@@ -1,6 +1,5 @@
 import { Container, Paper, Typography } from '@mui/material';
 import { NextPage } from 'next';
-import Image from 'next/image';
 
 interface Props {
   statusCode?: number;
@@ -18,12 +17,6 @@ const Error: NextPage<Props> = ({ statusCode }) => {
       }}
     >
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Image
-          width={96}
-          height={96}
-          src="/assets/emojis/downcast-face-with-sweat.png"
-          alt="אימוג׳י עצוב"
-        />
         <Typography variant="h1" gutterBottom>
           שגיאה לא צפויה, אנא נסו שנית
         </Typography>

@@ -12,19 +12,22 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/MenuRounded';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-const pages = ['אירועים', 'מחשבון ניקוד'];
+const pages = [
+  {
+    name: 'אירועים',
+    href: '/'
+  },
+  {
+    name: 'מחשבון ניקוד',
+    href: '/scorer'
+  }
+];
 
 const ResponsiveAppBar = () => {
+  const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
 
   return (
     <AppBar position="static">
@@ -37,7 +40,7 @@ const ResponsiveAppBar = () => {
               aria-label="mobile menu"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={handleOpenNavMenu}
+              onClick={event => setAnchorElNav(event.currentTarget)}
               color="inherit"
             >
               <MenuIcon />
@@ -55,12 +58,12 @@ const ResponsiveAppBar = () => {
                 horizontal: 'left'
               }}
               open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+              onClose={() => setAnchorElNav(null)}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map(page => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                <MenuItem key={page.name} onClick={() => router.push(page.href)}>
+                  <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -99,11 +102,11 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map(page => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.name}
+                onClick={() => router.push(page.href)}
                 sx={{ my: 2, mx: 1, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
