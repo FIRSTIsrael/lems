@@ -27,14 +27,14 @@ const ResponsiveAppBar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" dir="rtl">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Mobile */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
+              aria-label="mobile menu"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
@@ -76,7 +76,7 @@ const ResponsiveAppBar = () => {
                 src="/assets/first-israel-horizontal-reverse.svg"
                 alt=""
                 fill
-                objectFit="contain"
+                style={{ objectFit: 'contain' }}
               />
             </Box>
           </Box>
@@ -93,7 +93,7 @@ const ResponsiveAppBar = () => {
               src="/assets/first-israel-horizontal-reverse.svg"
               alt=""
               fill
-              objectFit="contain"
+              style={{ objectFit: 'contain' }}
             />
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -101,7 +101,7 @@ const ResponsiveAppBar = () => {
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, mx: 1, color: 'white', display: 'block' }}
               >
                 {page}
               </Button>
