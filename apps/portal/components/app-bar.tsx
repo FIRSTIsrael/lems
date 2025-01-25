@@ -17,7 +17,7 @@ import { useRouter } from 'next/router';
 const pages = [
   {
     name: 'אירועים',
-    href: '/'
+    href: '/events'
   },
   {
     name: 'מחשבון ניקוד',
@@ -74,7 +74,14 @@ const ResponsiveAppBar = () => {
             justifyContent="center"
             alignItems="center"
           >
-            <Box mr={1} height="44px" width="164px" position="relative">
+            <Box
+              mr={1}
+              height="44px"
+              width="164px"
+              position="relative"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => router.push('/')}
+            >
               <Image
                 src="/assets/first-israel-horizontal-reverse.svg"
                 alt=""
@@ -91,6 +98,8 @@ const ResponsiveAppBar = () => {
             height="44px"
             width="164px"
             position="relative"
+            sx={{ cursor: 'pointer' }}
+            onClick={() => router.push('/')}
           >
             <Image
               src="/assets/first-israel-horizontal-reverse.svg"
