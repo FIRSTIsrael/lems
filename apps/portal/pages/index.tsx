@@ -1,11 +1,26 @@
+import { NextPage, GetServerSideProps } from 'next';
 import { Container, Typography } from '@mui/material';
+import { PortalEvent } from '@lems/types';
+import { fetchEvents } from '../lib/api';
 
-export function Index() {
-  return (
-    <Container maxWidth="lg" sx={{ mt: 2 }}>
-      <Typography>TODO</Typography>
-    </Container>
-  );
+interface Props {
+  events: PortalEvent[];
 }
 
-export default Index;
+const Page: NextPage<Props> = ({ events }) => {
+  return (
+    <Container maxWidth="lg" sx={{ mt: 2 }}>
+      <Typography variant="h4">אירועים</Typography>
+      {events.map(event => (
+        <Typography key={event.id}>{event.name}</Typography>
+      ))}
+    </Container>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const events = await fetchEvents();
+  return { props: { events } };
+};
+
+export default Page;
