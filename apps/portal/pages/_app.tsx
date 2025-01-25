@@ -5,6 +5,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import '../lib/dayjs';
 import theme from '../lib/theme';
 import { createEmotionCache } from '../lib/emotion-cache';
+import ResponsiveAppBar from '../components/app-bar';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -24,6 +25,7 @@ function CustomApp({
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <main className="app">
+          <ResponsiveAppBar />
           <Component {...pageProps} />
         </main>
       </ThemeProvider>
