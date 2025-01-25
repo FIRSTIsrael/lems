@@ -36,7 +36,7 @@ const DivisionTabEditor: React.FC<DivisionTabEditorProps> = ({ event, division, 
         <DivisionOutlineEditor event={event} division={division} />
       </TabPanel>
       <TabPanel value="3">
-        <DivisionAwardEditor divisionId={division?._id} awardSchema={awardSchema} />
+        <DivisionAwardEditor divisionId={division._id} awardSchema={awardSchema} />
       </TabPanel>
     </TabContext>
   );

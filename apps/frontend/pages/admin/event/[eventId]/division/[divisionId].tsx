@@ -31,9 +31,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     res?.json()
   );
 
-  const division = await apiFetch(`/api/divisions/${ctx.params?.divisionId}`, undefined, ctx).then(
-    res => res?.json()
-  );
+  const division = await apiFetch(
+    `/api/divisions/${ctx.params?.divisionId}?withSchedule=true`,
+    undefined,
+    ctx
+  ).then(res => res?.json());
 
   const data = await serverSideGetRequests(
     {
