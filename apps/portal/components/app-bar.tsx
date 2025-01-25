@@ -66,13 +66,14 @@ const ResponsiveAppBar = () => {
             </Menu>
           </Box>
           <Box
+            width="100%"
             display={{ xs: 'flex', md: 'none' }}
-            mr={1}
-            height="44px"
-            width="164px"
-            position="relative"
+            justifyContent="center"
+            alignItems="center"
           >
-            <Image src="/assets/first-israel-horizontal.svg" alt="" fill objectFit="contain" />
+            <Box mr={1} height="44px" width="164px" position="relative">
+              <Image src="/assets/first-israel-horizontal.svg" alt="" fill objectFit="contain" />
+            </Box>
           </Box>
 
           {/* Desktop */}
