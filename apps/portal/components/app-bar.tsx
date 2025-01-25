@@ -27,7 +27,7 @@ const ResponsiveAppBar = () => {
   };
 
   return (
-    <AppBar position="static" dir="rtl">
+    <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Mobile */}
