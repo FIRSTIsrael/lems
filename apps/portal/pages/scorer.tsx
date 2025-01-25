@@ -1,7 +1,9 @@
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { Container, Typography, Stack } from '@mui/material';
 import { SEASON_SCORESHEET } from '@lems/season';
 import ScoresheetMission from '../components/scorer/scoresheet-mission';
+import NoEquipmentImage from '../public/assets/scoresheet/no-equipment.svg';
 
 const Page: NextPage = () => {
   return (
@@ -9,8 +11,17 @@ const Page: NextPage = () => {
       <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
         מחשבון ניקוד
       </Typography>
-      <Typography>תיאור של בונוס ביקורת ציוד</Typography>
-      <Stack spacing={4} my={2}>
+      <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+        <Image src={NoEquipmentImage} width={50} height={50} alt="איסור ציוד" />
+        <Stack>
+          <Typography fontWeight={500}>מגבלת ”ללא מגע ציוד של הקבוצה“:</Typography>
+          <Typography>
+            כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, המגבלה הבאה חלה: על מנת לקבל ניקוד על
+            משימה זו, אסור לציוד לגעת באף חלק של דגם המשימה בסיום המקצה.“
+          </Typography>
+        </Stack>
+      </Stack>
+      <Stack spacing={4} my={4}>
         {SEASON_SCORESHEET.missions.map((mission, index) => (
           <ScoresheetMission
             key={mission.id}
@@ -19,7 +30,6 @@ const Page: NextPage = () => {
             mission={mission}
             errors={[]}
             // errors={missionInfo.find(e => e?.id == mission.id)?.errors}
-            // readOnly={readOnly}
           />
         ))}
       </Stack>
