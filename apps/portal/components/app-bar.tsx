@@ -13,7 +13,7 @@ import {
 import MenuIcon from '@mui/icons-material/MenuRounded';
 import Image from 'next/image';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['אירועים', 'מחשבון ניקוד'];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -72,7 +72,12 @@ const ResponsiveAppBar = () => {
             alignItems="center"
           >
             <Box mr={1} height="44px" width="164px" position="relative">
-              <Image src="/assets/first-israel-horizontal.svg" alt="" fill objectFit="contain" />
+              <Image
+                src="/assets/first-israel-horizontal-reverse.svg"
+                alt=""
+                fill
+                objectFit="contain"
+              />
             </Box>
           </Box>
 
@@ -84,7 +89,12 @@ const ResponsiveAppBar = () => {
             width="164px"
             position="relative"
           >
-            <Image src="/assets/first-israel-horizontal.svg" alt="" fill objectFit="contain" />
+            <Image
+              src="/assets/first-israel-horizontal-reverse.svg"
+              alt=""
+              fill
+              objectFit="contain"
+            />
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map(page => (
