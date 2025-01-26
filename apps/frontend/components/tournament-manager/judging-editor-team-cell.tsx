@@ -20,7 +20,9 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
   const getOccurancesInForm = useCallback(
     (team?: WithId<Team>) => {
       if (!team) return 1;
-      return Object.values(values as FormikValues).filter(v => v === team).length;
+      return Object.values(values as FormikValues).filter(
+        _team => (_team as WithId<Team>)?._id === team._id
+      ).length;
     },
     [values]
   );
