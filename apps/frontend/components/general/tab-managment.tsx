@@ -9,7 +9,7 @@ interface TabContextProps {
 const TabContext: React.FC<TabContextProps> = ({ value, children }) => {
   return React.Children.map(children, child => {
     if (React.isValidElement(child) && child.type === TabPanel) {
-      return React.cloneElement(child, { value } as React.Attributes);
+      return React.cloneElement(child, { index: value } as React.Attributes);
     }
     return child;
   });
