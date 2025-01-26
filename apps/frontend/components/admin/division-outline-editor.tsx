@@ -61,14 +61,14 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
 
   const copyScheduleFrom = (eventId: string | ObjectId, divisionId?: string | ObjectId) => {
     if (divisionId && String(divisionId) === String(division._id)) return;
-    const event = events.find(e => String(e._id) === String(eventId));
-    if (!event) return;
-    if (!divisionId && event?.enableDivisions) return;
+    const _event = events.find(e => String(e._id) === String(eventId));
+    if (!_event) return;
+    if (!divisionId && _event?.enableDivisions) return;
     let copyFromDivision;
     if (divisionId) {
-      copyFromDivision = event?.divisions?.find(d => String(d._id) === String(divisionId));
+      copyFromDivision = _event?.divisions?.find(d => String(d._id) === String(divisionId));
     } else {
-      copyFromDivision = event?.divisions?.[0];
+      copyFromDivision = _event?.divisions?.[0];
     }
     if (!copyFromDivision) return;
 
