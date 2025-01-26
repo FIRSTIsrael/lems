@@ -22,7 +22,7 @@ const RoundEditorTeamCell: React.FC<RoundEditorTeamCellProps> = ({ name, teams, 
       if (!team) return 1;
       return Object.values(values as FormikValues)
         .flatMap(matchData => Object.values(matchData))
-        .filter(_team => _team === team).length;
+        .filter(_team => (_team as WithId<Team>)?._id === team._id).length;
     },
     [values]
   );
