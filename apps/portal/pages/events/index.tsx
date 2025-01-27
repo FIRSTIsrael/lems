@@ -6,7 +6,7 @@ import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } f
 import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
-import EventTable from '../../components/events/event-table';
+import EventList from '../../components/events/event-list';
 
 interface Props {
   events: Array<PortalEvent>;
@@ -14,6 +14,8 @@ interface Props {
 
 const Page: NextPage<Props> = ({ events }) => {
   const router = useRouter();
+
+  console.log(events);
 
   const { current, past, future } = useMemo(() => {
     const today = dayjs().startOf('day');
@@ -80,10 +82,20 @@ const Page: NextPage<Props> = ({ events }) => {
           <Typography variant="h1" gutterBottom display={{ xs: 'none', md: 'block' }}>
             אירועי <em>FIRST</em>&nbsp; LEGO League Challenge
           </Typography>
-          <Stack spacing={4}>
-            {<EventTable title="אירועים פעילים" events={current} />}
-            {<EventTable title="אירועים עתידיים" events={future} />}
-            {<EventTable title="אירועים קודמים" events={past} />}
+          <Stack spacing={2}>
+            <EventList
+              events={current}
+              emptyText="אין אירועים"
+              title="אירועים פעילים"
+              includeDate
+            />
+            <EventList
+              events={future}
+              emptyText="אין אירועים"
+              title="אירועים עתידיים"
+              includeDate
+            />
+            <EventList events={past} emptyText="אין אירועים" title="אירועים קודמים" includeDate />
           </Stack>
         </Grid>
       </Grid>

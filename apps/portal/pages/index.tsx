@@ -2,19 +2,10 @@ import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import {
-  Box,
-  Button,
-  Container,
-  Divider,
-  keyframes,
-  Paper,
-  Stack,
-  Typography
-} from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { Box, Button, Container, keyframes, Paper, Stack, Typography } from '@mui/material';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
+import EventList from '../components/events/event-list';
 
 interface Props {
   events: Array<PortalEvent>;
@@ -95,34 +86,7 @@ const Page: NextPage<Props> = ({ events }) => {
         <Typography ml={1} variant="body1" color="text.secondary">
           {dayjs().format('DD/MM/YYYY')}{' '}
         </Typography>
-        <Stack spacing={1} mt={2} divider={<Divider flexItem variant="middle" />}>
-          {activeEvents.length === 0 && (
-            <Typography pl={1} variant="body1">
-              אין אירועים פעילים
-            </Typography>
-          )}
-          {events.map(event => (
-            <Button
-              key={event.id}
-              sx={{
-                color: 'inherit',
-                justifyContent: 'space-between',
-                textAlign: 'left',
-                '& .MuiButton-endIcon svg': { fontSize: 30 }
-              }}
-              endIcon={<ChevronLeftIcon />}
-              fullWidth
-              onClick={() => router.push(`/events/${event.id}`)}
-            >
-              <span>
-                <Typography variant="h4">{event.name}</Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {event.location}
-                </Typography>
-              </span>
-            </Button>
-          ))}
-        </Stack>
+        <EventList events={activeEvents} emptyText="אין אירועים פעילים" />
       </Paper>
       <Box display="flex" justifyContent="center" textAlign="center" mt={2} width="100%">
         <Button
