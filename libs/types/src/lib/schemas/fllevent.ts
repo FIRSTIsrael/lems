@@ -6,6 +6,7 @@ export interface FllEvent {
   name: string;
   startDate: Date;
   endDate: Date;
+  location: string;
   color?: string;
   enableDivisions?: boolean;
   salesforceId?: string;
