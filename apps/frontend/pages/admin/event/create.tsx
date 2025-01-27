@@ -33,6 +33,7 @@ import { localizedRoles } from '../../../localization/roles';
 
 interface EventCreateFormValues {
   name: string;
+  location: string;
   salesforceId: string;
   enableDivisions: boolean;
   startDate: Dayjs;
@@ -92,10 +93,7 @@ const Page: NextPage = () => {
     return dayjs();
   };
 
-  const handleSubmit = (
-    values: EventCreateFormValues,
-    formikHelpers: FormikHelpers<EventCreateFormValues>
-  ) => {
+  const handleSubmit = (values: EventCreateFormValues) => {
     apiFetch('/api/admin/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,6 +125,7 @@ const Page: NextPage = () => {
   const getInitialValues = (): EventCreateFormValues => {
     return {
       name: '',
+      location: '',
       salesforceId: '',
       enableDivisions: false,
       eventUsers: EventUserAllowedRoleTypes.reduce(
@@ -151,7 +150,7 @@ const Page: NextPage = () => {
                     כללי
                   </Typography>
                 </Grid>
-                <Grid size={12}>
+                <Grid size={8}>
                   <Stack direction="row" spacing={2}>
                     {!values.enableDivisions && (
                       <ColorPickerButton
@@ -168,6 +167,17 @@ const Page: NextPage = () => {
                       label="שם אירוע"
                       fullWidth
                     />
+                    <FormikTextField
+                      variant="outlined"
+                      type="text"
+                      name="location"
+                      label="מיקום האירוע"
+                      fullWidth
+                    />
+                  </Stack>
+                </Grid>
+                <Grid size={8}>
+                  <Stack direction="row" spacing={2}>
                     <DatePicker
                       label="תאריך התחלה"
                       value={values.startDate}
