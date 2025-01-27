@@ -1,6 +1,7 @@
 import { useState, CSSProperties } from 'react';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
+import dayjs from 'dayjs';
 import {
   Box,
   Button,
@@ -82,11 +83,18 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
           <Divider />
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
             <UploadFileButton
-              urlPath={`/api/admin/divisions/${division?._id}/pit-map`}
+              urlPath={`/api/admin/divisions/${division._id}/schedule/parse`}
+              displayName="לוח זמנים"
+              extension=".csv"
+              disabled={division.hasState}
+              requestData={{ timezone: dayjs.tz.guess() }}
+            />
+            <UploadFileButton
+              urlPath={`/api/admin/divisions/${division._id}/pit-map`}
               displayName="מפת פיטים"
               extension=".png"
             />
-            <DownloadUsersButton division={division} disabled={!division?.hasState} />
+            <DownloadUsersButton division={division} disabled={!division.hasState} />
           </Stack>
         </Stack>
       </Box>
