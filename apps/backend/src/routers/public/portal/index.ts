@@ -12,7 +12,7 @@ router.get(
     const events = await db.getAllFllEvents();
 
     const result: Array<PortalEvent> = events.map(event => {
-      const { enableDivisions, divisions, startDate } = event;
+      const { enableDivisions, divisions, startDate, location } = event;
 
       if (!(divisions?.length > 0)) {
         return null; // Impossible, should never happen
@@ -24,7 +24,7 @@ router.get(
 
       if (!enableDivisions) {
         const { _id, name, color } = divisions[0];
-        return { id: String(_id), name, date: startDate, color };
+        return { id: String(_id), name, date: startDate, color, location };
       }
 
       const { _id, name, color } = event;
@@ -34,7 +34,7 @@ router.get(
           return { id: String(_id), name, color };
         })
         .filter(division => division !== null);
-      return { id: String(_id), name, date: startDate, color: color, divisions: eventDivisions };
+      return { id: String(_id), name, date: startDate, color, location, divisions: eventDivisions };
     });
 
     res.json(result.filter(event => event !== null));

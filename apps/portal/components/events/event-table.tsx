@@ -13,7 +13,7 @@ import EventRow from './event-row';
 
 interface EventTableProps {
   title?: string;
-  events: PortalEvent[];
+  events: Array<PortalEvent>;
 }
 
 const EventTable: React.FC<EventTableProps> = ({ title, events }) => {

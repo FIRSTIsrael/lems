@@ -17,7 +17,7 @@ import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 
 interface Props {
-  events: PortalEvent[];
+  events: Array<PortalEvent>;
 }
 
 const Page: NextPage<Props> = ({ events }) => {
@@ -101,7 +101,7 @@ const Page: NextPage<Props> = ({ events }) => {
               אין אירועים פעילים
             </Typography>
           )}
-          {activeEvents.map(event => (
+          {events.map(event => (
             <Button
               key={event.id}
               sx={{
@@ -117,7 +117,7 @@ const Page: NextPage<Props> = ({ events }) => {
               <span>
                 <Typography variant="h4">{event.name}</Typography>
                 <Typography variant="body1" color="text.secondary">
-                  {event.name}
+                  {event.location}
                 </Typography>
               </span>
             </Button>

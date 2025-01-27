@@ -9,7 +9,7 @@ import { fetchEvents } from '../../lib/api';
 import EventTable from '../../components/events/event-table';
 
 interface Props {
-  events: PortalEvent[];
+  events: Array<PortalEvent>;
 }
 
 const Page: NextPage<Props> = ({ events }) => {
@@ -30,7 +30,10 @@ const Page: NextPage<Props> = ({ events }) => {
         }
         return acc;
       },
-      { current: [], past: [], future: [] } as Record<'current' | 'past' | 'future', PortalEvent[]>
+      { current: [], past: [], future: [] } as Record<
+        'current' | 'past' | 'future',
+        Array<PortalEvent>
+      >
     );
   }, [events]);
 

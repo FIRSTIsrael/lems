@@ -4,7 +4,7 @@ export interface PortalEvent {
   id: string;
   name: string;
   date: Date;
-  // location?: string
+  location: string;
   color: string;
   divisions?: PortalDivision[];
 }
