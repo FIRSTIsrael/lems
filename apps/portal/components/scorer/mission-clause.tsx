@@ -91,6 +91,8 @@ interface MissionClauseProps {
   missionIndex: number;
   clauseIndex: number;
   clause: MissionClauseSchema;
+  value: string | number | boolean | null;
+  setValue: (value: string | number | boolean | null) => void;
   localizedMission: LocalizedMission;
   maxWidth?: number;
 }
@@ -99,6 +101,8 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   missionIndex,
   clauseIndex,
   clause,
+  value,
+  setValue,
   localizedMission,
   maxWidth = 550
 }) => {
@@ -109,11 +113,11 @@ const MissionClause: React.FC<MissionClauseProps> = ({
       </Grid>
       <Grid size={12} ml={3}>
         {clause.type === 'boolean' ? (
-          <BooleanClause value={null} onChange={() => console.log('unimplemented')} />
+          <BooleanClause value={value as boolean | null} onChange={setValue} />
         ) : clause.type === 'enum' ? (
           <EnumClause
-            value={null}
-            onChange={() => console.log('unimplemented')}
+            value={value as string | null}
+            onChange={setValue}
             labels={localizedMission.clauses[clauseIndex].labels || []}
             values={clause.options || []}
             multiSelect={!!clause.multiSelect}
@@ -123,8 +127,8 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           <NumericClause
             min={clause.min ?? 0}
             max={clause.max ?? 0}
-            value={null}
-            onChange={() => console.log('unimplemented')}
+            value={value as number | null}
+            onChange={setValue}
           />
         )}
       </Grid>

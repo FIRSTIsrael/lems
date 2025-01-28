@@ -6,12 +6,13 @@ import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import MissionClause from './mission-clause';
 import NoEquipmentImage from '../../public/assets/scoresheet/no-equipment.svg';
+import { useMission } from './mission-context';
 
 interface ScoresheetMissionProps {
   missionIndex: number;
   mission: MissionSchema;
   src: string;
-  errors?: Array<{ id: string; description: string }>;
+  errors?: { id: string; description: string }[];
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
@@ -22,6 +23,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
 }) => {
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
+  const { mission: missionData, updateClause } = useMission(missionIndex);
   const [missionWidth, setMissionWidth] = useState(0);
 
   useLayoutEffect(() => {
@@ -29,6 +31,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   }, []);
 
   const localizedMission = localizedScoresheet.missions.find(m => m.id === mission.id);
+
   return (
     localizedMission && (
       <Grid component={Paper} container pb={2} id={mission.id}>
@@ -62,16 +65,25 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               </Typography>
             </Grid>
           )}
-          {mission.clauses.map((clause, index) => (
-            <MissionClause
-              key={index}
-              missionIndex={missionIndex}
-              clauseIndex={index}
-              clause={clause}
-              localizedMission={localizedMission}
-              maxWidth={missionWidth * 0.9}
-            />
-          ))}
+          {mission.clauses.map((clause, index) => {
+            const value = missionData?.clauses[index].value;
+            const setValue = (value: string | number | boolean | null) => {
+              updateClause(index, value);
+            };
+
+            return (
+              <MissionClause
+                key={index}
+                missionIndex={missionIndex}
+                clauseIndex={index}
+                clause={clause}
+                localizedMission={localizedMission}
+                maxWidth={missionWidth * 0.9}
+                value={value}
+                setValue={setValue}
+              />
+            );
+          })}
           <Grid size={12} mt={2}>
             {localizedMission.remarks?.map(remark => (
               <Typography
