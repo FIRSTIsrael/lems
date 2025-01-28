@@ -7,7 +7,8 @@ import {
   CoreValuesAwardsTypes,
   DivisionWithEvent,
   SafeUser,
-  Team
+  Team,
+  AwardSchema
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
 import { serverSideGetRequests, getUserAndDivision } from '../../../../lib/utils/fetch';
@@ -19,14 +20,15 @@ interface Props {
   division: WithId<DivisionWithEvent>;
   team: WithId<Team>;
   awards: Array<Award>;
+  awardSchema: AwardSchema;
 }
 
-const ExportAwards: NextPage<Props> = ({ user, division, team, awards }) => {
+const ExportAwards: NextPage<Props> = ({ user, division, team, awards, awardSchema }) => {
   const awardsToExport: Array<AwardToExport> = awards.map(a => {
     const showPlace =
       a.name !== 'advancement' &&
       !CoreValuesAwardsTypes.includes(a.name as CoreValuesAwards) &&
-      awards.filter(award => award.name === a.name).length > 1;
+      awardSchema[a.name]?.count > 1;
     return { ...a, place: showPlace ? a.place : 0, isParticipation: false };
   });
   awardsToExport.push({ isParticipation: true });
@@ -66,7 +68,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       {
         division: `/api/divisions/${divisionId}?withEvent=true`,
         team: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}`,
-        awards: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}/awards`
+        awards: `/api/divisions/${divisionId}/teams/${ctx.params?.teamId}/awards`,
+        awardSchema: `/api/admin/divisions/${divisionId}/awards/schema`
       },
       ctx
     );
