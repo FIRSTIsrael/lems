@@ -4,18 +4,25 @@ import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS } from '@lems/season';
 import { useScore } from '../../hooks/use-score';
 
 interface MissionContextType {
+  points: number;
   missions: Mission[];
   onUpdateClause: (
     missionIndex: number,
     clauseIndex: number,
     value: string | number | boolean | null
   ) => void;
+  resetScore: () => void;
 }
 
-const MissionContext = createContext<MissionContextType | null>(null);
+export const MissionContext = createContext<MissionContextType>({
+  points: 0,
+  missions: [] as Mission[],
+  onUpdateClause: () => console.log('No context'),
+  resetScore: () => console.log('No context')
+});
 
 export function MissionProvider({ children }: { children: ReactNode }) {
-  const { score, updateScore, loading } = useScore();
+  const { score, updateScore, resetScore, loading } = useScore();
 
   const getDefaultScoresheet = () => {
     const missions: Mission[] = SEASON_SCORESHEET.missions.map(mission => {
@@ -28,7 +35,7 @@ export function MissionProvider({ children }: { children: ReactNode }) {
       };
     });
 
-    return { missions, points: 0 };
+    return missions;
   };
 
   useEffect(() => {
@@ -45,16 +52,18 @@ export function MissionProvider({ children }: { children: ReactNode }) {
     value: string | number | boolean | null
   ) => {
     if (!score) return;
-    const newScore = { ...score };
-    newScore.missions[missionIndex].clauses[clauseIndex].value = value;
-    updateScore(newScore);
+    const newMissions = structuredClone(score.missions);
+    newMissions[missionIndex].clauses[clauseIndex].value = value;
+    updateScore(newMissions);
   };
 
   return (
     <MissionContext.Provider
       value={{
+        points: score?.points || 0,
         missions: score?.missions || [],
-        onUpdateClause
+        onUpdateClause,
+        resetScore
       }}
     >
       {children}

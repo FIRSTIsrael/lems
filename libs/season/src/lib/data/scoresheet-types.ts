@@ -12,7 +12,7 @@ export interface MissionClauseSchema {
 export interface MissionSchema {
   id: string;
   clauses: Array<MissionClauseSchema>;
-  calculation: (...args: Array<boolean | string | number | string[]>) => number;
+  calculation: (...args: Array<boolean | string | number | string[] | null>) => number;
   noEquipment?: boolean;
 }
 
