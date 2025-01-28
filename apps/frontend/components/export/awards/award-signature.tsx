@@ -18,7 +18,16 @@ const ExportAwardSignature: React.FC<ExportAwardSignatureProps> = ({
   return (
     <Stack alignItems="center">
       <Image alt={`חתימה של ${name}`} src={src} width={100} height={100} />
-      <Box width={150} height={2} bgcolor="#000" mt={-2} mb={1.5} />
+      <Box
+        width={150}
+        height={0}
+        sx={{
+          borderBottom: '2px solid rgb(0,0,0)',
+          marginBottom: '2px'
+        }}
+        mt={-2}
+        mb={1.5}
+      />
       <Typography variant="h3" fontSize="1.35rem" fontWeight={600} align="center" gutterBottom>
         {name}
       </Typography>
