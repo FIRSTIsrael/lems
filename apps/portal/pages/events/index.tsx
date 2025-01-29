@@ -18,12 +18,12 @@ const Page: NextPage<Props> = ({ events }) => {
   console.log(events);
 
   const { current, past, future } = useMemo(() => {
-    const today = dayjs().startOf('day');
+    const today = dayjs();
     const eventsByDate = events.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
     return eventsByDate.reduce(
       (acc, event) => {
         const eventDate = dayjs(event.date).startOf('day');
-        if (eventDate === today) {
+        if (eventDate.isSame(today, 'day')) {
           acc.current.push(event);
         } else if (eventDate < today) {
           acc.past.push(event);
@@ -88,14 +88,22 @@ const Page: NextPage<Props> = ({ events }) => {
               emptyText="אין אירועים"
               title="אירועים פעילים"
               includeDate
+              id="current"
             />
             <EventList
               events={future}
               emptyText="אין אירועים"
               title="אירועים עתידיים"
               includeDate
+              id="future"
             />
-            <EventList events={past} emptyText="אין אירועים" title="אירועים קודמים" includeDate />
+            <EventList
+              events={past}
+              emptyText="אין אירועים"
+              title="אירועים קודמים"
+              includeDate
+              id="past"
+            />
           </Stack>
         </Grid>
       </Grid>

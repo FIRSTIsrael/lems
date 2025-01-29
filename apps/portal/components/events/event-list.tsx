@@ -7,13 +7,20 @@ interface EventListProps extends StackProps {
   emptyText: string;
   title?: string;
   includeDate?: boolean;
+  id?: string;
 }
 
-const EventList: React.FC<EventListProps> = ({ events, emptyText, title, includeDate = false }) => {
+const EventList: React.FC<EventListProps> = ({
+  events,
+  emptyText,
+  title,
+  includeDate = false,
+  id
+}) => {
   return (
     <>
       {title && <Typography variant="h2">{title}</Typography>}
-      <Stack spacing={1} divider={<Divider flexItem variant="middle" />}>
+      <Stack id={id} spacing={1} divider={<Divider flexItem variant="middle" />}>
         {events.length === 0 && (
           <Typography pl={1} variant="body1">
             {emptyText}
