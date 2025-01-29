@@ -1,4 +1,4 @@
-import { AwardNames } from '../constants';
+import { AwardNames, Status } from '../constants';
 
 export interface PortalEvent {
   id: string;
@@ -43,6 +43,7 @@ interface BaseActivity {
 
 interface MatchActivity extends BaseActivity {
   type: 'match';
+  status: Status;
   table: string;
   stage: string;
   round: number;
@@ -51,6 +52,7 @@ interface MatchActivity extends BaseActivity {
 
 interface SessionActivity extends BaseActivity {
   type: 'session';
+  status: Status;
   room: string;
   number: number;
 }

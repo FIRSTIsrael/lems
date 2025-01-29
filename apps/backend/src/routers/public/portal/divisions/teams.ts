@@ -42,7 +42,7 @@ router.get(
 
     const matches: Array<PortalActivity<'match'>> = [];
     for (const match of teamMatches) {
-      const { stage, round, number, scheduledTime } = match;
+      const { status, stage, round, number, scheduledTime } = match;
 
       // Not null since we're filtering by teamId
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -52,14 +52,15 @@ router.get(
 
       const table = (await db.getTable({ _id: tableId })).name;
 
-      matches.push({ type: 'match', stage, round, number, table, time: scheduledTime });
+      matches.push({ type: 'match', status, stage, round, number, table, time: scheduledTime });
     }
 
     const teamSession = await db.getSession({ teamId: new ObjectId(req.team._id) });
-    const { number, scheduledTime } = teamSession;
-    const room = (await db.getRoom({ _id: teamSession.roomId })).name;
+    const { status, number, scheduledTime, roomId } = teamSession;
+    const room = (await db.getRoom({ _id: roomId })).name;
     const session: PortalActivity<'session'> = {
       type: 'session',
+      status,
       number,
       room,
       time: scheduledTime

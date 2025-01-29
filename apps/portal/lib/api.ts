@@ -1,4 +1,4 @@
-import { PortalAward, PortalEvent, PortalScore, PortalTeam } from '@lems/types';
+import { PortalActivity, PortalAward, PortalEvent, PortalScore, PortalTeam } from '@lems/types';
 
 class AuthorizationError extends Error {
   id: string;
@@ -69,12 +69,15 @@ export const fetchTeam = async (eventId: string, teamNumber: string) => {
     // Event not yet completed
   }
 
-  const teamSchedule: any = await apiFetch(`/events/${eventId}/teams/${teamNumber}/schedule`);
+  const schedule: PortalActivity<'general' | 'match' | 'session'>[] = await apiFetch(
+    `/events/${eventId}/teams/${teamNumber}/schedule`
+  );
 
-  return { team, awards };
+  return { team, awards, schedule };
 };
 
 export const fetchScoreboard = async (eventId: string) => {
   const scoreboard: PortalScore[] = await apiFetch(`/events/${eventId}/scoreboard`);
-  return scoreboard;
+  const { currentStage } = await apiFetch(`/events/${eventId}/status`);
+  return { scoreboard, currentStage };
 };

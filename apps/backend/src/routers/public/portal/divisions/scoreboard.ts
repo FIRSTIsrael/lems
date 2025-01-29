@@ -95,7 +95,7 @@ router.get(
           scores: true,
           maxScore: true,
           team: {
-            _id: '$team._id',
+            id: '$team._id',
             name: '$team.name',
             number: '$team.number',
             affiliation: '$team.affiliation'

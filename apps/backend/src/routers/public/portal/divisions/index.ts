@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import dayjs from 'dayjs';
 import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
@@ -25,9 +26,30 @@ router.get(
   })
 );
 
-router.get('/status', (req: Request, res: Response) => {
-  // get event status
-});
+router.get(
+  '/status',
+  asyncHandler(async (req: Request, res: Response) => {
+    const event = await db.getFllEvent({ _id: new ObjectId(req.division.eventId) });
+    if (!event) {
+      res.status(404).send('Event not found');
+      return;
+    }
+
+    const isLive = dayjs(event.startDate).isSame(dayjs(), 'day');
+
+    const divisionState = await db.getDivisionState({
+      divisionId: new ObjectId(req.division._id)
+    });
+    if (!divisionState) {
+      res.status(404).send('Event/Division state not found');
+      return;
+    }
+
+    const { currentStage } = divisionState;
+
+    res.json({ isLive, currentStage });
+  })
+);
 
 router.use('/scoreboard', scoreboardRouter);
 
