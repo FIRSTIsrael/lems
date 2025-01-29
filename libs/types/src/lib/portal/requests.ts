@@ -36,3 +36,32 @@ export interface PortalScore {
   maxScore: number;
   team: PortalTeam;
 }
+
+interface BaseActivity {
+  time: Date;
+}
+
+interface MatchActivity extends BaseActivity {
+  type: 'match';
+  table: string;
+  stage: string;
+  round: number;
+  number: number;
+}
+
+interface SessionActivity extends BaseActivity {
+  type: 'session';
+  room: string;
+  number: number;
+}
+
+interface GeneralActivity extends BaseActivity {
+  type: 'general';
+  name: string;
+}
+
+export type PortalActivity<T extends 'match' | 'session' | 'general'> = T extends 'match'
+  ? MatchActivity
+  : T extends 'session'
+    ? SessionActivity
+    : GeneralActivity;

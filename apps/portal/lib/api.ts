@@ -69,6 +69,8 @@ export const fetchTeam = async (eventId: string, teamNumber: string) => {
     // Event not yet completed
   }
 
+  const teamSchedule: any = await apiFetch(`/events/${eventId}/teams/${teamNumber}/schedule`);
+
   return { team, awards };
 };
 
