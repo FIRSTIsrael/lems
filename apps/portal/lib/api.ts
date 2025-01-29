@@ -1,5 +1,16 @@
 import { PortalAward, PortalEvent, PortalScore, PortalTeam } from '@lems/types';
 
+class AuthorizationError extends Error {
+  id: string;
+
+  constructor(id: string) {
+    super();
+    this.id = id;
+
+    Object.setPrototypeOf(this, AuthorizationError.prototype);
+  }
+}
+
 const getApiBase = (forceClient = false) => {
   const isSsr = !forceClient && typeof window === 'undefined';
   const url = isSsr ? process.env.LOCAL_BASE_URL : process.env.NEXT_PUBLIC_BASE_URL;
@@ -13,7 +24,13 @@ const apiFetch = async (path: string, init?: RequestInit | undefined) => {
     ...init
   });
 
-  if (!response.ok) throw new Error(`Failed to fetch ${path}`);
+  if (!response.ok) {
+    if (response.status === 403) {
+      throw new AuthorizationError('Unauthorized');
+    }
+
+    throw new Error(`Failed to fetch ${path}`);
+  }
 
   const data = await response.json();
   return data;
@@ -31,10 +48,14 @@ export const fetchEvent = async (id: string) => {
 };
 
 export const fetchAwards = async (id: string) => {
-  const awards: PortalAward[] = await apiFetch(`/events/${id}/awards`).then(
-    awards => awards,
-    () => []
-  );
+  let awards: PortalAward[] | null = null;
+
+  try {
+    awards = await apiFetch(`/events/${id}/awards`);
+  } catch {
+    // Event not yet completed
+  }
+
   return awards;
 };
 
@@ -44,7 +65,7 @@ export const fetchTeam = async (eventId: string, teamNumber: string) => {
   let awards: PortalAward[] | null = null;
   try {
     awards = await apiFetch(`/events/${eventId}/teams/${teamNumber}/awards`);
-  } catch (e) {
+  } catch {
     // Event not yet completed
   }
 

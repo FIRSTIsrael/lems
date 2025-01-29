@@ -4,10 +4,12 @@ import { Container, Typography, Stack, Box } from '@mui/material';
 import { SEASON_SCORESHEET } from '@lems/season';
 import ScoresheetMission from '../components/scorer/scoresheet-mission';
 import NoEquipmentImage from '../public/assets/scoresheet/no-equipment.svg';
-import { MissionProvider } from '../components/scorer/mission-context';
+import { MissionProvider, useScoresheetValidator } from '../components/scorer/mission-context';
 import ScoreFloater from '../components/scorer/score-floater';
 
 const Scorer = () => {
+  const { errors } = useScoresheetValidator();
+
   return (
     <>
       <Container maxWidth="md" sx={{ mt: 2 }}>
@@ -26,15 +28,19 @@ const Scorer = () => {
             </Stack>
           </Stack>
 
-          <Stack spacing={4} my={4}>
+          <Stack spacing={4} mt={4} mb={16}>
             {SEASON_SCORESHEET.missions.map((mission, index) => (
               <ScoresheetMission
                 key={mission.id}
                 missionIndex={index}
                 src={`/assets/scoresheet/missions/${mission.id}.webp`}
                 mission={mission}
-                errors={[]}
               />
+            ))}
+            {errors.map((error, index) => (
+              <Typography key={index} color="error" fontWeight={600}>
+                {error.description}
+              </Typography>
             ))}
           </Stack>
         </Box>

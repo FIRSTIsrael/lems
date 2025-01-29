@@ -1,11 +1,13 @@
 import { createContext, useContext, ReactNode, useEffect } from 'react';
 import { Mission } from '@lems/types';
-import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS } from '@lems/season';
-import { useScore } from '../../hooks/use-score';
+import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS, localizedScoresheet } from '@lems/season';
+import { useScore, ErrorWithMessage } from '../../hooks/use-score';
 
 interface MissionContextType {
   points: number;
   missions: Mission[];
+  missionErrors: ErrorWithMessage[];
+  validatorErrors: ErrorWithMessage[];
   onUpdateClause: (
     missionIndex: number,
     clauseIndex: number,
@@ -17,6 +19,8 @@ interface MissionContextType {
 export const MissionContext = createContext<MissionContextType>({
   points: 0,
   missions: [] as Mission[],
+  missionErrors: [] as ErrorWithMessage[],
+  validatorErrors: [] as ErrorWithMessage[],
   onUpdateClause: () => console.log('No context'),
   resetScore: () => console.log('No context')
 });
@@ -62,6 +66,8 @@ export function MissionProvider({ children }: { children: ReactNode }) {
       value={{
         points: score?.points || 0,
         missions: score?.missions || [],
+        missionErrors: score?.missionErrors || [],
+        validatorErrors: score?.validatorErrors || [],
         onUpdateClause,
         resetScore
       }}
@@ -78,8 +84,22 @@ export const useMission = (index: number) => {
   }
 
   const mission = context.missions[index];
+  const localizedMission = localizedScoresheet.missions.find(m => m.id === mission?.id);
+  const errors =
+    localizedMission?.errors?.filter(error => context.missionErrors.some(e => e.id === error.id)) ||
+    [];
   const updateClause = (clauseIndex: number, value: string | number | boolean | null) => {
     context.onUpdateClause(index, clauseIndex, value);
   };
-  return { mission, updateClause };
+
+  return { mission, errors, updateClause };
+};
+
+export const useScoresheetValidator = () => {
+  const context = useContext(MissionContext);
+  if (!context) {
+    throw new Error('useMissionContext must be used within a MissionProvider');
+  }
+
+  return { errors: context.validatorErrors };
 };

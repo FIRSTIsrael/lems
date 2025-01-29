@@ -24,7 +24,7 @@ const Page: NextPage<Props> = ({ events }) => {
   return (
     <Container
       maxWidth="md"
-      sx={{ mt: 2, alignItems: 'center', display: 'flex', flexDirection: 'column' }}
+      sx={{ my: 2, alignItems: 'center', display: 'flex', flexDirection: 'column' }}
     >
       <Box
         width="100%"

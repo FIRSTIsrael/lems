@@ -12,18 +12,12 @@ interface ScoresheetMissionProps {
   missionIndex: number;
   mission: MissionSchema;
   src: string;
-  errors?: { id: string; description: string }[];
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
-  missionIndex,
-  mission,
-  src,
-  errors = []
-}) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
-  const { mission: missionData, updateClause } = useMission(missionIndex);
+  const { mission: missionData, errors, updateClause } = useMission(missionIndex);
   const [missionWidth, setMissionWidth] = useState(0);
 
   useLayoutEffect(() => {

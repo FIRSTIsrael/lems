@@ -19,7 +19,7 @@ export interface MissionSchema {
 export interface ScoresheetSchema {
   season: string;
   missions: Array<MissionSchema>;
-  validators: Array<(missions: { [key: string]: Array<boolean | string | number> }) => void>;
+  validators: Array<(missions: { [key: string]: Array<boolean | string | number | null> }) => void>;
 }
 
 export class ScoresheetError extends Error {

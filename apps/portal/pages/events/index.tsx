@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { NextPage, GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
 import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
@@ -13,8 +12,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  const router = useRouter();
-
   const { current, past, future } = useMemo(() => {
     const today = dayjs();
     const eventsByDate = events.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
@@ -43,7 +40,7 @@ const Page: NextPage<Props> = ({ events }) => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 2 }}>
+    <Container maxWidth="lg" sx={{ my: 2 }}>
       <Grid container spacing={2}>
         {/* Mobile header */}
         <Grid size={12} display={{ xs: 'block', md: 'none' }}>
@@ -77,7 +74,7 @@ const Page: NextPage<Props> = ({ events }) => {
 
         {/* Main Grid */}
         <Grid size={{ xs: 12, md: 10 }}>
-          <Typography variant="h1" gutterBottom display={{ xs: 'none', md: 'block' }}>
+          <Typography variant="h1" display={{ xs: 'none', md: 'block' }} mb={4}>
             אירועי <em>FIRST</em>&nbsp; LEGO League Challenge
           </Typography>
           <Stack spacing={2}>
