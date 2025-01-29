@@ -15,8 +15,6 @@ interface Props {
 const Page: NextPage<Props> = ({ events }) => {
   const router = useRouter();
 
-  console.log(events);
-
   const { current, past, future } = useMemo(() => {
     const today = dayjs();
     const eventsByDate = events.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));

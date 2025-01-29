@@ -30,6 +30,14 @@ export const fetchEvent = async (id: string) => {
   return { event, teams };
 };
 
+export const fetchAwards = async (id: string) => {
+  const awards: PortalAward[] = await apiFetch(`/events/${id}/awards`).then(
+    awards => awards,
+    () => []
+  );
+  return awards;
+};
+
 export const fetchTeam = async (eventId: string, teamNumber: string) => {
   const team: PortalTeam = await apiFetch(`/events/${eventId}/teams/${teamNumber}`);
 

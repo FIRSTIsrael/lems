@@ -147,7 +147,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
               onClick={() => router.push(`/events/${division.id}`)}
             >
               <Stack direction="row" spacing={2} alignItems="center">
-                <Box bgcolor={division.color} width={24} height={24} borderRadius="50%" />
+                <Box bgcolor={division.color} width={24} height={24} borderRadius={1} />
                 <Typography variant="h4" fontSize="1.25rem">
                   בית {division.name}
                 </Typography>

@@ -2,10 +2,11 @@ import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import { Box, Button, Container, keyframes, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Paper, Stack, Typography } from '@mui/material';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 import EventList from '../components/events/event-list';
+import LiveIcon from '../components/live-icon';
 
 interface Props {
   events: Array<PortalEvent>;
@@ -13,14 +14,6 @@ interface Props {
 
 const Page: NextPage<Props> = ({ events }) => {
   const router = useRouter();
-
-  const liveAnimation = keyframes`0% {
-    transform: scale(1, 1);
-  }
-  100% {
-    transform: scale(3.5, 3.5);
-    background-color: rgba(255, 0, 0, 0);
-  }`;
 
   const activeEvents = events.filter(event => {
     const eventDate = dayjs(event.date);
@@ -58,30 +51,7 @@ const Page: NextPage<Props> = ({ events }) => {
           <Typography variant="h2" maxWidth="90%">
             אירועים פעילים
           </Typography>
-          <Box
-            component="span"
-            display="inline-block"
-            position="relative"
-            bgcolor="red"
-            width={12}
-            height={12}
-            border="1px solid rgba(0, 0, 0, 0.1)"
-            borderRadius="50%"
-            zIndex={1}
-            sx={{
-              '::before': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                backgroundColor: 'rgba(255, 0, 0, 0.6)',
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                animation: `${liveAnimation} 2s ease-in-out infinite`,
-                zIndex: -1
-              }
-            }}
-          />
+          <LiveIcon />
         </Stack>
         <Typography ml={1} variant="body1" color="text.secondary">
           {dayjs().format('DD/MM/YYYY')}{' '}

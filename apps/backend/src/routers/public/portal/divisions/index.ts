@@ -15,8 +15,13 @@ router.use('/', divisionValidator);
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
+    const event = await db.getFllEvent({ _id: new ObjectId(req.division.eventId) });
+    if (!event) {
+      res.status(404).send('Event not found');
+      return;
+    }
     const { _id, name, color } = req.division;
-    res.json({ id: String(_id), name, color });
+    res.json({ id: String(_id), name, color, date: event.startDate, location: event.location });
   })
 );
 
