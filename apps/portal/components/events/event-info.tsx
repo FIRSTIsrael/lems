@@ -10,7 +10,7 @@ interface EventInfoProps {
 
 const EventInfo: React.FC<EventInfoProps> = ({ event, teamCount }) => {
   return (
-    <Grid container component={Paper} sx={{ p: 2, my: 2, width: '100%' }}>
+    <Grid container component={Paper} sx={{ p: 2, my: 3, width: '100%' }}>
       <Grid size={12}>
         <Typography variant="h2" gutterBottom>
           מידע כללי

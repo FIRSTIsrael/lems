@@ -1,15 +1,14 @@
 import { useRouter } from 'next/router';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { PortalAward, PortalEvent, PortalTeam } from '@lems/types';
+import { PortalEvent } from '@lems/types';
 
 interface EventQuickLinksProps {
   event: PortalEvent;
-  teams: PortalTeam[];
-  awards: PortalAward[] | null;
+  hasAwards: boolean;
 }
 
-const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, teams, awards }) => {
+const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) => {
   const router = useRouter();
 
   return (
@@ -18,7 +17,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, teams, awards 
       component={Paper}
       columnSpacing={2}
       rowSpacing={2}
-      sx={{ p: 2, my: 2, width: '100%' }}
+      sx={{ p: 2, my: 3, width: '100%' }}
     >
       <Grid size={{ xs: 6, md: 3 }}>
         <Button
@@ -30,7 +29,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, teams, awards 
           לוח תוצאות
         </Button>
       </Grid>
-      {awards?.length && (
+      {hasAwards && (
         <Grid size={{ xs: 6, md: 3 }}>
           <Button
             variant="contained"

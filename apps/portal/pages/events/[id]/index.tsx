@@ -1,30 +1,20 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
-import {
-  Container,
-  Paper,
-  Stack,
-  Table,
-  Typography,
-  TableRow,
-  TableCell,
-  TableBody,
-  TableContainer,
-  TableHead
-} from '@mui/material';
-import { PortalAward, PortalEvent, PortalTeam } from '@lems/types';
+import { Container, Paper, Stack, Typography } from '@mui/material';
+import { PortalEvent, PortalTeam } from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import LiveIcon from '../../../components/live-icon';
 import EventInfo from '../../../components/events/event-info';
 import EventQuickLinks from '../../../components/events/event-quick-links';
+import TeamList from 'apps/portal/components/teams/team-list';
 
 interface Props {
   event: PortalEvent;
   teams: PortalTeam[];
-  awards: PortalAward[];
+  hasAwards: boolean;
 }
 
-const Page: NextPage<Props> = ({ event, teams, awards }) => {
+const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
   const isLive = dayjs(event.date).isSame(dayjs(), 'day');
 
   return (
@@ -42,32 +32,11 @@ const Page: NextPage<Props> = ({ event, teams, awards }) => {
         </Paper>
       )}
       <EventInfo event={event} teamCount={teams.length} />
-      <EventQuickLinks event={event} awards={awards} teams={teams} />
-      <Typography variant="h2">קבוצות באירוע</Typography>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography fontWeight={500}>קבוצה</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight={500}>מיקום</Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {teams.map(team => (
-              <TableRow key={team.id}>
-                <TableCell>
-                  {team.name} #{team.number}
-                </TableCell>
-                <TableCell>{`${team.affiliation.name}, ${team.affiliation.city}`}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <EventQuickLinks event={event} hasAwards={hasAwards} />
+      <Typography variant="h2" gutterBottom>
+        קבוצות באירוע
+      </Typography>
+      <TeamList eventId={event.id} teams={teams} />
     </Container>
   );
 };
@@ -76,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const eventId = ctx.params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, awards } };
+  return { props: { event, teams, hasAwards: !!awards } };
 };
 
 export default Page;
