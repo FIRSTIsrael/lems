@@ -28,6 +28,7 @@ import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch
 import { localizedRoles, localizedDivisionSection } from '../../localization/roles';
 import QueuerJudgingTeamDisplay from '../../components/queueing/queuer-judging-team-display';
 import { localizeDivisionTitle } from '../../localization/event';
+import FilterButton from '../../components/queueing/filter-button';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -145,6 +146,7 @@ const Page: NextPage<Props> = ({
         color={division.color}
         error={connectionStatus === 'disconnected'} // No room to actually show the indicator
       >
+        {activeView === 0 && <FilterButton />}
         <Box sx={{ overflowY: 'auto', pb: `${NAVIGATION_HEIGHT + NAVIGATION_PADDING}px` }}>
           {activeView === 0 && (
             <>
