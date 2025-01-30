@@ -83,7 +83,13 @@ router.put(
       const updatedAward = [...awards].filter(a => a.name === awardName);
       updatedAward
         .sort((a, b) => a.place - b.place)
-        .forEach((award, index) => newAwards.push({ ...award, winner: winners[index] }));
+        .forEach((award, index) => {
+          const winner = winners[index];
+          if (typeof winner !== 'string') {
+            winner._id = new ObjectId(winner._id);
+          }
+          newAwards.push({ ...award, winner });
+        });
     });
 
     await Promise.all(
