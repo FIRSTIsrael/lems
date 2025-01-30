@@ -29,7 +29,7 @@ router.get(
       date: event.startDate,
       location: event.location,
       isDivision: event.enableDivisions,
-      divisionName: event.enableDivisions ? name : undefined
+      subtitle: event.enableDivisions ? `בית ${name}` : undefined
     });
   })
 );
