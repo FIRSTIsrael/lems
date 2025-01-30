@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import Grid, { Grid2Props } from '@mui/material/Grid2';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
 import theme from '../../lib/theme';
 
@@ -121,6 +122,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
             backgroundColor: 'rgba(0, 0, 0, 0.04)'
           }
         }}
+        expandIcon={<ExpandMoreIcon />}
       >
         <EventDescription
           event={event}
