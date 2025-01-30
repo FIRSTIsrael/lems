@@ -22,7 +22,15 @@ router.get(
       return;
     }
     const { _id, name, color } = req.division;
-    res.json({ id: String(_id), name, color, date: event.startDate, location: event.location });
+    res.json({
+      id: String(_id),
+      name: event.name,
+      color,
+      date: event.startDate,
+      location: event.location,
+      isDivision: event.enableDivisions,
+      divisionName: event.enableDivisions ? name : undefined
+    });
   })
 );
 

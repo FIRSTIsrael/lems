@@ -35,12 +35,32 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
             variant="contained"
             fullWidth
             sx={{ borderRadius: 2, minHeight: 25 }}
-            onClick={() => router.push(`/events/${event.id}/scoreboard`)}
+            onClick={() => router.push(`/events/${event.id}/awards`)}
           >
             פרסים
           </Button>
         </Grid>
       )}
+      <Grid size={{ xs: 6, md: 3 }}>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ borderRadius: 2, minHeight: 25 }}
+          onClick={() => router.push(`/events/${event.id}/schedule/field`)}
+        >
+          לוח זמנים - זירה
+        </Button>
+      </Grid>
+      <Grid size={{ xs: 6, md: 3 }}>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ borderRadius: 2, minHeight: 25 }}
+          onClick={() => router.push(`/events/${event.id}/schedule/judging`)}
+        >
+          לוח זמנים - שיפוט
+        </Button>
+      </Grid>
     </Grid>
   );
 };

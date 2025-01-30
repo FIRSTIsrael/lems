@@ -7,6 +7,8 @@ export interface PortalEvent {
   location: string;
   color: string;
   divisions?: PortalDivision[];
+  isDivision?: boolean;
+  divisionName?: string;
 }
 
 export interface PortalDivision {

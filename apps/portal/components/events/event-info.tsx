@@ -25,20 +25,6 @@ const EventInfo: React.FC<EventInfoProps> = ({ event, teamCount }) => {
       <Grid size={{ xs: 6, md: 3 }}>
         <Typography variant="body1">👥 {teamCount} קבוצות</Typography>
       </Grid>
-      {event.divisions?.length && (
-        <Grid size={{ xs: 6, md: 3 }}>
-          <Stack spacing={1} direction="row" alignItems="center">
-            <Box
-              component="span"
-              bgcolor={event.color}
-              width="1rem"
-              height="1rem"
-              borderRadius={1}
-            />
-            <Typography variant="body1">בית כלשהו</Typography>
-          </Stack>
-        </Grid>
-      )}
     </Grid>
   );
 };

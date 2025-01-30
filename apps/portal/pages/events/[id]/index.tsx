@@ -1,6 +1,6 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import dayjs from 'dayjs';
-import { Container, Paper, Stack, Typography } from '@mui/material';
+import { Box, Container, Paper, Stack, Typography } from '@mui/material';
 import { PortalEvent, PortalTeam } from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import LiveIcon from '../../../components/live-icon';
@@ -17,9 +17,19 @@ interface Props {
 const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
   const isLive = dayjs(event.date).isSame(dayjs(), 'day');
 
+  console.log('event', event);
+
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
       <Typography variant="h1">{event.name}</Typography>
+      {event.isDivision && (
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
+          <Typography variant="h6" color="text.secondary">
+            בית {event.divisionName}
+          </Typography>
+        </Stack>
+      )}
       {isLive && (
         <Paper sx={{ p: 2, my: 2, width: '100%' }}>
           <Stack direction="row" alignItems="center" spacing={2}>
