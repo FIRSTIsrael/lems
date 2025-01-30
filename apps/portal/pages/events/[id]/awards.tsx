@@ -1,19 +1,10 @@
 import { useRef, useEffect, useState } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
-import { Container, Box, Typography, Stack } from '@mui/material';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import {
-  AwardNames,
-  PortalAward,
-  PortalEvent,
-  CoreValuesAwardsTypes,
-  CoreValuesAwards,
-  PersonalAwardTypes,
-  PersonalAwards
-} from '@lems/types';
+import { Container, Box, Typography } from '@mui/material';
+import { AwardNames, PortalAward, PortalEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
-import { getColorByPlace } from '../../../lib/styling';
+import AwardWinner from '../../../components/events/award-winner';
 
 interface Props {
   awards: PortalAward[];
@@ -59,32 +50,26 @@ const Page: NextPage<Props> = ({ awards, event }) => {
       }}
     >
       <Typography variant="h1">פרסים</Typography>
-      <Typography gutterBottom>{event.name}</Typography>
+      <Typography sx={{ mb: 2 }} variant="body1" color="text.secondary">
+        {event.name}
+      </Typography>
 
       {Object.entries(restAwards).map(([awardName, awards]) => {
         if (awards.every(award => !award.winner)) return null; // Shouldn't happen but as a safeguard
-        const showTrophys = ![...CoreValuesAwardsTypes, ...PersonalAwardTypes].includes(
-          awardName as CoreValuesAwards | PersonalAwards
-        );
 
         return (
           <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
             <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
-            {awards.map(award => (
-              <Stack key={award.place} direction="row" spacing={1} mt={1}>
-                {typeof award.winner === 'string' ? (
-                  <Typography variant="body1">{award.winner}</Typography>
-                ) : (
-                  <>
-                    {showTrophys && (
-                      <EmojiEventsIcon sx={{ mr: 1, color: getColorByPlace(award.place) }} />
-                    )}
-                    <Typography>
-                      {award.winner?.name} #{award.winner?.number}
-                    </Typography>
-                  </>
-                )}
-              </Stack>
+            {awards.map((award, index) => (
+              <AwardWinner
+                key={index}
+                award={award}
+                winnerText={
+                  typeof award.winner === 'string'
+                    ? award.winner
+                    : `${award.winner?.name} #${award.winner?.number}`
+                }
+              />
             ))}
           </Box>
         );

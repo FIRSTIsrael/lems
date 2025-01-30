@@ -51,7 +51,7 @@ const Page: NextPage<Props> = ({ events }) => {
           </Typography>
           <LiveIcon />
         </Stack>
-        <Typography ml={1} variant="body1" color="text.secondary">
+        <Typography ml={1} variant="body1" color="text.secondary" gutterBottom>
           {dayjs().format('DD/MM/YYYY')}{' '}
         </Typography>
         <EventList events={activeEvents} emptyText="אין אירועים פעילים" />

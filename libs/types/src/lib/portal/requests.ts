@@ -16,6 +16,17 @@ export interface PortalEventStatus {
   isCompleted: boolean;
   field: {
     stage: 'practice' | 'ranking';
+    round: number;
+    match: {
+      number: number;
+      time: Date;
+    };
+  };
+  judging: {
+    session: {
+      number: number;
+      time: Date;
+    };
   };
 }
 

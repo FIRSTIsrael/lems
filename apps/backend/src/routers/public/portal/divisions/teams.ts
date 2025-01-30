@@ -66,15 +66,15 @@ router.get(
       time: scheduledTime
     };
 
-    const generalActivities: Array<PortalActivity<'general'>> = (req.division.schedule ?? []).map(
-      ({ name, startTime }) => ({ type: 'general', name, time: startTime })
-    );
+    const generalActivities: Array<PortalActivity<'general'>> = (req.division.schedule ?? [])
+      .filter(entry => entry.showOnDashboard)
+      .map(({ name, startTime }) => ({ type: 'general', name, time: startTime }));
 
     const result: Array<PortalActivity<'match' | 'session' | 'general'>> = [
       ...matches,
       session,
       ...generalActivities
-    ];
+    ].sort((a, b) => a.time.getTime() - b.time.getTime());
 
     res.json(result);
   })

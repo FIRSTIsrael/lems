@@ -5,6 +5,7 @@ import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
 import ScoreboardGrid from '../../../components/scoreboard-grid';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import LoadingAnimation from '../../../components/loading-animation';
 
 interface Props {
   event: PortalEvent;
@@ -14,12 +15,19 @@ const Page: NextPage<Props> = ({ event }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
-  const { data: scoreboard, isLoading } = useRealtimeData<PortalScore[]>(
-    `/events/${event.id}/scoreboard`
-  );
-  const { data: status, isLoading: statusLoading } = useRealtimeData<PortalEventStatus>(
-    `/events/${event.id}/status`
-  );
+  const {
+    data: scoreboard,
+    isLoading: scoresLoading,
+    error: scoresError
+  } = useRealtimeData<PortalScore[]>(`/events/${event.id}/scoreboard`);
+
+  const {
+    data: status,
+    isLoading: statusLoading,
+    error: statusError
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+
+  console.log(scoresLoading, scoresError, statusLoading, statusError);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -35,8 +43,6 @@ const Page: NextPage<Props> = ({ event }) => {
     return () => window.removeEventListener('resize', updateHeight);
   }, []);
 
-  // if (isLoading || statusLoading) return null;
-
   return (
     <Container
       maxWidth="md"
@@ -51,8 +57,12 @@ const Page: NextPage<Props> = ({ event }) => {
     >
       <Box sx={{ pb: 1 }}>
         <Typography variant="h1">לוח תוצאות</Typography>
-        <Typography gutterBottom>
-          {event.name} - {status.field.stage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}
+
+        <Typography color="text.secondary" gutterBottom>
+          {event.name}
+          {!statusLoading &&
+            !statusError &&
+            ` - ${status.field.stage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}`}
         </Typography>
       </Box>
       <Box
@@ -63,8 +73,8 @@ const Page: NextPage<Props> = ({ event }) => {
           mb: 2
         }}
       >
-        {isLoading && <Typography>טוען...</Typography>}
-        {!isLoading && <ScoreboardGrid data={scoreboard} />}
+        {(scoresLoading || scoresError) && <LoadingAnimation />}
+        {!scoresLoading && !scoresError && <ScoreboardGrid data={scoreboard} />}
       </Box>
     </Container>
   );

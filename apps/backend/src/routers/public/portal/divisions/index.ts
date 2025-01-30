@@ -1,13 +1,14 @@
 import express, { Request, Response } from 'express';
 import dayjs from 'dayjs';
 import asyncHandler from 'express-async-handler';
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import * as db from '@lems/database';
 import scoreboardRouter from './scoreboard';
 import awardsRouter from './awards';
 import scheduleRouter from './schedule';
 import teamsRouter from './teams';
 import divisionValidator from '../../../../middlewares/portal/division-validator';
+import { RobotGameMatch, JudgingSession } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 
@@ -53,9 +54,40 @@ router.get(
       return;
     }
 
-    const { currentStage, completed } = divisionState;
+    const matches = await db.getDivisionMatches(new ObjectId(req.division._id));
+    if (!matches) {
+      res.status(404).send('Matches not found');
+      return;
+    }
 
-    res.json({ isLive, isCompleted: completed, field: { stage: currentStage } });
+    const sessions = await db.getDivisionSessions(new ObjectId(req.division._id));
+
+    const { currentStage, completed, currentRound, activeMatch, loadedMatch } = divisionState;
+    const currentSession: WithId<JudgingSession> | undefined = sessions.find(
+      session =>
+        String(session.number) === String(divisionState.currentSession) &&
+        session.status !== 'completed'
+    );
+
+    let currentMatch: WithId<RobotGameMatch> | undefined;
+    if (loadedMatch) {
+      currentMatch = matches.find(match => match._id.equals(loadedMatch));
+    } else if (activeMatch) {
+      currentMatch = matches.find(match => match._id.equals(activeMatch));
+    } else {
+      currentMatch = matches.find(match => match.status !== 'completed' && match.stage !== 'test');
+    }
+
+    res.json({
+      isLive,
+      isCompleted: completed,
+      field: {
+        stage: currentStage,
+        round: currentRound,
+        match: { number: currentMatch?.number, time: currentMatch?.scheduledTime }
+      },
+      judging: { session: { number: currentSession?.number, time: currentSession?.scheduledTime } }
+    });
   })
 );
 
