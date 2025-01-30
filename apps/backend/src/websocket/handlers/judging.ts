@@ -358,7 +358,14 @@ export const handleUpdateAwardWinners = async (
     if (updatedAward.length === 0) return; // Award isn't handed out in this division
     updatedAward
       .sort((a, b) => a.place - b.place)
-      .forEach((award, index) => newAwards.push({ ...award, winner: winners[index] }));
+      .forEach((award, index) => {
+        const winner = winners[index];
+        if (typeof winner !== 'string') {
+          winner._id = new ObjectId(winner._id);
+          winner.divisionId = new ObjectId(winner.divisionId);
+        }
+        newAwards.push({ ...award, winner });
+      });
   });
 
   console.log(`🏆 Updating winners for awards in division ${divisionId}`);
@@ -398,13 +405,18 @@ export const handleAdvanceTeams = async (
     return;
   }
 
-  const advancementAwards: Array<Award> = teams.map((team, index) => ({
-    divisionId: new ObjectId(divisionId),
-    name: 'advancement',
-    index: -1,
-    place: index + 1,
-    winner: team
-  }));
+  const advancementAwards: Array<Award> = teams.map((team, index) => {
+    team._id = new ObjectId(team._id);
+    team.divisionId = new ObjectId(team.divisionId);
+
+    return {
+      divisionId: new ObjectId(divisionId),
+      name: 'advancement',
+      index: -1,
+      place: index + 1,
+      winner: team
+    };
+  });
 
   console.log(`🏆 Setting advancing teams for division ${divisionId}`);
   await db.deleteAwards({ divisionId: new ObjectId(divisionId), name: 'advancement' });

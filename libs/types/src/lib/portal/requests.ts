@@ -11,6 +11,14 @@ export interface PortalEvent {
   subtitle?: string;
 }
 
+export interface PortalEventStatus {
+  isLive: boolean;
+  isCompleted: boolean;
+  field: {
+    stage: 'practice' | 'ranking';
+  };
+}
+
 export interface PortalDivision {
   id: string;
   name: string;
@@ -29,7 +37,7 @@ export interface PortalTeam {
 
 export interface PortalAward {
   name: AwardNames;
-  place?: number;
+  place: number;
   winner?: PortalTeam | string;
 }
 

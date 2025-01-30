@@ -1,25 +1,41 @@
 import { useRef, useEffect, useState } from 'react';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box } from '@mui/material';
-import { PortalScore } from '@lems/types';
-import { fetchScoreboard } from '../../../lib/api';
-import ScoreboardGrid from 'apps/portal/components/scoreboard-grid';
+import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
+import { fetchEvent } from '../../../lib/api';
+import ScoreboardGrid from '../../../components/scoreboard-grid';
+import { useRealtimeData } from '../../../hooks/use-realtime-data';
 
 interface Props {
-  scoreboard: PortalScore[];
-  currentStage: 'practice' | 'ranking';
+  event: PortalEvent;
 }
 
-const Page: NextPage<Props> = ({ scoreboard, currentStage }) => {
+const Page: NextPage<Props> = ({ event }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
+  const { data: scoreboard, isLoading } = useRealtimeData<PortalScore[]>(
+    `/events/${event.id}/scoreboard`
+  );
+  const { data: status, isLoading: statusLoading } = useRealtimeData<PortalEventStatus>(
+    `/events/${event.id}/status`
+  );
+
   useEffect(() => {
-    if (containerRef.current) {
-      const topOffset = containerRef.current.getBoundingClientRect().top;
-      setContainerHeight(window.innerHeight - topOffset);
-    }
+    const updateHeight = () => {
+      if (containerRef.current) {
+        const topOffset = containerRef.current.getBoundingClientRect().top;
+        setContainerHeight(window.innerHeight - topOffset);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => window.removeEventListener('resize', updateHeight);
   }, []);
+
+  // if (isLoading || statusLoading) return null;
 
   return (
     <Container
@@ -36,7 +52,7 @@ const Page: NextPage<Props> = ({ scoreboard, currentStage }) => {
       <Box sx={{ pb: 1 }}>
         <Typography variant="h1">לוח תוצאות</Typography>
         <Typography gutterBottom>
-          {currentStage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}
+          {event.name} - {status.field.stage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}
         </Typography>
       </Box>
       <Box
@@ -47,7 +63,8 @@ const Page: NextPage<Props> = ({ scoreboard, currentStage }) => {
           mb: 2
         }}
       >
-        <ScoreboardGrid data={scoreboard} />
+        {isLoading && <Typography>טוען...</Typography>}
+        {!isLoading && <ScoreboardGrid data={scoreboard} />}
       </Box>
     </Container>
   );
@@ -55,8 +72,8 @@ const Page: NextPage<Props> = ({ scoreboard, currentStage }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-  const { scoreboard, currentStage } = await fetchScoreboard(eventId);
-  return { props: { scoreboard, currentStage } };
+  const { event } = await fetchEvent(eventId);
+  return { props: { event } };
 };
 
 export default Page;

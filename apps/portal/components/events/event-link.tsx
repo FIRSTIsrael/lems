@@ -1,4 +1,4 @@
-import router from 'next/router';
+import Link from 'next/link';
 import dayjs from 'dayjs';
 import {
   Accordion,
@@ -84,7 +84,8 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
         endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)', position: 'relative' }} />}
         fullWidth
         size="small"
-        onClick={() => router.push(`/events/${event.id}`)}
+        LinkComponent={Link}
+        href={`/events/${event.id}`}
       >
         <EventDescription
           event={event}
@@ -144,7 +145,8 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
               endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />}
               fullWidth
               size="small"
-              onClick={() => router.push(`/events/${division.id}`)}
+              LinkComponent={Link}
+              href={`/events/${division.id}`}
             >
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box bgcolor={division.color} width={24} height={24} borderRadius={1} />

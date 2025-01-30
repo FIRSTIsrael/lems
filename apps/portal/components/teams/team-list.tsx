@@ -6,7 +6,8 @@ import {
   TableCell,
   TableBody,
   TableContainer,
-  TableHead
+  TableHead,
+  Box
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { PortalTeam } from '@lems/types';
@@ -49,11 +50,19 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
               onClick={() => router.push(`/events/${eventId}/teams/${team.number}`)}
             >
               <TableCell>
-                {team.name} #{team.number}
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {team.name} #{team.number}
+                </Box>
               </TableCell>
-              <TableCell>{`${team.affiliation.name}, ${team.affiliation.city}`}</TableCell>
-              <TableCell sx={{ alignItems: 'center', display: 'flex' }}>
-                <ChevronLeftIcon />
+              <TableCell>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {`${team.affiliation.name}, ${team.affiliation.city}`}
+                </Box>
+              </TableCell>
+              <TableCell>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ChevronLeftIcon />
+                </Box>
               </TableCell>
             </TableRow>
           ))}

@@ -12,8 +12,9 @@ router.get(
   divisionCompleted,
   asyncHandler(async (req: Request, res: Response) => {
     const awards = await db.getDivisionAwards(new ObjectId(req.division._id));
-    const result: Array<PortalAward> = awards.map(award => {
-      const { name, place } = award;
+    const result: (PortalAward & { index: number })[] = awards.map(award => {
+      const { name, place, index } = award;
+      if (!award.winner) return { name, place, index };
 
       let winner: PortalTeam | string | undefined;
       if (typeof award.winner === 'string') {
@@ -23,7 +24,14 @@ router.get(
         winner = { id: String(_id), number, name, affiliation };
       }
 
-      return { name, place, winner };
+      return { name, place, winner, index };
+    });
+
+    result.sort((a, b) => {
+      if (a.index !== b.index) {
+        return b.index - a.index;
+      }
+      return a.place - b.place;
     });
 
     res.json(result);

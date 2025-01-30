@@ -53,9 +53,9 @@ router.get(
       return;
     }
 
-    const { currentStage } = divisionState;
+    const { currentStage, completed } = divisionState;
 
-    res.json({ isLive, currentStage });
+    res.json({ isLive, isCompleted: completed, field: { stage: currentStage } });
   })
 );
 

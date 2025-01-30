@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Button, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
@@ -9,8 +9,6 @@ interface EventQuickLinksProps {
 }
 
 const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) => {
-  const router = useRouter();
-
   return (
     <Grid
       container
@@ -24,7 +22,8 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           variant="contained"
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
-          onClick={() => router.push(`/events/${event.id}/scoreboard`)}
+          LinkComponent={Link}
+          href={`/events/${event.id}/scoreboard`}
         >
           לוח תוצאות
         </Button>
@@ -35,7 +34,8 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
             variant="contained"
             fullWidth
             sx={{ borderRadius: 2, minHeight: 25 }}
-            onClick={() => router.push(`/events/${event.id}/awards`)}
+            LinkComponent={Link}
+            href={`/events/${event.id}/awards`}
           >
             פרסים
           </Button>
@@ -46,7 +46,8 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           variant="contained"
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
-          onClick={() => router.push(`/events/${event.id}/schedule/field`)}
+          LinkComponent={Link}
+          href={`/events/${event.id}/teams`}
         >
           לוח זמנים - זירה
         </Button>
@@ -56,7 +57,8 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           variant="contained"
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
-          onClick={() => router.push(`/events/${event.id}/schedule/judging`)}
+          LinkComponent={Link}
+          href={`/events/${event.id}/teams`}
         >
           לוח זמנים - שיפוט
         </Button>

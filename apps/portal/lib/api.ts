@@ -1,4 +1,11 @@
-import { PortalActivity, PortalAward, PortalEvent, PortalScore, PortalTeam } from '@lems/types';
+import {
+  PortalActivity,
+  PortalAward,
+  PortalEvent,
+  PortalEventStatus,
+  PortalScore,
+  PortalTeam
+} from '@lems/types';
 
 class AuthorizationError extends Error {
   id: string;
@@ -17,7 +24,7 @@ const getApiBase = (forceClient = false) => {
   return url + '/public/portal';
 };
 
-const apiFetch = async (path: string, init?: RequestInit | undefined) => {
+export const apiFetch = async <T>(path: string, init?: RequestInit | undefined) => {
   const headers = { ...init?.headers };
   const response = await fetch(getApiBase() + path, {
     headers,
@@ -33,7 +40,7 @@ const apiFetch = async (path: string, init?: RequestInit | undefined) => {
   }
 
   const data = await response.json();
-  return data;
+  return data as T;
 };
 
 export const fetchEvents = async (): Promise<PortalEvent[]> => {
@@ -45,6 +52,11 @@ export const fetchEvent = async (id: string) => {
   const event: PortalEvent = await apiFetch(`/events/${id}`);
   const teams: PortalTeam[] = await apiFetch(`/events/${id}/teams`);
   return { event, teams };
+};
+
+export const fetchEventStatus = async (id: string) => {
+  const status = await apiFetch<PortalEventStatus>(`/events/${id}/status`);
+  return status;
 };
 
 export const fetchAwards = async (id: string) => {
@@ -60,24 +72,26 @@ export const fetchAwards = async (id: string) => {
 };
 
 export const fetchTeam = async (eventId: string, teamNumber: string) => {
-  const team: PortalTeam = await apiFetch(`/events/${eventId}/teams/${teamNumber}`);
+  const team = await apiFetch<PortalTeam>(`/events/${eventId}/teams/${teamNumber}`);
 
   let awards: PortalAward[] | null = null;
   try {
-    awards = await apiFetch(`/events/${eventId}/teams/${teamNumber}/awards`);
+    awards = await apiFetch<PortalAward[] | null>(`/events/${eventId}/teams/${teamNumber}/awards`);
   } catch {
     // Event not yet completed
   }
 
-  const schedule: PortalActivity<'general' | 'match' | 'session'>[] = await apiFetch(
+  const schedule = await apiFetch<PortalActivity<'general' | 'match' | 'session'>[]>(
     `/events/${eventId}/teams/${teamNumber}/schedule`
   );
 
-  return { team, awards, schedule };
+  const scores = await apiFetch<PortalScore[]>(`/events/${eventId}/teams/${teamNumber}/scores`);
+
+  return { team, awards, schedule, scores };
 };
 
 export const fetchScoreboard = async (eventId: string) => {
-  const scoreboard: PortalScore[] = await apiFetch(`/events/${eventId}/scoreboard`);
-  const { currentStage } = await apiFetch(`/events/${eventId}/status`);
-  return { scoreboard, currentStage };
+  const scoreboard = await apiFetch<PortalScore[]>(`/events/${eventId}/scoreboard`);
+  const { field } = await apiFetch<PortalEventStatus>(`/events/${eventId}/status`);
+  return { scoreboard, stage: field.stage };
 };

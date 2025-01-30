@@ -1,4 +1,6 @@
 import * as React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   AppBar,
   Box,
@@ -11,8 +13,6 @@ import {
   Button
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/MenuRounded';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 const pages = [
   {
@@ -26,7 +26,6 @@ const pages = [
 ];
 
 const ResponsiveAppBar = () => {
-  const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   return (
@@ -62,7 +61,7 @@ const ResponsiveAppBar = () => {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map(page => (
-                <MenuItem key={page.name} onClick={() => router.push(page.href)}>
+                <MenuItem key={page.name} component={Link} href={page.href}>
                   <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
                 </MenuItem>
               ))}
@@ -80,7 +79,8 @@ const ResponsiveAppBar = () => {
               width="164px"
               position="relative"
               sx={{ cursor: 'pointer' }}
-              onClick={() => router.push('/')}
+              component={Link}
+              href="/"
             >
               <Image
                 src="/assets/first-israel-horizontal-reverse.svg"
@@ -99,7 +99,8 @@ const ResponsiveAppBar = () => {
             width="164px"
             position="relative"
             sx={{ cursor: 'pointer' }}
-            onClick={() => router.push('/')}
+            component={Link}
+            href="/"
           >
             <Image
               src="/assets/first-israel-horizontal-reverse.svg"
@@ -112,7 +113,8 @@ const ResponsiveAppBar = () => {
             {pages.map(page => (
               <Button
                 key={page.name}
-                onClick={() => router.push(page.href)}
+                LinkComponent={Link}
+                href={page.href}
                 sx={{ my: 2, mx: 1, color: 'white', display: 'block' }}
               >
                 {page.name}

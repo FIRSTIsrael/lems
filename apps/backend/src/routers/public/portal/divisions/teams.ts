@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-import { PortalActivity, PortalAward, PortalTeam } from '@lems/types';
+import { PortalActivity, PortalAward, PortalScore, PortalTeam } from '@lems/types';
 import teamValidator from '../../../../middlewares/portal/team-validator';
 import divisionCompleted from '../../../../middlewares/portal/division-completed';
 
@@ -98,6 +98,41 @@ router.get(
 
       return { name, place, winner };
     });
+
+    res.json(result);
+  })
+);
+
+router.get(
+  '/:teamNumber/scores',
+  asyncHandler(async (req: Request, res: Response) => {
+    const divisionState = await db.getDivisionState({
+      divisionId: new ObjectId(req.division._id)
+    });
+
+    if (!divisionState) {
+      res.status(404).send('Event/Division state not found');
+      return;
+    }
+
+    const { _id, number, name, affiliation } = req.team;
+    const team = { id: String(_id), number, name, affiliation };
+    let scoresheets = await db.getTeamScoresheets(new ObjectId(req.team._id));
+    scoresheets = scoresheets.filter(scoresheet => scoresheet.stage === divisionState.currentStage);
+
+    const scores: Array<number> = scoresheets.map(scoresheet => {
+      if (
+        scoresheet.status !== 'ready' ||
+        scoresheet.data.score === undefined ||
+        scoresheet.data.score === null
+      ) {
+        return null;
+      }
+
+      return scoresheet.data.score;
+    });
+
+    const result: PortalScore = { team, scores, maxScore: Math.max(...scores) };
 
     res.json(result);
   })

@@ -9,7 +9,7 @@ interface ScoreboardGridProps {
   data: PortalScore[];
 }
 
-const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, ...props }) => {
+const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
   const localizedTheme = createTheme(theme, heIL);
   const isDesktop = useMediaQuery(localizedTheme.breakpoints.up('md'));
 

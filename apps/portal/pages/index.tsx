@@ -1,5 +1,5 @@
 import { NextPage, GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { Box, Button, Container, Paper, Stack, Typography } from '@mui/material';
@@ -13,8 +13,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  const router = useRouter();
-
   const activeEvents = events.filter(event => {
     const eventDate = dayjs(event.date);
     const today = dayjs();
@@ -63,7 +61,8 @@ const Page: NextPage<Props> = ({ events }) => {
           variant="contained"
           sx={{ width: { xs: '100%', md: '50%' }, borderRadius: 2, minHeight: 50 }}
           size="large"
-          onClick={() => router.push('/events')}
+          LinkComponent={Link}
+          href="/events"
         >
           לכל האירועים
         </Button>

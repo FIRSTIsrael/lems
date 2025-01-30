@@ -3,8 +3,11 @@ import asyncHandler from 'express-async-handler';
 import * as db from '@lems/database';
 import { PortalEvent } from '@lems/types';
 import divisionsRouter from './divisions/index';
+import { cache } from '../../../middlewares/cache';
 
 const router = express.Router({ mergeParams: true });
+
+router.use('/', cache(60));
 
 router.get(
   '/events',

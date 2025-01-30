@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { Scoresheet } from '@lems/types';
 import * as db from '@lems/database';
 import asyncHandler from 'express-async-handler';
-import { Scoresheet } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 

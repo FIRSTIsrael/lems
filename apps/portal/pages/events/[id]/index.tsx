@@ -1,24 +1,20 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
-import dayjs from 'dayjs';
 import { Box, Container, Paper, Stack, Typography } from '@mui/material';
 import { PortalEvent, PortalTeam } from '@lems/types';
-import { fetchAwards, fetchEvent } from '../../../lib/api';
+import { fetchAwards, fetchEvent, fetchEventStatus } from '../../../lib/api';
 import LiveIcon from '../../../components/live-icon';
 import EventInfo from '../../../components/events/event-info';
 import EventQuickLinks from '../../../components/events/event-quick-links';
-import TeamList from 'apps/portal/components/teams/team-list';
+import TeamList from '../../../components/teams/team-list';
 
 interface Props {
   event: PortalEvent;
   teams: PortalTeam[];
+  isLive: boolean;
   hasAwards: boolean;
 }
 
-const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
-  const isLive = dayjs(event.date).isSame(dayjs(), 'day');
-
-  console.log('event', event);
-
+const Page: NextPage<Props> = ({ event, teams, isLive, hasAwards }) => {
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
       <Typography variant="h1">{event.name}</Typography>
@@ -38,6 +34,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
             </Typography>
             <LiveIcon />
           </Stack>
+          {/* TODO */}
           <Typography variant="h2">Event status info</Typography>
         </Paper>
       )}
@@ -53,9 +50,10 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
+  const { isLive } = await fetchEventStatus(eventId);
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, hasAwards: !!awards } };
+  return { props: { event, teams, hasAwards: !!awards, isLive } };
 };
 
 export default Page;
