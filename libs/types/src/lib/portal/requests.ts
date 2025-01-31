@@ -93,7 +93,7 @@ export type PortalActivity<T extends 'match' | 'session' | 'general'> = T extend
 export interface PortalSchedule {
   columns: { id: string; name: string }[];
   rows: Record<
-    string,
+    number,
     {
       number: number;
       data: ((PortalTeam & { column: string }) | null)[];

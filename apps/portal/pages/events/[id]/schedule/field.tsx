@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import dayjs from 'dayjs';
 import {
   TableContainer,
   Table,
@@ -83,7 +84,7 @@ const Page: NextPage<Props> = ({ event }) => {
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                           <TableCell>{teams.number}</TableCell>
-                          <TableCell>{time}</TableCell>
+                          <TableCell>{dayjs.unix(Number(time)).format('HH:mm')}</TableCell>
                           {round.schedule.columns.map(column => {
                             const team = teams.data.find(t => t?.column === column.id);
                             return (

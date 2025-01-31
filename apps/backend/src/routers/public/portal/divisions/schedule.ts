@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 import { ObjectId } from 'mongodb';
 import dayjs from 'dayjs';
 import * as db from '@lems/database';
-import { PortalActivity, PortalSchedule, RobotGameMatch } from '@lems/types';
+import { PortalActivity, PortalSchedule } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 
@@ -40,7 +40,7 @@ router.get(
     const rows = {};
 
     for (const session of sessions) {
-      const startTime = dayjs(session.scheduledTime).format('HH:mm');
+      const startTime = dayjs(session.scheduledTime).unix();
       const team = teams.find(team => String(team._id) === String(session.teamId));
       const room = rooms.find(room => String(room._id) === String(session.roomId));
 
@@ -115,7 +115,8 @@ router.get(
         if (!acc[match.stage][match.round]) {
           acc[match.stage][match.round] = { columns, rows: {} };
         }
-        acc[match.stage][match.round].rows[dayjs(match.scheduledTime).format('HH:mm')] = {
+        const startTime = dayjs(match.scheduledTime).unix();
+        acc[match.stage][match.round].rows[startTime] = {
           number: match.number,
           data: matchTeams
         };

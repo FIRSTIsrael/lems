@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import dayjs from 'dayjs';
 import {
   TableContainer,
   Table,
@@ -9,8 +10,7 @@ import {
   TableBody,
   Paper,
   Container,
-  Box,
-  Stack
+  Box
 } from '@mui/material';
 import { PortalEvent, PortalJudgingSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
@@ -64,7 +64,7 @@ const Page: NextPage<Props> = ({ event }) => {
                   {Object.entries(schedule.rows).map(([time, session]) => (
                     <TableRow key={time} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>{session.number}</TableCell>
-                      <TableCell>{time}</TableCell>
+                      <TableCell>{dayjs.unix(Number(time)).format('HH:mm')}</TableCell>
                       {schedule.columns.map(column => {
                         const team = session.data.find(t => t?.column === column.id);
                         return (
