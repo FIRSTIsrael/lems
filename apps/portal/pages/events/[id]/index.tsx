@@ -27,7 +27,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
       {event.isDivision && (
         <Stack direction="row" spacing={2} alignItems="center">
           <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="body1" color="text.secondary">
             {event.subtitle}
           </Typography>
         </Stack>

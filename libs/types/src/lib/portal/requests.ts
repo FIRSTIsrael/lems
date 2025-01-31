@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { AwardNames, Status } from '../constants';
 
 export interface PortalEvent {
@@ -88,3 +89,27 @@ export type PortalActivity<T extends 'match' | 'session' | 'general'> = T extend
   : T extends 'session'
     ? SessionActivity
     : GeneralActivity;
+
+export interface PortalSchedule {
+  columns: { id: string; name: string }[];
+  rows: Record<
+    string,
+    {
+      number: number;
+      data: ((PortalTeam & { column: string }) | null)[];
+    }
+  >;
+}
+
+export interface PortalJudgingSchedule extends PortalSchedule {
+  type: 'judging';
+}
+
+export interface PortalFieldSchedule {
+  type: 'field';
+  rounds: {
+    stage: 'practice' | 'ranking';
+    number: number;
+    schedule: PortalSchedule;
+  }[];
+}

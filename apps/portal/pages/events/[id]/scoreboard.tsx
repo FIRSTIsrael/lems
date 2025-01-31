@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { Container, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
 import ScoreboardGrid from '../../../components/scoreboard-grid';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../components/loading-animation';
+import { localizedMatchStage } from 'apps/portal/lib/localization';
 
 interface Props {
   event: PortalEvent;
@@ -26,8 +27,6 @@ const Page: NextPage<Props> = ({ event }) => {
     isLoading: statusLoading,
     error: statusError
   } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
-
-  console.log(scoresLoading, scoresError, statusLoading, statusError);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -58,12 +57,16 @@ const Page: NextPage<Props> = ({ event }) => {
       <Box sx={{ pb: 1 }}>
         <Typography variant="h1">לוח תוצאות</Typography>
 
-        <Typography color="text.secondary" gutterBottom>
-          {event.name}
-          {!statusLoading &&
-            !statusError &&
-            ` - ${status.field.stage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}`}
-        </Typography>
+        <Stack direction="row" spacing={2} alignItems="center">
+          {event.isDivision && (
+            <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
+          )}
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            {event.name}
+            {event.isDivision && ` - ${event.subtitle}`}
+            {!statusLoading && !statusError && `: מקצי ${localizedMatchStage[status.field.stage]}`}
+          </Typography>
+        </Stack>
       </Box>
       <Box
         sx={{

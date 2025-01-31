@@ -1,10 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
-import { Container, Box, Typography } from '@mui/material';
+import { Container, Box, Typography, Stack } from '@mui/material';
 import { AwardNames, PortalAward, PortalEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import AwardWinner from '../../../components/events/award-winner';
+import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
 
 interface Props {
   awards: PortalAward[];
@@ -50,9 +51,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
       }}
     >
       <Typography variant="h1">פרסים</Typography>
-      <Typography sx={{ mb: 2 }} variant="body1" color="text.secondary">
-        {event.name}
-      </Typography>
+      <StyledEventSubtitle event={event} />
 
       {Object.entries(restAwards).map(([awardName, awards]) => {
         if (awards.every(award => !award.winner)) return null; // Shouldn't happen but as a safeguard

@@ -9,6 +9,7 @@ import {
   Typography
 } from '@mui/material';
 import { PortalScore } from '@lems/types';
+import { localizedMatchStage } from '../../lib/localization';
 
 interface TeamRobotScoresProps {
   score: PortalScore;
@@ -20,7 +21,7 @@ const TeamRobotScores: React.FC<TeamRobotScoresProps> = ({ score, currentStage }
     <Paper sx={{ p: 2, height: '100%' }}>
       <Typography variant="h2">ביצועי הרובוט</Typography>
       <Typography color="text.secondary" gutterBottom>
-        {currentStage === 'practice' ? 'מקצי אימונים' : 'מקצי דירוג'}
+        מקצי {localizedMatchStage[currentStage]}
       </Typography>
       <TableContainer>
         <Table>

@@ -128,7 +128,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           event={event}
           includeDate={includeDate}
           isDesktop={isDesktop}
-          width="97%" // I don't know how to exclude the icon from the width calculation on the button, this is a fix for now
+          width="100%"
         />
       </AccordionSummary>
       <AccordionDetails sx={{ px: 2, py: 0, mt: 1 }}>

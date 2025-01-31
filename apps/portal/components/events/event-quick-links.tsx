@@ -47,7 +47,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${event.id}/teams`}
+          href={`/events/${event.id}/schedule/field`}
         >
           לוח זמנים - זירה
         </Button>
@@ -58,7 +58,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${event.id}/teams`}
+          href={`/events/${event.id}/schedule/judging`}
         >
           לוח זמנים - שיפוט
         </Button>

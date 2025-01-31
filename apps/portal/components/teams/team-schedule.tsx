@@ -1,6 +1,7 @@
 import { Divider, Paper, Stack, Typography } from '@mui/material';
-import { PortalActivity } from '@lems/types';
+import { PortalActivity, RobotGameMatchStage } from '@lems/types';
 import dayjs from 'dayjs';
+import { localizedMatchStage } from '../../lib/localization';
 
 interface TeamScheduleProps {
   schedule: PortalActivity<'match' | 'session' | 'general'>[];
@@ -26,7 +27,7 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
             </Typography>
             <Typography variant="body1">
               {activity.type === 'match' &&
-                `מקצה ${activity.stage === 'practice' ? 'אימונים' : 'דירוג'} #${activity.round} - שולחן ${activity.table} (#${activity.number})`}
+                `מקצה ${localizedMatchStage[activity.stage as RobotGameMatchStage]} #${activity.round} - שולחן ${activity.table} (#${activity.number})`}
               {activity.type === 'session' &&
                 `מפגש שיפוט - חדר ${activity.room} (#${activity.number})`}
               {activity.type === 'general' && activity.name}

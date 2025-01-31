@@ -3,6 +3,7 @@ import {
   PortalAward,
   PortalEvent,
   PortalEventStatus,
+  PortalSchedule,
   PortalScore,
   PortalTeam
 } from '@lems/types';
@@ -94,4 +95,9 @@ export const fetchScoreboard = async (eventId: string) => {
   const scoreboard = await apiFetch<PortalScore[]>(`/events/${eventId}/scoreboard`);
   const { field } = await apiFetch<PortalEventStatus>(`/events/${eventId}/status`);
   return { scoreboard, stage: field.stage };
+};
+
+export const fetchSchedule = async (eventId: string, type: 'field' | 'judging') => {
+  const schedule = await apiFetch<PortalSchedule>(`/events/${eventId}/schedule/${type}`);
+  return schedule;
 };

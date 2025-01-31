@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useMediaQuery } from '@mui/material';
+import { Box, Typography, useMediaQuery } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { heIL } from '@mui/x-data-grid/locales';
 import { PortalScore } from '@lems/types';
@@ -13,7 +13,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
   const localizedTheme = createTheme(theme, heIL);
   const isDesktop = useMediaQuery(localizedTheme.breakpoints.up('md'));
 
-  const matches = data[0].scores.length;
+  const matches = data[0]?.scores.length ?? 1;
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
       field: 'teamName',
@@ -47,6 +47,13 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
         rows={data}
         columns={columns}
         getRowId={row => row.team.id}
+        slots={{
+          noRowsOverlay: () => (
+            <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+              <Typography variant="body1">אין תוצאות</Typography>
+            </Box>
+          )
+        }}
         initialState={{
           sorting: {
             sortModel: [{ field: 'maxScore', sort: 'desc' }]

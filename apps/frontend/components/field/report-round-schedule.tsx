@@ -111,7 +111,7 @@ const ReportRoundSchedule: React.FC<ReportRoundScheduleProps> = ({
             <TableCell align="center">סיום</TableCell>
             {tables.map(table => (
               <TableCell key={table._id.toString()} align="center">
-                {`שולחן ${table.name}`}
+                שולחן {table.name}
               </TableCell>
             ))}
           </TableRow>
