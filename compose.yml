@@ -60,8 +60,8 @@ services:
 
   portal:
     build:
-      dockerfile: Dockerfile
-      context: ./apps/portal
+      dockerfile: apps/portal/Dockerfile
+      context: .
       args:
         BASE_URL: ${BASE_URL}
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
