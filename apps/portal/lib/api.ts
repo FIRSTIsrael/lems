@@ -97,7 +97,7 @@ export const fetchScoreboard = async (eventId: string) => {
   return { scoreboard, stage: field.stage };
 };
 
-export const fetchSchedule = async (eventId: string, type: 'field' | 'judging') => {
-  const schedule = await apiFetch<PortalSchedule>(`/events/${eventId}/schedule/${type}`);
+export const fetchGeneralSchedule = async (eventId: string) => {
+  const schedule = await apiFetch<PortalSchedule>(`/events/${eventId}/schedule`);
   return schedule;
 };

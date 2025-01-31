@@ -8,9 +8,9 @@ import { PortalActivity, PortalSchedule, RobotGameMatch } from '@lems/types';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', (req: Request, res: Response) => {
-  const generalActivities: Array<PortalActivity<'general'>> = (req.division.schedule ?? []).map(
-    ({ name, startTime }) => ({ type: 'general', name, time: startTime })
-  );
+  const generalActivities: Array<PortalActivity<'general'>> = (req.division.schedule ?? [])
+    .filter(activity => activity.showOnDashboard)
+    .map(({ name, startTime }) => ({ type: 'general', name, time: startTime }));
   res.json(generalActivities);
 });
 
@@ -37,7 +37,6 @@ router.get(
 
     const columns = rooms.map(room => ({ id: String(room._id), name: room.name }));
 
-    // Group sessions by scheduled time, sort array by rooms
     const rows = {};
 
     for (const session of sessions) {

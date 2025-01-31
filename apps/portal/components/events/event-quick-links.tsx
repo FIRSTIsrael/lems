@@ -63,6 +63,17 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           לוח זמנים - שיפוט
         </Button>
       </Grid>
+      <Grid size={{ xs: 6, md: 3 }}>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ borderRadius: 2, minHeight: 25 }}
+          LinkComponent={Link}
+          href={`/events/${event.id}/schedule/general`}
+        >
+          לוח זמנים כללי
+        </Button>
+      </Grid>
     </Grid>
   );
 };
