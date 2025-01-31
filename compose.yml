@@ -65,7 +65,7 @@ services:
       args:
         BASE_URL: ${BASE_URL}
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
-      image: ${REGISTRY}/fll-events:${IMAGE_TAG}
+    image: ${REGISTRY}/fll-events:${IMAGE_TAG}
     ports:
       - '3000:3000'
     networks:
