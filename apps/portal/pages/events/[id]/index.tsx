@@ -7,6 +7,7 @@ import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import SearchBar from 'apps/portal/components/search-bar';
 
 interface Props {
   event: PortalEvent;
@@ -23,15 +24,20 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
-      <Typography variant="h1">{event.name}</Typography>
-      {event.isDivision && (
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
-          <Typography variant="body1" color="text.secondary">
-            {event.subtitle}
-          </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack>
+          <Typography variant="h1">{event.name}</Typography>
+          {event.isDivision && (
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
+              <Typography variant="body1" color="text.secondary">
+                {event.subtitle}
+              </Typography>
+            </Stack>
+          )}
         </Stack>
-      )}
+        <SearchBar teams={teams} />
+      </Stack>
       <EventInfo event={event} teamCount={teams.length} />
       {!isLoading && !error && status.isLive && <EventStatus event={event} status={status} />}
       <EventQuickLinks event={event} hasAwards={hasAwards} />
