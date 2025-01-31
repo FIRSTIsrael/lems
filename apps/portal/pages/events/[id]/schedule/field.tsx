@@ -20,6 +20,8 @@ import LoadingAnimation from '../../../../components/loading-animation';
 import { localizedMatchStage } from '../../../../lib/localization';
 import theme from '../../../../lib/theme';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
+import { useEffect } from 'react';
+import dayjs from 'dayjs';
 
 interface Props {
   event: PortalEvent;
@@ -32,6 +34,23 @@ const Page: NextPage<Props> = ({ event }) => {
     error
   } = useRealtimeData<PortalFieldSchedule>(`/events/${event.id}/schedule/field`);
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const scrollToCurrentRound = (roundIndex: number) => {
+    const element = document.getElementById(`paper-${roundIndex}`);
+    element?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+  };
+
+  useEffect(() => {
+    if (!schedule?.rounds) return;
+
+    const CurrentRound = schedule.rounds.findLastIndex(round =>
+      dayjs(
+        `${dayjs().format('YYYY-MM-DD')} ${Object.keys(round.schedule.rows).slice(-1)[0]}`
+      ).isBefore(dayjs())
+    );
+
+    scrollToCurrentRound(CurrentRound);
+  }, [schedule]);
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
@@ -48,7 +67,7 @@ const Page: NextPage<Props> = ({ event }) => {
         {!isLoading && !error && (
           <Stack spacing={2} mt={2}>
             {schedule.rounds.map((round, index) => (
-              <Paper key={index} sx={{ p: 2 }}>
+              <Paper id={`paper-${index}`} key={index} sx={{ p: 2 }}>
                 <TableContainer>
                   <Table>
                     <TableHead>
