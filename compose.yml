@@ -58,6 +58,21 @@ services:
       - lems-network
     restart: always
 
+  portal:
+    build:
+      dockerfile: Dockerfile
+      context: ./apps/portal
+      args:
+        BASE_URL: ${BASE_URL}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      image: ${REGISTRY}/fll-events:${IMAGE_TAG}
+    ports:
+      - '3000:3000'
+    networks:
+      - lems-network
+    restart: always
+
+
 networks:
   lems-network:
     driver: bridge

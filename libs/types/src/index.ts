@@ -17,3 +17,4 @@ export * from './lib/schemas/award';
 export * from './lib/constants';
 export * from './lib/websocket';
 export * from './lib/scheduler';
+export * from './lib/portal/requests';

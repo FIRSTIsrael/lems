@@ -5,10 +5,10 @@
   "author": "FIRST Israel",
   "prettier": "@firstisrael/prettier-config",
   "scripts": {
-    "dev": "npx nx run-many --target=serve --projects=backend,frontend",
-    "build": "npx nx run-many --target=build --projects=backend,frontend",
+    "dev": "npx nx run-many --target=serve --projects=backend,frontend,portal",
+    "build": "npx nx run-many --target=build --projects=backend,frontend,portal",
     "scheduler": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
-    "lint": "npx nx run-many --target=lint --projects=backend,frontend"
+    "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal"
   },
   "private": true,
   "dependencies": {
@@ -23,7 +23,6 @@
     "@mui/material": "^6.4.0",
     "@mui/x-data-grid": "^7.23.5",
     "@mui/x-date-pickers": "^7.23.3",
-    "@nx/next": "20.3.2",
     "@types/grecaptcha": "^3.0.9",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
@@ -58,6 +57,7 @@
     "socket.io-client": "^4.8.1",
     "stylis": "^4.3.4",
     "stylis-plugin-rtl": "^2.1.1",
+    "swr": "^2.3.0",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
     "winston": "^3.17.0"
@@ -70,6 +70,7 @@
     "@nx/eslint-plugin": "20.3.2",
     "@nx/express": "20.3.2",
     "@nx/js": "20.3.2",
+    "@nx/next": "20.3.2",
     "@nx/node": "20.3.2",
     "@nx/react": "20.3.2",
     "@nx/webpack": "20.3.2",

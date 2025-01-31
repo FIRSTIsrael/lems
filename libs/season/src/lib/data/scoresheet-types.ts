@@ -12,14 +12,14 @@ export interface MissionClauseSchema {
 export interface MissionSchema {
   id: string;
   clauses: Array<MissionClauseSchema>;
-  calculation: (...args: Array<boolean | string | number | string[]>) => number;
+  calculation: (...args: Array<boolean | string | number | string[] | null>) => number;
   noEquipment?: boolean;
 }
 
 export interface ScoresheetSchema {
   season: string;
   missions: Array<MissionSchema>;
-  validators: Array<(missions: { [key: string]: Array<boolean | string | number> }) => void>;
+  validators: Array<(missions: { [key: string]: Array<boolean | string | number | null> }) => void>;
 }
 
 export class ScoresheetError extends Error {
