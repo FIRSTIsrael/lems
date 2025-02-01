@@ -49,7 +49,8 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
               onClick={() => router.push(`/events/${eventId}/teams/${team.number}`)}
             >
               <TableCell>
-                {team.name} #{team.number}
+                {team.name}
+                <br />#{team.number}
               </TableCell>
               <TableCell>
                 {team.affiliation.name}, {team.affiliation.city}
