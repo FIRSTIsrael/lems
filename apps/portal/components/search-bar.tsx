@@ -14,7 +14,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ teams }) => {
 
   const options = teams
     .sort((a, b) => a.number - b.number)
-    .map(team => `${team.number} - ${team.name}`);
+    .map(team => `#${team.number} - ${team.name}`);
 
   const handleSearch = (event: any, value: string) => {
     setSearchTerm(value);
