@@ -7,12 +7,16 @@ import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 import EventList from '../components/events/event-list';
 import LiveIcon from '../components/live-icon';
+import PageError from '../components/page-error';
+import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants';
 
 interface Props {
   events: Array<PortalEvent>;
 }
 
 const Page: NextPage<Props> = ({ events }) => {
+  if (events === undefined) return <PageError statusCode={404} />
+
   const activeEvents = events.filter(event => {
     const eventDate = dayjs(event.date);
     const today = dayjs();
@@ -72,7 +76,12 @@ const Page: NextPage<Props> = ({ events }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const events = await fetchEvents();
+  let events: PortalEvent[] = []
+  // We cannot reach the backend while initial build
+  if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) {
+    events = await fetchEvents();
+  }
+
   return {
     props: { events },
     revalidate: 10 * 60 // 10 minutes

@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
-import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import { Container, Box, Typography } from '@mui/material';
 import { AwardNames, PortalAward, PortalEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
+import PageError from '../../../components/page-error';
 
 interface Props {
   awards: PortalAward[];
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ awards, event }) => {
+  if (!event) return <PageError statusCode={404} />
+
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
@@ -102,5 +105,10 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
     revalidate: 10 * 60 // 10 minutes
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: true };
+}
 
 export default Page;

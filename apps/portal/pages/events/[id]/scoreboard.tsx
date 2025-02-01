@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { NextPage, GetStaticProps, GetStaticPropsContext } from 'next';
+import { NextPage, GetStaticProps, GetStaticPropsContext, GetStaticPaths } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
@@ -7,12 +7,15 @@ import { localizedMatchStage } from '../../../lib/localization';
 import ScoreboardGrid from '../../../components/scoreboard-grid';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../components/loading-animation';
+import PageError from '../../../components/page-error';
 
 interface Props {
   event: PortalEvent;
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  if (!event) return <PageError statusCode={404} />
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -91,5 +94,10 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
     revalidate: 10 * 60 // 10 minutes
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: true };
+}
 
 export default Page;

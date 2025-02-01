@@ -1,4 +1,4 @@
-import { NextPage, GetStaticProps, GetStaticPropsContext } from 'next';
+import { NextPage, GetStaticProps, GetStaticPropsContext, GetStaticPaths } from 'next';
 import { Container } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
@@ -16,6 +16,7 @@ import TeamAwards from '../../../../components/teams/team-awards';
 import TeamScores from '../../../../components/teams/team-scores';
 import LoadingAnimation from '../../../../components/loading-animation';
 import EventStatus from '../../../../components/events/event-status';
+import PageError from '../../../../components/page-error';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 
 interface Props {
@@ -25,6 +26,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ team, event, awards }) => {
+  if (!team) return <PageError statusCode={404} />
+
   const {
     data: scores,
     isLoading: scoresLoading,
@@ -78,5 +81,10 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
   const { event } = await fetchEvent(eventId);
   return { props: { team, awards, event } };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: true };
+}
 
 export default Page;
