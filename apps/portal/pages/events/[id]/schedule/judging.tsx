@@ -60,7 +60,8 @@ const Page: NextPage<Props> = ({ event }) => {
                       sx={{
                         position: 'sticky',
                         left: 0,
-                        background: 'white'
+                        background: 'white',
+                        boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
                       }}
                     >
                       <Typography fontWeight={500}>זמן התחלה</Typography>
@@ -80,7 +81,8 @@ const Page: NextPage<Props> = ({ event }) => {
                         sx={{
                           position: 'sticky',
                           left: 0,
-                          background: 'white'
+                          background: 'white',
+                          boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
                         }}
                       >
                         {dayjs.unix(Number(time)).format('HH:mm')}

@@ -52,11 +52,17 @@ const Page: NextPage<Props> = ({ event }) => {
               <Paper key={index} sx={{ p: 2 }}>
                 <TableContainer>
                   <Table>
-                    <TableHead>
+                    <TableHead sx={{ position: 'sticky', top: 0, zIndex: 10, background: 'white' }}>
                       <TableRow>
                         <TableCell
-                          colSpan={round.schedule.columns.length + 2}
                           align={isDesktop ? 'center' : 'left'}
+                          sx={{
+                            position: 'sticky',
+                            left: 0,
+                            background: 'white',
+                            width: 'fit-content', // Makes the width fit the content
+                            whiteSpace: 'nowrap' // Prevents wrapping
+                          }}
                         >
                           <Typography fontWeight={500}>
                             סבב {localizedMatchStage[round.stage]} #{round.number}
@@ -64,14 +70,15 @@ const Page: NextPage<Props> = ({ event }) => {
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell>
+                        <TableCell sx={{ textAlign: 'center' }}>
                           <Typography fontWeight={500}>מקצה</Typography>
                         </TableCell>
                         <TableCell
                           sx={{
                             position: 'sticky',
                             left: 0,
-                            background: 'white'
+                            background: 'white',
+                            boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
                           }}
                         >
                           <Typography fontWeight={500}>זמן התחלה</Typography>
@@ -83,18 +90,20 @@ const Page: NextPage<Props> = ({ event }) => {
                         ))}
                       </TableRow>
                     </TableHead>
+
                     <TableBody>
                       {Object.entries(round.schedule.rows).map(([time, teams]) => (
                         <TableRow
                           key={time}
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                          <TableCell>{teams.number}</TableCell>
+                          <TableCell sx={{ textAlign: 'center' }}>{teams.number}</TableCell>
                           <TableCell
                             sx={{
                               position: 'sticky',
                               left: 0,
-                              background: 'white'
+                              background: 'white',
+                              boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
                             }}
                           >
                             {dayjs.unix(Number(time)).format('HH:mm')}
