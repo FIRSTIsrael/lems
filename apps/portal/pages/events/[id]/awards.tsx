@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
-import { Container, Box, Typography, Stack } from '@mui/material';
+import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
+import { Container, Box, Typography } from '@mui/material';
 import { AwardNames, PortalAward, PortalEvent } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
@@ -91,13 +91,16 @@ const Page: NextPage<Props> = ({ awards, event }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
   const { event } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
   if (awards === null) return { redirect: { destination: `/events/${eventId}`, permanent: false } };
 
-  return { props: { awards, event } };
+  return {
+    props: { awards, event },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;

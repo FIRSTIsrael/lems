@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -71,9 +71,12 @@ const Page: NextPage<Props> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const events = await fetchEvents();
-  return { props: { events } };
+  return {
+    props: { events },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;

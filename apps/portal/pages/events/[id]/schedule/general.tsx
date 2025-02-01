@@ -1,7 +1,7 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import dayjs from 'dayjs';
 import { Typography, Container, Stack, Divider, Paper } from '@mui/material';
-import { PortalActivity, PortalEvent, RobotGameMatchStage } from '@lems/types';
+import { PortalActivity, PortalEvent } from '@lems/types';
 import { fetchEvent, fetchGeneralSchedule } from '../../../../lib/api';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
@@ -36,12 +36,15 @@ const Page: NextPage<Props> = ({ event, schedule }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
 
   const { event } = await fetchEvent(eventId);
   const schedule = await fetchGeneralSchedule(eventId);
-  return { props: { event, schedule } };
+  return {
+    props: { event, schedule },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
@@ -106,9 +106,12 @@ const Page: NextPage<Props> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const events = await fetchEvents();
-  return { props: { events } };
+  return {
+    props: { events },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;

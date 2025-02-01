@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import dayjs from 'dayjs';
 import {
   TableContainer,
@@ -83,11 +83,14 @@ const Page: NextPage<Props> = ({ event }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
 
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  return {
+    props: { event },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;
