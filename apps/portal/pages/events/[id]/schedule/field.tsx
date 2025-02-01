@@ -67,7 +67,13 @@ const Page: NextPage<Props> = ({ event }) => {
                         <TableCell>
                           <Typography fontWeight={500}>מקצה</Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          sx={{
+                            position: 'sticky',
+                            left: 0,
+                            background: 'white'
+                          }}
+                        >
                           <Typography fontWeight={500}>זמן התחלה</Typography>
                         </TableCell>
                         {round.schedule.columns.map(column => (
@@ -84,7 +90,15 @@ const Page: NextPage<Props> = ({ event }) => {
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                           <TableCell>{teams.number}</TableCell>
-                          <TableCell>{dayjs.unix(Number(time)).format('HH:mm')}</TableCell>
+                          <TableCell
+                            sx={{
+                              position: 'sticky',
+                              left: 0,
+                              background: 'white'
+                            }}
+                          >
+                            {dayjs.unix(Number(time)).format('HH:mm')}
+                          </TableCell>
                           {round.schedule.columns.map(column => {
                             const team = teams.data.find(t => t?.column === column.id);
                             return (
