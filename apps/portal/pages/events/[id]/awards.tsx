@@ -6,7 +6,6 @@ import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
-import PageError from '../../../components/page-error';
 
 interface Props {
   awards: PortalAward[];

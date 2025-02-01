@@ -7,7 +7,6 @@ import { localizedMatchStage } from '../../../lib/localization';
 import ScoreboardGrid from '../../../components/scoreboard-grid';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../components/loading-animation';
-import PageError from '../../../components/page-error';
 
 interface Props {
   event: PortalEvent;

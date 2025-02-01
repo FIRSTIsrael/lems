@@ -7,7 +7,6 @@ import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 import EventList from '../components/events/event-list';
 import LiveIcon from '../components/live-icon';
-import PageError from '../components/page-error';
 import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants';
 
 interface Props {
