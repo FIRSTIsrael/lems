@@ -15,8 +15,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  if (events === undefined) return <PageError statusCode={404} />
-
   const activeEvents = events.filter(event => {
     const eventDate = dayjs(event.date);
     const today = dayjs();

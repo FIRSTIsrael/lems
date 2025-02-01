@@ -4,7 +4,6 @@ import { Typography, Container, Stack, Divider, Paper } from '@mui/material';
 import { PortalActivity, PortalEvent } from '@lems/types';
 import { fetchEvent, fetchGeneralSchedule } from '../../../../lib/api';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
-import PageError from '../../../../components/page-error';
 
 interface Props {
   event: PortalEvent;
@@ -12,8 +11,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, schedule }) => {
-  if (!event) return <PageError statusCode={404} />
-
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
       <Typography variant="h2">לוח זמנים כללי</Typography>
@@ -52,7 +49,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // We don't know the events at build time, Next.js will generate the pages at runtime.
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: 'blocking' };
 }
 
 export default Page;

@@ -6,7 +6,6 @@ import EventInfo from '../../../components/events/event-info';
 import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
-import PageError from '../../../components/page-error';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 
 interface Props {
@@ -16,8 +15,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
-  if (!event) return <PageError statusCode={404} />
-
   const {
     data: status,
     isLoading,
@@ -58,7 +55,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // We don't know the events at build time, Next.js will generate the pages at runtime.
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: 'blocking' };
 }
 
 export default Page;

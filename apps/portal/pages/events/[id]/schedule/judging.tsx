@@ -17,15 +17,12 @@ import { fetchEvent } from '../../../../lib/api';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
-import PageError from '../../../../components/page-error';
 
 interface Props {
   event: PortalEvent;
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  if (!event) return <PageError statusCode={404} />
-
   const {
     data: schedule,
     isLoading,
@@ -98,7 +95,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // We don't know the events at build time, Next.js will generate the pages at runtime.
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: 'blocking' };
 }
 
 export default Page;

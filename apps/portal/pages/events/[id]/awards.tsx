@@ -14,8 +14,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ awards, event }) => {
-  if (!event) return <PageError statusCode={404} />
-
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
@@ -108,7 +106,7 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // We don't know the events at build time, Next.js will generate the pages at runtime.
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: 'blocking' };
 }
 
 export default Page;

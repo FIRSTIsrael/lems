@@ -14,8 +14,6 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  if (!events) return <PageError statusCode={404} />
-
   const { current, past, future } = useMemo(() => {
     const today = dayjs();
     const eventsByDate = events.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
