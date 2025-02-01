@@ -24,26 +24,22 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Stack>
-          <Typography variant="h1">{event.name}</Typography>
-          {event.isDivision && (
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
-              <Typography variant="body1" color="text.secondary">
-                {event.subtitle}
-              </Typography>
-            </Stack>
-          )}
+      <Typography variant="h1">{event.name}</Typography>
+      {event.isDivision && (
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
+          <Typography variant="body1" color="text.secondary">
+            {event.subtitle}
+          </Typography>
         </Stack>
-        <SearchBar teams={teams} />
-      </Stack>
+      )}
       <EventInfo event={event} teamCount={teams.length} />
       {!isLoading && !error && status.isLive && <EventStatus event={event} status={status} />}
       <EventQuickLinks event={event} hasAwards={hasAwards} />
       <Typography variant="h2" gutterBottom>
         קבוצות באירוע
       </Typography>
+      <SearchBar teams={teams} sx={{ pt: 0.5 }} />
       <TeamList eventId={event.id} teams={teams} />
     </Container>
   );

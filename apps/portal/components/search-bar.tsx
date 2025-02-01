@@ -6,9 +6,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 interface SearchBarProps {
   teams: PortalTeam[];
+  sx?: any;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ teams }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ teams, sx = null }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
 
@@ -39,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ teams }) => {
       fullWidth
       clearText="נקה"
       disableClearable={searchTerm === ''}
-      sx={{ pl: 2 }}
+      sx={sx}
       renderInput={params => <TextField {...params} label="חיפוש" variant="outlined" fullWidth />}
     />
   );
