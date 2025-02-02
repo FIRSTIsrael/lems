@@ -90,73 +90,78 @@ export const useDeliberationTeams = (
   let roomFactors: Record<string, Record<string, number>> = {};
   if (roomScores) roomFactors = getRoomFactors(roomScores);
 
-  const teamsWithInfo: Array<DeliberationTeam> = teams.map(team => {
-    const room = rooms.find(
-      room => room._id === sessions.find(session => session.teamId === team._id)!.roomId
-    )!;
-    const teamRubrics = rubrics.filter(rubric => rubric.teamId === team._id);
-    const rubricIds = teamRubrics.reduce(
-      (acc, rubric) => ({ ...acc, [rubric.category]: rubric._id }),
-      {} as { [key in JudgingCategory]: ObjectId }
-    );
-    const teamScoresheets = scoresheets.filter(
-      scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking'
-    );
-    const robotGameScores = teamScoresheets.map(scoresheet => scoresheet.data?.score || 0);
-    const maxRobotGameScore = Math.max(...robotGameScores);
-    const gpScores = teamScoresheets.map(scoresheet => ({
-      round: scoresheet.round,
-      score: scoresheet.data?.gp?.value || 3
-    }));
+  const teamsWithInfo: Array<DeliberationTeam> = teams
+    .map(team => {
+      const teamSession = sessions.find(session => session.teamId === team._id);
+      if (!teamSession) return undefined;
 
-    const rubricFields = getRubricFields(teamRubrics);
-    const scores = getRubricScores(teamRubrics, gpScores);
-    const totalScore = Object.values(scores).reduce((acc, current) => acc + current, 0);
+      const room = rooms.find(room => room._id === teamSession.roomId);
+      if (!room) return undefined;
 
-    const optionalAwardNominations: { [key in CoreValuesAwards]?: boolean } =
-      teamRubrics.find(rubric => rubric.category === 'core-values')?.data?.awards ?? {};
+      const teamRubrics = rubrics.filter(rubric => rubric.teamId === team._id);
+      const rubricIds = teamRubrics.reduce(
+        (acc, rubric) => ({ ...acc, [rubric.category]: rubric._id }),
+        {} as { [key in JudgingCategory]: ObjectId }
+      );
+      const teamScoresheets = scoresheets.filter(
+        scoresheet => scoresheet.teamId === team._id && scoresheet.stage === 'ranking'
+      );
+      const robotGameScores = teamScoresheets.map(scoresheet => scoresheet.data?.score || 0);
+      const maxRobotGameScore = Math.max(...robotGameScores);
+      const gpScores = teamScoresheets.map(scoresheet => ({
+        round: scoresheet.round,
+        score: scoresheet.data?.gp?.value || 3
+      }));
 
-    const cvFormSeverities = cvForms
-      .filter(cvform => cvform.demonstratorAffiliation?._id.toString() === team?._id.toString())
-      .map(cvForm => cvForm.severity);
+      const rubricFields = getRubricFields(teamRubrics);
+      const scores = getRubricScores(teamRubrics, gpScores);
+      const totalScore = Object.values(scores).reduce((acc, current) => acc + current, 0);
 
-    const normalizedScores = { ...scores };
-    if (roomFactors) {
-      JudgingCategoryTypes.forEach(category => {
-        const normalized = normalizedScores[category] * roomFactors[category][String(room._id)];
-        normalizedScores[category] = Number(normalized.toFixed(2));
-      });
-    }
+      const optionalAwardNominations: { [key in CoreValuesAwards]?: boolean } =
+        teamRubrics.find(rubric => rubric.category === 'core-values')?.data?.awards ?? {};
 
-    let normalizedTotalScore = totalScore;
-    if (roomFactors) {
-      const normalized = totalScore * roomFactors.average[String(room._id)];
-      normalizedTotalScore = Number(normalized.toFixed(2));
-    }
+      const cvFormSeverities = cvForms
+        .filter(cvform => cvform.demonstratorAffiliation?._id.toString() === team?._id.toString())
+        .map(cvForm => cvForm.severity);
 
-    const stdDev = robotConsistency?.find((row: any) => row.id === team._id)?.relStdDev;
-    let consistency = stdDev === undefined ? 0 : 100 - stdDev;
-    consistency = Number(consistency.toFixed(2));
+      const normalizedScores = { ...scores };
+      if (roomFactors) {
+        JudgingCategoryTypes.forEach(category => {
+          const normalized = normalizedScores[category] * roomFactors[category][String(room._id)];
+          normalizedScores[category] = Number(normalized.toFixed(2));
+        });
+      }
 
-    return {
-      ...team,
-      room,
-      robotGameScores,
-      maxRobotGameScore,
-      robotConsistency: consistency,
-      gpScores,
-      scores,
-      normalizedScores,
-      totalScore,
-      normalizedTotalScore,
-      rubricIds,
-      rubricFields,
-      optionalAwardNominations,
-      cvFormSeverities,
-      ranks: { 'core-values': 0, 'innovation-project': 0, 'robot-design': 0, 'robot-game': 0 },
-      totalRank: 0
-    };
-  });
+      let normalizedTotalScore = totalScore;
+      if (roomFactors) {
+        const normalized = totalScore * roomFactors.average[String(room._id)];
+        normalizedTotalScore = Number(normalized.toFixed(2));
+      }
+
+      const stdDev = robotConsistency?.find((row: any) => row.id === team._id)?.relStdDev;
+      let consistency = stdDev === undefined ? 0 : 100 - stdDev;
+      consistency = Number(consistency.toFixed(2));
+
+      return {
+        ...team,
+        room,
+        robotGameScores,
+        maxRobotGameScore,
+        robotConsistency: consistency,
+        gpScores,
+        scores,
+        normalizedScores,
+        totalScore,
+        normalizedTotalScore,
+        rubricIds,
+        rubricFields,
+        optionalAwardNominations,
+        cvFormSeverities,
+        ranks: { 'core-values': 0, 'innovation-project': 0, 'robot-design': 0, 'robot-game': 0 },
+        totalRank: 0
+      };
+    })
+    .filter(team => team !== undefined);
 
   if (!categoryRanks) return teamsWithInfo;
   // This code is complicated and unreadable, but here's what it does:
