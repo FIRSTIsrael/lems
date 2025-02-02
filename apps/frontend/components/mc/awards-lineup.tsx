@@ -3,7 +3,13 @@ import { WithId } from 'mongodb';
 import { IconButton, Box, Paper, Stack, Typography } from '@mui/material';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
-import { Team, Award, DivisionWithEvent } from '@lems/types';
+import {
+  Team,
+  Award,
+  DivisionWithEvent,
+  CoreValuesAwardsTypes,
+  CoreValuesAwards
+} from '@lems/types';
 import { localizedAward } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeTeam } from '../../localization/teams';
@@ -47,7 +53,9 @@ const AwardsLineup: React.FC<AwardsLineupProps> = ({ division, awards }) => {
             {sortedAwards.map(award => {
               return (
                 <Typography fontSize="1.75rem" key={award.name + award.place} gutterBottom>
-                  {sortedAwards.length > 1 && 'במקום ה-' + award.place + ': '}
+                  {sortedAwards.length > 1 &&
+                    !CoreValuesAwardsTypes.includes(award.name as CoreValuesAwards) &&
+                    'במקום ה-' + award.place + ': '}
                   {award.winner
                     ? typeof award.winner === 'string'
                       ? award.winner
