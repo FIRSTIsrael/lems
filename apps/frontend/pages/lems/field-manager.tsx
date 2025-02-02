@@ -44,8 +44,7 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  sessions: initialSessions,
-  cvForms: initialCvForms
+  sessions: initialSessions
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
@@ -111,7 +110,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
 
