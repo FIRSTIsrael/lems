@@ -7,6 +7,7 @@ import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import SearchBar from 'apps/portal/components/search-bar';
 
 interface Props {
   event: PortalEvent;
@@ -38,6 +39,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
       <Typography variant="h2" gutterBottom>
         קבוצות באירוע
       </Typography>
+      <SearchBar teams={teams} sx={{ pt: 0.5 }} />
       <TeamList eventId={event.id} teams={teams} />
     </Container>
   );
