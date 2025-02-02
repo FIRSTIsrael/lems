@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { act, useMemo, useState } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
+import { TabContext, TabPanel } from '@mui/lab';
+import { Paper, Tabs, Tab } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
@@ -11,7 +13,8 @@ import {
   Team,
   DivisionWithEvent,
   JudgingSession,
-  RobotGameMatchParticipant
+  RobotGameMatchParticipant,
+  CoreValuesForm
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -21,6 +24,9 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
 import RematchManager from '../../components/field-manager/rematch-manager';
 import StaggerEditor from '../../components/field-manager/stagger-editor/stagger-editor';
+import { useQueryParam } from '../../hooks/use-query-param';
+import BadgeTab from '../../components/general/badge-tab';
+import CVPanel from '../../components/cv-form/cv-panel';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,6 +36,7 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -38,13 +45,34 @@ const Page: NextPage<Props> = ({
   divisionState: initialDivisionState,
   teams: initialTeams,
   matches: initialMatches,
-  sessions: initialSessions
+  sessions: initialSessions,
+  cvForms: initialCvForms
 }) => {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
+  const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
+  
+  const openCVForms = useMemo(
+    () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
+    [cvForms]
+  );
+
+  const handleCvFormCreated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms => [...cvForms, cvForm]);
+  };
+
+  const handleCvFormUpdated = (cvForm: WithId<CoreValuesForm>) => {
+    setCvForms(cvForms =>
+      cvForms.map(f => {
+        if (f._id === cvForm._id) return cvForm;
+        return f;
+      })
+    );
+  };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -103,7 +131,25 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
-      { name: 'judgingSessionUpdated', handler: handleSessionEvent }
+      { name: 'judgingSessionUpdated', handler: handleSessionEvent },
+      {
+        name: 'cvFormCreated',
+        handler: cvForm => {
+          handleCvFormCreated(cvForm);
+          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', {
+            variant: 'warning',
+            persist: true,
+            preventDuplicate: true
+          });
+        }
+      },
+      {
+        name: 'cvFormUpdated',
+        handler: cvForm => {
+          handleCvFormUpdated(cvForm);
+          enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
+        }
+      },
     ]
   );
 
@@ -190,23 +236,46 @@ const Page: NextPage<Props> = ({
         connectionStatus={connectionStatus}
         color={division.color}
       >
-        <RematchManager
-          teams={teams}
-          matches={matches}
-          divisionState={divisionState}
-          sessions={sessions}
-          isStaggered={!!division.staggered}
-          onScheduleRematch={handleScheduleRematch}
-        />
-        {division.staggered && (
-          <StaggerEditor
-            divisionState={divisionState}
-            matches={matches}
-            teams={teams}
-            onSwitchParticipants={handleSwitchParticipants}
-            onMergeMatches={handleMergeMatches}
-          />
-        )}
+        <TabContext value={activeTab}>
+          <Paper sx={{ mt: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
+              centered
+            >
+              <Tab label="זירה" value="1" />
+              <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="2" />
+            </Tabs>
+          </Paper>
+          <TabPanel value="1">
+            <RematchManager
+              teams={teams}
+              matches={matches}
+              divisionState={divisionState}
+              sessions={sessions}
+              isStaggered={!!division.staggered}
+              onScheduleRematch={handleScheduleRematch}
+            />
+            {division.staggered && (
+              <StaggerEditor
+                divisionState={divisionState}
+                matches={matches}
+                teams={teams}
+                onSwitchParticipants={handleSwitchParticipants}
+                onMergeMatches={handleMergeMatches}
+              />
+            )}
+          </TabPanel>
+          <TabPanel value="2">
+            <CVPanel
+              user={user}
+              teams={teams}
+              cvForms={cvForms}
+              division={division}
+              socket={socket}
+            />
+          </TabPanel>
+        </TabContext>
       </Layout>
     </RoleAuthorizer>
   );
@@ -223,7 +292,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        tables: `/api/divisions/${divisionId}/tables`
+        tables: `/api/divisions/${divisionId}/tables`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`
       },
       ctx
     );
