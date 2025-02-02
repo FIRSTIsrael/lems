@@ -1,4 +1,4 @@
-import { act, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -25,8 +25,7 @@ import { localizeDivisionTitle } from '../../localization/event';
 import RematchManager from '../../components/field-manager/rematch-manager';
 import StaggerEditor from '../../components/field-manager/stagger-editor/stagger-editor';
 import { useQueryParam } from '../../hooks/use-query-param';
-import BadgeTab from '../../components/general/badge-tab';
-import CVPanel from '../../components/cv-form/cv-panel';
+import CVForm from '../../components/cv-form/cv-form';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -54,25 +53,6 @@ const Page: NextPage<Props> = ({
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
-  const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
-  
-  const openCVForms = useMemo(
-    () => cvForms.filter(cvForm => !cvForm.actionTaken).length,
-    [cvForms]
-  );
-
-  const handleCvFormCreated = (cvForm: WithId<CoreValuesForm>) => {
-    setCvForms(cvForms => [...cvForms, cvForm]);
-  };
-
-  const handleCvFormUpdated = (cvForm: WithId<CoreValuesForm>) => {
-    setCvForms(cvForms =>
-      cvForms.map(f => {
-        if (f._id === cvForm._id) return cvForm;
-        return f;
-      })
-    );
-  };
 
   const handleTeamRegistered = (team: WithId<Team>) => {
     setTeams(teams =>
@@ -132,24 +112,6 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
       { name: 'judgingSessionUpdated', handler: handleSessionEvent },
-      {
-        name: 'cvFormCreated',
-        handler: cvForm => {
-          handleCvFormCreated(cvForm);
-          enqueueSnackbar('נוצר טופס ערכי ליבה חדש!', {
-            variant: 'warning',
-            persist: true,
-            preventDuplicate: true
-          });
-        }
-      },
-      {
-        name: 'cvFormUpdated',
-        handler: cvForm => {
-          handleCvFormUpdated(cvForm);
-          enqueueSnackbar('עודכן טופס ערכי ליבה!', { variant: 'info' });
-        }
-      },
     ]
   );
 
@@ -244,7 +206,7 @@ const Page: NextPage<Props> = ({
               centered
             >
               <Tab label="זירה" value="1" />
-              <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="2" />
+              <Tab label="הגשת טופס CV" value="2" />
             </Tabs>
           </Paper>
           <TabPanel value="1">
@@ -267,11 +229,10 @@ const Page: NextPage<Props> = ({
             )}
           </TabPanel>
           <TabPanel value="2">
-            <CVPanel
+            <CVForm
               user={user}
-              teams={teams}
-              cvForms={cvForms}
               division={division}
+              teams={teams.filter(team => team.registered)}
               socket={socket}
             />
           </TabPanel>
