@@ -219,21 +219,26 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const lockDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
+  const lockDeliberation = (deliberation: WithId<JudgingDeliberation>) => {
     const { anomalies } = deliberation;
-    socket.emit(
-      'completeJudgingDeliberation',
-      deliberation.divisionId.toString(),
-      deliberation._id.toString(),
-      { anomalies },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
+    return new Promise<void>((resolve, reject) => {
+      socket.emit(
+        'completeJudgingDeliberation',
+        deliberation.divisionId.toString(),
+        deliberation._id.toString(),
+        { anomalies },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+              variant: 'error'
+            });
+            reject(new Error('Deliberation lock failed.'));
+          } else {
+            resolve();
+          }
         }
-      }
-    );
+      );
+    });
   };
 
   return (

@@ -100,7 +100,7 @@ interface DeliberationProps {
     picklist: Array<ObjectId>
   ) => Array<DeliberationAnomaly>;
   onStart?: (state: WithId<JudgingDeliberation>) => void;
-  onLock?: (state: WithId<JudgingDeliberation>) => void;
+  onLock?: (state: WithId<JudgingDeliberation>) => Promise<void>;
   endStage?: (
     state: WithId<JudgingDeliberation>,
     eligibleTeams: Array<DeliberationTeam>,
@@ -168,7 +168,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       {} as { [key in AwardNames]?: number }
     );
 
-    const lockWithAnomalies = (state: WithId<JudgingDeliberation>) => {
+    const lockWithAnomalies = async (state: WithId<JudgingDeliberation>) => {
       const lockState = { ...state };
       if (state.category && calculateAnomalies) {
         lockState.anomalies = calculateAnomalies(
@@ -177,7 +177,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
           state.awards[state.category] || []
         );
       }
-      onLock?.(lockState);
+      await onLock?.(lockState);
     };
 
     const { stage, status, state, ...actions } = useDeliberationState(

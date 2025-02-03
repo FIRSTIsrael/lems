@@ -36,6 +36,7 @@ import { DeliberationRef } from '../../../components/deliberations/deliberation'
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 import { localizeDivisionTitle } from '../../../localization/event';
+import { resolve } from 'path';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -224,32 +225,44 @@ const Page: NextPage<Props> = ({
   };
 
   const sendLockEvent = (deliberation: WithId<JudgingDeliberation>) => {
-    socket.emit(
-      'completeJudgingDeliberation',
-      deliberation.divisionId.toString(),
-      deliberation._id.toString(),
-      {},
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
-        }
-      }
-    );
-    socket.emit(
-      'updatePresentation',
-      division._id.toString(),
-      'awards',
-      { enabled: true },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
-        }
-      }
-    );
+    return Promise.all([
+      new Promise<void>((resolve, reject) => {
+        socket.emit(
+          'completeJudgingDeliberation',
+          deliberation.divisionId.toString(),
+          deliberation._id.toString(),
+          {},
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+                variant: 'error'
+              });
+              reject(new Error('Deliberation lock failed.'));
+            } else {
+              resolve();
+            }
+          }
+        );
+      }),
+      new Promise<void>((resolve, reject) => {
+        socket.emit(
+          'updatePresentation',
+          division._id.toString(),
+          'awards',
+          { enabled: true },
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+                variant: 'error'
+              });
+              reject(new Error('Update presentation failed.'));
+            } else {
+              resolve();
+            }
+          }
+        );
+      })
+    ]);
   };
 
   const updateAwardWinners = (awards: { [key in AwardNames]?: Array<DeliberationTeam> }) => {
