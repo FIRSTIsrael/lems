@@ -99,7 +99,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
     return { awards, values, feedback };
   };
 
-  const handleSync = async (
+  const handleSync = (
     showSnackbar: boolean,
     formValues: FormikValues | undefined,
     newstatus: string | undefined
@@ -108,25 +108,29 @@ const RubricForm: React.FC<RubricFormProps> = ({
     if (newstatus) updatedRubric['status'] = newstatus;
     if (formValues) updatedRubric['data'] = formValues;
 
-    socket.emit(
-      'updateRubric',
-      division._id.toString(),
-      team._id.toString(),
-      rubric._id.toString(),
-      updatedRubric as Partial<Rubric<typeof rubric.category>>,
-      response => {
-        if (response.ok) {
-          if (showSnackbar) {
-            enqueueSnackbar('המחוון נשמר בהצלחה.', { variant: 'success' });
+    return new Promise<void>((resolve, reject) => {
+      socket.emit(
+        'updateRubric',
+        division._id.toString(),
+        team._id.toString(),
+        rubric._id.toString(),
+        updatedRubric as Partial<Rubric<typeof rubric.category>>,
+        response => {
+          if (response.ok) {
+            if (showSnackbar) {
+              enqueueSnackbar('המחוון נשמר בהצלחה.', { variant: 'success' });
+            }
+            resolve();
+          } else {
+            enqueueSnackbar('אופס, שמירת המחוון נכשלה.', { variant: 'error' });
+            reject();
           }
-        } else {
-          enqueueSnackbar('אופס, שמירת המחוון נכשלה.', { variant: 'error' });
         }
-      }
-    );
+      );
+    });
   };
 
-  const validateRubric = (formValues: FormikValues) => {
+  const validateRubric = async (formValues: FormikValues) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const errors: any = {};
 
@@ -160,7 +164,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
       }
 
       if (!fullMatch(rubric.data, formValues) || rubric.status !== newStatus) {
-        handleSync(false, formValues, newStatus);
+        await handleSync(false, formValues, newStatus);
       }
     }
 
@@ -362,10 +366,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                 <Button
                   variant="contained"
                   color="inherit"
-                  onClick={() => {
-                    handleSync(false, values, 'ready').then(() =>
-                      router.push(`/lems/${user.role}#${team.number.toString()}`)
-                    );
+                  onClick={async () => {
+                    await handleSync(false, values, 'ready');
+                    router.push(`/lems/${user.role}#${team.number.toString()}`);
                   }}
                   sx={actionButtonStyle}
                   disabled={!isValid}
@@ -391,9 +394,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <DialogTitle id="reset-dialog-title">איפוס המוון</DialogTitle>
                   <DialogContent>
                     <DialogContentText id="reset-dialog-description">
-                      {`איפוס המחוון ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם
-                      בטוחים שברצונכם למחוק את מחוון שיפוט ${localizedJudgingCategory[rubric.category].name} 
-                      של קבוצה ${localizeTeam(team)}?`}
+                      איפוס המחוון ימחק את הניקוד של הקבוצה, ללא אפשרות שחזור. האם אתם בטוחים
+                      שברצונכם למחוק את מחוון שיפוט {localizedJudgingCategory[rubric.category].name}
+                      של קבוצה {localizeTeam(team)}?
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
@@ -401,10 +404,10 @@ const RubricForm: React.FC<RubricFormProps> = ({
                       ביטול
                     </Button>
                     <Button
-                      onClick={() => {
-                        handleSync(true, getEmptyRubric(), 'empty');
+                      onClick={async () => {
+                        await handleSync(true, getEmptyRubric(), 'empty');
                         resetForm({ values: getEmptyRubric() });
-                        validateForm();
+                        await validateForm();
                         setResetDialog(false);
                       }}
                     >
@@ -417,8 +420,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <Button
                     variant="contained"
                     color="inherit"
-                    onClick={() => {
-                      handleSync(false, values, 'waiting-for-review');
+                    onClick={async () => {
+                      await handleSync(false, values, 'waiting-for-review');
                     }}
                     sx={actionButtonStyle}
                     disabled={!isValid}
@@ -431,8 +434,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <Button
                     variant="contained"
                     color="inherit"
-                    onClick={() => {
-                      handleSync(false, undefined, 'completed');
+                    onClick={async () => {
+                      await handleSync(false, undefined, 'completed');
                     }}
                     sx={actionButtonStyle}
                   >
@@ -446,8 +449,8 @@ const RubricForm: React.FC<RubricFormProps> = ({
                   <Button
                     variant="contained"
                     color="inherit"
-                    onClick={() => {
-                      handleSync(false, undefined, 'waiting-for-review');
+                    onClick={async () => {
+                      await handleSync(false, undefined, 'waiting-for-review');
                     }}
                     sx={actionButtonStyle}
                   >
