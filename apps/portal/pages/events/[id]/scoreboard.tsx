@@ -3,10 +3,10 @@ import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
+import { localizedMatchStage } from '../../../lib/localization';
 import ScoreboardGrid from '../../../components/scoreboard-grid';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../components/loading-animation';
-import { localizedMatchStage } from 'apps/portal/lib/localization';
 
 interface Props {
   event: PortalEvent;
