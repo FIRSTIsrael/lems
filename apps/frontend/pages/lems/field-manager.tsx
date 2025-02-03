@@ -217,7 +217,7 @@ const Page: NextPage<Props> = ({
               isStaggered={!!division.staggered}
               onScheduleRematch={handleScheduleRematch}
             />
-            {division.staggered && (
+            {division.staggered && divisionState.currentStage === 'ranking' && (
               <StaggerEditor
                 divisionState={divisionState}
                 matches={matches}
