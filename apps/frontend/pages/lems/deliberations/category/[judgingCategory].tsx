@@ -204,19 +204,23 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const startDeliberation = (deliberation: WithId<JudgingDeliberation>): void => {
-    socket.emit(
-      'startJudgingDeliberation',
-      deliberation.divisionId.toString(),
-      deliberation._id.toString(),
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-        } else {
-          new Audio('/assets/sounds/judging/judging-start.wav').play();
+  const startDeliberation = (deliberation: WithId<JudgingDeliberation>): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      socket.emit(
+        'startJudgingDeliberation',
+        deliberation.divisionId.toString(),
+        deliberation._id.toString(),
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+            reject(new Error('Deliberation start failed.'));
+          } else {
+            new Audio('/assets/sounds/judging/judging-start.wav').play();
+            resolve();
+          }
         }
-      }
-    );
+      );
+    });
   };
 
   const lockDeliberation = (deliberation: WithId<JudgingDeliberation>) => {
