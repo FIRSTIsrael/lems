@@ -164,7 +164,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
       }
 
       if (!fullMatch(rubric.data, formValues) || rubric.status !== newStatus) {
-        await handleSync(false, formValues, newStatus);
+        handleSync(false, formValues, newStatus);
       }
     }
 
@@ -405,9 +405,9 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     </Button>
                     <Button
                       onClick={async () => {
-                        await handleSync(true, getEmptyRubric(), 'empty');
+                        handleSync(true, getEmptyRubric(), 'empty');
                         resetForm({ values: getEmptyRubric() });
-                        await validateForm();
+                        validateForm();
                         setResetDialog(false);
                       }}
                     >
@@ -435,7 +435,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     variant="contained"
                     color="inherit"
                     onClick={async () => {
-                      await handleSync(false, undefined, 'completed');
+                      handleSync(false, undefined, 'completed');
                     }}
                     sx={actionButtonStyle}
                   >
@@ -450,7 +450,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
                     variant="contained"
                     color="inherit"
                     onClick={async () => {
-                      await handleSync(false, undefined, 'waiting-for-review');
+                      handleSync(false, undefined, 'waiting-for-review');
                     }}
                     sx={actionButtonStyle}
                   >
