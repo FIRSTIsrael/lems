@@ -66,7 +66,7 @@ export interface DeliberationContextType {
   ) => Array<DeliberationAnomaly>;
   onAddTeam: (team: WithId<Team>) => void;
   disqualifyTeam: (team: WithId<Team>) => void;
-  endStage?: () => void;
+  endStage?: () => Promise<void>;
 }
 
 export const DeliberationContext = createContext<DeliberationContextType>(null as any);
@@ -99,13 +99,13 @@ interface DeliberationProps {
     category: JudgingCategory,
     picklist: Array<ObjectId>
   ) => Array<DeliberationAnomaly>;
-  onStart?: (state: WithId<JudgingDeliberation>) => void;
+  onStart?: (state: WithId<JudgingDeliberation>) => Promise<void>;
   onLock?: (state: WithId<JudgingDeliberation>) => Promise<void>;
   endStage?: (
     state: WithId<JudgingDeliberation>,
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
-  ) => void;
+  ) => Promise<void>;
   awards: Array<WithId<Award>>;
   roomScores?: Array<any>;
   categoryRanks?: { [key in JudgingCategory]: Array<ObjectId> };
@@ -338,8 +338,8 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
             picklistLimits,
             anomalies,
             categoryRanks,
-            endStage: () =>
-              endStage?.(
+            endStage: async () =>
+              await endStage?.(
                 state,
                 teams.filter(t => eligibleTeams.includes(t._id)),
                 teams

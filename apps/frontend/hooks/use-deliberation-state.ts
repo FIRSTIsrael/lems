@@ -24,8 +24,8 @@ type ReducerActions =
 
 export interface DeliberationConfig {
   picklistLimits?: { [key in AwardNames]?: number };
-  onStart?: (state: WithId<JudgingDeliberation>) => void;
-  onLock?: (state: WithId<JudgingDeliberation>) => void;
+  onStart?: (state: WithId<JudgingDeliberation>) => Promise<void>;
+  onLock?: (state: WithId<JudgingDeliberation>) => Promise<void>;
 }
 
 export const useDeliberationState = (
