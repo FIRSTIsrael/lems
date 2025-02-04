@@ -22,8 +22,15 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
 
   const matches = data[0]?.scores.length ?? 1;
 
-  const maxScores = data.map(dataLine => dataLine.maxScore);
-  maxScores?.sort((a, b) => b - a);
+  const teamData = data.map(row => ({
+    team: row.team,
+    scores: row.scores
+  }));
+
+  const sortedTeamData = teamData.sort((a, b) => compareScoreArrays(a.scores, b.scores, true));
+
+  sortedTeamData.reverse();
+  console.log(sortedTeamData);
 
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
@@ -45,7 +52,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
       sortable: true,
       sortComparator: scoreComparator,
       valueGetter: (_, row) => {
-        return maxScores?.findIndex(score => score === row.maxScore) + 1;
+        return sortedTeamData?.findIndex(teamData => teamData.team.number === row.team.number) + 1;
       }
     },
     {
