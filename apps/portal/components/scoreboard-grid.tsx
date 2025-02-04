@@ -27,10 +27,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
     scores: row.scores
   }));
 
-  const sortedTeamData = teamData.sort((a, b) => compareScoreArrays(a.scores, b.scores, true));
-
-  sortedTeamData.reverse();
-  console.log(sortedTeamData);
+  const sortedTeamData = teamData.sort((a, b) => compareScoreArrays(a.scores, b.scores));
 
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
