@@ -21,6 +21,10 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
   };
 
   const matches = data[0]?.scores.length ?? 1;
+
+  const maxScores = data.map(dataLine => dataLine.maxScore);
+  maxScores?.sort((a, b) => b - a);
+
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
       field: 'teamName',
@@ -31,6 +35,17 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
           return `${row.team.name} #${row.team.number}`;
         }
         return `#${row.team.number}`;
+      }
+    },
+    {
+      field: 'rank',
+      type: 'number',
+      headerName: 'מקום',
+      width: isDesktop ? 150 : 100,
+      sortable: true,
+      sortComparator: scoreComparator,
+      valueGetter: (_, row) => {
+        return maxScores?.findIndex(score => score === row.maxScore) + 1;
       }
     },
     {
