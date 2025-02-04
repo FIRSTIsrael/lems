@@ -303,7 +303,7 @@ const Page: NextPage<Props> = ({
     });
   };
 
-  const endChampionsStage = async (
+  const endChampionsStage = (
     deliberation: WithId<JudgingDeliberation>,
     eligibleTeams: Array<DeliberationTeam>,
     allTeams: Array<DeliberationTeam>
@@ -319,7 +319,7 @@ const Page: NextPage<Props> = ({
     if (division.enableAdvancement) {
       advanceTeams(eligibleTeams.filter(team => !awardWinners.find(w => w._id === team._id)));
     }
-    await updateAwardWinners({
+    return updateAwardWinners({
       champions: awardWinners,
       'robot-performance': robotPerformanceWinners
     });
@@ -384,18 +384,24 @@ const Page: NextPage<Props> = ({
     ): Promise<void> => {
       switch (deliberation.stage) {
         case 'champions': {
-          await endChampionsStage(deliberation, eligibleTeams, allTeams);
-          await sendEndStageEvent(deliberation, 'core-awards');
+          await Promise.all([
+            endChampionsStage(deliberation, eligibleTeams, allTeams),
+            sendEndStageEvent(deliberation, 'core-awards')
+          ]);
           break;
         }
         case 'core-awards': {
-          await endCoreAwardsStage(deliberation, eligibleTeams);
-          await sendEndStageEvent(deliberation, 'optional-awards');
+          await Promise.all([
+            endCoreAwardsStage(deliberation, eligibleTeams),
+            sendEndStageEvent(deliberation, 'optional-awards')
+          ]);
           break;
         }
         case 'optional-awards': {
-          await endOptionalAwardsStage(deliberation, eligibleTeams);
-          await sendEndStageEvent(deliberation, 'review');
+          await Promise.all([
+            endOptionalAwardsStage(deliberation, eligibleTeams),
+            sendEndStageEvent(deliberation, 'review')
+          ]);
           break;
         }
         case 'review': {
