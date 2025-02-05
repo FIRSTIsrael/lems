@@ -31,6 +31,15 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
 
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
+      field: 'rank',
+      headerName: 'מקום',
+      width: isDesktop ? 75 : 50,
+      sortable: true,
+      valueGetter: (_, row) => {
+        return sortedTeamData?.findIndex(teamData => teamData.team.number === row.team.number) + 1;
+      }
+    },
+    {
       field: 'teamName',
       headerName: 'קבוצה',
       width: isDesktop ? 225 : 100,
@@ -42,19 +51,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
       }
     },
     {
-      field: 'rank',
-      type: 'number',
-      headerName: 'מקום',
-      width: isDesktop ? 150 : 100,
-      sortable: true,
-      sortComparator: scoreComparator,
-      valueGetter: (_, row) => {
-        return sortedTeamData?.findIndex(teamData => teamData.team.number === row.team.number) + 1;
-      }
-    },
-    {
       field: 'maxScore',
-      type: 'number',
       headerName: 'ניקוד',
       width: isDesktop ? 150 : 100,
       sortable: true,
@@ -97,6 +94,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
             }
           }
         }}
+        sx={{ textAlign: 'left' }}
         disableColumnMenu
       />
     </ThemeProvider>
