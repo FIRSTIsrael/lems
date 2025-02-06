@@ -63,6 +63,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
           columns={match?.participants.filter(p => p.teamId).length}
           columnSpacing={1.5}
           mt={2}
+          alignItems="stretch"
         >
           {match &&
             match.participants
@@ -83,17 +84,16 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                       backgroundColor: participant.ready ? green[100] : red[100],
                       border: `1px solid ${participant.ready ? green[300] : red[300]}`,
                       borderRadius: '0.5rem',
-                      height: '100%'
+                      display: 'flex',
+                      flexDirection: 'column'
                     }}
                   >
-                    <Grid container spacing={1} columns={2} px={2} py={1}>
-                      <Grid size={1}>
-                        <Typography fontWeight={500}>#{participant.team?.number}</Typography>
-                        <Typography fontSize="0.875rem" color="textSecondary">
-                          {participant.tableName}
-                        </Typography>
-                      </Grid>
-                      <Grid alignItems="center" display="flex" size={1}>
+                    <Box sx={{ p: 2, flex: 1 }}>
+                      <Typography fontWeight={500}>#{participant.team?.number}</Typography>
+                      <Typography fontSize="0.875rem" color="textSecondary">
+                        {participant.tableName}
+                      </Typography>
+                      <Box sx={{ mt: 1, display: 'flex', alignItems: 'center' }}>
                         {participant.present === 'present' ? (
                           <Tooltip title="הקבוצה על המגרש" arrow>
                             <DoneRoundedIcon />
@@ -115,8 +115,8 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                             <RemoveRoundedIcon />
                           </Tooltip>
                         )}
-                      </Grid>
-                    </Grid>
+                      </Box>
+                    </Box>
                   </Grid>
                 );
               })}
