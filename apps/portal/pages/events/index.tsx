@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
 import EventList from '../../components/events/event-list';
+import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants';
 
 interface Props {
   events: Array<PortalEvent>;
@@ -106,9 +107,17 @@ const Page: NextPage<Props> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const events = await fetchEvents();
-  return { props: { events } };
+export const getStaticProps: GetStaticProps = async () => {
+  let events: PortalEvent[] = []
+  // We cannot reach the backend while initial build
+  if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) {
+    events = await fetchEvents();
+  }
+
+  return {
+    props: { events },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
 
 export default Page;
