@@ -1,47 +1,38 @@
 import React, { useState } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import { PortalTeam } from '@lems/types';
-import { useRouter } from 'next/router';
-import ClearIcon from '@mui/icons-material/Clear';
 
 interface SearchBarProps {
   teams: PortalTeam[];
-  sx?: any;
+  setFilteredTeams: (teams: PortalTeam[]) => void;
+  sx?: object;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ teams, sx = null }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ teams, setFilteredTeams, sx }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
 
-  const options = teams
-    .sort((a, b) => a.number - b.number)
-    .map(team => `#${team.number} - ${team.name}`);
-
-  const handleSearch = (event: any, value: string) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-  };
+    const filteredTeams = teams.filter(
+      team =>
+        team.name.toLowerCase().includes(value) ||
+        team.number.toString().includes(value) ||
+        team.affiliation.city.toLowerCase().includes(value) ||
+        team.affiliation.name.toLowerCase().includes(value)
+    );
 
-  const handleSelect = (event: any, value: string | null) => {
-    if (value) {
-      const selectedTeam = teams.find(team => `${team.number} - ${team.name}` === value);
-      if (selectedTeam) {
-        router.push(`${router.asPath}/teams/${selectedTeam.number}`);
-      }
-    }
+    setFilteredTeams(filteredTeams);
   };
 
   return (
-    <Autocomplete
-      freeSolo
-      options={options}
+    <TextField
       value={searchTerm}
-      onInputChange={handleSearch}
-      onChange={handleSelect}
+      onChange={handleSearch}
+      label="חיפוש"
+      variant="outlined"
       fullWidth
-      clearText="נקה"
-      disableClearable={searchTerm === ''}
       sx={sx}
-      renderInput={params => <TextField {...params} label="חיפוש" variant="outlined" fullWidth />}
     />
   );
 };
