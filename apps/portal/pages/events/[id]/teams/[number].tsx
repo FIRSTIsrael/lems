@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { NextPage, GetStaticProps, GetStaticPropsContext, GetStaticPaths } from 'next';
 import { Container } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
@@ -70,13 +70,18 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
-  const teamNumber = ctx.params?.number as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
+  const teamNumber = params?.number as string;
 
   const { team, awards } = await fetchTeam(eventId, teamNumber);
   const { event } = await fetchEvent(eventId);
   return { props: { team, awards, event } };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: 'blocking' };
+}
 
 export default Page;

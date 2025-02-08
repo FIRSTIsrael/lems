@@ -86,7 +86,7 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
               disabled={!isEditable}
               spellCheck
               multiline
-              minRows={4}
+              rows={6}
               slotProps={{
                 input: {
                   sx: {

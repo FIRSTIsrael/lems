@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import dayjs from 'dayjs';
 import {
   TableContainer,
@@ -12,7 +12,8 @@ import {
   Container,
   Box,
   Stack,
-  useMediaQuery
+  useMediaQuery,
+  Link
 } from '@mui/material';
 import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
@@ -88,7 +89,16 @@ const Page: NextPage<Props> = ({ event }) => {
                           {round.schedule.columns.map(column => {
                             const team = teams.data.find(t => t?.column === column.id);
                             return (
-                              <TableCell key={column.id}>{team ? `#${team.number}` : ''}</TableCell>
+                              <TableCell key={column.id}>
+                                {team ? (
+                                  <Link 
+                                    href={`/events/${event.id}/teams/${team.number}`}
+                                    sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                                  >
+                                    #{team.number}
+                                  </Link>
+                                ) : ''}
+                              </TableCell>
                             );
                           })}
                         </TableRow>
@@ -105,11 +115,19 @@ const Page: NextPage<Props> = ({ event }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
 
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  return {
+    props: { event },
+    revalidate: 10 * 60 // 10 minutes
+  };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: 'blocking' };
+}
 
 export default Page;

@@ -186,7 +186,7 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
           icon={<SportsScoreIcon />}
         />
         <Chip label={`סבב נוכחי: ${divisionState.currentRound}`} icon={<NumbersRoundedIcon />} />
-        <Chip label={`מקצה נוכחי: ${currentMatch.number}`} icon={<NumbersRoundedIcon />} />
+        <Chip label={`מקצה נוכחי: ${currentMatch?.number ?? '-'}`} icon={<NumbersRoundedIcon />} />
       </Box>
       <Box display="flex" flexDirection="row" gap={1}>
         {availableMatches.length === 0 && (

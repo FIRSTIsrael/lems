@@ -3,6 +3,8 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
+import { TabContext, TabPanel } from '@mui/lab';
+import { Paper, Tabs, Tab } from '@mui/material';
 import {
   DivisionState,
   RobotGameMatch,
@@ -11,7 +13,8 @@ import {
   Team,
   DivisionWithEvent,
   JudgingSession,
-  RobotGameMatchParticipant
+  RobotGameMatchParticipant,
+  CoreValuesForm
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -21,6 +24,8 @@ import { useWebsocket } from '../../hooks/use-websocket';
 import { localizeDivisionTitle } from '../../localization/event';
 import RematchManager from '../../components/field-manager/rematch-manager';
 import StaggerEditor from '../../components/field-manager/stagger-editor/stagger-editor';
+import { useQueryParam } from '../../hooks/use-query-param';
+import CVForm from '../../components/cv-form/cv-form';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -30,6 +35,7 @@ interface Props {
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
+  cvForms: Array<WithId<CoreValuesForm>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -41,6 +47,7 @@ const Page: NextPage<Props> = ({
   sessions: initialSessions
 }) => {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
@@ -190,23 +197,45 @@ const Page: NextPage<Props> = ({
         connectionStatus={connectionStatus}
         color={division.color}
       >
-        <RematchManager
-          teams={teams}
-          matches={matches}
-          divisionState={divisionState}
-          sessions={sessions}
-          isStaggered={!!division.staggered}
-          onScheduleRematch={handleScheduleRematch}
-        />
-        {division.staggered && (
-          <StaggerEditor
-            divisionState={divisionState}
-            matches={matches}
-            teams={teams}
-            onSwitchParticipants={handleSwitchParticipants}
-            onMergeMatches={handleMergeMatches}
-          />
-        )}
+        <TabContext value={activeTab}>
+          <Paper sx={{ mt: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_e, newValue: string) => setActiveTab(newValue)}
+              centered
+            >
+              <Tab label="זירה" value="1" />
+              <Tab label="הגשת טופס CV" value="2" />
+            </Tabs>
+          </Paper>
+          <TabPanel value="1">
+            <RematchManager
+              teams={teams}
+              matches={matches}
+              divisionState={divisionState}
+              sessions={sessions}
+              isStaggered={!!division.staggered}
+              onScheduleRematch={handleScheduleRematch}
+            />
+            {division.staggered && divisionState.currentStage === 'ranking' && (
+              <StaggerEditor
+                divisionState={divisionState}
+                matches={matches}
+                teams={teams}
+                onSwitchParticipants={handleSwitchParticipants}
+                onMergeMatches={handleMergeMatches}
+              />
+            )}
+          </TabPanel>
+          <TabPanel value="2">
+            <CVForm
+              user={user}
+              division={division}
+              teams={teams.filter(team => team.registered)}
+              socket={socket}
+            />
+          </TabPanel>
+        </TabContext>
       </Layout>
     </RoleAuthorizer>
   );
@@ -223,7 +252,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         divisionState: `/api/divisions/${divisionId}/state`,
         matches: `/api/divisions/${divisionId}/matches`,
         sessions: `/api/divisions/${divisionId}/sessions`,
-        tables: `/api/divisions/${divisionId}/tables`
+        tables: `/api/divisions/${divisionId}/tables`,
+        cvForms: `/api/divisions/${divisionId}/cv-forms`
       },
       ctx
     );

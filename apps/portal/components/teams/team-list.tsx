@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import {
   Table,
   Typography,
@@ -6,7 +5,8 @@ import {
   TableCell,
   TableBody,
   TableContainer,
-  TableHead
+  TableHead,
+  Link
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { PortalTeam } from '@lems/types';
@@ -17,7 +17,7 @@ interface TeamListProps {
 }
 
 const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
-  const router = useRouter();
+  const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
     <TableContainer>
@@ -34,11 +34,10 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {teams.map(team => (
+          {sortedTeams.map(team => (
             <TableRow
               key={team.id}
               sx={{
-                cursor: 'pointer',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.04)'
                 },
@@ -46,16 +45,42 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
                   backgroundColor: 'rgba(0, 0, 0, 0.08)'
                 }
               }}
-              onClick={() => router.push(`/events/${eventId}/teams/${team.number}`)}
             >
               <TableCell>
-                {team.name} #{team.number}
+                <Link
+                  href={`/events/${eventId}/teams/${team.number}`}
+                  sx={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'block'
+                  }}
+                >
+                  {team.name} #{team.number}
+                </Link>
               </TableCell>
               <TableCell>
-                {team.affiliation.name}, {team.affiliation.city}
+                <Link
+                  href={`/events/${eventId}/teams/${team.number}`}
+                  sx={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'block'
+                  }}
+                >
+                  {team.affiliation.name}, {team.affiliation.city}
+                </Link>
               </TableCell>
               <TableCell>
-                <ChevronLeftIcon />
+                <Link
+                  href={`/events/${eventId}/teams/${team.number}`}
+                  sx={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'block'
+                  }}
+                >
+                  <ChevronLeftIcon />
+                </Link>
               </TableCell>
             </TableRow>
           ))}
