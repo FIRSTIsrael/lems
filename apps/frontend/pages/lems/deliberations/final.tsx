@@ -36,6 +36,7 @@ import { DeliberationRef } from '../../../components/deliberations/deliberation'
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 import { localizeDivisionTitle } from '../../../localization/event';
+import { resolve } from 'path';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -189,18 +190,22 @@ const Page: NextPage<Props> = ({
   );
 
   const startDeliberationStage = useCallback(
-    (deliberation: WithId<JudgingDeliberation>): void => {
-      socket.emit(
-        'startJudgingDeliberation',
-        deliberation.divisionId.toString(),
-        deliberation._id.toString(),
-        response => {
-          if (!response.ok) {
-            enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
-          } else {
-            new Audio('/assets/sounds/judging/judging-start.wav').play();
+    (deliberation: WithId<JudgingDeliberation>): Promise<void> => {
+      return new Promise<void>((resolve, reject) =>
+        socket.emit(
+          'startJudgingDeliberation',
+          deliberation.divisionId.toString(),
+          deliberation._id.toString(),
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, התחלת דיון השיפוט נכשלה.', { variant: 'error' });
+              reject(new Error('Starting deliberation failed.'));
+            } else {
+              new Audio('/assets/sounds/judging/judging-start.wav').play();
+              resolve();
+            }
           }
-        }
+        )
       );
     },
     [socket]
@@ -210,56 +215,82 @@ const Page: NextPage<Props> = ({
     deliberation: WithId<JudgingDeliberation>,
     nextStage: FinalDeliberationStage
   ) => {
-    socket.emit(
-      'updateJudgingDeliberation',
-      division._id.toString(),
-      deliberation._id.toString(),
-      { status: 'not-started', stage: nextStage as FinalDeliberationStage, manualEligibility: [] },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+    return new Promise<void>((resolve, reject) =>
+      socket.emit(
+        'updateJudgingDeliberation',
+        division._id.toString(),
+        deliberation._id.toString(),
+        {
+          status: 'not-started',
+          stage: nextStage as FinalDeliberationStage,
+          manualEligibility: []
+        },
+        response => {
+          if (!response.ok) {
+            enqueueSnackbar('אופס, עדכון דיון השיפוט נכשל.', { variant: 'error' });
+            reject(new Error('Ending stage failed.'));
+          } else {
+            resolve();
+          }
         }
-      }
+      )
     );
   };
 
   const sendLockEvent = (deliberation: WithId<JudgingDeliberation>) => {
-    socket.emit(
-      'completeJudgingDeliberation',
-      deliberation.divisionId.toString(),
-      deliberation._id.toString(),
-      {},
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
-        }
-      }
-    );
-    socket.emit(
-      'updatePresentation',
-      division._id.toString(),
-      'awards',
-      { enabled: true },
-      response => {
-        if (!response.ok) {
-          enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
-            variant: 'error'
-          });
-        }
-      }
-    );
+    return Promise.all([
+      new Promise<void>((resolve, reject) => {
+        socket.emit(
+          'completeJudgingDeliberation',
+          deliberation.divisionId.toString(),
+          deliberation._id.toString(),
+          {},
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+                variant: 'error'
+              });
+              reject(new Error('Deliberation lock failed.'));
+            } else {
+              resolve();
+            }
+          }
+        );
+      }),
+      new Promise<void>((resolve, reject) => {
+        socket.emit(
+          'updatePresentation',
+          division._id.toString(),
+          'awards',
+          { enabled: true },
+          response => {
+            if (!response.ok) {
+              enqueueSnackbar('אופס, לא הצלחנו לנעול את הדיון.', {
+                variant: 'error'
+              });
+              reject(new Error('Update presentation failed.'));
+            } else {
+              resolve();
+            }
+          }
+        );
+      })
+    ]);
   };
 
   const updateAwardWinners = (awards: { [key in AwardNames]?: Array<DeliberationTeam> }) => {
-    socket.emit('updateAwardWinners', division._id.toString(), awards, response => {
-      if (!response.ok) {
-        enqueueSnackbar('אופס, לא הצלחנו לעדכן את הפרסים.', {
-          variant: 'error'
-        });
-      }
-    });
+    return new Promise<void>((resolve, reject) =>
+      socket.emit('updateAwardWinners', division._id.toString(), awards, response => {
+        if (!response.ok) {
+          enqueueSnackbar('אופס, לא הצלחנו לעדכן את הפרסים.', {
+            variant: 'error'
+          });
+          reject(new Error('Updating award winners failed.'));
+        } else {
+          resolve();
+        }
+      })
+    );
   };
 
   const advanceTeams = (teams: Array<DeliberationTeam>) => {
@@ -288,7 +319,7 @@ const Page: NextPage<Props> = ({
     if (division.enableAdvancement) {
       advanceTeams(eligibleTeams.filter(team => !awardWinners.find(w => w._id === team._id)));
     }
-    updateAwardWinners({
+    return updateAwardWinners({
       champions: awardWinners,
       'robot-performance': robotPerformanceWinners
     });
@@ -296,8 +327,7 @@ const Page: NextPage<Props> = ({
 
   const endCoreAwardsStage = (
     deliberation: WithId<JudgingDeliberation>,
-    eligibleTeams: Array<DeliberationTeam>,
-    allTeams: Array<DeliberationTeam>
+    eligibleTeams: Array<DeliberationTeam>
   ) => {
     const newAwards = JudgingCategoryTypes.reduce(
       (acc, category) => {
@@ -329,8 +359,7 @@ const Page: NextPage<Props> = ({
 
   const endOptionalAwardsStage = (
     deliberation: WithId<JudgingDeliberation>,
-    eligibleTeams: Array<DeliberationTeam>,
-    allTeams: Array<DeliberationTeam>
+    eligibleTeams: Array<DeliberationTeam>
   ) => {
     const newAwards = CoreValuesAwardsTypes.filter(awardName =>
       awards.find(award => award.name === awardName)
@@ -348,29 +377,35 @@ const Page: NextPage<Props> = ({
   };
 
   const endDeliberationStage = useCallback(
-    (
+    async (
       deliberation: WithId<JudgingDeliberation>,
       eligibleTeams: Array<DeliberationTeam>,
       allTeams: Array<DeliberationTeam>
-    ): void => {
+    ): Promise<void> => {
       switch (deliberation.stage) {
         case 'champions': {
-          endChampionsStage(deliberation, eligibleTeams, allTeams);
-          sendEndStageEvent(deliberation, 'core-awards');
+          await Promise.all([
+            endChampionsStage(deliberation, eligibleTeams, allTeams),
+            sendEndStageEvent(deliberation, 'core-awards')
+          ]);
           break;
         }
         case 'core-awards': {
-          endCoreAwardsStage(deliberation, eligibleTeams, allTeams);
-          sendEndStageEvent(deliberation, 'optional-awards');
+          await Promise.all([
+            endCoreAwardsStage(deliberation, eligibleTeams),
+            sendEndStageEvent(deliberation, 'optional-awards')
+          ]);
           break;
         }
         case 'optional-awards': {
-          endOptionalAwardsStage(deliberation, eligibleTeams, allTeams);
-          sendEndStageEvent(deliberation, 'review');
+          await Promise.all([
+            endOptionalAwardsStage(deliberation, eligibleTeams),
+            sendEndStageEvent(deliberation, 'review')
+          ]);
           break;
         }
         case 'review': {
-          sendLockEvent(deliberation);
+          await sendLockEvent(deliberation);
         }
       }
     },

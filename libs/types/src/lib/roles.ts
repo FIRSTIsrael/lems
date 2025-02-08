@@ -41,7 +41,7 @@ export type ReportsAllowedRoles = (typeof ReportsAllowedRoleTypes)[number];
 export const InsightsAllowedRoleTypes = [
   'head-referee',
   'judge-advisor',
-  'tournament-manger',
+  'tournament-manager',
   'lead-judge',
   'field-manager'
 ] as const;

@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { NextPage, GetStaticProps, GetStaticPropsContext, GetStaticPaths } from 'next';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { PortalEvent, PortalTeam, PortalEventStatus } from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
@@ -45,11 +45,19 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const eventId = ctx.params?.id as string;
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const eventId = params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, hasAwards: !!awards } };
+  return {
+    props: { event, teams, hasAwards: !!awards },
+    revalidate: 10 * 60 // 10 mintues
+  };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // We don't know the events at build time, Next.js will generate the pages at runtime.
+  return { paths: [], fallback: 'blocking' };
+}
 
 export default Page;

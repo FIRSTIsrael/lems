@@ -18,7 +18,6 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 
 interface FieldQueueReportProps {
-  divisionId: ObjectId;
   teams: Array<WithId<Team>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -26,7 +25,6 @@ interface FieldQueueReportProps {
 }
 
 const FieldQueueReport: React.FC<FieldQueueReportProps> = ({
-  divisionId,
   teams,
   matches,
   tables,

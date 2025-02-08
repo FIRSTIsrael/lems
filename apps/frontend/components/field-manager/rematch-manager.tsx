@@ -28,17 +28,6 @@ const RematchManager: React.FC<RematchManagerProps> = ({
 }) => {
   const [rematchTeam, setRematchTeam] = useState<WithId<Team> | null>(null);
 
-  if (divisionState.currentStage !== 'ranking') {
-    return (
-      <Paper sx={{ p: 2, mt: 2 }}>
-        <Typography variant="h2" gutterBottom>
-          הענקת מקצה חוזר
-        </Typography>
-        <Typography>לא ניתן להעניק מקצה חוזר בשלב האימונים.</Typography>
-      </Paper>
-    );
-  }
-
   const doesTeamHavePendingMatch = (team: WithId<Team>) =>
     matches.find(
       match =>

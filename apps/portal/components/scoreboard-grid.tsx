@@ -1,9 +1,10 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
 import { heIL } from '@mui/x-data-grid/locales';
 import { PortalScore } from '@lems/types';
 import theme from '../lib/theme';
+import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface ScoreboardGridProps {
   data: PortalScore[];
@@ -13,8 +14,31 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
   const localizedTheme = createTheme(theme, heIL);
   const isDesktop = useMediaQuery(localizedTheme.breakpoints.up('md'));
 
+  const scoreComparator: GridComparatorFn<PortalScore> = (a, b, paramA, paramB) => {
+    const scoresA = paramA.api.getRow(paramA.id).scores;
+    const scoresB = paramB.api.getRow(paramB.id).scores;
+    return compareScoreArrays(scoresA, scoresB, true);
+  };
+
   const matches = data[0]?.scores.length ?? 1;
+
+  const teamData = data.map(row => ({
+    team: row.team,
+    scores: row.scores
+  }));
+
+  const sortedTeamData = teamData.sort((a, b) => compareScoreArrays(a.scores, b.scores));
+
   const columns: GridColDef<(typeof data)[number]>[] = [
+    {
+      field: 'rank',
+      headerName: 'מקום',
+      width: isDesktop ? 75 : 50,
+      sortable: true,
+      valueGetter: (_, row) => {
+        return sortedTeamData?.findIndex(teamData => teamData.team.number === row.team.number) + 1;
+      }
+    },
     {
       field: 'teamName',
       headerName: 'קבוצה',
@@ -26,7 +50,13 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
         return `#${row.team.number}`;
       }
     },
-    { field: 'maxScore', headerName: 'ניקוד', width: isDesktop ? 150 : 100 },
+    {
+      field: 'maxScore',
+      headerName: 'ניקוד',
+      width: isDesktop ? 150 : 100,
+      sortable: true,
+      sortComparator: scoreComparator
+    },
     ...Array.from(
       { length: matches },
       (_, index) =>
@@ -64,6 +94,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
             }
           }
         }}
+        sx={{ textAlign: 'left' }}
         disableColumnMenu
       />
     </ThemeProvider>

@@ -88,7 +88,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                       <Box alignItems="center">
                         {team && <StyledTeamTooltip team={team} />}
                         <br />
-                        {session.status === 'not-started' && session.queued ? (
+                        {team && session.status === 'not-started' && session.queued ? (
                           <Tooltip title="הקבוצה בקיו" arrow>
                             <PeopleAltRoundedIcon />
                           </Tooltip>
@@ -96,7 +96,8 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                           <StatusIcon status={session.status} />
                         )}
                         <br />
-                        {session.startTime &&
+                        {team &&
+                          session.startTime &&
                           `סיום: ${dayjs(session.startTime)
                             .add(JUDGING_SESSION_LENGTH, 'seconds')
                             .format('HH:mm')}`}
