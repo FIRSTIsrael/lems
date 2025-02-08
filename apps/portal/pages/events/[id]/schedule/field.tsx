@@ -12,7 +12,8 @@ import {
   Container,
   Box,
   Stack,
-  useMediaQuery
+  useMediaQuery,
+  Link
 } from '@mui/material';
 import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
@@ -88,7 +89,16 @@ const Page: NextPage<Props> = ({ event }) => {
                           {round.schedule.columns.map(column => {
                             const team = teams.data.find(t => t?.column === column.id);
                             return (
-                              <TableCell key={column.id}>{team ? `#${team.number}` : ''}</TableCell>
+                              <TableCell key={column.id}>
+                                {team ? (
+                                  <Link 
+                                    href={`/events/${event.id}/teams/${team.number}`}
+                                    sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                                  >
+                                    #{team.number}
+                                  </Link>
+                                ) : ''}
+                              </TableCell>
                             );
                           })}
                         </TableRow>
