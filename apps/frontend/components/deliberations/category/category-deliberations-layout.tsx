@@ -56,6 +56,7 @@ const CategoryDeliberationLayout: React.FC = () => {
       </Grid>
       <Grid size={2.5}>
         <CategoryDeliberationControlPanel
+          teamCount={teams.length}
           compareTeams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
           category={category}
