@@ -77,7 +77,7 @@ const Page: NextPage<Props> = ({ event }) => {
         }}
       >
         {(scoresLoading || scoresError) && <LoadingAnimation />}
-        {!scoresLoading && !scoresError && <ScoreboardGrid data={scoreboard} />}
+        {!scoresLoading && !scoresError && <ScoreboardGrid data={scoreboard} eventId={event.id} />}
       </Box>
     </Container>
   );
