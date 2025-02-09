@@ -1,16 +1,18 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, Typography, useMediaQuery } from '@mui/material';
+import { Box, Typography, useMediaQuery, Link } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
 import { heIL } from '@mui/x-data-grid/locales';
 import { PortalScore } from '@lems/types';
 import theme from '../lib/theme';
 import { compareScoreArrays } from '@lems/utils/arrays';
+import NextLink from 'next/link';
 
 interface ScoreboardGridProps {
   data: PortalScore[];
+  eventId: string;
 }
 
-const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
+const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
   const localizedTheme = createTheme(theme, heIL);
   const isDesktop = useMediaQuery(localizedTheme.breakpoints.up('md'));
 
@@ -43,11 +45,25 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data }) => {
       field: 'teamName',
       headerName: 'קבוצה',
       width: isDesktop ? 225 : 100,
-      valueGetter: (_, row) => {
-        if (isDesktop) {
-          return `${row.team.name} #${row.team.number}`;
-        }
-        return `#${row.team.number}`;
+      renderCell: params => {
+        const { team } = params.row;
+        return (
+          <Link
+            component={NextLink}
+            href={`/events/${eventId}/teams/${team.number}`}
+            sx={{
+              textDecoration: 'none',
+              color: 'text.primary',
+              '&:hover': {
+                textDecoration: 'underline',
+                color: 'primary.main'
+              },
+              fontWeight: 500
+            }}
+          >
+            {isDesktop ? `${team.name} #${team.number}` : `#${team.number}`}
+          </Link>
+        );
       }
     },
     {
