@@ -30,7 +30,7 @@ const rubricSections: Array<RubricSchemaSection> = [
   },
   {
     title: 'תכנון',
-    description: 'הקבוצה עבדה ביחד על תכנון הרובוט ופיתחה את המיומויות הנדרשות של בנייה ותכנות.',
+    description: 'הקבוצה עבדה ביחד על תכנון הרובוט ופיתחה את המיומנויות הנדרשות של בנייה ותכנות.',
     fields: [
       {
         id: 'ideation',
