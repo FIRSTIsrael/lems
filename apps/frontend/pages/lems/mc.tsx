@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import {
   DivisionState,
   RobotGameMatch,

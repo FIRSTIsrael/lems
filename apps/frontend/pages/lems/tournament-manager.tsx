@@ -3,7 +3,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { Paper, Tabs, Tab } from '@mui/material';
 import {
   CoreValuesForm,
