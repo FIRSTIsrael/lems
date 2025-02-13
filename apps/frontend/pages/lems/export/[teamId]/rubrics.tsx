@@ -29,7 +29,7 @@ const ExportRubricsPage: NextPage<Props> = ({ user, division, team, rubrics, awa
             team={team}
             rubric={rubric}
             awards={awards}
-            showFeedback={true}
+            showFeedback={false}
           />
         );
       })}
