@@ -46,7 +46,8 @@ export const SessionFeedbackTable: React.FC<ExportCRSummaryProps> = ({ rubrics }
   return (
     <Box
       sx={{
-        width: '100%',
+        width: '90%',
+        ml: 4,
         overflow: 'hidden',
         borderRadius: '8px',
         border: '0.5px solid #000',
@@ -75,177 +76,177 @@ export const SessionFeedbackTable: React.FC<ExportCRSummaryProps> = ({ rubrics }
         }}
       >
         <TableBody>
-        <TableRow>
-          <TableCell
-            align="center"
-            sx={{
-              width: '50%',
-              backgroundColor: '#f8f9fa',
-              py: 1,
-              '@media print': {
-                backgroundColor: '#f8f9fa',
-                py: 0,
-                height: '12px',
-                minHeight: '12px',
-                maxHeight: '12px',
-                lineHeight: '12px',
-                WebkitPrintColorAdjust: 'exact',
-                printColorAdjust: 'exact'
-              }
-            }}
-          >
-            <Typography
-              fontWeight={600}
+          <TableRow>
+            <TableCell
+              align="center"
               sx={{
+                width: '50%',
+                backgroundColor: '#f8f9fa',
+                py: 1,
                 '@media print': {
+                  backgroundColor: '#f8f9fa',
+                  py: 0,
+                  height: '12px',
+                  minHeight: '12px',
+                  maxHeight: '12px',
                   lineHeight: '12px',
-                  height: '12px'
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact'
                 }
               }}
             >
-              חשבו על...
-            </Typography>
-          </TableCell>
-          <TableCell
-            align="center"
-            sx={{
-              width: '50%',
-              backgroundColor: '#f8f9fa',
-              py: 1,
-              '@media print': {
-                backgroundColor: '#f8f9fa',
-                py: 0,
-                height: '12px',
-                minHeight: '12px',
-                maxHeight: '12px',
-                lineHeight: '12px',
-                WebkitPrintColorAdjust: 'exact',
-                printColorAdjust: 'exact'
-              }
-            }}
-          >
-            <Typography
-              fontWeight={600}
+              <Typography
+                fontWeight={600}
+                sx={{
+                  '@media print': {
+                    lineHeight: '12px',
+                    height: '12px'
+                  }
+                }}
+              >
+                חשבו על...
+              </Typography>
+            </TableCell>
+            <TableCell
+              align="center"
               sx={{
+                width: '50%',
+                backgroundColor: '#f8f9fa',
+                py: 1,
                 '@media print': {
+                  backgroundColor: '#f8f9fa',
+                  py: 0,
+                  height: '12px',
+                  minHeight: '12px',
+                  maxHeight: '12px',
                   lineHeight: '12px',
-                  height: '12px'
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact'
                 }
               }}
             >
-              עבודה מצוינת...
-            </Typography>
-          </TableCell>
-        </TableRow>
-        {feedbackSections.map(section => {
-          const feedback = getFeedback(section.category);
-          return (
-            <React.Fragment key={section.title}>
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  align="left"
-                  sx={{
-                    backgroundColor: section.color,
-                    border: '1px solid #000',
-                    boxSizing: 'border-box',
-                    fontSize: '1.4em',
-                    py: '0.3em',
-                    px: '1em',
-                    '@media print': {
-                      border: '0.1px solid black',
-                      py: 0,
-                      height: '12px',
-                      minHeight: '12px',
-                      maxHeight: '12px',
-                      lineHeight: '12px',
-                      px: '0.25em',
-                      WebkitPrintColorAdjust: 'exact',
-                      printColorAdjust: 'exact'
-                    }
-                  }}
-                >
-                  <Typography
+              <Typography
+                fontWeight={600}
+                sx={{
+                  '@media print': {
+                    lineHeight: '12px',
+                    height: '12px'
+                  }
+                }}
+              >
+                עבודה מצוינת...
+              </Typography>
+            </TableCell>
+          </TableRow>
+          {feedbackSections.map(section => {
+            const feedback = getFeedback(section.category);
+            return (
+              <React.Fragment key={section.title}>
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    align="left"
                     sx={{
+                      backgroundColor: section.color,
+                      border: '1px solid #000',
+                      boxSizing: 'border-box',
+                      fontSize: '1.4em',
+                      py: '0.3em',
+                      px: '1em',
                       '@media print': {
+                        border: '0.1px solid black',
+                        py: 0,
+                        height: '12px',
+                        minHeight: '12px',
+                        maxHeight: '12px',
                         lineHeight: '12px',
-                        height: '12px'
+                        px: '0.25em',
+                        WebkitPrintColorAdjust: 'exact',
+                        printColorAdjust: 'exact'
                       }
                     }}
                   >
-                    <Box
-                      component="span"
+                    <Typography
                       sx={{
-                        fontWeight: 700,
                         '@media print': {
                           lineHeight: '12px',
                           height: '12px'
                         }
                       }}
                     >
-                      {section.title}
-                    </Box>
-                    <Box
-                      component="span"
-                      sx={{
-                        fontSize: '0.9em',
-                        '@media print': {
-                          lineHeight: '12px',
-                          height: '12px'
-                        }
-                      }}
-                    >
-                      {' - '}
-                      {section.question}
-                    </Box>
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #000',
-                    boxSizing: 'border-box',
-                    fontSize: '1.4em',
-                    py: '3em',
-                    px: '1em',
-                    '@media print': {
-                      border: '0.1px solid grey',
-                      py: 0,
-                      pt: '0.5em',
-                      px: '0.25em',
-                      height: '100px',
-                      verticalAlign: 'top'
-                    }
-                  }}
-                >
-                  <Typography>{feedback.thinkAbout}</Typography>
-                </TableCell>
-                <TableCell
-                  sx={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #000',
-                    boxSizing: 'border-box',
-                    fontSize: '1.4em',
-                    py: '3em',
-                    px: '1em',
-                    '@media print': {
-                      border: '0.1px solid grey',
-                      py: 0,
-                      pt: '0.5em',
-                      px: '0.25em',
-                      height: '100px',
-                      verticalAlign: 'top'
-                    }
-                  }}
-                >
-                  <Typography>{feedback.greatJob}</Typography>
-                </TableCell>
-              </TableRow>
-            </React.Fragment>
-          );
-        })}
+                      <Box
+                        component="span"
+                        sx={{
+                          fontWeight: 700,
+                          '@media print': {
+                            lineHeight: '12px',
+                            height: '12px'
+                          }
+                        }}
+                      >
+                        {section.title}
+                      </Box>
+                      <Box
+                        component="span"
+                        sx={{
+                          fontSize: '0.9em',
+                          '@media print': {
+                            lineHeight: '12px',
+                            height: '12px'
+                          }
+                        }}
+                      >
+                        {' - '}
+                        {section.question}
+                      </Box>
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #000',
+                      boxSizing: 'border-box',
+                      fontSize: '1.4em',
+                      py: '3em',
+                      px: '1em',
+                      '@media print': {
+                        border: '0.1px solid grey',
+                        py: 0,
+                        pt: '0.5em',
+                        px: '0.25em',
+                        height: '100px',
+                        verticalAlign: 'top'
+                      }
+                    }}
+                  >
+                    <Typography>{feedback.thinkAbout}</Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #000',
+                      boxSizing: 'border-box',
+                      fontSize: '1.4em',
+                      py: '3em',
+                      px: '1em',
+                      '@media print': {
+                        border: '0.1px solid grey',
+                        py: 0,
+                        pt: '0.5em',
+                        px: '0.25em',
+                        height: '100px',
+                        verticalAlign: 'top'
+                      }
+                    }}
+                  >
+                    <Typography>{feedback.greatJob}</Typography>
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
+            );
+          })}
         </TableBody>
       </Table>
     </Box>
