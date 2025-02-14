@@ -24,13 +24,14 @@ interface Props {
 }
 
 const ExportAwards: NextPage<Props> = ({ user, division, team, awards, awardSchema }) => {
-  const awardsToExport: Array<AwardToExport> = awards.map(a => {
-    const showPlace =
-      a.name !== 'advancement' &&
-      !CoreValuesAwardsTypes.includes(a.name as CoreValuesAwards) &&
-      awardSchema[a.name]?.count > 1;
-    return { ...a, place: showPlace ? a.place : 0, isParticipation: false };
-  });
+  const awardsToExport: Array<AwardToExport> = awards
+    .filter(a => a.name !== 'advancement')
+    .map(a => {
+      const showPlace =
+        !CoreValuesAwardsTypes.includes(a.name as CoreValuesAwards) &&
+        awardSchema[a.name]?.count > 1;
+      return { ...a, place: showPlace ? a.place : 0, isParticipation: false };
+    });
   awardsToExport.push({ isParticipation: true });
 
   return (
