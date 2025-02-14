@@ -32,6 +32,8 @@ export interface WSServerEmittedEvents {
 
   judgingSessionAborted: (session: JudgingSession) => void;
 
+  judgingSessionFinished: (session: JudgingSession) => void;
+
   judgingSessionUpdated: (session: JudgingSession) => void;
 
   judgingDeliberationStarted: (deliberation: JudgingDeliberation) => void;
@@ -95,6 +97,15 @@ export interface WSClientEmittedEvents {
     sessionId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
+
+
+  finishJudgingSession: (
+    divisionId: string,
+    roomId: string,
+    sessionId: string,
+    callback: (response: { ok: boolean; error?: string }) => void
+  ) => void;
+
 
   updateJudgingSessionTeam: (
     divisionId: string,

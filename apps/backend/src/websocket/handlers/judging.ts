@@ -101,6 +101,35 @@ export const handleAbortSession = async (
   namespace.to('judging').emit('judgingSessionAborted', session);
 };
 
+export const handleFinishSession = async (
+  namespace: any,
+  divisionId: string,
+  roomId,
+  sessionId,
+  callback
+) => {
+  let session = await db.getSession({
+    roomId: new ObjectId(roomId),
+    _id: new ObjectId(sessionId)
+  });
+  if (!session) {
+    callback({ ok: false, error: `Could not find session ${sessionId} in room ${roomId}!` });
+    return;
+  }
+  if (session.status !== 'in-progress') {
+    callback({ ok: false, error: `Session ${sessionId} is not in progress!` });
+    return;
+  }
+
+  console.log(`❗ Finishing session ${sessionId} early for room ${roomId} in division ${divisionId}`);
+
+  await db.updateSession({ _id: session._id }, { startTime: undefined, status: 'completed' });
+
+  callback({ ok: true });
+  session = await db.getSession({ _id: new ObjectId(sessionId) });
+  namespace.to('judging').emit('judgingSessionFinished', session);
+};
+
 export const handleUpdateSessionTeam = async (
   namespace,
   divisionId: string,

@@ -110,6 +110,7 @@ const Page: NextPage<Props> = ({
       { name: 'judgingSessionStarted', handler: handleSessionEvent },
       { name: 'judgingSessionCompleted', handler: handleSessionEvent },
       { name: 'judgingSessionAborted', handler: handleSessionEvent },
+      { name: 'judgingSessionFinished', handler: handleSessionEvent },
       { name: 'judgingSessionUpdated', handler: handleSessionEvent }
     ]
   );
