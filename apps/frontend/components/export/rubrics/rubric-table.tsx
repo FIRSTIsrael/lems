@@ -186,13 +186,17 @@ export const RubricTable: React.FC<RubricTableProps> = ({ rubric, showFeedback =
               })}
             </TableBody>
           ))}
-          {showFeedback && <TableBody><RubricFeedback rubric={rubric} /></TableBody>}
+          {showFeedback && (
+            <TableBody>
+              <RubricFeedback rubric={rubric} />
+            </TableBody>
+          )}
         </Table>
       </Box>
       {rubric.data?.values &&
         (rubric.category === 'innovation-project' || rubric.category === 'robot-design') && (
           <Box
-            mt={-28}
+            mt={-25}
             ml={-6}
             sx={{
               display: 'flex',
