@@ -48,10 +48,23 @@ const Page: NextPage<Props> = ({ event }) => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>
+                    <TableCell
+                      sx={{
+                        position: 'sticky',
+                        left: 0,
+                        background: 'white'
+                      }}
+                    >
                       <Typography fontWeight={500}>סבב</Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell
+                      sx={{
+                        position: 'sticky',
+                        left: 0,
+                        background: 'white',
+                        boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
+                      }}
+                    >
                       <Typography fontWeight={500}>זמן התחלה</Typography>
                     </TableCell>
                     {schedule.columns.map(column => (
@@ -65,7 +78,16 @@ const Page: NextPage<Props> = ({ event }) => {
                   {Object.entries(schedule.rows).map(([time, session]) => (
                     <TableRow key={time} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>{session.number}</TableCell>
-                      <TableCell>{dayjs.unix(Number(time)).format('HH:mm')}</TableCell>
+                      <TableCell
+                        sx={{
+                          position: 'sticky',
+                          left: 0,
+                          background: 'white',
+                          boxShadow: '2px 0 5px -2px rgba(0,0,0,0.2)'
+                        }}
+                      >
+                        {dayjs.unix(Number(time)).format('HH:mm')}
+                      </TableCell>
                       {schedule.columns.map(column => {
                         const team = session.data.find(t => t?.column === column.id);
                         return (
