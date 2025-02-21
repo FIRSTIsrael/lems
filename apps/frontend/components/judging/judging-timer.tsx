@@ -1,9 +1,22 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { animated, useTransition } from 'react-spring';
-import { Typography, Paper, LinearProgress, Stack, Box } from '@mui/material';
+import {
+  Typography,
+  Paper,
+  LinearProgress,
+  Stack,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ButtonProps
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { blue, green, purple } from '@mui/material/colors';
 import {
@@ -20,7 +33,94 @@ import Countdown from '../general/countdown';
 import { localizeTeam } from '../../localization/teams';
 import JudgingStageBox from './judging-stage-box';
 import AbortJudgingSessionButton from './abort-judging-session-button';
+import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
+import { enqueueSnackbar } from 'notistack';
 
+// -----------------------------------------------------------------------------
+// FinishJudgingSessionButton Component
+// -----------------------------------------------------------------------------
+interface FinishJudgingSessionButtonProps extends ButtonProps {
+  division: WithId<Division>;
+  room: WithId<JudgingRoom>;
+  session: WithId<JudgingSession>;
+  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  sx?: any; // Added to allow sx prop
+}
+
+const FinishJudgingSessionButton: React.FC<FinishJudgingSessionButtonProps> = ({
+  division,
+  room,
+  session,
+  socket,
+  ...props
+}) => {
+  const [open, setOpen] = useState<boolean>(false);
+
+  const finishSession = (divisionId: string, roomId: string, sessionId: string) => {
+    // Cast socket.emit to any to allow our custom event name.
+    (socket.emit as any)(
+      'finishJudgingSession',
+      divisionId,
+      roomId,
+      sessionId,
+      (response: { ok: boolean }) => {
+        if (response.ok) {
+          enqueueSnackbar('מפגש השיפוט הסתיים בהצלחה!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('אופס, סיום מפגש השיפוט נכשל.', { variant: 'error' });
+        }
+      }
+    );
+  };
+
+  return (
+    <>
+      <Button
+        aria-label="Finish session early"
+        onClick={() => setOpen(true)}
+        startIcon={<DangerousOutlinedIcon />}
+        color="error"
+        variant="contained"
+        {...props}
+      >
+        סיום מפגש מוקדם
+      </Button>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="finish-dialog-title"
+        aria-describedby="finish-dialog-description"
+      >
+        <DialogTitle id="finish-dialog-title">סיום מפגש מוקדם</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="finish-dialog-description">
+            שימו לב! סיום מפגש השיפוט יסיים את הטיימר ולא יתן לפתוח את הטיימר מחדש! <br /> במידה והקבוצה לא הגיעה, נא לחצו על ביטול מפגש השיפוט
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} autoFocus>
+            ביטול
+          </Button>
+          <Button
+            onClick={() =>
+              finishSession(
+                division._id.toString(),
+                room._id.toString(),
+                session._id.toString()
+              )
+            }
+          >
+            אישור
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// JudgingTimer Component
+// -----------------------------------------------------------------------------
 type JudgingStage = {
   duration: number;
   primaryText: string;
@@ -112,7 +212,6 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
     const _currentStage = timedStages.find(stage =>
       currentTime.isBetween(stage.startTime, stage.endTime, 'seconds', '[]')
     );
-
     return _currentStage ? _currentStage : timedStages[STAGES.length - 1];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsJudging]);
@@ -227,13 +326,22 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
               color={barProgress !== 0 ? 'primary' : 'error'}
               sx={{ width: '80%', borderRadius: 32, height: 16 }}
             />
-            <AbortJudgingSessionButton
-              division={division}
-              room={room}
-              session={session}
-              socket={socket}
-              sx={{ mt: 2.5, width: 200 }}
-            />
+            <Box sx={{ mt: 2.5, display: 'flex', gap: 2 }}>
+              <AbortJudgingSessionButton
+                division={division}
+                room={room}
+                session={session}
+                socket={socket}
+                sx={{ width: 200 }}
+              />
+              <FinishJudgingSessionButton
+                division={division}
+                room={room}
+                session={session}
+                socket={socket}
+                sx={{ width: 200 }}
+              />
+            </Box>
           </Stack>
         </Grid>
       </Grid>
