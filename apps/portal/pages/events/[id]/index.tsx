@@ -1,6 +1,7 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Box, Container, Stack, Typography, Button, Menu, MenuItem } from '@mui/material';
-import { PortalEvent, PortalTeam, PortalEventStatus } from '@lems/types';
+import Link from 'next/link';
+import { PortalEvent, PortalTeam, PortalEventStatus, PortalDivision } from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import EventInfo from '../../../components/events/event-info';
 import EventQuickLinks from '../../../components/events/event-quick-links';
@@ -13,9 +14,10 @@ interface Props {
   event: PortalEvent;
   teams: PortalTeam[];
   hasAwards: boolean;
+  divisions: PortalDivision[];
 }
 
-const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
+const Page: NextPage<Props> = ({ event, teams, hasAwards, divisions }) => {
   const {
     data: status,
     isLoading,
@@ -75,9 +77,20 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
               horizontal: 'left'
             }}
           >
-            <MenuItem onClick={handleClose}>Option 1</MenuItem>
-            <MenuItem onClick={handleClose}>Option 2</MenuItem>
-            <MenuItem onClick={handleClose}>Option 3</MenuItem>
+            {event.divisions?.map(division => (
+              <Link
+                key={division.id}
+                href={`/events/${division.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <MenuItem onClick={handleClose}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Box bgcolor={division.color} width={18} height={18} borderRadius={1} />
+                    <Typography variant="body1">{division.name}</Typography>
+                  </Stack>
+                </MenuItem>
+              </Link>
+            ))}
           </Menu>
         </>
       )}
@@ -96,7 +109,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const eventId = ctx.params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, hasAwards: !!awards } };
+  const divisions = event.divisions || [];
+  return { props: { event, teams, hasAwards: !!awards, divisions } };
 };
 
 export default Page;
