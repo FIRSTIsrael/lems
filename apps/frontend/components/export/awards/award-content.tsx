@@ -32,7 +32,7 @@ const ExportAwardContent: React.FC<ExportAwardContentProps> = ({ division, team,
 
   return (
     <Stack alignItems="center" mt={6}>
-      <Typography align="center" fontSize="3.2rem" fontWeight={700}>
+      <Typography align="center" fontSize="3rem" fontWeight={700}>
         {`${awardTitle}`}
       </Typography>
       <Typography align="center" fontSize="1.75rem" mb={3.5} fontWeight={400}>
