@@ -26,7 +26,6 @@ import {
   WSServerEmittedEvents
 } from '@lems/types';
 import JudgingEditorTeamCell from './judging-editor-team-cell';
-import { LoadingButton } from '@mui/lab';
 interface JudgingScheduleEditorRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
@@ -144,7 +143,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
             </Table>
           </TableContainer>
           <Stack justifyContent="center" direction="row" mt={2} spacing={2}>
-            <LoadingButton
+            <Button
               startIcon={<SaveOutlinedIcon />}
               sx={{ minWidth: 200 }}
               variant="contained"
@@ -152,7 +151,7 @@ const JudgingScheduleEditor: React.FC<JudgingScheduleEditorProps> = ({
               loading={isSubmitting}
             >
               שמירה
-            </LoadingButton>
+            </Button>
             <Button
               startIcon={<RestartAltIcon />}
               sx={{ minWidth: 200 }}

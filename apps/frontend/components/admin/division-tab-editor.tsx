@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '../general/tab-managment';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { FllEvent, Division, AwardSchema } from '@lems/types';
 import DivisionAwardEditor from './division-award-editor';
