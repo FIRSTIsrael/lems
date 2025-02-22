@@ -12,6 +12,7 @@ export interface FllEvent {
   salesforceId?: string;
   divisions?: Array<WithId<Division>>;
   eventUsers: Array<EventUserAllowedRoles>;
+  eventType: string;
 }
 
 export interface DivisionWithEvent extends Division {
