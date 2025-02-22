@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { db } from '@lems/database';
-import { FllEvent, PortalDivision } from '@lems/types';
+import { FllEvent, Division } from '@lems/types';
 
 type EventType = "rg" | "ch" | "ps" | "os" | "otc";
 
@@ -23,17 +23,17 @@ export const getEventRoute = async (eventId: string, divisionId?: string): Promi
     startDate: { $lt: event.startDate },
   });
 
-  const eventType = eventTypeMappings[event.eventType]
+  const eventType = eventTypeMappings[event.eventType];
 
-  let formattedRoute = `${year}${event.eventType}${count + 1}`;
+  let formattedRoute = `${year}${eventType}${count + 1}`;
 
   if (event.enableDivisions && divisionId) {
-    const divisions = await db.collection<PortalDivision>('divisions')
+    const divisions = await db.collection<Division>('divisions')
       .find({ eventId: new ObjectId(eventId) })
       .sort({ _id: 1 }) // Sort by _id to maintain order
       .toArray();
 
-    const divisionIndex = divisions.findIndex(div => div.id === divisionId);
+    const divisionIndex = divisions.findIndex(div => div._id.toString() === divisionId);
     if (divisionIndex !== -1) {
       const letterSuffix = String.fromCharCode(97 + divisionIndex);
       formattedRoute += letterSuffix;
