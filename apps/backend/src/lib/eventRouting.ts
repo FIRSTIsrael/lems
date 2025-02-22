@@ -2,6 +2,16 @@ import { ObjectId } from 'mongodb';
 import { db } from '@lems/database';
 import { FllEvent, PortalDivision } from '@lems/types';
 
+type EventType = "rg" | "ch" | "ps" | "os" | "otc";
+
+const eventTypeMappings: Record<string, EventType> = {
+  'מוקדמות': "rg",
+  "אליפות": "ch",
+  "Pre-Season": "ps",
+  "Off-Season": "os",
+  "אחר": "otc"
+}
+
 export const getEventRoute = async (eventId: string, divisionId?: string): Promise<string> => {
   const event = await db.collection<FllEvent>('fll-events').findOne({ _id: new ObjectId(eventId) });
   if (!event) throw new Error('Event not found');
@@ -12,6 +22,8 @@ export const getEventRoute = async (eventId: string, divisionId?: string): Promi
     eventType: event.eventType,
     startDate: { $lt: event.startDate },
   });
+
+  const eventType = eventTypeMappings[event.eventType]
 
   let formattedRoute = `${year}${event.eventType}${count + 1}`;
 
