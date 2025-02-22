@@ -13,7 +13,9 @@ import {
   FormControlLabel,
   Avatar,
   Stack,
-  IconButton
+  IconButton,
+  RadioGroup,
+  Radio
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -43,6 +45,7 @@ interface EventCreateFormValues {
     name: string;
     color: string;
   }[];
+  eventType: string;
 }
 
 const DivisionField: React.FC<{ index: number }> = ({ index }) => {
@@ -134,7 +137,8 @@ const Page: NextPage = () => {
       ),
       startDate: getDefaultDate(),
       endDate: getDefaultDate(),
-      divisions: [{ name: '', color: DivisionSwatches[0] }]
+      divisions: [{ name: '', color: DivisionSwatches[0] }],
+      eventType: ''
     };
   };
 
@@ -209,6 +213,27 @@ const Page: NextPage = () => {
                       }}
                     />
                   </Stack>
+                </Grid>
+                <Grid size={12}>
+                  <Typography variant="h2" fontSize="1.5rem" fontWeight={500}>
+                    סוג האירוע
+                  </Typography>
+                </Grid>
+                <Grid size={12}>
+                  <Field name="eventType">
+                    {({ field }: FieldProps) => (
+                      <RadioGroup row {...field}>
+                        {['מוקדמות', 'אליפות', 'Pre-season', 'Off-season', 'אחר'].map(option => (
+                          <FormControlLabel
+                            key={option}
+                            value={option}
+                            control={<Radio />}
+                            label={option}
+                          />
+                        ))}
+                      </RadioGroup>
+                    )}
+                  </Field>
                 </Grid>
 
                 <Grid size={12}>
