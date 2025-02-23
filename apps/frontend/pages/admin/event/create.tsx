@@ -223,7 +223,7 @@ const Page: NextPage = () => {
                   <Field name="eventType">
                     {({ field }: FieldProps) => (
                       <RadioGroup row {...field}>
-                        {['מוקדמות', 'אליפות', 'Pre-season', 'Off-season', 'אחר'].map(option => (
+                        {['מוקדמות', 'אליפות', 'Pre-Season', 'Off-Season', 'אחר'].map(option => (
                           <FormControlLabel
                             key={option}
                             value={option}
