@@ -19,6 +19,6 @@
     ],
     "types": ["node", "@types/grecaptcha", "webpack-env"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "../__tests__/unit/frontend/pages/404.test.tsx"],
   "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
