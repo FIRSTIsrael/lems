@@ -10,6 +10,7 @@ export interface PortalEvent {
   divisions?: PortalDivision[];
   isDivision?: boolean;
   subtitle?: string;
+  routing?: string;
 }
 
 export interface PortalEventStatus {
@@ -35,6 +36,7 @@ export interface PortalDivision {
   id: string;
   name: string;
   color: string;
+  routing?: string;
 }
 
 export interface PortalTeam {
@@ -87,8 +89,8 @@ interface GeneralActivity extends BaseActivity {
 export type PortalActivity<T extends 'match' | 'session' | 'general'> = T extends 'match'
   ? MatchActivity
   : T extends 'session'
-    ? SessionActivity
-    : GeneralActivity;
+  ? SessionActivity
+  : GeneralActivity;
 
 export interface PortalSchedule {
   columns: { id: string; name: string }[];

@@ -26,18 +26,18 @@ router.get(
       }
 
       if (!enableDivisions) {
-        const { _id, name, color } = divisions[0];
-        return { id: String(_id), name, date: startDate, color, location };
+        const { _id, name, color, routing } = divisions[0];
+        return { id: String(_id), name, date: startDate, color, location, routing };
       }
 
-      const { _id, name, color } = event;
+      const { _id, name, color, routing } = event;
       const eventDivisions = divisions
         .map(({ _id, name, color, hasState }) => {
           if (!hasState) return null;
-          return { id: String(_id), name, color };
+          return { id: String(_id), name, color, routing };
         })
         .filter(division => division !== null);
-      return { id: String(_id), name, date: startDate, color, location, divisions: eventDivisions };
+      return { id: String(_id), name, date: startDate, color, location, divisions: eventDivisions, routing };
     });
 
     res.json(result.filter(event => event !== null));
