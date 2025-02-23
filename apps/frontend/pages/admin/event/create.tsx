@@ -46,6 +46,7 @@ interface EventCreateFormValues {
     color: string;
   }[];
   eventType: string;
+  routing?: string;
 }
 
 const DivisionField: React.FC<{ index: number }> = ({ index }) => {

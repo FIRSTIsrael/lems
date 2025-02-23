@@ -13,6 +13,7 @@ export interface FllEvent {
   divisions?: Array<WithId<Division>>;
   eventUsers: Array<EventUserAllowedRoles>;
   eventType: string;
+  routing: string;
 }
 
 export interface DivisionWithEvent extends Division {

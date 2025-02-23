@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import { FllEvent, User, Role } from '@lems/types';
 import * as db from '@lems/database';
 import { randomString } from '@lems/utils/random';
+import { getEventRoute } from 'apps/backend/src/lib/eventRouting';
 
 const router = express.Router({ mergeParams: true });
 
@@ -23,6 +24,7 @@ router.post(
 
     body.startDate = new Date(body.startDate);
     body.endDate = new Date(body.endDate);
+    body.routing = await getEventRoute(body.eventType, body.startDate);
 
     console.log('⏬ Creating Event...');
     const eventResult = await db.addFllEvent(body);
@@ -34,11 +36,12 @@ router.post(
 
     console.log('⏬ Creating Event divisions...');
     const divisionIds = [];
-    for (const division of divisions) {
+    for (const [index, division] of divisions.entries()) {
       const divisionResult = await db.addDivision({
         ...division,
         eventId: eventResult.insertedId,
-        hasState: false
+        hasState: false,
+        routing: await getEventRoute(body.eventType, body.startDate, index)
       });
       if (divisionResult.acknowledged) {
         console.log(`✅ Division ${divisionResult.insertedId} created!`);

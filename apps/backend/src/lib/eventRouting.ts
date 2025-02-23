@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { db } from '@lems/database';
 import { FllEvent, Division } from '@lems/types';
+import dayjs from 'dayjs';
 
 type EventType = "rg" | "ch" | "ps" | "os" | "otc";
 
@@ -12,32 +13,26 @@ const eventTypeMappings: Record<string, EventType> = {
   "אחר": "otc"
 }
 
-export const getEventRoute = async (eventId: string, divisionId?: string): Promise<string> => {
-  const event = await db.collection<FllEvent>('fll-events').findOne({ _id: new ObjectId(eventId) });
-  if (!event) throw new Error('Event not found');
-
-  const year = new Date(event.startDate).getFullYear();
+export const getEventRoute = async (Type: string, startDate: Date, divisionIndex?: number): Promise<string> => {
+  const year = dayjs(startDate).year();
 
   const count = await db.collection<FllEvent>('fll-events').countDocuments({
-    eventType: event.eventType,
-    startDate: { $lt: event.startDate },
+    eventType: Type,
+    startDate: {
+      $gte: dayjs().startOf('year').toDate(),
+      $lte: dayjs(startDate).toDate()
+    },
   });
 
-  const eventType = eventTypeMappings[event.eventType];
+  const eventType = eventTypeMappings[Type];
 
-  let formattedRoute = `${year}${eventType}${count + 1}`;
-
-  if (event.enableDivisions && divisionId) {
-    const divisions = await db.collection<Division>('divisions')
-      .find({ eventId: new ObjectId(eventId) })
-      .sort({ _id: 1 }) // Sort by _id to maintain order
-      .toArray();
-
-    const divisionIndex = divisions.findIndex(div => div._id.toString() === divisionId);
-    if (divisionIndex !== -1) {
-      const letterSuffix = String.fromCharCode(97 + divisionIndex);
-      formattedRoute += letterSuffix;
-    }
+  let formattedRoute = `${year}${eventType}${count}`;
+  if (!divisionIndex) {
+    formattedRoute = `${year}${eventType}${count + 1}`;
+  }
+  else {
+    const letterSuffix = String.fromCharCode(97 + divisionIndex);
+    formattedRoute += letterSuffix;
   }
 
   return formattedRoute;
