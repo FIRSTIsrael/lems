@@ -12,14 +12,15 @@ interface Props {
   event: PortalEvent;
   teams: PortalTeam[];
   hasAwards: boolean;
+  eventId: string;
 }
 
-const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
+const Page: NextPage<Props> = ({ event, teams, hasAwards, eventId }) => {
   const {
     data: status,
     isLoading,
     error
-  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${eventId}/status`);
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
@@ -34,11 +35,11 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
       )}
       <EventInfo event={event} teamCount={teams.length} />
       {!isLoading && !error && status.isLive && <EventStatus event={event} status={status} />}
-      <EventQuickLinks event={event} hasAwards={hasAwards} />
+      <EventQuickLinks eventId={eventId} event={event} hasAwards={hasAwards} />
       <Typography variant="h2" gutterBottom>
         קבוצות באירוע
       </Typography>
-      <TeamList eventId={event.id} teams={teams} />
+      <TeamList eventRouting={eventId} teams={teams} />
     </Container>
   );
 };
@@ -47,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const eventId = ctx.params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, hasAwards: !!awards } };
+  return { props: { event, teams, hasAwards: !!awards, eventId } };
 };
 
 export default Page;

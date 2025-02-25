@@ -24,15 +24,16 @@ import theme from '../../../../lib/theme';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
+  eventId: string;
   event: PortalEvent;
 }
 
-const Page: NextPage<Props> = ({ event }) => {
+const Page: NextPage<Props> = ({ eventId, event }) => {
   const {
     data: schedule,
     isLoading,
     error
-  } = useRealtimeData<PortalFieldSchedule>(`/events/${event.id}/schedule/field`);
+  } = useRealtimeData<PortalFieldSchedule>(`/events/${eventId}/schedule/field`);
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
@@ -91,8 +92,8 @@ const Page: NextPage<Props> = ({ event }) => {
                             return (
                               <TableCell key={column.id}>
                                 {team ? (
-                                  <Link 
-                                    href={`/events/${event.id}/teams/${team.number}`}
+                                  <Link
+                                    href={`/events/${eventId}/teams/${team.number}`}
                                     sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                                   >
                                     #{team.number}

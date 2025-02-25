@@ -12,12 +12,13 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { PortalTeam } from '@lems/types';
 
 interface TeamListProps {
-  eventId: string;
+  eventRouting: string;
   teams: PortalTeam[];
 }
 
-const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
+const TeamList: React.FC<TeamListProps> = ({ eventRouting, teams }) => {
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
+  console.log("ever", eventRouting)
 
   return (
     <TableContainer>
@@ -48,7 +49,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
             >
               <TableCell>
                 <Link
-                  href={`/events/${eventId}/teams/${team.number}`}
+                  href={`/events/${eventRouting}/teams/${team.number}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'inherit',
@@ -60,7 +61,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
               </TableCell>
               <TableCell>
                 <Link
-                  href={`/events/${eventId}/teams/${team.number}`}
+                  href={`/events/${eventRouting}/teams/${team.number}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'inherit',
@@ -72,7 +73,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
               </TableCell>
               <TableCell>
                 <Link
-                  href={`/events/${eventId}/teams/${team.number}`}
+                  href={`/events/${eventRouting}/teams/${team.number}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'inherit',
