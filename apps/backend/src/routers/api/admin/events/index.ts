@@ -36,12 +36,13 @@ router.post(
 
     console.log('⏬ Creating Event divisions...');
     const divisionIds = [];
+    const isOnlyDivision = divisions.length === 1;
     for (const [index, division] of divisions.entries()) {
       const divisionResult = await db.addDivision({
         ...division,
         eventId: eventResult.insertedId,
         hasState: false,
-        routing: await getEventRoute(body.eventType, body.startDate, index)
+        routing: await getEventRoute(body.eventType, body.startDate, index, isOnlyDivision)
       });
       if (divisionResult.acknowledged) {
         console.log(`✅ Division ${divisionResult.insertedId} created!`);

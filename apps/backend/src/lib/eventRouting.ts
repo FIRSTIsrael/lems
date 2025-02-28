@@ -13,7 +13,7 @@ const eventTypeMappings: Record<string, EventType> = {
   "אחר": "otc"
 }
 
-export const getEventRoute = async (Type: string, startDate: Date, divisionIndex?: number): Promise<string> => {
+export const getEventRoute = async (Type: string, startDate: Date, divisionIndex?: number, isOnlyDivision?: boolean): Promise<string> => {
   const year = dayjs(startDate).year();
 
   const count = await db.collection<FllEvent>('fll-events').countDocuments({
@@ -30,7 +30,7 @@ export const getEventRoute = async (Type: string, startDate: Date, divisionIndex
   if (divisionIndex === undefined) {
     formattedRoute = `${year}${eventType}${count + 1}`;
   }
-  else {
+  else if (!isOnlyDivision) {
     const letterSuffix = String.fromCharCode(97 + divisionIndex);
     formattedRoute += letterSuffix;
   }
