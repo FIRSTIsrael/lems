@@ -20,13 +20,13 @@ const Page: NextPage<Props> = ({ event }) => {
     data: scoreboard,
     isLoading: scoresLoading,
     error: scoresError
-  } = useRealtimeData<PortalScore[]>(`/events/${event.id}/scoreboard`);
+  } = useRealtimeData<PortalScore[]>(`/events/${event.routing}/scoreboard`);
 
   const {
     data: status,
     isLoading: statusLoading,
     error: statusError
-  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.routing}/status`);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -77,7 +77,7 @@ const Page: NextPage<Props> = ({ event }) => {
         }}
       >
         {(scoresLoading || scoresError) && <LoadingAnimation />}
-        {!scoresLoading && !scoresError && <ScoreboardGrid data={scoreboard} eventId={event.id} />}
+        {!scoresLoading && !scoresError && <ScoreboardGrid data={scoreboard} eventId={event.routing} />}
       </Box>
     </Container>
   );

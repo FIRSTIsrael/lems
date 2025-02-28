@@ -11,7 +11,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const teams = await db.getDivisionTeams(new ObjectId(req.params.divisionId));
+    const teams = await db.getDivisionTeams(new ObjectId(req.division._id));
     const result: Array<PortalTeam> = teams.map(team => {
       const { _id, number, name, affiliation } = team;
       return { id: String(_id), number, name, affiliation };

@@ -86,7 +86,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
         fullWidth
         size="small"
         LinkComponent={Link}
-        href={`/events/${event.id}`}
+        href={`/events/${event.routing}`}
       >
         <EventDescription
           event={event}
@@ -148,7 +148,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
               fullWidth
               size="small"
               LinkComponent={Link}
-              href={`/events/${division.id}`}
+              href={`/events/${division.routing}`}
             >
               <Stack direction="row" spacing={2} alignItems="center">
                 <Box bgcolor={division.color} width={24} height={24} borderRadius={1} />

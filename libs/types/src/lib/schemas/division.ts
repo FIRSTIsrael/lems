@@ -18,4 +18,5 @@ export interface Division {
   staggered?: boolean;
   schedule?: Array<DivisionScheduleEntry>;
   enableAdvancement?: boolean;
+  routing: string;
 }
