@@ -27,7 +27,7 @@ export const getEventRoute = async (Type: string, startDate: Date, divisionIndex
   const eventType = eventTypeMappings[Type];
 
   let formattedRoute = `${year}${eventType}${count}`;
-  if (!divisionIndex) {
+  if (divisionIndex === undefined) {
     formattedRoute = `${year}${eventType}${count + 1}`;
   }
   else {

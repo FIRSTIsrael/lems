@@ -22,7 +22,7 @@ router.get(
     const pipeline = [
       {
         $match: {
-          divisionId: new ObjectId(req.params.divisionId),
+          divisionId: new ObjectId(req.params.divisionRouting),
           status: 'ready',
           stage: currentStage
         }
