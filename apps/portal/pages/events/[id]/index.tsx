@@ -19,7 +19,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
     data: status,
     isLoading,
     error
-  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.routing}/status`);
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
