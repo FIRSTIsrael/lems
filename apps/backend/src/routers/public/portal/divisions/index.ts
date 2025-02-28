@@ -30,7 +30,8 @@ router.get(
       date: event.startDate,
       location: event.location,
       isDivision: event.enableDivisions,
-      subtitle: event.enableDivisions ? `בית ${name}` : undefined
+      subtitle: event.enableDivisions ? `בית ${name}` : undefined,
+      routing: event.routing
     });
   })
 );

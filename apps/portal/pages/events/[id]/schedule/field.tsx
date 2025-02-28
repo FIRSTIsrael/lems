@@ -32,7 +32,7 @@ const Page: NextPage<Props> = ({ event }) => {
     data: schedule,
     isLoading,
     error
-  } = useRealtimeData<PortalFieldSchedule>(`/events/${event.id}/schedule/field`);
+  } = useRealtimeData<PortalFieldSchedule>(`/events/${event.routing}/schedule/field`);
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
@@ -91,8 +91,8 @@ const Page: NextPage<Props> = ({ event }) => {
                             return (
                               <TableCell key={column.id}>
                                 {team ? (
-                                  <Link 
-                                    href={`/events/${event.id}/teams/${team.number}`}
+                                  <Link
+                                    href={`/events/${event.routing}/teams/${team.number}`}
                                     sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                                   >
                                     #{team.number}

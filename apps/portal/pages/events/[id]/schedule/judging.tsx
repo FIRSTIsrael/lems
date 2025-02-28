@@ -28,7 +28,7 @@ const Page: NextPage<Props> = ({ event }) => {
     data: schedule,
     isLoading,
     error
-  } = useRealtimeData<PortalJudgingSchedule>(`/events/${event.id}/schedule/judging`);
+  } = useRealtimeData<PortalJudgingSchedule>(`/events/${event.routing}/schedule/judging`);
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
@@ -72,7 +72,7 @@ const Page: NextPage<Props> = ({ event }) => {
                           <TableCell key={column.id}>
                             {team ? (
                               <Link
-                                href={`/events/${event.id}/teams/${team.number}`}
+                                href={`/events/${event.routing}/teams/${team.number}`}
                                 sx={{
                                   color: 'inherit',
                                   textDecoration: 'none',
