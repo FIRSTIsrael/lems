@@ -20,11 +20,10 @@ import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
-  eventId: string;
   event: PortalEvent;
 }
 
-const Page: NextPage<Props> = ({ eventId, event }) => {
+const Page: NextPage<Props> = ({ event }) => {
   const {
     data: schedule,
     isLoading,
@@ -73,7 +72,7 @@ const Page: NextPage<Props> = ({ eventId, event }) => {
                           <TableCell key={column.id}>
                             {team ? (
                               <Link
-                                href={`/events/${eventId}/teams/${team.number}`}
+                                href={`/events/${event.id}/teams/${team.number}`}
                                 sx={{
                                   color: 'inherit',
                                   textDecoration: 'none',

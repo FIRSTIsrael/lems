@@ -9,11 +9,10 @@ import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../components/loading-animation';
 
 interface Props {
-  eventId: string;
   event: PortalEvent;
 }
 
-const Page: NextPage<Props> = ({ eventId, event }) => {
+const Page: NextPage<Props> = ({ event }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -21,13 +20,13 @@ const Page: NextPage<Props> = ({ eventId, event }) => {
     data: scoreboard,
     isLoading: scoresLoading,
     error: scoresError
-  } = useRealtimeData<PortalScore[]>(`/events/${eventId}/scoreboard`);
+  } = useRealtimeData<PortalScore[]>(`/events/${event.id}/scoreboard`);
 
   const {
     data: status,
     isLoading: statusLoading,
     error: statusError
-  } = useRealtimeData<PortalEventStatus>(`/events/${eventId}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
 
   useEffect(() => {
     const updateHeight = () => {

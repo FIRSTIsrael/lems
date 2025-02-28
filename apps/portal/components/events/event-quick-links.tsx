@@ -4,12 +4,11 @@ import Grid from '@mui/material/Grid2';
 import { PortalEvent } from '@lems/types';
 
 interface EventQuickLinksProps {
-  eventId: string;
   event: PortalEvent;
   hasAwards: boolean;
 }
 
-const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAwards }) => {
+const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) => {
   return (
     <Grid
       container
@@ -24,7 +23,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAw
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${eventId}/scoreboard`}
+          href={`/events/${event.id}/scoreboard`}
         >
           לוח תוצאות
         </Button>
@@ -36,7 +35,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAw
             fullWidth
             sx={{ borderRadius: 2, minHeight: 25 }}
             LinkComponent={Link}
-            href={`/events/${eventId}/awards`}
+            href={`/events/${event.id}/awards`}
           >
             פרסים
           </Button>
@@ -48,7 +47,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAw
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${eventId}/schedule/field`}
+          href={`/events/${event.id}/schedule/field`}
         >
           לוח זמנים - זירה
         </Button>
@@ -59,7 +58,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAw
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${eventId}/schedule/judging`}
+          href={`/events/${event.id}/schedule/judging`}
         >
           לוח זמנים - שיפוט
         </Button>
@@ -70,7 +69,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ eventId, event, hasAw
           fullWidth
           sx={{ borderRadius: 2, minHeight: 25 }}
           LinkComponent={Link}
-          href={`/events/${eventId}/schedule/general`}
+          href={`/events/${event.id}/schedule/general`}
         >
           לוח זמנים כללי
         </Button>

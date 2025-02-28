@@ -32,7 +32,7 @@ router.get(
 
       const { _id, name, color, routing } = event;
       const eventDivisions = divisions
-        .map(({ _id, name, color, hasState, routing }) => {
+        .map(({ _id, name, color, hasState }) => {
           if (!hasState) return null;
           return { id: String(_id), name, color, routing };
         })
@@ -44,6 +44,6 @@ router.get(
   })
 );
 
-router.use('/events/:divisionRouting', divisionsRouter);
+router.use('/events/:divisionId', divisionsRouter);
 
 export default router;

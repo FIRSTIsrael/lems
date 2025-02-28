@@ -10,7 +10,7 @@ export interface PortalEvent {
   divisions?: PortalDivision[];
   isDivision?: boolean;
   subtitle?: string;
-  routing: string;
+  routing?: string;
 }
 
 export interface PortalEventStatus {
@@ -36,7 +36,7 @@ export interface PortalDivision {
   id: string;
   name: string;
   color: string;
-  routing: string;
+  routing?: string;
 }
 
 export interface PortalTeam {
