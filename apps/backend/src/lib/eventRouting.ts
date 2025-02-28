@@ -1,6 +1,5 @@
-import { ObjectId } from 'mongodb';
 import { db } from '@lems/database';
-import { FllEvent, Division } from '@lems/types';
+import { FllEvent } from '@lems/types';
 import dayjs from 'dayjs';
 
 type EventType = "rg" | "ch" | "ps" | "os" | "otc";
