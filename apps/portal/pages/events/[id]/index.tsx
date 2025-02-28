@@ -46,6 +46,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
+  console.log(event);
   const awards = await fetchAwards(eventId);
   return { props: { event, teams, hasAwards: !!awards } };
 };

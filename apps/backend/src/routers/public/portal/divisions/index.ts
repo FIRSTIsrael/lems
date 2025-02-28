@@ -31,7 +31,7 @@ router.get(
       location: event.location,
       isDivision: event.enableDivisions,
       subtitle: event.enableDivisions ? `בית ${name}` : undefined,
-      routing: event.routing
+      routing: req.division.routing
     });
   })
 );
