@@ -6,7 +6,7 @@ from events.judging_session import JudgingSession
 from events.practice_match import PracticeMatch
 from events.ranking_match import Match
 from exceptions.scheduler_error import SchedulerError
-from models.create_schedule_request import CreateScheduleRequest, Break
+from models.requests.create_schedule import CreateScheduleRequest, Break
 from models.team import Team
 from models.team_activity import ActivityType, TeamActivity
 from models.location import Location
@@ -23,17 +23,17 @@ MIN_SCORE = 15
 
 SECONDS_PER_MINUTE = 60
 
-# logger = logging.getLogger("lems.scheduler")
+logger = logging.getLogger("lems.scheduler")
 
 # Configure the logger
-logger = logging.getLogger("scheduler_service")
+# logger = logging.getLogger("scheduler_service")
 logger.setLevel(logging.DEBUG)
-csv_handler = CSVLoggerHandler("scheduler_log.csv")
+# csv_handler = CSVLoggerHandler("scheduler_log.csv")
 formatter = logging.Formatter(
     "%(asctime)s,%(levelname)s,%(message)s,%(name)s,%(filename)s"
 )
-csv_handler.setFormatter(formatter)
-logger.addHandler(csv_handler)
+# csv_handler.setFormatter(formatter)
+# logger.addHandler(csv_handler)
 
 
 def check_score(teams: list[Team]) -> int:
@@ -226,7 +226,7 @@ class SchedulerService:
         while current_run < MAX_RUNS:
             current_run += 1
 
-            csv_handler.set_filename(f"scheduler_log_{current_run}.csv")
+            # csv_handler.set_filename(f"scheduler_log_{current_run}.csv")
             logger.debug(f"Starting Gale-Shapley run number: {current_run}")
 
             current_teams = deepcopy(teams)

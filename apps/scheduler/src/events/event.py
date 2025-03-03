@@ -4,7 +4,7 @@ import logging
 
 from typing import List
 
-from models.create_schedule_request import Break
+from models.requests.create_schedule import Break
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 from models.location import Location
