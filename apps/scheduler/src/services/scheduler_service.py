@@ -14,15 +14,26 @@ from services.gale_shapley_service import (
     gale_shapley,
     team_minimum_delta,
 )
+from services.csv_logger_handler import CSVLoggerHandler
 from repository.lems_repository import LemsRepository
 
-MIN_RUNS = 10
-MAX_RUNS = 1000
+MIN_RUNS = 1
+MAX_RUNS = 100
 MIN_SCORE = 15
 
 SECONDS_PER_MINUTE = 60
 
-logger = logging.getLogger("lems.scheduler")
+# logger = logging.getLogger("lems.scheduler")
+
+# Configure the logger
+logger = logging.getLogger("scheduler_service")
+logger.setLevel(logging.DEBUG)
+csv_handler = CSVLoggerHandler("scheduler_log.csv")
+formatter = logging.Formatter(
+    "%(asctime)s,%(levelname)s,%(message)s,%(name)s,%(filename)s"
+)
+csv_handler.setFormatter(formatter)
+logger.addHandler(csv_handler)
 
 
 def check_score(teams: list[Team]) -> int:
@@ -32,7 +43,12 @@ def check_score(teams: list[Team]) -> int:
     total_score = 0
 
     for team in teams:
+        for event in team.team_events:
+            logger.debug(
+                f"Team {team.team_number} has event {event.activity_type}, start {event.start_time}, end {event.end_time}"
+            )
         current_score = team_minimum_delta(team.team_events)
+        logger.debug(f"Team {team.team_number} has a score of {current_score}")
         total_score += current_score
         if current_score < min_score:
             min_score = current_score
@@ -184,9 +200,17 @@ class SchedulerService:
                     if activity.end_time > current_matches_start_time:
                         current_matches_start_time = activity.end_time
             else:
-                activities += event.create_activities(
+                new_activities = event.create_activities(
                     create_schedule_request.judging_start
                 )
+                activities += new_activities
+
+            # Log detailed information about the activities for each team
+            # for activity in new_activities:
+            #     logger.debug(
+            #         f"Activity created: Team {activity.team_number}, Type {activity.activity_type}, "
+            #         f"Start {activity.start_time}, End {activity.end_time}, Location {activity.location.name}"
+            #     )
 
         return activities
 
@@ -202,6 +226,7 @@ class SchedulerService:
         while current_run < MAX_RUNS:
             current_run += 1
 
+            csv_handler.set_filename(f"scheduler_log_{current_run}.csv")
             logger.debug(f"Starting Gale-Shapley run number: {current_run}")
 
             current_teams = deepcopy(teams)
@@ -231,10 +256,11 @@ class SchedulerService:
 
         if current_score < MIN_SCORE:
             raise SchedulerError(
-                "Failed to generate valid schedule after mulitple attmepts"
+                "Failed to generate valid schedule after multiple attempts"
             )
 
         logger.info(
             f"Inserting schedule into LEMS database with score of {current_score} and avg of: {current_average_score}"
         )
         self.lems_repository.insert_schedule(best_activities)
+        logger.info(f"Schedule created successfully with score: {current_score}")
