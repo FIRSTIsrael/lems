@@ -24,9 +24,9 @@ async def validate_schedule(
     lems = LemsRepository(request.division_id)
 
     validator = ValidatorService(lems, request)
-    validator.validate()
+    validator_data = validator.validate()
 
-    return ValidateScheduleResponse(is_valid=True)
+    return ValidateScheduleResponse(is_valid=True, data=validator_data)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

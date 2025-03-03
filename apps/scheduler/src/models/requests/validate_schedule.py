@@ -2,6 +2,8 @@ from typing import Literal
 from datetime import datetime
 from pydantic import BaseModel
 
+from models.validator import ValidatorData
+
 
 class Break(BaseModel):
     event_type: Literal["judging", "match"]
@@ -30,4 +32,5 @@ class ValidateScheduleRequest(BaseModel):
 
 class ValidateScheduleResponse(BaseModel):
     is_valid: bool
+    data: list[ValidatorData] = None
     error: str = None
