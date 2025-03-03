@@ -3,7 +3,12 @@ import logging
 from typing import Iterable
 from datetime import timedelta
 
-from models.validator import ValidatorData, ValidatorMatch, ValidatorSession
+from models.validator import (
+    ValidatorData,
+    ValidatorError,
+    ValidatorMatch,
+    ValidatorSession,
+)
 from models.requests.validate_schedule import ValidateScheduleRequest, Break
 from repository.lems_repository import LemsRepository
 
@@ -142,11 +147,6 @@ class ValidatorService:
             f"Session {session['number']} has matches {avaliable_match_numbers}"
         )
 
-        # available_slots = sum(match["slots"] for match in available_matches)
-        # if available_slots < session["slots"]:
-        #     raise ValidatorError(
-        #         f"Session {session['number']} does not have enough matches to fill all slots"
-        #     )
         return avaliable_match_numbers
 
     def create_validator_data(self) -> list[ValidatorData]:
@@ -188,12 +188,19 @@ class ValidatorService:
 
     def validate(self):
         data = self.create_validator_data()
-        # for session in self.sessions:
-        #     optional_matches = self.get_optional_matches(session)
-        #     if not optional_matches:
-        #         raise ValidatorError(
-        #             f"Session {session['number']} does not have any available matches"
-        #         )
-        return data
+
+        for entry in data:
+            for overlapping_round in entry["overlapping_rounds"]:
+                slots = sum(
+                    match["slots"] for match in overlapping_round["available_matches"]
+                )
+                if slots < entry["session"]["slots"]:
+                    raise ValidatorError(
+                        f"Session {entry['session']['number']} does not have enough matches to fill all slots",
+                        data,
+                    )
+
         # TODO: stage 2 validation - check if slots are shared between 2 sessions.
         # In this case we can fail even when the slots check passes
+
+        return data

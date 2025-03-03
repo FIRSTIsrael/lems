@@ -2,6 +2,7 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 
+from models.validator import ValidatorError
 from models.requests.create_schedule import CreateScheduleRequest
 from models.requests.validate_schedule import (
     ValidateScheduleRequest,
@@ -24,7 +25,13 @@ async def validate_schedule(
     lems = LemsRepository(request.division_id)
 
     validator = ValidatorService(lems, request)
-    validator_data = validator.validate()
+
+    try:
+        validator_data = validator.validate()
+    except ValidatorError as error:
+        return ValidateScheduleResponse(
+            is_valid=False, error=str(error), data=error.data
+        )
 
     return ValidateScheduleResponse(is_valid=True, data=validator_data)
 
