@@ -120,26 +120,29 @@ class ValidatorService:
             for round in rounds_with_matches
         ]
 
-        return [
+        overlaps = [
             index
             for (index, round) in enumerate(round_times)
             if round["start_time"] < (session["end_time"] + self.padding)
             and round["end_time"] > (session["start_time"] - self.padding)
         ]
 
+        return overlaps
+
     def _get_optional_matches(self, session: ValidatorSession):
         """Returns the matches that are available for each team in the session.
         A match is available if it doesn't overlap with the session's time window.
         """
 
-        potential_overlaps = self._get_potential_round_overlaps(session=session)
+        overlaps = self._get_potential_round_overlaps(session=session)
+        logger.debug(f"Session {session['number']} overlaps with rounds {overlaps}")
 
         available_matches = []
 
-        if len(potential_overlaps) == 0:
+        if len(overlaps) == 0:
             return
 
-        for round_index in potential_overlaps:
+        for round_index in overlaps:
             round = self.matches[round_index]
             for match in round:
                 if match["start_time"] > (session["end_time"] + self.padding) or match[
@@ -168,6 +171,7 @@ class ValidatorService:
             overlapping_rounds = []
             for round_index in self._get_potential_round_overlaps(session):
                 round = self.matches[round_index]
+                round_number = round_index + 1
                 overlapping_rounds.append(
                     {
                         "stage": (
@@ -175,7 +179,11 @@ class ValidatorService:
                             if round_index < self.config.practice_rounds
                             else "ranking"
                         ),
-                        "number": round_index + 1,
+                        "number": (
+                            round_number - self.config.practice_rounds
+                            if round_number > self.config.practice_rounds
+                            else round_number
+                        ),
                         "start_time": round[0]["start_time"],
                         "end_time": round[-1]["end_time"],
                         "available_matches": [

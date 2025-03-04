@@ -29,10 +29,12 @@ async def validate_schedule(
     try:
         validator_data = validator.validate()
     except ValidatorError as error:
+        logger.info(f"Validation failed: {error}")
         return ValidateScheduleResponse(
             is_valid=False, error=str(error), data=error.data
         )
 
+    logger.info("Validation successful")
     return ValidateScheduleResponse(is_valid=True, data=validator_data)
 
 
