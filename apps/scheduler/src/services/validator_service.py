@@ -26,11 +26,11 @@ class ValidatorService:
         self.lems_repository = lems_repository
         self.config = request
         self.team_count = len(self.lems_repository.get_teams())
-        self.sessions = self.get_sessions()
-        self.matches = self.get_matches()
+        self.sessions = self._get_sessions()
+        self.matches = self._get_matches()
         self.padding = timedelta(minutes=MIN_MINUTES_BETWEEN_EVENTS)
 
-    def get_sessions(self) -> list[ValidatorSession]:
+    def _get_sessions(self) -> list[ValidatorSession]:
         judging_start_time = self.config.judging_start
         cycle_time = timedelta(seconds=self.config.judging_cycle_time_seconds)
         rooms = self.lems_repository.get_rooms()
@@ -61,7 +61,7 @@ class ValidatorService:
 
         return sessions
 
-    def get_matches(self) -> list[list[ValidatorMatch]]:
+    def _get_matches(self) -> list[list[ValidatorMatch]]:
         total_rounds = self.config.practice_rounds + self.config.ranking_rounds
         tables = self.lems_repository.get_tables()
         slots = math.ceil(
@@ -107,7 +107,9 @@ class ValidatorService:
 
         return rounds
 
-    def get_potential_match_overlaps(self, session: ValidatorSession):
+    def _get_potential_round_overlaps(self, session: ValidatorSession):
+        """Returns the rounds that overlap with the session's time window."""
+
         rounds_with_matches = self.matches
 
         round_times = [
@@ -125,8 +127,12 @@ class ValidatorService:
             and round["end_time"] > (session["start_time"] - self.padding)
         ]
 
-    def get_optional_matches(self, session: ValidatorSession):
-        potential_overlaps = self.get_potential_match_overlaps(session=session)
+    def _get_optional_matches(self, session: ValidatorSession):
+        """Returns the matches that are available for each team in the session.
+        A match is available if it doesn't overlap with the session's time window.
+        """
+
+        potential_overlaps = self._get_potential_round_overlaps(session=session)
 
         available_matches = []
 
@@ -149,15 +155,18 @@ class ValidatorService:
 
         return avaliable_match_numbers
 
-    def create_validator_data(self) -> list[ValidatorData]:
+    def _create_validator_data(self) -> list[ValidatorData]:
+        """Creates the data structure for the validator to use.
+        This is a list of sessions, each with a list of overlapping rounds."""
+
         data = []
         for session in self.sessions:
-            optional_matches = self.get_optional_matches(session)
+            optional_matches = self._get_optional_matches(session)
             if not optional_matches:
                 continue
 
             overlapping_rounds = []
-            for round_index in self.get_potential_match_overlaps(session):
+            for round_index in self._get_potential_round_overlaps(session):
                 round = self.matches[round_index]
                 overlapping_rounds.append(
                     {
@@ -186,8 +195,66 @@ class ValidatorService:
 
         return data
 
+    def _cross_reference_match_slots(self, data: list[ValidatorData]):
+        """Handles cases where multiple sessions have the same available match.
+        Known unhandles cases: Splitting the slots of a shared session between 2 matches.
+        """
+
+        match_numbers = []
+        for entry in data:
+            for overlapping_round in entry["overlapping_rounds"]:
+                for match in overlapping_round["available_matches"]:
+                    match_numbers.append(match["number"])
+
+        duplicate_matches = {
+            match_number
+            for match_number in match_numbers
+            if match_numbers.count(match_number) > 1
+        }
+
+        duplicate_match_details = {}
+        for match_number in duplicate_matches:
+            sessions = []
+            for entry in data:
+                for overlapping_round in entry["overlapping_rounds"]:
+                    for match in overlapping_round["available_matches"]:
+                        if match["number"] == match_number:
+                            sessions.append(
+                                {
+                                    "session": entry["session"]["number"],
+                                    "slots": sum(
+                                        match["slots"]
+                                        for match in overlapping_round[
+                                            "available_matches"
+                                        ]
+                                    ),
+                                }
+                            )
+
+            duplicate_match_details[match_number] = sessions
+
+            min_slots = min(sessions, key=lambda x: x["slots"])["slots"]
+            first_min_session = next(
+                s["session"] for s in sessions if s["slots"] == min_slots
+            )
+
+            for entry in data:
+                for overlapping_round in entry["overlapping_rounds"]:
+                    overlapping_round["available_matches"] = [
+                        match
+                        for match in overlapping_round["available_matches"]
+                        if match["number"] != match_number
+                        or entry["session"]["number"] == first_min_session
+                    ]
+
+        logger.debug(f"Duplicate matches: {duplicate_match_details}")
+        logger.info(f"Schedule has duplicate available matches: {duplicate_matches}")
+
+        return data
+
     def validate(self):
-        data = self.create_validator_data()
+        data = self._create_validator_data()
+        self._cross_reference_match_slots(data)  # Modifies in place
 
         for entry in data:
             for overlapping_round in entry["overlapping_rounds"]:
@@ -199,8 +266,5 @@ class ValidatorService:
                         f"Session {entry['session']['number']} does not have enough matches to fill all slots",
                         data,
                     )
-
-        # TODO: stage 2 validation - check if slots are shared between 2 sessions.
-        # In this case we can fail even when the slots check passes
 
         return data
