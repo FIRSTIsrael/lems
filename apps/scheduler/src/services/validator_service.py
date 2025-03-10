@@ -141,7 +141,7 @@ class ValidatorService:
         available_matches = []
 
         if len(overlaps) == 0:
-            return
+            return None
 
         for round_index in overlaps:
             round = self.matches[round_index]
@@ -166,7 +166,7 @@ class ValidatorService:
         data = []
         for session in self.sessions:
             optional_matches = self._get_optional_matches(session)
-            if not optional_matches:
+            if optional_matches is None:
                 continue
 
             overlapping_rounds = []
