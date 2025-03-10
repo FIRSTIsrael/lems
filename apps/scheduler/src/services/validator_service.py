@@ -97,7 +97,8 @@ class ValidatorService:
                 breaks: Iterable[Break] = (
                     break_
                     for break_ in self.config.breaks
-                    if break_.event_type == "match" and break_.after == match
+                    if break_.event_type == "match"
+                    and break_.after == (start_number + match)
                 )
                 break_after = next(breaks, None)
                 if break_after:
