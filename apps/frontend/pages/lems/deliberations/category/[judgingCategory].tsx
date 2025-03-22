@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
   rooms,
   sessions,
   cvForms,
-  scoresheets,
+  scoresheets: initialScoresheets,
   deliberation: initialDeliberation,
   roomScores,
   awards
@@ -68,6 +68,7 @@ const Page: NextPage<Props> = ({
   const deliberationId = initialDeliberation._id;
   const deliberation = useRef<DeliberationRef>(null);
   const [rubrics, setRubrics] = useState(initialRubrics);
+  const [scoresheets, setScoresheets] = useState(initialScoresheets);
 
   if (!initialDeliberation.available) {
     router.push(`/lems/${user.role}`);
@@ -155,15 +156,27 @@ const Page: NextPage<Props> = ({
     );
   };
 
+  const updateScoresheet = (scoresheet: WithId<Scoresheet>) => {
+    setScoresheets(scoresheets =>
+      scoresheets.map(s => {
+        if (s._id === scoresheet._id) {
+          return scoresheet;
+        }
+        return s;
+      })
+    );
+  };
+
   const { socket, connectionStatus } = useWebsocket(
     division._id.toString(),
-    ['judging'],
+    ['judging', 'field'],
     undefined,
     [
       { name: 'judgingDeliberationStarted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationCompleted', handler: handleDeliberationEvent },
       { name: 'judgingDeliberationUpdated', handler: handleDeliberationEvent },
-      { name: 'rubricUpdated', handler: updateRubric }
+      { name: 'rubricUpdated', handler: updateRubric },
+      { name: 'scoresheetUpdated', handler: updateScoresheet }
     ]
   );
 
