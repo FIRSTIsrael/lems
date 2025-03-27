@@ -29,21 +29,21 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
     data: scores,
     isLoading: scoresLoading,
     error: scoresError
-  } = useRealtimeData<PortalScore>(`/events/${event.id}/teams/${team.number}/scores`);
+  } = useRealtimeData<PortalScore>(`/events/${event.routing}/teams/${team.number}/scores`);
 
   const {
     data: schedule,
     isLoading: scheduleLoading,
     error: scheduleError
   } = useRealtimeData<PortalActivity<'match' | 'session' | 'general'>[]>(
-    `/events/${event.id}/teams/${team.number}/schedule`
+    `/events/${event.routing}/teams/${team.number}/schedule`
   );
 
   const {
     data: status,
     isLoading: statusLoading,
     error: statusError
-  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.routing}/status`);
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>

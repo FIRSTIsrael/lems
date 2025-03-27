@@ -19,7 +19,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
     data: status,
     isLoading,
     error
-  } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  } = useRealtimeData<PortalEventStatus>(`/events/${event.routing}/status`);
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
@@ -38,7 +38,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
       <Typography variant="h2" gutterBottom>
         קבוצות באירוע
       </Typography>
-      <TeamList eventId={event.id} teams={teams} />
+      <TeamList eventId={event.routing} teams={teams} />
     </Container>
   );
 };
