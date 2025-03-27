@@ -31,7 +31,6 @@ import RoundEditorTeamCell from './round-editor-team-cell';
 import { fullMatch } from '@lems/utils/objects';
 import { enqueueSnackbar } from 'notistack';
 import { Socket } from 'socket.io-client';
-import { LoadingButton } from '@mui/lab';
 
 interface RoundScheduleEditorRowProps {
   divisionState: WithId<DivisionState>;
@@ -167,7 +166,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
             </Table>
           </TableContainer>
           <Stack justifyContent="center" direction="row" mt={2} spacing={2}>
-            <LoadingButton
+            <Button
               startIcon={<SaveOutlinedIcon />}
               sx={{ minWidth: 200 }}
               variant="contained"
@@ -175,7 +174,7 @@ const RoundScheduleEditor: React.FC<RoundScheduleEditorProps> = ({
               loading={isSubmitting}
             >
               שמירה
-            </LoadingButton>
+            </Button>
             <Button
               startIcon={<RestartAltIcon />}
               sx={{ minWidth: 200 }}
