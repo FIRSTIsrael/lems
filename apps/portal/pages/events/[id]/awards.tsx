@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
 import { Container, Box, Typography, Stack } from '@mui/material';
-import { AwardNames, PortalAward, PortalEvent } from '@lems/types';
+import { AwardNames, PortalAward, PortalEvent, PersonalAwardTypes, PersonalAwards } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import AwardWinner from '../../../components/events/award-winner';
@@ -53,40 +53,69 @@ const Page: NextPage<Props> = ({ awards, event }) => {
       <Typography variant="h1">פרסים</Typography>
       <StyledEventSubtitle event={event} />
 
-      {Object.entries(restAwards).map(([awardName, awards]) => {
-        if (awards.every(award => !award.winner)) return null; // Shouldn't happen but as a safeguard
+      {/* Personal Awards First */}
+      {Object.entries(restAwards)
+        .filter(([awardName]) => PersonalAwardTypes.includes(awardName as PersonalAwards))
+        .map(([awardName, awards]) => {
+          if (awards.every(award => !award.winner)) return null;
 
-        return (
-          <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-            <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
-            {awards.map((award, index) => (
-              <AwardWinner
-                key={index}
-                award={award}
-                winnerText={
-                  typeof award.winner === 'string'
-                    ? award.winner
-                    : `${award.winner?.name} #${award.winner?.number}`
-                }
-              />
-            ))}
+          return (
+            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
+              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+              {awards.map((award, index) => (
+                <AwardWinner
+                  key={index}
+                  award={award}
+                  winnerText={
+                    typeof award.winner === 'string'
+                      ? award.winner
+                      : `${award.winner?.name} #${award.winner?.number}`
+                  }
+                />
+              ))}
+            </Box>
+          );
+        })}
+
+      {/* Other Awards */}
+      {Object.entries(restAwards)
+        .filter(([awardName]) => !PersonalAwardTypes.includes(awardName as PersonalAwards))
+        .map(([awardName, awards]) => {
+          if (awards.every(award => !award.winner)) return null;
+
+          return (
+            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
+              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+              {awards.map((award, index) => (
+                <AwardWinner
+                  key={index}
+                  award={award}
+                  winnerText={
+                    typeof award.winner === 'string'
+                      ? award.winner
+                      : `${award.winner?.name} #${award.winner?.number}`
+                  }
+                />
+              ))}
+            </Box>
+          );
+        })}
+
+      {advancement?.length > 0 && (
+        <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
+          <Typography variant="h6">מעפילות לתחרות האליפות</Typography>
+          <Box sx={{ mt: 1 }}>
+            {advancement.map((award, index) => {
+              if (!award.winner || typeof award.winner === 'string') return null;
+              return (
+                <Typography key={index}>
+                  {award.winner.name} #{award.winner.number}
+                </Typography>
+              );
+            })}
           </Box>
-        );
-      })}
-
-      <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-        <Typography variant="h6">מעפילות לתחרות האליפות</Typography>
-        <Box sx={{ mt: 1 }}>
-          {advancement.map((award, index) => {
-            if (!award.winner || typeof award.winner === 'string') return null;
-            return (
-              <Typography key={index}>
-                {award.winner.name} #{award.winner.number}
-              </Typography>
-            );
-          })}
         </Box>
-      </Box>
+      )}
     </Container>
   );
 };
