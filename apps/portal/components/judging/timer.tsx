@@ -21,10 +21,18 @@ export const JudgingTimer = () => {
 
   useEffect(() => {
     if (isRunning) {
-      const interval = setInterval(() => setCurrentTime(dayjs()), 100);
+      const interval = setInterval(() => {
+        const now = dayjs();
+        setCurrentTime(now);
+
+        // Check if timer should end
+        if (startTime && now.diff(dayjs(startTime), 'seconds') >= TOTAL_SESSION_LENGTH) {
+          handleReset();
+        }
+      }, 100);
       return () => clearInterval(interval);
     }
-  }, [isRunning]);
+  }, [isRunning, startTime]);
 
   const handleStart = () => {
     setStartTime(currentTime.toDate());
@@ -34,6 +42,7 @@ export const JudgingTimer = () => {
   const handleReset = () => {
     setStartTime(null);
     setIsRunning(false);
+    setCurrentTime(dayjs());
   };
 
   const getProgressValue = () => {
@@ -98,7 +107,10 @@ export const JudgingTimer = () => {
             width: 250,
             display: 'flex',
             flexDirection: 'column',
-            gap: 1
+            gap: 1,
+            height: 'fit-content',
+            bgcolor: 'background.paper',
+            borderRadius: 1
           }}
         >
           {JUDGING_FLOW.map((phase, index) => {
@@ -125,7 +137,10 @@ export const JudgingTimer = () => {
                   <Typography
                     variant="body2"
                     fontFamily="Roboto Mono"
-                    sx={{ opacity: index === getCurrentPhase() ? 1 : 0.5 }}
+                    sx={{
+                      opacity: index === getCurrentPhase() ? 1 : 0.5,
+                      ml: 1
+                    }}
                   >
                     {minutes}:{seconds.toString().padStart(2, '0')}
                   </Typography>
@@ -136,7 +151,19 @@ export const JudgingTimer = () => {
         </Paper>
       )}
 
-      <Paper sx={{ py: 4, px: 2, textAlign: 'center', flexGrow: 1 }}>
+      <Paper
+        sx={{
+          py: 4,
+          px: 2,
+          textAlign: 'center',
+          flexGrow: 1,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}
+      >
         <Stack spacing={2}>
           {isRunning && (
             <>
