@@ -22,6 +22,10 @@ const pages = [
   {
     name: 'מחשבון ניקוד',
     href: '/scorer'
+  },
+  {
+    name: 'טיימר חדר שיפוט',
+    href: '/judging-timer'
   }
 ];
 
