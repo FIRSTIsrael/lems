@@ -39,13 +39,15 @@ export const JudgingTimer = () => {
   const getProgressValue = () => {
     if (!startTime || !isRunning) return 0;
     const sessionEnd = dayjs(startTime).add(TOTAL_SESSION_LENGTH, 'seconds');
-    const progress = 100 - (sessionEnd.diff(currentTime) / (TOTAL_SESSION_LENGTH * 10));
+    const progress = 100 - sessionEnd.diff(currentTime) / (TOTAL_SESSION_LENGTH * 10);
     return Math.min(100, Math.max(0, progress));
   };
 
   const getProgressColor = () => {
     if (!startTime || !isRunning) return 'primary';
-    const timeLeft = dayjs(startTime).add(TOTAL_SESSION_LENGTH, 'seconds').diff(currentTime, 'seconds');
+    const timeLeft = dayjs(startTime)
+      .add(TOTAL_SESSION_LENGTH, 'seconds')
+      .diff(currentTime, 'seconds');
     if (timeLeft <= 0) return 'error';
     if (timeLeft <= 60) return 'warning';
     return 'success';
@@ -55,34 +57,34 @@ export const JudgingTimer = () => {
     if (!startTime || !isRunning) return -1;
     const elapsed = currentTime.diff(startTime, 'seconds');
     let accumulatedTime = 0;
-    
+
     for (let i = 0; i < JUDGING_FLOW.length; i++) {
       accumulatedTime += JUDGING_FLOW[i].duration;
       if (elapsed < accumulatedTime) return i;
     }
-    
+
     return JUDGING_FLOW.length - 1;
   };
 
   const getPhaseTimeRemaining = (phaseIndex: number) => {
     if (!startTime || !isRunning || phaseIndex < 0) return null;
-    
+
     const elapsed = currentTime.diff(startTime, 'seconds');
     let accumulatedTime = 0;
-    
+
     // Sum up all previous phases
     for (let i = 0; i < phaseIndex; i++) {
       accumulatedTime += JUDGING_FLOW[i].duration;
     }
-    
+
     // If we haven't reached this phase yet
     if (elapsed < accumulatedTime) return JUDGING_FLOW[phaseIndex].duration;
-    
+
     // If we're in this phase
     if (elapsed < accumulatedTime + JUDGING_FLOW[phaseIndex].duration) {
       return Math.max(0, accumulatedTime + JUDGING_FLOW[phaseIndex].duration - elapsed);
     }
-    
+
     // If we're past this phase
     return 0;
   };
@@ -90,18 +92,20 @@ export const JudgingTimer = () => {
   return (
     <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
       {isRunning && (
-        <Paper sx={{ 
-          p: 2, 
-          width: 250,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1
-        }}>
+        <Paper
+          sx={{
+            p: 2,
+            width: 250,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1
+          }}
+        >
           {JUDGING_FLOW.map((phase, index) => {
             const timeRemaining = getPhaseTimeRemaining(index);
             const minutes = Math.floor((timeRemaining || 0) / 60);
             const seconds = (timeRemaining || 0) % 60;
-            
+
             return (
               <Box
                 key={phase.name}
@@ -118,8 +122,8 @@ export const JudgingTimer = () => {
               >
                 <Typography variant="body2">{phase.name}</Typography>
                 {timeRemaining !== null && (
-                  <Typography 
-                    variant="body2" 
+                  <Typography
+                    variant="body2"
                     fontFamily="Roboto Mono"
                     sx={{ opacity: index === getCurrentPhase() ? 1 : 0.5 }}
                   >
@@ -141,8 +145,15 @@ export const JudgingTimer = () => {
                 allowNegativeValues={true}
                 variant="h1"
                 fontFamily="Roboto Mono"
-                fontSize="10rem"
-                fontWeight={700}
+                sx={{
+                  fontSize: {
+                    xs: '15vw',
+                    sm: '12vw',
+                    md: '10vw',
+                    lg: '8vw'
+                  },
+                  fontWeight: 700
+                }}
                 dir="ltr"
               />
               <LinearProgress
@@ -158,9 +169,9 @@ export const JudgingTimer = () => {
               />
             </>
           )}
-          <Button 
-            variant="contained" 
-            color={isRunning ? "error" : "primary"}
+          <Button
+            variant="contained"
+            color={isRunning ? 'error' : 'primary'}
             size="large"
             onClick={isRunning ? handleReset : handleStart}
             sx={{ mt: isRunning ? 2 : 0 }}
