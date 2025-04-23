@@ -119,11 +119,12 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
     },
     ...rankingRounds.map(
       round =>
-        ({
+        (({
           ...defaultColumnSettings,
           field: `gp-${round}`,
           headerName: `GP ${round}`,
           width: 60,
+
           renderCell: params => {
             return (
               <Typography
@@ -135,7 +136,7 @@ const ChampionsDeliberationsGrid: React.FC<ChampionsDeliberationGridProps> = ({
               </Typography>
             );
           }
-        }) as GridColDef
+        }) as GridColDef)
     ),
     {
       ...defaultColumnSettings,

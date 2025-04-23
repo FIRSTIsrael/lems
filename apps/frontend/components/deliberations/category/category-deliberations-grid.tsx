@@ -115,18 +115,19 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
     },
     ...fields.map(
       field =>
-        ({
+        (({
           ...defaultColumnSettings,
           ...field,
           width: 75
-        }) as GridColDef
+        }) as GridColDef)
     ),
     ...(category === 'core-values'
       ? rankingRounds.map(
           round =>
-            ({
+            (({
               field: `gp-${round}`,
               headerName: `GP ${round}`,
+
               renderCell: params => {
                 return (
                   <Typography
@@ -138,8 +139,9 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
                   </Typography>
                 );
               },
+
               ...defaultColumnSettings
-            }) as GridColDef
+            }) as GridColDef)
         )
       : []),
     {
@@ -160,12 +162,12 @@ const CategoryDeliberationsGrid: React.FC<CategoryDeliberationsGridProps> = ({
       : []),
     ...awards.map(
       award =>
-        ({
+        (({
           ...award,
           type: 'boolean',
           editable: !disabled,
           width: 65
-        }) as GridColDef
+        }) as GridColDef)
     ),
     ...(category === 'core-values'
       ? [

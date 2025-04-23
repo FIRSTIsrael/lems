@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, type JSX } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useSteps } from '../hooks/use-steps';
 import { SlideContext } from './slide';
