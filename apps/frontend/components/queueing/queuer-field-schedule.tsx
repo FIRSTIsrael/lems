@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
 import ReportRoundSchedule from '../field/report-round-schedule';
 

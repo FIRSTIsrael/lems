@@ -5,7 +5,7 @@ const eventSalesforceValidator = (req: Request, res: Response, next: NextFunctio
     return next();
   }
 
-  return res.status(403).json({ error: 'FORBIDDEN' });
+  res.status(403).json({ error: 'FORBIDDEN' });
 };
 
 export default eventSalesforceValidator;

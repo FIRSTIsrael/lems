@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Countdown from '../general/countdown';
 import useCountdown from '../../hooks/use-countdown';
 

@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { green } from '@mui/material/colors';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division } from '@lems/types';
 import Stat from '../stat';
 import CycleTimeReport from '../cycle-time-report';

@@ -13,6 +13,8 @@ const nextConfig = {
     svgr: false
   },
 
+  transpilePackages: ['@mui/x-data-grid'],
+
   compiler: {
     // For other options, see https://nextjs.org/docs/architecture/nextjs-compiler#emotion
     emotion: true

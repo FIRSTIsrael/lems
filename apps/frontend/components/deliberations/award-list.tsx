@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
 import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';

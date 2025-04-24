@@ -41,10 +41,12 @@ app.use('/dashboard', dashboardRouter);
 app.use('/api', apiRouter);
 
 app.get('/status', (req, res) => {
-  return res.status(200).json({ ok: true });
+  res.status(200).json({ ok: true });
 });
 
-app.use((req, res) => res.status(404).json({ error: 'ROUTE_NOT_DEFINED' }));
+app.use((req, res) => {
+  res.status(404).json({ error: 'ROUTE_NOT_DEFINED' });
+});
 
 app.use((err, req, res, next) => {
   console.log(err);

@@ -1,6 +1,6 @@
 import { ResponsiveStyleValue } from '@mui/system';
 import { Award, JudgingCategory, Rubric } from '@lems/types';
-import Grid, { GridSize } from '@mui/material/Grid2';
+import Grid, { GridSize } from '@mui/material/Grid';
 import {
   Checkbox,
   ListItem,

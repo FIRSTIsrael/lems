@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { red, blue, green } from '@mui/material/colors';
 import {
   RadarChart,

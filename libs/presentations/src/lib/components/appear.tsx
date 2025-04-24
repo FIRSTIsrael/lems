@@ -58,6 +58,7 @@ const SteppedComponent: React.FC<SteppedComponentProps> = ({
   return (
     <>
       {placeholder}
+      {/* @ts-expect-error For some reason react-spring doesn't like children. */}
       <AnimatedEl
         style={alwaysAppearActive ? (activeStyle as React.CSSProperties) : springStyle}
         className={className}

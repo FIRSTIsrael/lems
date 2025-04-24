@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';

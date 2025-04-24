@@ -20,8 +20,10 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       console.log(`🔏 Captcha failure: ${captcha['error-codes'] || []}`);
     }
 
-    if (captcha.action != 'submit' || captcha.score < 0.5)
-      return res.status(429).json({ error: 'Captcha Failure, please try again later' });
+    if (captcha.action != 'submit' || captcha.score < 0.5) {
+      res.status(429).json({ error: 'Captcha Failure, please try again later' });
+      return;
+    }
   }
 
   if (loginDetails.eventId) loginDetails.eventId = new ObjectId(loginDetails.eventId);
@@ -38,7 +40,8 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
           loginDetails.role || 'admin'
         }`
       );
-      return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
+      res.status(401).json({ error: 'INVALID_CREDENTIALS' });
+      return;
     }
 
     console.log(
@@ -62,7 +65,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     );
 
     res.cookie('auth-token', token, { expires: expires.toDate(), httpOnly: true, secure: true });
-    return res.json(user);
+    res.json(user);
   } catch (err) {
     next(err);
   }
@@ -71,7 +74,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 router.post('/logout', (req: Request, res: Response) => {
   console.log(`🔒 Logout successful`);
   res.clearCookie('auth-token');
-  return res.json({ ok: true });
+  res.json({ ok: true });
 });
 
 export default router;

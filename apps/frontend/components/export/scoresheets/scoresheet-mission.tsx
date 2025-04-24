@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { Typography, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Scoresheet } from '@lems/types';
 import { MissionSchema, localizedScoresheet } from '@lems/season';
 import { ScoresheetMissionClause } from './scoresheet-mission-clause';

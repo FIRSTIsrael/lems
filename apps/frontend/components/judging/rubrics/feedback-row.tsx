@@ -66,8 +66,8 @@ const FeedbackRow: React.FC<FeedbackRowProps> = ({
             border: '1px solid black'
           }}
         >
-          <Box height={25} justifyContent="center" marginTop={-1}>
-            <Markdown css={{ marginLeft: '12px' }}>{description}</Markdown>
+          <Box height={25} justifyContent="center" marginTop={-1} marginLeft={'12px'}>
+            <Markdown>{description}</Markdown>
           </Box>
         </TableCell>
       </TableRow>

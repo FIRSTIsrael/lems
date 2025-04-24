@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import ScoresPerRoomChart from '../../insights/charts/scores-per-room-chart';
 import TeamPool from '../team-pool';
 import AwardList from '../award-list';

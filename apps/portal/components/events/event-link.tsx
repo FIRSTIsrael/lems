@@ -11,13 +11,13 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material';
-import Grid, { Grid2Props } from '@mui/material/Grid2';
+import Grid, { GridProps } from '@mui/material/Grid';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
 import theme from '../../lib/theme';
 
-interface EventDescriptionProps extends Grid2Props {
+interface EventDescriptionProps extends GridProps {
   event: PortalEvent;
   isDesktop?: boolean;
   includeDate?: boolean;

@@ -5,7 +5,7 @@ const adminValidator = (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 
-  return res.status(403).json({ error: 'FORBIDDEN' });
+  res.status(403).json({ error: 'FORBIDDEN' });
 };
 
 export default adminValidator;

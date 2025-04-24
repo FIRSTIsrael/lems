@@ -15,7 +15,7 @@ import {
   DialogTitle,
   TextField
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import TaskIcon from '@mui/icons-material/Task';
 import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';

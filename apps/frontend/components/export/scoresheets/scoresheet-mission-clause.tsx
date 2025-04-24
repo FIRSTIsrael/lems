@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb';
 import Markdown from 'react-markdown';
 import { Typography, ThemeProvider } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Scoresheet } from '@lems/types';
 import { LocalizedMission, MissionClauseSchema } from '@lems/season';
 

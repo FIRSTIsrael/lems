@@ -2,7 +2,7 @@ import React from 'react';
 import { WithId } from 'mongodb';
 import { FormikValues } from 'formik';
 import { Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Team } from '@lems/types';
 import CVFormSubjectSelect from './cv-form-subject';
 import FormikTeamField from '../general/forms/formik-team-field';

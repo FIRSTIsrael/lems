@@ -2,7 +2,7 @@ import React from 'react';
 import { LocalizedMission, MissionClauseSchema } from '@lems/season';
 import { ensureArray } from '@lems/utils/arrays';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Markdown from 'react-markdown';
 import CustomNumberInput from './number-input';
 

@@ -12,7 +12,7 @@ import {
   PaperProps,
   Divider
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { FllEvent, Division, DivisionSwatches } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';

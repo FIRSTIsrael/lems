@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 

@@ -1,8 +1,8 @@
 import { SvgIconProps } from '@mui/material';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
-import CvFieldCheckedIcon from '../../icons/CvFieldCheckedIcon';
-import CvFieldUncheckedIcon from '../../icons/CvFieldUncheckedIcon';
+import CVFieldCheckedIcon from '../../icons/cv-field-checked-icon';
+import CVFieldUncheckedIcon from '../../icons/cv-field-unchecked-icon';
 
 interface Props extends SvgIconProps {
   checked: boolean;
@@ -11,7 +11,7 @@ interface Props extends SvgIconProps {
 
 const RubricRadioIcon = ({ checked, isCoreValuesField = false, ...props }: Props) => {
   if (isCoreValuesField) {
-    return checked ? <CvFieldCheckedIcon {...props} /> : <CvFieldUncheckedIcon {...props} />;
+    return checked ? <CVFieldCheckedIcon {...props} /> : <CVFieldUncheckedIcon {...props} />;
   }
   return checked ? <CheckedIcon {...props} /> : <UncheckedIcon {...props} />;
 };

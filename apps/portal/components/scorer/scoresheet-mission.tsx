@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { MissionSchema, localizedScoresheet } from '@lems/season';
 import { Paper, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import MissionClause from './mission-clause';
 import NoEquipmentImage from '../../public/assets/scoresheet/no-equipment.svg';

@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { blue } from '@mui/material/colors';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division, Team } from '@lems/types';
 import Stat from '../stat';
 import TeamInsightsDashboard from './team';

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { NextPage, GetServerSideProps } from 'next';
 import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
 import EventList from '../../components/events/event-list';
