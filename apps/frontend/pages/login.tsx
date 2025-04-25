@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Box, Link, Stack, Typography } from '@mui/material';
@@ -99,7 +100,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
         ) : (
           <Stack direction="column">
             <Typography variant="h2" pb={2} textAlign={'center'}>
-              בחירת אירוע
+              <FormattedMessage id="login.selectEvent" defaultMessage="בחירת אירוע" />
             </Typography>
             <EventSelector
               events={events}
