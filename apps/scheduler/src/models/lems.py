@@ -5,7 +5,7 @@ from bson import ObjectId
 @dataclass
 class Team:
     id: ObjectId
-    team_number: int
+    number: int
 
 
 @dataclass

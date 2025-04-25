@@ -10,6 +10,7 @@ from models.requests import (
 )
 from repository.lems_repository import LemsRepository
 from services.validator_service import ValidatorService
+from services.scheduler_service import SchedulerService
 
 logger = logging.getLogger("lems.scheduler")
 router = APIRouter(prefix="/scheduler")
@@ -45,12 +46,12 @@ async def create_schedule(
 ) -> CreateScheduleResponse:
     logger.info(f"Creating schedule for division {request.division_id}")
     logger.debug(f"Request: {request}")
-    lems = LemsRepository(request.division_id)
 
-    print("Hi")
+    lems = LemsRepository(request.division_id)
+    scheduler = SchedulerService(lems, request)
 
     try:
-        pass
+        scheduler.create_schedule()
     except SchedulerError as error:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -59,7 +60,4 @@ async def create_schedule(
 
     logger.info("Schedule created successfully")
     response.status_code = status.HTTP_201_CREATED
-    return CreateScheduleResponse(
-        status_code=status.HTTP_201_CREATED,
-        content={"ok": True, "error": None},
-    )
+    return CreateScheduleResponse(ok=True)

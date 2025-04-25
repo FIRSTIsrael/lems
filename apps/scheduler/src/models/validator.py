@@ -16,6 +16,8 @@ class ValidatorSession(ValidatorEvent):
 
 class ValidatorMatch(ValidatorEvent):
     event_type: Literal["match"]
+    stage: Literal["practice", "ranking"]
+    round: int
 
 
 class OverlappingRound(TypedDict):
