@@ -32,6 +32,7 @@ class ValidatorService:
 
     def _get_sessions(self) -> list[ValidatorSession]:
         judging_start_time = self.config.judging_start
+        event_length = timedelta(seconds=self.config.judging_session_length_seconds)
         cycle_time = timedelta(seconds=self.config.judging_cycle_time_seconds)
         rooms = self.lems_repository.get_rooms()
         judging_rounds = math.ceil(self.team_count / len(rooms))
@@ -45,7 +46,8 @@ class ValidatorService:
                     "number": round,
                     "slots": len(rooms),
                     "start_time": current_time,
-                    "end_time": current_time + cycle_time,
+                    # We don't use cycle time since rubrics are filled out after the session ends
+                    "end_time": current_time + event_length,
                 }
             )
             current_time += cycle_time
@@ -146,7 +148,7 @@ class ValidatorService:
         for round_index in overlaps:
             round = self.matches[round_index]
             for match in round:
-                if match["start_time"] > (session["end_time"] + self.padding) or match[
+                if match["start_time"] >= (session["end_time"] + self.padding) or match[
                     "end_time"
                 ] < (session["start_time"] - self.padding):
                     available_matches.append(match)
