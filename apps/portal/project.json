@@ -41,6 +41,14 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "extract": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/portal",
+        "command": "npx formatjs extract \"**/!(*.d).ts*\" --out-file ./lang/he_IL.json",
+        "parallel": false
+      }
     }
   }
 }

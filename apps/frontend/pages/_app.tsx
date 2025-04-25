@@ -1,8 +1,11 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { IntlProvider } from 'react-intl';
 import { SnackbarProvider } from 'notistack';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
-import { CacheProvider, EmotionCache } from '@emotion/react';
+import { CacheProvider } from '@emotion/react';
+import type { EmotionCache } from '@emotion/cache';
+import messages from '../lang/he_IL.json';
 import '../lib/utils/dayjs';
 import theme from '../lib/theme';
 import { createEmotionCache } from '../lib/emotion-cache';
@@ -28,22 +31,25 @@ function CustomApp({
         />
         <title>מערכת אירועים - FIRST ישראל</title>
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <SnackbarProvider
-          maxSnack={3}
-          TransitionComponent={Grow}
-          action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
-        >
-          <TimeSyncProvider>
-            <main className="app">
-              <RouteAuthorizer>
-                <Component {...pageProps} />
-              </RouteAuthorizer>
-            </main>
-          </TimeSyncProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
+      {/* TODO: Fix typing */}
+      <IntlProvider locale="he-IL" messages={messages as any}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider
+            maxSnack={3}
+            TransitionComponent={Grow}
+            action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
+          >
+            <TimeSyncProvider>
+              <main className="app">
+                <RouteAuthorizer>
+                  <Component {...pageProps} />
+                </RouteAuthorizer>
+              </main>
+            </TimeSyncProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </IntlProvider>
     </CacheProvider>
   );
 }

@@ -3,6 +3,7 @@ import nx from '@nx/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
+import formatjs from 'eslint-plugin-formatjs'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
@@ -33,6 +34,7 @@ export default defineConfig([
     '**/.vscode',
     '**/.git'
   ]),
+  formatjs.configs.recommended,
   reactHooks.configs['recommended-latest'],
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],

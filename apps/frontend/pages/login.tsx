@@ -100,7 +100,11 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
         ) : (
           <Stack direction="column">
             <Typography variant="h2" pb={2} textAlign={'center'}>
-              <FormattedMessage id="login.selectEvent" defaultMessage="בחירת אירוע" />
+              <FormattedMessage
+                id="login.selectEvent"
+                defaultMessage="בחירת אירוע"
+                description="Select event in login screen"
+              />
             </Typography>
             <EventSelector
               events={events}

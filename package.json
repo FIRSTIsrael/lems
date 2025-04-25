@@ -9,7 +9,7 @@
     "build": "npx nx run-many --target=build --projects=backend,frontend,portal",
     "scheduler": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
     "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal",
-    "extract": "formatjs extract '{apps,libs}/**/!(*.d).ts*' --out-file ./lang/he_IL.json"
+    "extract": "npx nx run-many --target=extract --projects=backend,frontend,portal"
   },
   "private": true,
   "dependencies": {
@@ -101,6 +101,7 @@
     "eslint": "^9.25.1",
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-formatjs": "^5.3.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",

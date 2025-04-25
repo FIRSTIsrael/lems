@@ -1,0 +1,6 @@
+{
+  "login.selectEvent": {
+    "defaultMessage": "בחירת אירוע",
+    "description": "Select event in login screen"
+  }
+}

@@ -46,6 +46,14 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
+    },
+    "extract": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "./apps/frontend",
+        "command": "npx formatjs extract \"**/!(*.d).ts*\" --out-file ./lang/he_IL.json",
+        "parallel": false
+      }
     }
   },
   "tags": []
