@@ -370,22 +370,28 @@ class SchedulerService:
         for team in self.teams:
             team_events = []
 
-            match_times = self.match_schedule[
+            # Get match events with start and end times
+            match_events = self.match_schedule[
                 self.match_schedule.isin([team.number]).any(axis=1)
-            ]["start_time"].tolist()
+            ][["start_time", "end_time"]].values.tolist()
 
-            session_times = self.session_schedule[
+            # Get session events with start and end times
+            session_events = self.session_schedule[
                 self.session_schedule.isin([team.number]).any(axis=1)
-            ]["start_time"].tolist()
+            ][["start_time", "end_time"]].values.tolist()
 
+            # Combine and sort all events by start time
             team_events = sorted(
-                [pd.to_datetime(t) for t in match_times + session_times]
+                match_events + session_events, key=lambda x: pd.to_datetime(x[0])
             )
 
-            # Calculate time differences between consecutive events
+            # Calculate time differences between end of one event and start of next
             if len(team_events) > 1:
                 time_diffs = [
-                    (team_events[i + 1] - team_events[i]).total_seconds()
+                    (
+                        pd.to_datetime(team_events[i + 1][0])
+                        - pd.to_datetime(team_events[i][1])
+                    ).total_seconds()
                     for i in range(len(team_events) - 1)
                 ]
                 team_intervals[team.number] = time_diffs
