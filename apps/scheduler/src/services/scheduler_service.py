@@ -374,7 +374,11 @@ class SchedulerService:
             f"Minimum time between events: {int(overall_min//60):02d}:{int(overall_min%60):02d}"
         )
 
-    def create_schedule(self):
+    def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Create the schedule by populating the match schedule and ensuring constraints.
+        Returns (match_schedule, session_schedule).
+        """
+
         self.session_schedule = self._make_sessions()
         self.match_schedule = self._make_matches()
 
@@ -384,5 +388,5 @@ class SchedulerService:
         self._ensure_constraints("practice")
         self._ensure_constraints("ranking")
         self._analyze_schedule()
-        self.session_schedule.to_csv(f"session_schedule.csv", index=True)
-        self.match_schedule.to_csv(f"match_schedule.csv", index=True)
+
+        return self.match_schedule.copy(), self.session_schedule.copy()
