@@ -5,11 +5,11 @@ from datetime import timedelta
 
 from models.validator import (
     ValidatorData,
-    ValidatorError,
     ValidatorMatch,
     ValidatorSession,
 )
-from models.requests.validate_schedule import ValidateScheduleRequest, Break
+from models.errors import ValidatorError
+from models.requests import SchedulerRequest, Break
 from repository.lems_repository import LemsRepository
 
 logger = logging.getLogger("lems.scheduler")
@@ -20,9 +20,7 @@ MIN_MINUTES_BETWEEN_EVENTS = 15
 
 class ValidatorService:
 
-    def __init__(
-        self, lems_repository: LemsRepository, request: ValidateScheduleRequest
-    ):
+    def __init__(self, lems_repository: LemsRepository, request: SchedulerRequest):
         self.lems_repository = lems_repository
         self.config = request
         self.team_count = len(self.lems_repository.get_teams())

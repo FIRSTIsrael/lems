@@ -29,9 +29,3 @@ class OverlappingRound(TypedDict):
 class ValidatorData(TypedDict):
     session: ValidatorSession
     overlapping_rounds: list[OverlappingRound]
-
-
-class ValidatorError(Exception):
-    def __init__(self, message: str, data: list[ValidatorData], *args):
-        super().__init__(message, *args)
-        self.data = data
