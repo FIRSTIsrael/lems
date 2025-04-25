@@ -97,7 +97,9 @@ class SchedulerService:
 
             session = entry["session"]
             session_schedule = self.session_schedule.loc[session["number"]]
-            session_teams = set(session_schedule.values[2:])
+            session_teams = set(
+                session_schedule.values[2:]
+            )  # Exclude start and end time.
 
             for round in overlapping_rounds:
                 available_matches = round["available_matches"]

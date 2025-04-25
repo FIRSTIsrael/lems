@@ -61,11 +61,14 @@ const BreakEditor: React.FC<BreakEditorProps> = ({ addBreak }) => {
         sx={{ minWidth: 150 }}
         onChange={newTime => {
           if (newTime)
-            setNewBreak({ ...newBreak, durationSeconds: newTime.minute() * 60 + newTime.second() });
+            setNewBreak({
+              ...newBreak,
+              durationSeconds: newTime.hour() * 60 * 60 + newTime.minute() * 60 + newTime.second()
+            });
         }}
         ampm={false}
-        format="mm:ss"
-        views={['minutes', 'seconds']}
+        format="hh:mm:ss"
+        views={['hours', 'minutes', 'seconds']}
       />
       <IconButton
         sx={{ ml: 2 }}
