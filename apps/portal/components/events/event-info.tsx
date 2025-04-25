@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { Box, Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 
 interface EventInfoProps {

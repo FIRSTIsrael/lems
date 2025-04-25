@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { FllEvent } from '@lems/types';

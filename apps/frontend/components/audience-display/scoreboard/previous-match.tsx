@@ -1,5 +1,5 @@
-import { Stack, Typography, Grid2Props, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Stack, Typography, GridProps, Paper } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { yellow, grey, green } from '@mui/material/colors';
 import { WithId } from 'mongodb';
 import { Team, Scoresheet, RobotGameMatch } from '@lems/types';
@@ -57,7 +57,7 @@ const TeamScoreBox: React.FC<TeamScoreBoxProps> = ({ team, scoresheet }) => {
   );
 };
 
-interface ScoreboardPreviousMatchProps extends Grid2Props {
+interface ScoreboardPreviousMatchProps extends GridProps {
   previousMatch: WithId<RobotGameMatch> | undefined;
   previousScoresheets: Array<WithId<Scoresheet>>;
 }

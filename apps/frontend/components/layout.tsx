@@ -133,7 +133,7 @@ const Layout: React.FC<LayoutProps> = ({
                 {isEventUser && (
                   // isEventUser should be false if division?.event is undefined
                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  <DivisionDropdown event={division!.event} selected={division!._id.toString()} />
+                  (<DivisionDropdown event={division!.event} selected={division!._id.toString()} />)
                 )}
                 {showInsights && <InsightsLink />}
                 {showReports && <ReportLink />}

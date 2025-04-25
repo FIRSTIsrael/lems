@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division } from '@lems/types';
 import Stat from '../stat';
 import AverageMedianCard from '../average-median-card';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division, Team } from '@lems/types';
 import TeamSelection from '../../general/team-selection';
 import TeamProfileChart from '../charts/team-profile-chart';

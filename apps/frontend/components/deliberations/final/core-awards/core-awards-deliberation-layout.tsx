@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { WithId } from 'mongodb';
 import { Stack } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { JudgingCategory, Team, JudgingCategoryTypes, AwardLimits } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';

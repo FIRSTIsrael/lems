@@ -1,6 +1,6 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   PortalAward,
   PortalEvent,

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 
 interface EventQuickLinksProps {

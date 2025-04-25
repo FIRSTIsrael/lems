@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Button, Paper, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   DivisionState,
   WSServerEmittedEvents,

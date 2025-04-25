@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { AwardLimits } from '@lems/types';
 import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';

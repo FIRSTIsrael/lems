@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Stack, Divider, IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import {
   Rubric,

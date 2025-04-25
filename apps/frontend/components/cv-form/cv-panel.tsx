@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { Stack, Button } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import AddRoundedIcon from '@mui/icons-material/Add';
 import {
   SafeUser,

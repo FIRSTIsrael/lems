@@ -1,7 +1,7 @@
 import React from 'react';
 import { WithId } from 'mongodb';
 import { Box, Stack } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { rubricsSchemas } from '@lems/season';
 import { Rubric, JudgingCategory, DivisionWithEvent, Team, Award } from '@lems/types';
 import { RubricAwards } from './rubrics/rubric-awards';

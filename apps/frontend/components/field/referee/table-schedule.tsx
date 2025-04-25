@@ -101,7 +101,7 @@ const TableSchedule: React.FC<TableScheduleProps> = ({
     .sort(match => RobotGameMatchStages.indexOf(match.stage));
 
   const displayedTableRows = upcomingTableMatches.reduce(
-    (result: Array<React.ReactElement>, currentMatch, currentMatchIndex) => {
+    (result: Array<React.ReactElement<any>>, currentMatch, currentMatchIndex) => {
       if (
         currentMatchIndex > 0 &&
         dayjs(currentMatch.scheduledTime)

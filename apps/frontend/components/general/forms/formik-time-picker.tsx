@@ -6,7 +6,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 type FormikTimePickerProps = {
   name: string;
   label?: string;
-} & TimePickerProps<Dayjs>;
+} & TimePickerProps;
 
 const FormikTimePicker: React.FC<FormikTimePickerProps> = ({ name, label, ...props }) => {
   return (

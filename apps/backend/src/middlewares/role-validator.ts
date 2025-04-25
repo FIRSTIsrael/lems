@@ -9,7 +9,7 @@ const roleValidator = (allowedRoles: Role | Array<Role>) => {
     if ((req.user.role && allowedRoleArray.includes(req.user.role)) || req.user.isAdmin) {
       return next();
     }
-    return res.status(401).json({ error: 'UNAUTHORIZED' });
+    res.status(401).json({ error: 'UNAUTHORIZED' });
   };
 };
 

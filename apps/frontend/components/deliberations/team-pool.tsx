@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { WithId } from 'mongodb';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Team } from '@lems/types';
 import { useDimensions } from '../../hooks/use-dimensions';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Box, Avatar, Typography } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division, JudgingCategoryTypes } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import ExportAction from './export-action';

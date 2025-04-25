@@ -12,7 +12,7 @@ interface PresentationControllerProps {
   division: WithId<Division>;
   divisionState: WithId<DivisionState>;
   presentationId: string;
-  children: ReactElement;
+  children: ReactElement<any>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

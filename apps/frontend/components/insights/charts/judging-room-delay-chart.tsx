@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { red } from '@mui/material/colors';
 import { Box, Card, Stack, Divider, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Division } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 

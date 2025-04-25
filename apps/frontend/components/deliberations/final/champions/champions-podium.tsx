@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Box, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { AwardLimits } from '@lems/types';
 import TeamSelection from '../../../general/team-selection';
 import { DeliberationTeam } from '../../../../hooks/use-deliberation-teams';

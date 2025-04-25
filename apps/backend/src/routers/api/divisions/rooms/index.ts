@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import asyncHandler from 'express-async-handler';
+
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import sessionsRouter from './sessions';
@@ -24,28 +24,24 @@ router.get('/:roomId', (req: Request, res: Response) => {
   });
 });
 
-router.post(
-  '/',
-  roleValidator([]),
-  asyncHandler(async (req: Request, res: Response) => {
-    const divisionId = new ObjectId(req.params.divisionId);
+router.post('/', roleValidator([]), async (req: Request, res: Response) => {
+  const divisionId = new ObjectId(req.params.divisionId);
 
-    if (!Array.isArray(req.body.names)) {
-      res.status(400).json({ error: 'INVALID_TABLE_NAMES' });
-      return;
-    }
+  if (!Array.isArray(req.body.names)) {
+    res.status(400).json({ error: 'INVALID_TABLE_NAMES' });
+    return;
+  }
 
-    const rooms: Array<JudgingRoom> = req.body.names.map((name: string) => ({ divisionId, name }));
-    await db.deleteDivisionRooms(divisionId);
+  const rooms: Array<JudgingRoom> = req.body.names.map((name: string) => ({ divisionId, name }));
+  await db.deleteDivisionRooms(divisionId);
 
-    const result = await db.addRooms(rooms);
-    if (result.insertedCount === rooms.length) {
-      res.json(rooms);
-    } else {
-      res.status(500).send('Failed to add tables');
-    }
-  })
-);
+  const result = await db.addRooms(rooms);
+  if (result.insertedCount === rooms.length) {
+    res.json(rooms);
+  } else {
+    res.status(500).send('Failed to add tables');
+  }
+});
 
 router.use(
   '/:roomId/sessions',

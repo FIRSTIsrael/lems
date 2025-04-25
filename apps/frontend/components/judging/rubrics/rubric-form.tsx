@@ -21,7 +21,7 @@ import {
   Theme
 } from '@mui/material';
 import { purple } from '@mui/material/colors';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   Division,
   Team,
@@ -43,7 +43,7 @@ import FeedbackRow from './feedback-row';
 import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
-import CvFieldUncheckedIcon from '../../icons/CvFieldUncheckedIcon';
+import CVFieldUncheckedIcon from '../../icons/cv-field-unchecked-icon';
 
 interface RubricFormProps {
   division: WithId<Division>;
@@ -341,7 +341,7 @@ const RubricForm: React.FC<RubricFormProps> = ({
 
             {schema.cvDescription && (
               <Stack direction="row" spacing={2} sx={{ pb: 1 }}>
-                <CvFieldUncheckedIcon />
+                <CVFieldUncheckedIcon />
                 <Markdown>{schema.cvDescription}</Markdown>
               </Stack>
             )}
