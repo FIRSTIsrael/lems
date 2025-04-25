@@ -1,17 +1,16 @@
 import os
 import logging
 from bson import ObjectId
-from typing import Literal
+import pandas as pd
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
-from models.team import Team as TeamModel
-from models.team_activity import TeamActivity, ActivityType
-from models.location import Location as LocationModel
-from repository.schemas.team import Team
+from models.lems import Team as TeamModel, Location as LocationModel
+
 from repository.schemas.judging_session import JudgingSession
 from repository.schemas.robot_game_match import RobotGameMatch
+from repository.schemas.team import Team
 from repository.schemas.judging_room import JudgingRoom
 from repository.schemas.robot_game_table import RobotGameTable
 
@@ -25,7 +24,6 @@ class LemsRepository:
         self.client = MongoClient(
             connection_string,
             tls=False,  # TODO: fix this
-            # tlsAllowInvalidCertificates=os.getenv("PYTHON_ENV") == "production",
         )
         self.db = self.client["lems"]
         logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")
@@ -38,7 +36,7 @@ class LemsRepository:
     def get_teams(self) -> list[TeamModel]:
         collection: Collection[Team] = self.db.teams
         teams = collection.find({"divisionId": self.divisionId}).to_list()
-        return [TeamModel(team.get("_id"), team.get("number"), []) for team in teams]
+        return [TeamModel(team.get("_id"), team.get("number")) for team in teams]
 
     def get_rooms(self) -> list[LocationModel]:
         collection: Collection[JudgingRoom] = self.db.rooms
@@ -49,11 +47,6 @@ class LemsRepository:
         collection: Collection[RobotGameTable] = self.db.tables
         tables = collection.find({"divisionId": self.divisionId}).to_list()
         return [LocationModel(table.get("_id"), table.get("name")) for table in tables]
-
-    def get_locations(self) -> list[LocationModel]:
-        rooms = self.get_rooms()
-        tables = self.get_tables()
-        return rooms + tables
 
     def get_team(self, team_number: int) -> Team:
         collection: Collection[Team] = self.db.teams
@@ -70,86 +63,73 @@ class LemsRepository:
                 lems_team_id = ObjectId(object_id["_id"])
         return lems_team_id
 
-    def insert_schedule(self, activities: list[TeamActivity]):
-        logger.info("Inserting schedule into LEMS database")
-        judging_activities = [
-            activity
-            for activity in activities
-            if activity.activity_type == ActivityType.JUDGING_SESSION
-        ]
-
-        for activity in judging_activities:
-            self.insert_judging_session(activity)
-
-        match_activities = [
-            activity
-            for activity in activities
-            if activity.activity_type == ActivityType.PRACTICE_MATCH
-            or activity.activity_type == ActivityType.RANKING_MATCH
-        ]
-
-        max_match_number = 0
-        for team_match_activity in match_activities:
-            if team_match_activity.number > max_match_number:
-                max_match_number = team_match_activity.number
-
-        logger.debug(f"Max match number: {max_match_number}")
-        for match_index in range(1, max_match_number + 1):
-            current_match_activities = [
-                activity
-                for activity in match_activities
-                if activity.number == match_index
-            ]
-
-            if current_match_activities[0].activity_type == ActivityType.RANKING_MATCH:
-                self.insert_match("ranking", current_match_activities)
-            else:
-                self.insert_match("practice", current_match_activities)
-
-    def insert_judging_session(self, activity: TeamActivity):
+    def insert_sessions(self, session_schedule: pd.DataFrame):
+        logger.info("Inserting judging sessions into LEMS database")
         collection: Collection[JudgingSession] = self.db.sessions
-        document: JudgingSession = {
-            "divisionId": self.divisionId,
-            "number": activity.number,
-            "roomId": activity.location.id,
-            "teamId": self.get_lems_team_id(activity.team_number),
-            "called": False,
-            "queued": False,
-            "status": "not-started",
-            "scheduledTime": activity.start_time,
-        }
-        collection.insert_one(document)
+        sessions: list[JudgingSession] = []
 
-    def insert_match(
-        self,
-        stage: Literal["practice", "ranking"],
-        activities: list[TeamActivity],
-    ):
-        participants = []
-        for activity in activities:
-            participants.append(
-                {
-                    "teamId": self.get_lems_team_id(activity.team_number),
-                    "tableId": activity.location.id,
-                    "tableName": activity.location.name,
-                    "queued": False,
-                    "ready": False,
-                    "present": "no-show",
-                }
-            )
+        ignore_columns = ["start_time", "end_time"]
+        for index, row in session_schedule.iterrows():
+            start_time = row["start_time"]
+            for room_id, _team_number in row[len(ignore_columns) :].items():
+                team_number = int(_team_number) if pd.notna(_team_number) else None
 
-        if len(participants) > 8:
-            participants = participants[:8]
+                lems_team_id = self.get_lems_team_id(team_number)
+                if lems_team_id is not None:
+                    document: JudgingSession = {
+                        "divisionId": self.divisionId,
+                        "number": index,
+                        "roomId": room_id,
+                        "teamId": lems_team_id,
+                        "called": False,
+                        "queued": False,
+                        "status": "not-started",
+                        "scheduledTime": start_time,
+                    }
+                    sessions.append(document)
 
+        collection.insert_many(sessions)
+        logger.info("Judging sessions inserted successfully")
+
+    def insert_matches(self, match_schedule: pd.DataFrame):
+        logger.info("Inserting matches into LEMS database")
         collection: Collection[RobotGameMatch] = self.db.matches
-        document: RobotGameMatch = {
-            "divisionId": self.divisionId,
-            "stage": stage,
-            "round": activity.round,
-            "number": activity.number,
-            "status": "not-started",
-            "scheduledTime": activity.start_time,
-            "called": False,
-            "participants": participants,
-        }
-        collection.insert_one(document)
+        matches: list[RobotGameMatch] = []
+
+        ignore_columns = ["start_time", "end_time", "stage", "round"]
+        for index, row in match_schedule.iterrows():
+            start_time = row["start_time"]
+            stage = row["stage"]
+            round_number = row["round"]
+
+            participants = []
+            for table_id, _team_number in row[len(ignore_columns) :].items():
+                team_number = int(_team_number) if pd.notna(_team_number) else None
+
+                lems_team_id = self.get_lems_team_id(team_number)
+                if lems_team_id is not None:
+                    participants.append(
+                        {
+                            "teamId": lems_team_id,
+                            "tableId": table_id,
+                            "tableName": table_id,
+                            "queued": False,
+                            "ready": False,
+                            "present": "no-show",
+                        }
+                    )
+
+            document: RobotGameMatch = {
+                "divisionId": self.divisionId,
+                "stage": stage,
+                "round": round_number,
+                "number": index,
+                "status": "not-started",
+                "scheduledTime": start_time,
+                "called": False,
+                "participants": participants,
+            }
+            matches.append(document)
+
+        collection.insert_many(matches)
+        logger.info("Matches inserted successfully")

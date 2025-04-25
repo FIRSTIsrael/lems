@@ -5,11 +5,11 @@ from datetime import timedelta
 
 from models.validator import (
     ValidatorData,
-    ValidatorError,
     ValidatorMatch,
     ValidatorSession,
 )
-from models.requests.validate_schedule import ValidateScheduleRequest, Break
+from models.errors import ValidatorError
+from models.requests import SchedulerRequest, Break
 from repository.lems_repository import LemsRepository
 
 logger = logging.getLogger("lems.scheduler")
@@ -20,18 +20,27 @@ MIN_MINUTES_BETWEEN_EVENTS = 15
 
 class ValidatorService:
 
-    def __init__(
-        self, lems_repository: LemsRepository, request: ValidateScheduleRequest
-    ):
+    def __init__(self, lems_repository: LemsRepository, request: SchedulerRequest):
         self.lems_repository = lems_repository
         self.config = request
         self.team_count = len(self.lems_repository.get_teams())
-        self.sessions = self._get_sessions()
-        self.matches = self._get_matches()
+        self._sessions = self._get_sessions()
+        self._matches = self._get_matches()
         self.padding = timedelta(minutes=MIN_MINUTES_BETWEEN_EVENTS)
+
+    @property
+    def sessions(self) -> list[ValidatorSession]:
+        """Read-only property for sessions"""
+        return self._sessions.copy()
+
+    @property
+    def matches(self) -> list[list[ValidatorMatch]]:
+        """Read-only property for matches"""
+        return [round.copy() for round in self._matches]
 
     def _get_sessions(self) -> list[ValidatorSession]:
         judging_start_time = self.config.judging_start
+        event_length = timedelta(seconds=self.config.judging_session_length_seconds)
         cycle_time = timedelta(seconds=self.config.judging_cycle_time_seconds)
         rooms = self.lems_repository.get_rooms()
         judging_rounds = math.ceil(self.team_count / len(rooms))
@@ -45,7 +54,8 @@ class ValidatorService:
                     "number": round,
                     "slots": len(rooms),
                     "start_time": current_time,
-                    "end_time": current_time + cycle_time,
+                    # We don't use cycle time since rubrics are filled out after the session ends
+                    "end_time": current_time + event_length,
                 }
             )
             current_time += cycle_time
@@ -74,6 +84,11 @@ class ValidatorService:
 
         for round in range(1, total_rounds + 1):
             start_number = (round - 1) * matches_per_round
+            stage = "practice" if round <= self.config.practice_rounds else "ranking"
+            round_number = (
+                round if stage == "practice" else round - self.config.practice_rounds
+            )
+            print(round, round_number, stage)
 
             cycle_time = (
                 timedelta(seconds=self.config.practice_match_cycle_time_seconds)
@@ -86,6 +101,8 @@ class ValidatorService:
                 matches.append(
                     {
                         "event_type": "match",
+                        "stage": stage,
+                        "round": round_number,
                         "number": start_number + match,
                         "slots": slots,
                         "start_time": current_time,
@@ -146,7 +163,7 @@ class ValidatorService:
         for round_index in overlaps:
             round = self.matches[round_index]
             for match in round:
-                if match["start_time"] > (session["end_time"] + self.padding) or match[
+                if match["start_time"] >= (session["end_time"] + self.padding) or match[
                     "end_time"
                 ] < (session["start_time"] - self.padding):
                     available_matches.append(match)
