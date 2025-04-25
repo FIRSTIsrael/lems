@@ -39,12 +39,11 @@ class SchedulerService:
         self.matches = [match for round in validator.matches for match in round]
 
     def _make_sessions(self):
-        """Create a DataFrame for the session schedule."""
+        """Create a DataFrame for the session schedule. Teams are assigned randomly."""
 
         columns = ["start_time", "end_time"] + [str(room.id) for room in self.rooms]
-        _teams = {team.number for team in self.teams}
+        teams = {team.number for team in self.teams}
 
-        # Prepare row data
         rows = []
         for session in self.sessions:
             row_data = {
@@ -52,31 +51,32 @@ class SchedulerService:
                 "end_time": session["end_time"],
             }
             for room in self.rooms:
-                _team = np.random.choice(list(_teams)) if len(_teams) > 0 else pd.NA
-                row_data[str(room.id)] = _team
-                if pd.notna(_team):
-                    _teams.remove(_team)
+                team = np.random.choice(list(teams)) if len(teams) > 0 else pd.NA
+                row_data[str(room.id)] = team
+                if pd.notna(team):
+                    teams.remove(team)
             rows.append(row_data)
 
-        # Create DataFrame with all data at once
         sessions = pd.DataFrame(
-            rows, columns=columns, index=pd.RangeIndex(start=1, stop=len(rows) + 1)
+            rows,
+            columns=columns,
+            index=pd.RangeIndex(start=1, stop=len(rows) + 1),
         )
         sessions.index.name = "number"
 
         return sessions
 
     def _make_matches(self):
-        """Create a DataFrame for the match schedule."""
+        """Create a DataFrame for the match schedule. Teams are not assigned yet."""
 
-        columns = ["start_time", "end_time", "stage", "round"] + [
-            str(table.id) for table in self.tables
-        ]
+        table_columns = [str(table.id) for table in self.tables]
+        columns = ["start_time", "end_time", "stage", "round"] + table_columns
+
         matches = pd.DataFrame(
-            columns=columns, index=pd.RangeIndex(start=1, stop=len(self.matches) + 1)
+            columns=columns,
+            index=pd.RangeIndex(start=1, stop=len(self.matches) + 1),
         )
         matches.index.name = "number"
-        matches.fillna(pd.NA, inplace=True)
 
         for match in self.matches:
             matches.at[match["number"], "start_time"] = match["start_time"]
@@ -97,23 +97,23 @@ class SchedulerService:
 
             session = entry["session"]
             session_schedule = self.session_schedule.loc[session["number"]]
-            _session_teams = set(session_schedule.values[2:])
+            session_teams = set(session_schedule.values[2:])
 
             for round in overlapping_rounds:
                 available_matches = round["available_matches"]
-                _round_teams = _session_teams.copy()
+                round_teams = session_teams.copy()
 
                 for match in available_matches:
                     slots = match["slots"]
-                    for i in range(slots):
-                        _team = (
-                            np.random.choice(list(_round_teams))
-                            if len(_round_teams) > 0
+                    for _ in range(slots):
+                        team = (
+                            np.random.choice(list(round_teams))
+                            if len(round_teams) > 0
                             else pd.NA
                         )
-                        if pd.notna(_team):
-                            _round_teams.remove(_team)
-                            self._assign_team(_team, match["number"])
+                        if pd.notna(team):
+                            round_teams.remove(team)
+                            self._assign_team(team, match["number"])
 
     def _assign_team(self, team: int, match_number: int) -> None:
         """Assign a team to a match in the match schedule.
@@ -142,38 +142,21 @@ class SchedulerService:
     def _did_team_play(
         self, team: int, stage: Literal["practice", "ranking"], round_num: int
     ) -> bool:
-        """Check if a team has played in a specific round.
-
-        Args:
-            team: The team number to check
-            stage: The stage of the competition
-            round_num: The round number to check
-
-        Returns:
-            bool: True if team has already played in this round, False otherwise
-        """
+        """Check if a team has played in a specific round."""
 
         round_matches: pd.DataFrame = self.match_schedule[
             (self.match_schedule["stage"] == stage)
             & (self.match_schedule["round"] == round_num)
         ]
-
         teams_in_round = round_matches.values[~pd.isna(round_matches.values)]
+
         return team in teams_in_round
 
     def _did_team_play_on_table(
         self, team: int, table_id: str, stage: Literal["practice", "ranking"]
     ) -> bool:
-        """Check if a team has played on a specific table in a specific stage.
+        """Check if a team has played on a specific table in a specific stage."""
 
-        Args:
-            team: The team number to check
-            table_id: The table ID to check
-            stage: The stage of the competition
-
-        Returns:
-            bool: True if team has already played on this table in this stage, False otherwise
-        """
         slot: pd.Series = self.match_schedule[table_id]
         stage_matches = self.match_schedule[
             (self.match_schedule["stage"] == stage) & (slot.notna())
@@ -185,7 +168,8 @@ class SchedulerService:
         return team in teams_on_table
 
     def _get_available_tables(self, match_number: int) -> list[str]:
-        """Get available tables based on match number when staggering is enabled."""
+        """Get available table IDs based on match number when staggering is enabled."""
+
         table_columns = [str(table.id) for table in self.tables]
 
         if not self.staggered:
@@ -195,38 +179,23 @@ class SchedulerService:
             return table_columns[: len(table_columns) // 2]
         return table_columns[len(table_columns) // 2 :]
 
-    def _get_team_last_event_time(
+    def _get_last_event_time(
         self, team: int, current_time: pd.Timestamp
     ) -> pd.Timestamp | None:
         """Get the last event time (match or judging) for a team before the current time.
+        If no events are found, return None."""
 
-        Args:
-            team: The team number to check
-            current_time: Only consider events before this time
+        def _get_time(df: pd.DataFrame) -> pd.Timestamp | None:
+            events = df[
+                (df.isin([team]).any(axis=1))
+                & (pd.to_datetime(df["start_time"]) < current_time)
+            ]
+            if not events.empty:
+                return pd.to_datetime(events["start_time"].max())
+            return None
 
-        Returns:
-            The datetime of the team's most recent event before current_time, or None if no previous events
-        """
-
-        # Check match schedule
-        team_matches: pd.Series = self.match_schedule[
-            (self.match_schedule.isin([team]).any(axis=1))
-            & (pd.to_datetime(self.match_schedule["start_time"]) < current_time)
-        ]
-        last_match_time = None
-        if not team_matches.empty:
-            _match_times: pd.Series = team_matches["start_time"]
-            last_match_time = pd.to_datetime(_match_times.max())
-
-        # Check session schedule
-        team_sessions: pd.Series = self.session_schedule[
-            (self.session_schedule.isin([team]).any(axis=1))
-            & (pd.to_datetime(self.session_schedule["start_time"]) < current_time)
-        ]
-        last_session_time = None
-        if not team_sessions.empty:
-            _session_times: pd.Series = team_sessions["start_time"]
-            last_session_time = pd.to_datetime(_session_times.max())
+        last_match_time = _get_time(self.match_schedule)
+        last_session_time = _get_time(self.session_schedule)
 
         return max(filter(None, [last_match_time, last_session_time]), default=None)
 
@@ -270,9 +239,7 @@ class SchedulerService:
                     waiting_times = {}
 
                     for team in eligible_teams:
-                        last_event_time = self._get_team_last_event_time(
-                            team, current_time
-                        )
+                        last_event_time = self._get_last_event_time(team, current_time)
                         if last_event_time is None:
                             waiting_times[team] = float("inf")
                         else:
@@ -289,7 +256,6 @@ class SchedulerService:
             # Second pass: Handle unassigned tables through swapping
             if unassigned_tables:
                 for unassigned_table in unassigned_tables:
-                    # Find a team that needs to play but hasn't been assigned
                     unplayed_teams = [
                         team
                         for team in available_teams
@@ -300,18 +266,19 @@ class SchedulerService:
                     if not unplayed_teams:
                         continue
 
-                    # For each unplayed team, try to find a swap
                     for team in unplayed_teams:
                         swap_found = False
-                        # Try each assigned table/team for a potential swap
                         for assigned_table, assigned_team in assigned_teams.items():
-                            # Check if the swap would be valid
-                            if not self._did_team_play_on_table(
-                                team, assigned_table, stage
-                            ) and not self._did_team_play_on_table(
-                                assigned_team, unassigned_table, stage
-                            ):
-                                # Perform the swap
+                            swap_valid = not (
+                                self._did_team_play_on_table(
+                                    team, assigned_table, stage
+                                )
+                                or self._did_team_play_on_table(
+                                    assigned_team, unassigned_table, stage
+                                )
+                            )
+
+                            if swap_valid:
                                 self.match_schedule.at[match_num, assigned_table] = team
                                 self.match_schedule.at[match_num, unassigned_table] = (
                                     assigned_team
@@ -330,9 +297,8 @@ class SchedulerService:
         1. Teams play exactly one match per round
         """
 
-        rounds = self.match_schedule[self.match_schedule["stage"] == stage][
-            "round"
-        ].unique()
+        stage_schedule = self.match_schedule[self.match_schedule["stage"] == stage]
+        rounds = stage_schedule["round"].unique()
 
         for round_num in rounds:
             round_matches = self.match_schedule[
@@ -370,22 +336,19 @@ class SchedulerService:
         for team in self.teams:
             team_events = []
 
-            # Get match events with start and end times
             match_events = self.match_schedule[
                 self.match_schedule.isin([team.number]).any(axis=1)
             ][["start_time", "end_time"]].values.tolist()
 
-            # Get session events with start and end times
             session_events = self.session_schedule[
                 self.session_schedule.isin([team.number]).any(axis=1)
             ][["start_time", "end_time"]].values.tolist()
 
-            # Combine and sort all events by start time
             team_events = sorted(
-                match_events + session_events, key=lambda x: pd.to_datetime(x[0])
+                match_events + session_events,
+                key=lambda x: pd.to_datetime(x[0]),
             )
 
-            # Calculate time differences between end of one event and start of next
             if len(team_events) > 1:
                 time_diffs = [
                     (
