@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Stack } from '@mui/material';
 import { Team, CoreValuesAwardsTypes, AwardNames, AwardLimits } from '@lems/types';
 import { localizedAward } from '@lems/season';

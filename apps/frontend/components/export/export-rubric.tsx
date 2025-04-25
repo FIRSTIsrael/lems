@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { Award, DivisionWithEvent, JudgingCategory, Rubric, Team } from '@lems/types';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Box, Stack } from '@mui/material';
 import { rubricsSchemas } from '@lems/season';
 import { RubricHeader } from './rubrics/rubric-header';

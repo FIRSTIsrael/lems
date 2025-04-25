@@ -225,7 +225,6 @@ const Page: NextPage<Props> = ({
           <ActiveMatch title="המקצה הבא" match={loadedMatch} sessions={sessions} />
         </Stack>
         <FieldQueueReport
-          divisionId={division._id}
           matches={matches.filter(m => m._id.toString() !== loadedMatch?._id.toString())}
           sessions={sessions}
           tables={tables}

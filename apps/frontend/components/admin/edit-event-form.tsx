@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import { Box, Button, TextField, Typography, Stack, Paper, PaperProps } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { FllEvent } from '@lems/types';
@@ -17,9 +17,10 @@ interface EditEventFormProps extends PaperProps {
 
 const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
   const [name, setName] = useState<string>(event.name);
+  const [location, setLocation] = useState<string>(event.location);
   const [startDate, setStartDate] = useState<Dayjs>(dayjs(event.startDate));
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
-  const gridItemSize = event.enableDivisions ? 4 : 3.5;
+  const gridItemSize = event.enableDivisions ? 4.5 : 4;
   const [color, setColor] = useState<CSSProperties['color']>(event.color);
 
   const updateEvent = () => {
@@ -28,6 +29,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
+        location,
         startDate: startDate.toDate() || event.startDate,
         endDate: endDate.toDate() || event.endDate
       })
@@ -71,6 +73,16 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 label="שם אירוע"
+                fullWidth
+              />
+            </Grid>
+            <Grid size={gridItemSize}>
+              <TextField
+                variant="outlined"
+                type="text"
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                label="מיקום האירוע"
                 fullWidth
               />
             </Grid>

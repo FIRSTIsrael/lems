@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { DivisionWithEvent, Team, Scoresheet } from '@lems/types';
 import { SEASON_NAME } from '@lems/types';
 import { localizeDivisionTitle } from '../../../localization/event';

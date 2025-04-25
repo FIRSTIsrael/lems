@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   DivisionWithEvent,
   Team,

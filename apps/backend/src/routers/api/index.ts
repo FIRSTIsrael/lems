@@ -16,7 +16,7 @@ router.use('/events', eventsRouter);
 
 router.get('/me', (req, res) => {
   const user = req.user;
-  return res.json(user);
+  res.json(user);
 });
 
 export default router;

@@ -7,7 +7,7 @@ const subscribe = (callback: (e: Event) => void) => {
   };
 };
 
-export const useDimensions = (ref: RefObject<HTMLElement>) => {
+export const useDimensions = (ref: RefObject<HTMLElement | null>) => {
   const dimensions = useSyncExternalStore(subscribe, () =>
     JSON.stringify({
       width: ref.current?.offsetWidth ?? 0,

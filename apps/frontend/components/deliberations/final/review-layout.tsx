@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
@@ -12,7 +12,7 @@ import { DeliberationContext } from '../deliberation';
 
 interface ReviewLayoutProps {
   awards: Array<WithId<Award>>;
-  onSubmit: (deliberation: WithId<JudgingDeliberation>) => void;
+  onSubmit: (deliberation: WithId<JudgingDeliberation>) => Promise<[void, void]>;
 }
 
 const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
@@ -104,8 +104,8 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
                 <Button
                   variant="contained"
                   sx={{ width: 250 }}
-                  onClick={() => {
-                    onSubmit(deliberation);
+                  onClick={async () => {
+                    await onSubmit(deliberation);
                     router.push('/lems/judge-advisor');
                   }}
                 >

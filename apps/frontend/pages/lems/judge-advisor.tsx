@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Avatar, Box, Paper, Tab, Tabs, Typography } from '@mui/material';
-import { TabContext, TabPanel } from '../../components/general/tab-managment';
-import Grid from '@mui/material/Grid2';
+import { TabContext, TabPanel } from '@mui/lab';
+import Grid from '@mui/material/Grid';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   JudgingRoom,

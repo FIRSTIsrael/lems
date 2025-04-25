@@ -24,5 +24,5 @@ export const dashboardAuthMiddleware = async (req: Request, res: Response, next:
     //Invalid token
   }
 
-  return res.status(401).json({ error: 'UNAUTHORIZED' });
+  res.status(401).json({ error: 'UNAUTHORIZED' });
 };

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ObjectId } from 'mongodb';
 import { Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { JudgingCategoryTypes } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import { CompareContext } from './compare-view';

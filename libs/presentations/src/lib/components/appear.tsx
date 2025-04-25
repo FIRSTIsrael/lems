@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, type JSX } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useSteps } from '../hooks/use-steps';
 import { SlideContext } from './slide';
@@ -58,6 +58,7 @@ const SteppedComponent: React.FC<SteppedComponentProps> = ({
   return (
     <>
       {placeholder}
+      {/* @ts-expect-error For some reason react-spring doesn't like children. */}
       <AnimatedEl
         style={alwaysAppearActive ? (activeStyle as React.CSSProperties) : springStyle}
         className={className}

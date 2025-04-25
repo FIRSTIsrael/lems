@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { FllEvent, Division, User } from '@lems/types';
+import { FllEvent, Division, User, Team } from '@lems/types';
 
 declare global {
   namespace Express {
@@ -7,6 +7,7 @@ declare global {
       user?: WithId<User>;
       division?: WithId<Division>;
       event?: WithId<FllEvent>;
+      team?: WithId<Team>;
       teamNumber?: number;
     }
   }

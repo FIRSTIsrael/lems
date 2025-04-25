@@ -1,0 +1,46 @@
+{
+  "name": "portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/portal",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/portal"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/portal"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "portal:build",
+        "port": 3000,
+        "dev": true,
+        "turbo": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "portal:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "portal:build:production",
+          "dev": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

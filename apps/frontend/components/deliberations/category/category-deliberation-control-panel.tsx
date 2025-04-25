@@ -22,6 +22,7 @@ import CompareModal from '../compare/compare-modal';
 import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 interface DeliberationControlPanelProps {
+  teamCount: number;
   compareTeams: Array<WithId<Team>>;
   deliberation: WithId<JudgingDeliberation>;
   startDeliberation: () => void;
@@ -38,6 +39,7 @@ interface DeliberationControlPanelProps {
 }
 
 const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> = ({
+  teamCount,
   compareTeams: teams,
   deliberation,
   startDeliberation,
@@ -61,7 +63,7 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
           lockDeliberation={lockDeliberation}
           disabled={
             deliberation.status !== 'in-progress' ||
-            (deliberation.awards[category]?.length ?? 0) < getDefaultPicklistLimit(teams.length)
+            (deliberation.awards[category]?.length ?? 0) < getDefaultPicklistLimit(teamCount)
           }
         />
         <Divider />

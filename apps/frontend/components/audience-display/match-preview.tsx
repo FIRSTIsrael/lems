@@ -3,9 +3,9 @@ import { WithId } from 'mongodb';
 import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { localizedMatchStage } from '../../localization/field';
-import Grid from '@mui/material/Grid2';
-import { blue, red } from '@mui/material/colors';
+import Grid from '@mui/material/Grid';
 import Image from 'next/image';
+import { alpha, darken } from '@mui/material/styles';
 
 interface MatchPreviewProps {
   division: WithId<Division>;
@@ -70,9 +70,9 @@ const MatchPreview: React.FC<MatchPreviewProps> = ({ division, match }) => {
                 <Grid key={p.teamId?.toString()} size={1}>
                   <Stack
                     sx={{
-                      color: division.color === 'red' ? red[800] : blue[800],
-                      border: `1px solid ${division.color === 'red' ? red[300] : blue[300]}`,
-                      backgroundColor: division.color === 'red' ? red[100] : blue[100]
+                      color: division?.color ? darken(division.color, 0.2) : undefined,
+                      border: `1px solid ${division?.color ? alpha(division.color, 0.7) : undefined}`,
+                      backgroundColor: division?.color ? alpha(division.color, 0.1) : undefined
                     }}
                     borderRadius="0.5rem"
                     px={5}

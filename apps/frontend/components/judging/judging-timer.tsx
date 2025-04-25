@@ -4,7 +4,7 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import { animated, useTransition } from 'react-spring';
 import { Typography, Paper, LinearProgress, Stack, Box } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { blue, green, purple } from '@mui/material/colors';
 import {
   Division,
@@ -174,11 +174,12 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
         <Grid size={4}>
           <Stack spacing={3}>
             {transitions(({ innerHeight, ...style }, stage) => (
+              //@ts-expect-error For some reason react-spring doesn't like children.
               <animated.div
+                key={stage.id}
                 style={{ ...style, height: innerHeight, backgroundColor: 'transparent' }}
               >
                 <JudgingStageBox
-                  key={stage.id}
                   primaryText={stage.primaryText}
                   secondaryText={stage.secondaryText}
                   iconColor={stage.iconColor}

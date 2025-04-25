@@ -15,7 +15,7 @@ import {
   DialogTitle
 } from '@mui/material';
 import ManageIcon from '@mui/icons-material/WidgetsRounded';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import PublishIcon from '@mui/icons-material/Publish';
 import { Division, DivisionState } from '@lems/types';

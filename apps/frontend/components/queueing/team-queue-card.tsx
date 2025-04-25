@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Stack, Tooltip, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { DivisionSection, Team } from '@lems/types';

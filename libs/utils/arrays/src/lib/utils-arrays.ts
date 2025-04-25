@@ -13,7 +13,8 @@ export const reorder = (arr: Array<any>, startIndex: number, endIndex: number) =
 
 export const compareScoreArrays = (
   scoresA: (number | undefined)[],
-  scoresB: (number | undefined)[]
+  scoresB: (number | undefined)[],
+  reverse = false
 ) => {
   const sortedA = [...scoresA].sort((a, b) => (b || 0) - (a || 0));
   const sortedB = [...scoresB].sort((a, b) => (b || 0) - (a || 0));
@@ -24,6 +25,8 @@ export const compareScoreArrays = (
   for (let i = 0; i < maxLen && difference == 0; i++) {
     difference = (sortedB[i] || 0) - (sortedA[i] || 0);
   }
+
+  if (reverse) difference *= -1;
   return difference;
 };
 

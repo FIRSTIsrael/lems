@@ -5,7 +5,7 @@ import { Form, Formik } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { green } from '@mui/material/colors';
 import { Box, Button, Checkbox, IconButton, Paper, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EditOffOutlinedIcon from '@mui/icons-material/EditOffOutlined';

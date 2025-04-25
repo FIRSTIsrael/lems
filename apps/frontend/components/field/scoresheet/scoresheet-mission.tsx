@@ -14,7 +14,7 @@ import {
   ToggleButtonGroup,
   Typography
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import Markdown from 'react-markdown';

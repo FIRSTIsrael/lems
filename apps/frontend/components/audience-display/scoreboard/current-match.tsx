@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { Grid2Props, Paper, Typography, LinearProgress } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { GridProps, Paper, Typography, LinearProgress } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
@@ -9,7 +9,7 @@ import Countdown from '../../general/countdown';
 import { useTime } from '../../../hooks/use-time';
 import { localizedMatchStage } from '../../../localization/field';
 
-interface ScoreboardCurrentMatchProps extends Grid2Props {
+interface ScoreboardCurrentMatchProps extends GridProps {
   activeMatch: WithId<RobotGameMatch> | undefined;
   showTimer?: boolean;
 }

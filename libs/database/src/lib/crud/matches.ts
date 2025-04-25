@@ -48,7 +48,7 @@ export const getMatch = (filter: Filter<RobotGameMatch>) => {
   return findMatches(filter).next();
 };
 
-export const getDivisionMatches = (divisionId: string) => {
+export const getDivisionMatches = (divisionId: string | ObjectId) => {
   return findMatches({
     divisionId: new ObjectId(divisionId)
   }).toArray();
