@@ -2,12 +2,40 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 
-from models.create_schedule_request import CreateScheduleRequest
+from models.validator import ValidatorError
+from models.requests.create_schedule import CreateScheduleRequest
+from models.requests.validate_schedule import (
+    ValidateScheduleRequest,
+    ValidateScheduleResponse,
+)
 from services.scheduler_service import SchedulerService, SchedulerError
 from repository.lems_repository import LemsRepository
+from services.validator_service import ValidatorService
 
 logger = logging.getLogger("lems.scheduler")
 router = APIRouter(prefix="/scheduler")
+
+
+@router.get("/validate")
+async def validate_schedule(
+    request: ValidateScheduleRequest,
+) -> ValidateScheduleResponse:
+    logger.info(f"Validating schedule for division {request.division_id}")
+    logger.debug(f"Request: {request}")
+    lems = LemsRepository(request.division_id)
+
+    validator = ValidatorService(lems, request)
+
+    try:
+        validator_data = validator.validate()
+    except ValidatorError as error:
+        logger.info(f"Validation failed: {error}")
+        return ValidateScheduleResponse(
+            is_valid=False, error=str(error), data=error.data
+        )
+
+    logger.info("Validation successful")
+    return ValidateScheduleResponse(is_valid=True, data=validator_data)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

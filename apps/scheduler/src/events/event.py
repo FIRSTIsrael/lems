@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
+import logging
 
 from typing import List
 
-from models.create_schedule_request import Break
+from models.requests.create_schedule import Break
 from models.team_activity import TeamActivity, ActivityType
 from models.team import Team
 from models.location import Location
@@ -13,11 +14,19 @@ MAX_MINUTES = 1440
 MINUTES_PER_HOUR = 60
 TEAM_MIN_WAIT_TIME = 15
 
+# Configure the logger
+logger = logging.getLogger("scheduler_service")
+
 
 def team_minimum_delta(sessions: List[TeamActivity]) -> int:
     """
     Calculate the minimum time between two activities for a team
     """
+    # # Log all the sessions of a team
+    # for session in sessions:
+    #     logger.debug(
+    #         f"Session: Team {session.team_number} {session.activity_type}, Start {session.start_time}, End {session.end_time}"
+    #     )
 
     sessions_sorted = sorted(sessions, key=lambda s: s.start_time)
     min_gap = MAX_MINUTES
