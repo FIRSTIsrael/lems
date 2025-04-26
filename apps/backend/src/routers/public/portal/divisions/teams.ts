@@ -26,11 +26,27 @@ router.get('/:teamNumber', async (req: Request, res: Response) => {
 });
 
 router.get('/:teamNumber/schedule', async (req: Request, res: Response) => {
+  console.log('Schedule Request for Team:', {
+    teamNumber: req.params.teamNumber,
+    divisionId: req.division._id,
+    teamId: req.team._id,
+    path: req.path
+  });
+
   const teamMatches = await db
     .findMatches({
       'participants.teamId': new ObjectId(req.team._id)
     })
     .toArray();
+
+  console.log('Found Matches:', {
+    count: teamMatches.length,
+    matches: teamMatches.map(m => ({
+      number: m.number,
+      stage: m.stage,
+      time: m.scheduledTime
+    }))
+  });
 
   const matches: Array<PortalActivity<'match'>> = [];
   for (const match of teamMatches) {

@@ -7,10 +7,37 @@ import { PortalActivity, PortalSchedule } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+  console.log('Schedule Request:', {
+    divisionId: req.division._id,
+    eventId: req.division.eventId,
+    schedule: req.division.schedule,
+    hasSchedule: req.division.schedule?.length > 0
+  });
+
+  // Check if division exists in database
+  const division = await db.getDivision({ _id: new ObjectId(req.division._id) });
+  console.log('Division from DB:', {
+    found: !!division,
+    hasSchedule: division?.schedule?.length > 0,
+    scheduleCount: division?.schedule?.length
+  });
+
   const generalActivities: Array<PortalActivity<'general'>> = (req.division.schedule ?? [])
-    .filter(activity => activity.showOnDashboard)
+    .filter(activity => {
+      console.log('Activity:', {
+        name: activity.name,
+        showOnDashboard: activity.showOnDashboard
+      });
+      return activity.showOnDashboard;
+    })
     .map(({ name, startTime }) => ({ type: 'general', name, time: startTime }));
+
+  console.log('Sending Response:', {
+    activitiesCount: generalActivities.length,
+    activities: generalActivities
+  });
+
   res.json(generalActivities);
 });
 

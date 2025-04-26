@@ -26,6 +26,12 @@ const getApiBase = (forceClient = false) => {
 };
 
 export const apiFetch = async <T>(path: string, init?: RequestInit | undefined) => {
+  console.log('API Request:', {
+    path,
+    method: init?.method || 'GET',
+    headers: init?.headers
+  });
+
   const headers = { ...init?.headers };
   const response = await fetch(getApiBase() + path, {
     headers,
@@ -33,6 +39,12 @@ export const apiFetch = async <T>(path: string, init?: RequestInit | undefined) 
   });
 
   if (!response.ok) {
+    console.error('API Error:', {
+      path,
+      status: response.status,
+      statusText: response.statusText
+    });
+
     if (response.status === 403) {
       throw new AuthorizationError('Unauthorized');
     }
@@ -41,6 +53,11 @@ export const apiFetch = async <T>(path: string, init?: RequestInit | undefined) 
   }
 
   const data = await response.json();
+  console.log('API Response:', {
+    path,
+    data
+  });
+  
   return data as T;
 };
 
@@ -74,6 +91,7 @@ export const fetchAwards = async (id: string) => {
 
 export const fetchTeam = async (eventId: string, teamNumber: string) => {
   const team = await apiFetch<PortalTeam>(`/events/${eventId}/teams/${teamNumber}`);
+  const { event } = await fetchEvent(eventId);
 
   let awards: PortalAward[] | null = null;
   try {
@@ -82,10 +100,11 @@ export const fetchTeam = async (eventId: string, teamNumber: string) => {
     // Event not yet completed
   }
 
-  const schedule = await apiFetch<PortalActivity<'general' | 'match' | 'session'>[]>(
-    `/events/${eventId}/teams/${teamNumber}/schedule`
-  );
+  const schedulePath = event.divisions 
+    ? `/events/${eventId}/teams/${teamNumber}/schedule`
+    : `/events/${eventId}/schedule`;
 
+  const schedule = await apiFetch<PortalActivity<'general' | 'match' | 'session'>[]>(schedulePath);
   const scores = await apiFetch<PortalScore[]>(`/events/${eventId}/teams/${teamNumber}/scores`);
 
   return { team, awards, schedule, scores };

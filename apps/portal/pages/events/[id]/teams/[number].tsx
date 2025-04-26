@@ -31,13 +31,23 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
     error: scoresError
   } = useRealtimeData<PortalScore>(`/events/${event.id}/teams/${team.number}/scores`);
 
+  const schedulePath = event.divisions
+    ? `/events/${event.id}/teams/${team.number}/schedule`
+    : `/events/${event.id}/schedule`;
+  console.log('Schedule Endpoint:', schedulePath);
+
   const {
     data: schedule,
     isLoading: scheduleLoading,
     error: scheduleError
-  } = useRealtimeData<PortalActivity<'match' | 'session' | 'general'>[]>(
-    `/events/${event.id}/teams/${team.number}/schedule`
-  );
+  } = useRealtimeData<PortalActivity<'match' | 'session' | 'general'>[]>(schedulePath);
+
+  console.log('Schedule Data:', {
+    path: schedulePath,
+    data: schedule,
+    loading: scheduleLoading,
+    error: scheduleError
+  });
 
   const {
     data: status,
@@ -63,7 +73,7 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
             <EventStatus event={event} status={status} />
           )}
           {(scheduleLoading || scheduleError) && <LoadingAnimation />}
-          {!scheduleLoading && !scheduleError && <TeamSchedule schedule={schedule} />}
+          {!scheduleLoading && !scheduleError && schedule && <TeamSchedule schedule={schedule} />}
         </Grid>
       </Grid>
     </Container>
