@@ -93,18 +93,80 @@ const Calendar: React.FC<CalendarProps> = ({ date, settings, teams, rooms, table
       column
     };
 
-    const updatedEvents = events.map(event => {
+    // Sort events to ensure we process them in chronological order
+    const sortedEvents = [...events].sort(
+      (a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf()
+    );
+
+    let timeShift = adjustedDuration;
+    const updatedEvents = sortedEvents.map(event => {
       if (event.column === column && !dayjs(event.startTime).isBefore(startTime)) {
+        const newStartTime = dayjs(event.startTime).add(timeShift, 'minutes');
+        let newEndTime = dayjs(event.endTime).add(timeShift, 'minutes');
+
+        // If this is a break, ensure its end time is divisible by 5
+        if (event.type === 'break') {
+          const endMinutes = newEndTime.minute();
+          const extraMins = endMinutes % 5 === 0 ? 0 : 5 - (endMinutes % 5);
+          if (extraMins > 0) {
+            newEndTime = newEndTime.add(extraMins, 'minutes');
+            // Update timeShift for subsequent events
+            timeShift += extraMins;
+          }
+        }
+
         return {
           ...event,
-          startTime: dayjs(event.startTime).add(adjustedDuration, 'minutes').toDate(),
-          endTime: dayjs(event.endTime).add(adjustedDuration, 'minutes').toDate()
+          startTime: newStartTime.toDate(),
+          endTime: newEndTime.toDate()
         };
       }
       return event;
     });
 
     setEvents([...updatedEvents, newBreak]);
+  };
+
+  const removeBreak = (breakEvent: CalendarEvent) => {
+    // Sort events to ensure we process them in chronological order
+    const sortedEvents = [...events].sort(
+      (a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf()
+    );
+
+    const breakDuration = dayjs(breakEvent.endTime).diff(dayjs(breakEvent.startTime), 'minute');
+    let timeShift = breakDuration;
+
+    const updatedEvents = sortedEvents
+      .filter(event => event.id !== breakEvent.id)
+      .map(event => {
+        if (
+          event.column === breakEvent.column &&
+          dayjs(event.startTime).isAfter(dayjs(breakEvent.startTime))
+        ) {
+          const newStartTime = dayjs(event.startTime).subtract(timeShift, 'minutes');
+          let newEndTime = dayjs(event.endTime).subtract(timeShift, 'minutes');
+
+          // If this is a break, ensure its end time is divisible by 5
+          if (event.type === 'break') {
+            const endMinutes = newEndTime.minute();
+            const extraMins = endMinutes % 5 === 0 ? 0 : 5 - (endMinutes % 5);
+            if (extraMins > 0) {
+              newEndTime = newEndTime.add(extraMins, 'minutes');
+              // Update timeShift for subsequent events
+              timeShift -= extraMins;
+            }
+          }
+
+          return {
+            ...event,
+            startTime: newStartTime.toDate(),
+            endTime: newEndTime.toDate()
+          };
+        }
+        return event;
+      });
+
+    setEvents(updatedEvents);
   };
 
   const handleBreakResize = (breakEvent: CalendarEvent, newDuration: number) => {
@@ -141,102 +203,132 @@ const Calendar: React.FC<CalendarProps> = ({ date, settings, teams, rooms, table
   };
 
   return (
-    <Paper ref={containerRef} sx={{ height: '600px', overflow: 'auto' }}>
-      <Stack direction="row" spacing={2} p={2}>
+    <Paper ref={containerRef} sx={{ height: '600px', overflowY: 'auto' }}>
+      <Stack direction="row" sx={{ position: 'relative' }}>
         {/* Time axis */}
-        <Box width={60} flexShrink={0}>
-          {generateTimeSlots(timeRange.start, timeRange.end).map((time, index) => (
+        <Stack width={60} flexShrink={0} sx={{ borderRight: '1px solid rgba(0,0,0,0.12)' }}>
+          <Box height={40} sx={{ borderTop: '1px solid rgba(0,0,0,0.12)' }} /> {/* Header space */}
+          <Box>
+            {generateTimeSlots(timeRange.start, timeRange.end).map((time, index) => (
+              <Box
+                key={index}
+                height={TIME_SLOT_HEIGHT}
+                display="flex"
+                alignItems="center"
+                sx={{
+                  borderTop:
+                    index % (15 / MINUTES_PER_SLOT) === 0 ? '1px solid rgba(0,0,0,0.12)' : 'none',
+                  backgroundColor:
+                    index % (60 / MINUTES_PER_SLOT) === 0 ? 'rgba(0,0,0,0.02)' : 'transparent'
+                }}
+              >
+                {index % (60 / MINUTES_PER_SLOT) === 0 && (
+                  <Typography variant="caption">{time.format('HH:mm')}</Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+        </Stack>
+
+        {/* Content wrapper with shared background grid */}
+        <Box
+          sx={{
+            display: 'flex',
+            flex: 1,
+            backgroundImage: `
+            linear-gradient(rgba(0,0,0,0.12) 1px, transparent 1px),
+            linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)
+          `,
+            backgroundSize: `
+            100% ${TIME_SLOT_HEIGHT * (60 / MINUTES_PER_SLOT)}px,
+            100% ${TIME_SLOT_HEIGHT * (15 / MINUTES_PER_SLOT)}px
+          `,
+            backgroundPosition: '0 40px'
+          }}
+        >
+          {/* Judging Column */}
+          <Stack width={COLUMN_WIDTH} sx={{ borderRight: '1px solid rgba(0,0,0,0.12)' }}>
             <Box
-              key={index}
-              height={TIME_SLOT_HEIGHT}
-              display="flex"
-              alignItems="center"
               sx={{
-                borderBottom:
-                  index % (60 / MINUTES_PER_SLOT) === 0 ? '1px solid rgba(0,0,0,0.12)' : 'none',
-                backgroundColor:
-                  index % (60 / MINUTES_PER_SLOT) === 0 ? 'rgba(0,0,0,0.02)' : 'transparent'
+                height: 40,
+                position: 'sticky',
+                top: 0,
+                bgcolor: '#F0F0F0',
+                zIndex: 5,
+                borderTop: '1px solid rgba(0,0,0,0.12)',
+                borderBottom: '1px solid rgba(0,0,0,0.12)'
               }}
             >
-              {index % (60 / MINUTES_PER_SLOT) === 0 && (
-                <Typography variant="caption">{time.format('HH:mm')}</Typography>
-              )}
+              <Typography variant="h6">שיפוט</Typography>
             </Box>
-          ))}
-        </Box>
+            <Box>
+              <Box sx={{ position: 'relative', minHeight: '100%' }}>
+                {columnEvents.judging.map(event => (
+                  <EventBlock
+                    key={event.id}
+                    event={event}
+                    startTime={timeRange.start}
+                    onBreakResize={handleBreakResize}
+                    onRemoveBreak={removeBreak}
+                  />
+                ))}
+                {calculateBreakPositions(columnEvents.judging).map((position, index) => (
+                  <BreakIndicator
+                    key={`break-indicator-judging-${index}`}
+                    topEvent={position.top}
+                    bottomEvent={position.bottom}
+                    startTime={timeRange.start}
+                    onClick={() => {
+                      const startTime = dayjs(position.top.endTime);
+                      addBreak('judging', startTime);
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Stack>
 
-        {/* Judging Column */}
-        <Box width={COLUMN_WIDTH}>
-          <Typography variant="h6" gutterBottom>
-            שיפוט
-          </Typography>
-          <Box
-            sx={{
-              position: 'relative',
-              minHeight: '100%',
-              backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)',
-              backgroundSize: `100% ${TIME_SLOT_HEIGHT * (60 / MINUTES_PER_SLOT)}px`,
-              backgroundPosition: '0 0'
-            }}
-          >
-            {columnEvents.judging.map(event => (
-              <EventBlock
-                key={event.id}
-                event={event}
-                startTime={timeRange.start}
-                onBreakResize={handleBreakResize}
-              />
-            ))}
-            {calculateBreakPositions(columnEvents.judging).map((position, index) => (
-              <BreakIndicator
-                key={`break-indicator-judging-${index}`}
-                topEvent={position.top}
-                bottomEvent={position.bottom}
-                startTime={timeRange.start}
-                onClick={() => {
-                  const startTime = dayjs(position.top.endTime);
-                  addBreak('judging', startTime);
-                }}
-              />
-            ))}
-          </Box>
-        </Box>
-
-        {/* Field Column */}
-        <Box width={COLUMN_WIDTH}>
-          <Typography variant="h6" gutterBottom>
-            זירה
-          </Typography>
-          <Box
-            sx={{
-              position: 'relative',
-              minHeight: '100%',
-              backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)',
-              backgroundSize: `100% ${TIME_SLOT_HEIGHT * (60 / MINUTES_PER_SLOT)}px`,
-              backgroundPosition: '0 0'
-            }}
-          >
-            {columnEvents.field.map(event => (
-              <EventBlock
-                key={event.id}
-                event={event}
-                startTime={timeRange.start}
-                onBreakResize={handleBreakResize}
-              />
-            ))}
-            {calculateBreakPositions(columnEvents.field).map((position, index) => (
-              <BreakIndicator
-                key={`break-indicator-field-${index}`}
-                topEvent={position.top}
-                bottomEvent={position.bottom}
-                startTime={timeRange.start}
-                onClick={() => {
-                  const startTime = dayjs(position.top.endTime);
-                  addBreak('field', startTime);
-                }}
-              />
-            ))}
-          </Box>
+          {/* Field Column */}
+          <Stack width={COLUMN_WIDTH}>
+            <Box
+              sx={{
+                height: 40,
+                position: 'sticky',
+                top: 0,
+                bgcolor: '#F0F0F0',
+                zIndex: 5,
+                borderTop: '1px solid rgba(0,0,0,0.12)',
+                borderBottom: '1px solid rgba(0,0,0,0.12)'
+              }}
+            >
+              <Typography variant="h6">זירה</Typography>
+            </Box>
+            <Box>
+              <Box sx={{ position: 'relative', minHeight: '100%' }}>
+                {columnEvents.field.map(event => (
+                  <EventBlock
+                    key={event.id}
+                    event={event}
+                    startTime={timeRange.start}
+                    onBreakResize={handleBreakResize}
+                    onRemoveBreak={removeBreak}
+                  />
+                ))}
+                {calculateBreakPositions(columnEvents.field).map((position, index) => (
+                  <BreakIndicator
+                    key={`break-indicator-field-${index}`}
+                    topEvent={position.top}
+                    bottomEvent={position.bottom}
+                    startTime={timeRange.start}
+                    onClick={() => {
+                      const startTime = dayjs(position.top.endTime);
+                      addBreak('field', startTime);
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Stack>
         </Box>
       </Stack>
     </Paper>

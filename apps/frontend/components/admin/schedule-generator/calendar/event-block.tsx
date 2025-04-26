@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Paper, Stack, Typography } from '@mui/material';
+import { Paper, Stack, Typography, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from 'dayjs';
 import { CalendarEvent, MINUTES_PER_SLOT, TIME_SLOT_HEIGHT } from './common';
 
@@ -7,7 +8,8 @@ export const EventBlock: React.FC<{
   event: CalendarEvent;
   startTime: dayjs.Dayjs;
   onBreakResize?: (event: CalendarEvent, newDuration: number) => void;
-}> = ({ event, startTime, onBreakResize }) => {
+  onRemoveBreak?: (event: CalendarEvent) => void;
+}> = ({ event, startTime, onBreakResize, onRemoveBreak }) => {
   const duration = dayjs(event.endTime).diff(dayjs(event.startTime), 'minute');
   const height = (duration / MINUTES_PER_SLOT) * TIME_SLOT_HEIGHT;
   const [isDragging, setIsDragging] = useState(false);
@@ -97,7 +99,7 @@ export const EventBlock: React.FC<{
         top,
         height,
         backgroundColor: getEventColor(),
-        padding: height > 20 ? 1 : 0,
+        padding: height >= 40 ? 1 : 0,
         ...breakIndicatorStyle(event.type, isResizeHover)
       }}
       onMouseDown={handleMouseDown}
@@ -111,16 +113,36 @@ export const EventBlock: React.FC<{
       onMouseLeave={() => setIsResizeHover(false)}
     >
       <Stack
-        direction={height > 40 ? 'column' : 'row'}
+        direction={height >= 60 ? 'column' : 'row'}
         px={1}
         py={0.5}
         spacing={1}
-        alignItems={height > 40 ? 'flex-start' : 'center'}
+        alignItems={height >= 60 ? 'flex-start' : 'center'}
+        position="relative"
       >
         <Typography variant="body2">{getEventTitle()}</Typography>
         <Typography variant="body2" color="text.secondary">
           {dayjs(event.startTime).format('HH:mm')} - {dayjs(event.endTime).format('HH:mm')}
         </Typography>
+        {event.type === 'break' && onRemoveBreak && (
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              onRemoveBreak(event);
+            }}
+            sx={{
+              position: 'absolute',
+              right: 4,
+              top: 4,
+              opacity: 0.7,
+              padding: height < 30 ? '2px' : '4px',
+              '&:hover': { opacity: 1 }
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: height < 30 ? 14 : 20 }} />
+          </IconButton>
+        )}
       </Stack>
     </Paper>
   );

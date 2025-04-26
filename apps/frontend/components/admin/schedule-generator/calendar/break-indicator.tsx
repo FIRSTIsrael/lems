@@ -42,11 +42,11 @@ const breakIndicatorStyle = (topOffset: number, isHovered: boolean) => ({
   alignItems: 'center',
   justifyContent: 'center',
   '&:hover': {
-    backgroundColor: 'rgba(25, 118, 210, 0.4)',
+    backgroundColor: 'rgba(25, 118, 210, 0.2)',
     '&::after': {
       content: '"הוסף הפסקה"',
       position: 'absolute',
-      right: '105%',
+      left: '105%',
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
       color: 'white',
       padding: '4px 8px',
@@ -61,7 +61,7 @@ const breakIndicatorStyle = (topOffset: number, isHovered: boolean) => ({
     position: 'absolute',
     width: '100%',
     height: '2px',
-    backgroundColor: isHovered ? 'rgba(25, 118, 210, 0.6)' : 'rgba(25, 118, 210, 0.3)'
+    backgroundColor: isHovered ? 'rgba(25, 118, 210, 0.4)' : 'rgba(25, 118, 210, 0.1)'
   },
   zIndex: 3
 });
