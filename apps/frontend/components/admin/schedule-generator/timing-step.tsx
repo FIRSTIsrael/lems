@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import Calendar from './calendar';
 
 interface TimingStepProps {
-  event: FllEvent;
+  event: WithId<FllEvent>;
   division: WithId<Division>;
   settings: ScheduleGenerationSettings;
   updateSettings: (settings: ScheduleGenerationSettings) => void;
@@ -77,24 +77,24 @@ const TimingStep: React.FC<TimingStepProps> = ({
       <Stack spacing={4}>
         <Stack spacing={2} direction="row">
           <TimePicker
-            label="תחילת מקצים"
-            value={settings.matchesStart ? dayjs(settings.matchesStart) : null}
-            sx={{ minWidth: 150 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({ ...settings, matchesStart: newTime.set('seconds', 0).toDate() });
-            }}
-            ampm={false}
-            format="HH:mm"
-            views={['hours', 'minutes']}
-          />
-          <TimePicker
             label="תחילת שיפוט"
             value={settings.judgingStart ? dayjs(settings.judgingStart) : null}
             sx={{ minWidth: 150 }}
             onChange={newTime => {
               if (newTime)
                 updateSettings({ ...settings, judgingStart: newTime.set('seconds', 0).toDate() });
+            }}
+            ampm={false}
+            format="HH:mm"
+            views={['hours', 'minutes']}
+          />
+          <TimePicker
+            label="תחילת מקצים"
+            value={settings.matchesStart ? dayjs(settings.matchesStart) : null}
+            sx={{ minWidth: 150 }}
+            onChange={newTime => {
+              if (newTime)
+                updateSettings({ ...settings, matchesStart: newTime.set('seconds', 0).toDate() });
             }}
             ampm={false}
             format="HH:mm"
