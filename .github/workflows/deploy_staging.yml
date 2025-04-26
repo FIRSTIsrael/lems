@@ -1,4 +1,4 @@
-name: Deploy LEMS
+name: Deploy LEMS Staging
 
 on: workflow_dispatch
 
