@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
+import dayjs from 'dayjs';
 import { Button, Stack } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,11 +13,8 @@ import {
   ScheduleGenerationSettings,
   Team
 } from '@lems/types';
-
-import { useEffect, useState } from 'react';
 import { apiFetch } from '../../../lib/utils/fetch';
-import dayjs from 'dayjs';
-import Calendar from './calendar';
+import Calendar from './calendar/calendar';
 
 interface TimingStepProps {
   event: WithId<FllEvent>;
@@ -104,8 +103,7 @@ const TimingStep: React.FC<TimingStepProps> = ({
 
         {settings.matchesStart && settings.judgingStart && (
           <Calendar
-            event={event}
-            division={division}
+            date={event.startDate}
             settings={settings}
             teams={teams}
             rooms={rooms}
