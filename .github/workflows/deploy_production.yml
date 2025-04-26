@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
-  IMAGE_TAG: ${{ github.ref_name }}
+  IMAGE_TAG: lems-${{ github.ref_name }}
   DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
   DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
   DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
@@ -29,6 +29,7 @@ env:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -49,21 +50,20 @@ jobs:
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
-
-      - name: Remove all old images
-        run: |
-          if doctl registry repository list-tags lems-frontend | grep -o "sha.*"; then
-            doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "sha.*") --force
-          fi
-          if doctl registry repository list-tags lems-backend | grep -o "sha.*"; then
-            doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "sha.*") --force
-          fi
-          if doctl registry repository list-tags lems-scheduler | grep -o "sha.*"; then
-            doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "sha.*") --force
-          fi
-          if doctl registry repository list-tags fll-events | grep -o "sha.*"; then
-            doctl registry repository delete-manifest fll-events $(doctl registry repository list-tags fll-events | grep -o "sha.*") --force
-          fi
+        - name: Remove all old images
+          run: |
+            if doctl registry repository list-tags lems-frontend | grep -o "lems-.*"; then
+          doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "lems-.*") --force
+            fi
+            if doctl registry repository list-tags lems-backend | grep -o "lems-.*"; then
+          doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "lems-.*") --force
+            fi
+            if doctl registry repository list-tags lems-scheduler | grep -o "lems-.*"; then
+          doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "lems-.*") --force
+            fi
+            if doctl registry repository list-tags lems-portal | grep -o "lems-.*"; then
+          doctl registry repository delete-manifest lems-portal $(doctl registry repository list-tags lems-portal | grep -o "lems-.*") --force
+            fi
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
@@ -73,6 +73,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     needs: build_and_push
 
     steps:
