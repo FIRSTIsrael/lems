@@ -16,7 +16,7 @@ logger = logging.getLogger("lems.scheduler")
 router = APIRouter(prefix="/scheduler")
 
 
-@router.get("/validate")
+@router.post("/validate")
 async def validate_schedule(
     request: SchedulerRequest, response: Response
 ) -> ValidateScheduleResponse:

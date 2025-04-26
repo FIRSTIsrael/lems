@@ -88,7 +88,6 @@ class ValidatorService:
             round_number = (
                 round if stage == "practice" else round - self.config.practice_rounds
             )
-            print(round, round_number, stage)
 
             cycle_time = (
                 timedelta(seconds=self.config.practice_match_cycle_time_seconds)

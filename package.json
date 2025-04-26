@@ -34,7 +34,6 @@
     "express-fileupload": "^1.5.1",
     "express-winston": "^4.2.0",
     "formik": "^2.4.6",
-    "i": "^0.3.7",
     "idb": "^8.0.2",
     "jsonwebtoken": "^9.0.2",
     "merge-anything": "^6.0.6",

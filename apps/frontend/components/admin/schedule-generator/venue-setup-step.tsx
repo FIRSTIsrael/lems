@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { WithId } from 'mongodb';
 import { Division, JudgingRoom, RobotGameTable, ScheduleGenerationSettings } from '@lems/types';
 import {
   Button,
-  Chip,
   FormControlLabel,
   IconButton,
   Stack,
@@ -11,56 +10,74 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { apiFetch } from '../../../lib/utils/fetch';
 import CustomNumberInput from '../../field/scoresheet/number-input';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { heIL } from '@mui/x-date-pickers/locales';
 
 interface LocationManagerProps {
+  locations: string[];
+  setLocations: React.Dispatch<SetStateAction<string[]>>;
   title: string;
-  locations: Array<string>;
-  setLocations(newLocations: Array<string>): void;
 }
 
-const LocationManager: React.FC<LocationManagerProps> = ({ title, locations, setLocations }) => {
-  const [name, setName] = useState<string>('1');
-
-  const add = (location: string) => {
-    setLocations([...locations, location]);
+const LocationManager: React.FC<LocationManagerProps> = ({ locations, setLocations, title }) => {
+  const addLocation = () => {
+    setLocations(prev => [...prev, '']);
   };
 
-  const remove = (index: number) => {
-    const updatedLocations = [...locations];
-    updatedLocations.splice(index, 1);
-    setLocations(updatedLocations);
+  const removeLocation = (index: number) => {
+    setLocations(prev => {
+      const newLocations = [...prev];
+      newLocations.splice(index, 1);
+      return newLocations;
+    });
   };
 
   return (
-    <Stack spacing={2}>
-      <Stack direction="row" spacing={2}>
-        <TextField
-          label={`הוסף ${title}`}
-          value={name}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setName(event.target.value);
-          }}
-        />
-        <IconButton
-          sx={{ ml: 2 }}
-          onClick={() => {
-            add(name);
-            if (!isNaN(Number(name))) setName(String(Number(name) + 1));
-            else setName('');
-          }}
-        >
+    <Grid size={4}>
+      <Stack direction="row" spacing={2} alignItems="center" marginBottom={4}>
+        <Typography fontSize="1.5rem" fontWeight={500}>
+          {title}
+        </Typography>
+        <IconButton onClick={addLocation} size="small">
           <AddRoundedIcon />
         </IconButton>
       </Stack>
-      <Stack direction="row" spacing={2}>
+      <Stack spacing={3}>
         {locations.map((location, index) => (
-          <Chip key={index} label={location} onDelete={remove} />
+          <Grid container key={`title-${index}`} spacing={2} alignItems="center" width="80%">
+            <Grid size={2}>
+              <Typography>{index + 1}</Typography>
+            </Grid>
+            <Grid size={8}>
+              <TextField
+                defaultValue={location}
+                variant="standard"
+                onBlur={e => {
+                  const newValue = e.target.value;
+                  setLocations(prev => {
+                    const newRooms = [...prev];
+                    newRooms[index] = newValue;
+                    return newRooms;
+                  });
+                }}
+              />
+            </Grid>
+            <Grid size={2}>
+              <IconButton onClick={() => removeLocation(index)} size="small">
+                <DeleteRoundedIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
         ))}
       </Stack>
-    </Stack>
+    </Grid>
   );
 };
 
@@ -81,7 +98,13 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
 }) => {
   const [rooms, setRooms] = useState<Array<string>>([]);
   const [tables, setTables] = useState<Array<string>>([]);
-  const canAdvanceStep = rooms.length > 0 && tables.length > 0;
+
+  const canAdvanceStep =
+    rooms.length > 0 &&
+    tables.length > 0 &&
+    settings.practiceCycleTimeSeconds &&
+    settings.rankingCycleTimeSeconds &&
+    settings.judgingCycleTimeSeconds;
 
   const fetchRooms = async () => {
     const response = await apiFetch(`/api/divisions/${division._id}/rooms`);
@@ -122,53 +145,117 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
   }, []);
 
   return (
-    <>
-      <Stack spacing={2}>
-        <LocationManager title="חדרים" locations={rooms} setLocations={setRooms} />
-        <LocationManager title="שולחנות" locations={tables} setLocations={setTables} />
-
-        <Stack direction="row" spacing={2}>
-          <Stack direction="column" spacing={1}>
-            <Typography variant="caption">מספר סבבי אימונים</Typography>
-            <CustomNumberInput
-              min={1}
-              max={5}
-              value={settings.practiceRounds}
-              onChange={(e, value) => {
-                if (value !== null) {
-                  e.preventDefault();
-                  updateSettings({ ...settings, practiceRounds: value });
-                }
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      localeText={heIL.components.MuiLocalizationProvider.defaultProps.localeText}
+    >
+      <Grid container spacing={2} marginBottom={4}>
+        <Grid size={4}>
+          <Stack spacing={3}>
+            <Stack spacing={1}>
+              <Typography fontSize="1.5rem" fontWeight={500}>
+                הגדרות
+              </Typography>
+              <Typography>מספר סבבי אימונים</Typography>
+              <CustomNumberInput
+                min={1}
+                max={5}
+                value={settings.practiceRounds}
+                onChange={(e, value) => {
+                  if (value !== null) {
+                    e.preventDefault();
+                    updateSettings({ ...settings, practiceRounds: value });
+                  }
+                }}
+              />
+            </Stack>
+            <Stack spacing={1}>
+              <Typography>מספר סבבי דירוג</Typography>
+              <CustomNumberInput
+                min={1}
+                max={5}
+                value={settings.rankingRounds}
+                onChange={(e, value) => {
+                  if (value !== null) {
+                    e.preventDefault();
+                    updateSettings({ ...settings, rankingRounds: value });
+                  }
+                }}
+              />
+            </Stack>
+            <FormControlLabel
+              label={'הרצה מדורגת'}
+              control={
+                <Switch
+                  checked={settings.isStaggered}
+                  onChange={e => {
+                    updateSettings({ ...settings, isStaggered: e.target.checked });
+                  }}
+                />
+              }
+            />
+            <TimePicker
+              label="מחזור מקצי אימון"
+              value={
+                settings.practiceCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.practiceCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    practiceCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
               }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
+            />
+            <TimePicker
+              label="מחזור מקצי דירוג"
+              value={
+                settings.rankingCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.rankingCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    rankingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
+              }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
+            />
+            <TimePicker
+              label="מחזור מפגשי שיפוט"
+              value={
+                settings.judgingCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.judgingCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    judgingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
+              }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
             />
           </Stack>
-          <Stack direction="column" spacing={1}>
-            <Typography variant="caption">מספר סבבי דירוג</Typography>
-            <CustomNumberInput
-              min={1}
-              max={5}
-              value={settings.rankingRounds}
-              onChange={(e, value) => {
-                if (value !== null) {
-                  e.preventDefault();
-                  updateSettings({ ...settings, rankingRounds: value });
-                }
-              }}
-            />
-          </Stack>
-        </Stack>
-        <FormControlLabel
-          label={'הרצה מדורגת'}
-          control={
-            <Switch
-              checked={settings.isStaggered}
-              onChange={e => {
-                updateSettings({ ...settings, isStaggered: e.target.checked });
-              }}
-            />
-          }
-        />
-      </Stack>
+        </Grid>
+        <LocationManager locations={rooms} setLocations={setRooms} title="חדרים" />
+        <LocationManager locations={tables} setLocations={setTables} title="שולחנות" />
+      </Grid>
 
       <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
         <Button variant="contained" onClick={goBack}>
@@ -186,7 +273,7 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
           הבא
         </Button>
       </Stack>
-    </>
+    </LocalizationProvider>
   );
 };
 
