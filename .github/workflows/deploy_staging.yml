@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 env:
   REGISTRY: 'registry.digitalocean.com/first-israel-registry'
-  IMAGE_TAG: staging-${{ github.ref_name }}
+  IMAGE_TAG: staging-${{ github.sha }}
   DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
   DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
   DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
@@ -88,6 +88,6 @@ jobs:
             docker compose down
             docker compose rm
             docker rmi $(docker images | grep 'lems-')
-            git reset --hard origin/main
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/${{ github.sha }}
             docker compose up -d
