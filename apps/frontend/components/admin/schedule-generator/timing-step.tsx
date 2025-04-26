@@ -15,6 +15,7 @@ import {
 } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Calendar from './calendar/calendar';
+import { enqueueSnackbar } from 'notistack';
 
 interface TimingStepProps {
   event: WithId<FllEvent>;
@@ -36,6 +37,7 @@ const TimingStep: React.FC<TimingStepProps> = ({
   const [teams, setTeams] = useState<Array<WithId<Team>> | null>(null);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | null>(null);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchTeams = async () => {
     const response = await apiFetch(`/api/divisions/${division._id}/teams`);
@@ -53,6 +55,25 @@ const TimingStep: React.FC<TimingStepProps> = ({
     const response = await apiFetch(`/api/divisions/${division._id}/tables`);
     const data = await response.json();
     setTables(data);
+  };
+
+  const sendValidate = async () => {
+    return apiFetch(`/api/admin/divisions/${division._id}/schedule/validate`, {
+      method: 'POST',
+      body: JSON.stringify(settings),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => {
+      if (res.ok) {
+        return true;
+      } else {
+        res.json().then(data => {
+          enqueueSnackbar(data.error, {
+            variant: 'error'
+          });
+          return false;
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -105,6 +126,7 @@ const TimingStep: React.FC<TimingStepProps> = ({
           <Calendar
             date={event.startDate}
             settings={settings}
+            updateSettings={updateSettings}
             teams={teams}
             rooms={rooms}
             tables={tables}
@@ -115,7 +137,19 @@ const TimingStep: React.FC<TimingStepProps> = ({
           <Button variant="contained" onClick={goBack}>
             הקודם
           </Button>
-          <Button variant="contained" onClick={advanceStep} disabled={!canAdvanceStep}>
+          <Button
+            loading={isLoading}
+            variant="contained"
+            onClick={async () => {
+              setIsLoading(true);
+              const isValid = await sendValidate();
+              if (isValid) {
+                await advanceStep();
+              }
+              setIsLoading(false);
+            }}
+            disabled={!canAdvanceStep}
+          >
             הבא
           </Button>
         </Stack>

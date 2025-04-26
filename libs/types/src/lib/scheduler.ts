@@ -12,6 +12,7 @@ export interface ScheduleGenerationSettings {
 
 export interface ScheduleBreak {
   eventType: 'match' | 'judging';
+  matchType?: 'practice' | 'ranking';
   after: number;
   durationSeconds: number;
 }

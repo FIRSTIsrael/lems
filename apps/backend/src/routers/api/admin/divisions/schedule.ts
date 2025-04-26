@@ -72,7 +72,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
   }
 });
 
-router.post('/generate', async (req: Request, res: Response) => {
+const withScheduleRequest = async (req: Request, res: Response, next: () => void) => {
   const settings: ScheduleGenerationSettings = req.body;
 
   const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
@@ -84,9 +84,6 @@ router.post('/generate', async (req: Request, res: Response) => {
   }
 
   try {
-    const domain = process.env.SCHEDULER_URL;
-    if (!domain) throw new Error('SCHEDULER_URL is not configured');
-
     const matchesStart = dayjs(settings.matchesStart);
     settings.matchesStart = dayjs(event.startDate)
       .set('minutes', matchesStart.get('minutes'))
@@ -121,10 +118,52 @@ router.post('/generate', async (req: Request, res: Response) => {
       }))
     };
 
+    req.body.schedulerRequest = schedulerRequest;
+    return next();
+  } catch {
+    console.log('❌ Error parsing schedule request');
+    res.status(400).json({ error: 'BAD_REQUEST' });
+  }
+};
+
+router.post('/validate', withScheduleRequest, async (req: Request, res: Response) => {
+  try {
+    const domain = process.env.SCHEDULER_URL;
+    if (!domain) throw new Error('SCHEDULER_URL is not configured');
+
+    const response = await fetch(`${domain}/scheduler/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body.schedulerRequest)
+    });
+
+    const data = await response.json();
+    if (!response.ok && !data.error) throw new Error('Scheduler failed to run');
+    if (data.is_valid) {
+      res.status(200).json({ ok: true });
+      return;
+    }
+
+    res.status(400).json({ error: data.error });
+  } catch (error) {
+    console.log('❌ Error validating schedule');
+    console.debug(error);
+    res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.post('/generate', withScheduleRequest, async (req: Request, res: Response) => {
+  try {
+    const domain = process.env.SCHEDULER_URL;
+    if (!domain) throw new Error('SCHEDULER_URL is not configured');
+
+    const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
+    const event = await db.getFllEvent({ _id: division.eventId });
+
     await fetch(`${domain}/scheduler`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(schedulerRequest)
+      body: JSON.stringify(req.body.schedulerRequest)
     }).then(res => {
       if (!res.ok) throw new Error('Scheduler failed to run');
     });
@@ -134,6 +173,7 @@ router.post('/generate', async (req: Request, res: Response) => {
   } catch (error) {
     console.log('❌ Error generating schedule');
     console.debug(error);
+    const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
     await cleanDivisionData(division, true);
     console.log('✅ Deleted division data!');
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });

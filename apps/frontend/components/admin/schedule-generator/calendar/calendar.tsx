@@ -5,7 +5,6 @@ import { Stack, Box, Typography, Paper } from '@mui/material';
 import { Team, JudgingRoom, RobotGameTable, ScheduleGenerationSettings } from '@lems/types';
 import {
   CalendarEvent,
-  DEFAULT_BREAK_DURATION_MINUTES,
   COLUMN_WIDTH,
   MINUTES_PER_SLOT,
   TIME_SLOT_HEIGHT,
@@ -14,192 +13,57 @@ import {
 } from './common';
 import { BreakIndicator } from './break-indicator';
 import { EventBlock } from './event-block';
+import { useBreaks } from './use-breaks';
 
 export interface CalendarProps {
   date: Date;
   settings: ScheduleGenerationSettings;
+  updateSettings: (settings: ScheduleGenerationSettings) => void;
   teams: WithId<Team>[];
   rooms: WithId<JudgingRoom>[];
   tables: WithId<RobotGameTable>[];
 }
 
-const Calendar: React.FC<CalendarProps> = ({ date, settings, teams, rooms, tables }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  date,
+  settings,
+  updateSettings,
+  teams,
+  rooms,
+  tables
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+
+  const matchesPerRound = useMemo(() => {
+    return Math.ceil(teams.length / tables.length) * (settings.isStaggered ? 2 : 1);
+  }, [teams.length, tables.length, settings.isStaggered]);
+
+  const { calculateBreakPositions, addBreak, removeBreak, handleBreakResize } = useBreaks({
+    events,
+    settings,
+    matchesPerRound,
+    updateSettings,
+    setEvents
+  });
 
   useEffect(() => {
     setEvents(generateEvents({ date, settings, teams, rooms, tables }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(settings)]);
-
-  const timeRange = useMemo(() => {
-    // Set to 6:00-20:00 for the event day
-    return {
-      start: dayjs(date).set('hour', 6).set('minute', 0),
-      end: dayjs(date).set('hour', 20).set('minute', 0)
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [settings.judgingStart, settings.matchesStart]);
 
   const columnEvents = useMemo(() => {
     return {
       judging: events.filter(e => e.column === 'judging'),
       field: events.filter(e => e.column === 'field')
     };
-  }, [events]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(events)]);
 
-  const calculateBreakPositions = (columnEvents: CalendarEvent[]) => {
-    const positions: { top: CalendarEvent; bottom: CalendarEvent }[] = [];
-
-    const sortedEvents = columnEvents
-      .filter(e => e.type !== 'break')
-      .sort((a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf());
-
-    for (let i = 0; i < sortedEvents.length - 1; i++) {
-      const currentEvent = sortedEvents[i];
-      const nextEvent = sortedEvents[i + 1];
-
-      const hasBreakBetween = columnEvents.some(
-        e =>
-          e.type === 'break' &&
-          !dayjs(e.startTime).isBefore(dayjs(currentEvent.endTime)) &&
-          !dayjs(e.endTime).isAfter(dayjs(nextEvent.startTime))
-      );
-
-      if (!hasBreakBetween) {
-        positions.push({
-          top: currentEvent,
-          bottom: nextEvent
-        });
-      }
-    }
-
-    return positions;
-  };
-
-  const addBreak = (column: 'judging' | 'field', startTime: dayjs.Dayjs) => {
-    // Calculate adjusted duration to make end time divisible by 5
-    const defaultEndTime = startTime.add(DEFAULT_BREAK_DURATION_MINUTES, 'minutes');
-    const minutesFromStart = defaultEndTime.minute();
-    const extraMinutes = minutesFromStart % 5 === 0 ? 0 : 5 - (minutesFromStart % 5);
-    const adjustedDuration = DEFAULT_BREAK_DURATION_MINUTES + extraMinutes;
-
-    const newBreak: CalendarEvent = {
-      id: `break-${column}-${startTime.valueOf()}`,
-      type: 'break',
-      startTime: startTime.toDate(),
-      endTime: startTime.add(adjustedDuration, 'minutes').toDate(),
-      number: events.filter(e => e.type === 'break').length + 1,
-      column
-    };
-
-    // Sort events to ensure we process them in chronological order
-    const sortedEvents = [...events].sort(
-      (a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf()
-    );
-
-    let timeShift = adjustedDuration;
-    const updatedEvents = sortedEvents.map(event => {
-      if (event.column === column && !dayjs(event.startTime).isBefore(startTime)) {
-        const newStartTime = dayjs(event.startTime).add(timeShift, 'minutes');
-        let newEndTime = dayjs(event.endTime).add(timeShift, 'minutes');
-
-        // If this is a break, ensure its end time is divisible by 5
-        if (event.type === 'break') {
-          const endMinutes = newEndTime.minute();
-          const extraMins = endMinutes % 5 === 0 ? 0 : 5 - (endMinutes % 5);
-          if (extraMins > 0) {
-            newEndTime = newEndTime.add(extraMins, 'minutes');
-            // Update timeShift for subsequent events
-            timeShift += extraMins;
-          }
-        }
-
-        return {
-          ...event,
-          startTime: newStartTime.toDate(),
-          endTime: newEndTime.toDate()
-        };
-      }
-      return event;
-    });
-
-    setEvents([...updatedEvents, newBreak]);
-  };
-
-  const removeBreak = (breakEvent: CalendarEvent) => {
-    // Sort events to ensure we process them in chronological order
-    const sortedEvents = [...events].sort(
-      (a, b) => dayjs(a.startTime).valueOf() - dayjs(b.startTime).valueOf()
-    );
-
-    const breakDuration = dayjs(breakEvent.endTime).diff(dayjs(breakEvent.startTime), 'minute');
-    let timeShift = breakDuration;
-
-    const updatedEvents = sortedEvents
-      .filter(event => event.id !== breakEvent.id)
-      .map(event => {
-        if (
-          event.column === breakEvent.column &&
-          dayjs(event.startTime).isAfter(dayjs(breakEvent.startTime))
-        ) {
-          const newStartTime = dayjs(event.startTime).subtract(timeShift, 'minutes');
-          let newEndTime = dayjs(event.endTime).subtract(timeShift, 'minutes');
-
-          // If this is a break, ensure its end time is divisible by 5
-          if (event.type === 'break') {
-            const endMinutes = newEndTime.minute();
-            const extraMins = endMinutes % 5 === 0 ? 0 : 5 - (endMinutes % 5);
-            if (extraMins > 0) {
-              newEndTime = newEndTime.add(extraMins, 'minutes');
-              // Update timeShift for subsequent events
-              timeShift -= extraMins;
-            }
-          }
-
-          return {
-            ...event,
-            startTime: newStartTime.toDate(),
-            endTime: newEndTime.toDate()
-          };
-        }
-        return event;
-      });
-
-    setEvents(updatedEvents);
-  };
-
-  const handleBreakResize = (breakEvent: CalendarEvent, newDuration: number) => {
-    // Adjust the new duration to ensure end time is divisible by 5
-    const endMinute = dayjs(breakEvent.startTime).add(newDuration, 'minutes').minute();
-    const extraMinutes = endMinute % 5 === 0 ? 0 : 5 - (endMinute % 5);
-    const adjustedNewDuration = newDuration + extraMinutes;
-
-    const oldDuration = dayjs(breakEvent.endTime).diff(dayjs(breakEvent.startTime), 'minute');
-    const durationDiff = adjustedNewDuration - oldDuration;
-
-    const updatedEvents = events.map(event => {
-      if (event.id === breakEvent.id) {
-        // Update the break duration
-        return {
-          ...event,
-          endTime: dayjs(event.startTime).add(adjustedNewDuration, 'minute').toDate()
-        };
-      } else if (
-        event.column === breakEvent.column &&
-        dayjs(event.startTime).isAfter(dayjs(breakEvent.startTime))
-      ) {
-        // Shift all subsequent events in the same column
-        return {
-          ...event,
-          startTime: dayjs(event.startTime).add(durationDiff, 'minute').toDate(),
-          endTime: dayjs(event.endTime).add(durationDiff, 'minute').toDate()
-        };
-      }
-      return event;
-    });
-
-    setEvents(updatedEvents);
+  // Set to 6:00-20:00 for the event day
+  const timeRange = {
+    start: dayjs(date).set('hour', 6).set('minute', 0),
+    end: dayjs(date).set('hour', 20).set('minute', 0)
   };
 
   return (

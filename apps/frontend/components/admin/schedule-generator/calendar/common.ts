@@ -52,15 +52,17 @@ export const generateEvents = ({
     practiceCycleTimeSeconds,
     practiceRounds,
     rankingCycleTimeSeconds,
-    rankingRounds
+    rankingRounds,
+    breaks
   } = settings;
   const judgingRounds = Math.ceil(teams.length / rooms.length);
+  const matchesPerRound = Math.ceil(teams.length / tables.length) * (isStaggered ? 2 : 1);
 
   let currentTime = dayjs(date)
     .set('hour', judgingStart?.getHours() ?? 0)
     .set('minute', judgingStart?.getMinutes() ?? 0);
 
-  // Add judging events
+  // Add judging events and breaks
   for (let i = 0; i < judgingRounds; i++) {
     events.push({
       id: `judging-${i}`,
@@ -71,14 +73,27 @@ export const generateEvents = ({
       column: 'judging'
     });
     currentTime = currentTime.add(judgingCycleTimeSeconds ?? 1, 'second');
+
+    // Add judging break if configured
+    const judgingBreak = breaks.find(b => b.eventType === 'judging' && b.after === i + 1);
+    if (judgingBreak) {
+      events.push({
+        id: `judging-break-${i}`,
+        type: 'break',
+        startTime: currentTime.toDate(),
+        endTime: currentTime.add(judgingBreak.durationSeconds, 'second').toDate(),
+        number: events.filter(e => e.type === 'break').length + 1,
+        column: 'judging'
+      });
+      currentTime = currentTime.add(judgingBreak.durationSeconds, 'second');
+    }
   }
 
-  const matchesPerRound = Math.ceil(teams.length / tables.length) * (isStaggered ? 2 : 1);
   currentTime = dayjs(date)
     .set('hour', matchesStart?.getHours() ?? 0)
     .set('minute', matchesStart?.getMinutes() ?? 0);
 
-  // Add practice rounds
+  // Add practice rounds and breaks
   for (let i = 0; i < practiceRounds; i++) {
     const duration = matchesPerRound * (practiceCycleTimeSeconds ?? 1);
     events.push({
@@ -90,9 +105,28 @@ export const generateEvents = ({
       column: 'field'
     });
     currentTime = currentTime.add(duration, 'second');
+
+    // Add match break if configured
+    const practiceBreak = breaks.find(
+      b =>
+        b.eventType === 'match' &&
+        b.matchType === 'practice' &&
+        b.after === (i + 1) * matchesPerRound
+    );
+    if (practiceBreak) {
+      events.push({
+        id: `field-break-practice-${i}`,
+        type: 'break',
+        startTime: currentTime.toDate(),
+        endTime: currentTime.add(practiceBreak.durationSeconds, 'second').toDate(),
+        number: events.filter(e => e.type === 'break').length + 1,
+        column: 'field'
+      });
+      currentTime = currentTime.add(practiceBreak.durationSeconds, 'second');
+    }
   }
 
-  // Add ranking rounds
+  // Add ranking rounds and breaks
   for (let i = 0; i < rankingRounds; i++) {
     const duration = matchesPerRound * (rankingCycleTimeSeconds ?? 1);
     events.push({
@@ -104,6 +138,25 @@ export const generateEvents = ({
       column: 'field'
     });
     currentTime = currentTime.add(duration, 'second');
+
+    // Add match break if configured, looking specifically for ranking match breaks
+    const rankingBreak = breaks.find(
+      b =>
+        b.eventType === 'match' &&
+        b.matchType === 'ranking' &&
+        b.after === (i + 1 + practiceRounds) * matchesPerRound
+    );
+    if (rankingBreak) {
+      events.push({
+        id: `field-break-ranking-${i}`,
+        type: 'break',
+        startTime: currentTime.toDate(),
+        endTime: currentTime.add(rankingBreak.durationSeconds, 'second').toDate(),
+        number: events.filter(e => e.type === 'break').length + 1,
+        column: 'field'
+      });
+      currentTime = currentTime.add(rankingBreak.durationSeconds, 'second');
+    }
   }
 
   return events;
