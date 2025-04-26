@@ -1,5 +1,8 @@
 import { WithId } from 'mongodb';
 import { Button, Stack } from '@mui/material';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { heIL } from '@mui/x-date-pickers/locales';
 import {
   Division,
   FllEvent,
@@ -9,28 +12,13 @@ import {
   Team
 } from '@lems/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiFetch } from '../../../lib/utils/fetch';
 import dayjs from 'dayjs';
-
-const EVENT_TYPE_TO_COLOR = {
-  JUDGING: '#d87cac',
-  PRACTICE: '#ffda22',
-  RANKING: '#004f2d',
-  FIELD_BREAK: '#091e05',
-  JUDGING_BREAK: '#f9b9c3'
-};
-
-interface CalenderEvent {
-  id: string;
-  start: string;
-  end: string;
-  title: string;
-  backgroundColor: string;
-}
+import Calendar from './calendar';
 
 interface TimingStepProps {
-  event: WithId<FllEvent>;
+  event: FllEvent;
   division: WithId<Division>;
   settings: ScheduleGenerationSettings;
   updateSettings: (settings: ScheduleGenerationSettings) => void;
@@ -75,88 +63,66 @@ const TimingStep: React.FC<TimingStepProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const events = useMemo(() => {
-    if (!teams || !rooms || !tables) return [];
-
-    const result: CalenderEvent[] = [];
-    let matchesPerRound = Math.ceil(teams.length / tables.length);
-    if (settings.isStaggered) matchesPerRound *= 2;
-    const practiceRoundLength = matchesPerRound * (settings.practiceCycleTimeSeconds ?? 0);
-    const rankingRoundLength = matchesPerRound * (settings.rankingCycleTimeSeconds ?? 0);
-
-    Array.from({ length: settings.practiceRounds }).forEach((_, i) => {
-      const start = dayjs(event.startDate).add(i * practiceRoundLength, 'seconds');
-      const end = start.add(practiceRoundLength, 'seconds');
-      const title = `סבב אימונים ${i + 1}`;
-      const calendarEvent = {
-        id: `practice-${i}`,
-        start: start.toISOString(),
-        end: end.toISOString(),
-        title,
-        backgroundColor: EVENT_TYPE_TO_COLOR.PRACTICE
-      };
-      result.push(calendarEvent);
-    });
-
-    Array.from({ length: settings.rankingRounds }).forEach((_, i) => {
-      const start = dayjs(event.startDate).add(i * rankingRoundLength, 'seconds');
-      const end = start.add(rankingRoundLength, 'seconds');
-      const title = `סבב דירוג ${i + 1}`;
-      const calendarEvent = {
-        id: `ranking-${i}`,
-        start: start.toISOString(),
-        end: end.toISOString(),
-        title,
-        backgroundColor: EVENT_TYPE_TO_COLOR.RANKING
-      };
-      result.push(calendarEvent);
-    });
-
-    const judgingSessions = Math.ceil(teams.length / rooms.length);
-
-    Array.from({ length: judgingSessions }).forEach((_, i) => {
-      const start = dayjs(event.startDate).add(
-        i * (settings.judgingCycleTimeSeconds ?? 0),
-        'seconds'
-      );
-      const end = start.add(settings.judgingCycleTimeSeconds ?? 0, 'seconds');
-      const title = `סבב שיפוט ${i + 1}`;
-      const calendarEvent = {
-        id: `judging-${i}`,
-        start: start.toISOString(),
-        end: end.toISOString(),
-        title,
-        backgroundColor: EVENT_TYPE_TO_COLOR.JUDGING
-      };
-      result.push(calendarEvent);
-    });
-
-    return result;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    rooms?.length,
-    teams?.length,
-    tables?.length,
-    settings.isStaggered,
-    settings.judgingCycleTimeSeconds,
-    settings.judgingStart,
-    settings.rankingCycleTimeSeconds
-  ]);
-
   const canAdvanceStep = settings.matchesStart && settings.judgingStart;
 
+  if (!teams || !rooms || !tables) {
+    return null; // or loading indicator
+  }
+
   return (
-    <>
-      <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
-        <Button variant="contained" onClick={goBack}>
-          הקודם
-        </Button>
-        <Button variant="contained" onClick={advanceStep} disabled={!canAdvanceStep}>
-          הבא
-        </Button>
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      localeText={heIL.components.MuiLocalizationProvider.defaultProps.localeText}
+    >
+      <Stack spacing={4}>
+        <Stack spacing={2} direction="row">
+          <TimePicker
+            label="תחילת מקצים"
+            value={settings.matchesStart ? dayjs(settings.matchesStart) : null}
+            sx={{ minWidth: 150 }}
+            onChange={newTime => {
+              if (newTime)
+                updateSettings({ ...settings, matchesStart: newTime.set('seconds', 0).toDate() });
+            }}
+            ampm={false}
+            format="HH:mm"
+            views={['hours', 'minutes']}
+          />
+          <TimePicker
+            label="תחילת שיפוט"
+            value={settings.judgingStart ? dayjs(settings.judgingStart) : null}
+            sx={{ minWidth: 150 }}
+            onChange={newTime => {
+              if (newTime)
+                updateSettings({ ...settings, judgingStart: newTime.set('seconds', 0).toDate() });
+            }}
+            ampm={false}
+            format="HH:mm"
+            views={['hours', 'minutes']}
+          />
+        </Stack>
+
+        {settings.matchesStart && settings.judgingStart && (
+          <Calendar
+            event={event}
+            division={division}
+            settings={settings}
+            teams={teams}
+            rooms={rooms}
+            tables={tables}
+          />
+        )}
+
+        <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
+          <Button variant="contained" onClick={goBack}>
+            הקודם
+          </Button>
+          <Button variant="contained" onClick={advanceStep} disabled={!canAdvanceStep}>
+            הבא
+          </Button>
+        </Stack>
       </Stack>
-    </>
+    </LocalizationProvider>
   );
 };
 
