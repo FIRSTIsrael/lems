@@ -1,89 +1,36 @@
-import { useState } from 'react';
 import { WithId } from 'mongodb';
-import dayjs from 'dayjs';
+import { Button, Stack } from '@mui/material';
 import {
-  IconButton,
-  Button,
-  Stack,
-  Typography,
-  RadioGroup,
-  Radio,
-  FormControl,
-  FormControlLabel,
-  Chip
-} from '@mui/material';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { Division, ScheduleBreak, ScheduleGenerationSettings } from '@lems/types';
-import CustomNumberInput from '../../field/scoresheet/number-input';
+  Division,
+  FllEvent,
+  JudgingRoom,
+  RobotGameTable,
+  ScheduleGenerationSettings,
+  Team
+} from '@lems/types';
 
-interface BreakEditorProps {
-  addBreak: (newBreak: ScheduleBreak) => void;
-}
+import { useEffect, useMemo, useState } from 'react';
+import { apiFetch } from '../../../lib/utils/fetch';
+import dayjs from 'dayjs';
 
-const BreakEditor: React.FC<BreakEditorProps> = ({ addBreak }) => {
-  const [newBreak, setNewBreak] = useState<ScheduleBreak>({
-    eventType: 'match',
-    after: 1,
-    durationSeconds: 0
-  });
-
-  return (
-    <Stack direction="row" spacing={2} alignItems="center">
-      <FormControl>
-        <RadioGroup
-          value={newBreak.eventType}
-          onChange={e =>
-            setNewBreak({ ...newBreak, eventType: e.target.value as 'match' | 'judging' })
-          }
-        >
-          <FormControlLabel value="match" control={<Radio />} label="זירה" />
-          <FormControlLabel value="judging" control={<Radio />} label="שיפוט" />
-        </RadioGroup>
-      </FormControl>
-      <Stack direction="column" spacing={1}>
-        <Typography variant="caption">מספר סבבי דירוג</Typography>
-        <CustomNumberInput
-          min={1}
-          value={newBreak.after}
-          onChange={(e, value) => {
-            if (value !== null) {
-              e.preventDefault();
-              setNewBreak({ ...newBreak, after: value });
-            }
-          }}
-        />
-      </Stack>
-      <TimePicker
-        label="אורך ההפסקה"
-        value={dayjs().startOf('day').add(newBreak.durationSeconds, 'second')}
-        sx={{ minWidth: 150 }}
-        onChange={newTime => {
-          if (newTime)
-            setNewBreak({
-              ...newBreak,
-              durationSeconds: newTime.hour() * 60 * 60 + newTime.minute() * 60 + newTime.second()
-            });
-        }}
-        ampm={false}
-        format="hh:mm:ss"
-        views={['hours', 'minutes', 'seconds']}
-      />
-      <IconButton
-        sx={{ ml: 2 }}
-        onClick={() => {
-          addBreak(newBreak);
-          setNewBreak({ eventType: 'match', after: 1, durationSeconds: 0 });
-        }}
-      >
-        <AddRoundedIcon />
-      </IconButton>
-    </Stack>
-  );
+const EVENT_TYPE_TO_COLOR = {
+  JUDGING: '#d87cac',
+  PRACTICE: '#ffda22',
+  RANKING: '#004f2d',
+  FIELD_BREAK: '#091e05',
+  JUDGING_BREAK: '#f9b9c3'
 };
 
+interface CalenderEvent {
+  id: string;
+  start: string;
+  end: string;
+  title: string;
+  backgroundColor: string;
+}
+
 interface TimingStepProps {
+  event: WithId<FllEvent>;
   division: WithId<Division>;
   settings: ScheduleGenerationSettings;
   updateSettings: (settings: ScheduleGenerationSettings) => void;
@@ -92,143 +39,115 @@ interface TimingStepProps {
 }
 
 const TimingStep: React.FC<TimingStepProps> = ({
+  event,
   division,
   settings,
   updateSettings,
   advanceStep,
   goBack
 }) => {
-  const canAdvanceStep =
-    settings.matchesStart &&
-    settings.judgingStart &&
-    settings.practiceCycleTimeSeconds &&
-    settings.rankingCycleTimeSeconds &&
-    settings.judgingCycleTimeSeconds;
+  const [teams, setTeams] = useState<Array<WithId<Team>> | null>(null);
+  const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | null>(null);
+  const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | null>(null);
+
+  const fetchTeams = async () => {
+    const response = await apiFetch(`/api/divisions/${division._id}/teams`);
+    const data = await response.json();
+    setTeams(data);
+  };
+
+  const fetchRooms = async () => {
+    const response = await apiFetch(`/api/divisions/${division._id}/rooms`);
+    const data = await response.json();
+    setRooms(data);
+  };
+
+  const fetchTables = async () => {
+    const response = await apiFetch(`/api/divisions/${division._id}/tables`);
+    const data = await response.json();
+    setTables(data);
+  };
+
+  useEffect(() => {
+    fetchTeams();
+    fetchRooms();
+    fetchTables();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const events = useMemo(() => {
+    if (!teams || !rooms || !tables) return [];
+
+    const result: CalenderEvent[] = [];
+    let matchesPerRound = Math.ceil(teams.length / tables.length);
+    if (settings.isStaggered) matchesPerRound *= 2;
+    const practiceRoundLength = matchesPerRound * (settings.practiceCycleTimeSeconds ?? 0);
+    const rankingRoundLength = matchesPerRound * (settings.rankingCycleTimeSeconds ?? 0);
+
+    Array.from({ length: settings.practiceRounds }).forEach((_, i) => {
+      const start = dayjs(event.startDate).add(i * practiceRoundLength, 'seconds');
+      const end = start.add(practiceRoundLength, 'seconds');
+      const title = `סבב אימונים ${i + 1}`;
+      const calendarEvent = {
+        id: `practice-${i}`,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        title,
+        backgroundColor: EVENT_TYPE_TO_COLOR.PRACTICE
+      };
+      result.push(calendarEvent);
+    });
+
+    Array.from({ length: settings.rankingRounds }).forEach((_, i) => {
+      const start = dayjs(event.startDate).add(i * rankingRoundLength, 'seconds');
+      const end = start.add(rankingRoundLength, 'seconds');
+      const title = `סבב דירוג ${i + 1}`;
+      const calendarEvent = {
+        id: `ranking-${i}`,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        title,
+        backgroundColor: EVENT_TYPE_TO_COLOR.RANKING
+      };
+      result.push(calendarEvent);
+    });
+
+    const judgingSessions = Math.ceil(teams.length / rooms.length);
+
+    Array.from({ length: judgingSessions }).forEach((_, i) => {
+      const start = dayjs(event.startDate).add(
+        i * (settings.judgingCycleTimeSeconds ?? 0),
+        'seconds'
+      );
+      const end = start.add(settings.judgingCycleTimeSeconds ?? 0, 'seconds');
+      const title = `סבב שיפוט ${i + 1}`;
+      const calendarEvent = {
+        id: `judging-${i}`,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        title,
+        backgroundColor: EVENT_TYPE_TO_COLOR.JUDGING
+      };
+      result.push(calendarEvent);
+    });
+
+    return result;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    rooms?.length,
+    teams?.length,
+    tables?.length,
+    settings.isStaggered,
+    settings.judgingCycleTimeSeconds,
+    settings.judgingStart,
+    settings.rankingCycleTimeSeconds
+  ]);
+
+  const canAdvanceStep = settings.matchesStart && settings.judgingStart;
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Stack spacing={2}>
-        <Stack spacing={2} direction="row">
-          <TimePicker
-            label="תחילת מקצים"
-            value={settings.matchesStart ? dayjs(settings.matchesStart) : null}
-            sx={{ minWidth: 150 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({ ...settings, matchesStart: newTime.set('seconds', 0).toDate() });
-            }}
-            ampm={false}
-            format="HH:mm"
-            views={['hours', 'minutes']}
-          />
-          <TimePicker
-            label="תחילת שיפוט"
-            value={settings.judgingStart ? dayjs(settings.judgingStart) : null}
-            sx={{ minWidth: 150 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({ ...settings, judgingStart: newTime.set('seconds', 0).toDate() });
-            }}
-            ampm={false}
-            format="HH:mm"
-            views={['hours', 'minutes']}
-          />
-        </Stack>
-        <Stack spacing={2} direction="row">
-          <TimePicker
-            label="מחזור מקצי אימונים"
-            value={
-              settings.practiceCycleTimeSeconds
-                ? dayjs().startOf('day').add(settings.practiceCycleTimeSeconds, 'second')
-                : null
-            }
-            sx={{ minWidth: 100 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({
-                  ...settings,
-                  practiceCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
-                });
-            }}
-            ampm={false}
-            format="mm:ss"
-            views={['minutes', 'seconds']}
-          />
-          <TimePicker
-            label="מחזור מקצי דירוג"
-            value={
-              settings.rankingCycleTimeSeconds
-                ? dayjs().startOf('day').add(settings.rankingCycleTimeSeconds, 'second')
-                : null
-            }
-            sx={{ minWidth: 100 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({
-                  ...settings,
-                  rankingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
-                });
-            }}
-            ampm={false}
-            format="mm:ss"
-            views={['minutes', 'seconds']}
-          />
-          <TimePicker
-            label="מחזור מפגשי שיפוט"
-            value={
-              settings.judgingCycleTimeSeconds
-                ? dayjs().startOf('day').add(settings.judgingCycleTimeSeconds, 'second')
-                : null
-            }
-            sx={{ minWidth: 100 }}
-            onChange={newTime => {
-              if (newTime)
-                updateSettings({
-                  ...settings,
-                  judgingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
-                });
-            }}
-            ampm={false}
-            format="mm:ss"
-            views={['minutes', 'seconds']}
-          />
-        </Stack>
-        <Typography variant="h6">הפסקות</Typography>
-        <BreakEditor
-          addBreak={newBreak =>
-            updateSettings({
-              ...settings,
-              breaks: [...settings.breaks, newBreak]
-            })
-          }
-        />
-        <Stack spacing={2} sx={{ pb: 2 }}>
-          {settings.breaks.map(({ eventType, after, durationSeconds }, index) => {
-            const localizedEventType = eventType === 'match' ? 'זירה' : 'שיפוט';
-            const formattedDuration = dayjs()
-              .startOf('day')
-              .add(durationSeconds, 'second')
-              .format('mm:ss');
-
-            return (
-              <Stack direction="row" spacing={2} key={index} alignItems="center">
-                <Chip
-                  label={`הפסקה ב${localizedEventType} לאחר מקצה ${after} באורך ${formattedDuration} דקות`}
-                  onDelete={() => {
-                    const updatedBreaks = [...settings.breaks];
-                    updatedBreaks.splice(index, 1);
-                    updateSettings({
-                      ...settings,
-                      breaks: updatedBreaks
-                    });
-                  }}
-                />
-              </Stack>
-            );
-          })}
-        </Stack>
-      </Stack>
-
+    <>
       <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
         <Button variant="contained" onClick={goBack}>
           הקודם
@@ -237,7 +156,7 @@ const TimingStep: React.FC<TimingStepProps> = ({
           הבא
         </Button>
       </Stack>
-    </LocalizationProvider>
+    </>
   );
 };
 

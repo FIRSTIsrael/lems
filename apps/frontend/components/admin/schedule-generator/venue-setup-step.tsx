@@ -15,6 +15,10 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { apiFetch } from '../../../lib/utils/fetch';
 import CustomNumberInput from '../../field/scoresheet/number-input';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { heIL } from '@mui/x-date-pickers/locales';
 
 interface LocationManagerProps {
   locations: string[];
@@ -94,7 +98,13 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
 }) => {
   const [rooms, setRooms] = useState<Array<string>>([]);
   const [tables, setTables] = useState<Array<string>>([]);
-  const canAdvanceStep = rooms.length > 0 && tables.length > 0;
+
+  const canAdvanceStep =
+    rooms.length > 0 &&
+    tables.length > 0 &&
+    settings.practiceCycleTimeSeconds &&
+    settings.rankingCycleTimeSeconds &&
+    settings.judgingCycleTimeSeconds;
 
   const fetchRooms = async () => {
     const response = await apiFetch(`/api/divisions/${division._id}/rooms`);
@@ -135,13 +145,14 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
   }, []);
 
   return (
-    <>
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      localeText={heIL.components.MuiLocalizationProvider.defaultProps.localeText}
+    >
       <Grid container spacing={2} marginBottom={4}>
-        <LocationManager locations={rooms} setLocations={setRooms} title="חדרים" />
-        <LocationManager locations={tables} setLocations={setTables} title="שולחנות" />
         <Grid size={4}>
-          <Stack spacing={5}>
-            <Stack spacing={2}>
+          <Stack spacing={3}>
+            <Stack spacing={1}>
               <Typography fontSize="1.5rem" fontWeight={500}>
                 הגדרות
               </Typography>
@@ -158,7 +169,7 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
                 }}
               />
             </Stack>
-            <Stack spacing={2}>
+            <Stack spacing={1}>
               <Typography>מספר סבבי דירוג</Typography>
               <CustomNumberInput
                 min={1}
@@ -183,8 +194,67 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
                 />
               }
             />
+            <TimePicker
+              label="מחזור מקצי אימון"
+              value={
+                settings.practiceCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.practiceCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    practiceCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
+              }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
+            />
+            <TimePicker
+              label="מחזור מקצי דירוג"
+              value={
+                settings.rankingCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.rankingCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    rankingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
+              }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
+            />
+            <TimePicker
+              label="מחזור מפגשי שיפוט"
+              value={
+                settings.judgingCycleTimeSeconds
+                  ? dayjs().startOf('day').add(settings.judgingCycleTimeSeconds, 'second')
+                  : null
+              }
+              sx={{ width: '75%' }}
+              onChange={newTime => {
+                if (newTime)
+                  updateSettings({
+                    ...settings,
+                    judgingCycleTimeSeconds: newTime.minute() * 60 + newTime.second()
+                  });
+              }}
+              ampm={false}
+              format="mm:ss"
+              views={['minutes', 'seconds']}
+            />
           </Stack>
         </Grid>
+        <LocationManager locations={rooms} setLocations={setRooms} title="חדרים" />
+        <LocationManager locations={tables} setLocations={setTables} title="שולחנות" />
       </Grid>
 
       <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
@@ -203,7 +273,7 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
           הבא
         </Button>
       </Stack>
-    </>
+    </LocalizationProvider>
   );
 };
 

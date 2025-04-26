@@ -8,7 +8,7 @@ import VenueSetupStep from './schedule-generator/venue-setup-step';
 import TimingStep from './schedule-generator/timing-step';
 import DeleteDivisionData from './delete-division-data';
 import ReviewStep from './schedule-generator/review-step';
-import { apiFetch } from 'apps/frontend/lib/utils/fetch';
+import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 
 const SchedulerStages = ['upload-teams', 'venue-setup', 'timing', 'review'];
@@ -78,6 +78,7 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
             )}
             {activeStep === 2 && (
               <TimingStep
+                event={event}
                 division={division}
                 settings={settings}
                 updateSettings={setSettings}
