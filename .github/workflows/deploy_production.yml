@@ -50,20 +50,21 @@ jobs:
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
-        - name: Remove all old images
-          run: |
-            if doctl registry repository list-tags lems-frontend | grep -o "lems-.*"; then
-          doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "lems-.*") --force
-            fi
-            if doctl registry repository list-tags lems-backend | grep -o "lems-.*"; then
-          doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "lems-.*") --force
-            fi
-            if doctl registry repository list-tags lems-scheduler | grep -o "lems-.*"; then
-          doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "lems-.*") --force
-            fi
-            if doctl registry repository list-tags lems-portal | grep -o "lems-.*"; then
-          doctl registry repository delete-manifest lems-portal $(doctl registry repository list-tags lems-portal | grep -o "lems-.*") --force
-            fi
+
+      - name: Remove all old images
+        run: |
+          if doctl registry repository list-tags lems-frontend | grep -o "lems-.*"; then
+            doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "lems-.*") --force
+          fi
+          if doctl registry repository list-tags lems-backend | grep -o "lems-.*"; then
+            doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "lems-.*") --force
+          fi
+          if doctl registry repository list-tags lems-scheduler | grep -o "lems-.*"; then
+            doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "lems-.*") --force
+          fi
+          if doctl registry repository list-tags lems-portal | grep -o "lems-.*"; then
+            doctl registry repository delete-manifest lems-portal $(doctl registry repository list-tags lems-portal | grep -o "lems-.*") --force
+          fi
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
