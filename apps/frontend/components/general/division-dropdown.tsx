@@ -1,9 +1,7 @@
 import React, { useState, useRef, CSSProperties, useEffect } from 'react';
 import { WithId } from 'mongodb';
-import { SelectProvider, useSelect } from '@mui/base';
-import { useOption } from '@mui/base';
 import { FllEvent, Division } from '@lems/types';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, IconButton, Typography, Menu, MenuItem } from '@mui/material';
 import HomeIcon from '@mui/icons-material/HomeRounded';
 import { apiFetch } from '../../lib/utils/fetch';
 import { useRouter } from 'next/router';
@@ -13,47 +11,46 @@ interface DropdownOptionProps {
   name: string;
   color: CSSProperties['color'];
   disabled: boolean;
+  onClick?: () => void;
+  selected?: boolean;
 }
 
-const DropdownOption: React.FC<DropdownOptionProps> = ({ id, name, color, disabled }) => {
-  const { getRootProps, highlighted } = useOption({
-    value: id,
-    disabled: disabled,
-    label: name
-  });
-
+const DropdownOption: React.FC<DropdownOptionProps> = ({
+  name,
+  color,
+  disabled,
+  onClick,
+  selected
+}) => {
   return (
-    <Box
-      {...getRootProps()}
-      bgcolor={highlighted ? '#daecff' : undefined}
-      padding={0.5}
-      display="flex"
-      flexDirection="row"
-      gap={1}
-      justifyContent="flex-start"
-      alignItems="center"
-      borderRadius={1}
-      paddingX={2}
-      minWidth={110}
-      sx={disabled ? {} : { cursor: 'pointer', '&:hover': { bgcolor: '#e5eaf2' } }}
+    <MenuItem
+      onClick={onClick}
+      disabled={disabled}
+      selected={selected}
+      sx={
+        disabled
+          ? { minWidth: 110 }
+          : { cursor: 'pointer', '&:hover': { bgcolor: '#e5eaf2' }, minWidth: 110 }
+      }
     >
-      <Box height={10} width={10} borderRadius="50%" bgcolor={disabled ? '#666' : color} />
-      <Typography>{name}</Typography>
-    </Box>
+      <Box display="flex" flexDirection="row" gap={1} alignItems="center" width="100%">
+        <Box height={10} width={10} borderRadius="100%" bgcolor={disabled ? '#666' : color} />
+        <Typography>{name}</Typography>
+      </Box>
+    </MenuItem>
   );
 };
 
 interface DivisionDropdownProps {
   event: WithId<FllEvent>;
   selected: string;
-  onSelect?: (divisionId: string) => void;
 }
 
-const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, onSelect }) => {
-  const listboxRef = useRef<HTMLUListElement>(null);
-  const [open, setOpen] = useState(false);
+const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [divisions, setDivisions] = useState<WithId<Division>[]>([]);
   const router = useRouter();
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     apiFetch(`/api/events/${event._id}/divisions`)
@@ -61,59 +58,48 @@ const DivisionDropdown: React.FC<DivisionDropdownProps> = ({ event, selected, on
       .then(data => setDivisions(data));
   }, [event._id]);
 
-  const handleChange =
-    onSelect ??
-    ((divisionId: string) => {
-      router.push({ query: { divisionId } });
-    });
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  const { getButtonProps, getListboxProps, contextValue } = useSelect<string, false>({
-    listboxRef,
-    onOpenChange: setOpen,
-    open: open,
-    value: selected,
-    onChange(event, value) {
-      value && handleChange(value);
-    }
-  });
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleChange = (divisionId: string) => {
+    router.push({ query: { divisionId } });
+  };
 
   return (
     <Box position="relative">
-      <IconButton {...getButtonProps()} sx={{ position: 'relative' }}>
+      <IconButton onClick={handleClick}>
         <HomeIcon />
       </IconButton>
-      <Box
-        {...getListboxProps()}
-        position="absolute"
-        height="auto"
-        maxWidth={250}
-        zIndex={1}
-        bgcolor="white"
-        borderRadius={2}
-        paddingY={1}
-        paddingX={1.5}
-        marginTop={2}
-        sx={{
-          transition: 'opacity 0.1s ease, visibility 0.1s step-end;',
-          visibility: open ? 'visible' : 'hidden',
-          opacity: open ? 1 : 0
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
         }}
-        display="flex"
-        flexDirection="column"
-        gap={1}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
+        }}
       >
-        <SelectProvider value={contextValue}>
-          {divisions.map((division, index) => (
-            <DropdownOption
-              key={index}
-              id={division._id.toString()}
-              name={division.name}
-              color={division.color}
-              disabled={!division.hasState}
-            />
-          ))}
-        </SelectProvider>
-      </Box>
+        {divisions.map(division => (
+          <DropdownOption
+            key={division._id.toString()}
+            id={division._id.toString()}
+            name={division.name}
+            color={division.color}
+            disabled={!division.hasState}
+            onClick={() => handleChange(division._id.toString())}
+            selected={selected === division._id.toString()}
+          />
+        ))}
+      </Menu>
     </Box>
   );
 };
