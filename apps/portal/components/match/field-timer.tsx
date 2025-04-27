@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button, Paper, Stack, LinearProgress, Box } from '@mui/material';
 import dayjs from 'dayjs';
 import { Countdown } from '../judging/countdown';
+import Link from 'next/link';
 
 const MATCH_DURATION = 150; // 2.5 minutes in seconds
 
@@ -92,7 +93,7 @@ export const FieldTimer = () => {
   const handleReset = () => {
     setStartTime(null);
     setIsRunning(false);
-    setCurrentTime(dayjs());  
+    setCurrentTime(dayjs());
     setLastTimeWarning(false);
   };
 
@@ -165,6 +166,16 @@ export const FieldTimer = () => {
             sx={{ mt: isRunning ? 2 : 0 }}
           >
             {isRunning ? 'איפוס טיימר' : 'התחל מקצה'}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ mt: 2 }}
+            LinkComponent={Link}
+            href={`/scorer`}
+          >
+            מעבר למחשבון ניקוד
           </Button>
         </Stack>
       </Paper>
