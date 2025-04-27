@@ -24,8 +24,12 @@ const pages = [
     href: '/scorer'
   },
   {
-    name: 'טיימר חדר שיפוט',
+    name: 'שעון שיפוט',
     href: '/judging-timer'
+  },
+  {
+    name: 'שעון מקצה',
+    href: '/match-field-timer'
   }
 ];
 
