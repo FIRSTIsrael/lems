@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Avatar, Box, Paper, Tab, Tabs, Typography } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
 import Grid from '@mui/material/Grid';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
@@ -21,6 +20,7 @@ import {
   Award
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import Layout from '../../components/layout';
