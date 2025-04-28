@@ -4,7 +4,7 @@ import { WithId } from 'mongodb';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { DivisionWithEvent, Team, Ticket, SafeUser } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';

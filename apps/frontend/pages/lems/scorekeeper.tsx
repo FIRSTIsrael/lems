@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
-import { TabContext, TabPanel } from '@mui/lab';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import {
   SafeUser,
   RobotGameMatch,
