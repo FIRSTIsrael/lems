@@ -108,7 +108,7 @@ export const FieldTimer = () => {
     if (!startTime || !isRunning) return 'primary';
     const timeLeft = dayjs(startTime).add(MATCH_DURATION, 'seconds').diff(currentTime, 'seconds');
     if (timeLeft <= 0) return 'error';
-    if (timeLeft <= 30) return 'warning'; // Warning at last 30 seconds
+    if (timeLeft <= 30) return 'warning'; //endgame
     return 'success';
   };
 
@@ -165,13 +165,12 @@ export const FieldTimer = () => {
             onClick={isRunning ? handleReset : handleStart}
             sx={{ mt: isRunning ? 2 : 0 }}
           >
-            {isRunning ? 'איפוס טיימר' : 'התחל מקצה'}
+            {isRunning ? 'איפוס טיימר' : 'התחל שעון מקצה'}
           </Button>
           <Button
             variant="contained"
             color="primary"
             size="large"
-            sx={{ mt: 2 }}
             LinkComponent={Link}
             href={`/scorer`}
           >

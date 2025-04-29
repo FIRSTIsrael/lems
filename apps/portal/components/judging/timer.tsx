@@ -203,7 +203,7 @@ export const JudgingTimer = () => {
             onClick={isRunning ? handleReset : handleStart}
             sx={{ mt: isRunning ? 2 : 0 }}
           >
-            {isRunning ? 'איפוס טיימר' : 'התחל שיפוט'}
+            {isRunning ? 'איפוס טיימר' : 'התחל שעון שיפוט'}
           </Button>
         </Stack>
       </Paper>
