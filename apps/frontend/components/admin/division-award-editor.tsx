@@ -98,7 +98,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                     value={field.value}
                     onChange={(e, value) => {
                       e.preventDefault();
-                      value !== undefined && form.setFieldValue(field.name, value);
+                      if (value !== undefined) form.setFieldValue(field.name, value);
                     }}
                   />
                 </Grid>
@@ -290,7 +290,9 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
                   labelId="award-select-label"
                   label="פרס"
                   value={awardToAdd}
-                  onChange={e => {
+                  // From MUI docs: Warning: This is a generic event, not a change event
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onChange={(e: any) => {
                     setAwardToAdd(e.target.value as AwardNames);
                   }}
                 >
