@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
-import { animated, useTransition } from 'react-spring';
+import { AnimatePresence, motion } from 'motion/react';
 import { Typography, Paper, LinearProgress, Stack, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { blue, green, purple } from '@mui/material/colors';
@@ -136,26 +136,7 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
     if (currentStage.id !== 0) new Audio('/assets/sounds/judging/judging-change.wav').play();
   }, [currentStage]);
 
-  const transitions = useTransition(stagesToDisplay, {
-    keys: stage => stage.id,
-    from: {
-      opacity: 0,
-      innerHeight: 0,
-      transform: 'translateY(50px)',
-      borderRadius: '16px'
-    },
-    enter: stage => ({
-      opacity: 1,
-      innerHeight: 105,
-      transform: 'translateY(0px)'
-    }),
-    leave: {
-      opacity: 0,
-      innerHeight: 0,
-      transform: 'translateY(-50px)'
-    },
-    config: { duration: 400 }
-  });
+  const STAGE_HEIGHT = 105;
 
   return (
     <Box
@@ -172,22 +153,36 @@ const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, ses
     >
       <Grid container width="80%" alignItems="flex-top" columnSpacing={4}>
         <Grid size={4}>
-          <Stack spacing={3}>
-            {transitions(({ innerHeight, ...style }, stage) => (
-              //@ts-expect-error For some reason react-spring doesn't like children.
-              <animated.div
-                key={stage.id}
-                style={{ ...style, height: innerHeight, backgroundColor: 'transparent' }}
-              >
-                <JudgingStageBox
-                  primaryText={stage.primaryText}
-                  secondaryText={stage.secondaryText}
-                  iconColor={stage.iconColor}
-                  stageDuration={stage.duration}
-                  targetDate={stage.id === currentStage.id ? stage.endTime : undefined}
-                />
-              </animated.div>
-            ))}
+          <Stack spacing={3} height={STAGE_HEIGHT * 4}>
+            <AnimatePresence>
+              {stagesToDisplay.map(stage => (
+                <motion.div
+                  key={stage.id}
+                  variants={{
+                    enter: {
+                      opacity: 0,
+                      y: 50,
+                      height: 0
+                    },
+                    move: { opacity: 1, y: 0, height: STAGE_HEIGHT },
+                    leave: { opacity: 0, y: -50, height: 0 }
+                  }}
+                  initial="enter"
+                  exit="leave"
+                  animate="move"
+                  transition={{ duration: 0.4 }}
+                  style={{ borderRadius: '16px' }}
+                >
+                  <JudgingStageBox
+                    primaryText={stage.primaryText}
+                    secondaryText={stage.secondaryText}
+                    iconColor={stage.iconColor}
+                    stageDuration={stage.duration}
+                    targetDate={stage.id === currentStage.id ? stage.endTime : undefined}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </Stack>
         </Grid>
         <Grid size={8}>
