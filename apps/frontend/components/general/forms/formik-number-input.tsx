@@ -1,11 +1,21 @@
 import { FastField, FieldProps } from 'formik';
-import { NumberInputProps } from '@mui/base/Unstable_NumberInput';
 import CustomNumberInput from '../../field/scoresheet/number-input';
+import { TextFieldProps } from '@mui/material/TextField';
+
+interface CustomNumberInputProps
+  extends Omit<TextFieldProps, 'onChange' | 'value' | 'type' | 'disabled'> {
+  value: number | null;
+  onChange: (event: React.MouseEvent | React.ChangeEvent, value: number | null) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+}
 
 type FormikNumberInputProps = {
   name: string;
   label?: string;
-} & NumberInputProps;
+} & CustomNumberInputProps;
 
 const FormikNumberInput: React.FC<FormikNumberInputProps> = ({ name, label, ...props }) => {
   return (
