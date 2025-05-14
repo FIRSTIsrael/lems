@@ -32,15 +32,25 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
   return (
     <Grid {...props} container columnSpacing={4} justifyContent="space-between" alignItems="center">
       <Grid size={{ xs: 12, md: 6 }}>
-        <Typography variant="h4">{event.name}</Typography>
+        <Typography variant="h4" sx={{ textAlign: 'right', direction: 'rtl' }}>
+          {event.name}
+        </Typography>
       </Grid>
       {isDesktop ? (
         <Grid size={6}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ textAlign: 'right', direction: 'rtl' }}
+          >
             📍 {event.location}
           </Typography>
           {includeDate && (
-            <Typography variant="body1" color="text.secondary">
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ textAlign: 'right', direction: 'rtl' }}
+            >
               📅 {dayjs(event.date).format('DD/MM/YYYY')}
             </Typography>
           )}
@@ -48,13 +58,21 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
       ) : (
         <>
           <Grid size={12}>
-            <Typography variant="body1" color="text.secondary">
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ textAlign: 'right', direction: 'rtl' }}
+            >
               📍 {event.location}
             </Typography>
           </Grid>
           <Grid size={12}>
             {includeDate && (
-              <Typography variant="body1" color="text.secondary">
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ textAlign: 'right', direction: 'rtl' }}
+              >
                 📅 {dayjs(event.date).format('DD/MM/YYYY')}
               </Typography>
             )}
@@ -103,9 +121,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
       disableGutters
       sx={{
         mt: '8px !important',
-        '& .MuiAccordion-heading.Mui-expanded': {
-          backgroundColor: 'rgba(0, 0, 0, 0.04)'
-        }
+        '& .MuiAccordion-heading.Mui-expanded': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
       }}
     >
       <AccordionSummary
@@ -118,9 +134,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           '& .MuiAccordionSummary-content': { m: 0 },
           transition:
             'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)'
-          }
+          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
         }}
         expandIcon={<ExpandMoreIcon />}
       >
