@@ -1,9 +1,15 @@
 import { WithId } from 'mongodb';
-import { JudgingCategoryTypes, Rubric, JudgingCategory, Team, Division } from '@lems/types';
+import {
+  JudgingCategoryTypes,
+  Rubric,
+  JudgingCategory,
+  TeamRegistration,
+  Division
+} from '@lems/types';
 
 export const getDivisionRubrics = (
   division: WithId<Division>,
-  teams: Array<WithId<Team>>
+  teams: Array<WithId<TeamRegistration>>
 ): Rubric<JudgingCategory>[] => {
   const rubrics = [];
 

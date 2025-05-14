@@ -1,8 +1,9 @@
-import { WithId } from 'mongodb';
+import { WithId, ObjectId } from 'mongodb';
 import { Division } from './division';
 import { EventUserAllowedRoles } from '../roles';
 
 export interface FllEvent {
+  seasonId: ObjectId;
   name: string;
   startDate: Date;
   endDate: Date;

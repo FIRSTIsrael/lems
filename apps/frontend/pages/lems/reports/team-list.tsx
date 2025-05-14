@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import ContactPageRoundedIcon from '@mui/icons-material/ContactPageRounded';
-import { DivisionWithEvent, Team, SafeUser, RoleTypes, Role } from '@lems/types';
+import { DivisionWithEvent, TeamRegistration, SafeUser, RoleTypes, Role } from '@lems/types';
 import BooleanIcon from '../../../components/general/boolean-icon';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
@@ -29,12 +29,12 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [sortBy, setSortBy] = useState<string>('number');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -47,7 +47,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
       institution: { label: 'מוסד', sort: 'institution' },
       city: { label: 'עיר', sort: 'city' },
       registration: {
-        label: `הגעה (${teams.filter(t => t.registered).length}/${teams.length})`,
+        label: `הגעה (${teams.filter(t => t.arrived).length}/${teams.length})`,
         sort: 'registration'
       },
       profileDocumentUrl: {
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
     [teams]
   );
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {
@@ -72,12 +72,14 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
   };
 
   useEffect(() => {
-    const sortFunctions: { [key: string]: (a: WithId<Team>, b: WithId<Team>) => number } = {
+    const sortFunctions: {
+      [key: string]: (a: WithId<TeamRegistration>, b: WithId<TeamRegistration>) => number;
+    } = {
       number: (a, b) => a.number - b.number,
       name: (a, b) => a.name.localeCompare(b.name),
       institution: (a, b) => a.affiliation.name.localeCompare(b.affiliation.name),
       city: (a, b) => a.affiliation.city.localeCompare(b.affiliation.city),
-      registration: (a, b) => (b.registered ? 1 : -1),
+      registration: (a, b) => (b.arrived ? 1 : -1),
       profileDocumentUrl: (a, b) => (b.profileDocumentUrl ? 1 : -1)
     };
 
@@ -158,7 +160,7 @@ const Page: NextPage<Props> = ({ user, division, teams: initialTeams }) => {
                       <TableCell align="left">{team.affiliation.name}</TableCell>
                       <TableCell align="left">{team.affiliation.city}</TableCell>
                       <TableCell align="left">
-                        <BooleanIcon condition={team.registered} />
+                        <BooleanIcon condition={team.arrived} />
                       </TableCell>
                       <RoleAuthorizer
                         user={user}

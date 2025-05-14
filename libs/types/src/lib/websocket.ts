@@ -7,7 +7,7 @@ import {
 } from './schemas/robot-game-match';
 import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
-import { Team } from './schemas/team';
+import { TeamRegistration } from './schemas/team-registration';
 import { Scoresheet } from './schemas/scoresheet';
 import { DivisionState, PresentationState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
@@ -52,7 +52,7 @@ export interface WSServerEmittedEvents {
 
   cvFormUpdated: (cvForm: WithId<CoreValuesForm>) => void;
 
-  teamRegistered: (team: WithId<Team>) => void;
+  teamRegistered: (team: WithId<TeamRegistration>) => void;
 
   ticketCreated: (ticket: WithId<Ticket>) => void;
 
@@ -132,7 +132,7 @@ export interface WSClientEmittedEvents {
 
   updateAwardWinners: (
     divisionId: string,
-    data: { [key in AwardNames]?: Array<WithId<Team> | string> },
+    data: { [key in AwardNames]?: Array<WithId<TeamRegistration> | string> },
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
@@ -144,7 +144,7 @@ export interface WSClientEmittedEvents {
 
   advanceTeams: (
     divisionId: string,
-    teams: Array<WithId<Team>>,
+    teams: Array<WithId<TeamRegistration>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 

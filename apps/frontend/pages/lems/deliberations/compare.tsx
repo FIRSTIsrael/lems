@@ -20,7 +20,7 @@ import AddRounded from '@mui/icons-material/AddRounded';
 import {
   DivisionWithEvent,
   SafeUser,
-  Team,
+  TeamRegistration,
   Rubric,
   JudgingCategory,
   CoreValuesForm,
@@ -43,7 +43,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
@@ -65,7 +65,7 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const { connectionStatus } = useWebsocket(division._id.toString(), ['judging'], undefined, []);
-  const [selectedTeam, setSelectedTeam] = useState<WithId<Team> | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<WithId<TeamRegistration> | null>(null);
   const [compareTeamIds, setCompareTeamIds] = useState<Array<ObjectId>>([]);
   const [category, setCategory] = useState<JudgingCategory | 'general'>('general');
 

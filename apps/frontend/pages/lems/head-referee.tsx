@@ -11,7 +11,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   DivisionState,
-  Team,
+  TeamRegistration,
   DivisionWithEvent
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
@@ -103,7 +103,7 @@ const Page: NextPage<Props> = ({
     });
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setMatches(matches =>
       matches.map(m => {
         const teamIndex = m.participants

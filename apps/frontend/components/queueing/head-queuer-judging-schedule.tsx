@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-  Team,
+  TeamRegistration,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
   JudgingRoom,
@@ -31,7 +31,7 @@ import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerJudgingScheduleProps {
   divisionId: ObjectId;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -150,7 +150,7 @@ const HeadQueuerJudgingSchedule: React.FC<HeadQueuerJudgingScheduleProps> = ({
                           ) : (
                             <Checkbox
                               checked={session.queued}
-                              disabled={!team.registered}
+                              disabled={!team.arrived}
                               onClick={e => {
                                 e.preventDefault();
                                 updateTeamQueueStatus(session._id, !session.queued);

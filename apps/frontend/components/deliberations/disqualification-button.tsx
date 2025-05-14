@@ -10,13 +10,13 @@ import {
   ButtonProps
 } from '@mui/material';
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 import { red } from '@mui/material/colors';
 
 interface DisqualificationButtonProps extends ButtonProps {
-  teams: Array<WithId<Team>>;
-  disqualifyTeam: (team: WithId<Team>) => void;
+  teams: Array<WithId<TeamRegistration>>;
+  disqualifyTeam: (team: WithId<TeamRegistration>) => void;
   disabled?: boolean;
 }
 
@@ -27,7 +27,7 @@ const DisqualificationButton: React.FC<DisqualificationButtonProps> = ({
   ...props
 }) => {
   const [open, setOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<WithId<Team> | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<WithId<TeamRegistration> | null>(null);
 
   return (
     <>

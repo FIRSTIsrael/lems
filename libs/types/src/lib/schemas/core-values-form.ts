@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from 'mongodb';
-import { Team } from './team';
+import { TeamRegistration } from './team-registration';
 
 export const CVFormSubjectTypes = [
   'team',
@@ -41,9 +41,9 @@ export interface CVFormCategory {
 export interface CoreValuesForm {
   divisionId: ObjectId;
   observers: Array<CVFormSubject>;
-  observerAffiliation?: WithId<Team> | null;
+  observerAffiliation?: WithId<TeamRegistration> | null;
   demonstrators: Array<CVFormSubject>;
-  demonstratorAffiliation?: WithId<Team> | null;
+  demonstratorAffiliation?: WithId<TeamRegistration> | null;
   data: { [key in CVFormCategoryNames]: CVFormCategory };
   details: string;
   completedBy: CVFormAuthor;

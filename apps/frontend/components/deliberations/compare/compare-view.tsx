@@ -6,7 +6,7 @@ import CloseRounded from '@mui/icons-material/CloseRounded';
 import {
   Rubric,
   JudgingCategory,
-  Team,
+  TeamRegistration,
   CoreValuesForm,
   Scoresheet,
   JudgingRoom,
@@ -26,7 +26,7 @@ import CompareCvForms from './compare-cv-forms';
 import { makeCvValuesForAllRubrics } from '@lems/season';
 
 export interface CompareContextType {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;
@@ -41,7 +41,7 @@ export const CompareContext = createContext<CompareContextType>(null as never);
 export interface CompareViewProps {
   compareTeamIds: Array<ObjectId>;
   category?: JudgingCategory;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   scoresheets: Array<WithId<Scoresheet>>;
   cvForms: Array<WithId<CoreValuesForm>>;

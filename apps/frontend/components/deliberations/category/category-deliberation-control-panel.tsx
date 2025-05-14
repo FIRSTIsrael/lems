@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import {
-  Team,
+  TeamRegistration,
   JudgingDeliberation,
   JudgingCategory,
   Scoresheet,
@@ -23,7 +23,7 @@ import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 interface DeliberationControlPanelProps {
   teamCount: number;
-  compareTeams: Array<WithId<Team>>;
+  compareTeams: Array<WithId<TeamRegistration>>;
   deliberation: WithId<JudgingDeliberation>;
   startDeliberation: () => void;
   lockDeliberation: () => void;
@@ -47,7 +47,10 @@ const CategoryDeliberationControlPanel: React.FC<DeliberationControlPanelProps> 
   category,
   compareProps: { cvForms, rubrics, scoresheets, sessions, rooms, awards }
 }) => {
-  const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
+  const [compareTeams, setCompareTeams] = useState<Array<WithId<TeamRegistration> | null>>([
+    null,
+    null
+  ]);
   const [compareOpen, setCompareOpen] = useState(false);
 
   return (

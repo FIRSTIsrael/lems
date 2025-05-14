@@ -22,7 +22,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import SignatureCanvas from 'react-signature-canvas';
 import {
   Division,
-  Team,
+  TeamRegistration,
   WSServerEmittedEvents,
   WSClientEmittedEvents,
   SafeUser,
@@ -60,7 +60,7 @@ interface MissionInfo {
 
 interface ScoresheetFormProps {
   division: WithId<Division>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   scoresheet: WithId<Scoresheet>;
   user: WithId<SafeUser>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

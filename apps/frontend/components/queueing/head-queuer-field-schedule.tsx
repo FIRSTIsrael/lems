@@ -4,7 +4,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
 import { Socket } from 'socket.io-client';
 import {
-  Team,
+  TeamRegistration,
   RobotGameMatch,
   RobotGameTable,
   WSClientEmittedEvents,
@@ -30,7 +30,7 @@ import { useTime } from '../../hooks/use-time';
 
 interface HeadQueuerFieldScheduleProps {
   divisionId: ObjectId;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -138,7 +138,7 @@ const HeadQueuerFieldSchedule: React.FC<HeadQueuerFieldScheduleProps> = ({
                         ) : (
                           <Checkbox
                             checked={queued}
-                            disabled={!team.registered}
+                            disabled={!team.arrived}
                             onClick={e => {
                               e.preventDefault();
                               updateParticipantQueueStatus(match, team._id, !queued);

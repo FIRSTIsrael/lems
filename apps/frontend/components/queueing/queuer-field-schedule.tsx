@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Grid';
-import { Division, Team, RobotGameMatch, RobotGameTable } from '@lems/types';
+import { Division, TeamRegistration, RobotGameMatch, RobotGameTable } from '@lems/types';
 import ReportRoundSchedule from '../field/report-round-schedule';
 
 interface QueuerFieldScheduleProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
 }

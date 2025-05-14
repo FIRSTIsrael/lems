@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Box, BoxProps } from '@mui/material';
 import {
   Award,
-  Team,
+  TeamRegistration,
   DivisionWithEvent,
   CoreValuesAwardsTypes,
   CoreValuesAwards
@@ -51,7 +51,7 @@ const AwardsPresentation = forwardRef<DeckRef, AwardsPresentationProps>(
 
     const advancingTeams = awards
       .filter(award => award.name === 'advancement')
-      .map(award => award.winner) as Array<WithId<Team>>;
+      .map(award => award.winner) as Array<WithId<TeamRegistration>>;
     const awardSlides = useMemo(() => {
       const awardIndices = [
         ...new Set(awards.filter(award => award.index >= 0).flatMap(a => a.index))

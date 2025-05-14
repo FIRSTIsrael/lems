@@ -11,5 +11,5 @@ class Team(TypedDict):
     divisionId: ObjectId
     number: int
     name: str
-    registered: Literal[False]
+    arrived: Literal[False]
     affiliation: TeamAffiliation

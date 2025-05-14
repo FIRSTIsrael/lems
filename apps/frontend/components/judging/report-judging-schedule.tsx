@@ -13,7 +13,7 @@ import {
   Division,
   JudgingSession,
   JudgingRoom,
-  Team,
+  TeamRegistration,
   DivisionScheduleEntry,
   JUDGING_SESSION_LENGTH
 } from '@lems/types';
@@ -23,7 +23,7 @@ interface JudgingScheduleRowProps {
   number: number;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const JudgingScheduleRow: React.FC<JudgingScheduleRowProps> = ({
@@ -79,7 +79,7 @@ interface ReportJudgingScheduleProps {
   division: WithId<Division>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   showGeneralSchedule: boolean;
 }
 

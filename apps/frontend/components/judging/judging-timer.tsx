@@ -11,7 +11,7 @@ import {
   JUDGING_SESSION_LENGTH,
   JudgingRoom,
   JudgingSession,
-  Team,
+  TeamRegistration,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -36,7 +36,7 @@ interface JudgingTimerProps {
   room: WithId<JudgingRoom>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   session: WithId<JudgingSession>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
 }
 
 const JudgingTimer: React.FC<JudgingTimerProps> = ({ division, room, socket, session, team }) => {

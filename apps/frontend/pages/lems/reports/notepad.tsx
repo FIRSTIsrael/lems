@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EditOffOutlinedIcon from '@mui/icons-material/EditOffOutlined';
-import { DivisionWithEvent, SafeUser, RoleTypes, Team } from '@lems/types';
+import { DivisionWithEvent, SafeUser, RoleTypes, TeamRegistration } from '@lems/types';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
@@ -43,7 +43,7 @@ const ViewingNote: React.FC<ViewingNoteProps> = ({ note }) => {
 };
 
 interface EditingNoteProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   note: Note;
   updateNote: (note: Note) => Promise<void>;
 }
@@ -75,13 +75,13 @@ const EditingNote: React.FC<EditingNoteProps> = ({ teams, note, updateNote }) =>
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const Page: NextPage<Props> = ({ user, division, teams }) => {
   const router = useRouter();
   const { notes, addNote, updateNote, deleteNote } = useNotes();
-  const initialValues: { text: string; title: string; team: WithId<Team> | null } = {
+  const initialValues: { text: string; title: string; team: WithId<TeamRegistration> | null } = {
     text: '',
     title: '',
     team: null

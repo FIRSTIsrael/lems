@@ -1,5 +1,11 @@
 import { WithId } from 'mongodb';
-import { DivisionWithEvent, JudgingCategory, Rubric, SEASON_NAME, Team } from '@lems/types';
+import {
+  DivisionWithEvent,
+  JudgingCategory,
+  Rubric,
+  SEASON_NAME,
+  TeamRegistration
+} from '@lems/types';
 import Grid from '@mui/material/Grid';
 import { Stack, Typography } from '@mui/material';
 import { localizeDivisionTitle } from '../../../../localization/event';
@@ -7,7 +13,7 @@ import { localizeDivisionTitle } from '../../../../localization/event';
 interface RubricHeaderProps {
   rubric: WithId<Rubric<JudgingCategory>>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
 }
 
 export const SessionFeedbackHeader: React.FC<RubricHeaderProps> = ({ rubric, division, team }) => {

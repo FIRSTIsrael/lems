@@ -13,7 +13,7 @@ import {
   JudgingSession,
   SafeUser,
   Rubric,
-  Team,
+  TeamRegistration,
   DivisionWithEvent,
   Award
 } from '@lems/types';
@@ -34,7 +34,7 @@ import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface RubricSelectorProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   judgingCategory: JudgingCategory;
 }
 
@@ -74,7 +74,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   room: WithId<JudgingRoom>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   session: WithId<JudgingSession>;
   rubric: WithId<Rubric<JudgingCategory>>;
   awards: Array<WithId<Award>>;
@@ -90,7 +90,7 @@ const Page: NextPage<Props> = ({
   awards
 }) => {
   const router = useRouter();
-  if (!team.registered) {
+  if (!team.arrived) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }

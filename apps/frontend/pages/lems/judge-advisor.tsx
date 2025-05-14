@@ -11,7 +11,7 @@ import {
   JudgingSession,
   SafeUser,
   DivisionWithEvent,
-  Team,
+  TeamRegistration,
   JudgingCategory,
   Rubric,
   CoreValuesForm,
@@ -38,7 +38,7 @@ interface Props {
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   cvForms: Array<WithId<CoreValuesForm>>;
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
   awards: initialAwards
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [cvForms, setCvForms] = useState<Array<WithId<CoreValuesForm>>>(initialCvForms);
@@ -92,7 +92,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) return team;

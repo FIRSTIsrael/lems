@@ -1,9 +1,9 @@
 import { WithId } from 'mongodb';
-import { Scoresheet, RobotGameMatch, Team, Division } from '@lems/types';
+import { Scoresheet, RobotGameMatch, TeamRegistration, Division } from '@lems/types';
 
 export const getDivisionScoresheets = (
   division: WithId<Division>,
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   matches: Array<WithId<RobotGameMatch>>
 ): Array<Scoresheet> => {
   const practiceMatches = matches.filter(m => m.stage === 'practice');

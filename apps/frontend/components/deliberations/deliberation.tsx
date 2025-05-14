@@ -11,7 +11,7 @@ import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd';
 import {
   JudgingDeliberation,
   Award,
-  Team,
+  TeamRegistration,
   Rubric,
   Scoresheet,
   JudgingCategory,
@@ -37,7 +37,7 @@ export interface DeliberationContextType {
   eligibleTeams: Array<ObjectId>;
   selectedTeams: Array<ObjectId>;
   availableTeams: Array<ObjectId>;
-  additionalTeams: Array<WithId<Team>>;
+  additionalTeams: Array<WithId<TeamRegistration>>;
   suggestedTeam: DeliberationTeam | null;
   picklistLimits: { [key in AwardNames]?: number };
   anomalies?: Array<DeliberationAnomaly>;
@@ -64,8 +64,8 @@ export interface DeliberationContextType {
     category: JudgingCategory,
     picklist: Array<ObjectId>
   ) => Array<DeliberationAnomaly>;
-  onAddTeam: (team: WithId<Team>) => void;
-  disqualifyTeam: (team: WithId<Team>) => void;
+  onAddTeam: (team: WithId<TeamRegistration>) => void;
+  disqualifyTeam: (team: WithId<TeamRegistration>) => void;
   endStage?: () => Promise<void>;
 }
 
@@ -73,7 +73,7 @@ export const DeliberationContext = createContext<DeliberationContextType>(null a
 
 interface DeliberationProps {
   initialState: WithId<JudgingDeliberation>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   rooms: Array<WithId<JudgingRoom>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
@@ -81,7 +81,7 @@ interface DeliberationProps {
   cvForms: Array<WithId<CoreValuesForm>>;
   onChange: (value: Partial<JudgingDeliberation>) => void;
   checkEligibility: (
-    team: WithId<Team>,
+    team: WithId<TeamRegistration>,
     teams: Array<DeliberationTeam>,
     disqualifications: Array<ObjectId>
   ) => boolean;
@@ -229,7 +229,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
     };
 
     const teamWonAward = useCallback(
-      (team: WithId<Team>) =>
+      (team: WithId<TeamRegistration>) =>
         awards.find(
           award =>
             typeof award.winner !== 'string' &&
@@ -245,7 +245,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
         teams
           .filter(
             team =>
-              !team.registered ||
+              !team.arrived ||
               state.disqualifications.includes(team._id) ||
               teamWonAward(team) ||
               !!rubrics.find(
@@ -284,12 +284,12 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
       team => !(ineligibleTeams.includes(team._id) || eligibleTeams.includes(team._id))
     );
 
-    const onAddTeam = (team: WithId<Team>) => {
+    const onAddTeam = (team: WithId<TeamRegistration>) => {
       const updatedAddtionalTeams = [...(state.manualEligibility || []), team._id];
       onChange({ manualEligibility: updatedAddtionalTeams });
     };
 
-    const disqualifyTeam = (team: WithId<Team>) => {
+    const disqualifyTeam = (team: WithId<TeamRegistration>) => {
       if (!state.isFinalDeliberation) return; // DQs for category deliberations are handled by the JA UI
       const updatedDisqualification = [...(state.disqualifications || []), team._id];
       const updatedAwards = Object.entries(state.awards).reduce(

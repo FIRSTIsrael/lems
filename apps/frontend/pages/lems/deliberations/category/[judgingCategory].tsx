@@ -8,7 +8,7 @@ import {
   SafeUser,
   JudgingCategory,
   Rubric,
-  Team,
+  TeamRegistration,
   Scoresheet,
   JudgingSession,
   JudgingRoom,
@@ -38,7 +38,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;

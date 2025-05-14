@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { WithId } from 'mongodb';
 import { Stack } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { JudgingCategory, Team, JudgingCategoryTypes, AwardLimits } from '@lems/types';
+import { JudgingCategory, TeamRegistration, JudgingCategoryTypes, AwardLimits } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
@@ -91,7 +91,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
               id={category}
               pickList={
                 deliberation.awards[category]?.map(
-                  teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<Team>)
+                  teamId => teams.find(t => t._id === teamId) ?? ({} as WithId<TeamRegistration>)
                 ) ?? []
               }
               disabled={deliberation.status !== 'in-progress'}

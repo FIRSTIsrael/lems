@@ -11,7 +11,7 @@ import {
   RoleTypes,
   SafeUser,
   Scoresheet,
-  Team
+  TeamRegistration
 } from '@lems/types';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -26,7 +26,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionState: DivisionState;
   scoresheets: Array<WithId<Scoresheet>>;
 }
@@ -41,7 +41,8 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [scoresheets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
 
-  const teamNumberComparator: GridComparatorFn<Team> = (v1, v2) => v1.number - v2.number;
+  const teamNumberComparator: GridComparatorFn<TeamRegistration> = (v1, v2) =>
+    v1.number - v2.number;
 
   const handleScoresheetEvent = (scoresheet: WithId<Scoresheet>) => {
     setScoresheets(scoresheets =>
@@ -82,7 +83,7 @@ const Page: NextPage<Props> = ({
       field: 'team',
       headerName: 'קבוצה',
       width: 350,
-      valueFormatter: (value: Team) => localizeTeam(value),
+      valueFormatter: (value: TeamRegistration) => localizeTeam(value),
       sortComparator: teamNumberComparator
     },
     ...rounds.map(r => ({

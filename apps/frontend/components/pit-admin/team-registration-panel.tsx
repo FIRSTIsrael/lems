@@ -4,13 +4,18 @@ import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { Division, Team, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
+import {
+  Division,
+  TeamRegistration,
+  WSClientEmittedEvents,
+  WSServerEmittedEvents
+} from '@lems/types';
 import TeamSelection from '../general/team-selection';
 
 interface TeamRegistrationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({
@@ -18,10 +23,10 @@ const TeamRegistrationPanel: React.FC<TeamRegistrationPanelProps> = ({
   division,
   teams
 }) => {
-  const [team, setTeam] = useState<WithId<Team> | null>(null);
+  const [team, setTeam] = useState<WithId<TeamRegistration> | null>(null);
 
   const unregisteredTeams = useMemo(
-    () => (teams ? teams.filter((team: WithId<Team>) => !team.registered) : []),
+    () => (teams ? teams.filter((team: WithId<TeamRegistration>) => !team.arrived) : []),
     [teams]
   );
 

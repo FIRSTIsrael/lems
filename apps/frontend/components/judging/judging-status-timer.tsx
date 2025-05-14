@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
-import { Team, JudgingSession } from '@lems/types';
+import { TeamRegistration, JudgingSession } from '@lems/types';
 import Countdown from '../../components/general/countdown';
 import { useTime } from '../../hooks/use-time';
 
 interface JudgingStatusTimerProps {
   currentSessions: Array<WithId<JudgingSession>>;
   nextSessions: Array<WithId<JudgingSession>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
@@ -69,7 +69,7 @@ const JudgingStatusTimer: React.FC<JudgingStatusTimerProps> = ({
               {currentSessions.filter(session => !!session.startTime).length} מתוך{' '}
               {
                 currentSessions.filter(
-                  session => teams.find(team => team._id === session.teamId)?.registered
+                  session => teams.find(team => team._id === session.teamId)?.arrived
                 ).length
               }{' '}
               קבוצות בחדר השיפוט

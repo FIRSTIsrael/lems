@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DivisionState, RobotGameMatch, RobotGameTable, Team } from '@lems/types';
+import { DivisionState, RobotGameMatch, RobotGameTable, TeamRegistration } from '@lems/types';
 import { Paper, Stack, Typography } from '@mui/material';
 import { WithId } from 'mongodb';
 import { localizedMatchStage } from '../../localization/field';
@@ -8,7 +8,7 @@ import ReportRoundSchedule from '../field/report-round-schedule';
 
 interface McScheduleProps {
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
 }
@@ -68,7 +68,7 @@ const McSchedule: React.FC<McScheduleProps> = ({ divisionState, teams, matches, 
               .map((participant, index) => {
                 const registered = teams.find(
                   t => t._id.toString() === participant.teamId?.toString()
-                )?.registered;
+                )?.arrived;
                 if (!registered) return;
 
                 return (

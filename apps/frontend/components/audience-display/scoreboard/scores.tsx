@@ -1,4 +1,4 @@
-import { Scoresheet, Team, DivisionState } from '@lems/types';
+import { Scoresheet, TeamRegistration, DivisionState } from '@lems/types';
 import {
   TableContainer,
   Paper,
@@ -18,7 +18,7 @@ import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionState: DivisionState;
 }
 
@@ -119,7 +119,7 @@ interface ScoreboardScoresBodyProps extends TableBodyProps {
   scoresheets: Array<WithId<Scoresheet>>;
   rounds: Array<{ stage: string; round: number }>;
   currentStage: 'practice' | 'ranking';
-  maxScores: Array<{ team: WithId<Team>; score: number }>;
+  maxScores: Array<{ team: WithId<TeamRegistration>; score: number }>;
 }
 
 const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
@@ -141,7 +141,7 @@ const ScoreboardScoresBody: React.FC<ScoreboardScoresBodyProps> = ({
               sx={{
                 font: 'inherit',
                 fontWeight: 500,
-                color: !team.registered ? '#aaa' : undefined
+                color: !team.arrived ? '#aaa' : undefined
               }}
             >
               {localizeTeam(team, false)}

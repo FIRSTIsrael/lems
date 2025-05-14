@@ -1,8 +1,11 @@
 import { WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
-import { Division, Team } from '@lems/types';
+import { Division, TeamRegistration } from '@lems/types';
 
-export const parseTeamList = (division: WithId<Division>, csvData: string): Array<Team> => {
+export const parseTeamList = (
+  division: WithId<Division>,
+  csvData: string
+): Array<TeamRegistration> => {
   const file: string[] = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); // Version number: 2nd cell of 1st row.
   if (version !== 1) {
@@ -17,7 +20,7 @@ export const parseTeamList = (division: WithId<Division>, csvData: string): Arra
     divisionId: division._id,
     number: parseInt(teamLine[0]),
     name: teamLine[1],
-    registered: false,
+    arrived: false,
     affiliation: {
       name: teamLine[2],
       city: teamLine[3]

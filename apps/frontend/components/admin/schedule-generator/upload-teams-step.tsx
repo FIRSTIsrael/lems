@@ -11,7 +11,7 @@ import {
   TableRow,
   TableCell
 } from '@mui/material';
-import { Division, Team } from '@lems/types';
+import { Division, TeamRegistration } from '@lems/types';
 import UploadFileButton from '../../general/upload-file';
 import { apiFetch } from '../../../lib/utils/fetch';
 
@@ -21,7 +21,7 @@ interface UploadTeamsStepProps {
 }
 
 const UploadTeamsStep: React.FC<UploadTeamsStepProps> = ({ division, advanceStep }) => {
-  const [teams, setTeams] = useState<Array<WithId<Team>> | null>(null);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>> | null>(null);
 
   const fetchTeams = async () => {
     const response = await apiFetch(`/api/divisions/${division._id}/teams`);

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '../../components/general/tab-managment';
-import { DivisionWithEvent, Team, Ticket, SafeUser } from '@lems/types';
+import { DivisionWithEvent, TeamRegistration, Ticket, SafeUser } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import TicketCreationPanel from '../../components/pit-admin/ticket-creation-panel';
@@ -20,7 +20,7 @@ import { useQueryParam } from '../../hooks/use-query-param';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tickets: Array<WithId<Ticket>>;
 }
 
@@ -31,11 +31,11 @@ const Page: NextPage<Props> = ({
   tickets: initialTickets
 }) => {
   const [division] = useState<WithId<DivisionWithEvent>>(initialDivision);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {

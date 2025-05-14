@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Stack } from '@mui/material';
-import { DivisionState, RobotGameMatch, Scoresheet, Team } from '@lems/types';
+import { DivisionState, RobotGameMatch, Scoresheet, TeamRegistration } from '@lems/types';
 import ScoreboardSponsorsRow from './sponsors-row';
 import ScoreboardCurrentMatch from './current-match';
 import ScoreboardScores from './scores';
@@ -11,7 +11,7 @@ interface ScoreboardProps {
   activeMatch: WithId<RobotGameMatch> | undefined;
   previousMatch: WithId<RobotGameMatch> | undefined;
   scoresheets: Array<WithId<Scoresheet>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionState: DivisionState;
 }
 

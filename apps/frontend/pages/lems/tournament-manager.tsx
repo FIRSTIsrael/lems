@@ -12,7 +12,7 @@ import {
   JudgingRoom,
   JudgingSession,
   SafeUser,
-  Team,
+  TeamRegistration,
   Ticket,
   RobotGameTable,
   RobotGameMatch
@@ -35,7 +35,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tickets: Array<WithId<Ticket>>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -60,7 +60,7 @@ const Page: NextPage<Props> = ({
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
   const [division] = useState<WithId<DivisionWithEvent>>(initialDivision);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [tickets, setTickets] = useState<Array<WithId<Ticket>>>(initialTickets);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
@@ -73,7 +73,7 @@ const Page: NextPage<Props> = ({
 
   const openTickets = useMemo(() => tickets.filter(t => !t.closed).length, [tickets]);
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

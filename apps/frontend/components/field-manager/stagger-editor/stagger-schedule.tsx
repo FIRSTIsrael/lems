@@ -8,12 +8,12 @@ import {
   TableCell,
   TableContainer
 } from '@mui/material';
-import { Team, RobotGameMatch } from '@lems/types';
+import { TeamRegistration, RobotGameMatch } from '@lems/types';
 import MatchRow from './stagger-schedule-match-row';
 import ActionRow from './stagger-schedule-action-row';
 
 interface StaggerScheduleProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   currentMatch: WithId<RobotGameMatch> | null;
   nextMatch: WithId<RobotGameMatch> | null;
   nextNextMatch: WithId<RobotGameMatch> | null;

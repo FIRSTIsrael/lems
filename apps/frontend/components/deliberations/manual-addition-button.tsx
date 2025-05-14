@@ -10,12 +10,12 @@ import {
   ButtonProps
 } from '@mui/material';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 
 interface ManualAdditionButtonProps extends ButtonProps {
-  additionalTeams: Array<WithId<Team>>;
-  onAddTeam: (team: WithId<Team>) => void;
+  additionalTeams: Array<WithId<TeamRegistration>>;
+  onAddTeam: (team: WithId<TeamRegistration>) => void;
   disabled: boolean;
 }
 
@@ -26,7 +26,7 @@ const ManualAdditionButton: React.FC<ManualAdditionButtonProps> = ({
   ...props
 }) => {
   const [open, setOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<WithId<Team> | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<WithId<TeamRegistration> | null>(null);
 
   return (
     <>

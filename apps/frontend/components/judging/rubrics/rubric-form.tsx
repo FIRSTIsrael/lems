@@ -24,7 +24,7 @@ import { purple } from '@mui/material/colors';
 import Grid from '@mui/material/Grid';
 import {
   Division,
-  Team,
+  TeamRegistration,
   Rubric,
   JudgingCategory,
   WSServerEmittedEvents,
@@ -47,7 +47,7 @@ import CVFieldUncheckedIcon from '../../icons/cv-field-unchecked-icon';
 
 interface RubricFormProps {
   division: WithId<Division>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   rubric: WithId<Rubric<JudgingCategory>>;
   schema: RubricsSchema;
   awards: Array<WithId<Award>>;

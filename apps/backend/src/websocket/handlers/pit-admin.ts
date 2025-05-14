@@ -10,14 +10,14 @@ export const handleRegisterTeam = async (namespace, divisionId, teamId, callback
     callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
     return;
   }
-  if (team.registered) {
+  if (team.arrived) {
     callback({ ok: false, error: `Team ${teamId} is already registered!` });
     return;
   }
 
   console.log(`📝 Registered team ${teamId} in division ${divisionId}`);
 
-  await db.updateTeam({ _id: team._id }, { registered: true });
+  await db.updateTeam({ _id: team._id }, { arrived: true });
   team = await db.getTeam({ _id: new ObjectId(teamId) });
 
   callback({ ok: true });

@@ -1,4 +1,4 @@
-import { Team, Scoresheet, SafeUser } from '@lems/types';
+import { TeamRegistration, Scoresheet, SafeUser } from '@lems/types';
 import { serverSideGetRequests } from '../../../../lib/utils/fetch';
 import { WithId } from 'mongodb';
 import { NextPage, GetServerSideProps } from 'next';
@@ -11,7 +11,7 @@ import { ExportScoresheetPage } from '../../../../components/export/scoresheets/
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   scoresheets: Array<WithId<Scoresheet>>;
 }
 

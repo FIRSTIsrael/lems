@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
-  Team,
+  TeamRegistration,
   SafeUser,
   RoleTypes,
   DivisionState,
@@ -32,7 +32,7 @@ interface Props {
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   scoresheets: Array<WithId<Scoresheet>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const Page: NextPage<Props> = ({
@@ -47,7 +47,7 @@ const Page: NextPage<Props> = ({
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [scorehseets, setScoresheets] = useState<Array<WithId<Scoresheet>>>(initialScoresheets);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
 
   const sounds = useRef({
     start: new Audio('/assets/sounds/field/field-start.wav'),
@@ -105,7 +105,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

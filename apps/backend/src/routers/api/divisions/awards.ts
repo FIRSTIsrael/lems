@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { WithId, ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
-import { Award, Team, AwardNames } from '@lems/types';
+import { Award, TeamRegistration, AwardNames } from '@lems/types';
 import roleValidator from '../../../middlewares/role-validator';
 
 const router = express.Router({ mergeParams: true });
@@ -59,7 +59,7 @@ router.get(
 );
 
 router.put('/winners', roleValidator(['judge-advisor']), async (req: Request, res: Response) => {
-  const body = req.body as Record<AwardNames, Array<WithId<Team> | string>>;
+  const body = req.body as Record<AwardNames, Array<WithId<TeamRegistration> | string>>;
   const awards = await db.getDivisionAwards(new ObjectId(req.params.divisionId));
   if (!Object.keys(body).every(awardName => awards.some(award => award.name === awardName))) {
     res.status(400).json({ error: 'Invalid award name' });

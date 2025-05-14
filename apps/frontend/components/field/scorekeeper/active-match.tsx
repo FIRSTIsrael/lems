@@ -102,7 +102,7 @@ const ActiveMatch: React.FC<ActiveMatchProps> = ({
                           <Tooltip title="הקבוצה בקיו" arrow>
                             <PeopleAltRoundedIcon />
                           </Tooltip>
-                        ) : !participant.team?.registered ? (
+                        ) : !participant.team?.arrived ? (
                           <Tooltip title="הקבוצה טרם הגיעה לאירוע!" arrow>
                             <CloseRoundedIcon />
                           </Tooltip>

@@ -17,7 +17,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
   Division,
   DivisionState,
-  Team,
+  TeamRegistration,
   MATCH_LENGTH,
   RobotGameMatch,
   RobotGameTable,
@@ -36,7 +36,7 @@ interface RoundScheduleEditorRowProps {
   divisionState: WithId<DivisionState>;
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const RoundScheduleEditorRow: React.FC<RoundScheduleEditorRowProps> = ({
@@ -76,7 +76,7 @@ interface RoundScheduleEditorProps {
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 

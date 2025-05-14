@@ -26,7 +26,7 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents,
   SafeUser,
-  Team
+  TeamRegistration
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { cvFormSchema } from '@lems/season';
@@ -37,7 +37,7 @@ import CVFormCategoryRow from './cv-form-category-row';
 interface CVFormProps {
   user: WithId<SafeUser>;
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;
@@ -61,9 +61,9 @@ const CVForm: React.FC<CVFormProps> = ({
   const getEmptyCVForm = () => {
     const divisionId = division._id;
     const observers: Array<CVFormSubject> = [];
-    const observerAffiliation: WithId<Team> | null = null;
+    const observerAffiliation: WithId<TeamRegistration> | null = null;
     const demonstrators: Array<CVFormSubject> = [];
-    const demonstratorAffiliation: WithId<Team> | null = null;
+    const demonstratorAffiliation: WithId<TeamRegistration> | null = null;
     const data: { [key in CVFormCategoryNames]: CVFormCategory } = {} as {
       [key in CVFormCategoryNames]: CVFormCategory;
     };

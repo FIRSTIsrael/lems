@@ -38,7 +38,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
             {localizeTeam(participant.team)}
           </Typography>
 
-          {participant.team.registered ? (
+          {participant.team.arrived ? (
             <PresentSwitch
               value={participant.present}
               onChange={present => {
@@ -58,7 +58,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
           )}
 
           {updateInspectionStatus &&
-            participant.team.registered &&
+            participant.team.arrived &&
             participant.present === 'present' && (
               <>
                 <Typography fontSize="1rem" sx={{ mt: 4 }}>
@@ -88,7 +88,7 @@ const MatchPrestart: React.FC<MatchPrestartProps> = ({
               variant="contained"
               color="primary"
             >
-              {participant.team.registered ? 'אנחנו מוכנים!' : 'מוכנים ומאשרים שהקבוצה חסרה'}
+              {participant.team.arrived ? 'אנחנו מוכנים!' : 'מוכנים ומאשרים שהקבוצה חסרה'}
             </Button>
           </Stack>
         </>

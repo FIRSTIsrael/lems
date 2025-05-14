@@ -4,7 +4,7 @@ import {
   JudgingRoom,
   JudgingSession,
   Rubric,
-  Team,
+  TeamRegistration,
   Scoresheet,
   CoreValuesForm,
   CVFormCategoryNames,
@@ -13,7 +13,7 @@ import {
 } from '@lems/types';
 import { sum, average, compareScoreArrays, rankArray } from '@lems/utils/arrays';
 
-export interface DeliberationTeam extends WithId<Team> {
+export interface DeliberationTeam extends WithId<TeamRegistration> {
   room: WithId<JudgingRoom>;
   scores: Record<JudgingCategory, number>;
   normalizedScores: Record<JudgingCategory, number>;
@@ -77,7 +77,7 @@ const getRubricFields = (
   );
 
 export const useDeliberationTeams = (
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   sessions: Array<WithId<JudgingSession>>,
   rooms: Array<WithId<JudgingRoom>>,
   rubrics: Array<WithId<Rubric<JudgingCategory>>>,

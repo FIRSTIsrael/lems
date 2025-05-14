@@ -8,7 +8,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   DivisionState,
-  Team
+  TeamRegistration
 } from '@lems/types';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import Layout from '../../components/layout';
@@ -22,7 +22,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   table: WithId<RobotGameTable>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -38,7 +38,7 @@ const Page: NextPage<Props> = ({
   const router = useRouter();
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
 
   const updateMatches = (newMatch: WithId<RobotGameMatch>) => {
     setMatches(matches =>
@@ -59,7 +59,7 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

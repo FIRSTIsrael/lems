@@ -3,7 +3,7 @@ import { WithId } from 'mongodb';
 import { Box, Stack } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { rubricsSchemas } from '@lems/season';
-import { Rubric, JudgingCategory, DivisionWithEvent, Team, Award } from '@lems/types';
+import { Rubric, JudgingCategory, DivisionWithEvent, TeamRegistration, Award } from '@lems/types';
 import { RubricAwards } from './rubrics/rubric-awards';
 import { SessionFeedbackHeader } from './rubrics/feedback-page/session-feedback-header';
 import SessionFeedbackTable from './rubrics/feedback-page/session-feedback-table';
@@ -11,7 +11,7 @@ import SessionFeedbackTable from './rubrics/feedback-page/session-feedback-table
 interface ExportRubricFeedbackProps {
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   awards: Array<WithId<Award>>;
 }
 

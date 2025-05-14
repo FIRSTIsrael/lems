@@ -3,13 +3,13 @@ import { WithId } from 'mongodb';
 import { Button, Stack, Typography } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
-import { DivisionWithEvent, Scoresheet, Team } from '@lems/types';
+import { DivisionWithEvent, Scoresheet, TeamRegistration } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoresheetSelectorProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   matchScoresheet: WithId<Scoresheet>;
 }
 

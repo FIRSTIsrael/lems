@@ -1,6 +1,13 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { Award, DivisionWithEvent, JudgingCategory, Rubric, SafeUser, Team } from '@lems/types';
+import {
+  Award,
+  DivisionWithEvent,
+  JudgingCategory,
+  Rubric,
+  SafeUser,
+  TeamRegistration
+} from '@lems/types';
 import { ExportRubric } from '../../../../components/export/export-rubric';
 import { ExportRubricFeedback } from '../../../../components/export/export-rubric-feedback';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -9,7 +16,7 @@ import { serverSideGetRequests, getUserAndDivision } from '../../../../lib/utils
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   awards: Array<WithId<Award>>;
 }

@@ -1,13 +1,13 @@
 import { WithId } from 'mongodb';
 import { Box, Typography, Container, Stack, ThemeProvider, createTheme } from '@mui/material';
-import { DivisionWithEvent, Team, Scoresheet } from '@lems/types';
+import { DivisionWithEvent, TeamRegistration, Scoresheet } from '@lems/types';
 import { SEASON_SCORESHEET } from '@lems/season';
 import { ScoresheetHeader } from './scoresheet-header';
 import { ScoresheetMission } from './scoresheet-mission';
 
 interface ExportScoresheetPageProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   scoresheet: WithId<Scoresheet>;
 }
 

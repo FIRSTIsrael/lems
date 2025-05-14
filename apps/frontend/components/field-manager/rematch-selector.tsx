@@ -10,14 +10,14 @@ import {
   IconButton
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Team, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
+import { TeamRegistration, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import dayjs from 'dayjs';
 import { getBackgroundColor } from '../../lib/utils/theme';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 
 interface RematchSelectorRowProps {
   match: WithId<RobotGameMatch>;
-  teams?: Array<WithId<Team>>;
+  teams?: Array<WithId<TeamRegistration>>;
   canSelect?: boolean;
   onSelect?: (participantIndex: number) => void;
 }
@@ -35,7 +35,7 @@ const RematchSelectorRow: React.FC<RematchSelectorRowProps> = ({
   const matchStart = dayjs(match.scheduledTime).format('HH:mm');
   const canSelectBg = getBackgroundColor('#77ea7e', 'light');
   const tableIsEmpty = (participant: RobotGameMatchParticipant) =>
-    !participant.teamId || !teams?.find(team => team._id === participant.teamId)?.registered;
+    !participant.teamId || !teams?.find(team => team._id === participant.teamId)?.arrived;
 
   return (
     <TableRow sx={{ backgroundColor: canSelect ? canSelectBg : undefined }}>
@@ -78,7 +78,7 @@ const RematchSelectorRow: React.FC<RematchSelectorRowProps> = ({
 };
 
 interface RematchSelectorProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   previousMatch: WithId<RobotGameMatch> | null;
   match: WithId<RobotGameMatch>;
   nextMatch: WithId<RobotGameMatch> | null;

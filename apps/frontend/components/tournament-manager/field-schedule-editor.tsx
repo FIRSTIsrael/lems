@@ -4,7 +4,7 @@ import { Button, Stack } from '@mui/material';
 import {
   Division,
   DivisionState,
-  Team,
+  TeamRegistration,
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStage,
@@ -21,7 +21,7 @@ type RoundInfo = { stage: RobotGameMatchStage; number: number };
 interface FieldScheduleEditorProps {
   division: WithId<Division>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

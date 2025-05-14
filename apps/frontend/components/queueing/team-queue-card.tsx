@@ -4,12 +4,12 @@ import { Paper, Stack, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import { DivisionSection, Team } from '@lems/types';
+import { DivisionSection, TeamRegistration } from '@lems/types';
 import dayjs from 'dayjs';
 import useCountdown from '../../hooks/use-countdown';
 import useStopwatch from '../../hooks/use-stopwatch';
 interface TeamQueueCardProps {
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   location?: string;
   scheduledTime?: Date;
   isBusy?: DivisionSection;

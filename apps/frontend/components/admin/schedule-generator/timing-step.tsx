@@ -11,7 +11,7 @@ import {
   JudgingRoom,
   RobotGameTable,
   ScheduleGenerationSettings,
-  Team
+  TeamRegistration
 } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import Calendar from './calendar/calendar';
@@ -34,7 +34,7 @@ const TimingStep: React.FC<TimingStepProps> = ({
   advanceStep,
   goBack
 }) => {
-  const [teams, setTeams] = useState<Array<WithId<Team>> | null>(null);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>> | null>(null);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | null>(null);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);

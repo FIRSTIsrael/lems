@@ -20,7 +20,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import {
   DivisionWithEvent,
-  Team,
+  TeamRegistration,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -46,7 +46,7 @@ interface JudgingStatusTableProps {
   loadedMatch?: WithId<RobotGameMatch>;
   matches?: Array<WithId<RobotGameMatch>>;
   rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
@@ -134,7 +134,7 @@ const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                         justifyContent="center"
                       >
                         {team && <StyledTeamTooltip team={team} />}
-                        {team?.registered && teamOnField && (
+                        {team?.arrived && teamOnField && (
                           <Tooltip title="הקבוצה נמצאת בזירה כרגע!" arrow>
                             <WarningAmberRoundedIcon color="warning" />
                           </Tooltip>
@@ -162,7 +162,7 @@ interface Props {
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -177,7 +177,7 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
@@ -191,7 +191,7 @@ const Page: NextPage<Props> = ({
     [matches, divisionState.loadedMatch]
   );
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

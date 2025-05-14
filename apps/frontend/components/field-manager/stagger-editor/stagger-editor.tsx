@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
-import { Team, DivisionState, RobotGameMatch } from '@lems/types';
+import { TeamRegistration, DivisionState, RobotGameMatch } from '@lems/types';
 import StaggerSchedule from './stagger-schedule';
 
 interface StaggerEditorProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   divisionState: WithId<DivisionState>;
   onSwitchParticipants: (

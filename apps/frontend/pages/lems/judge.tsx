@@ -5,7 +5,7 @@ import { WithId } from 'mongodb';
 import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
-  Team,
+  TeamRegistration,
   JudgingRoom,
   Rubric,
   JudgingSession,
@@ -32,7 +32,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   room: WithId<JudgingRoom>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
 }
@@ -46,7 +46,7 @@ const Page: NextPage<Props> = ({
   rubrics: initialRubrics
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
@@ -57,8 +57,9 @@ const Page: NextPage<Props> = ({
 
   const activeTeam = useMemo(() => {
     return currentSession
-      ? teams.find((t: WithId<Team>) => t._id == currentSession.teamId) || ({} as WithId<Team>)
-      : ({} as WithId<Team>);
+      ? teams.find((t: WithId<TeamRegistration>) => t._id == currentSession.teamId) ||
+          ({} as WithId<TeamRegistration>)
+      : ({} as WithId<TeamRegistration>);
   }, [teams, currentSession]);
 
   const handleSessionEvent = (
@@ -75,7 +76,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {

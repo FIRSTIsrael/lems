@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Team, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
+import { TeamRegistration, RobotGameMatch, RobotGameMatchParticipant } from '@lems/types';
 import SouthRoundedIcon from '@mui/icons-material/SouthRounded';
 import JoinFullRoundedIcon from '@mui/icons-material/JoinFullRounded';
 import { TableRow, TableCell, IconButton, Button } from '@mui/material';
 
 interface ActionRowProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   fromMatch: WithId<RobotGameMatch>;
   toMatch: WithId<RobotGameMatch>;
   allowMerge?: boolean;
@@ -30,7 +30,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
     (participant: RobotGameMatchParticipant) => {
       if (!participant.teamId) return true;
       const team = teams.find(team => team._id === participant.teamId);
-      return !team?.registered;
+      return !team?.arrived;
     },
     [teams]
   );

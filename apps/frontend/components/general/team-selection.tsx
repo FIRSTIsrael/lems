@@ -1,13 +1,13 @@
 import { WithId } from 'mongodb';
 import React from 'react';
 import { Autocomplete, TextField, SxProps, Theme, TextFieldVariants } from '@mui/material';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import { localizeTeam } from '../../localization/teams';
 
 interface TeamSelectionProps {
-  teams: WithId<Team>[] | undefined;
-  value: WithId<Team> | null;
-  setTeam: (team: WithId<Team> | null) => void;
+  teams: WithId<TeamRegistration>[] | undefined;
+  value: WithId<TeamRegistration> | null;
+  setTeam: (team: WithId<TeamRegistration> | null) => void;
   readOnly?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;

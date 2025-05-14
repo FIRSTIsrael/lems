@@ -7,7 +7,7 @@ import { Stack } from '@mui/material';
 import {
   DivisionState,
   SafeUser,
-  Team,
+  TeamRegistration,
   RobotGameMatch,
   RobotGameTable,
   JudgingSession,
@@ -30,7 +30,7 @@ interface Props {
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   sessions: Array<WithId<JudgingSession>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tables: Array<WithId<RobotGameTable>>;
   rooms: Array<WithId<JudgingRoom>>;
   matches: Array<WithId<RobotGameMatch>>;
@@ -47,7 +47,7 @@ const Page: NextPage<Props> = ({
   matches: initialMatches
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
@@ -85,7 +85,7 @@ const Page: NextPage<Props> = ({
     if (newDivisionState) setDivisionState(newDivisionState);
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {

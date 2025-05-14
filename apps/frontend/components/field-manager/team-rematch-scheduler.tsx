@@ -10,7 +10,7 @@ import {
   DivisionState,
   JudgingSession,
   RobotGameMatch,
-  Team,
+  TeamRegistration,
   JUDGING_SESSION_LENGTH,
   MATCH_LENGTH
 } from '@lems/types';
@@ -18,14 +18,14 @@ import { getBackgroundColor } from '../../lib/utils/theme';
 import RematchSelector from './rematch-selector';
 
 interface TeamRematchSchedulerProps {
-  team: WithId<Team>;
-  teams: Array<WithId<Team>>;
+  team: WithId<TeamRegistration>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   isStaggered: boolean;
   onScheduleRematch: (
-    team: WithId<Team>,
+    team: WithId<TeamRegistration>,
     match: WithId<RobotGameMatch>,
     participantIndex: number
   ) => void;
@@ -139,8 +139,7 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
   const nextMatch = teamMatches.find(({ match }) => match.round === nextRound);
   const nextMatchTime = nextMatch ? dayjs(nextMatch.match.scheduledTime) : null;
 
-  const isTeamRegistered = (teamId: ObjectId) =>
-    !!teams.find(team => team._id === teamId)?.registered;
+  const isTeamRegistered = (teamId: ObjectId) => !!teams.find(team => team._id === teamId)?.arrived;
 
   const hasEmptyTable = (match: RobotGameMatch) =>
     match.participants.some(

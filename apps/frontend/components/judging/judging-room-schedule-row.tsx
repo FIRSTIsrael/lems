@@ -8,7 +8,7 @@ import {
   Division,
   JudgingSession,
   JudgingRoom,
-  Team,
+  TeamRegistration,
   Rubric,
   SafeUser,
   JudgingCategoryTypes,
@@ -27,7 +27,7 @@ interface Props {
   division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   user: WithId<SafeUser>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

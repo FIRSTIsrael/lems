@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper } from '@mui/material';
-import { CoreValuesForm, DivisionWithEvent, SafeUser, Team } from '@lems/types';
+import { CoreValuesForm, DivisionWithEvent, SafeUser, TeamRegistration } from '@lems/types';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
@@ -14,7 +14,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {
   user: WithId<SafeUser>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   division: WithId<DivisionWithEvent>;
   cvForm: WithId<CoreValuesForm>;
 }
@@ -60,7 +60,7 @@ const Page: NextPage<Props> = ({ user, teams, division, cvForm: initialCvForm })
           <CVForm
             user={user}
             division={division}
-            teams={teams.filter(team => team.registered)}
+            teams={teams.filter(team => team.arrived)}
             socket={socket}
             cvForm={cvForm}
             readOnly={true}

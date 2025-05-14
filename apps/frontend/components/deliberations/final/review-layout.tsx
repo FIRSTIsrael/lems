@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import Grid from '@mui/material/Grid';
-import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
+import { Award, AwardNames, JudgingDeliberation, TeamRegistration, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
 import AwardList from '../award-list';
@@ -66,7 +66,9 @@ const ReviewLayout: React.FC<ReviewLayoutProps> = ({ awards, onSubmit }) => {
                   withIcons
                   trophyCount={awardsByName[_award].length}
                   disabled={true}
-                  pickList={awardsByName[_award].map(award => (award.winner as WithId<Team>)!)}
+                  pickList={awardsByName[_award].map(
+                    award => (award.winner as WithId<TeamRegistration>)!
+                  )}
                   id={_award}
                 />
               </Grid>

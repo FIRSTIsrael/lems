@@ -1,15 +1,15 @@
 import { WithId } from 'mongodb';
 import { Field, FieldProps } from 'formik';
 import { Autocomplete, AutocompleteProps, TextField } from '@mui/material';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import { localizeTeam } from '../../../localization/teams';
 
 type FormikTeamFieldProps = {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   numberOnly?: boolean;
   name: string;
   label?: string;
-} & Partial<AutocompleteProps<WithId<Team> | null, false, false, false>>;
+} & Partial<AutocompleteProps<WithId<TeamRegistration> | null, false, false, false>>;
 
 const FormikTeamField: React.FC<FormikTeamFieldProps> = ({
   name,
@@ -21,7 +21,7 @@ const FormikTeamField: React.FC<FormikTeamFieldProps> = ({
   return (
     <Field name={name}>
       {({ field, form }: FieldProps) => (
-        <Autocomplete<WithId<Team> | null, false, false, false>
+        <Autocomplete<WithId<TeamRegistration> | null, false, false, false>
           {...props}
           {...field}
           blurOnSelect

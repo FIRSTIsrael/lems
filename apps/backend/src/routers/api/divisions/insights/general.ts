@@ -14,13 +14,13 @@ router.get('/total-teams', async (req: Request, res: Response) => {
       $group: {
         _id: null,
         total: { $sum: 1 },
-        registered: { $sum: { $cond: [{ $eq: ['$registered', true] }, 1, 0] } }
+        arrived: { $sum: { $cond: [{ $eq: ['$registered', true] }, 1, 0] } }
       }
     }
   ];
 
   const report = await db.db.collection('teams').aggregate(pipeline).next();
-  res.json({ result: `${report.registered ?? 0} / ${report.total ?? 0}` });
+  res.json({ result: `${report.arrived ?? 0} / ${report.total ?? 0}` });
 });
 
 router.get('/total-tickets', async (req: Request, res: Response) => {

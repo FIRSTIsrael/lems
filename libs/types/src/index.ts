@@ -6,6 +6,7 @@ export * from './lib/schemas/judging-room';
 export * from './lib/schemas/judging-session';
 export * from './lib/schemas/robot-game-match';
 export * from './lib/schemas/robot-game-table';
+export * from './lib/schemas/team-registration';
 export * from './lib/schemas/team';
 export * from './lib/schemas/rubric';
 export * from './lib/schemas/scoresheet';

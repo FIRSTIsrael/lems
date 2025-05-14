@@ -21,7 +21,7 @@ import {
   SafeUser,
   Scoresheet,
   Mission,
-  Team,
+  TeamRegistration,
   MissionClauseType,
   RobotGameMatchPresent
 } from '@lems/types';
@@ -42,7 +42,7 @@ import { localizeDivisionTitle } from '../../../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   table: WithId<RobotGameTable>;
   match: WithId<RobotGameMatch>;
   scoresheet: WithId<Scoresheet>;
@@ -64,7 +64,7 @@ const Page: NextPage<Props> = ({
     user.role === 'head-referee' && match.status === 'completed' && isNoShow
   );
 
-  if (!team.registered) {
+  if (!team.arrived) {
     router.push(`/lems/${user.role}`);
     enqueueSnackbar('הקבוצה טרם הגיעה לאירוע.', { variant: 'info' });
   }

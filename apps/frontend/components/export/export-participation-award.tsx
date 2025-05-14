@@ -1,4 +1,4 @@
-import { DivisionWithEvent, Team } from '@lems/types';
+import { DivisionWithEvent, TeamRegistration } from '@lems/types';
 import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Box } from '@mui/material';
@@ -6,7 +6,7 @@ import ExportParticipationAwardContent from './awards/participation-award-conten
 
 interface ExportParticipationAwardProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
 }
 
 const ExportParticipationAward: React.FC<ExportParticipationAwardProps> = ({ division, team }) => {

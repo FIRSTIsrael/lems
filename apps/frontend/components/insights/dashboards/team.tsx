@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { Division, Team } from '@lems/types';
+import { Division, TeamRegistration } from '@lems/types';
 import TeamSelection from '../../general/team-selection';
 import TeamProfileChart from '../charts/team-profile-chart';
 import TeamInformationChart from '../charts/team-informaton-chart';
 
 interface TeamInsightsDashboardProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ division, teams }) => {
-  const [team, setTeam] = useState<WithId<Team> | null>(teams.filter(t => t.registered)[0]);
+  const [team, setTeam] = useState<WithId<TeamRegistration> | null>(
+    teams.filter(t => t.arrived)[0]
+  );
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -24,7 +26,7 @@ const TeamInsightsDashboard: React.FC<TeamInsightsDashboardProps> = ({ division,
           </Typography>
         </Grid>
         <Grid size={9}>
-          <TeamSelection teams={teams.filter(t => t.registered)} value={team} setTeam={setTeam} />
+          <TeamSelection teams={teams.filter(t => t.arrived)} value={team} setTeam={setTeam} />
         </Grid>
         <Grid size={6}>
           <TeamProfileChart division={division} team={team} />

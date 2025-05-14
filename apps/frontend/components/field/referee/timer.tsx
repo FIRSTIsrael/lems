@@ -71,7 +71,7 @@ const Timer: React.FC<TimerProps> = ({ participant, match, getScoresheet, toScor
         }}
       />
 
-      {participant.team?.registered &&
+      {participant.team?.arrived &&
         participant.present === 'present' &&
         getScoresheet &&
         toScoresheet && (

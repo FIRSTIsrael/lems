@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
-import { Division, Team, JudgingSession, JudgingRoom } from '@lems/types';
+import { Division, TeamRegistration, JudgingSession, JudgingRoom } from '@lems/types';
 import ReportJudgingSchedule from '../judging/report-judging-schedule';
 
 interface QueuerJudgingScheduleProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
 }

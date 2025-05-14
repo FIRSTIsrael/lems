@@ -4,7 +4,7 @@ import {
   Award,
   Division,
   JudgingDeliberation,
-  Team,
+  TeamRegistration,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -13,7 +13,7 @@ import AwardsPaper from './awards-paper';
 
 interface AwardsPanelProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   deliberations: Array<WithId<JudgingDeliberation>>;
   awards: Array<WithId<Award>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;

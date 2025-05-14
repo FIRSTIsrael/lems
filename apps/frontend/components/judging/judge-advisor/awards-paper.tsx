@@ -8,7 +8,7 @@ import {
   Division,
   JudgingDeliberation,
   Award,
-  Team,
+  TeamRegistration,
   WSClientEmittedEvents,
   WSServerEmittedEvents,
   PersonalAwardTypes,
@@ -20,7 +20,7 @@ import PersonalAwardWinnerSelector from './personal-award-winner-selector';
 
 interface AwardsPaperProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   deliberations: Array<WithId<JudgingDeliberation>>;
   awards: Array<WithId<Award>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
@@ -33,7 +33,7 @@ const AwardsPaper: React.FC<AwardsPaperProps> = ({
   awards,
   socket
 }) => {
-  const disqualifyTeam = (team: WithId<Team>) => {
+  const disqualifyTeam = (team: WithId<TeamRegistration>) => {
     socket.emit('disqualifyTeam', division._id.toString(), team._id.toString(), response => {
       if (!response.ok) {
         enqueueSnackbar('לא הצלחנו לפסול את הקבוצה.', { variant: 'error' });

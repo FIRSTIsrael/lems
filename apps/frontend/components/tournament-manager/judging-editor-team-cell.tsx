@@ -2,33 +2,33 @@ import { useState, useMemo, useCallback } from 'react';
 import { WithId } from 'mongodb';
 import { Field, FieldProps, FormikValues, useFormikContext } from 'formik';
 import { Autocomplete, TextField, Button, Typography, TableCell } from '@mui/material';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 
 interface JudgingEditorTeamCellProps {
   name: string;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   disabled: boolean;
 }
 
 const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, teams, disabled }) => {
   const [editable, setEditable] = useState<boolean>(false);
-  let dropdownOptions: Array<WithId<Team> | null> = [null];
+  let dropdownOptions: Array<WithId<TeamRegistration> | null> = [null];
   dropdownOptions = dropdownOptions.concat(teams.sort((a, b) => a.number - b.number));
 
   const { values, getFieldMeta } = useFormikContext();
 
   const getOccurancesInForm = useCallback(
-    (team?: WithId<Team>) => {
+    (team?: WithId<TeamRegistration>) => {
       if (!team) return 1;
       return Object.values(values as FormikValues).filter(
-        _team => (_team as WithId<Team>)?._id === team._id
+        _team => (_team as WithId<TeamRegistration>)?._id === team._id
       ).length;
     },
     [values]
   );
 
   const fieldOccurances = useMemo(
-    () => getOccurancesInForm((getFieldMeta(name).value as WithId<Team>) || undefined),
+    () => getOccurancesInForm((getFieldMeta(name).value as WithId<TeamRegistration>) || undefined),
     [getFieldMeta, getOccurancesInForm, name]
   );
 

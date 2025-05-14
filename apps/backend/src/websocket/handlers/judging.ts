@@ -2,7 +2,13 @@ import dayjs from 'dayjs';
 import { WithId, ObjectId } from 'mongodb';
 import * as scheduler from 'node-schedule';
 import * as db from '@lems/database';
-import { JUDGING_SESSION_LENGTH, Award, Team, AwardNames, CoreValuesForm } from '@lems/types';
+import {
+  JUDGING_SESSION_LENGTH,
+  Award,
+  TeamRegistration,
+  AwardNames,
+  CoreValuesForm
+} from '@lems/types';
 
 export const handleStartSession = async (
   namespace: any,
@@ -333,7 +339,7 @@ export const handleUpdateAwardWinners = async (
   data,
   callback
 ) => {
-  const body = data as Record<AwardNames, Array<WithId<Team> | string>>;
+  const body = data as Record<AwardNames, Array<WithId<TeamRegistration> | string>>;
   let awards = await db.getDivisionAwards(new ObjectId(divisionId));
   if (!awards) {
     callback({ ok: false, error: `Error getting awards for division ${divisionId}!` });
@@ -385,7 +391,7 @@ export const handleUpdateAwardWinners = async (
 export const handleAdvanceTeams = async (
   namespace: any,
   divisionId: string,
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   callback
 ) => {
   const division = await db.getDivision({ _id: new ObjectId(divisionId) });

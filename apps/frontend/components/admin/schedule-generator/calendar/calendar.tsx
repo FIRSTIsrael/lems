@@ -2,7 +2,12 @@ import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Stack, Box, Typography, Paper } from '@mui/material';
-import { Team, JudgingRoom, RobotGameTable, ScheduleGenerationSettings } from '@lems/types';
+import {
+  TeamRegistration,
+  JudgingRoom,
+  RobotGameTable,
+  ScheduleGenerationSettings
+} from '@lems/types';
 import {
   CalendarEvent,
   COLUMN_WIDTH,
@@ -19,7 +24,7 @@ export interface CalendarProps {
   date: Date;
   settings: ScheduleGenerationSettings;
   updateSettings: (settings: ScheduleGenerationSettings) => void;
-  teams: WithId<Team>[];
+  teams: WithId<TeamRegistration>[];
   rooms: WithId<JudgingRoom>[];
   tables: WithId<RobotGameTable>[];
 }

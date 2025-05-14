@@ -1,13 +1,13 @@
 import { WithId } from 'mongodb';
 import { blue } from '@mui/material/colors';
 import Grid from '@mui/material/Grid';
-import { Division, Team } from '@lems/types';
+import { Division, TeamRegistration } from '@lems/types';
 import Stat from '../stat';
 import TeamInsightsDashboard from './team';
 
 interface GeneralInsightsDashboardProps {
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const GeneralInsightsDashboard: React.FC<GeneralInsightsDashboardProps> = ({ division, teams }) => {

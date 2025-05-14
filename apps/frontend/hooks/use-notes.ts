@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { WithId } from 'mongodb';
 import { openDB, DBSchema } from 'idb';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 
 export interface Note {
   id?: number;
   text: string;
   title?: string;
   done?: boolean;
-  team?: WithId<Team> | null;
+  team?: WithId<TeamRegistration> | null;
   editing?: boolean;
 }
 

@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { Award, DivisionWithEvent, JudgingCategory, Rubric, Team } from '@lems/types';
+import { Award, DivisionWithEvent, JudgingCategory, Rubric, TeamRegistration } from '@lems/types';
 import Grid from '@mui/material/Grid';
 import { Box, Stack } from '@mui/material';
 import { rubricsSchemas } from '@lems/season';
@@ -9,7 +9,7 @@ import { RubricTable } from './rubrics/rubric-table';
 
 interface ExportRubricProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   rubric: WithId<Rubric<JudgingCategory>>;
   awards: Array<WithId<Award>>;
   showFeedback?: boolean;

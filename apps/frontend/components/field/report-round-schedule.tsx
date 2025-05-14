@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material';
 import {
-  Team,
+  TeamRegistration,
   MATCH_LENGTH,
   RobotGameMatch,
   RobotGameTable,
@@ -25,7 +25,7 @@ import { localizedMatchStage } from '../../localization/field';
 interface ReportMatchScheduleRowProps {
   match: WithId<RobotGameMatch>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   extendedTeamInfo?: boolean;
 }
 
@@ -59,7 +59,7 @@ const ReportMatchScheduleRow: React.FC<ReportMatchScheduleRowProps> = ({
                 <Stack>
                   <Typography
                     fontWeight={500}
-                  >{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
+                  >{`${team.arrived ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
                   <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                     {team.affiliation.name}
                   </Typography>
@@ -82,7 +82,7 @@ interface ReportRoundScheduleProps {
   roundNumber: number;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionSchedule: Array<DivisionScheduleEntry>;
   extendedTeamInfo?: boolean;
 }

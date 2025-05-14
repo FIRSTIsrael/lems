@@ -1,18 +1,18 @@
 import { WithId } from 'mongodb';
 import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
-import { DivisionState, JudgingSession, RobotGameMatch, Team } from '@lems/types';
+import { DivisionState, JudgingSession, RobotGameMatch, TeamRegistration } from '@lems/types';
 import TeamSelection from '../general/team-selection';
 import TeamRematchScheduler from './team-rematch-scheduler';
 
 interface RematchManagerProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   divisionState: WithId<DivisionState>;
   isStaggered: boolean;
   onScheduleRematch: (
-    team: WithId<Team>,
+    team: WithId<TeamRegistration>,
     match: WithId<RobotGameMatch>,
     participantIndex: number
   ) => void;
@@ -26,9 +26,9 @@ const RematchManager: React.FC<RematchManagerProps> = ({
   isStaggered,
   onScheduleRematch
 }) => {
-  const [rematchTeam, setRematchTeam] = useState<WithId<Team> | null>(null);
+  const [rematchTeam, setRematchTeam] = useState<WithId<TeamRegistration> | null>(null);
 
-  const doesTeamHavePendingMatch = (team: WithId<Team>) =>
+  const doesTeamHavePendingMatch = (team: WithId<TeamRegistration>) =>
     matches.find(
       match =>
         match.stage === 'ranking' &&
@@ -67,7 +67,7 @@ const RematchManager: React.FC<RematchManagerProps> = ({
           sessions={sessions}
           isStaggered={isStaggered}
           onScheduleRematch={(
-            team: WithId<Team>,
+            team: WithId<TeamRegistration>,
             match: WithId<RobotGameMatch>,
             participantIndex: number
           ) => {

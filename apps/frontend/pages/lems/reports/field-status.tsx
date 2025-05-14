@@ -7,7 +7,7 @@ import { enqueueSnackbar } from 'notistack';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import {
   DivisionWithEvent,
-  Team,
+  TeamRegistration,
   SafeUser,
   DivisionState,
   RobotGameMatch,
@@ -29,7 +29,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface MatchStatusTimerProps {
   activeMatch: WithId<RobotGameMatch> | null;
   loadedMatch: WithId<RobotGameMatch> | null;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const MatchStatusTimer: React.FC<MatchStatusTimerProps> = ({ activeMatch, loadedMatch, teams }) => {
@@ -109,7 +109,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -125,7 +125,7 @@ const Page: NextPage<Props> = ({
   sessions: initialSessions
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
@@ -139,7 +139,7 @@ const Page: NextPage<Props> = ({
     [matches, divisionState.loadedMatch]
   );
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

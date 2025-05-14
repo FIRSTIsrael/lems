@@ -2,13 +2,13 @@ import { WithId } from 'mongodb';
 import { useMemo, CSSProperties } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import { Appear, Slide } from '@lems/presentations';
 import LogoStack from './logo-stack';
 import { localizeTeam } from '../../localization/teams';
 
 interface AdvancingTeamsSlideProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   color?: CSSProperties['color'];
 }
 

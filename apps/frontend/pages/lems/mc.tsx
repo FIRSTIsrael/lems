@@ -10,7 +10,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
-  Team,
+  TeamRegistration,
   Award,
   DivisionWithEvent
 } from '@lems/types';
@@ -29,7 +29,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   awards: Array<WithId<Award>>;
@@ -46,12 +46,12 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
   const [awards, setAwards] = useState<Array<WithId<Award>>>(initialAwards);
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {

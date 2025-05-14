@@ -6,7 +6,7 @@ import { Avatar, Box, Paper, Typography } from '@mui/material';
 import JudgingRoomIcon from '@mui/icons-material/Workspaces';
 import {
   DivisionState,
-  Team,
+  TeamRegistration,
   JudgingRoom,
   JudgingSession,
   SafeUser,
@@ -32,7 +32,7 @@ interface Props {
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
   rooms: Array<WithId<JudgingRoom>>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   sessions: Array<WithId<JudgingSession>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   deliberation: WithId<JudgingDeliberation>;
@@ -49,7 +49,7 @@ const Page: NextPage<Props> = ({
   deliberation: initialDeliberation
 }) => {
   const router = useRouter();
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [rubrics, setRubrics] = useState<Array<WithId<Rubric<JudgingCategory>>>>(initialRubrics);
   const [deliberation, setDeliberation] =
@@ -75,7 +75,7 @@ const Page: NextPage<Props> = ({
     );
   };
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { WithId } from 'mongodb';
-import { Team, DivisionState, RobotGameMatch, JudgingSession } from '@lems/types';
+import { TeamRegistration, DivisionState, RobotGameMatch, JudgingSession } from '@lems/types';
 import TeamQueueCard from './team-queue-card';
 
 interface QueuerFieldTeamDisplayProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   divisionState: WithId<DivisionState>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -32,7 +32,7 @@ const QueuerFieldTeamDisplay: React.FC<QueuerFieldTeamDisplayProps> = ({
           )
           .find(s => s.teamId === teamId);
         return (
-          team?.registered && (
+          team?.arrived && (
             <TeamQueueCard
               key={index}
               team={team}

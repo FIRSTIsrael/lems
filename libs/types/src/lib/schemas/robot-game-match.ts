@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
 import { RobotGameMatchStage, RobotGameMatchStatus, RobotGameMatchPresent } from '../constants';
-import { Team } from './team';
+import { TeamRegistration } from './team-registration';
 
 export interface RobotGameMatchBrief {
   divisionId: ObjectId;
@@ -15,7 +15,7 @@ export interface RobotGameMatchBrief {
 
 export interface RobotGameMatchParticipant {
   teamId: ObjectId | null;
-  team?: WithId<Team>;
+  team?: WithId<TeamRegistration>;
   tableId: ObjectId;
   tableName?: string;
   queued: boolean;

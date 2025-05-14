@@ -7,7 +7,7 @@ import {
   CoreValuesAwardsTypes,
   DivisionWithEvent,
   SafeUser,
-  Team,
+  TeamRegistration,
   AwardSchema
 } from '@lems/types';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
@@ -18,7 +18,7 @@ import ExportParticipationAward from '../../../../components/export/export-parti
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   awards: Array<Award>;
   awardSchema: AwardSchema;
 }

@@ -1,6 +1,11 @@
 import { WithId } from 'mongodb';
 import dayjs, { Dayjs } from 'dayjs';
-import { Team, JudgingRoom, RobotGameTable, ScheduleGenerationSettings } from '@lems/types';
+import {
+  TeamRegistration,
+  JudgingRoom,
+  RobotGameTable,
+  ScheduleGenerationSettings
+} from '@lems/types';
 
 export const COLUMN_WIDTH = 300;
 export const TIME_SLOT_HEIGHT = 20; // 5 minutes in pixels
@@ -38,7 +43,7 @@ export const generateEvents = ({
 }: {
   date: Date;
   settings: ScheduleGenerationSettings;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rooms: Array<WithId<JudgingRoom>>;
   tables: Array<WithId<RobotGameTable>>;
 }): CalendarEvent[] => {

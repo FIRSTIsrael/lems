@@ -16,7 +16,7 @@ import {
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import {
   Division,
-  Team,
+  TeamRegistration,
   TicketType,
   TicketTypes,
   WSClientEmittedEvents,
@@ -28,11 +28,11 @@ import TeamSelection from '../general/team-selection';
 interface TicketCreationPanelProps {
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
   division: WithId<Division>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const TicketCreationPanel: React.FC<TicketCreationPanelProps> = ({ socket, division, teams }) => {
-  const [team, setTeam] = useState<WithId<Team> | null>(null);
+  const [team, setTeam] = useState<WithId<TeamRegistration> | null>(null);
   const [content, setContent] = useState<string>('');
   const [type, setType] = useState<TicketType>('general');
 

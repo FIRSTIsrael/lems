@@ -1,12 +1,12 @@
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
-import { RobotGameMatch, Team } from '@lems/types';
+import { RobotGameMatch, TeamRegistration } from '@lems/types';
 import { TableRow, TableCell } from '@mui/material';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 
 interface MatchRowProps {
   match: WithId<RobotGameMatch>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const MatchRow: React.FC<MatchRowProps> = ({ match, teams }) => {

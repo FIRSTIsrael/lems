@@ -8,7 +8,7 @@ import {
   Division,
   JudgingRoom,
   JudgingSession,
-  Team,
+  TeamRegistration,
   Status,
   WSServerEmittedEvents,
   WSClientEmittedEvents
@@ -31,7 +31,7 @@ interface StartJudgingSessionButtonProps extends IconButtonProps {
   division: WithId<Division>;
   room: WithId<JudgingRoom>;
   session: WithId<JudgingSession>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
@@ -45,8 +45,8 @@ const StartJudgingSessionButton: React.FC<StartJudgingSessionButtonProps> = ({
 }) => {
   const currentTime = useTime({ interval: 10 * 1000 });
   const isDisabled = useMemo(
-    () => currentTime <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.registered,
-    [currentTime, session.scheduledTime, team.registered]
+    () => currentTime <= dayjs(session.scheduledTime).subtract(5, 'minutes') || !team.arrived,
+    [currentTime, session.scheduledTime, team.arrived]
   );
 
   const startSession = (divisionId: string, roomId: string, sessionId: string): void => {

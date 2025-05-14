@@ -9,7 +9,7 @@ import {
   RobotGameMatch,
   RobotGameTable,
   SafeUser,
-  Team,
+  TeamRegistration,
   DivisionWithEvent,
   JudgingSession,
   RobotGameMatchParticipant,
@@ -31,7 +31,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   sessions: Array<WithId<JudgingSession>>;
   tables: Array<WithId<RobotGameTable>>;
@@ -48,12 +48,12 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
   const [divisionState, setDivisionState] = useState<WithId<DivisionState>>(initialDivisionState);
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id == team._id) {
@@ -115,7 +115,7 @@ const Page: NextPage<Props> = ({
   );
 
   const handleScheduleRematch = (
-    team: WithId<Team>,
+    team: WithId<TeamRegistration>,
     match: WithId<RobotGameMatch>,
     participantIndex: number
   ) => {
@@ -231,7 +231,7 @@ const Page: NextPage<Props> = ({
             <CVForm
               user={user}
               division={division}
-              teams={teams.filter(team => team.registered)}
+              teams={teams.filter(team => team.arrived)}
               socket={socket}
             />
           </TabPanel>

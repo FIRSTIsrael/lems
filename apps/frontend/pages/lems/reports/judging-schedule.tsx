@@ -6,7 +6,7 @@ import { enqueueSnackbar } from 'notistack';
 import { Switch, FormControlLabel } from '@mui/material';
 import {
   DivisionWithEvent,
-  Team,
+  TeamRegistration,
   JudgingRoom,
   SafeUser,
   JudgingSession,
@@ -23,7 +23,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   rooms: Array<WithId<JudgingRoom>>;
   sessions: Array<WithId<JudgingSession>>;
 }
@@ -37,10 +37,10 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [showGeneralSchedule, setShowGeneralSchedule] = useState<boolean>(true);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [sessions, setSessions] = useState<Array<WithId<JudgingSession>>>(initialSessions);
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

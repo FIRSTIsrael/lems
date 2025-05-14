@@ -4,14 +4,14 @@ import Grid from '@mui/material/Grid';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Team, AwardNames, SUGGESTED_TEAM_COLOR } from '@lems/types';
+import { TeamRegistration, AwardNames, SUGGESTED_TEAM_COLOR } from '@lems/types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { errorAnimation } from '../../lib/utils/animations';
 import { getBackgroundColor } from '../../lib/utils/theme';
 
 interface AwardListItemProps {
   droppableId: string;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   index: number;
   shouldPlayErrorAnimation: boolean;
   disabled?: boolean;
@@ -62,7 +62,7 @@ const AwardListItem: React.FC<AwardListItemProps> = ({
 };
 
 interface SuggestedTeamItem {
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   addTeam: (teamId: ObjectId) => void;
   disabled?: boolean;
 }
@@ -92,7 +92,7 @@ const SuggestedTeamItem: React.FC<SuggestedTeamItem> = ({ team, addTeam, disable
 };
 
 interface AwardListProps {
-  pickList: Array<WithId<Team>>;
+  pickList: Array<WithId<TeamRegistration>>;
   id: AwardNames;
   disabled?: boolean;
   withIcons?: boolean;
@@ -100,7 +100,7 @@ interface AwardListProps {
   length: number;
   title?: string;
   fullWidth?: boolean;
-  suggestedTeam?: WithId<Team> | null;
+  suggestedTeam?: WithId<TeamRegistration> | null;
   addSuggestedTeam?: (teamId: ObjectId) => void;
 }
 

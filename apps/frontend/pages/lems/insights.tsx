@@ -4,7 +4,7 @@ import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import { Tabs, Tab, Paper } from '@mui/material';
 import { TabContext, TabPanel } from '../../components/general/tab-managment';
-import { DivisionWithEvent, DivisionState, SafeUser, Team } from '@lems/types';
+import { DivisionWithEvent, DivisionState, SafeUser, TeamRegistration } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import FieldInsightsDashboard from '../../components/insights/dashboards/field';
@@ -18,7 +18,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
 }
 
 const Page: NextPage<Props> = ({ user, division, divisionState, teams }) => {

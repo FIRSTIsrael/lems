@@ -2,11 +2,11 @@ import { Stack, Typography, GridProps, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { yellow, grey, green } from '@mui/material/colors';
 import { WithId } from 'mongodb';
-import { Team, Scoresheet, RobotGameMatch } from '@lems/types';
+import { TeamRegistration, Scoresheet, RobotGameMatch } from '@lems/types';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface TeamScoreBoxProps {
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   scoresheet: WithId<Scoresheet>;
 }
 
@@ -98,7 +98,7 @@ const ScoreboardPreviousMatch: React.FC<ScoreboardPreviousMatchProps> = ({
               scoresheet && (
                 <Grid key={scoresheet._id.toString()} height="100%" size={1}>
                   <TeamScoreBox
-                    team={p.team || ({} as WithId<Team>)}
+                    team={p.team || ({} as WithId<TeamRegistration>)}
                     scoresheet={scoresheet || ({} as WithId<Scoresheet>)}
                   />
                 </Grid>

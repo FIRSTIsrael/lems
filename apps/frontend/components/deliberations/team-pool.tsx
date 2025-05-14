@@ -3,12 +3,12 @@ import { WithId } from 'mongodb';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import { useDimensions } from '../../hooks/use-dimensions';
 
 interface TeamPoolItemProps {
   droppableId: string;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   index: number;
   disabled?: boolean;
 }
@@ -72,7 +72,7 @@ const TeamPoolItem: React.FC<TeamPoolItemProps> = ({
 };
 
 interface TeamPoolProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   disabled?: boolean;
 }
 

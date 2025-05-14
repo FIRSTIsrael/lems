@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { WithId } from 'mongodb';
 import { Skeleton } from '@mui/material';
 import { red, green, blue } from '@mui/material/colors';
-import { Division, JudgingCategory, Team } from '@lems/types';
+import { Division, JudgingCategory, TeamRegistration } from '@lems/types';
 import { apiFetch } from '../../../lib/utils/fetch';
 import {
   RadarChart,
@@ -17,7 +17,7 @@ import { localizedJudgingCategory } from '@lems/season';
 
 interface TeamProfileChartProps {
   division: WithId<Division>;
-  team: WithId<Team> | null;
+  team: WithId<TeamRegistration> | null;
 }
 
 type TeamProfileChartData = Array<{

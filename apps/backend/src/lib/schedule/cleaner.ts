@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import * as db from '@lems/database';
-import { Division, JudgingRoom, Team } from '@lems/types';
+import { Division, JudgingRoom, TeamRegistration } from '@lems/types';
 
 export const cleanDivisionData = async (division: WithId<Division>, scheduleOnly = false) => {
   if (!(await db.deleteDivisionUsers(division._id)).acknowledged)
@@ -23,14 +23,14 @@ export const cleanDivisionData = async (division: WithId<Division>, scheduleOnly
   );
 
   await Promise.all(
-    oldTeams.map(async (team: WithId<Team>) => {
+    oldTeams.map(async (team: WithId<TeamRegistration>) => {
       if (!(await db.deleteTeamRubrics(team._id)).acknowledged)
         throw new Error('Could not delete rubrics!');
     })
   );
 
   await Promise.all(
-    oldTeams.map(async (team: WithId<Team>) => {
+    oldTeams.map(async (team: WithId<TeamRegistration>) => {
       if (!(await db.deleteTeamScoresheets(team._id)).acknowledged)
         throw new Error('Could not delete scoresheets!');
     })

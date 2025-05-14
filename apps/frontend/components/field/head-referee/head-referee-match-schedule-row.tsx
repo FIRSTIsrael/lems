@@ -67,7 +67,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                 ) : match.status === 'completed' && scoresheet ? (
                   <>
                     <EditScoresheetButton
-                      active={!!participant.team?.registered}
+                      active={!!participant.team?.arrived}
                       status={scoresheet.status}
                       escalated={scoresheet.escalated}
                       score={scoresheet.status !== 'empty' ? scoresheet.data?.score : undefined}
@@ -75,8 +75,7 @@ const HeadRefereeMatchScheduleRow: React.FC<HeadRefereeMatchScheduleRowProps> = 
                       href={`/lems/team/${scoresheet.teamId}/scoresheet/${scoresheet._id}`}
                       tooltip={
                         participant.team
-                          ? (participant.team.registered ? '' : '🚫') +
-                            localizeTeam(participant.team)
+                          ? (participant.team.arrived ? '' : '🚫') + localizeTeam(participant.team)
                           : undefined
                       }
                     >

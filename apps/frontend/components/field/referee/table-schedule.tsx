@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material';
 import {
-  Team,
+  TeamRegistration,
   RobotGameMatch,
   RobotGameTable,
   RobotGameMatchStages,
@@ -24,7 +24,7 @@ import React from 'react';
 
 interface TableScheduleRowProps {
   match: WithId<RobotGameMatch>;
-  team: WithId<Team> | undefined;
+  team: WithId<TeamRegistration> | undefined;
   extendedTeamInfo?: boolean;
 }
 
@@ -49,7 +49,7 @@ export const TableScheduleRow: React.FC<TableScheduleRowProps> = ({
             <Stack>
               <Typography
                 fontWeight={500}
-              >{`${team.registered ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
+              >{`${team.arrived ? '' : '🚫 '}${team.name} #${team.number}`}</Typography>
               <Typography color="textSecondary" fontSize="0.875rem" fontWeight={500}>
                 {team.affiliation.name}
               </Typography>
@@ -78,7 +78,7 @@ const BreakRow: React.FC = () => {
 interface TableScheduleProps {
   matches: Array<WithId<RobotGameMatch>>;
   table: WithId<RobotGameTable>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   limit?: number;
   extendedTeamInfo?: boolean;
 }

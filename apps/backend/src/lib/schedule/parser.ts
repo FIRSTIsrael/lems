@@ -3,7 +3,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { parse } from 'csv-parse/sync';
 import {
   FllEvent,
-  Team,
+  TeamRegistration,
   Division,
   DivisionState,
   RobotGameTable,
@@ -32,7 +32,10 @@ const getTestMatch = (divisionId: ObjectId): RobotGameMatch => {
   } as RobotGameMatch;
 };
 
-const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Division>): Array<Team> => {
+const extractTeamsFromBlock = (
+  teamBlock: Line[],
+  division: WithId<Division>
+): Array<TeamRegistration> => {
   const LINES_TO_SKIP = 1;
   teamBlock = (teamBlock || []).splice(LINES_TO_SKIP);
 
@@ -40,7 +43,7 @@ const extractTeamsFromBlock = (teamBlock: Line[], division: WithId<Division>): A
     divisionId: division._id,
     number: parseInt(teamLine[0]),
     name: teamLine[1],
-    registered: false,
+    arrived: false,
     affiliation: {
       name: teamLine[2],
       city: teamLine[3]
@@ -81,7 +84,7 @@ const extractJudgingRoomsFromBlock = (
 export const parseDivisionData = (
   division: WithId<Division>,
   csvData: string
-): { teams: Array<Team>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
+): { teams: Array<TeamRegistration>; tables: Array<RobotGameTable>; rooms: Array<JudgingRoom> } => {
   const file = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); // Version number: 2nd cell of 1st row.
   if (version !== 2) {
@@ -102,7 +105,7 @@ const extractMatchesFromMatchBlock = (
   stage: RobotGameMatchStage,
   event: WithId<FllEvent>,
   division: WithId<Division>,
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   tables: Array<WithId<RobotGameTable>>,
   timezone: string
 ): Array<RobotGameMatch> => {
@@ -160,7 +163,7 @@ const extractSessionsFromJudgingBlock = (
   judgingBlock: Line[],
   event: WithId<FllEvent>,
   division: WithId<Division>,
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   rooms: Array<WithId<JudgingRoom>>,
   timezone: string
 ): Array<JudgingSession> => {
@@ -207,7 +210,7 @@ export const parseSessionsAndMatches = (
   csvData: string,
   event: WithId<FllEvent>,
   division: WithId<Division>,
-  teams: Array<WithId<Team>>,
+  teams: Array<WithId<TeamRegistration>>,
   tables: Array<WithId<RobotGameTable>>,
   rooms: Array<WithId<JudgingRoom>>,
   timezone = 'UTC'

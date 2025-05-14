@@ -1,13 +1,8 @@
-import { ObjectId } from 'mongodb';
-
 export interface Team {
-  divisionId: ObjectId;
-  number: number;
   name: string;
-  registered: boolean;
+  number: number;
   affiliation: {
     name: string;
     city: string;
   };
-  profileDocumentUrl?: string;
 }

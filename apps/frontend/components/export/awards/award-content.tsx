@@ -1,4 +1,4 @@
-import { AwardNames, DivisionWithEvent, SEASON_NAME, Team } from '@lems/types';
+import { AwardNames, DivisionWithEvent, SEASON_NAME, TeamRegistration } from '@lems/types';
 import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Typography, Box } from '@mui/material';
@@ -15,7 +15,7 @@ interface AwardToExport {
 
 interface ExportAwardContentProps {
   division: WithId<DivisionWithEvent>;
-  team: WithId<Team>;
+  team: WithId<TeamRegistration>;
   award: AwardToExport;
 }
 

@@ -7,7 +7,7 @@ import {
   SafeUser,
   JudgingCategory,
   Rubric,
-  Team,
+  TeamRegistration,
   Scoresheet,
   JudgingSession,
   JudgingRoom,
@@ -42,7 +42,7 @@ interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   awards: Array<WithId<Award>>;
   rubrics: Array<WithId<Rubric<JudgingCategory>>>;
   rooms: Array<WithId<JudgingRoom>>;
@@ -83,7 +83,7 @@ const Page: NextPage<Props> = ({
   }
 
   const checkChampionsElegibility = (
-    team: WithId<Team>,
+    team: WithId<TeamRegistration>,
     teams: Array<DeliberationTeam>,
     disqualifications: Array<ObjectId>
   ) => {
@@ -94,7 +94,7 @@ const Page: NextPage<Props> = ({
         if (place !== 0) return place;
         place = a.ranks['core-values'] - b.ranks['core-values']; // Tiebreaker 1 - CV score
         if (place !== 0) return place;
-        place = b.number - a.number; // Tiebreaker 2 - Team Number
+        place = b.number - a.number; // Tiebreaker 2 -TeamRegistrationNumber
         return place;
       })
       .filter(t => !disqualifications.includes(t._id))
@@ -102,14 +102,20 @@ const Page: NextPage<Props> = ({
     return !!shouldBeElegibile.find(t => t._id === team._id);
   };
 
-  const checkCoreAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+  const checkCoreAwardsElegibility = (
+    team: WithId<TeamRegistration>,
+    teams: Array<DeliberationTeam>
+  ) => {
     const _team = teams.find(t => t._id === team._id);
     if (!_team) return false;
     const { 'robot-game': robotGame, ...ranks } = _team.ranks;
     return Object.values(ranks).some(rank => rank <= getDefaultPicklistLimit(teams.length));
   };
 
-  const checkOptionalAwardsElegibility = (team: WithId<Team>, teams: Array<DeliberationTeam>) => {
+  const checkOptionalAwardsElegibility = (
+    team: WithId<TeamRegistration>,
+    teams: Array<DeliberationTeam>
+  ) => {
     const _team = teams.find(t => t._id === team._id);
     if (!_team) return false;
     return Object.entries(_team.optionalAwardNominations).some(

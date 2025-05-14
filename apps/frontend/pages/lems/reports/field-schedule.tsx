@@ -5,7 +5,7 @@ import { WithId } from 'mongodb';
 import Grid from '@mui/material/Grid';
 import {
   DivisionWithEvent,
-  Team,
+  TeamRegistration,
   SafeUser,
   RoleTypes,
   RobotGameMatch,
@@ -23,7 +23,7 @@ import { localizeDivisionTitle } from '../../../localization/event';
 interface Props {
   user: WithId<SafeUser>;
   division: WithId<DivisionWithEvent>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   tables: Array<WithId<RobotGameTable>>;
   matches: Array<WithId<RobotGameMatch>>;
 }
@@ -37,13 +37,13 @@ const Page: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const [showGeneralSchedule] = useState<boolean>(true);
-  const [teams, setTeams] = useState<Array<WithId<Team>>>(initialTeams);
+  const [teams, setTeams] = useState<Array<WithId<TeamRegistration>>>(initialTeams);
   const [matches, setMatches] = useState<Array<WithId<RobotGameMatch>>>(initialMatches);
 
   const refereeGeneralSchedule =
     (showGeneralSchedule && division.schedule?.filter(s => s.roles.includes('referee'))) || [];
 
-  const handleTeamRegistered = (team: WithId<Team>) => {
+  const handleTeamRegistered = (team: WithId<TeamRegistration>) => {
     setTeams(teams =>
       teams.map(t => {
         if (t._id === team._id) {

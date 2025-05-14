@@ -3,12 +3,12 @@ import { WithId } from 'mongodb';
 import { FormikValues } from 'formik';
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { Team } from '@lems/types';
+import { TeamRegistration } from '@lems/types';
 import CVFormSubjectSelect from './cv-form-subject';
 import FormikTeamField from '../general/forms/formik-team-field';
 
 interface CVFormHeaderProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   values: FormikValues;
   readOnly?: boolean;
 }

@@ -10,7 +10,7 @@ import {
   RobotGameMatchParticipant,
   RobotGameTable,
   Scoresheet,
-  Team,
+  TeamRegistration,
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
@@ -28,7 +28,7 @@ interface MatchPrestartProps {
   division: WithId<Division>;
   table: WithId<RobotGameTable>;
   divisionState: WithId<DivisionState>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }

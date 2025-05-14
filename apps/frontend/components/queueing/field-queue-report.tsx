@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { ObjectId, WithId } from 'mongodb';
-import { Team, RobotGameMatch, RobotGameTable, JudgingSession } from '@lems/types';
+import { TeamRegistration, RobotGameMatch, RobotGameTable, JudgingSession } from '@lems/types';
 import {
   Paper,
   TableContainer,
@@ -18,7 +18,7 @@ import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 
 interface FieldQueueReportProps {
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   matches: Array<WithId<RobotGameMatch>>;
   tables: Array<WithId<RobotGameTable>>;
   sessions: Array<WithId<JudgingSession>>;
@@ -80,7 +80,7 @@ const FieldQueueReport: React.FC<FieldQueueReportProps> = ({
                               <WarningAmberRoundedIcon color="warning" />
                             </Tooltip>
                           ) : (
-                            <Checkbox checked={queued} disabled={!team.registered} readOnly />
+                            <Checkbox checked={queued} disabled={!team.arrived} readOnly />
                           ))}
                       </Stack>
                     </TableCell>

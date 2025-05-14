@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
 import {
-  Team,
+  TeamRegistration,
   JudgingDeliberation,
   JudgingCategory,
   Scoresheet,
@@ -25,14 +25,14 @@ import DisqualificationButton from '../disqualification-button';
 
 interface FinalDeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;
-  teams: Array<WithId<Team>>;
+  teams: Array<WithId<TeamRegistration>>;
   startDeliberation: () => void;
   endDeliberationStage: () => void;
   nextStageUnlocked?: boolean;
   allowManualTeamAddition?: boolean;
-  additionalTeams?: Array<WithId<Team>>;
-  onAddTeam?: (team: WithId<Team>) => void;
-  disqualifyTeam?: (team: WithId<Team>) => void;
+  additionalTeams?: Array<WithId<TeamRegistration>>;
+  onAddTeam?: (team: WithId<TeamRegistration>) => void;
+  disqualifyTeam?: (team: WithId<TeamRegistration>) => void;
   enableTrash?: boolean;
   compareProps: {
     cvForms: Array<WithId<CoreValuesForm>>;
@@ -64,7 +64,10 @@ const FinalDeliberationControlPanel: React.FC<FinalDeliberationControlPanelProps
   enableTrash = false,
   compareProps: { cvForms, rubrics, scoresheets, sessions, rooms, awards }
 }) => {
-  const [compareTeams, setCompareTeams] = useState<Array<WithId<Team> | null>>([null, null]);
+  const [compareTeams, setCompareTeams] = useState<Array<WithId<TeamRegistration> | null>>([
+    null,
+    null
+  ]);
   const [compareOpen, setCompareOpen] = useState(false);
   const activeStage = FinalDeliberationStages.findIndex(stage => stage === deliberation.stage);
 
