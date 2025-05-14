@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { WithId } from 'mongodb';
-import { useRouter } from 'next/router';
 import { Box, Stack, Step, StepLabel, Stepper, Paper } from '@mui/material';
 import { Division, FllEvent, ScheduleGenerationSettings } from '@lems/types';
 import UploadTeamsStep from './schedule-generator/upload-teams-step';
 import VenueSetupStep from './schedule-generator/venue-setup-step';
 import TimingStep from './schedule-generator/timing-step';
 import DeleteDivisionData from './delete-division-data';
-import ReviewStep from './schedule-generator/review-step';
-import { apiFetch } from 'apps/frontend/lib/utils/fetch';
+import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
+import { useRouter } from 'next/router';
 
-const SchedulerStages = ['upload-teams', 'venue-setup', 'timing', 'review'];
+const SchedulerStages = ['upload-teams', 'venue-setup', 'timing'];
 export type SchedulerStage = (typeof SchedulerStages)[number];
 
 const localizedStages: Record<SchedulerStage, string> = {
   'upload-teams': 'העלאת קבוצות',
   'venue-setup': 'פרטי תחרות',
-  timing: 'הגדרת זמנים',
-  review: 'סיכום'
+  timing: 'הגדרת זמנים'
 };
 
 interface DivisionScheduleEditorProps {
@@ -78,32 +76,28 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
             )}
             {activeStep === 2 && (
               <TimingStep
+                event={event}
                 division={division}
                 settings={settings}
                 updateSettings={setSettings}
-                advanceStep={() => setActiveStep(3)}
-                goBack={() => setActiveStep(1)}
-              />
-            )}
-            {activeStep === 3 && (
-              <ReviewStep
-                division={division}
-                settings={settings}
-                advanceStep={() => {
-                  apiFetch(`/api/admin/divisions/${division._id}/schedule/generate`, {
-                    method: 'POST',
-                    body: JSON.stringify(settings),
-                    headers: { 'Content-Type': 'application/json' }
-                  }).then(res => {
-                    if (res.ok) {
-                      enqueueSnackbar('לו"ז נוצר בהצלחה', { variant: 'success' });
-                      router.reload();
-                    } else {
-                      enqueueSnackbar('שגיאה ביצירת הלו"ז', { variant: 'error' });
+                advanceStep={async () => {
+                  const response = await apiFetch(
+                    `/api/admin/divisions/${division._id}/schedule/generate`,
+                    {
+                      method: 'POST',
+                      body: JSON.stringify(settings),
+                      headers: { 'Content-Type': 'application/json' }
                     }
-                  });
+                  );
+
+                  if (response.ok) {
+                    enqueueSnackbar('לו"ז נוצר בהצלחה', { variant: 'success' });
+                    router.reload();
+                  } else {
+                    enqueueSnackbar('שגיאה ביצירת הלו"ז', { variant: 'error' });
+                  }
                 }}
-                goBack={() => setActiveStep(2)}
+                goBack={() => setActiveStep(1)}
               />
             )}
           </Box>

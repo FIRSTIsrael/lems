@@ -3,7 +3,6 @@ import { WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
-import { TabContext, TabPanel } from '@mui/lab';
 import { Paper, Tabs, Tab } from '@mui/material';
 import {
   DivisionState,
@@ -18,6 +17,7 @@ import {
 } from '@lems/types';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';

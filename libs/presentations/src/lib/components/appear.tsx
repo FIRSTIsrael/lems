@@ -1,5 +1,5 @@
 import { ReactNode, useContext, type JSX } from 'react';
-import { animated, useSpring } from 'react-spring';
+import { motion, TargetAndTransition } from 'motion/react';
 import { useSteps } from '../hooks/use-steps';
 import { SlideContext } from './slide';
 
@@ -7,24 +7,20 @@ type SteppedComponentProps = {
   id?: string | number;
   priority?: number;
   children: ReactNode | ((step: number, isActive: boolean) => ReactNode);
-  className?: string;
-  tagName?: keyof JSX.IntrinsicElements;
-  activeStyle?: Partial<React.CSSProperties>;
-  inactiveStyle?: Partial<React.CSSProperties>;
+  activeStyle?: TargetAndTransition;
+  inactiveStyle?: TargetAndTransition;
   numSteps?: number;
   alwaysAppearActive?: boolean;
 };
 
 const SteppedComponent: React.FC<SteppedComponentProps> = ({
   id,
-  className,
   children: childrenOrRenderFunction,
-  tagName = 'div',
   priority,
   numSteps = 1,
   alwaysAppearActive = false,
-  activeStyle = { opacity: '1' },
-  inactiveStyle = { opacity: '0' }
+  activeStyle = { opacity: 1 },
+  inactiveStyle = { opacity: 0 }
 }) => {
   const slideContext = useContext(SlideContext);
   if (slideContext === null) {
@@ -41,8 +37,6 @@ const SteppedComponent: React.FC<SteppedComponentProps> = ({
     priority
   });
 
-  const AnimatedEl = animated[tagName];
-
   let children: ReactNode;
   if (typeof childrenOrRenderFunction === 'function') {
     children = childrenOrRenderFunction(step, isActive);
@@ -50,22 +44,19 @@ const SteppedComponent: React.FC<SteppedComponentProps> = ({
     children = childrenOrRenderFunction;
   }
 
-  const springStyle = useSpring({
-    to: (isActive ? activeStyle : inactiveStyle) as React.CSSProperties,
-    immediate
-  });
-
   return (
     <>
       {placeholder}
-      {/* @ts-expect-error For some reason react-spring doesn't like children. */}
-      <AnimatedEl
-        style={alwaysAppearActive ? (activeStyle as React.CSSProperties) : springStyle}
-        className={className}
-        data-testid="AppearElement"
-      >
-        {children}
-      </AnimatedEl>
+      {
+        <motion.div
+          initial={alwaysAppearActive ? 'active' : 'inactive'}
+          variants={{ active: activeStyle, inactive: inactiveStyle }}
+          animate={isActive || alwaysAppearActive ? 'active' : 'inactive'}
+          transition={{ duration: immediate ? 0 : 0.5 }}
+        >
+          {children}
+        </motion.div>
+      }
     </>
   );
 };
@@ -89,8 +80,8 @@ type StepperProps<T extends unknown[] = unknown[]> = {
   tagName?: keyof JSX.IntrinsicElements;
   values: T;
   alwaysVisible?: boolean;
-  activeStyle?: Partial<React.CSSProperties>;
-  inactiveStyle?: Partial<React.CSSProperties>;
+  activeStyle?: TargetAndTransition;
+  inactiveStyle?: TargetAndTransition;
 };
 
 export const Stepper: React.FC<StepperProps> = ({
@@ -108,6 +99,7 @@ export const Stepper: React.FC<StepperProps> = ({
 
   return (
     <SteppedComponent {...props} numSteps={values.length} alwaysAppearActive={alwaysVisible}>
+      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
       {(step, isActive) => (renderFn || renderChildrenFn!)(values[step], step, isActive)}
     </SteppedComponent>
   );
