@@ -23,7 +23,8 @@ class LemsRepository:
         self.divisionId = ObjectId(divisionId)
         self.client = MongoClient(
             connection_string,
-            tls=True
+            tls=True,
+            tlsAllowInvalidCertificates=True
         )
         self.db = self.client["lems"]
         logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")
