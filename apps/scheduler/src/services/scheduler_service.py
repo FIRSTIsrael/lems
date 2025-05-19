@@ -211,6 +211,14 @@ class SchedulerService:
         4. Respect staggered matches configuration
         """
 
+         # Check if there are enough tables for ranking rounds
+        ranking_rounds = self.match_schedule[self.match_schedule["stage"] == "ranking"]["round"].nunique()
+        are_enough_tables = len(self.tables) >= ranking_rounds
+        if not are_enough_tables: 
+            logger.info(
+                f"Not enough tables available. {len(self.tables)} tables provided, but {ranking_rounds} ranking rounds require at least {ranking_rounds} tables."
+            )
+
         available_teams = set(team.number for team in self.teams)
         sorted_matches = self.match_schedule.sort_values(["start_time", "number"])
 
@@ -232,7 +240,7 @@ class SchedulerService:
                     team
                     for team in available_teams
                     if not self._did_team_play(team, stage, round_num)
-                    and not self._did_team_play_on_table(team, table, stage)
+                    and (not self._did_team_play_on_table(team, table, stage) or not are_enough_tables)
                 ]
 
                 if eligible_teams:
@@ -271,7 +279,7 @@ class SchedulerService:
                     for team in unplayed_teams:
                         swap_found = False
                         for assigned_table, assigned_team in assigned_teams.items():
-                            swap_valid = not (
+                            swap_valid = not are_enough_tables or not (
                                 self._did_team_play_on_table(
                                     team, assigned_table, stage
                                 )
