@@ -38,7 +38,7 @@ RUN chown -R frontend:lems .
 # The result is slimming the docker from 1.7GB to 300MB
 
 WORKDIR /app/frontend
-RUN npm i --omit=dev
+RUN npm i
 
 EXPOSE 4200
 
