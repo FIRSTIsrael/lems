@@ -15,6 +15,7 @@ import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
 import wsValidateDivision from './middlewares/websocket/division-validator';
+import aiRouter from './routers/ai-router';
 
 const app = express();
 const server = http.createServer(app);
@@ -39,6 +40,7 @@ app.use('/auth', authRouter);
 app.use('/public', publicRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/api', apiRouter);
+app.use('/ai', aiRouter);
 
 app.get('/status', (req, res) => {
   res.status(200).json({ ok: true });
