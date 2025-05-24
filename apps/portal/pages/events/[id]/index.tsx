@@ -7,6 +7,8 @@ import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import SearchBar from 'apps/portal/components/search-bar';
+import { useState } from 'react';
 
 interface Props {
   event: PortalEvent;
@@ -20,6 +22,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
     isLoading,
     error
   } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  const [filteredTeams, setFilteredTeams] = useState<PortalTeam[]>(teams);
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
@@ -38,7 +41,8 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
       <Typography variant="h2" gutterBottom>
         קבוצות באירוע
       </Typography>
-      <TeamList eventId={event.id} teams={teams} />
+      <SearchBar teams={teams} setFilteredTeams={setFilteredTeams} sx={{ mt: 0.5 }} />
+      <TeamList eventId={event.id} teams={filteredTeams} />
     </Container>
   );
 };
