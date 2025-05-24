@@ -2,6 +2,7 @@
 
 # .env files
 **/.env.local
+**/*.env.local
 
 # compiled output
 dist
