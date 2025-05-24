@@ -25,12 +25,17 @@ const workflow = graph.compile();
 type AgentInput = z.infer<typeof RubricSchema>;
 export async function enhanceFeedback(rubric: AgentInput) {
   try {
-    const result = await workflow.invoke({
-      rubric,
-      feedback: rubric.feedback || { greatJob: '', thinkAbout: '' },
-      isValid: true,
-      error: ''
-    });
+    const result = await workflow.invoke(
+      {
+        rubric,
+        feedback: rubric.feedback || { greatJob: '', thinkAbout: '' },
+        isValid: true,
+        error: ''
+      },
+      {
+        runName: 'enhance-feedback'
+      }
+    );
 
     return result;
   } catch (error) {
