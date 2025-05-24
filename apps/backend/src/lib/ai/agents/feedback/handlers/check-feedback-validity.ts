@@ -7,9 +7,7 @@ export const checkFeedbackValidity = async (state: typeof GraphAnnotation.State)
     Analyze the following feedback for a FIRST LEGO League team rubric and determine if it's problematic.
     Problematic feedback is defined as:
     1. Empty or extremely short feedback that provides no real insight (fewer than 5 meaningful words)
-    2. "Great Job" section that contains primarily negative critiques (misplaced feedback)
-    3. "Think About" section that contains primarily praise (misplaced feedback)
-    4. Content that is unclear, incoherent, or cannot be meaningfully improved
+    2. Content that is unclear, incoherent, or cannot be meaningfully improved
     
     Great Job Feedback: ${state.feedback.greatJob || '(empty)'}
     Think About Feedback: ${state.feedback.thinkAbout || '(empty)'}
@@ -46,7 +44,7 @@ export const checkFeedbackValidity = async (state: typeof GraphAnnotation.State)
   }
 
   return {
-    isValid: result.isProblematic,
+    isValid: !result.isProblematic,
     error: result.reason || ''
   };
 };
