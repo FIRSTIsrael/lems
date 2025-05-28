@@ -22,9 +22,7 @@ class LemsRepository:
         connection_string = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
         self.divisionId = ObjectId(divisionId)
         self.client = MongoClient(
-            connection_string,
-            tls=True,
-            tlsAllowInvalidCertificates=True
+            connection_string, tls=True, tlsAllowInvalidCertificates=True
         )
         self.db = self.client["lems"]
         logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")
@@ -96,6 +94,7 @@ class LemsRepository:
         logger.info("Inserting matches into LEMS database")
         collection: Collection[RobotGameMatch] = self.db.matches
         matches: list[RobotGameMatch] = []
+        tables = self.get_tables()
 
         ignore_columns = ["start_time", "end_time", "stage", "round"]
         for index, row in match_schedule.iterrows():
@@ -106,6 +105,9 @@ class LemsRepository:
             participants = []
             for table_id, _team_number in row[len(ignore_columns) :].items():
                 team_number = int(_team_number) if pd.notna(_team_number) else None
+                table_name = next(
+                    (table.name for table in tables if table.id == table_id), None
+                )
 
                 lems_team_id = self.get_lems_team_id(team_number)
                 if lems_team_id is not None:
@@ -113,7 +115,7 @@ class LemsRepository:
                         {
                             "teamId": lems_team_id,
                             "tableId": table_id,
-                            "tableName": table_id,
+                            "tableName": table_name,
                             "queued": False,
                             "ready": False,
                             "present": "no-show",
