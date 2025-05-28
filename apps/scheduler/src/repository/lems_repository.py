@@ -78,7 +78,7 @@ class LemsRepository:
                     document: JudgingSession = {
                         "divisionId": self.divisionId,
                         "number": index,
-                        "roomId": room_id,
+                        "roomId": ObjectId(room_id),
                         "teamId": lems_team_id,
                         "called": False,
                         "queued": False,
@@ -114,7 +114,7 @@ class LemsRepository:
                     participants.append(
                         {
                             "teamId": lems_team_id,
-                            "tableId": table_id,
+                            "tableId": ObjectId(table_id),
                             "tableName": table_name,
                             "queued": False,
                             "ready": False,
