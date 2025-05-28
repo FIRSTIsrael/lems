@@ -170,7 +170,7 @@ class SchedulerService:
         matches_on_table: pd.Series = stage_matches[table_id]
         teams_on_table = matches_on_table.values[~pd.isna(matches_on_table.values)]
 
-        return teams_on_table.tolist().count(team) > limit
+        return list(teams_on_table).count(team) > limit
 
     def _get_available_tables(self, match_number: int) -> list[str]:
         """Get available table IDs based on match number when staggering is enabled."""
