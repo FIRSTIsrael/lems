@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Form, Formik, FastField, FieldProps, FormikProps, FormikValues } from 'formik';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import {
   Paper,
   Stack,
@@ -39,6 +38,25 @@ import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 import FormikCheckbox from '../general/forms/formik-checkbox';
 import EventSelectorModal from '../general/event-selector-modal';
+import {
+  draggable,
+  dropTargetForElements
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+
+interface DragData {
+  id: AwardNames;
+  index: number;
+}
+
+function isDragData(data: unknown): data is DragData {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    'index' in data &&
+    typeof (data as DragData).index === 'number'
+  );
+}
 
 interface AwardItemProps {
   name: AwardNames;
@@ -48,66 +66,76 @@ interface AwardItemProps {
 
 const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
+  const itemRef = useRef<HTMLDivElement>(null);
+  const dragHandleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!itemRef.current || !dragHandleRef.current) return;
+
+    // Make the item draggable
+    const cleanup = draggable({
+      element: itemRef.current,
+      dragHandle: dragHandleRef.current,
+      getInitialData: () => ({ id: name, index })
+    });
+
+    return cleanup;
+  }, [name, index]);
 
   return (
-    <Draggable draggableId={name} index={index}>
-      {provided => (
-        <Grid
-          container
-          component={Paper}
-          px={1}
-          py={2}
-          direction="row"
-          alignItems="center"
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-        >
-          <Grid display="flex" alignItems="center" {...provided.dragHandleProps} size={1}>
-            <DragIndicatorIcon color="disabled" />
-          </Grid>
-          <FastField name={`${name}`}>
-            {({ field, form }: FieldProps) => (
-              <Grid display="flex" alignItems="center" {...field} size={10}>
-                <Grid display="flex" alignItems="center" size={2}>
-                  {isMandatory ? (
-                    <Tooltip title="פרס חובה" arrow>
-                      <span>
-                        <IconButton disabled>
-                          <LockOutlinedIcon />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
-                  ) : (
-                    <IconButton
-                      onClick={() => {
-                        form.setFieldValue(field.name, 0);
-                        onRemove();
-                      }}
-                    >
-                      <DeleteOutlineIcon />
+    <Grid
+      container
+      component={Paper}
+      px={1}
+      py={2}
+      direction="row"
+      alignItems="center"
+      ref={itemRef}
+    >
+      <Grid display="flex" alignItems="center" ref={dragHandleRef} size={1}>
+        <DragIndicatorIcon color="disabled" />
+      </Grid>
+      <FastField name={`${name}`}>
+        {({ field, form }: FieldProps) => (
+          <Grid display="flex" alignItems="center" {...field} size={10}>
+            <Grid display="flex" alignItems="center" size={2}>
+              {isMandatory ? (
+                <Tooltip title="פרס חובה" arrow>
+                  <span>
+                    <IconButton disabled>
+                      <LockOutlinedIcon />
                     </IconButton>
-                  )}
-                </Grid>
-                <Grid size={4}>
-                  <Typography>פרס {localizedAward[name].name || name}</Typography>
-                </Grid>
-                <Grid size={4}>
-                  <CustomNumberInput
-                    min={1}
-                    max={AwardLimits[name] ?? 5}
-                    value={field.value}
-                    onChange={(e, value) => {
-                      e.preventDefault();
-                      value !== undefined && form.setFieldValue(field.name, value);
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            )}
-          </FastField>
-        </Grid>
-      )}
-    </Draggable>
+                  </span>
+                </Tooltip>
+              ) : (
+                <IconButton
+                  onClick={() => {
+                    form.setFieldValue(field.name, 0);
+                    onRemove();
+                  }}
+                >
+                  <DeleteOutlineIcon />
+                </IconButton>
+              )}
+            </Grid>
+            <Grid size={4}>
+              <Typography>פרס {localizedAward[name].name || name}</Typography>
+            </Grid>
+            <Grid size={4}>
+              <CustomNumberInput
+                min={1}
+                max={AwardLimits[name] ?? 5}
+                value={field.value}
+                onChange={(e, value) => {
+                  e.preventDefault();
+                  if (value !== undefined) form.setFieldValue(field.name, value);
+                }}
+              />
+            </Grid>
+          </Grid>
+        )}
+      </FastField>
+    </Grid>
   );
 };
 
@@ -122,6 +150,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
   const [copyModal, setCopyModal] = useState(false);
   const [events, setEvents] = useState<Array<WithId<FllEvent>>>([]);
   const formikRef = useRef<FormikProps<FormikValues>>(null);
+  const dropContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     apiFetch(`/public/events`).then(res => {
@@ -129,10 +158,52 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     });
   }, []);
 
+  // Setup drop target for the awards container
+  useEffect(() => {
+    if (!dropContainerRef.current) return;
+
+    const cleanup = dropTargetForElements({
+      element: dropContainerRef.current,
+      onDragStart: () => {
+        // Optional: Add styling for drag start
+      },
+      onDrop: ({ source, location }) => {
+        // Check if our container is one of the drop targets
+        if (
+          !location.current.dropTargets.some(target => target.element === dropContainerRef.current)
+        )
+          return;
+
+        const data = source.data as unknown;
+        if (!isDragData(data)) return;
+        const sourceIndex = data.index;
+
+        // Calculate the destination index based on the drop location
+        const children = Array.from(dropContainerRef.current?.children || []);
+        const targetIndex = children.findIndex(child => {
+          const rect = child.getBoundingClientRect();
+          const childMiddle = rect.top + rect.height / 2;
+          return location.current.input.clientY <= childMiddle;
+        });
+
+        // If dropped at the end
+        const destinationIndex = targetIndex === -1 ? children.length : targetIndex;
+
+        if (sourceIndex !== destinationIndex) {
+          setAwards(awards => reorder(awards, sourceIndex, destinationIndex));
+        }
+      }
+    });
+
+    return cleanup;
+  }, []);
+
   const getExistingAwards = (schema: AwardSchema): Array<AwardNames> => {
-    const awards = Object.entries(schema).map(([key, value]) => {
-      if (value.count > 0) return key;
-    }) as Array<AwardNames>;
+    const awards = Object.entries(schema)
+      .map(([key, value]) => {
+        if (value.count > 0) return key;
+      })
+      .filter(Boolean) as Array<AwardNames>;
 
     MandatoryAwardTypes.forEach(a => {
       if (!awards.includes(a)) awards.push(a);
@@ -185,14 +256,6 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
       });
   };
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return; // Dropped outside the list
-
-    // The compiler thinks destination can be none despite the if statement above
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    setAwards(awards => reorder(awards, result.source.index, result.destination!.index));
-  };
-
   return (
     <Formik
       innerRef={formikRef}
@@ -234,23 +297,16 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
     >
       {({ setFieldValue, submitForm }) => (
         <Form>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-              {provided => (
-                <Stack spacing={2} {...provided.droppableProps} ref={provided.innerRef}>
-                  {awards.map((award, index) => (
-                    <AwardItem
-                      name={award}
-                      index={index}
-                      key={award}
-                      onRemove={() => setAwards(awards => awards.filter(a => a !== award))}
-                    />
-                  ))}
-                  {provided.placeholder}
-                </Stack>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <Stack spacing={2} ref={dropContainerRef}>
+            {awards.map((award, index) => (
+              <AwardItem
+                name={award}
+                index={index}
+                key={award}
+                onRemove={() => setAwards(awards => awards.filter(a => a !== award))}
+              />
+            ))}
+          </Stack>
           <Stack component={Paper} my={2} p={2} width="100%" direction="row" spacing={2}>
             <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 120 }}>
               הוספת פרס רשות

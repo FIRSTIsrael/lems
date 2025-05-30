@@ -12,6 +12,8 @@
   },
   "private": true,
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.0",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@aws-sdk/client-s3": "^3.787.0",
     "@emotion/react": "^11.13.3",
     "@emotion/server": "11.11.0",
