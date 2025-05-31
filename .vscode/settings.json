@@ -6,4 +6,5 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
   },
+  "nxConsole.generateAiAgentRules": true,
 }
