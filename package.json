@@ -16,6 +16,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/server": "11.11.0",
     "@emotion/styled": "^11.14.0",
+    "@hello-pangea/dnd": "^18.0.1",
     "@json2csv/plainjs": "^7.0.6",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
@@ -44,7 +45,6 @@
     "promise": "^8.3.0",
     "puppeteer": "^24.7.2",
     "react": "19.1.0",
-    "react-beautiful-dnd": "^13.1.1",
     "react-color": "^2.19.3",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",
@@ -84,7 +84,6 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.2",
     "@types/react": "19.1.2",
-    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "19.1.2",
     "@types/react-signature-canvas": "^1.0.7",
@@ -103,10 +102,6 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "react-beautiful-dnd": {
-      "react": "^19.0.0",
-      "react-dom": "^19.0.0"
-    },
     "@nx/express": {
       "express": "^5.1.0"
     }
