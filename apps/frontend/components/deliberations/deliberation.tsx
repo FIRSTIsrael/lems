@@ -7,7 +7,7 @@ import React, {
   useCallback
 } from 'react';
 import { ObjectId, WithId } from 'mongodb';
-import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd';
+import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd';
 import {
   JudgingDeliberation,
   Award,
