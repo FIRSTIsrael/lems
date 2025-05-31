@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { TabContext, TabPanel } from '../general/tab-managment';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { FllEvent, Division, AwardSchema } from '@lems/types';
-import DivisionAwardEditor from './division-award-editor';
+import DivisionAwardEditor from './award-editor/division-award-editor';
 import DivisionOutlineEditor from './division-outline-editor';
 import DivisionScheduleEditor from './division-schedule-editor';
 import { useQueryParam } from '../../hooks/use-query-param';

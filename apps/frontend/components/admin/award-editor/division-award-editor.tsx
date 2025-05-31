@@ -24,11 +24,11 @@ import {
   FllEvent
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
-import { apiFetch } from '../../lib/utils/fetch';
+import { apiFetch } from '../../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
-import FormikCheckbox from '../general/forms/formik-checkbox';
-import EventSelectorModal from '../general/event-selector-modal';
-import AwardList from './award-editor/award-list';
+import FormikCheckbox from '../../general/forms/formik-checkbox';
+import EventSelectorModal from '../../general/event-selector-modal';
+import AwardList from './award-list';
 
 interface DivisionAwardEditorProps {
   divisionId: ObjectId;
