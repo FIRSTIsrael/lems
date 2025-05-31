@@ -17,6 +17,9 @@
     "@emotion/server": "11.11.0",
     "@emotion/styled": "^11.14.0",
     "@json2csv/plainjs": "^7.0.6",
+    "@langchain/core": "^0.3.57",
+    "@langchain/langgraph": "^0.2.73",
+    "@langchain/openai": "^0.5.11",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/x-data-grid": "^8.1.0",
@@ -58,7 +61,8 @@
     "swr": "^2.3.3",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
