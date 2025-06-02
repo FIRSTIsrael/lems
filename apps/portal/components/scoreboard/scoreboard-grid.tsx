@@ -1,9 +1,7 @@
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
-import { heIL } from '@mui/x-data-grid/locales';
 import { PortalScore } from '@lems/types';
-import theme from '../lib/theme';
 import { compareScoreArrays } from '@lems/utils/arrays';
 import NextLink from 'next/link';
 
@@ -13,8 +11,8 @@ interface ScoreboardGridProps {
 }
 
 const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
-  const localizedTheme = createTheme(theme, heIL);
-  const isDesktop = useMediaQuery(localizedTheme.breakpoints.up('md'));
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const scoreComparator: GridComparatorFn<PortalScore> = (a, b, paramA, paramB) => {
     const scoresA = paramA.api.getRow(paramA.id).scores;
@@ -76,7 +74,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
     ...Array.from(
       { length: matches },
       (_, index) =>
-        (({
+        ({
           field: `match${index + 1}`,
           headerName: `מקצה ${index + 1}`,
           width: isDesktop ? 150 : 100,
@@ -84,37 +82,35 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
           valueGetter: (_, row) => {
             return row.scores[index];
           }
-        }) as GridColDef<(typeof data)[number]>)
+        }) as GridColDef<(typeof data)[number]>
     )
   ];
 
   return (
-    <ThemeProvider theme={localizedTheme}>
-      <DataGrid
-        rows={data}
-        columns={columns}
-        getRowId={row => row.team.id}
-        slots={{
-          noRowsOverlay: () => (
-            <Box display="flex" alignItems="center" justifyContent="center" height="100%">
-              <Typography variant="body1">אין תוצאות</Typography>
-            </Box>
-          )
-        }}
-        initialState={{
-          sorting: {
-            sortModel: [{ field: 'maxScore', sort: 'desc' }]
-          },
-          pagination: {
-            paginationModel: {
-              pageSize: 25
-            }
+    <DataGrid
+      rows={data}
+      columns={columns}
+      getRowId={row => row.team.id}
+      slots={{
+        noRowsOverlay: () => (
+          <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+            <Typography variant="body1">אין תוצאות</Typography>
+          </Box>
+        )
+      }}
+      initialState={{
+        sorting: {
+          sortModel: [{ field: 'maxScore', sort: 'desc' }]
+        },
+        pagination: {
+          paginationModel: {
+            pageSize: 25
           }
-        }}
-        sx={{ textAlign: 'left' }}
-        disableColumnMenu
-      />
-    </ThemeProvider>
+        }
+      }}
+      sx={{ textAlign: 'left' }}
+      disableColumnMenu
+    />
   );
 };
 
