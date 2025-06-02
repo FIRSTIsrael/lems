@@ -9,13 +9,13 @@ import {
   Divider,
   Stack,
   Typography,
+  useTheme,
   useMediaQuery
 } from '@mui/material';
 import Grid, { GridProps } from '@mui/material/Grid';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
-import theme from '../../lib/theme';
 
 interface EventDescriptionProps extends GridProps {
   event: PortalEvent;
@@ -71,6 +71,7 @@ interface EventLinkProps {
 }
 
 const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => {
+  const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   if (!event.divisions || event.divisions.length === 0) {

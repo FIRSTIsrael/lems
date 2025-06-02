@@ -13,14 +13,14 @@ import {
   Box,
   Stack,
   useMediaQuery,
-  Link
+  Link,
+  useTheme
 } from '@mui/material';
 import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import { localizedMatchStage } from '../../../../lib/localization';
-import theme from '../../../../lib/theme';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
@@ -33,6 +33,7 @@ const Page: NextPage<Props> = ({ event }) => {
     isLoading,
     error
   } = useRealtimeData<PortalFieldSchedule>(`/events/${event.id}/schedule/field`);
+  const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
@@ -91,13 +92,19 @@ const Page: NextPage<Props> = ({ event }) => {
                             return (
                               <TableCell key={column.id}>
                                 {team ? (
-                                  <Link 
+                                  <Link
                                     href={`/events/${event.id}/teams/${team.number}`}
-                                    sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                                    sx={{
+                                      color: 'inherit',
+                                      textDecoration: 'none',
+                                      '&:hover': { textDecoration: 'underline' }
+                                    }}
                                   >
                                     #{team.number}
                                   </Link>
-                                ) : ''}
+                                ) : (
+                                  ''
+                                )}
                               </TableCell>
                             );
                           })}

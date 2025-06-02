@@ -1,0 +1,9 @@
+{
+  "portal:index": {
+    "fll-events": "אירועי <i>FIRST</i> LEGO League Challenge",
+    "active-events": "אירועים פעילים",
+    "future-events": "אירועים עתידיים",
+    "past-events": "אירועים קודמים",
+    "no-events": "אין אירועים"
+  }
+}

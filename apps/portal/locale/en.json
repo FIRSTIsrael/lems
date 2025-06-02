@@ -1,0 +1,9 @@
+{
+  "portal:index": {
+    "fll-events": "<i>FIRST</i> LEGO League Challenge events",
+    "active-events": "Active events",
+    "future-events": "Future events",
+    "past-events": "Past events",
+    "no-events": "No events"
+  }
+}

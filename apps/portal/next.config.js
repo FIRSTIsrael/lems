@@ -1,6 +1,3 @@
-//@ts-check
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
 
 /**
@@ -27,6 +24,11 @@ const nextConfig = {
         hostname: 'emojicdn.elk.sh'
       }
     ]
+  },
+
+  i18n: {
+    locales: ['he', 'en'],
+    defaultLocale: 'he'
   }
 };
 

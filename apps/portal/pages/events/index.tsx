@@ -1,17 +1,21 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useTranslations } from 'next-intl';
 import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
 import EventList from '../../components/events/event-list';
+import RichText from '../../components/rich-text';
 
 interface Props {
   events: Array<PortalEvent>;
 }
 
 const Page: NextPage<Props> = ({ events }) => {
+  const t = useTranslations('portal:index');
+
   const { current, past, future } = useMemo(() => {
     const today = dayjs();
     const eventsByDate = events.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
@@ -45,7 +49,7 @@ const Page: NextPage<Props> = ({ events }) => {
         {/* Mobile header */}
         <Grid size={12} display={{ xs: 'block', md: 'none' }}>
           <Typography variant="h1" gutterBottom>
-            אירועי <em>FIRST</em>&nbsp; LEGO League Challenge
+            <RichText>{tags => t.rich('fll-events', tags)}</RichText>
           </Typography>
         </Grid>
 
@@ -55,17 +59,17 @@ const Page: NextPage<Props> = ({ events }) => {
             <List>
               <ListItem disablePadding>
                 <ListItemButton onClick={() => scrollToSection('current')}>
-                  אירועים פעילים
+                  {t('active-events')}
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton onClick={() => scrollToSection('future')}>
-                  אירועים עתידיים
+                  {t('future-events')}
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
                 <ListItemButton onClick={() => scrollToSection('past')}>
-                  אירועים קודמים
+                  {t('past-events')}
                 </ListItemButton>
               </ListItem>
             </List>
@@ -75,27 +79,27 @@ const Page: NextPage<Props> = ({ events }) => {
         {/* Main Grid */}
         <Grid size={{ xs: 12, md: 10 }}>
           <Typography variant="h1" display={{ xs: 'none', md: 'block' }} mb={4}>
-            אירועי <em>FIRST</em>&nbsp; LEGO League Challenge
+            <RichText>{tags => t.rich('fll-events', tags)}</RichText>
           </Typography>
           <Stack spacing={2}>
             <EventList
               events={current}
-              emptyText="אין אירועים"
-              title="אירועים פעילים"
+              emptyText={t('no-events')}
+              title={t('active-events')}
               includeDate
               id="current"
             />
             <EventList
               events={future}
-              emptyText="אין אירועים"
-              title="אירועים עתידיים"
+              emptyText={t('no-events')}
+              title={t('future-events')}
               includeDate
               id="future"
             />
             <EventList
               events={past}
-              emptyText="אין אירועים"
-              title="אירועים קודמים"
+              emptyText={t('no-events')}
+              title={t('past-events')}
               includeDate
               id="past"
             />
@@ -106,9 +110,12 @@ const Page: NextPage<Props> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale
+}: GetServerSidePropsContext) => {
+  const messages = (await import(`../../locale/${locale}.json`)).default;
   const events = await fetchEvents();
-  return { props: { events } };
+  return { props: { events, messages } };
 };
 
 export default Page;
