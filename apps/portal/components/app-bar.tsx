@@ -13,20 +13,22 @@ import {
   Button
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/MenuRounded';
+import { useTranslations } from 'next-intl';
 
 const pages = [
   {
-    name: 'אירועים',
+    name: 'events',
     href: '/events'
   },
   {
-    name: 'מחשבון ניקוד',
+    name: 'scorer',
     href: '/scorer'
   }
 ];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const t = useTranslations('portal:components:app-bar');
 
   return (
     <AppBar position="static">
@@ -62,7 +64,7 @@ const ResponsiveAppBar = () => {
             >
               {pages.map(page => (
                 <MenuItem key={page.name} component={Link} href={page.href}>
-                  <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
+                  <Typography sx={{ textAlign: 'center' }}>{t(page.name)}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -117,7 +119,7 @@ const ResponsiveAppBar = () => {
                 href={page.href}
                 sx={{ my: 2, mx: 1, color: 'white', display: 'block' }}
               >
-                {page.name}
+                {t(page.name)}
               </Button>
             ))}
           </Box>

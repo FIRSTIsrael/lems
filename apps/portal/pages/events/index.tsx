@@ -6,6 +6,7 @@ import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } f
 import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
+import { getMessages } from '../../lib/localization';
 import EventList from '../../components/events/event-list';
 import RichText from '../../components/rich-text';
 
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  const t = useTranslations('portal:index');
+  const t = useTranslations('portal:pages:events:index');
 
   const { current, past, future } = useMemo(() => {
     const today = dayjs();
@@ -113,7 +114,7 @@ const Page: NextPage<Props> = ({ events }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale
 }: GetServerSidePropsContext) => {
-  const messages = (await import(`../../locale/${locale}.json`)).default;
+  const messages = await getMessages(locale);
   const events = await fetchEvents();
   return { props: { events, messages } };
 };

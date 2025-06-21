@@ -1,9 +1,22 @@
 {
-  "portal:index": {
+  "portal:pages:events:index": {
     "fll-events": "אירועי <i>FIRST</i> LEGO League Challenge",
     "active-events": "אירועים פעילים",
     "future-events": "אירועים עתידיים",
     "past-events": "אירועים קודמים",
     "no-events": "אין אירועים"
+  },
+  "portal:pages:events:[id]:index": {
+    "event-teams": "קבוצות באירוע"
+  },
+  "portal:pages:scorer": {
+    "title": "מחשבון ניקוד",
+    "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
+    "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, המגבלה הבאה חלה: על מנת לקבל ניקוד על משימה זו, אסור לציוד לגעת באף חלק של דגם המשימה בסיום המקצה."
+  },
+
+  "portal:components:app-bar": {
+    "events": "אירועים",
+    "scorer": "מחשבון ניקוד"
   }
 }

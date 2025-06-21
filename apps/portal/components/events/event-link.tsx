@@ -13,9 +13,9 @@ import {
   useMediaQuery
 } from '@mui/material';
 import Grid, { GridProps } from '@mui/material/Grid';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
+import DirectionalIcon from '../directional-icon';
 
 interface EventDescriptionProps extends GridProps {
   event: PortalEvent;
@@ -83,7 +83,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           '& .MuiButton-endIcon svg': { fontSize: 24 },
           borderRadius: 3
         }}
-        endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)', position: 'relative' }} />}
+        endIcon={<DirectionalIcon sxProps={{ position: 'relative' }} />}
         fullWidth
         size="small"
         LinkComponent={Link}
@@ -145,7 +145,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
                 minHeight: 48,
                 borderRadius: 3
               }}
-              endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />}
+              endIcon={<DirectionalIcon />}
               fullWidth
               size="small"
               LinkComponent={Link}
