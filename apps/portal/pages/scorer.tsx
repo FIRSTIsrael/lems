@@ -1,7 +1,9 @@
-import { NextPage } from 'next';
+import { NextPage, GetStaticProps, GetStaticPropsContext } from 'next';
 import Image from 'next/image';
-import { Container, Typography, Stack, Box } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { Container, Typography, Stack, Box, useTheme } from '@mui/material';
 import { SEASON_SCORESHEET } from '@lems/season';
+import { getMessages } from '../lib/localization';
 import ScoresheetMission from '../components/scorer/scoresheet-mission';
 import NoEquipmentImage from '../public/assets/scoresheet/no-equipment.svg';
 import { MissionProvider, useScoresheetValidator } from '../components/scorer/mission-context';
@@ -9,22 +11,23 @@ import ScoreFloater from '../components/scorer/score-floater';
 
 const Scorer = () => {
   const { errors } = useScoresheetValidator();
+  const t = useTranslations('portal:pages:scorer');
+
+  const theme = useTheme();
+  console.log(theme.direction);
 
   return (
     <>
       <Container maxWidth="md" sx={{ mt: 2 }}>
         <Box maxWidth="95%" mb={8}>
           <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
-            מחשבון ניקוד
+            {t('title')}
           </Typography>
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
             <Image src={NoEquipmentImage} width={50} height={50} alt="איסור ציוד" />
             <Stack>
-              <Typography fontWeight={500}>מגבלת ”ללא מגע ציוד של הקבוצה“:</Typography>
-              <Typography>
-                כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, המגבלה הבאה חלה: על מנת לקבל ניקוד
-                על משימה זו, אסור לציוד לגעת באף חלק של דגם המשימה בסיום המקצה.“
-              </Typography>
+              <Typography fontWeight={500}>{t('no-equipment-constraint-title')}</Typography>
+              <Typography>{t('no-equipment-constraint')}</Typography>
             </Stack>
           </Stack>
 
@@ -56,6 +59,11 @@ const Page: NextPage = () => {
       <Scorer />
     </MissionProvider>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }: GetStaticPropsContext) => {
+  const messages = await getMessages(locale);
+  return { props: { messages } };
 };
 
 export default Page;

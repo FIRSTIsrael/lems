@@ -8,8 +8,8 @@ import {
   TableHead,
   Link
 } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { PortalTeam } from '@lems/types';
+import DirectionalIcon from '../directional-icon';
 
 interface TeamListProps {
   eventId: string;
@@ -79,7 +79,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
                     display: 'block'
                   }}
                 >
-                  <ChevronLeftIcon />
+                  <DirectionalIcon />
                 </Link>
               </TableCell>
             </TableRow>

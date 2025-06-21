@@ -6,10 +6,13 @@ import type {
   NextComponentType
 } from 'next/dist/shared/lib/utils';
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
+// For some reason, EmotionCache import is not recognized
+// eslint-disable-next-line import/named
 import { EmotionCache } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
 import { createEmotionCache } from '../lib/emotion-cache';
-import theme from '../lib/theme';
+import getLocalizedTheme from '../lib/theme';
+import { Locales } from '../locale/locales';
 
 type EnhancedApp = NextComponentType<
   AppContextType,
@@ -21,12 +24,12 @@ export default class FIRSTDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const originalRenderPage = ctx.renderPage;
 
-    const cache = createEmotionCache();
+    const locale = ctx.locale as Locales | undefined;
+    const cache = createEmotionCache(locale);
     const { extractCriticalToChunks } = createEmotionServer(cache);
 
     ctx.renderPage = () =>
       originalRenderPage({
-        // eslint-disable-next-line react/display-name
         enhanceApp: (App: EnhancedApp) => props => <App emotionCache={cache} {...props} />
       });
 
@@ -45,10 +48,13 @@ export default class FIRSTDocument extends Document {
       styles: [...React.Children.toArray(initialProps.styles), ...emotionStyleTags]
     };
   }
-
   render() {
+    // Next.js document props include __NEXT_DATA__ with locale information
+    const locale = (this.props.__NEXT_DATA__ as { locale?: string })?.locale as Locales | undefined;
+    const theme = getLocalizedTheme(locale);
+
     return (
-      <Html lang="en">
+      <Html>
         <Head>
           <link
             rel="stylesheet"
