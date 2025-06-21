@@ -57,3 +57,4 @@ http-log.log
 **/.venv
 /.cursor\rules\nx-rules.mdc
 /.github/instructions/nx.instructions.md
+.cursor/rules/nx-rules.mdc
