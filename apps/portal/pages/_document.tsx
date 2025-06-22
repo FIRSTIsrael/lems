@@ -1,13 +1,16 @@
 import {
   DocumentHeadTags,
   DocumentHeadTagsProps,
-  documentGetInitialProps
+  documentGetInitialProps,
+  createEmotionCache
 } from '@mui/material-nextjs/v15-pagesRouter';
+import { prefixer } from 'stylis';
+import rtlPlugin from '@mui/stylis-plugin-rtl';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
 import theme from '../lib/theme';
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
   return (
-    <Html lang="en">
+    <Html lang="he" dir="rtl">
       <Head>
         <meta name="theme-color" content={theme.palette.primary.main} />
         <link
@@ -34,6 +37,12 @@ export default function PortalDocument(props: DocumentProps & DocumentHeadTagsPr
 }
 
 PortalDocument.getInitialProps = async (ctx: DocumentContext) => {
-  const finalProps = await documentGetInitialProps(ctx);
+  const emotionCache = createEmotionCache({
+    key: 'mui',
+    stylisPlugins: [prefixer, rtlPlugin]
+  });
+  const finalProps = await documentGetInitialProps(ctx, {
+    emotionCache
+  });
   return finalProps;
 };
