@@ -13,7 +13,11 @@ const nextConfig = {
 
   reactStrictMode: true,
 
-  transpilePackages: ['@mui/x-data-grid'],
+  compiler: {
+    emotion: true
+  },
+
+  transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
 
   images: {
     remotePatterns: [
