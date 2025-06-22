@@ -7,7 +7,9 @@
   "targets": {
     "build": {
       "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/portal"
@@ -25,7 +27,8 @@
       "options": {
         "buildTarget": "portal:build",
         "port": 3000,
-        "dev": true
+        "dev": true,
+        "turbo": true
       },
       "configurations": {
         "development": {

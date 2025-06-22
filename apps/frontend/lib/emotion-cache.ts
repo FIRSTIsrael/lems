@@ -1,5 +1,5 @@
 import createCache from '@emotion/cache';
-import rtlPlugin from 'stylis-plugin-rtl';
+import rtlPlugin from '@mui/stylis-plugin-rtl';
 import theme from './theme';
 
 export const createEmotionCache = () =>
