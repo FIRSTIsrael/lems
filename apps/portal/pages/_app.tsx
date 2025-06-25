@@ -4,13 +4,14 @@ import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '../lib/dayjs';
 import theme from '../lib/theme';
+import { clientSideEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 
 export default function PortalApp(props: AppProps) {
   const { Component, pageProps } = props;
 
   return (
-    <AppCacheProvider {...props}>
+    <AppCacheProvider {...props} emotionCache={clientSideEmotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="פורטל האירועים של FIRST LEGO League Challenge" />
