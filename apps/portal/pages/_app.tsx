@@ -1,36 +1,27 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { CacheProvider, EmotionCache } from '@emotion/react';
 import '../lib/dayjs';
 import theme from '../lib/theme';
-import { createEmotionCache } from '../lib/emotion-cache';
+import { clientSideEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 
-const clientSideEmotionCache = createEmotionCache();
+export default function PortalApp(props: AppProps) {
+  const { Component, pageProps } = props;
 
-function CustomApp({
-  Component,
-  pageProps,
-  emotionCache = clientSideEmotionCache
-}: AppProps & { emotionCache: EmotionCache }) {
   return (
-    <CacheProvider value={emotionCache}>
+    <AppCacheProvider {...props} emotionCache={clientSideEmotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#fff" />
         <meta name="description" content="פורטל האירועים של FIRST LEGO League Challenge" />
         <title>פורטל אירועים - FIRST LEGO League Challenge</title>
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <main className="app">
-          <ResponsiveAppBar />
-          <Component {...pageProps} />
-        </main>
+        <ResponsiveAppBar />
+        <Component {...pageProps} />
       </ThemeProvider>
-    </CacheProvider>
+    </AppCacheProvider>
   );
 }
-
-export default CustomApp;
