@@ -85,7 +85,7 @@
     "@types/node": "^22.15.2",
     "@types/react": "19.1.2",
     "@types/react-color": "^3.0.13",
-    "@types/react-dom": "19.1.2",
+    "@types/react-dom": "19.1.6",
     "@types/react-signature-canvas": "^1.0.7",
     "@types/serve-favicon": "^2.5.7",
     "@types/webpack-env": "^1.18.8",
