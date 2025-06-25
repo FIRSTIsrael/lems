@@ -5,6 +5,7 @@ import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import '../lib/utils/dayjs';
 import theme from '../lib/theme';
+import { clientSideEmotionCache } from '../lib/emotion-cache';
 import SnackbarCloseButton from '../components/general/snackbar-close-button';
 import { TimeSyncProvider } from '../lib/timesync';
 
@@ -12,7 +13,7 @@ export default function LEMSApp(props: AppProps) {
   const { Component, pageProps } = props;
 
   return (
-    <AppCacheProvider {...props}>
+    <AppCacheProvider {...props} emotionCache={clientSideEmotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#fff" />

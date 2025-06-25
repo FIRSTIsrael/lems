@@ -1,13 +1,11 @@
 import {
   DocumentHeadTags,
   DocumentHeadTagsProps,
-  createEmotionCache,
   documentGetInitialProps
 } from '@mui/material-nextjs/v15-pagesRouter';
-import { prefixer } from 'stylis';
-import rtlPlugin from '@mui/stylis-plugin-rtl';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
 import theme from '../lib/theme';
+import { createRtlEmotionCache } from '../lib/emotion-cache';
 
 export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProps) {
   return (
@@ -38,10 +36,7 @@ export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProp
 }
 
 LEMSDocument.getInitialProps = async (ctx: DocumentContext) => {
-  const emotionCache = createEmotionCache({
-    key: 'mui',
-    stylisPlugins: [prefixer, rtlPlugin]
-  });
+  const emotionCache = createRtlEmotionCache();
   const finalProps = await documentGetInitialProps(ctx, {
     emotionCache
   });

@@ -5,7 +5,6 @@ const mainColor = '#0071e3';
 const fourthShadow = '0 8px 12px 0 rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 4%)';
 
 const theme = createTheme({
-  cssVariables: true,
   direction: 'rtl',
   shape: {
     borderRadius: 8
