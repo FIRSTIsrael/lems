@@ -45,7 +45,7 @@ const Page: NextPage<Props> = ({ events }) => {
         />
       </Box>
       <Paper sx={{ p: 2, my: 2, width: '95%' }}>
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={2} ml={1}>
           <Typography variant="h2" maxWidth="90%">
             אירועים פעילים
           </Typography>
