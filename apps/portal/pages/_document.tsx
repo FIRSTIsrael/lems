@@ -8,8 +8,11 @@ import { createRtlEmotionCache } from '../lib/emotion-cache';
 import { baseTheme } from '../lib/theme';
 
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
+  const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided
+  const dir = locale === 'he' ? 'rtl' : 'ltr'; // Set direction based on locale
+
   return (
-    <Html lang="he" dir="rtl">
+    <Html lang={locale} dir={dir}>
       <Head>
         <meta name="theme-color" content={baseTheme.palette.primary.main} />
         <link
