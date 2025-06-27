@@ -1,3 +1,4 @@
+//@ts-check
 const { composePlugins, withNx } = require('@nx/next');
 
 /**
@@ -10,12 +11,13 @@ const nextConfig = {
     svgr: false
   },
 
-  transpilePackages: ['@mui/x-data-grid'],
+  reactStrictMode: true,
 
   compiler: {
-    // For other options, see https://nextjs.org/docs/architecture/nextjs-compiler#emotion
     emotion: true
   },
+
+  transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
 
   images: {
     remotePatterns: [

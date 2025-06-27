@@ -1,10 +1,12 @@
-import createCache from '@emotion/cache';
-import rtlPlugin from '@mui/stylis-plugin-rtl';
-import { prefixer } from 'stylis';
-import theme from './theme';
+import { createEmotionCache } from "@mui/material-nextjs/v15-pagesRouter";
+import { prefixer } from "stylis";
+import rtlPlugin from "@mui/stylis-plugin-rtl";
 
-export const createEmotionCache = () =>
-  createCache({
-    key: 'css',
-    stylisPlugins: theme.direction === 'rtl' ? [prefixer, rtlPlugin] : []
+export const createRtlEmotionCache = () => {
+  return createEmotionCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
   });
+};
+
+export const clientSideEmotionCache = createRtlEmotionCache();

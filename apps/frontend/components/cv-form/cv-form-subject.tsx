@@ -47,7 +47,7 @@ const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, 
             input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
             renderValue={selected => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map(value => (
+                {selected.map((value: CVFormSubject) => (
                   <Chip key={value} label={localizedFormSubject[value]} />
                 ))}
               </Box>
