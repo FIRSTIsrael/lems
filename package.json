@@ -83,7 +83,7 @@
     "@swc/plugin-emotion": "^9.0.3",
     "@types/express": "^5.0.3",
     "@types/express-fileupload": "^1.5.1",
-    "@types/jsonwebtoken": "^9.0.9",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.15.2",
     "@types/react": "19.1.2",
     "@types/react-color": "^3.0.13",
