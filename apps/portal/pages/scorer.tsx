@@ -1,7 +1,7 @@
 import { NextPage, GetStaticProps, GetStaticPropsContext } from 'next';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Container, Typography, Stack, Box, useTheme } from '@mui/material';
+import { Container, Typography, Stack, Box } from '@mui/material';
 import { SEASON_SCORESHEET } from '@lems/season';
 import { getMessages } from '../lib/localization';
 import ScoresheetMission from '../components/scorer/scoresheet-mission';
@@ -12,9 +12,6 @@ import ScoreFloater from '../components/scorer/score-floater';
 const Scorer = () => {
   const { errors } = useScoresheetValidator();
   const t = useTranslations('portal:pages:scorer');
-
-  const theme = useTheme();
-  console.log(theme.direction);
 
   return (
     <>
