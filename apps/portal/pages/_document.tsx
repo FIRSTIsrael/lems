@@ -4,8 +4,9 @@ import {
   documentGetInitialProps
 } from '@mui/material-nextjs/v15-pagesRouter';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
-import { createRtlEmotionCache } from '../lib/emotion-cache';
+import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { baseTheme } from '../lib/theme';
+import { Locales } from '../locale/locales';
 
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided
@@ -39,7 +40,8 @@ export default function PortalDocument(props: DocumentProps & DocumentHeadTagsPr
 }
 
 PortalDocument.getInitialProps = async (ctx: DocumentContext) => {
-  const emotionCache = createRtlEmotionCache();
+  const locale = ctx.locale || 'he'; // Default to Hebrew if no locale is provided
+  const emotionCache = createCustomEmotionCache(locale as Locales);
   const finalProps = await documentGetInitialProps(ctx, {
     emotionCache
   });

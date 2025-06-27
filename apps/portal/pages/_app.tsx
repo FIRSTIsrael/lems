@@ -6,17 +6,18 @@ import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '../lib/dayjs';
 import { baseTheme } from '../lib/theme';
-import { clientSideEmotionCache } from '../lib/emotion-cache';
+import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 import { Locales } from '../locale/locales';
 
 export default function PortalApp(props: AppProps) {
   const { Component, pageProps } = props;
   const router = useRouter();
-  const locale = router.locale as Locales | undefined;
+  const locale = (router.locale ?? 'he') as Locales;
+  const emotionCache = createCustomEmotionCache(locale);
 
   return (
-    <AppCacheProvider {...props} emotionCache={clientSideEmotionCache}>
+    <AppCacheProvider {...props} emotionCache={emotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="פורטל האירועים של FIRST LEGO League Challenge" />
