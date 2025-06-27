@@ -51,7 +51,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
   const messages = await getMessages(ctx.locale);
-
   return { props: { event, teams, hasAwards: !!awards, messages } };
 };
 

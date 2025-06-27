@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { PortalEvent, PortalJudgingSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
+import { getMessages } from '../../../../lib/localization';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
@@ -101,9 +102,9 @@ const Page: NextPage<Props> = ({ event }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, messages } };
 };
 
 export default Page;

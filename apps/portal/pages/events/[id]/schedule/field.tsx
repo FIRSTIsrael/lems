@@ -20,7 +20,7 @@ import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
-import { localizedMatchStage } from '../../../../lib/localization';
+import { getMessages, localizedMatchStage } from '../../../../lib/localization';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
@@ -124,9 +124,9 @@ const Page: NextPage<Props> = ({ event }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, messages } };
 };
 
 export default Page;

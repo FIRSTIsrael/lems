@@ -1,5 +1,6 @@
 import { Container, Paper, Typography } from '@mui/material';
-import { NextPage } from 'next';
+import { GetStaticPropsContext, NextPage } from 'next';
+import { getMessages } from '../lib/localization';
 
 const Custom404: NextPage = () => {
   return (
@@ -22,6 +23,11 @@ const Custom404: NextPage = () => {
       </Paper>
     </Container>
   );
+};
+
+export const getStaticProps = async ({ locale }: GetStaticPropsContext) => {
+  const messages = await getMessages(locale);
+  return { props: { messages } };
 };
 
 export default Custom404;

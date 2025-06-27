@@ -114,8 +114,8 @@ const Page: NextPage<Props> = ({ events }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale
 }: GetServerSidePropsContext) => {
-  const messages = await getMessages(locale);
   const events = await fetchEvents();
+  const messages = await getMessages(locale);
   return { props: { events, messages } };
 };
 

@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 import EventList from '../components/events/event-list';
 import LiveIcon from '../components/live-icon';
+import { getMessages } from '../lib/localization';
 
 interface Props {
   events: Array<PortalEvent>;
@@ -71,9 +72,12 @@ const Page: NextPage<Props> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale
+}: GetServerSidePropsContext) => {
   const events = await fetchEvents();
-  return { props: { events } };
+  const messages = await getMessages(locale);
+  return { props: { events, messages } };
 };
 
 export default Page;

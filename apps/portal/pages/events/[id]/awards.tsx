@@ -1,9 +1,16 @@
 import { useRef, useEffect, useState } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
-import { Container, Box, Typography, Stack } from '@mui/material';
-import { AwardNames, PortalAward, PortalEvent, PersonalAwardTypes, PersonalAwards } from '@lems/types';
+import { Container, Box, Typography } from '@mui/material';
+import {
+  AwardNames,
+  PortalAward,
+  PortalEvent,
+  PersonalAwardTypes,
+  PersonalAwards
+} from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
+import { getMessages } from '../../../lib/localization';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
 
@@ -60,8 +67,13 @@ const Page: NextPage<Props> = ({ awards, event }) => {
           if (awards.every(award => !award.winner)) return null;
 
           return (
-            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+            <Box
+              key={awardName}
+              sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
+            >
+              <Typography variant="h6">
+                פרס {localizedAward[awardName as AwardNames].name}
+              </Typography>
               {awards.map((award, index) => (
                 <AwardWinner
                   key={index}
@@ -84,8 +96,13 @@ const Page: NextPage<Props> = ({ awards, event }) => {
           if (awards.every(award => !award.winner)) return null;
 
           return (
-            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+            <Box
+              key={awardName}
+              sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
+            >
+              <Typography variant="h6">
+                פרס {localizedAward[awardName as AwardNames].name}
+              </Typography>
               {awards.map((award, index) => (
                 <AwardWinner
                   key={index}
@@ -126,7 +143,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const awards = await fetchAwards(eventId);
   if (awards === null) return { redirect: { destination: `/events/${eventId}`, permanent: false } };
 
-  return { props: { awards, event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { awards, event, messages } };
 };
 
 export default Page;
