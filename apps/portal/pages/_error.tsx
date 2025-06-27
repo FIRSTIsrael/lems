@@ -16,12 +16,13 @@ const Error: NextPage<Props> = ({ statusCode }) => {
         transform: 'translateX(-50%) translateY(-50%)'
       }}
     >
+      {/* Error page currently does not support localization */}
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <Typography variant="h1" gutterBottom>
-          שגיאה לא צפויה, אנא נסו שנית
+          Oops! Something went wrong, please try again.
         </Typography>
         <Typography variant="h2" sx={{ color: '#666' }} fontSize="1.5rem">
-          קוד שגיאה: {statusCode}
+          Error code: {statusCode}
         </Typography>
       </Paper>
     </Container>
