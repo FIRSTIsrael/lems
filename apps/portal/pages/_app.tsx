@@ -1,7 +1,6 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
-import { useRouter } from 'next/router';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '../lib/dayjs';
@@ -11,8 +10,7 @@ import ResponsiveAppBar from '../components/app-bar';
 import { Locales } from '../locale/locales';
 
 export default function PortalApp(props: AppProps) {
-  const { Component, pageProps } = props;
-  const router = useRouter();
+  const { Component, pageProps, router } = props;
   const locale = (router.locale ?? 'he') as Locales;
   const emotionCache = createCustomEmotionCache(locale);
   const theme = getLocalizedTheme(locale);
