@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '../lib/dayjs';
-import { baseTheme } from '../lib/theme';
+import getLocalizedTheme from '../lib/theme';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 import { Locales } from '../locale/locales';
@@ -15,6 +15,7 @@ export default function PortalApp(props: AppProps) {
   const router = useRouter();
   const locale = (router.locale ?? 'he') as Locales;
   const emotionCache = createCustomEmotionCache(locale);
+  const theme = getLocalizedTheme(locale);
 
   return (
     <AppCacheProvider {...props} emotionCache={emotionCache}>
@@ -24,7 +25,7 @@ export default function PortalApp(props: AppProps) {
         <title>פורטל אירועים - FIRST LEGO League Challenge</title>
       </Head>
       <NextIntlClientProvider locale={locale} messages={pageProps.messages}>
-        <ThemeProvider theme={baseTheme}>
+        <ThemeProvider theme={theme}>
           <CssBaseline />
           <ResponsiveAppBar />
           <Component {...pageProps} />
