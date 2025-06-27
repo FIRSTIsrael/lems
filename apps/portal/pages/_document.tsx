@@ -1,26 +1,17 @@
 import {
   DocumentHeadTags,
   DocumentHeadTagsProps,
-  documentGetInitialProps,
-} from "@mui/material-nextjs/v15-pagesRouter";
-import {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentProps,
-  DocumentContext,
-} from "next/document";
-import { createRtlEmotionCache } from "../lib/emotion-cache";
-import theme from "../lib/theme";
+  documentGetInitialProps
+} from '@mui/material-nextjs/v15-pagesRouter';
+import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
+import { createRtlEmotionCache } from '../lib/emotion-cache';
+import { baseTheme } from '../lib/theme';
 
-export default function PortalDocument(
-  props: DocumentProps & DocumentHeadTagsProps,
-) {
+export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
   return (
     <Html lang="he" dir="rtl">
       <Head>
-        <meta name="theme-color" content={theme.palette.primary.main} />
+        <meta name="theme-color" content={baseTheme.palette.primary.main} />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -47,7 +38,7 @@ export default function PortalDocument(
 PortalDocument.getInitialProps = async (ctx: DocumentContext) => {
   const emotionCache = createRtlEmotionCache();
   const finalProps = await documentGetInitialProps(ctx, {
-    emotionCache,
+    emotionCache
   });
   return finalProps;
 };
