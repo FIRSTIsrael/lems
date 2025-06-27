@@ -6,11 +6,11 @@ import {
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { baseTheme } from '../lib/theme';
-import { Locales } from '../locale/locales';
+import PortalLocales, { Locales } from '../locale/locales';
 
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided
-  const dir = locale === 'he' ? 'rtl' : 'ltr'; // Set direction based on locale
+  const dir = PortalLocales[locale as Locales].direction;
 
   return (
     <Html lang={locale} dir={dir}>
