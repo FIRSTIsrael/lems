@@ -15,7 +15,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  const t = useTranslations('portal:pages:events:index');
+  const t = useTranslations('pages:events:index');
 
   const { current, past, future } = useMemo(() => {
     const today = dayjs();

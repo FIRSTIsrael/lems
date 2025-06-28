@@ -14,7 +14,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  const t = useTranslations('portal:pages:events:[id]:scoreboard');
+  const t = useTranslations('pages:events:[id]:scoreboard');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);

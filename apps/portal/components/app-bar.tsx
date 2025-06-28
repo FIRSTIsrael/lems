@@ -28,7 +28,7 @@ const pages = [
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const t = useTranslations('portal:components:app-bar');
+  const t = useTranslations('components:app-bar');
 
   return (
     <AppBar position="static">

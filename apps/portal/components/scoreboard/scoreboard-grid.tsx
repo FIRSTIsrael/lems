@@ -12,7 +12,7 @@ interface ScoreboardGridProps {
 }
 
 const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
-  const t = useTranslations('portal:components:scoreboard:scoreboard-grid');
+  const t = useTranslations('components:scoreboard:scoreboard-grid');
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));

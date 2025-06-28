@@ -11,7 +11,7 @@ import ScoreFloater from '../components/scorer/score-floater';
 
 const Scorer = () => {
   const { errors } = useScoresheetValidator();
-  const t = useTranslations('portal:pages:scorer');
+  const t = useTranslations('pages:scorer');
 
   return (
     <>

@@ -1,35 +1,35 @@
 {
-  "portal:pages:404": {
+  "pages:404": {
     "title": "The page you are looking for does not exist",
     "subtitle": "Error 404"
   },
-  "portal:pages:scorer": {
+  "pages:scorer": {
     "title": "Robot Game Scorer",
     "no-equipment-constraint-title": "No Equipment Constraint:",
     "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
   },
-  "portal:pages:index": {
+  "pages:index": {
     "active-events": "Active events",
     "all-events": "All events"
   },
-  "portal:pages:events:index": {
+  "pages:events:index": {
     "fll-events": "<i>FIRST</i> LEGO League Challenge events",
     "active-events": "Active events",
     "future-events": "Future events",
     "past-events": "Past events",
     "no-events": "No events"
   },
-  "portal:pages:events:[id]:index": {
+  "pages:events:[id]:index": {
     "event-teams": "Registered teams"
   },
-  "portal:pages:events:[id]:awards": {
+  "pages:events:[id]:awards": {
     "title": "Awards",
     "eligible-for-advancement": "Eligible for Advancement"
   },
-  "portal:pages:events:[id]:scoreboard": {
+  "pages:events:[id]:scoreboard": {
     "title": "Scoreboard"
   },
-  "portal:pages:events:[id]:schedule:field": {
+  "pages:events:[id]:schedule:field": {
     "title": "Field Schedule",
     "table": {
       "columns": {
@@ -38,7 +38,7 @@
       }
     }
   },
-  "portal:pages:events:[id]:schedule:judging": {
+  "pages:events:[id]:schedule:judging": {
     "title": "לוח זמנים - שיפוט",
     "table": {
       "columns": {
@@ -47,15 +47,15 @@
       }
     }
   },
-  "portal:pages:events:[id]:schedule:general": {
+  "pages:events:[id]:schedule:general": {
     "title": "General Schedule"
   },
 
-  "portal:components:app-bar": {
+  "components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"
   },
-  "portal:components:scoreboard:scoreboard-grid": {
+  "components:scoreboard:scoreboard-grid": {
     "columns": {
       "rank": "Rank",
       "team": "Team",

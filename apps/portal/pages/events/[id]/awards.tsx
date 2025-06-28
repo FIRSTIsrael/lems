@@ -21,7 +21,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ awards, event }) => {
-  const t = useTranslations('portal:pages:events:[id]:awards');
+  const t = useTranslations('pages:events:[id]:awards');
 
   const awardsByName = awards.reduce(
     (acc, award) => {
