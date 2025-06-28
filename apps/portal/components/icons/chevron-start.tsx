@@ -6,15 +6,15 @@ interface DirectionalIconProps extends SvgIconProps {
   sxProps?: SxProps;
 }
 
-const DirectionalIcon: React.FC<DirectionalIconProps> = ({ sxProps, ...props }) => {
+const ChevronStartIcon: React.FC<DirectionalIconProps> = ({ sxProps, ...props }) => {
   const theme = useTheme();
   const isRtl = theme.direction === 'rtl';
 
   return isRtl ? (
-    <ChevronLeftIcon {...props} sx={{ ...sxProps, color: 'rgba(0, 0, 0, 0.54)' }} />
-  ) : (
     <ChevronRightIcon {...props} sx={{ ...sxProps, color: 'rgba(0, 0, 0, 0.54)' }} />
+  ) : (
+    <ChevronLeftIcon {...props} sx={{ ...sxProps, color: 'rgba(0, 0, 0, 0.54)' }} />
   );
 };
 
-export default DirectionalIcon;
+export default ChevronStartIcon;

@@ -1,9 +1,10 @@
+import NextLink from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link } from '@mui/material';
 import { DataGrid, GridColDef, GridComparatorFn } from '@mui/x-data-grid';
 import { PortalScore } from '@lems/types';
 import { compareScoreArrays } from '@lems/utils/arrays';
-import NextLink from 'next/link';
 
 interface ScoreboardGridProps {
   data: PortalScore[];
@@ -11,6 +12,8 @@ interface ScoreboardGridProps {
 }
 
 const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
+  const t = useTranslations('portal:components:scoreboard:scoreboard-grid');
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -32,7 +35,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
   const columns: GridColDef<(typeof data)[number]>[] = [
     {
       field: 'rank',
-      headerName: 'מקום',
+      headerName: t('columns.rank'),
       width: isDesktop ? 75 : 50,
       sortable: true,
       valueGetter: (_, row) => {
@@ -41,7 +44,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
     },
     {
       field: 'teamName',
-      headerName: 'קבוצה',
+      headerName: t('columns.team'),
       width: isDesktop ? 225 : 100,
       renderCell: params => {
         const { team } = params.row;
@@ -66,7 +69,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
     },
     {
       field: 'maxScore',
-      headerName: 'ניקוד',
+      headerName: t('columns.score'),
       width: isDesktop ? 150 : 100,
       sortable: true,
       sortComparator: scoreComparator
@@ -76,7 +79,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
       (_, index) =>
         ({
           field: `match${index + 1}`,
-          headerName: `מקצה ${index + 1}`,
+          headerName: `${t('columns.match')} ${index + 1}`,
           width: isDesktop ? 150 : 100,
 
           valueGetter: (_, row) => {
@@ -94,7 +97,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
       slots={{
         noRowsOverlay: () => (
           <Box display="flex" alignItems="center" justifyContent="center" height="100%">
-            <Typography variant="body1">אין תוצאות</Typography>
+            <Typography variant="body1">{t('no-data')}</Typography>
           </Box>
         )
       }}

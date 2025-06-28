@@ -50,8 +50,18 @@
   "portal:pages:events:[id]:schedule:general": {
     "title": "General Schedule"
   },
+
   "portal:components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"
+  },
+  "portal:components:scoreboard:scoreboard-grid": {
+    "columns": {
+      "rank": "Rank",
+      "team": "Team",
+      "score": "Score",
+      "match": "Match"
+    },
+    "no-data": "No results"
   }
 }

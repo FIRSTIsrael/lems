@@ -50,8 +50,18 @@
   "portal:pages:events:[id]:schedule:general": {
     "title": "לוח זמנים כללי"
   },
+
   "portal:components:app-bar": {
     "events": "אירועים",
     "scorer": "מחשבון ניקוד"
+  },
+  "portal:components:scoreboard:scoreboard-grid": {
+    "columns": {
+      "rank": "מקום",
+      "team": "קבוצה",
+      "score": "ניקוד",
+      "match": "מקצה"
+    },
+    "no-data": "אין תוצאות"
   }
 }
