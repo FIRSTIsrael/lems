@@ -1,11 +1,13 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
 import { localizedMatchStage } from '../../../lib/localization';
-import ScoreboardGrid from '../../../components/scoreboard-grid';
+import { getMessages } from '../../../locale/get-messages';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import ScoreboardGrid from '../../../components/scoreboard/scoreboard-grid';
 import LoadingAnimation from '../../../components/loading-animation';
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  const t = useTranslations('pages:events:[id]:scoreboard');
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -55,7 +59,7 @@ const Page: NextPage<Props> = ({ event }) => {
       ref={containerRef}
     >
       <Box sx={{ pb: 1 }}>
-        <Typography variant="h1">לוח תוצאות</Typography>
+        <Typography variant="h1">{t('title')}</Typography>
 
         <Stack direction="row" spacing={2} alignItems="center">
           {event.isDivision && (
@@ -86,7 +90,8 @@ const Page: NextPage<Props> = ({ event }) => {
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, messages } };
 };
 
 export default Page;

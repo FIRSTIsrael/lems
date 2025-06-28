@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
   TableContainer,
@@ -13,14 +14,15 @@ import {
   Box,
   Stack,
   useMediaQuery,
-  Link
+  Link,
+  useTheme
 } from '@mui/material';
 import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import { localizedMatchStage } from '../../../../lib/localization';
-import theme from '../../../../lib/theme';
+import { getMessages } from '../../../../locale/get-messages';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
@@ -28,16 +30,19 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  const t = useTranslations('pages:events:id:schedule:field');
+
   const {
     data: schedule,
     isLoading,
     error
   } = useRealtimeData<PortalFieldSchedule>(`/events/${event.id}/schedule/field`);
+  const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
-      <Typography variant="h2">לוח זמנים - זירה</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Box
         sx={{
@@ -66,10 +71,10 @@ const Page: NextPage<Props> = ({ event }) => {
                       </TableRow>
                       <TableRow>
                         <TableCell>
-                          <Typography fontWeight={500}>מקצה</Typography>
+                          <Typography fontWeight={500}>{t('table.columns.match')}</Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography fontWeight={500}>זמן התחלה</Typography>
+                          <Typography fontWeight={500}>{t('table.columns.start-time')}</Typography>
                         </TableCell>
                         {round.schedule.columns.map(column => (
                           <TableCell key={column.id}>
@@ -91,13 +96,19 @@ const Page: NextPage<Props> = ({ event }) => {
                             return (
                               <TableCell key={column.id}>
                                 {team ? (
-                                  <Link 
+                                  <Link
                                     href={`/events/${event.id}/teams/${team.number}`}
-                                    sx={{ color: 'inherit', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                                    sx={{
+                                      color: 'inherit',
+                                      textDecoration: 'none',
+                                      '&:hover': { textDecoration: 'underline' }
+                                    }}
                                   >
                                     #{team.number}
                                   </Link>
-                                ) : ''}
+                                ) : (
+                                  ''
+                                )}
                               </TableCell>
                             );
                           })}
@@ -117,9 +128,9 @@ const Page: NextPage<Props> = ({ event }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, messages } };
 };
 
 export default Page;

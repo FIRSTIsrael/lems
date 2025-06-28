@@ -9,13 +9,13 @@ import {
   Divider,
   Stack,
   Typography,
+  useTheme,
   useMediaQuery
 } from '@mui/material';
 import Grid, { GridProps } from '@mui/material/Grid';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
-import theme from '../../lib/theme';
+import ChevronEndIcon from '../icons/chevron-end';
 
 interface EventDescriptionProps extends GridProps {
   event: PortalEvent;
@@ -71,6 +71,7 @@ interface EventLinkProps {
 }
 
 const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => {
+  const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   if (!event.divisions || event.divisions.length === 0) {
@@ -82,7 +83,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           '& .MuiButton-endIcon svg': { fontSize: 24 },
           borderRadius: 3
         }}
-        endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)', position: 'relative' }} />}
+        endIcon={<ChevronEndIcon sxProps={{ position: 'relative' }} />}
         fullWidth
         size="small"
         LinkComponent={Link}
@@ -144,7 +145,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
                 minHeight: 48,
                 borderRadius: 3
               }}
-              endIcon={<ChevronLeftIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />}
+              endIcon={<ChevronEndIcon />}
               fullWidth
               size="small"
               LinkComponent={Link}

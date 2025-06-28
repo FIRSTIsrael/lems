@@ -7,4 +7,9 @@
     "editor.defaultFormatter": "ms-python.black-formatter",
   },
   "nxConsole.generateAiAgentRules": true,
+  "i18n-ally.localesPaths": [
+    "apps/portal/locale",
+    "apps/frontend/locale",
+  ],
+  "i18n-ally.keystyle": "nested" 
 }

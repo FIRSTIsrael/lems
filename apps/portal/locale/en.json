@@ -1,0 +1,80 @@
+{
+  "pages:404": {
+    "title": "The page you are looking for does not exist",
+    "subtitle": "Error 404"
+  },
+  "pages:scorer": {
+    "title": "Robot Game Scorer",
+    "no-equipment-constraint-title": "No Equipment Constraint:",
+    "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+  },
+  "pages:index": {
+    "active-events": "Active events",
+    "no-active-events": "No active events",
+    "all-events": "All events"
+  },
+  "pages:events:index": {
+    "fll-events": "<i>FIRST</i> LEGO League Challenge events",
+    "active-events": "Active events",
+    "future-events": "Future events",
+    "past-events": "Past events",
+    "no-events": "No events"
+  },
+  "pages:events:id:index": {
+    "event-teams": "Registered teams"
+  },
+  "pages:events:id:awards": {
+    "title": "Awards",
+    "eligible-for-advancement": "Eligible for Advancement"
+  },
+  "pages:events:id:scoreboard": {
+    "title": "Scoreboard"
+  },
+  "pages:events:id:schedule:field": {
+    "title": "Field Schedule",
+    "table": {
+      "columns": {
+        "match": "Match",
+        "start-time": "Start Time"
+      }
+    }
+  },
+  "pages:events:id:schedule:judging": {
+    "title": "לוח זמנים - שיפוט",
+    "table": {
+      "columns": {
+        "round": "סבב",
+        "start-time": "זמן התחלה"
+      }
+    }
+  },
+  "pages:events:id:schedule:general": {
+    "title": "General Schedule"
+  },
+  "components:app-bar": {
+    "events": "Events",
+    "scorer": "Scorer"
+  },
+  "components:scoreboard:scoreboard-grid": {
+    "columns": {
+      "rank": "Rank",
+      "team": "Team",
+      "score": "Score",
+      "match": "Match"
+    },
+    "no-data": "No results"
+  },
+  "components:teams:teamSchedule": {
+    "title": "Schedule",
+    "activity": {
+      "match": "{stage} match #{round} - {table} table (#{number})"
+    }
+  },
+  "hooks:useMatchStage": {
+    "stages": {
+      "practice": "Practice",
+      "ranking": "Ranking",
+      "test": "Test"
+    }
+  }
+}
