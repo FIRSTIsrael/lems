@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/MenuRounded';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from './language-switcher';
 
 const pages = [
   {
@@ -92,6 +93,11 @@ const ResponsiveAppBar = () => {
               />
             </Box>
           </Box>
+          
+          {/* Mobile Language Switcher */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <LanguageSwitcher />
+          </Box>
 
           {/* Desktop */}
           <Box
@@ -122,6 +128,11 @@ const ResponsiveAppBar = () => {
                 {t(page.name)}
               </Button>
             ))}
+          </Box>
+          
+          {/* Desktop Language Switcher */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <LanguageSwitcher />
           </Box>
         </Toolbar>
       </Container>

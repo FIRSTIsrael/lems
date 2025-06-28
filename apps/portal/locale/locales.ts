@@ -3,12 +3,14 @@ import { heIL as xDataGridHeIL, enUS as xDataGridEnUS } from '@mui/x-data-grid/l
 
 const PortalLocales = {
   he: {
+    displayName: 'עברית',
     id: 'he',
     direction: 'rtl',
     muiLocale: heIL,
     xDataGridLocale: xDataGridHeIL
   },
   en: {
+    displayName: 'English',
     id: 'en',
     direction: 'ltr',
     muiLocale: enUS,

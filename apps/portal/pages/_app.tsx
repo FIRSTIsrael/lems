@@ -8,12 +8,16 @@ import getLocalizedTheme from '../lib/theme';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 import { Locales } from '../locale/locales';
+import { useHtmlDirection } from '../hooks/use-html-direction';
 
 export default function PortalApp(props: AppProps) {
   const { Component, pageProps, router } = props;
   const locale = (router.locale ?? 'he') as Locales;
   const emotionCache = createCustomEmotionCache(locale);
   const theme = getLocalizedTheme(locale);
+  
+  // This hook will dynamically update the HTML dir and lang attributes
+  useHtmlDirection();
 
   return (
     <AppCacheProvider {...props} emotionCache={emotionCache}>
