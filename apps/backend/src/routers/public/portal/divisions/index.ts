@@ -28,6 +28,11 @@ router.get('/', async (req: Request, res: Response) => {
     date: event.startDate,
     location: event.location,
     isDivision: event.enableDivisions,
+    divisions: event.divisions.map(d => ({
+      id: String(d._id),
+      name: d.name,
+      color: d.color
+    })),
     subtitle: event.enableDivisions ? `בית ${name}` : undefined
   });
 });
