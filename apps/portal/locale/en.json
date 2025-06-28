@@ -51,7 +51,6 @@
   "pages:events:id:schedule:general": {
     "title": "General Schedule"
   },
-
   "components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"
@@ -64,5 +63,18 @@
       "match": "Match"
     },
     "no-data": "No results"
+  },
+  "components:teams:teamSchedule": {
+    "title": "Schedule",
+    "activity": {
+      "match": "{stage} match #{round} - {table} table (#{number})"
+    }
+  },
+  "hooks:useMatchStage": {
+    "stages": {
+      "practice": "Practice",
+      "ranking": "Ranking",
+      "test": "Test"
+    }
   }
 }

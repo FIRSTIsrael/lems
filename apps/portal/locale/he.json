@@ -51,7 +51,6 @@
   "pages:events:id:schedule:general": {
     "title": "לוח זמנים כללי"
   },
-
   "components:app-bar": {
     "events": "אירועים",
     "scorer": "מחשבון ניקוד"
@@ -64,5 +63,18 @@
       "match": "מקצה"
     },
     "no-data": "אין תוצאות"
+  },
+  "components:teams:teamSchedule": {
+    "title": "לוח הזמנים",
+    "activity": {
+      "match": "מקצה {stage} #{round} - שולחן {table} (#{number})"
+    }
+  },
+  "hooks:useMatchStage": {
+    "stages": {
+      "practice": "אימונים",
+      "ranking": "דירוג",
+      "test": "בדיקה"
+    }
   }
 }

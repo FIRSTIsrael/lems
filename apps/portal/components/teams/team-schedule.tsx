@@ -1,17 +1,21 @@
+import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Divider, Paper, Stack, Typography } from '@mui/material';
 import { PortalActivity, RobotGameMatchStage } from '@lems/types';
-import dayjs from 'dayjs';
-import { localizedMatchStage } from '../../lib/localization';
+import { useMatchStage } from '../../locale/hooks/use-match-stage';
 
 interface TeamScheduleProps {
   schedule: PortalActivity<'match' | 'session' | 'general'>[];
 }
 
 const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
+  const t = useTranslations('components:teams:teamSchedule');
+  const matchStageToText = useMatchStage();
+
   return (
     <Paper sx={{ p: 2, pb: 3 }}>
       <Typography variant="h2" gutterBottom>
-        לוח הזמנים
+        {t('title')}
       </Typography>
       <Stack spacing={1}>
         {schedule.map((activity, index) => (
@@ -27,7 +31,12 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
             </Typography>
             <Typography variant="body1">
               {activity.type === 'match' &&
-                `מקצה ${localizedMatchStage[activity.stage as RobotGameMatchStage]} #${activity.round} - שולחן ${activity.table} (#${activity.number})`}
+                t('activity.match', {
+                  stage: matchStageToText(activity.stage as RobotGameMatchStage),
+                  table: activity.table,
+                  round: activity.round,
+                  number: activity.number
+                })}
               {activity.type === 'session' &&
                 `מפגש שיפוט - חדר ${activity.room} (#${activity.number})`}
               {activity.type === 'general' && activity.name}
