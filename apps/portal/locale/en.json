@@ -10,6 +10,7 @@
   },
   "pages:index": {
     "active-events": "Active events",
+    "no-active-events": "No active events",
     "all-events": "All events"
   },
   "pages:events:index": {

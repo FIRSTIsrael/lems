@@ -58,7 +58,7 @@ const Page: NextPage<Props> = ({ events }) => {
         <Typography ml={1} variant="body1" color="text.secondary" gutterBottom>
           {dayjs().format('DD/MM/YYYY')}
         </Typography>
-        <EventList events={activeEvents} emptyText="אין אירועים פעילים" />
+        <EventList events={activeEvents} emptyText={t('no-active-events')} />
       </Paper>
       <Box display="flex" justifyContent="center" textAlign="center" mt={2} width="100%">
         <Button

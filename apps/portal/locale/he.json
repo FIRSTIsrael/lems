@@ -1,6 +1,7 @@
 {
   "pages:index": {
     "active-events": "אירועים פעילים",
+    "no-active-events": "אין אירועים פעילים",
     "all-events": "לכל האירועים"
   },
   "pages:404": {
