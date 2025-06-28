@@ -20,17 +20,17 @@
     "past-events": "Past events",
     "no-events": "No events"
   },
-  "pages:events:[id]:index": {
+  "pages:events:id:index": {
     "event-teams": "Registered teams"
   },
-  "pages:events:[id]:awards": {
+  "pages:events:id:awards": {
     "title": "Awards",
     "eligible-for-advancement": "Eligible for Advancement"
   },
-  "pages:events:[id]:scoreboard": {
+  "pages:events:id:scoreboard": {
     "title": "Scoreboard"
   },
-  "pages:events:[id]:schedule:field": {
+  "pages:events:id:schedule:field": {
     "title": "Field Schedule",
     "table": {
       "columns": {
@@ -39,7 +39,7 @@
       }
     }
   },
-  "pages:events:[id]:schedule:judging": {
+  "pages:events:id:schedule:judging": {
     "title": "לוח זמנים - שיפוט",
     "table": {
       "columns": {
@@ -48,7 +48,7 @@
       }
     }
   },
-  "pages:events:[id]:schedule:general": {
+  "pages:events:id:schedule:general": {
     "title": "General Schedule"
   },
 

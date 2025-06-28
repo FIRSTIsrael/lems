@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, schedule }) => {
-  const t = useTranslations('pages:events:[id]:schedule:general');
+  const t = useTranslations('pages:events:id:schedule:general');
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>

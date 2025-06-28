@@ -26,7 +26,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  const t = useTranslations('pages:events:[id]:schedule:judging');
+  const t = useTranslations('pages:events:id:schedule:judging');
 
   const {
     data: schedule,

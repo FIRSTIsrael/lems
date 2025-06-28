@@ -22,7 +22,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
     isLoading,
     error
   } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
-  const t = useTranslations('pages:events:[id]:index');
+  const t = useTranslations('pages:events:id:index');
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
