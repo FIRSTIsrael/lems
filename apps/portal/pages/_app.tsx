@@ -15,7 +15,7 @@ export default function PortalApp(props: AppProps) {
   const locale = (router.locale ?? 'he') as Locales;
   const emotionCache = createCustomEmotionCache(locale);
   const theme = getLocalizedTheme(locale);
-  
+
   // This hook will dynamically update the HTML dir and lang attributes
   useHtmlDirection();
 

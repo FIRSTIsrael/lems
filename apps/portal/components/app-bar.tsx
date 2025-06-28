@@ -93,7 +93,7 @@ const ResponsiveAppBar = () => {
               />
             </Box>
           </Box>
-          
+
           {/* Mobile Language Switcher */}
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <LanguageSwitcher />
@@ -129,7 +129,7 @@ const ResponsiveAppBar = () => {
               </Button>
             ))}
           </Box>
-          
+
           {/* Desktop Language Switcher */}
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <LanguageSwitcher />
