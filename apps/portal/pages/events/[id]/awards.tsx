@@ -11,7 +11,7 @@ import {
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
-import { getMessages } from '../../../lib/localization';
+import { getMessages } from '../../../locale/get-messages';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
 

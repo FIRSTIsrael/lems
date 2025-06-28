@@ -1,7 +1,7 @@
 import { Container, Paper, Typography } from '@mui/material';
 import { GetStaticPropsContext, NextPage } from 'next';
 import { useTranslations } from 'next-intl';
-import { getMessages } from '../lib/localization';
+import { getMessages } from '../locale/get-messages';
 
 const Custom404: NextPage = () => {
   const t = useTranslations('pages:404');

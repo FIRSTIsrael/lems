@@ -8,7 +8,7 @@ import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
-import { getMessages } from '../../../lib/localization';
+import { getMessages } from '../../../locale/get-messages';
 
 interface Props {
   event: PortalEvent;

@@ -10,7 +10,7 @@ import {
   PortalEventStatus
 } from '@lems/types';
 import { fetchEvent, fetchTeam } from '../../../../lib/api';
-import { getMessages } from '../../../../lib/localization';
+import { getMessages } from '../../../../locale/get-messages';
 import TeamSchedule from '../../../../components/teams/team-schedule';
 import TeamInfo from '../../../../components/teams/team-info';
 import TeamAwards from '../../../../components/teams/team-awards';

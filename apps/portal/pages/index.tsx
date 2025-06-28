@@ -8,7 +8,7 @@ import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../lib/api';
 import EventList from '../components/events/event-list';
 import LiveIcon from '../components/live-icon';
-import { getMessages } from '../lib/localization';
+import { getMessages } from '../locale/get-messages';
 
 interface Props {
   events: Array<PortalEvent>;

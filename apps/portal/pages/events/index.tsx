@@ -6,7 +6,7 @@ import { Container, Typography, Stack, Paper, List, ListItem, ListItemButton } f
 import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 import { fetchEvents } from '../../lib/api';
-import { getMessages } from '../../lib/localization';
+import { getMessages } from '../../locale/get-messages';
 import EventList from '../../components/events/event-list';
 import RichText from '../../components/rich-text';
 

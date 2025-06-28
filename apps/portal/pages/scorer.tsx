@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Container, Typography, Stack, Box } from '@mui/material';
 import { SEASON_SCORESHEET } from '@lems/season';
-import { getMessages } from '../lib/localization';
+import { getMessages } from '../locale/get-messages';
 import ScoresheetMission from '../components/scorer/scoresheet-mission';
 import NoEquipmentImage from '../public/assets/scoresheet/no-equipment.svg';
 import { MissionProvider, useScoresheetValidator } from '../components/scorer/mission-context';

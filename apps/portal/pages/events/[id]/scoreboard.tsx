@@ -4,7 +4,8 @@ import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
-import { localizedMatchStage, getMessages } from '../../../lib/localization';
+import { localizedMatchStage } from '../../../lib/localization';
+import { getMessages } from '../../../locale/get-messages';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import ScoreboardGrid from '../../../components/scoreboard/scoreboard-grid';
 import LoadingAnimation from '../../../components/loading-animation';
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  const t = useTranslations('pages:events:id:scoreboard');
+  const t = useTranslations('pages:events:[id]:scoreboard');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);

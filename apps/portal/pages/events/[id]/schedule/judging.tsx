@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { PortalEvent, PortalJudgingSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
-import { getMessages } from '../../../../lib/localization';
+import { getMessages } from '../../../../locale/get-messages';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';

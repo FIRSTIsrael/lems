@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { Typography, Container, Stack, Divider, Paper } from '@mui/material';
 import { PortalActivity, PortalEvent } from '@lems/types';
 import { fetchEvent, fetchGeneralSchedule } from '../../../../lib/api';
-import { getMessages } from '../../../../lib/localization';
+import { getMessages } from '../../../../locale/get-messages';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
