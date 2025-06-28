@@ -1,8 +1,11 @@
 import { Container, Paper, Typography } from '@mui/material';
 import { GetStaticPropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import { getMessages } from '../lib/localization';
 
 const Custom404: NextPage = () => {
+  const t = useTranslations('portal:pages:404');
+
   return (
     <Container
       maxWidth="md"
@@ -15,10 +18,10 @@ const Custom404: NextPage = () => {
     >
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <Typography variant="h1" gutterBottom>
-          הדף אליו נכנסתם לא נמצא
+          {t('title')}
         </Typography>
         <Typography variant="h2" sx={{ color: '#666' }} fontSize="1.5rem">
-          שגיאה 404
+          {t('subtitle')}
         </Typography>
       </Paper>
     </Container>

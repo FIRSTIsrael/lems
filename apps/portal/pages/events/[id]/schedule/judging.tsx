@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
   TableContainer,
@@ -25,6 +26,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  const t = useTranslations('portal:pages:events:[id]:schedule:judging');
+
   const {
     data: schedule,
     isLoading,
@@ -33,7 +36,7 @@ const Page: NextPage<Props> = ({ event }) => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
-      <Typography variant="h2">לוח זמנים - שיפוט</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Box
         sx={{
@@ -50,10 +53,10 @@ const Page: NextPage<Props> = ({ event }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>
-                      <Typography fontWeight={500}>סבב</Typography>
+                      <Typography fontWeight={500}>{t('table.columns.round')}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontWeight={500}>זמן התחלה</Typography>
+                      <Typography fontWeight={500}>{t('table.columns.start-time')}</Typography>
                     </TableCell>
                     {schedule.columns.map(column => (
                       <TableCell key={column.id}>

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  const t = useTranslations('portal:pages:events:[id]:scoreboard');
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -55,7 +58,7 @@ const Page: NextPage<Props> = ({ event }) => {
       ref={containerRef}
     >
       <Box sx={{ pb: 1 }}>
-        <Typography variant="h1">לוח תוצאות</Typography>
+        <Typography variant="h1">{t('title')}</Typography>
 
         <Stack direction="row" spacing={2} alignItems="center">
           {event.isDivision && (

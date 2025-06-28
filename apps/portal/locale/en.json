@@ -1,4 +1,17 @@
 {
+  "portal:pages:404": {
+    "title": "The page you are looking for does not exist",
+    "subtitle": "Error 404"
+  },
+  "portal:pages:scorer": {
+    "title": "Robot Game Scorer",
+    "no-equipment-constraint-title": "No Equipment Constraint:",
+    "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+  },
+  "portal:pages:index": {
+    "active-events": "Active events",
+    "all-events": "All events"
+  },
   "portal:pages:events:index": {
     "fll-events": "<i>FIRST</i> LEGO League Challenge events",
     "active-events": "Active events",
@@ -9,12 +22,34 @@
   "portal:pages:events:[id]:index": {
     "event-teams": "Registered teams"
   },
-  "portal:pages:scorer": {
-    "title": "Robot Game Scorer",
-    "no-equipment-constraint-title": "No Equipment Constraint:",
-    "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+  "portal:pages:events:[id]:awards": {
+    "title": "Awards",
+    "eligible-for-advancement": "Eligible for Advancement"
   },
-  
+  "portal:pages:events:[id]:scoreboard": {
+    "title": "Scoreboard"
+  },
+  "portal:pages:events:[id]:schedule:field": {
+    "title": "Field Schedule",
+    "table": {
+      "columns": {
+        "match": "Match",
+        "start-time": "Start Time"
+      }
+    }
+  },
+  "portal:pages:events:[id]:schedule:judging": {
+    "title": "לוח זמנים - שיפוט",
+    "table": {
+      "columns": {
+        "round": "סבב",
+        "start-time": "זמן התחלה"
+      }
+    }
+  },
+  "portal:pages:events:[id]:schedule:general": {
+    "title": "General Schedule"
+  },
   "portal:components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"

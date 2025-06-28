@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
 import { Container, Box, Typography } from '@mui/material';
 import {
@@ -20,6 +21,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ awards, event }) => {
+  const t = useTranslations('portal:pages:events:[id]:awards');
+
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
@@ -57,7 +60,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
         height: containerHeight ? `${containerHeight}px` : 'auto'
       }}
     >
-      <Typography variant="h1">פרסים</Typography>
+      <Typography variant="h1">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
 
       {/* Personal Awards First */}
@@ -120,7 +123,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
 
       {advancement?.length > 0 && (
         <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-          <Typography variant="h6">מעפילות לתחרות האליפות</Typography>
+          <Typography variant="h6">{t('eligibile-for-advancement')}</Typography>
           <Box sx={{ mt: 1 }}>
             {advancement.map((award, index) => {
               if (!award.winner || typeof award.winner === 'string') return null;

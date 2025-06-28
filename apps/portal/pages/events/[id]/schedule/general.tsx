@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Typography, Container, Stack, Divider, Paper } from '@mui/material';
 import { PortalActivity, PortalEvent } from '@lems/types';
@@ -12,9 +13,11 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, schedule }) => {
+  const t = useTranslations('portal:pages:events:[id]:schedule:general');
+
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
-      <Typography variant="h2">לוח זמנים כללי</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Stack component={Paper} spacing={1} p={2} mt={2}>
         {schedule.length === 0 && <Typography variant="body1">אין לוח זמנים כללי</Typography>}
