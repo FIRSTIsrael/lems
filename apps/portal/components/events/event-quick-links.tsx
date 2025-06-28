@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Button, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
+import { useTranslations } from 'next-intl';
+import RichText from '../../components/rich-text';
 
 interface EventQuickLinksProps {
   event: PortalEvent;
@@ -9,6 +11,8 @@ interface EventQuickLinksProps {
 }
 
 const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) => {
+  const t = useTranslations('components:events:event-quick-links');
+
   return (
     <Grid
       container
@@ -25,7 +29,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/scoreboard`}
         >
-          לוח תוצאות
+          {t('scoreboard')}
         </Button>
       </Grid>
       {hasAwards && (
@@ -37,7 +41,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
             LinkComponent={Link}
             href={`/events/${event.id}/awards`}
           >
-            פרסים
+            {t('awards')}
           </Button>
         </Grid>
       )}
@@ -49,7 +53,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/field`}
         >
-          לוח זמנים - זירה
+          {t('schedule_field')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -60,7 +64,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/judging`}
         >
-          לוח זמנים - שיפוט
+          {t('schedule_judging')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -71,7 +75,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/general`}
         >
-          לוח זמנים כללי
+          {t('schedule_general')}
         </Button>
       </Grid>
     </Grid>

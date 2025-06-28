@@ -70,6 +70,21 @@
       "match": "{stage} match #{round} - {table} table (#{number})"
     }
   },
+  "components:events:event-quick-links": {
+    "scoreboard": "Scoreboard",
+    "awards": "Awards",
+    "schedule_field": "Field Schedule",
+    "schedule_judging": "Judging Schedule",
+    "schedule_general": "General Schedule"
+  },
+  "components:events:event-status": {
+    "active-event": "Active event",
+    "current-match": "Current match - match",
+    "estimated-time": "Estimated time:",
+    "all-matches-completed": "All matches completed",
+    "current-session": "Current session - session",
+    "all-sessions-completed": "All sessions completed"
+  },
   "hooks:useMatchStage": {
     "stages": {
       "practice": "Practice",

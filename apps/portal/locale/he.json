@@ -70,6 +70,23 @@
       "match": "מקצה {stage} #{round} - שולחן {table} (#{number})"
     }
   },
+  "components:events:event-quick-links": {
+    "scoreboard": "לוח תוצאות",
+    "awards": "פרסים",
+    "schedule_field": "לוח זמנים - זירה",
+    "schedule_judging": "לוח זמנים - שיפוט",
+    "schedule_general": "לוח זמנים כללי"
+  },
+  "components:events:event-status": {
+    "active-event": "אירוע פעיל",
+    "current-match": "מקצה נוכחי- מקצה ",
+    "estimated-time": "זמן מתוכנן:",
+    
+    "all-matches-completed": "כל המקצים הושלמו",
+    "current-session": "סבב שיפוט נוכחי- סבב",
+    "all-sessions-completed": "כל סבבי השיפוט הושלמו"
+  },
+
   "hooks:useMatchStage": {
     "stages": {
       "practice": "אימונים",
@@ -77,4 +94,5 @@
       "test": "בדיקה"
     }
   }
+
 }
