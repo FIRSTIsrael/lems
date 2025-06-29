@@ -123,7 +123,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
 
       {advancement?.length > 0 && (
         <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-          <Typography variant="h6">{t('eligibile-for-advancement')}</Typography>
+          <Typography variant="h6">{t('eligible-for-advancement')}</Typography>
           <Box sx={{ mt: 1 }}>
             {advancement.map((award, index) => {
               if (!award.winner || typeof award.winner === 'string') return null;

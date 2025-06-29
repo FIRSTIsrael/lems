@@ -12,11 +12,7 @@ const TeamInfo: React.FC<TeamInfoProps> = ({ team, event }) => {
     <Paper sx={{ p: 2, flexGrow: 1 }}>
       <Grid container alignItems="center">
         <Grid size={4}>
-          <Avatar
-            src="/assets/default-avatar.svg"
-            alt="לוגו קבוצתי"
-            sx={{ width: 72, height: 72 }}
-          />
+          <Avatar src="/assets/default-avatar.svg" alt="Team logo" sx={{ width: 72, height: 72 }} />
         </Grid>
         <Grid size={8}>
           <Typography variant="h2">
