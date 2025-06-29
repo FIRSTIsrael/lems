@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { PortalScore } from '@lems/types';
 import { localizedMatchStage } from '../../lib/localization';
+import { useTranslations } from 'next-intl';
 
 interface TeamRobotScoresProps {
   score: PortalScore;
@@ -17,28 +18,30 @@ interface TeamRobotScoresProps {
 }
 
 const TeamRobotScores: React.FC<TeamRobotScoresProps> = ({ score, currentStage }) => {
+  const t = useTranslations('components:teams:team-scores');
+
   return (
     <Paper sx={{ p: 2, height: '100%' }}>
-      <Typography variant="h2">ביצועי הרובוט</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <Typography color="text.secondary" gutterBottom>
-        מקצי {localizedMatchStage[currentStage]}
+        {t('match-kind', { stage: localizedMatchStage[currentStage] })}
       </Typography>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography fontWeight={500}>מקצה</Typography>
+                <Typography fontWeight={500}>{t('match')}</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight={500}>ניקוד</Typography>
+                <Typography fontWeight={500}>{t('score')}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {score.scores.map((score, index) => (
               <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell>מקצה #{index + 1}</TableCell>
+                <TableCell>{t('match-number', { number: index + 1 })}</TableCell>
                 <TableCell>{score ?? '-'}</TableCell>
               </TableRow>
             ))}

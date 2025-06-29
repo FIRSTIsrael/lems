@@ -38,7 +38,10 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
                   number: activity.number
                 })}
               {activity.type === 'session' &&
-                `מפגש שיפוט - חדר ${activity.room} (#${activity.number})`}
+                t('activity.session', {
+                  room: activity.room,
+                  number: activity.number
+                })}
               {activity.type === 'general' && activity.name}
             </Typography>
           </Stack>

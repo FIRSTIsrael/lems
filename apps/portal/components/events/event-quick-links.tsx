@@ -3,7 +3,6 @@ import { Button, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { PortalEvent } from '@lems/types';
 import { useTranslations } from 'next-intl';
-import RichText from '../../components/rich-text';
 
 interface EventQuickLinksProps {
   event: PortalEvent;
@@ -53,7 +52,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/field`}
         >
-          {t('schedule_field')}
+          {t('schedule-field')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -64,7 +63,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/judging`}
         >
-          {t('schedule_judging')}
+          {t('schedule-judging')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -75,7 +74,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/general`}
         >
-          {t('schedule_general')}
+          {t('schedule-general')}
         </Button>
       </Grid>
     </Grid>

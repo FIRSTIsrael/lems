@@ -40,17 +40,22 @@
     }
   },
   "pages:events:id:schedule:judging": {
-    "title": "לוח זמנים - שיפוט",
+    "title": "Judging Schedule",
     "table": {
       "columns": {
-        "round": "סבב",
-        "start-time": "זמן התחלה"
+        "round": "Round",
+        "start-time": "Start Time"
       }
     }
   },
   "pages:events:id:schedule:general": {
-    "title": "General Schedule"
+    "title": "General Schedule",
+    "no-schedule": "there is no general schedule"
   },
+  "pages:_app": {
+    "title": "FIRST LEGO League Challenge events portal"
+  },
+  
   "components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"
@@ -67,23 +72,42 @@
   "components:teams:teamSchedule": {
     "title": "Schedule",
     "activity": {
-      "match": "{stage} match #{round} - {table} table (#{number})"
+      "match": "{stage} match #{round} - {table} table (#{number})",
+      "session": "Judging session - room {room} #{number}" 
     }
+  },
+  "components:teams:team-scores": {
+    "title": "Robot game scores",
+    "matched":"Matches",
+    "match":"Match",
+    "score":"Score",
+    "match-kind":"{stage} match ",
+    "match-number": "Match #{number}"
   },
   "components:events:event-quick-links": {
     "scoreboard": "Scoreboard",
     "awards": "Awards",
-    "schedule_field": "Field Schedule",
-    "schedule_judging": "Judging Schedule",
-    "schedule_general": "General Schedule"
+    "schedule-field": "Field Schedule",
+    "schedule-judging": "Judging Schedule",
+    "schedule-general": "General Schedule"
   },
+
   "components:events:event-status": {
     "active-event": "Active event",
-    "current-match": "Current match - match",
-    "estimated-time": "Estimated time:",
+    "current-match": "Current match: #{number}",
+    "current-match-time": "Scheduled time: {time}",
     "all-matches-completed": "All matches completed",
-    "current-session": "Current session - session",
+    "current-session": "Current session: #{number}",
+    "current-session-time": "Scheduled time: {time}",
     "all-sessions-completed": "All sessions completed"
+  },
+  "components:teams:team-awards": {
+    "Awards": "Awards",
+    "Award-place": "Place"
+  },
+  "components:teams:team-list": {
+    "team": "Team",
+    "place": "Place"
   },
   "hooks:useMatchStage": {
     "stages": {

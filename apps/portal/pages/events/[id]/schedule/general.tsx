@@ -20,7 +20,7 @@ const Page: NextPage<Props> = ({ event, schedule }) => {
       <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Stack component={Paper} spacing={1} p={2} mt={2}>
-        {schedule.length === 0 && <Typography variant="body1">אין לוח זמנים כללי</Typography>}
+        {schedule.length === 0 && <Typography variant="body1">{t('no-schedule')}</Typography>}
         {schedule.map((activity, index) => (
           <Stack
             key={index}
