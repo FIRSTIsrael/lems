@@ -36,7 +36,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
         </Stack>
       )}
       <EventInfo event={event} teamCount={teams.length} />
-      {!isLoading && !error && status.isLive && <EventStatus event={event} status={status} />}
+      {!isLoading && !error && status.isLive && <EventStatus status={status} />}
       <EventQuickLinks event={event} hasAwards={hasAwards} />
       <Typography variant="h2" gutterBottom>
         {t('event-teams')}

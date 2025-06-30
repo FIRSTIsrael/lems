@@ -60,9 +60,7 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
           )}
         </Grid>
         <Grid size={12}>
-          {!statusLoading && !statusError && status.isLive && (
-            <EventStatus event={event} status={status} />
-          )}
+          {!statusLoading && !statusError && status.isLive && <EventStatus status={status} />}
           {(scheduleLoading || scheduleError) && <LoadingAnimation />}
           {!scheduleLoading && !scheduleError && <TeamSchedule schedule={schedule} />}
         </Grid>

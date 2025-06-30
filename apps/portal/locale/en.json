@@ -25,10 +25,12 @@
   },
   "pages:events:id:awards": {
     "title": "Awards",
-    "eligible-for-advancement": "Eligible for Advancement"
+    "eligible-for-advancement": "Eligible for Advancement",
+    "award-name": "{award} Award"
   },
   "pages:events:id:scoreboard": {
-    "title": "Scoreboard"
+    "title": "Scoreboard",
+    "subtitle": "{stage} matches"
   },
   "pages:events:id:schedule:field": {
     "title": "Field Schedule",
@@ -40,16 +42,17 @@
     }
   },
   "pages:events:id:schedule:judging": {
-    "title": "לוח זמנים - שיפוט",
+    "title": "Judging Schedule",
     "table": {
       "columns": {
-        "round": "סבב",
-        "start-time": "זמן התחלה"
+        "round": "Round",
+        "start-time": "Start Time"
       }
     }
   },
   "pages:events:id:schedule:general": {
-    "title": "General Schedule"
+    "title": "General Schedule",
+    "no-schedule": "No general schedule"
   },
   "components:app-bar": {
     "events": "Events",
@@ -64,17 +67,116 @@
     },
     "no-data": "No results"
   },
-  "components:teams:teamSchedule": {
+  "components:teams:team-schedule": {
     "title": "Schedule",
     "activity": {
-      "match": "{stage} match #{round} - {table} table (#{number})"
+      "match": "{stage} match #{round} - {table} table (#{number})",
+      "session": "Judging session - {room} room (#{number})"
     }
+  },
+  "components:teams:team-scores": {
+    "title": "Robot Game scores",
+    "subtitle": "{stage} matches",
+    "columns": {
+      "match": "Match",
+      "score": "Score"
+    },
+    "match-number": "Match #{number}"
+  },
+  "components:events:event-quick-links": {
+    "scoreboard": "Scoreboard",
+    "awards": "Awards",
+    "field-schedule": "Field Schedule",
+    "judging-schedule": "Judging Schedule",
+    "general-schedule": "General Schedule"
+  },
+  "components:events:event-status": {
+    "active-event": "Active event",
+    "current-match": "Current match: #{number}",
+    "current-match-time": "Scheduled time: {time}",
+    "all-matches-completed": "All matches completed",
+    "current-session": "Current session: #{number}",
+    "current-session-time": "Scheduled time: {time}",
+    "all-sessions-completed": "All sessions completed"
+  },
+  "components:events:award-winner": {
+    "award": {
+      "name": "{name} Award",
+      "place": ", {place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} Place"
+    }
+  },
+  "components:teams:team-awards": {
+    "title": "Awards"
+  },
+  "components:teams:team-list": {
+    "team": "Team",
+    "location": "Location"
   },
   "hooks:useMatchStage": {
     "stages": {
       "practice": "Practice",
       "ranking": "Ranking",
       "test": "Test"
+    }
+  },
+  "hooks:useAwardName": {
+    "awards": {
+      "core-values": {
+        "name": "Core Values",
+        "description": "This team displays extraordinary enthusiasm and spirit, knows they can accomplish more together than they could as individuals, and shows each other and other teams respect at all times."
+      },
+      "innovation-project": {
+        "name": "Innovation Project",
+        "description": "This team utilizes diverse resources for their Innovation Project to help them gain a comprehensive understanding of their problem; has a creative, well-researched solution; and effectively communicates their findings to judges and the community."
+      },
+      "robot-design": {
+        "name": "Robot Design",
+        "description": "This team uses outstanding programming principles and solid engineering practices to develop a robot that is mechanically sound, durable, efficient, and highly capable of performing challenge missions."
+      },
+      "robot-performance": {
+        "name": "Robot Performance",
+        "description": "This award celebrates a team that scores the most points during the Robot Game. Teams have a chance to compete in at least three 2.5-minute matches, and their highest score counts."
+      },
+      "champions": {
+        "name": "Champion's",
+        "description": "This award celebrates a team that embodies the FIRST LEGO® League Challenge experience by fully embracing the Core Values while achieving excellence and innovation in Robot Performance, Robot Design, and the Innovation Project."
+      },
+      "impact": {
+        "name": "Impact",
+        "description": "This award celebrates a team that has made a significant ongoing impact on their community. They demonstrate that they understand the importance of sharing their knowledge and inspiring others."
+      },
+      "lead-mentor": {
+        "name": "Coach/Mentor",
+        "description": "Coaches and mentors inspire their teams to do their best, both as individuals and together. Without them, there would be no FIRST LEGO League Challenge. This award goes to the coach or mentor whose leadership and guidance is clearly evident and best exemplifies the FIRST Core Values."
+      },
+      "volunteer-of-the-year": {
+        "name": "Volunteer of the Year",
+        "description": "This award celebrates a volunteer who has made a significant impact on FIRST LEGO League this year."
+      },
+      "breakthrough": {
+        "name": "Breakthrough",
+        "description": "This award celebrates a team that made significant progress in their confidence and capability in both the Robot Game and Innovation Project and are a shining example of excellent Core Values. They demonstrate that they understand that what they discover is more important than what they win. "
+      },
+      "rising-all-star": {
+        "name": "Rising All-Star",
+        "description": "This award celebrates a team that the judges notice and expect great things from in the future."
+      },
+      "motivate": {
+        "name": "Motivate",
+        "description": "This award celebrates a team that embraces the culture of FIRST LEGO League through team building, team spirit, and displayed enthusiasm."
+      },
+      "judges-award": {
+        "name": "Judges' Award",
+        "description": "This award celebrates a team that is recognized by the judges for their outstanding work and dedication."
+      },
+      "excellence-in-engineering": {
+        "name": "Excellence in Engineering",
+        "description": "This award celebrates a team with an efficiently designed robot, an innovative project solution that effectively addresses the season challenge, and Core Values evident in all they do."
+      },
+      "advancement": {
+        "name": "Advancement",
+        "description": "Teams advancing to the next stage of competition"
+      }
     }
   }
 }

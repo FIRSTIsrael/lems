@@ -48,7 +48,12 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
                 {localizedMission.title}
               </Typography>
               {mission.noEquipment && (
-                <Image src={NoEquipmentImage} width={35} height={35} alt="איסור ציוד" />
+                <Image
+                  src={NoEquipmentImage}
+                  width={35}
+                  height={35}
+                  alt="No equipment constraint"
+                />
               )}
             </Stack>
           </Grid>
@@ -106,7 +111,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
             width={0}
             height={0}
             sizes="100vw"
-            alt={`תמונה של משימה ${mission.id}`}
+            alt={`Mission photo ${mission.id}`}
             style={{
               width: '100%',
               height: 'auto'

@@ -9,9 +9,9 @@ import {
   PersonalAwardTypes,
   PersonalAwards
 } from '@lems/types';
-import { localizedAward } from '@lems/season';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
 import { getMessages } from '../../../locale/get-messages';
+import { useLocaleAwardName } from '../../../locale/hooks/use-locale-award';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
 
@@ -22,6 +22,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({ awards, event }) => {
   const t = useTranslations('pages:events:id:awards');
+  const awardNameToText = useLocaleAwardName();
 
   const awardsByName = awards.reduce(
     (acc, award) => {
@@ -75,18 +76,10 @@ const Page: NextPage<Props> = ({ awards, event }) => {
               sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
             >
               <Typography variant="h6">
-                פרס {localizedAward[awardName as AwardNames].name}
+                {t('award-name', { award: awardNameToText(awardName as AwardNames) })}
               </Typography>
               {awards.map((award, index) => (
-                <AwardWinner
-                  key={index}
-                  award={award}
-                  winnerText={
-                    typeof award.winner === 'string'
-                      ? award.winner
-                      : `${award.winner?.name} #${award.winner?.number}`
-                  }
-                />
+                <AwardWinner key={index} award={award} />
               ))}
             </Box>
           );
@@ -104,18 +97,10 @@ const Page: NextPage<Props> = ({ awards, event }) => {
               sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
             >
               <Typography variant="h6">
-                פרס {localizedAward[awardName as AwardNames].name}
+                {t('award-name', { award: awardNameToText(awardName as AwardNames) })}
               </Typography>
               {awards.map((award, index) => (
-                <AwardWinner
-                  key={index}
-                  award={award}
-                  winnerText={
-                    typeof award.winner === 'string'
-                      ? award.winner
-                      : `${award.winner?.name} #${award.winner?.number}`
-                  }
-                />
+                <AwardWinner key={index} award={award} />
               ))}
             </Box>
           );
@@ -123,7 +108,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
 
       {advancement?.length > 0 && (
         <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-          <Typography variant="h6">{t('eligibile-for-advancement')}</Typography>
+          <Typography variant="h6">{t('eligible-for-advancement')}</Typography>
           <Box sx={{ mt: 1 }}>
             {advancement.map((award, index) => {
               if (!award.winner || typeof award.winner === 'string') return null;

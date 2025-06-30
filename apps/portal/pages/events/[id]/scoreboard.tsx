@@ -4,8 +4,8 @@ import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Container, Typography, Box, Stack } from '@mui/material';
 import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
-import { localizedMatchStage } from '../../../lib/localization';
 import { getMessages } from '../../../locale/get-messages';
+import { useLocaleMatchStage } from '../../../locale/hooks/use-locale-match-stage';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import ScoreboardGrid from '../../../components/scoreboard/scoreboard-grid';
 import LoadingAnimation from '../../../components/loading-animation';
@@ -15,7 +15,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  const t = useTranslations('pages:events:[id]:scoreboard');
+  const t = useTranslations('pages:events:id:scoreboard');
+  const matchStageToText = useLocaleMatchStage();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState<number>(0);
@@ -68,7 +69,11 @@ const Page: NextPage<Props> = ({ event }) => {
           <Typography variant="body1" color="text.secondary" gutterBottom>
             {event.name}
             {event.isDivision && ` - ${event.subtitle}`}
-            {!statusLoading && !statusError && `: מקצי ${localizedMatchStage[status.field.stage]}`}
+            {!statusLoading &&
+              !statusError &&
+              `: ${t('subtitle', {
+                stage: matchStageToText(status.field.stage)
+              })}`}
           </Typography>
         </Stack>
       </Box>

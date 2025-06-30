@@ -2,15 +2,15 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Divider, Paper, Stack, Typography } from '@mui/material';
 import { PortalActivity, RobotGameMatchStage } from '@lems/types';
-import { useMatchStage } from '../../locale/hooks/use-match-stage';
+import { useLocaleMatchStage } from '../../locale/hooks/use-locale-match-stage';
 
 interface TeamScheduleProps {
   schedule: PortalActivity<'match' | 'session' | 'general'>[];
 }
 
 const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
-  const t = useTranslations('components:teams:teamSchedule');
-  const matchStageToText = useMatchStage();
+  const t = useTranslations('components:teams:team-schedule');
+  const matchStageToText = useLocaleMatchStage();
 
   return (
     <Paper sx={{ p: 2, pb: 3 }}>
@@ -38,7 +38,10 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
                   number: activity.number
                 })}
               {activity.type === 'session' &&
-                `מפגש שיפוט - חדר ${activity.room} (#${activity.number})`}
+                t('activity.session', {
+                  room: activity.room,
+                  number: activity.number
+                })}
               {activity.type === 'general' && activity.name}
             </Typography>
           </Stack>
