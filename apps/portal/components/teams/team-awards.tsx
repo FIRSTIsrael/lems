@@ -10,10 +10,11 @@ interface TeamAwardsProps {
 
 const TeamAwards: React.FC<TeamAwardsProps> = ({ awards }) => {
   const t = useTranslations('components:teams:team-awards');
+
   return (
     <Paper sx={{ p: 2, mt: 2, flexGrow: 1 }}>
       <Typography variant="h2" gutterBottom>
-        {t('Awards')}
+        {t('title')}
       </Typography>
       {awards
         .filter(award => award.name !== 'advancement')

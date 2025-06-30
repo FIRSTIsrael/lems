@@ -52,6 +52,7 @@
     "title": "לוח זמנים כללי",
     "no-schedule": "אין לוח זמנים כללי"
   },
+
   "components:app-bar": {
     "events": "אירועים",
     "scorer": "מחשבון ניקוד"
@@ -65,7 +66,7 @@
     },
     "no-data": "אין תוצאות"
   },
-  "components:teams:teamSchedule": {
+  "components:teams:team-schedule": {
     "title": "לוח הזמנים",
     "activity": {
       "match": "מקצה {stage} #{round} - שולחן {table} (#{number})",
@@ -74,18 +75,19 @@
   },
   "components:teams:team-scores": {
     "title": "ביצועי הרובוט",
-    "matched":"מקצים",
-    "match":"מקצה",
-    "score":"ניקוד",
-    "match-kind":" מקצה {stage} ",
+    "subtitle": "מקצי {stage}",
+    "columns": {
+      "match": "מקצה",
+      "score": "ניקוד"
+    },
     "match-number": "מקצה #{number}"
   },
   "components:events:event-quick-links": {
     "scoreboard": "לוח תוצאות",
     "awards": "פרסים",
-    "schedule-field": "לוח זמנים - זירה",
-    "schedule-judging": "לוח זמנים - שיפוט",
-    "schedule-general": "לוח זמנים כללי"
+    "field-schedule": "לוח זמנים - זירה",
+    "judging-schedule": "לוח זמנים - שיפוט",
+    "general-schedule": "לוח זמנים כללי"
   },
   "components:events:event-status": {
     "active-event": "אירוע פעיל",
@@ -97,13 +99,13 @@
     "all-sessions-completed": "כל סבבי השיפוט הושלמו"
   },
   "components:teams:team-awards": {
-    "Awards": "פרסים",
-    "Award-place": "מקום"
+    "title": "פרסים"
   },
   "components:teams:team-list": {
     "team": "קבוצה",
-    "place": "מקום"
+    "location": "מיקום"
   },
+
   "hooks:useMatchStage": {
     "stages": {
       "practice": "אימונים",
@@ -111,5 +113,4 @@
       "test": "בדיקה"
     }
   }
-
 }

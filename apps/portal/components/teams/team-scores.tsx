@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import {
   Paper,
   Table,
@@ -9,8 +10,7 @@ import {
   Typography
 } from '@mui/material';
 import { PortalScore } from '@lems/types';
-import { localizedMatchStage } from '../../lib/localization';
-import { useTranslations } from 'next-intl';
+import { useLocaleMatchStage } from '../../locale/hooks/use-locale-match-stage';
 
 interface TeamRobotScoresProps {
   score: PortalScore;
@@ -19,22 +19,23 @@ interface TeamRobotScoresProps {
 
 const TeamRobotScores: React.FC<TeamRobotScoresProps> = ({ score, currentStage }) => {
   const t = useTranslations('components:teams:team-scores');
+  const matchStageToText = useLocaleMatchStage();
 
   return (
     <Paper sx={{ p: 2, height: '100%' }}>
       <Typography variant="h2">{t('title')}</Typography>
       <Typography color="text.secondary" gutterBottom>
-        {t('match-kind', { stage: localizedMatchStage[currentStage] })}
+        {t('subtitle', { stage: matchStageToText(currentStage) })}
       </Typography>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography fontWeight={500}>{t('match')}</Typography>
+                <Typography fontWeight={500}>{t('columns.match')}</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight={500}>{t('score')}</Typography>
+                <Typography fontWeight={500}>{t('columns.score')}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>

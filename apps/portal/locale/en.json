@@ -50,12 +50,9 @@
   },
   "pages:events:id:schedule:general": {
     "title": "General Schedule",
-    "no-schedule": "there is no general schedule"
+    "no-schedule": "No general schedule"
   },
-  "pages:_app": {
-    "title": "FIRST LEGO League Challenge events portal"
-  },
-  
+
   "components:app-bar": {
     "events": "Events",
     "scorer": "Scorer"
@@ -69,27 +66,28 @@
     },
     "no-data": "No results"
   },
-  "components:teams:teamSchedule": {
+  "components:teams:team-schedule": {
     "title": "Schedule",
     "activity": {
       "match": "{stage} match #{round} - {table} table (#{number})",
-      "session": "Judging session - room {room} #{number}" 
+      "session": "Judging session - {room} room (#{number})"
     }
   },
   "components:teams:team-scores": {
-    "title": "Robot game scores",
-    "matched":"Matches",
-    "match":"Match",
-    "score":"Score",
-    "match-kind":"{stage} match ",
+    "title": "Robot Game scores",
+    "subtitle": "{stage} matches",
+    "columns": {
+      "match": "Match",
+      "score": "Score"
+    },
     "match-number": "Match #{number}"
   },
   "components:events:event-quick-links": {
     "scoreboard": "Scoreboard",
     "awards": "Awards",
-    "schedule-field": "Field Schedule",
-    "schedule-judging": "Judging Schedule",
-    "schedule-general": "General Schedule"
+    "field-schedule": "Field Schedule",
+    "judging-schedule": "Judging Schedule",
+    "general-schedule": "General Schedule"
   },
 
   "components:events:event-status": {
@@ -102,13 +100,13 @@
     "all-sessions-completed": "All sessions completed"
   },
   "components:teams:team-awards": {
-    "Awards": "Awards",
-    "Award-place": "Place"
+    "title": "Awards"
   },
   "components:teams:team-list": {
     "team": "Team",
-    "place": "Place"
+    "location": "Location"
   },
+
   "hooks:useMatchStage": {
     "stages": {
       "practice": "Practice",

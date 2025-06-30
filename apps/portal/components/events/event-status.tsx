@@ -1,16 +1,15 @@
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { PortalEvent, PortalEventStatus } from '@lems/types';
+import { PortalEventStatus } from '@lems/types';
 import LiveIcon from '../live-icon';
 import { useTranslations } from 'next-intl';
 
 interface EventStatusProps {
-  event: PortalEvent;
   status: PortalEventStatus;
 }
 
-const EventStatus: React.FC<EventStatusProps> = ({ event, status }) => {
+const EventStatus: React.FC<EventStatusProps> = ({ status }) => {
   const t = useTranslations('components:events:event-status');
 
   const hasCurrentMatch = status.field.match.number > 0;
@@ -29,11 +28,9 @@ const EventStatus: React.FC<EventStatusProps> = ({ event, status }) => {
           {hasCurrentMatch ? (
             <>
               <Typography variant="h6">
-                {' '}
                 {t('current-match', { number: status.field.match.number })}
               </Typography>
               <Typography variant="h6">
-                {' '}
                 {t('current-match-time', { time: dayjs(status.field.match.time).format('HH:mm') })}
               </Typography>
             </>

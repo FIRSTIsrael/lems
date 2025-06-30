@@ -30,7 +30,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
               <Typography fontWeight={500}>{t('team')}</Typography>
             </TableCell>
             <TableCell>
-              <Typography fontWeight={500}>{t('place')}</Typography>
+              <Typography fontWeight={500}>{t('location')}</Typography>
             </TableCell>
             <TableCell />
           </TableRow>

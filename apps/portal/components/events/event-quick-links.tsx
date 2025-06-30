@@ -52,7 +52,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/field`}
         >
-          {t('schedule-field')}
+          {t('field-schedule')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -63,7 +63,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/judging`}
         >
-          {t('schedule-judging')}
+          {t('judging-schedule')}
         </Button>
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>
@@ -74,7 +74,7 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) =
           LinkComponent={Link}
           href={`/events/${event.id}/schedule/general`}
         >
-          {t('schedule-general')}
+          {t('general-schedule')}
         </Button>
       </Grid>
     </Grid>
