@@ -18,11 +18,11 @@ import {
   useTheme
 } from '@mui/material';
 import { PortalEvent, PortalFieldSchedule } from '@lems/types';
+import { getMessages } from '../../../../locale/get-messages';
+import { useLocaleMatchStage } from '../../../../locale/hooks/use-locale-match-stage';
 import { fetchEvent } from '../../../../lib/api';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
-import { localizedMatchStage } from '../../../../lib/localization';
-import { getMessages } from '../../../../locale/get-messages';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
@@ -31,6 +31,7 @@ interface Props {
 
 const Page: NextPage<Props> = ({ event }) => {
   const t = useTranslations('pages:events:id:schedule:field');
+  const matchStageToText = useLocaleMatchStage();
 
   const {
     data: schedule,
@@ -65,7 +66,10 @@ const Page: NextPage<Props> = ({ event }) => {
                           align={isDesktop ? 'center' : 'left'}
                         >
                           <Typography fontWeight={500}>
-                            סבב {localizedMatchStage[round.stage]} #{round.number}
+                            {t('table.round', {
+                              stage: matchStageToText(round.stage),
+                              number: round.number
+                            })}
                           </Typography>
                         </TableCell>
                       </TableRow>
