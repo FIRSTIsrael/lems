@@ -1,0 +1,182 @@
+{
+  "pages:index": {
+    "active-events": "אירועים פעילים",
+    "no-active-events": "אין אירועים פעילים",
+    "all-events": "לכל האירועים"
+  },
+  "pages:404": {
+    "title": "הדף אליו נכנסתם לא נמצא",
+    "subtitle": "שגיאה 404"
+  },
+  "pages:scorer": {
+    "title": "מחשבון ניקוד",
+    "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
+    "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, המגבלה הבאה חלה: על מנת לקבל ניקוד על משימה זו, אסור לציוד לגעת באף חלק של דגם המשימה בסיום המקצה."
+  },
+  "pages:events:index": {
+    "fll-events": "אירועי <i>FIRST</i> LEGO League Challenge",
+    "active-events": "אירועים פעילים",
+    "future-events": "אירועים עתידיים",
+    "past-events": "אירועים קודמים",
+    "no-events": "אין אירועים"
+  },
+  "pages:events:id:index": {
+    "event-teams": "קבוצות באירוע"
+  },
+  "pages:events:id:awards": {
+    "title": "פרסים",
+    "eligible-for-advancement": "קבוצות זכאיות להעפלת שלב",
+    "award-name": "פרס {award}"
+  },
+  "pages:events:id:scoreboard": {
+    "title": "לוח תוצאות",
+    "subtitle": "מקצי {stage}"
+  },
+  "pages:events:id:schedule:field": {
+    "title": "לוח זמנים - זירה",
+    "table": {
+      "columns": {
+        "match": "מקצה",
+        "start-time": "זמן התחלה"
+      }
+    }
+  },
+  "pages:events:id:schedule:judging": {
+    "title": "לוח זמנים - שיפוט",
+    "table": {
+      "columns": {
+        "round": "סבב",
+        "start-time": "זמן התחלה"
+      }
+    }
+  },
+  "pages:events:id:schedule:general": {
+    "title": "לוח זמנים כללי",
+    "no-schedule": "אין לוח זמנים כללי"
+  },
+  "components:app-bar": {
+    "events": "אירועים",
+    "scorer": "מחשבון ניקוד"
+  },
+  "components:scoreboard:scoreboard-grid": {
+    "columns": {
+      "rank": "מקום",
+      "team": "קבוצה",
+      "score": "ניקוד",
+      "match": "מקצה"
+    },
+    "no-data": "אין תוצאות"
+  },
+  "components:teams:team-schedule": {
+    "title": "לוח הזמנים",
+    "activity": {
+      "match": "מקצה {stage} #{round} - שולחן {table} (#{number})",
+      "session": "מפגש שיפוט - חדר {room} (#{number})"
+    }
+  },
+  "components:teams:team-scores": {
+    "title": "ביצועי הרובוט",
+    "subtitle": "מקצי {stage}",
+    "columns": {
+      "match": "מקצה",
+      "score": "ניקוד"
+    },
+    "match-number": "מקצה #{number}"
+  },
+  "components:events:event-quick-links": {
+    "scoreboard": "לוח תוצאות",
+    "awards": "פרסים",
+    "field-schedule": "לוח זמנים - זירה",
+    "judging-schedule": "לוח זמנים - שיפוט",
+    "general-schedule": "לוח זמנים כללי"
+  },
+  "components:events:event-status": {
+    "active-event": "אירוע פעיל",
+    "current-match": "מקצה נוכחי: #{number}",
+    "current-match-time": "זמן מתוכנן: {time}",
+    "all-matches-completed": "כל המקצים הושלמו",
+    "current-session": "סבב שיפוט נוכחי: #{number}",
+    "current-session-time": "זמן מתוכנן: {time}",
+    "all-sessions-completed": "כל סבבי השיפוט הושלמו"
+  },
+  "components:teams:team-awards": {
+    "title": "פרסים"
+  },
+  "components:teams:team-list": {
+    "team": "קבוצה",
+    "location": "מיקום"
+  },
+  "components:events:award-winner": {
+    "award": {
+      "name": "פרס {name}",
+      "place": ", מקום {place, select, 1 {ראשון} 2 {שני} 3 {שלישי} 4 {רביעי} 5 {חמישי} other {#{place}}}"
+    }
+  },
+  "hooks:useMatchStage": {
+    "stages": {
+      "practice": "אימונים",
+      "ranking": "דירוג",
+      "test": "בדיקה"
+    }
+  },
+  "hooks:useAwardName": {
+    "awards": {
+      "core-values": {
+        "name": "ערכי הליבה",
+        "description": "פרס ערכי הליבה מוענק לקבוצה המדגימה התלהבות ורוח צוות יוצאים מן הכלל, יודעת שמוענק להשיג יותר כקבוצה מאשר כבודדים ומציגה כל הזמן כבוד הדדי אחד כלפי השני וכלפי קבוצות אחרות."
+      },
+      "innovation-project": {
+        "name": "פרויקט החדשנות",
+        "description": "פרס פרויקט החדשנות מוענק לקבוצה שמשתמשת במקורות מידע מגוונים בפרויקט החדשנות שלה אשר עוזרים לה להגיע להבנה מקיפה של הבעיה, מפתחת פתרון יצירתי שנחקר לעומק ומשתפת את ממצאיה עם השופטים ועם הקהילה באופן תכליתי."
+      },
+      "lead-mentor": {
+        "name": "המנטור המצטיין",
+        "description": "מנטורים, מדריכים ומורים נותנים לקבוצות השראה להוציא מעצמן את המיטב, כל אחד לחוד וכולם ביחד, ובלעדיהם *FIRST* LEGO League  לא הייתה מתקיימת. פרס זה מוענק למנטור אשר ניכרת מנהיגותו והובלתו של הקבוצה ואשר מדגים בברור את ערכי הליבה של *FIRST*"
+      },
+      "robot-design": {
+        "name": "תכנון הרובוט",
+        "description": "פרס תכנון הרובוט מוענק לקבוצה המשתמשת בעקרונות תכנות וברעיונות הנדסיים יוצאים מן הכלל, על מנת לפתח רובוט חסון, עמיד ויעיל מבחינה מכנית ובעל יכולת גבוהה לבצע את משימות האתגר."
+      },
+      "breakthrough": {
+        "name": "פורצי הדרך",
+        "description": "פרס זה מוענק לקבוצה שהעצימה את ביטחונה העצמי, התקדמה משמעותית גם במשחק הרובוט וגם בפרויקט החדשנות ומהווה דוגמה מזהירה של ערכי ליבה מעולים. ניכר שחברי הקבוצה הבינו שמה שהם מגלים חשוב יותר מהזכייה בפרסים."
+      },
+      "robot-performance": {
+        "name": "ביצועי הרובוט",
+        "description": "פרס ביצועי הרובוט מוענק לקבוצה אשר השיגה את הניקוד הגבוה ביותר במשחקי הרובוט. לקבוצות ניתנת הזדמנות להתחרות בלפחות שלושה מקצים של 2.5 דקות והניקוד הגבוה ביותר קובע."
+      },
+      "volunteer-of-the-year": {
+        "name": "מתנדב/ת השנה",
+        "description": "פרס מתנדב/ת השנה מוענק למתנדב/ת שהשקיעו את מירב מאמצים ותרמו מעצמם משמעותית לתוכנית *FIRST* LEGO League."
+      },
+      "champions": {
+        "name": "האליפות",
+        "description": "פרס זה מוענק לקבוצה שמגלמת את חוויית *FIRST* LEGO League  על ידי אימוץ ערכי ליבה תוך הגעה למצוינות ולחדשנות הן במשחק הרובוט והן בפרויקט החדשנות."
+      },
+      "impact": {
+        "name": "ההשפעה",
+        "description": "פרס ההשפעה מוענק לקבוצה שיש לה תרומה ייחודית והשפעה משמעותית ומתמשכת על חיי הקהילה."
+      },
+      "motivate": {
+        "name": "המניעים",
+        "description": "פרס זה מוענק לקבוצה אשר מפנימה את התרבות של *FIRST* LEGO League  על ידי גיבוש הקבוצה, רוח הצוות והדגמת התלהבות."
+      },
+      "rising-all-star": {
+        "name": "הכוכב העולה",
+        "description": "פרס זה מוענק לקבוצה שהשופטים מצפים ממנה להגיע להישגים גדולים בעתיד."
+      },
+      "judges-award": {
+        "name": "השופטים",
+        "description": "פרס זה מוענק לקבוצה אשר הפנימה את התרבות של _FIRST®_ LEGO® League והתמודדה במהלך העונה בהצלחה עם אתגרים ייחודיים."
+      },
+      "excellence-in-engineering": {
+        "name": "מצוינות הנדסית",
+        "description": "פרס זה מוענק לקבוצה אשר מציגה רובוט מתוכנן ביעילות, פתרון לפרויקט החדשנות שנוגע באופן תכליתי באתגר העונה ושערכי הליבה ניכרים בכל מה שהיא עושה."
+      },
+      "advancement": {
+        "name": "העפלה לאליפות",
+        "description": "קבוצות המעפילות לתחרות האליפות"
+      }
+    }
+  }
+}

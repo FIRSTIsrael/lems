@@ -1,4 +1,5 @@
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useTranslations } from 'next-intl';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { PortalEvent, PortalTeam, PortalEventStatus } from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
@@ -7,6 +8,7 @@ import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import { getMessages } from '../../../locale/get-messages';
 
 interface Props {
   event: PortalEvent;
@@ -20,6 +22,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
     isLoading,
     error
   } = useRealtimeData<PortalEventStatus>(`/events/${event.id}/status`);
+  const t = useTranslations('pages:events:id:index');
 
   return (
     <Container maxWidth="md" sx={{ my: 2 }}>
@@ -33,10 +36,10 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards }) => {
         </Stack>
       )}
       <EventInfo event={event} teamCount={teams.length} />
-      {!isLoading && !error && status.isLive && <EventStatus event={event} status={status} />}
+      {!isLoading && !error && status.isLive && <EventStatus status={status} />}
       <EventQuickLinks event={event} hasAwards={hasAwards} />
       <Typography variant="h2" gutterBottom>
-        קבוצות באירוע
+        {t('event-teams')}
       </Typography>
       <TeamList eventId={event.id} teams={teams} />
     </Container>
@@ -47,7 +50,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const eventId = ctx.params?.id as string;
   const { event, teams } = await fetchEvent(eventId);
   const awards = await fetchAwards(eventId);
-  return { props: { event, teams, hasAwards: !!awards } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, teams, hasAwards: !!awards, messages } };
 };
 
 export default Page;
