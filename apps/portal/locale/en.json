@@ -35,6 +35,7 @@
   "pages:events:id:schedule:field": {
     "title": "Field Schedule",
     "table": {
+      "round": "Round {stage} #{number}",
       "columns": {
         "match": "Match",
         "start-time": "Start Time"

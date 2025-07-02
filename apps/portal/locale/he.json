@@ -35,6 +35,7 @@
   "pages:events:id:schedule:field": {
     "title": "לוח זמנים - זירה",
     "table": {
+      "round": "סבב {stage} #{number}",
       "columns": {
         "match": "מקצה",
         "start-time": "זמן התחלה"
