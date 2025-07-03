@@ -4,7 +4,7 @@ import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '../lib/dayjs';
-import getLocalizedTheme from '../lib/theme';
+import { getLocalizedTheme } from '../lib/theme';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 import { Locales } from '../locale/locales';

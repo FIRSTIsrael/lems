@@ -1,19 +1,28 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
+import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import '../lib/utils/dayjs';
-import theme from '../lib/theme';
-import { clientSideEmotionCache } from '../lib/emotion-cache';
-import SnackbarCloseButton from '../components/general/snackbar-close-button';
+import { getLocalizedTheme } from '../lib/theme';
+import { createCustomEmotionCache } from '../lib/emotion-cache';
+import { Locales } from '../locale/locales';
 import { TimeSyncProvider } from '../lib/timesync';
+import { useHtmlDirection } from '../hooks/use-html-direction';
+import SnackbarCloseButton from '../components/general/snackbar-close-button';
 
 export default function LEMSApp(props: AppProps) {
-  const { Component, pageProps } = props;
+  const { Component, pageProps, router } = props;
+  const locale = (router.locale ?? 'he') as Locales;
+  const emotionCache = createCustomEmotionCache(locale);
+  const theme = getLocalizedTheme(locale);
+
+  // This hook will dynamically update the HTML dir and lang attributes
+  useHtmlDirection();
 
   return (
-    <AppCacheProvider {...props} emotionCache={clientSideEmotionCache}>
+    <AppCacheProvider {...props} emotionCache={emotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#fff" />
@@ -23,18 +32,20 @@ export default function LEMSApp(props: AppProps) {
         />
         <title>מערכת אירועים - FIRST ישראל</title>
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <SnackbarProvider
-          maxSnack={3}
-          TransitionComponent={Grow}
-          action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
-        >
-          <TimeSyncProvider>
-            <Component {...pageProps} />
-          </TimeSyncProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
+      <NextIntlClientProvider locale={locale} messages={pageProps.messages}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider
+            maxSnack={3}
+            TransitionComponent={Grow}
+            action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
+          >
+            <TimeSyncProvider>
+              <Component {...pageProps} />
+            </TimeSyncProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </NextIntlClientProvider>
     </AppCacheProvider>
   );
 }

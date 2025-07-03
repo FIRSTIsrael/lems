@@ -30,6 +30,11 @@ const nextConfig = {
         hostname: 'emojicdn.elk.sh'
       }
     ]
+  },
+
+  i18n: {
+    locales: ['he', 'en'],
+    defaultLocale: 'he'
   }
 };
 

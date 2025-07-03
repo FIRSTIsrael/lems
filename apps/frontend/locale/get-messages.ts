@@ -1,11 +1,11 @@
-import PortalLocales from './locales';
+import LEMSLocales from './locales';
 
 /**
  * Utility for fetching translations. Must be used in getServerSideProps or getStaticProps.
  * @param locale - The locale to fetch messages for, e.g., 'en', 'he'.
  */
 export const getMessages = async (locale?: string) => {
-  if (!locale || !(locale in PortalLocales)) {
+  if (!locale || !(locale in LEMSLocales)) {
     locale = 'he'; // Default to Hebrew if no valid locale is provided
   }
 
