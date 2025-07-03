@@ -24,7 +24,7 @@
     "@mui/material-nextjs": "^7.1.1",
     "@mui/stylis-plugin-rtl": "^7.1.0",
     "@mui/x-data-grid": "^8.5.3",
-    "@mui/x-date-pickers": "^8.1.0",
+    "@mui/x-date-pickers": "^8.6.0",
     "@types/grecaptcha": "^3.0.9",
     "axios": "^1.10.0",
     "cookie-parser": "^1.4.7",
