@@ -41,7 +41,7 @@
     "merge-anything": "^6.0.6",
     "mongodb": "^6.16.0",
     "motion": "^12.9.4",
-    "next": "15.3.1",
+    "next": "15.3.4",
     "next-intl": "^4.1.0",
     "node-schedule": "^2.1.1",
     "notistack": "^3.0.1",
