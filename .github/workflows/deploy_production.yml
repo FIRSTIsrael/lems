@@ -53,18 +53,26 @@ jobs:
 
       - name: Remove all old images
         run: |
-          if doctl registry repository list-tags lems-frontend | grep -o "lems-.*"; then
-            doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "lems-.*") --force
-          fi
-          if doctl registry repository list-tags lems-backend | grep -o "lems-.*"; then
-            doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "lems-.*") --force
-          fi
-          if doctl registry repository list-tags lems-scheduler | grep -o "lems-.*"; then
-            doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "lems-.*") --force
-          fi
-          if doctl registry repository list-tags lems-portal | grep -o "lems-.*"; then
-            doctl registry repository delete-manifest lems-portal $(doctl registry repository list-tags lems-portal | grep -o "lems-.*") --force
-          fi
+          # Function to clean up old images for a repository
+          cleanup_repository() {
+            local repo_name=$1
+            echo "Cleaning up repository: $repo_name"
+            
+            local tags=$(doctl registry repository list-tags "$repo_name" --format Tag --no-header 2>/dev/null | grep "^lems-" || true)
+            
+            if [ -n "$tags" ]; then
+              echo "Found tags to delete: $tags"
+              echo "$tags" | xargs -r -I {} doctl registry repository delete-manifest "$repo_name" {} --force
+              echo "✓ Cleaned up $repo_name"
+            else
+              echo "✓ No old images found in $repo_name"
+            fi
+          }
+          
+          # Clean up all repositories
+          for repo in lems-frontend lems-backend lems-scheduler lems-portal; do
+            cleanup_repository "$repo"
+          done
 
       - name: Push image to DigitalOcean Container Registry
         run: docker compose push
