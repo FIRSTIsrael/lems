@@ -49,5 +49,3 @@ export const getLocalizedTheme = (locale: Locales = 'he') => {
   const { direction, muiLocale, xDataGridLocale } = PortalLocales[locale];
   return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale);
 };
-
-export default getLocalizedTheme;
