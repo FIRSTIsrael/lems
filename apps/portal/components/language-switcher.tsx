@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import PortalLocales, { Locales } from '../locale/locales';
+import { useLocalePreference } from '../hooks/use-locale-preference';
 
 const LanguageSwitcher: React.FC = () => {
-  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = !!anchorEl;
 
-  const currentLocale = (router.locale ?? 'he') as Locales;
+  const { changeLocale, currentLocale } = useLocalePreference();
   const currentLocaleData = PortalLocales[currentLocale];
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,7 +20,7 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   const handleLanguageChange = (locale: Locales) => {
-    router.push(router.asPath, router.asPath, { locale });
+    changeLocale(locale);
     handleClose();
   };
 
