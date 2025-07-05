@@ -1,0 +1,185 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'The environment to deploy to (production or staging)'
+      image_tag:
+        required: true
+        type: string
+        description: 'The image tag to use'
+      git_ref:
+        required: false
+        type: string
+        description: 'Git reference for staging deployments'
+        default: 'main'
+      cleanup_pattern:
+        required: false
+        type: string
+        description: 'Pattern for images to cleanup (e.g., "staging-*" for staging, "" for all images in production)'
+        default: ''
+      digitalocean_endpoint:
+        required: true
+        type: string
+      digitalocean_space:
+        required: true
+        type: string
+      lems_domain:
+        required: true
+        type: string
+      scheduler_url:
+        required: true
+        type: string
+      base_url:
+        required: true
+        type: string
+      next_public_base_url:
+        required: true
+        type: string
+      ws_url:
+        required: true
+        type: string
+      next_public_ws_url:
+        required: true
+        type: string
+      recaptcha:
+        required: true
+        type: string
+
+env:
+  REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  IMAGE_TAG: ${{ inputs.image_tag }}
+  DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+  DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+  DIGITALOCEAN_ENDPOINT: ${{ inputs.digitalocean_endpoint }}
+  DIGITALOCEAN_SPACE: ${{ inputs.digitalocean_space }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  MONGO_CA_CERTIFICATE: ${{ secrets.MONGO_CA_CERTIFICATE }}
+  LEMS_DOMAIN: ${{ inputs.lems_domain }}
+  SCHEDULER_URL: ${{ inputs.scheduler_url }}
+  BASE_URL: ${{ inputs.base_url }}
+  NEXT_PUBLIC_BASE_URL: ${{ inputs.next_public_base_url }}
+  WS_URL: ${{ inputs.ws_url }}
+  NEXT_PUBLIC_WS_URL: ${{ inputs.next_public_ws_url }}
+  RECAPTCHA: ${{ inputs.recaptcha }}
+  RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+  RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+  NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install Node Modules
+        run: npm ci
+
+      - name: LEMS Build
+        run: npm run build
+
+      - name: Build container image
+        run: docker compose build
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Remove old images
+        run: |
+          # Function to clean up old images for a repository
+          cleanup_repository() {
+            local repo_name=$1
+            local pattern=$2
+            echo "Cleaning up repository: $repo_name with pattern: '$pattern'"
+            
+            local tags_and_digests=$(doctl registry repository list-tags "$repo_name" --format Tag,ManifestDigest --no-header 2>/dev/null || true)
+            
+            if [ -n "$tags_and_digests" ]; then
+              echo "Found tags and digests in $repo_name:"
+              
+              # If pattern is provided, filter tags
+              if [ -n "$pattern" ]; then
+                # Filter tags that match the pattern
+                local filtered_tags=$(echo "$tags_and_digests" | awk -v pattern="$pattern" '$1 ~ pattern {print}')
+                if [ -n "$filtered_tags" ]; then
+                  echo "Tags matching pattern '$pattern':"
+                  echo "$filtered_tags"
+                  echo "$filtered_tags" | while read -r line; do
+                    tag=$(echo "$line" | awk '{print $1}')
+                    digest=$(echo "$line" | awk '{print $2}')
+                    echo "Deleting tag: $tag, digest: $digest"
+                    if [ -n "$digest" ]; then
+                      doctl registry repository delete-manifest "$repo_name" "$digest" --force
+                    else
+                      echo "Warning: Empty digest for tag $tag in repository $repo_name" >&2
+                    fi
+                  done
+                  echo "✓ Cleaned up matching images in $repo_name"
+                else
+                  echo "✓ No images matching pattern '$pattern' found in $repo_name"
+                fi
+              else
+                # No pattern provided, delete all images (production behavior)
+                echo "Deleting all images in $repo_name:"
+                echo "$tags_and_digests" | while read -r line; do
+                  tag=$(echo "$line" | awk '{print $1}')
+                  digest=$(echo "$line" | awk '{print $2}')
+                  echo "Deleting tag: $tag, digest: $digest"
+                  if [ -n "$digest" ]; then
+                    doctl registry repository delete-manifest "$repo_name" "$digest" --force
+                  else
+                    echo "Warning: Empty digest for tag $tag in repository $repo_name" >&2
+                  fi
+                done
+                echo "✓ Cleaned up all images in $repo_name"
+              fi
+            else
+              echo "✓ No images found in $repo_name"
+            fi
+          }
+          
+          # Clean up all repositories
+          for repo in lems-frontend lems-backend lems-scheduler lems-portal; do
+            cleanup_repository "$repo" "${{ inputs.cleanup_pattern }}"
+          done
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker compose push
+
+      - name: Run garbage collection
+        run: doctl registry garbage-collection start --force
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: REGISTRY,IMAGE_TAG,DASHBOARD_JWT_SECRET,LEMS_DOMAIN,SCHEDULER_URL,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,JWT_SECRET,MONGODB_URI,MONGO_CA_CERTIFICATE,BASE_URL,NEXT_PUBLIC_BASE_URL,WS_URL,NEXT_PUBLIC_WS_URL,RECAPTCHA,RECAPTCHA_SECRET_KEY,RECAPTCHA_SITE_KEY,${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com  
+            cd lems
+            docker compose down
+            docker compose rm
+            docker rmi $(docker images | grep 'lems-') 2>/dev/null || true
+            ${{ inputs.environment == 'staging' && format('git fetch origin && git reset --hard origin/{0}', inputs.git_ref) || 'git reset --hard origin/main && git pull origin main' }}
+            docker compose up -d

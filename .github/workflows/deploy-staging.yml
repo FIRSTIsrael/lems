@@ -1,0 +1,22 @@
+name: Deploy LEMS Staging
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy-reusable.yml
+    with:
+      environment: staging
+      image_tag: staging-${{ github.sha }}
+      git_ref: ${{ github.sha }}
+      cleanup_pattern: 'staging-.*'
+      digitalocean_endpoint: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+      digitalocean_space: ${{ vars.DIGITALOCEAN_SPACE }}
+      lems_domain: ${{ vars.LEMS_DOMAIN }}
+      scheduler_url: ${{ vars.SCHEDULER_URL }}
+      base_url: ${{ vars.BASE_URL }}
+      next_public_base_url: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+      ws_url: ${{ vars.WS_URL }}
+      next_public_ws_url: ${{ vars.NEXT_PUBLIC_WS_URL }}
+      recaptcha: ${{ vars.RECAPTCHA }}
+    secrets: inherit
