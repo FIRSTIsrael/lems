@@ -62,7 +62,7 @@ jobs:
             
             if [ -n "$tags" ]; then
               echo "Found tags to delete: $tags"
-              echo "$tags" | xargs -r -I {} doctl registry repository delete-manifest "$repo_name" {} --force
+              echo "$tags" | xargs -r -I {} doctl registry repository delete-tag "$repo_name" {} --force
               echo "✓ Cleaned up $repo_name"
             else
               echo "✓ No old images found in $repo_name"
