@@ -63,8 +63,8 @@ jobs:
             if [ -n "$tags_and_digests" ]; then
               echo "Found tags and digests to delete:"
               echo "$tags_and_digests" | while IFS=',' read -r tag digest; do
-                tag=$(echo "$tag" | xargs) # Trim spaces
-                digest=$(echo "$digest" | xargs) # Trim spaces
+                tag=$(echo "$tag" | awk '{print $1}') # Extract tag
+                digest=$(echo "$tag" | awk '{print $2}') # Extract digest
                 echo "Tag: $tag, Digest: $digest"
                 if [ -n "$digest" ]; then
                   doctl registry repository delete-manifest "$repo_name" "$digest" --force
