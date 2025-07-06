@@ -1,0 +1,93 @@
+name: Deploy LEMS Staging
+
+on: workflow_dispatch
+
+env:
+  REGISTRY: 'registry.digitalocean.com/first-israel-registry'
+  IMAGE_TAG: staging-${{ github.sha }}
+  DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+  DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+  DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+  DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  MONGO_CA_CERTIFICATE: ${{ secrets.MONGO_CA_CERTIFICATE }}
+  LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
+  SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
+  BASE_URL: ${{ vars.BASE_URL }}
+  NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+  WS_URL: ${{ vars.WS_URL }}
+  NEXT_PUBLIC_WS_URL: ${{ vars.NEXT_PUBLIC_WS_URL }}
+  RECAPTCHA: ${{ vars.RECAPTCHA }}
+  NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install Node Modules
+        run: npm ci
+
+      - name: LEMS Build
+        run: npm run build
+
+      - name: Build container image
+        run: docker compose build
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Remove all old staging images
+        run: |
+          if doctl registry repository list-tags lems-frontend | grep -o "staging-.*"; then
+            doctl registry repository delete-manifest lems-frontend $(doctl registry repository list-tags lems-frontend | grep -o "staging-.*") --force
+          fi
+          if doctl registry repository list-tags lems-backend | grep -o "staging-.*"; then
+            doctl registry repository delete-manifest lems-backend $(doctl registry repository list-tags lems-backend | grep -o "staging-.*") --force
+          fi
+          if doctl registry repository list-tags lems-scheduler | grep -o "staging-.*"; then
+            doctl registry repository delete-manifest lems-scheduler $(doctl registry repository list-tags lems-scheduler | grep -o "staging-.*") --force
+          fi
+          if doctl registry repository list-tags lems-portal | grep -o "staging-.*"; then
+            doctl registry repository delete-manifest lems-portal $(doctl registry repository list-tags lems-portal | grep -o "staging-.*") --force
+          fi
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker compose push
+
+      - name: Run garbage collection
+        run: doctl registry garbage-collection start --force
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: REGISTRY,IMAGE_TAG,DASHBOARD_JWT_SECRET,LEMS_DOMAIN,SCHEDULER_URL,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,JWT_SECRET,MONGODB_URI,MONGO_CA_CERTIFICATE,BASE_URL,NEXT_PUBLIC_BASE_URL,WS_URL,NEXT_PUBLIC_WS_URL,RECAPTCHA,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com  
+            cd lems
+            docker compose down
+            docker compose rm
+            docker rmi $(docker images | grep 'lems-')
+            git fetch origin
+            git reset --hard origin/${{ github.sha }}
+            docker compose up -d
