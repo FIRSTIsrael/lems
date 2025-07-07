@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 
 const TrashDroppable = () => (
   <Droppable droppableId="trash">

@@ -1,4 +1,5 @@
 import logging
+import math
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -154,10 +155,12 @@ class SchedulerService:
 
         return team in teams_in_round
 
-    def _did_team_play_on_table(
-        self, team: int, table_id: str, stage: Literal["practice", "ranking"]
+    def _did_team_reach_limit_on_table(
+        self, team: int, table_id: str, stage: Literal["practice", "ranking"], limit=1
     ) -> bool:
-        """Check if a team has played on a specific table in a specific stage."""
+        """Check if a team has played on a specific table in a specific stage.
+        By default, this checks for 1 occurance, however a limit can be specified.
+        """
 
         slot: pd.Series = self.match_schedule[table_id]
         stage_matches = self.match_schedule[
@@ -167,7 +170,7 @@ class SchedulerService:
         matches_on_table: pd.Series = stage_matches[table_id]
         teams_on_table = matches_on_table.values[~pd.isna(matches_on_table.values)]
 
-        return team in teams_on_table
+        return list(teams_on_table).count(team) > limit
 
     def _get_available_tables(self, match_number: int) -> list[str]:
         """Get available table IDs based on match number when staggering is enabled."""
@@ -211,6 +214,12 @@ class SchedulerService:
         4. Respect staggered matches configuration
         """
 
+        # Check if there are enough tables for ranking rounds
+        ranking_rounds = self.match_schedule[self.match_schedule["stage"] == "ranking"][
+            "round"
+        ].nunique()
+        max_times_team_can_play_on_table = math.ceil(len(self.tables) / ranking_rounds)
+
         available_teams = set(team.number for team in self.teams)
         sorted_matches = self.match_schedule.sort_values(["start_time", "number"])
 
@@ -232,7 +241,14 @@ class SchedulerService:
                     team
                     for team in available_teams
                     if not self._did_team_play(team, stage, round_num)
-                    and not self._did_team_play_on_table(team, table, stage)
+                    and (
+                        not self._did_team_reach_limit_on_table(
+                            team,
+                            table,
+                            stage,
+                            limit=max_times_team_can_play_on_table,
+                        )
+                    )
                 ]
 
                 if eligible_teams:
@@ -272,11 +288,11 @@ class SchedulerService:
                         swap_found = False
                         for assigned_table, assigned_team in assigned_teams.items():
                             swap_valid = not (
-                                self._did_team_play_on_table(
-                                    team, assigned_table, stage
-                                )
-                                or self._did_team_play_on_table(
-                                    assigned_team, unassigned_table, stage
+                                self._did_team_reach_limit_on_table(
+                                    team,
+                                    assigned_table,
+                                    stage,
+                                    max_times_team_can_play_on_table,
                                 )
                             )
 

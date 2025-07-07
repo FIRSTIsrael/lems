@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
+import PortalLocales, { Locales } from '../locale/locales';
 
-const theme = createTheme({
-  direction: 'rtl',
+export const baseTheme = createTheme({
   palette: {
     primary: {
       main: '#003d6a'
@@ -12,8 +12,8 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: [
-      'Roboto',
       'Heebo',
+      'Roboto',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
@@ -45,4 +45,7 @@ const theme = createTheme({
   }
 });
 
-export default theme;
+export const getLocalizedTheme = (locale: Locales = 'he') => {
+  const { direction, muiLocale, xDataGridLocale } = PortalLocales[locale];
+  return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale);
+};

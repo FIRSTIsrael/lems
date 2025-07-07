@@ -10,6 +10,7 @@ import {
   PortalEventStatus
 } from '@lems/types';
 import { fetchEvent, fetchTeam } from '../../../../lib/api';
+import { getMessages } from '../../../../locale/get-messages';
 import TeamSchedule from '../../../../components/teams/team-schedule';
 import TeamInfo from '../../../../components/teams/team-info';
 import TeamAwards from '../../../../components/teams/team-awards';
@@ -59,9 +60,7 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
           )}
         </Grid>
         <Grid size={12}>
-          {!statusLoading && !statusError && status.isLive && (
-            <EventStatus event={event} status={status} />
-          )}
+          {!statusLoading && !statusError && status.isLive && <EventStatus status={status} />}
           {(scheduleLoading || scheduleError) && <LoadingAnimation />}
           {!scheduleLoading && !scheduleError && <TeamSchedule schedule={schedule} />}
         </Grid>
@@ -73,10 +72,10 @@ const Page: NextPage<Props> = ({ team, event, awards }) => {
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
   const teamNumber = ctx.params?.number as string;
-
   const { team, awards } = await fetchTeam(eventId, teamNumber);
   const { event } = await fetchEvent(eventId);
-  return { props: { team, awards, event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { team, awards, event, messages } };
 };
 
 export default Page;

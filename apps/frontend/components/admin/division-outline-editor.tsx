@@ -230,7 +230,10 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                   labelId="role-chip-label"
                   id="role-chip"
                   multiple
+                  // @ts-expect-error Bug with MUI expects string and not string[]
+                  // Even when multiple is set to true
                   value={entry.roles}
+                  // @ts-expect-error Same as above
                   onChange={(e: SelectChangeEvent<Array<Role>>) => {
                     const {
                       target: { value }
@@ -250,8 +253,9 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                   input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
                   renderValue={selected => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {/* @ts-expect-error Same as above */}
                       {selected.map(value => (
-                        <Chip key={value} label={localizedRoles[value].name} />
+                        <Chip key={value} label={localizedRoles[value as Role].name} />
                       ))}
                     </Box>
                   )}

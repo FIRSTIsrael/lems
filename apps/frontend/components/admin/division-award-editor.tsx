@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { WithId, ObjectId } from 'mongodb';
 import { Form, Formik, FastField, FieldProps, FormikProps, FormikValues } from 'formik';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import {
   Paper,
   Stack,
@@ -98,7 +98,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                     value={field.value}
                     onChange={(e, value) => {
                       e.preventDefault();
-                      value !== undefined && form.setFieldValue(field.name, value);
+                      if (value !== undefined) form.setFieldValue(field.name, value);
                     }}
                   />
                 </Grid>

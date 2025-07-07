@@ -5,12 +5,11 @@ import {
   Box,
   Chip,
   MenuItem,
-  Theme,
   FormControl,
-  InputLabel
+  InputLabel,
+  useTheme
 } from '@mui/material';
 import { CVFormSubjectTypes, CVFormSubject } from '@lems/types';
-import theme from '../../lib/theme';
 import { localizedFormSubject } from '../../localization/cv-form';
 import { FastField, FieldProps } from 'formik';
 
@@ -21,7 +20,9 @@ interface CVFormSubjectSelectProps {
 }
 
 const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, readOnly }) => {
-  const getStyles = (name: string, subjectList: readonly string[], theme: Theme) => {
+  const theme = useTheme();
+
+  const getStyles = (name: string, subjectList: readonly string[]) => {
     return {
       fontWeight:
         subjectList.indexOf(name) === -1
@@ -47,7 +48,7 @@ const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, 
             input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
             renderValue={selected => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map(value => (
+                {selected.map((value: CVFormSubject) => (
                   <Chip key={value} label={localizedFormSubject[value]} />
                 ))}
               </Box>
@@ -62,11 +63,7 @@ const CVFormSubjectSelect: React.FC<CVFormSubjectSelectProps> = ({ name, label, 
             }}
           >
             {CVFormSubjectTypes.map(subject => (
-              <MenuItem
-                key={subject}
-                value={subject}
-                style={getStyles(subject, field.value, theme)}
-              >
+              <MenuItem key={subject} value={subject} style={getStyles(subject, field.value)}>
                 {localizedFormSubject[subject]}
               </MenuItem>
             ))}

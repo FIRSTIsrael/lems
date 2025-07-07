@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+#.env files
+**/.env.local
+
 # compiled output
 dist
 tmp
@@ -52,3 +55,6 @@ http-log.log
 **/__pycache__/
 **/.pytest_cache/
 **/.venv
+/.cursor\rules\nx-rules.mdc
+/.github/instructions/nx.instructions.md
+.cursor/rules/nx-rules.mdc
