@@ -33,7 +33,7 @@
     "dayjs": "^1.11.13",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
-    "express-fileupload": "^1.5.1",
+    "express-fileupload": "^1.5.2",
     "express-winston": "^4.2.0",
     "formik": "^2.4.6",
     "idb": "^8.0.2",
