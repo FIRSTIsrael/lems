@@ -80,7 +80,7 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards, divisions }) => {
               horizontal: 'left'
             }}
           >
-            {event.divisions?.map(division => (
+            {divisions?.map(division => (
               <Link
                 key={division.id}
                 href={`/events/${division.id}`}
