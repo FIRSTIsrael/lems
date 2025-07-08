@@ -1,8 +1,10 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Typography, Container, Stack, Divider, Paper } from '@mui/material';
-import { PortalActivity, PortalEvent, RobotGameMatchStage } from '@lems/types';
+import { PortalActivity, PortalEvent } from '@lems/types';
 import { fetchEvent, fetchGeneralSchedule } from '../../../../lib/api';
+import { getMessages } from '../../../../locale/get-messages';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 
 interface Props {
@@ -11,12 +13,14 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event, schedule }) => {
+  const t = useTranslations('pages:events:id:schedule:general');
+
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
-      <Typography variant="h2">לוח זמנים כללי</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Stack component={Paper} spacing={1} p={2} mt={2}>
-        {schedule.length === 0 && <Typography variant="body1">אין לוח זמנים כללי</Typography>}
+        {schedule.length === 0 && <Typography variant="body1">{t('no-schedule')}</Typography>}
         {schedule.map((activity, index) => (
           <Stack
             key={index}
@@ -38,10 +42,10 @@ const Page: NextPage<Props> = ({ event, schedule }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-
   const { event } = await fetchEvent(eventId);
   const schedule = await fetchGeneralSchedule(eventId);
-  return { props: { event, schedule } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, schedule, messages } };
 };
 
 export default Page;

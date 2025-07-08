@@ -1,24 +1,28 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
+import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
-import { CacheProvider, EmotionCache } from '@emotion/react';
+import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import '../lib/utils/dayjs';
-import theme from '../lib/theme';
-import { createEmotionCache } from '../lib/emotion-cache';
-import { RouteAuthorizer } from '../components/route-authorizer';
-import SnackbarCloseButton from '../components/general/snackbar-close-button';
+import { getLocalizedTheme } from '../lib/theme';
+import { createCustomEmotionCache } from '../lib/emotion-cache';
+import { Locales } from '../locale/locales';
 import { TimeSyncProvider } from '../lib/timesync';
+import { useHtmlDirection } from '../hooks/use-html-direction';
+import SnackbarCloseButton from '../components/general/snackbar-close-button';
 
-const clientSideEmotionCache = createEmotionCache();
+export default function LEMSApp(props: AppProps) {
+  const { Component, pageProps, router } = props;
+  const locale = (router.locale ?? 'he') as Locales;
+  const emotionCache = createCustomEmotionCache(locale);
+  const theme = getLocalizedTheme(locale);
 
-function CustomApp({
-  Component,
-  pageProps,
-  emotionCache = clientSideEmotionCache
-}: AppProps & { emotionCache: EmotionCache }) {
+  // This hook will dynamically update the HTML dir and lang attributes
+  useHtmlDirection();
+
   return (
-    <CacheProvider value={emotionCache}>
+    <AppCacheProvider {...props} emotionCache={emotionCache}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#fff" />
@@ -28,24 +32,20 @@ function CustomApp({
         />
         <title>מערכת אירועים - FIRST ישראל</title>
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <SnackbarProvider
-          maxSnack={3}
-          TransitionComponent={Grow}
-          action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
-        >
-          <TimeSyncProvider>
-            <main className="app">
-              <RouteAuthorizer>
-                <Component {...pageProps} />
-              </RouteAuthorizer>
-            </main>
-          </TimeSyncProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </CacheProvider>
+      <NextIntlClientProvider locale={locale} messages={pageProps.messages}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider
+            maxSnack={3}
+            TransitionComponent={Grow}
+            action={snackbarId => <SnackbarCloseButton snackbarId={snackbarId} />}
+          >
+            <TimeSyncProvider>
+              <Component {...pageProps} />
+            </TimeSyncProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </NextIntlClientProvider>
+    </AppCacheProvider>
   );
 }
-
-export default CustomApp;
