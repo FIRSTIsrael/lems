@@ -11,6 +11,7 @@ import EventStatus from '../../../components/events/event-status';
 import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import { getMessages } from '../../../locale/get-messages';
 import React from 'react';
+import { ArrowDropDown } from '@mui/icons-material';
 
 interface Props {
   event: PortalEvent;
@@ -50,17 +51,17 @@ const Page: NextPage<Props> = ({ event, teams, hasAwards, divisions }) => {
             aria-expanded={open ? 'true' : undefined}
             sx={{
               p: 1,
-              minWidth: 'auto',
-              '&:hover': {
-                background: 'none'
-              }
+              minWidth: 'auto'
             }}
           >
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
-              <Typography variant="body1" color="text.secondary">
-                {event.subtitle}
-              </Typography>
+            <Stack direction="row" alignItems="center">
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Box bgcolor={event.color} width={18} height={18} borderRadius={1} />
+                <Typography variant="body1" color="text.secondary">
+                  {event.subtitle}
+                </Typography>
+              </Stack>
+              <ArrowDropDown />
             </Stack>
           </Button>
           <Menu
