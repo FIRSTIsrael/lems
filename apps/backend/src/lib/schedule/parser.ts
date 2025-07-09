@@ -143,7 +143,6 @@ const extractMatchesFromMatchBlock = (
       match.participants.push({
         teamId: team?._id || null,
         tableId: table._id,
-        tableName: table.name,
         queued: false,
         ready: false,
         present: 'no-show'

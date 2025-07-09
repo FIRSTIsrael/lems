@@ -27,6 +27,21 @@ export const findMatches = (filter: Filter<RobotGameMatch>) => {
             }
           },
           {
+            $lookup: {
+              from: 'tables',
+              localField: 'participants.tableId',
+              foreignField: '_id',
+              as: 'participants.table'
+            }
+          },
+          {
+            $addFields: {
+              'participants.tableName': {
+                $arrayElemAt: ['$participants.table.name', 0]
+              }
+            }
+          },
+          {
             $group: {
               _id: '$_id',
               participants: { $push: '$participants' },

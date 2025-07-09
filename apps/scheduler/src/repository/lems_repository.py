@@ -105,9 +105,6 @@ class LemsRepository:
             participants = []
             for table_id, _team_number in row[len(ignore_columns) :].items():
                 team_number = int(_team_number) if pd.notna(_team_number) else None
-                table_name = next(
-                    (table.name for table in tables if table.id == table_id), None
-                )
 
                 lems_team_id = self.get_lems_team_id(team_number)
                 if lems_team_id is not None:
@@ -115,7 +112,6 @@ class LemsRepository:
                         {
                             "teamId": lems_team_id,
                             "tableId": ObjectId(table_id),
-                            "tableName": table_name,
                             "queued": False,
                             "ready": False,
                             "present": "no-show",
