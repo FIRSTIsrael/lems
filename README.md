@@ -31,7 +31,7 @@ LEMS is fully open source and maintained by volunteers.
    `docker run -d --name lems-local-mongo -p 27017:27017 mongo:8`
 
 5. Run postgres with an exposed port
-   `docker run -d --name lems-local-sql -p 5432:5432 mongo:8`
+   `docker run -d --name lems-local-sql -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:17`
 
 To stop the DB containers, use either the CLI or docker desktop.
 When you stop a container without removing it, you will be unable to start a new container with the same name.
