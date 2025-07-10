@@ -37,6 +37,10 @@ To stop the DB containers, use either the CLI or docker desktop.
 When you stop a container without removing it, you will be unable to start a new container with the same name.
 It is encouraged to just restart the containers you created instead of removing it every time.
 
+To setup a blank postres DB, run:
+
+`npm run init-postgres -- --host localhost --port 5432 --password postgres --database lems-local`
+
 ### Start the app
 
 #### Configure the app

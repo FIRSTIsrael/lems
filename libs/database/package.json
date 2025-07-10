@@ -2,7 +2,12 @@
   "name": "@lems/database",
   "version": "1.4.0",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "kysely": "^0.28.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.4"
   },
   "type": "module",
   "main": "./src/index.js",
