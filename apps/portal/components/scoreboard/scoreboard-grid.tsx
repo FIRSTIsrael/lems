@@ -77,7 +77,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
     ...Array.from(
       { length: matches },
       (_, index) =>
-        ({
+        (({
           field: `match${index + 1}`,
           headerName: `${t('columns.match')} ${index + 1}`,
           width: isDesktop ? 150 : 100,
@@ -85,7 +85,7 @@ const ScoreboardGrid: React.FC<ScoreboardGridProps> = ({ data, eventId }) => {
           valueGetter: (_, row) => {
             return row.scores[index];
           }
-        }) as GridColDef<(typeof data)[number]>
+        }) as GridColDef<(typeof data)[number]>)
     )
   ];
 
