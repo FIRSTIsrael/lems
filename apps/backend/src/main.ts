@@ -11,6 +11,7 @@ import './lib/database';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
+import adminRouter from './routers/admin/index';
 import publicRouter from './routers/public/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
@@ -40,6 +41,7 @@ app.use('/auth', authRouter);
 app.use('/public', publicRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/api', apiRouter);
+app.use('/admin', adminRouter);
 
 app.get('/status', (req, res) => {
   res.status(200).json({ ok: true });

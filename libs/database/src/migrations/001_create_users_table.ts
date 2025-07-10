@@ -5,7 +5,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   // Create the users table with the specified columns and constraints
   await db.schema
     .createTable('users')
-    .addColumn('pk', 'integer', col => col.primaryKey())
+    .addColumn('pk', 'serial', col => col.primaryKey())
     .addColumn('id', 'uuid', col =>
       col
         .notNull()
