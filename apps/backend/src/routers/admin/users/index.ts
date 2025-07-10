@@ -1,70 +1,54 @@
 import express from 'express';
 import db from '../../../lib/database';
-import { hashPassword, validatePassword, validateUsername } from '../../../lib/security/password';
+import {
+  hashPassword,
+  validatePassword,
+  validateUsername
+} from '../../../lib/security/credentials';
 
 const router = express.Router({ mergeParams: true });
+
+class RegistrationError extends Error {
+  status: number;
+  detail: string;
+
+  constructor(status: number, message: string, detail: string) {
+    super(message);
+    this.name = 'RegistrationError';
+    this.status = status;
+    this.detail = detail;
+  }
+}
 
 router.post('/register', async (req, res) => {
   try {
     const { username, password, firstName, lastName } = req.body;
 
-    // Validate required fields
     if (!username || !password || !firstName || !lastName) {
-      res.status(400).json({
-        ok: false,
-        error: 'Missing required fields',
-        details: 'Username, password, firstName, and lastName are required'
-      });
-      return;
+      throw new RegistrationError(400, 'Missing required fields', 'missing-required-fields');
     }
 
-    // Validate username format
     const usernameValidation = validateUsername(username);
     if (!usernameValidation.isValid) {
-      res.status(400).json({
-        ok: false,
-        error: 'Invalid username',
-        details: usernameValidation.errors
-      });
-      return;
+      throw new RegistrationError(400, 'Invalid username', usernameValidation.error);
     }
 
-    // Validate password strength
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
-      res.status(400).json({
-        ok: false,
-        error: 'Invalid password',
-        details: passwordValidation.errors
-      });
-      return;
+      throw new RegistrationError(400, 'Invalid password', passwordValidation.error);
     }
 
-    // Validate name lengths
     if (firstName.length > 64 || lastName.length > 64) {
-      res.status(400).json({
-        ok: false,
-        error: 'Invalid name length',
-        details: 'First name and last name must be 64 characters or less'
-      });
-      return;
+      throw new RegistrationError(400, 'Invalid name length', 'name-too-long');
     }
 
-    // Check if username already exists
     const existingUser = await db.users.getByUsername(username);
     if (existingUser) {
-      res.status(409).json({
-        ok: false,
-        error: 'Username already exists',
-        details: 'A user with this username already exists'
-      });
-      return;
+      throw new RegistrationError(409, 'Username already exists', 'user-already-exists');
     }
 
-    // Hash the password
     const { hash, salt } = await hashPassword(password);
 
-    // Create the user
     const newUser = await db.users.create({
       username: username.toLowerCase(), // Store usernames in lowercase for consistency
       password_hash: hash,
@@ -74,7 +58,6 @@ router.post('/register', async (req, res) => {
       last_password_set_date: new Date()
     });
 
-    // Return success response (without sensitive data)
     res.status(201).json({
       ok: true,
       message: 'User registered successfully',
@@ -89,20 +72,20 @@ router.post('/register', async (req, res) => {
   } catch (error) {
     console.error('User registration error:', error);
 
-    // Check for specific database constraint violations
-    if (error.message?.includes('unique constraint') || error.code === '23505') {
-      res.status(409).json({
+    if (error instanceof RegistrationError) {
+      res.status(error.status).json({
         ok: false,
-        error: 'Username already exists',
-        details: 'A user with this username already exists'
+        error: error.message,
+        details: error.detail
       });
-    } else {
-      res.status(500).json({
-        ok: false,
-        error: 'Internal server error',
-        details: 'An error occurred while creating the user'
-      });
+      return;
     }
+
+    res.status(500).json({
+      ok: false,
+      error: 'Internal server error',
+      details: 'An error occurred while creating the user'
+    });
   }
 });
 
