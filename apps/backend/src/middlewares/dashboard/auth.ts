@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import { DashboardTokenData } from '../../types/auth';
-import { extractToken } from '../../lib/auth';
+import { extractToken } from '../../lib/security/auth';
 import { getDivisionByEventAndTeamNumber } from '../../lib/salesforce-helpers';
 import * as db from '@lems/database';
 

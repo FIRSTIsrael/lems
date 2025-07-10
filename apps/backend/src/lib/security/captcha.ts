@@ -1,4 +1,4 @@
-import { RecaptchaResponse } from '../types/auth';
+import { RecaptchaResponse } from '../../types/auth';
 
 export const getRecaptchaResponse = (captchaToken: string): Promise<RecaptchaResponse> => {
   return fetch(

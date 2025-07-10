@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { NextFunction, Request, Response } from 'express';
 import * as db from '@lems/database';
 import { JwtTokenData } from '../types/auth';
-import { extractToken } from '../lib/auth';
+import { extractToken } from '../lib/security/auth';
 
 const jwtSecret = process.env.JWT_SECRET;
 

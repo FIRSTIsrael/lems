@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { User } from '@lems/types';
 import { RecaptchaResponse } from '../types/auth';
-import { getRecaptchaResponse } from '../lib/captcha';
+import { getRecaptchaResponse } from '../lib/security/captcha';
 
 const router = express.Router({ mergeParams: true });
 
