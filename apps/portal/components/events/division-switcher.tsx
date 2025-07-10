@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { PortalDivision, PortalEvent } from '@lems/types';
 import { Box, Stack, Typography, Button, Menu, MenuItem } from '@mui/material';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ interface DivisionSwitcherProps {
 }
 
 const DivisionSwitcher: React.FC<DivisionSwitcherProps> = ({ event, divisions }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -49,8 +49,10 @@ const DivisionSwitcher: React.FC<DivisionSwitcherProps> = ({ event, divisions })
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'division-button'
+        slotProps={{
+          list: {
+            'aria-labelledby': 'division-button'
+          }
         }}
         anchorOrigin={{
           vertical: 'bottom',
