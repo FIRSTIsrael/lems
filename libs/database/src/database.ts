@@ -53,10 +53,8 @@ export class Database {
     }
 
     try {
-      // Connect to MongoDB
-      console.log('Connecting to MongoDB...');
-      await this.mongoClient.connect();
       // Test MongoDB connection
+      await this.mongoClient.connect();
       await this.mongoDB.admin().ping();
       console.log('✓ MongoDB connected successfully');
     } catch (error) {
