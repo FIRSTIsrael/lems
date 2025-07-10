@@ -8,7 +8,8 @@
     "dev": "npx nx run-many --target=serve --projects=backend,frontend,portal",
     "build": "npx nx run-many --target=build --projects=backend,frontend,portal",
     "scheduler": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
-    "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal"
+    "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal",
+    "migrate": "npx nx build database && node dist/libs/database/src/scripts/run-migrations.js"
   },
   "private": true,
   "dependencies": {
@@ -36,6 +37,8 @@
     "express-fileupload": "^1.5.1",
     "express-winston": "^4.2.0",
     "formik": "^2.4.6",
+    "graphql": "^16.11.0",
+    "graphql-http": "^1.22.4",
     "idb": "^8.0.2",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.2",
@@ -106,6 +109,7 @@
     "nx": "21.2.2",
     "prettier": "^3.5.3",
     "ts-node": "10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "overrides": {
