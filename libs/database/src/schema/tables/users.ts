@@ -1,4 +1,4 @@
-import { ColumnType } from 'kysely';
+import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 
 export interface UserTable {
   id: ColumnType<string, never, never>; // UUID, generated
@@ -12,3 +12,7 @@ export interface UserTable {
   created_at: ColumnType<Date, never, never>; // Generated on insert
   last_updated: ColumnType<Date, never, Date>; // Updated automatically
 }
+
+export type User = Selectable<UserTable>;
+export type InsertableUser = Insertable<UserTable>;
+export type UpdateableUser = Updateable<UserTable>;
