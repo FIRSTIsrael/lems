@@ -1,141 +1,164 @@
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import {
-  Button,
-  Box,
-  Typography,
-  Stack,
-  TextField,
-  Paper,
-  IconButton,
-  InputAdornment
-} from '@mui/material';
+import { Formik, Form, FormikHelpers } from 'formik';
+import { Button, Box, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Layout from '../../components/layout';
+import FormikTextField from '../../components/formik/formik-text-field';
 import { apiFetch } from '../../lib/utils/fetch';
 import { useRecaptcha } from '../../hooks/use-recaptcha';
+
+interface LoginFormValues {
+  username: string;
+  password: string;
+}
 
 interface PageProps {
   recaptchaRequired: boolean;
 }
 
+const validateForm = (values: LoginFormValues) => {
+  const errors: Partial<LoginFormValues> = {};
+
+  if (!values.username.trim()) {
+    errors.username = 'no-username';
+  }
+
+  if (!values.password) {
+    errors.password = 'no-password';
+  }
+
+  return errors;
+};
+
 const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
-  const removeBadge = useRecaptcha(recaptchaRequired);
+  useRecaptcha(recaptchaRequired);
 
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const initialValues: LoginFormValues = {
+    username: '',
+    password: ''
+  };
 
-    if (!username.trim() || !password.trim()) {
-      enqueueSnackbar('אנא מלא את כל השדות הנדרשים', { variant: 'warning' });
-      return;
-    }
-
-    setIsLoading(true);
+  const handleSubmit = async (
+    values: LoginFormValues,
+    { setSubmitting, setStatus }: FormikHelpers<LoginFormValues>
+  ) => {
+    setStatus(null);
+    setSubmitting(true);
 
     try {
-      const response = await apiFetch('/admin/login', {});
+      const response = await apiFetch('/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      });
 
-      const data = await response.json();
-
-      if (data && !data.error) {
-        const returnUrl = router.query.returnUrl || '/admin';
-        router.push(returnUrl as string);
-      } else if (data.error) {
-        // TODO: Handle specific error messages
-      } else {
-        // TODO: Error message
-        enqueueSnackbar('אופס, משהו השתבש', { variant: 'error' });
+      if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('too-many-requests');
+        }
+        if (response.status === 401) {
+          throw new Error('invalid-credentials');
+        }
+        throw new Error('server-error');
       }
-    } catch {
-      // TODO: Handle server connection errors
-      enqueueSnackbar('אופס, החיבור לשרת נכשל', { variant: 'error' });
+
+      const returnUrl = router.query.returnUrl || `/lems`;
+      router.push(returnUrl as string);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'server-error';
+      setStatus(message);
     } finally {
-      setIsLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
-        <Stack direction="column" spacing={3} component="form" onSubmit={handleSubmit}>
-          <Typography variant="h2" textAlign="center" sx={{ mb: 2 }}>
-            התחברות למערכת
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            label="שם משתמש"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            disabled={isLoading}
-            autoComplete="username"
-            required
-          />
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validate={validateForm}
+          validateOnMount
+        >
+          {({ isSubmitting, status, isValid }) => (
+            <Form>
+              <Stack direction="column" spacing={3}>
+                <Typography variant="h2" textAlign="center" sx={{ mb: 2 }}>
+                  התחברות למערכת
+                </Typography>
 
-          <TextField
-            fullWidth
-            variant="outlined"
-            type={showPassword ? 'text' : 'password'}
-            label="סיסמה"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            disabled={isLoading}
-            autoComplete="current-password"
-            required
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                      size="small"
-                    >
-                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }
-            }}
-          />
+                <FormikTextField
+                  name="username"
+                  variant="outlined"
+                  label="שם משתמש"
+                  disabled={isSubmitting}
+                  autoComplete="username"
+                  required
+                />
 
-          <Box sx={{ pt: 2 }}>
-            <Button
-              fullWidth
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={isLoading || !username.trim() || !password.trim()}
-              endIcon={<ChevronLeftIcon />}
-              sx={{
-                borderRadius: 2,
-                py: 1.5,
-                fontSize: '1rem'
-              }}
-              loading={isLoading}
-            >
-              {isLoading ? 'מתחבר...' : 'התחבר'}
-            </Button>
-          </Box>
-        </Stack>
+                <FormikTextField
+                  name="password"
+                  variant="outlined"
+                  type={showPassword ? 'text' : 'password'}
+                  label="סיסמה"
+                  disabled={isSubmitting}
+                  autoComplete="current-password"
+                  required
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            size="small"
+                          >
+                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }
+                  }}
+                />
+
+                {status && (
+                  <Typography color="error" variant="body2">
+                    {status}
+                  </Typography>
+                )}
+
+                <Box sx={{ pt: 2 }}>
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting || !isValid}
+                    endIcon={<ChevronLeftIcon />}
+                    sx={{ borderRadius: 2, py: 1.5 }}
+                  >
+                    {isSubmitting ? 'מתחבר...' : 'התחבר'}
+                  </Button>
+                </Box>
+              </Stack>
+            </Form>
+          )}
+        </Formik>
       </Paper>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
+export const getServerSideProps: GetServerSideProps = async () => {
   // TODO: Redirect if already logged in
 
   const recaptchaRequired = process.env.RECAPTCHA === 'true';

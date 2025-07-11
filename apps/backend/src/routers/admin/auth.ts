@@ -27,7 +27,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     if (captcha.action != 'submit' || captcha.score < 0.5) {
-      res.status(429).json({ error: 'Captcha Failure, please try again later' });
+      res.status(429).json({ error: 'TOO_MANY_REQUESTS' });
       return;
     }
   }
@@ -43,7 +43,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     //TODO: Finish this route
     if (!isValidAdmin) {
       console.log(`🔑 Admin login failed: ${loginDetails.username}`);
-      res.status(401).json({ error: 'INVALID_ADMIN_CREDENTIALS' });
+      res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
 
@@ -76,7 +76,6 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     res.json({
       id: 'admin-user-id', // Replace with actual admin user ID
       username: loginDetails.username,
-      type: 'admin',
       loginTime: new Date()
     });
   } catch (err) {
