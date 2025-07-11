@@ -51,7 +51,6 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       return;
     }
 
-    // Verify password
     const isValidPassword = await verifyPassword(
       loginDetails.password,
       adminUser.password_hash,
