@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useTimeSync } from '../lib/timesync';
+import { useTimeSync } from '../../lib/timesync';
 import dayjs, { Dayjs } from 'dayjs';
 
 interface UseTimeOptions {

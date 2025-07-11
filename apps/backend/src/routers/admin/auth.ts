@@ -17,6 +17,7 @@ interface AdminLoginRequest {
 }
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+  console.log('Received admin login request', req.body); // Temporary debug log
   const { captchaToken, ...loginDetails }: AdminLoginRequest = req.body;
 
   if (process.env.RECAPTCHA === 'true') {

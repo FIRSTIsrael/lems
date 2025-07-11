@@ -16,7 +16,7 @@ import { RoleAuthorizer } from '../../components/role-authorizer';
 import Layout from '../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
-import { useTime } from '../../hooks/use-time';
+import { useTime } from '../../hooks/time/use-time';
 import { localizedRoles } from '../../localization/roles';
 import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../components/field/scorekeeper/field-control';

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useWindowSize } from '../../hooks/use-window-size';
+import { useWindowSize } from '../../hooks/layout/use-window-size';
 import { useMemo } from 'react';
 
 interface AudienceDisplayContainerProps {

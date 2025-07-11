@@ -17,10 +17,16 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Layout from '../../components/layout';
 import { apiFetch } from '../../lib/utils/fetch';
+import { useRecaptcha } from '../../hooks/use-recaptcha';
 
-const Page: NextPage = () => {
+interface PageProps {
+  recaptchaRequired: boolean;
+}
+
+const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const removeBadge = useRecaptcha(recaptchaRequired);
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -131,7 +137,9 @@ const Page: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   // TODO: Redirect if already logged in
-  return { props: {} };
+
+  const recaptchaRequired = process.env.RECAPTCHA === 'true';
+  return { props: { recaptchaRequired } };
 };
 
 export default Page;
