@@ -1,52 +1,60 @@
 import { Kysely } from 'kysely';
 import { DatabaseSchema } from '../schema';
 import { InsertableUser, User } from '../schema/tables/users';
-import {
-  InsertableUserPermission,
-  PermissionType,
-  UserPermission
-} from '../schema/tables/user-permissions';
+import { PermissionType, UserPermission } from '../schema/tables/user-permissions';
 
-export class UsersRepository {
-  constructor(private db: Kysely<DatabaseSchema>) {}
+class UserSelector {
+  private includePermissions = false;
 
-  async create(user: InsertableUser): Promise<User> {
-    const [createdUser] = await this.db.insertInto('users').values(user).returningAll().execute();
-    return createdUser;
+  constructor(
+    private db: Kysely<DatabaseSchema>,
+    private selector: { type: 'id' | 'username'; value: string }
+  ) {}
+
+  withPermissions(): UserSelector {
+    this.includePermissions = true;
+    return this;
   }
 
-  async getById(id: string): Promise<User | null> {
-    const user = await this.db
-      .selectFrom('users')
-      .selectAll()
-      .where('id', '=', id)
-      .executeTakeFirst();
-    return user || null;
+  async get(): Promise<User | null>;
+  async get<T extends boolean>(
+    this: T extends true ? UserSelector & { includePermissions: true } : UserSelector
+  ): Promise<T extends true ? (User & { permissions: PermissionType[] }) | null : User | null>;
+  async get(): Promise<User | (User & { permissions: PermissionType[] }) | null> {
+    const query = this.db.selectFrom('users').selectAll();
+
+    let user: User | undefined;
+    if (this.selector.type === 'id') {
+      user = await query.where('id', '=', this.selector.value).executeTakeFirst();
+    } else {
+      user = await query.where('username', '=', this.selector.value).executeTakeFirst();
+    }
+
+    if (!user) return null;
+
+    if (this.includePermissions) {
+      const permissions = await this.db
+        .selectFrom('user_permissions')
+        .select('permission')
+        .where('user_id', '=', user.id)
+        .execute();
+
+      return { ...user, permissions: permissions.map(p => p.permission) } as User & {
+        permissions: PermissionType[];
+      };
+    }
+
+    return user;
   }
 
-  async getByUsername(username: string): Promise<User | null> {
-    const user = await this.db
-      .selectFrom('users')
-      .selectAll()
-      .where('username', '=', username)
-      .executeTakeFirst();
-    return user || null;
-  }
+  async grantPermission(permission: PermissionType): Promise<UserPermission> {
+    const user = await this.get();
+    if (!user) throw new Error(`User not found`);
 
-  async updateLastLogin(userId: string): Promise<void> {
-    await this.db
-      .updateTable('users')
-      .set({ last_login: new Date() })
-      .where('id', '=', userId)
-      .execute();
-  }
-
-  // Permission-related methods
-  async grantPermission(userId: string, permission: PermissionType): Promise<UserPermission> {
     const [grantedPermission] = await this.db
       .insertInto('user_permissions')
       .values({
-        user_id: userId,
+        user_id: user.id,
         permission: permission
       })
       .returningAll()
@@ -54,50 +62,69 @@ export class UsersRepository {
     return grantedPermission;
   }
 
-  async revokePermission(userId: string, permission: PermissionType): Promise<void> {
+  async removePermission(permission: PermissionType): Promise<void> {
+    const user = await this.get();
+    if (!user) throw new Error(`User not found`);
+
     await this.db
       .deleteFrom('user_permissions')
-      .where('user_id', '=', userId)
+      .where('user_id', '=', user.id)
       .where('permission', '=', permission)
       .execute();
   }
 
-  async getPermissions(userId: string): Promise<PermissionType[]> {
-    const permissions = await this.db
-      .selectFrom('user_permissions')
-      .select('permission')
-      .where('user_id', '=', userId)
-      .execute();
-    return permissions.map(p => p.permission);
-  }
+  async hasPermission(permission: PermissionType): Promise<boolean> {
+    const user = await this.get();
+    if (!user) return false;
 
-  async hasPermission(userId: string, permission: PermissionType): Promise<boolean> {
     const result = await this.db
       .selectFrom('user_permissions')
       .select('permission')
-      .where('user_id', '=', userId)
+      .where('user_id', '=', user.id)
       .where('permission', '=', permission)
       .executeTakeFirst();
     return !!result;
   }
 
-  async getUsersWithPermission(permission: PermissionType): Promise<User[]> {
-    const users = await this.db
-      .selectFrom('users')
-      .innerJoin('user_permissions', 'users.id', 'user_permissions.user_id')
-      .selectAll('users')
-      .where('user_permissions.permission', '=', permission)
+  async getPermissions(): Promise<PermissionType[]> {
+    const user = await this.get();
+    if (!user) return [];
+
+    const permissions = await this.db
+      .selectFrom('user_permissions')
+      .select('permission')
+      .where('user_id', '=', user.id)
       .execute();
-    return users;
+    return permissions.map(p => p.permission);
   }
 
-  async getUserWithPermissions(
-    userId: string
-  ): Promise<(User & { permissions: PermissionType[] }) | null> {
-    const user = await this.getById(userId);
-    if (!user) return null;
+  async updateLastLogin(): Promise<void> {
+    const user = await this.get();
+    if (!user) throw new Error(`User not found`);
 
-    const permissions = await this.getPermissions(userId);
-    return { ...user, permissions };
+    await this.db
+      .updateTable('users')
+      .set({ last_login: new Date() })
+      .where('id', '=', user.id)
+      .execute();
+  }
+}
+
+export class UsersRepository {
+  constructor(private db: Kysely<DatabaseSchema>) {}
+
+  // Fluent selector methods
+  byId(id: string): UserSelector {
+    return new UserSelector(this.db, { type: 'id', value: id });
+  }
+
+  byUsername(username: string): UserSelector {
+    return new UserSelector(this.db, { type: 'username', value: username });
+  }
+
+  // Direct methods for operations that don't need selectors
+  async create(user: InsertableUser): Promise<User> {
+    const [createdUser] = await this.db.insertInto('users').values(user).returningAll().execute();
+    return createdUser;
   }
 }

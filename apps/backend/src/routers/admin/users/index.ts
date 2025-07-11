@@ -42,7 +42,7 @@ router.post('/register', async (req, res) => {
       throw new RegistrationError(400, 'Invalid name length', 'name-too-long');
     }
 
-    const existingUser = await db.users.getByUsername(username);
+    const existingUser = await db.users.byUsername(username).get();
     if (existingUser) {
       throw new RegistrationError(409, 'Username already exists', 'user-already-exists');
     }
