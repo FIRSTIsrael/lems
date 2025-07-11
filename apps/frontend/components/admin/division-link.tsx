@@ -5,12 +5,14 @@ import HomeIcon from '@mui/icons-material/HomeRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { Division } from '@lems/types';
 import { getBackgroundColor } from '../../lib/utils/theme';
+import { useTranslations } from 'next-intl';
 
 interface DivisionLinkProps {
   division: WithId<Division>;
 }
 
 const DivisionLink: React.FC<DivisionLinkProps> = ({ division }) => {
+  const t = useTranslations('components:admin:division-link');
   return (
     <Link
       href={`/admin/event/${division.eventId}/division/${division._id}`}
@@ -35,7 +37,7 @@ const DivisionLink: React.FC<DivisionLinkProps> = ({ division }) => {
           <HomeIcon />
         </Avatar>
         <Typography fontWeight={600} fontSize="1.125rem">
-          ניהול בית {division.name}
+          {t('division-link', { name: division.name })}
         </Typography>
         <OpenInNewRoundedIcon htmlColor="#666" fontSize="small" />
       </Stack>

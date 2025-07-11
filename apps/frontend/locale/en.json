@@ -1,1 +1,80 @@
-{}
+{
+  "components:admin:delete-division-data": {
+    "already-has-data": "The division already has data",
+    "delete-event-data": "Delete event data", 
+    "cancel": "Cancel", 
+    "confirem": "Confirem"
+  },
+  "components:admin:division-award-editor": {
+    "mandatory-award": "Mandatory award",
+    "award": "Award",
+    "copy-awards": "The awards have been copied successfully!",
+    "no-awards": "The event you selected has no awards", 
+    "saved-awards": "The list of awards has been saved successfully!",
+    "error-saved-awards": "Oops, we couldn't save the list of awards.",
+    "error-update-event": "Oops, we couldn't update the event information.",
+    "add-optional-award": "Add optional award",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "copy-from-event": "Copy from event",
+    "advancement-teams": "Advancement teams",
+    "chose-optional-award": "Choose optional award"
+  },
+  "components:admin:division-link": {
+    "division-link": "Manage division {name}"
+  },
+  "components:admin:division-outline-editor": {
+    "copied-schedule": "The general schedule has been copied successfully!",
+    "no-schedule": "The event you selected has no general schedule",
+    "saved-schedule": "The general schedule has been saved successfully!",
+    "error-schedule": "Oops, we couldn't save the general schedule.", 
+    "name": "Name",   
+    "start-time": "Start time",
+    "end-time": "End time", 
+    "roles": "Roles",
+    "sort": "Sort",
+    "save": "Save",
+    "cancel": "Cancel",
+    "copy-from-event": "Copy from event",
+    "copy-general-schedule": "Copy general schedule",
+    "show-on-dashboard": "Show on dashboard",
+    "generate-schedule": "Generate schedule"
+  },
+  "components:admin:division-schedule-editor": {
+    "upload-teams": "Upload teams",
+    "venue-setup": "Venue setup",
+    "timing": "Timing",
+    "generated-schedule": "Schedule generated successfully",
+    "error-schedule": "Error generating schedule"
+  },
+  "components:admin:division-tab-editor": {
+    "schedule": "Schedule",
+    "outline": "Event outline",
+    "awards": "Awards"
+  }, 
+  "components:admin:download-users": {
+    "download-users": "Download passwords file"
+  }, 
+  "components:admin:edit-division-form": {
+    "saved-info": "The division information has been saved successfully!",
+    "error-info": "Oops, we couldn't save the division information.", 
+    "division-info": "Division information",
+    "division-name": "Name",
+    "save": "Save",
+    "schedule": "Schedule",
+    "pit-map": "Pit map"
+},
+"components:admin:edit-event-form": {
+    "saved-info": "The event information has been saved successfully!",
+    "error-info": "Oops, we couldn't save the event information.", 
+    "event-info": "Event information",
+    "event-name": "Event name",
+    "event-location": "Event location",
+    "event-start-date": "Event start date",
+    "event-end-date": "Event end date",
+    "save": "Save"
+}, 
+"components:admin:generate-schedule": {
+    "generate-schedule": "Generate schedule"
+}
+}

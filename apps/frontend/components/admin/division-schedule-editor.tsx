@@ -9,15 +9,10 @@ import DeleteDivisionData from './delete-division-data';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/router';
+import { useTranslations } from 'next-intl';
 
-const SchedulerStages = ['upload-teams', 'venue-setup', 'timing'];
+const SchedulerStages = ['upload-teams', 'venue-setup', 'timing'] as const;
 export type SchedulerStage = (typeof SchedulerStages)[number];
-
-const localizedStages: Record<SchedulerStage, string> = {
-  'upload-teams': 'העלאת קבוצות',
-  'venue-setup': 'פרטי תחרות',
-  timing: 'הגדרת זמנים'
-};
 
 interface DivisionScheduleEditorProps {
   event: WithId<FllEvent>;
@@ -26,6 +21,13 @@ interface DivisionScheduleEditorProps {
 
 const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ division, event }) => {
   const router = useRouter();
+  const t = useTranslations('components:admin:division-schedule-editor');
+
+  const localizedStages: Record<SchedulerStage, string> = {
+    'upload-teams': t('upload-teams'),
+    'venue-setup': t('venue-setup'),
+    timing: t('timing')
+  };
   const [activeStep, setActiveStep] = useState(0);
   const [settings, setSettings] = useState<ScheduleGenerationSettings>({
     practiceRounds: 1,
@@ -91,10 +93,10 @@ const DivisionScheduleEditor: React.FC<DivisionScheduleEditorProps> = ({ divisio
                   );
 
                   if (response.ok) {
-                    enqueueSnackbar('לו"ז נוצר בהצלחה', { variant: 'success' });
+                    enqueueSnackbar(t('generated-schedule'), { variant: 'success' });
                     router.reload();
                   } else {
-                    enqueueSnackbar('שגיאה ביצירת הלו"ז', { variant: 'error' });
+                    enqueueSnackbar(t('error-schedule'), { variant: 'error' });
                   }
                 }}
                 goBack={() => setActiveStep(1)}

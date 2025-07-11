@@ -6,6 +6,7 @@ import DivisionAwardEditor from './division-award-editor';
 import DivisionOutlineEditor from './division-outline-editor';
 import DivisionScheduleEditor from './division-schedule-editor';
 import { useQueryParam } from '../../hooks/use-query-param';
+import { useTranslations } from 'next-intl';
 
 interface DivisionTabEditorProps {
   event: WithId<FllEvent>;
@@ -14,6 +15,7 @@ interface DivisionTabEditorProps {
 }
 
 const DivisionTabEditor: React.FC<DivisionTabEditorProps> = ({ event, division, awardSchema }) => {
+  const t = useTranslations('components:admin:division-tab-editor');
   const [activeTab, setActiveTab] = useQueryParam('tab', '1');
 
   return (
@@ -24,9 +26,9 @@ const DivisionTabEditor: React.FC<DivisionTabEditorProps> = ({ event, division, 
           onChange={(_e, newValue: string) => setActiveTab(newValue)}
           centered
         >
-          <Tab label="לוח זמנים" value="1" />
-          <Tab label="מסגרת אירוע" value="2" />
-          <Tab label="פרסים" value="3" />
+          <Tab label={t('schedule')} value="1" />
+          <Tab label={t('outline')} value="2" />
+          <Tab label={t('awards')} value="3" />
         </Tabs>
       </Paper>
       <TabPanel value="1">

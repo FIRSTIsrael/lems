@@ -39,6 +39,7 @@ import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
 import FormikCheckbox from '../general/forms/formik-checkbox';
 import EventSelectorModal from '../general/event-selector-modal';
+import { useTranslations } from 'next-intl';
 
 interface AwardItemProps {
   name: AwardNames;
@@ -48,6 +49,7 @@ interface AwardItemProps {
 
 const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
   const isMandatory = MandatoryAwardTypes.some(x => x === name);
+  const t = useTranslations('components:admin:division-award-editor');
 
   return (
     <Draggable draggableId={name} index={index}>
@@ -70,7 +72,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
               <Grid display="flex" alignItems="center" {...field} size={10}>
                 <Grid display="flex" alignItems="center" size={2}>
                   {isMandatory ? (
-                    <Tooltip title="פרס חובה" arrow>
+                    <Tooltip title={t('mandatory-award')} arrow>
                       <span>
                         <IconButton disabled>
                           <LockOutlinedIcon />
@@ -122,6 +124,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
   const [copyModal, setCopyModal] = useState(false);
   const [events, setEvents] = useState<Array<WithId<FllEvent>>>([]);
   const formikRef = useRef<FormikProps<FormikValues>>(null);
+  const t = useTranslations('components:admin:division-award-editor');
 
   useEffect(() => {
     apiFetch(`/public/events`).then(res => {
@@ -177,10 +180,10 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
         if (Object.entries(data).length > 0) {
           setAwards(getExistingAwards(data));
           formikRef.current?.setValues(getInitialValues(data), true);
-          enqueueSnackbar('הפרסים הועתקו בהצלחה!', { variant: 'success' });
+          enqueueSnackbar(t('copy-awards'), { variant: 'success' });
           setCopyModal(false);
         } else {
-          enqueueSnackbar('לאירוע שבחרתם אין פרסים', { variant: 'warning' });
+          enqueueSnackbar(t('no-awards'), { variant: 'warning' });
         }
       });
   };
@@ -213,9 +216,9 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
           body: JSON.stringify(schema)
         }).then(res => {
           if (res.ok) {
-            enqueueSnackbar('רשימת הפרסים נשמרה בהצלחה!', { variant: 'success' });
+            enqueueSnackbar(t('saved-awards'), { variant: 'success' });
           } else {
-            enqueueSnackbar('אופס, לא הצלחנו לשמור את רשימת הפרסים.', { variant: 'error' });
+            enqueueSnackbar(t('error-saved-awards'), { variant: 'error' });
           }
         });
 
@@ -225,7 +228,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
           body: JSON.stringify({ enableAdvancement })
         }).then(res => {
           if (!res.ok) {
-            enqueueSnackbar('לא הצלחנו לעדכן את פרטי האירוע.', { variant: 'error' });
+            enqueueSnackbar(t('error-update-event'), { variant: 'error' });
           }
         });
 
@@ -253,22 +256,22 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
           </DragDropContext>
           <Stack component={Paper} my={2} p={2} width="100%" direction="row" spacing={2}>
             <Button variant="contained" onClick={() => setOpen(true)} sx={{ minWidth: 120 }}>
-              הוספת פרס רשות
+              {t('add-optional-award')}
             </Button>
             <Button variant="contained" onClick={submitForm} sx={{ minWidth: 120 }}>
-              שמירה
+              {t('confirm')}
             </Button>
             <Button variant="contained" sx={{ minWidth: 100 }} onClick={() => setCopyModal(true)}>
-              העתקה מאירוע אחר
+              {t('copy-from-event')}
             </Button>
             <EventSelectorModal
-              title="העתקה מאירוע אחר"
+              title={t('copy-from-event')}
               open={copyModal}
               setOpen={setCopyModal}
               events={events}
               onSelect={copyAwardsFrom}
             />
-            <FormikCheckbox name="enableAdvancement" label="העפלת קבוצות מתחרות זו" />
+            <FormikCheckbox name="enableAdvancement" label={t('advancement-teams')} />
           </Stack>
 
           <Dialog
@@ -282,13 +285,13 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
             <DialogTitle id="award-dialog-title">הוספת פרס רשות</DialogTitle>
             <DialogContent>
               <DialogContentText id="award-dialog-description">
-                בחרו פרס רשות להוסיף.
+                {t('chose-optional-award')}
               </DialogContentText>
               <FormControl fullWidth sx={{ mt: 2 }}>
-                <InputLabel id="award-select-label">פרס</InputLabel>
+                <InputLabel id="award-select-label">{t('award')}</InputLabel>
                 <Select
                   labelId="award-select-label"
-                  label="פרס"
+                  label={t('award')}
                   value={awardToAdd}
                   onChange={e => {
                     setAwardToAdd(e.target.value as AwardNames);
@@ -306,7 +309,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpen(false)} autoFocus>
-                ביטול
+                {t('cancel')}
               </Button>
               <Button
                 disabled={!awardToAdd}
@@ -319,7 +322,7 @@ const DivisionAwardEditor: React.FC<DivisionAwardEditorProps> = ({ divisionId, a
                   }
                 }}
               >
-                אישור
+                {t('confirm')}
               </Button>
             </DialogActions>
           </Dialog>

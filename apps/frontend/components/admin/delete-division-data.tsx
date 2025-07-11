@@ -15,6 +15,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DivisionWithEvent } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import { localizeDivisionTitle } from '../../localization/event';
+import { useTranslations } from 'next-intl';
 
 interface DeleteDivisionDataProps {
   division: WithId<DivisionWithEvent>;
@@ -23,6 +24,7 @@ interface DeleteDivisionDataProps {
 const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const t = useTranslations('components:admin:delete-division-data');
 
   const handleConfirm = () => {
     apiFetch(`/api/admin/divisions/${division._id}/data`, {
@@ -45,7 +47,7 @@ const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => 
             border: '1px solid #ff2f00'
           }}
         >
-          יש כבר נתונים לאירוע
+          {t('already-has-data')}
         </Alert>
         <Button
           variant="contained"
@@ -54,7 +56,7 @@ const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => 
           sx={{ borderRadius: '1rem' }}
           onClick={() => setOpen(true)}
         >
-          מחיקת נתוני האירוע
+          {t('delete-event-data')}
         </Button>
       </Stack>
       <Dialog
@@ -63,7 +65,7 @@ const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => 
         aria-labelledby="delete-data-title"
         aria-describedby="delete-data-description"
       >
-        <DialogTitle id="delete-data-title">מחיקת נתוני האירוע</DialogTitle>
+        <DialogTitle id="delete-data-title">{t('delete-event-data')}</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-data-description">
             {`אתם עומדים למחוק את כל נתוני האירוע, כולל תוצאות ופרסים מיום התחרות.
@@ -73,10 +75,10 @@ const DeleteDivisionData: React.FC<DeleteDivisionDataProps> = ({ division }) => 
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={() => setOpen(false)}>
-            ביטול
+            {t('cancel')}
           </Button>
           <Button onClick={handleConfirm} autoFocus>
-            אישור
+            {t('confirem')}
           </Button>
         </DialogActions>
       </Dialog>

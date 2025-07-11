@@ -3,12 +3,14 @@ import { Button, ButtonProps } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Division } from '@lems/types';
 import { getApiBase } from '../../lib/utils/fetch';
+import { useTranslations } from 'next-intl';
 
 interface DownloadUsersButtonProps extends ButtonProps {
   division: WithId<Division>;
 }
 
 const DownloadUsersButton: React.FC<DownloadUsersButtonProps> = ({ division, ...props }) => {
+  const t = useTranslations('components:admin:download-users');
   return (
     <Button
       component="a"
@@ -19,7 +21,7 @@ const DownloadUsersButton: React.FC<DownloadUsersButtonProps> = ({ division, ...
       download
       {...props}
     >
-      הורדת קובץ סיסמאות
+      {t('download-users')}
     </Button>
   );
 };

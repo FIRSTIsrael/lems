@@ -18,6 +18,7 @@ import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
 import UploadFileButton from '../general/upload-file';
 import DownloadUsersButton from './download-users';
+import { useTranslations } from 'next-intl';
 
 interface EditDivisionFormProps extends PaperProps {
   event: WithId<FllEvent>;
@@ -25,6 +26,7 @@ interface EditDivisionFormProps extends PaperProps {
 }
 
 const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ...props }) => {
+  const t = useTranslations('components:admin:edit-division-form');
   const [name, setName] = useState<string>(division.name);
   const [color, setColor] = useState<CSSProperties['color']>(division.color);
 
@@ -35,9 +37,9 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
       body: JSON.stringify({ name, color })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('פרטי הבית נשמרו בהצלחה!', { variant: 'success' });
+        enqueueSnackbar(t('saved-info'), { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת פרטי הבית נכשלה.', { variant: 'error' });
+        enqueueSnackbar(t('error-info'), { variant: 'error' });
       }
     });
   };
@@ -53,7 +55,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
       >
         <Stack direction="column" spacing={2}>
           <Typography variant="h2" fontSize="1.25rem" fontWeight={600}>
-            פרטי הבית
+            {t('division-info')}
           </Typography>
           <Grid container spacing={2}>
             <Grid size={6}>
@@ -62,7 +64,7 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                label="שם בית"
+                label={t('division-name')}
                 fullWidth
               />
             </Grid>
@@ -77,21 +79,21 @@ const EditDivisionForm: React.FC<EditDivisionFormProps> = ({ event, division, ..
           </Grid>
           <Box justifyContent="center" display="flex">
             <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
-              שמירה
+              {t('save')}
             </Button>
           </Box>
           <Divider />
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
             <UploadFileButton
               urlPath={`/api/admin/divisions/${division._id}/schedule/parse`}
-              displayName="לוח זמנים"
+              displayName={t('schedule')}
               extension=".csv"
               disabled={division.hasState}
               requestData={{ timezone: dayjs.tz.guess() }}
             />
             <UploadFileButton
               urlPath={`/api/admin/divisions/${division._id}/pit-map`}
-              displayName="מפת פיטים"
+              displayName={t('pit-map')}
               extension=".png"
             />
             <DownloadUsersButton division={division} disabled={!division.hasState} />

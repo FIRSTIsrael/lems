@@ -10,6 +10,7 @@ import { FllEvent } from '@lems/types';
 import { apiFetch } from '../../lib/utils/fetch';
 import ColorPickerButton from './color-picker-button';
 import { DivisionSwatches } from '@lems/types';
+import { useTranslations } from 'next-intl';
 
 interface EditEventFormProps extends PaperProps {
   event: WithId<FllEvent>;
@@ -22,6 +23,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
   const [endDate, setEndDate] = useState<Dayjs>(dayjs(event.endDate));
   const gridItemSize = event.enableDivisions ? 4.5 : 4;
   const [color, setColor] = useState<CSSProperties['color']>(event.color);
+  const t = useTranslations('components:admin:edit-event-form');
 
   const updateEvent = () => {
     apiFetch(`/api/admin/events/${event._id}`, {
@@ -35,9 +37,9 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
       })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('פרטי האירוע נשמרו בהצלחה!', { variant: 'success' });
+        enqueueSnackbar(t('saved-info'), { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת פרטי האירוע נכשלה.', { variant: 'error' });
+        enqueueSnackbar(t('error-info'), { variant: 'error' });
       }
     });
   };
@@ -53,7 +55,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
       >
         <Stack direction="column" spacing={2}>
           <Typography variant="h2" fontSize="1.25rem" fontWeight={600}>
-            פרטי האירוע
+            {t('event-info')}
           </Typography>
           <Grid container spacing={2}>
             {!event.enableDivisions && (
@@ -72,7 +74,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                label="שם אירוע"
+                label={t('event-name')}
                 fullWidth
               />
             </Grid>
@@ -82,7 +84,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
                 type="text"
                 value={location}
                 onChange={e => setLocation(e.target.value)}
-                label="מיקום האירוע"
+                label={t('event-location')}
                 fullWidth
               />
             </Grid>
@@ -90,7 +92,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
               <Grid size={gridItemSize}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
-                  label="תאריך התחלה"
+                  label={t('event-start-date')}
                   value={startDate}
                   onChange={newDate => {
                     if (newDate) setStartDate(newDate);
@@ -102,7 +104,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
               <Grid size={gridItemSize}>
                 <DatePicker
                   disabled // Currently we do not support editing division dates (see LEMS-153)
-                  label="תאריך סיום"
+                  label={t('event-end-date')}
                   value={endDate}
                   onChange={newDate => {
                     if (newDate) setEndDate(newDate);
@@ -116,7 +118,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, ...props }) => {
 
           <Box justifyContent="center" display="flex">
             <Button type="submit" variant="contained" sx={{ minWidth: 250 }}>
-              שמירה
+              {t('save')}
             </Button>
           </Box>
         </Stack>

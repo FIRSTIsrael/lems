@@ -10,6 +10,7 @@ import DownloadUsersButton from '../../../../components/admin/download-users';
 import UploadFileButton from '../../../../components/general/upload-file';
 import DivisionTabEditor from '../../../../components/admin/division-tab-editor';
 import dayjs from 'dayjs';
+import { getMessages } from '../../../../locale/get-messages';
 
 interface Props {
   event: WithId<FllEvent>;
@@ -74,8 +75,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         ctx
       ).then(res => res?.json())
     : null;
+  const messages = await getMessages(ctx.locale);
 
-  return { props: { event, division, awardSchema } };
+  return { props: { event, division, awardSchema, messages } };
 };
 
 export default Page;

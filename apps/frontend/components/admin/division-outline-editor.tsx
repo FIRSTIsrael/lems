@@ -32,6 +32,7 @@ import { fullMatch } from '@lems/utils/objects';
 import { localizedRoles } from '../../localization/roles';
 import { apiFetch } from '../../lib/utils/fetch';
 import EventSelectorModal from '../general/event-selector-modal';
+import { useTranslations } from 'next-intl';
 
 interface DivisionOutlineEditorProps {
   event: WithId<FllEvent>;
@@ -39,6 +40,7 @@ interface DivisionOutlineEditorProps {
 }
 
 const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, division }) => {
+  const t = useTranslations('components:admin:division-outline-editor');
   const theme = useTheme();
   const router = useRouter();
   const [schedule, setSchedule] = useState<Array<DivisionScheduleEntry>>(division.schedule || []);
@@ -91,10 +93,10 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
           });
 
           setSchedule(newSchedule);
-          enqueueSnackbar('הלו"ז הכללי הועתק בהצלחה!', { variant: 'success' });
+          enqueueSnackbar(t('copied-schedule'), { variant: 'success' });
           setCopyModal(false);
         } else {
-          enqueueSnackbar('לאירוע שבחרתם אין לו"ז כללי', { variant: 'warning' });
+          enqueueSnackbar(t('no-schedule'), { variant: 'warning' });
         }
       });
   };
@@ -107,9 +109,9 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
       body: JSON.stringify({ schedule: sortedSchedule })
     }).then(res => {
       if (res.ok) {
-        enqueueSnackbar('לוח הזמנים נשמר בהצלחה!', { variant: 'success' });
+        enqueueSnackbar(t('saved-schedule'), { variant: 'success' });
       } else {
-        enqueueSnackbar('אופס, שמירת לוח הזמנים נכשלה.', { variant: 'error' });
+        enqueueSnackbar(t('error-schedule'), { variant: 'error' });
       }
     });
   };
@@ -149,7 +151,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                   <DeleteOutlineIcon />
                 </IconButton>
                 <TextField
-                  label="שם"
+                  label={t('name')}
                   fullWidth
                   value={entry.name}
                   onChange={e =>
@@ -165,7 +167,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
-                    label="שעת התחלה"
+                    label={t('start-time')}
                     value={dayjs(entry.startTime)}
                     sx={{ minWidth: 150 }}
                     onChange={newTime => {
@@ -185,7 +187,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                     views={['hours', 'minutes']}
                   />
                   <TimePicker
-                    label="שעת סיום"
+                    label={t('end-time')}
                     value={dayjs(entry.endTime)}
                     sx={{ minWidth: 150 }}
                     onChange={newTime => {
@@ -221,11 +223,11 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                       }
                     />
                   }
-                  label={<Typography fontSize="0.85rem">הצגה ב-Dashboard</Typography>}
+                  label={<Typography fontSize="0.85rem">{t('show-on-dashboard')}</Typography>}
                 />
               </Stack>
               <FormControl fullWidth>
-                <InputLabel id="role-chip-label">תפקידים</InputLabel>
+                <InputLabel id="role-chip-label">{t('roles')}</InputLabel>
                 <Select
                   labelId="role-chip-label"
                   id="role-chip"
@@ -250,7 +252,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
                       return newSchedule;
                     });
                   }}
-                  input={<OutlinedInput id="select-multiple-chip" label="תפקידים" />}
+                  input={<OutlinedInput id="select-multiple-chip" label={t('roles')} />}
                   renderValue={selected => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {/* @ts-expect-error Same as above */}
@@ -286,7 +288,7 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
             setSchedule(schedule => [
               ...schedule,
               {
-                name: `מרכיב לו״ז ${schedule.length + 1}`,
+                name: `${t('generate-schedule')} ${schedule.length + 1}`,
                 startTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 endTime: dayjs(event.startDate).set('hour', 0).set('minute', 0).toDate(),
                 roles: []
@@ -302,10 +304,10 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
           disabled={fullMatch(schedule, sortedSchedule)}
           onClick={() => setSchedule(sortedSchedule)}
         >
-          מיון
+          {t('sort')}
         </Button>
         <Button type="submit" variant="contained" sx={{ minWidth: 100 }}>
-          שמירה
+          {t('save')}
         </Button>
         <Button
           variant="contained"
@@ -313,10 +315,10 @@ const DivisionOutlineEditor: React.FC<DivisionOutlineEditorProps> = ({ event, di
           onClick={() => setCopyModal(true)}
           disabled={schedule.length > 0}
         >
-          העתקה מאירוע אחר
+          {t('copy-from-event')}
         </Button>
         <EventSelectorModal
-          title="העתקת לו״ז כללי"
+          title={t('copy-general-schedule')}
           open={copyModal}
           setOpen={setCopyModal}
           events={events}

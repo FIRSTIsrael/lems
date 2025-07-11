@@ -1,1 +1,80 @@
-{}
+{
+  "components:admin:delete-division-data": {
+    "already-has-data": "יש כבר נתונים לאירוע",
+    "delete-event-data": "מחיקת נתוני האירוע",
+    "cancel": "ביטול",
+    "confirem": "אישור"
+  }, 
+  "components:admin:division-award-editor": {
+    "mandatory-award": "פרס חובה",
+    "award": "פרס",
+    "copy-awards": "הפרסים הועתקו בהצלחה!",
+    "no-awards": "לאירוע שבחרתם אין פרסים", 
+    "saved-awards": "רשימת הפרסים נשמרה בהצלחה!",
+    "error-saved-awards": "אופס, לא הצלחנו לשמור את רשימת הפרסים.",
+    "error-update-event": "לא הצלחנו לעדכן את פרטי האירוע.",
+    "add-optional-award": "הוספת פרס רשות",
+    "confirm": "שמירה",
+    "cancel": "ביטול",
+    "copy-from-event": "העתקה מאירוע אחר",
+    "advancement-teams": "העפלת קבוצות מתחרות זו",
+    "chose-optional-award": "בחירת פרס רשות"
+  },
+  "components:admin:division-link": {
+    "division-link": "ניהול בית {name}"
+  },
+  "components:admin:division-outline-editor": {
+    "copied-schedule": "הלו׳׳ז הכללי העותק בהצלחה!",
+    "no-schedule": "לאירוע שבחרתם אין לו''ז כללי",
+    "saved-schedule": "לוח הזמנים נשמר בהצלחה!",
+    "error-schedule": "אופס, שמירת לוח הזמנים נכשלה.", 
+    "name": "שם",   
+    "start-time": "שעת התחלה",
+    "end-time": "שעת סיום", 
+    "roles": "תפקידים",
+    "sort": "מיון",
+    "save": "שמירה",
+    "cancel": "ביטול",
+    "copy-from-event": "העתקה מאירוע אחר",
+    "copy-general-schedule": "העתיק לו׳׳ז כללי",
+    "show-on-dashboard": "הצגה ב-Dashboard",
+    "generate-schedule": "מרכיז לוז"
+  },
+  "components:admin:division-schedule-editor": {
+    "upload-teams": "העלאת קבוצות",
+    "venue-setup": "פרטי תחרות",
+    "timing": "הגדרת זמנים",
+    "generated-schedule": "לו׳׳ז נוצר בהצלחה",
+    "error-schedule": "שגיאה ביצירת הלו׳׳ז"
+  }, 
+  "components:admin:division-tab-editor": {
+    "schedule": "לוח זמנים",
+    "outline": "מסגרת אירוע",
+    "awards": "פרסים"
+  },
+  "components:admin:download-users": {
+    "download-users": "הורדת קובץ סיסמאות"
+  }, 
+  "components:admin:edit-division-form": {
+    "saved-info": "פרטי הבית נשמרו בהצלחה!",
+    "error-info": "אופס, שמירת פרטי הבית נכשלה.", 
+    "division-info": "פרטי הבית",
+    "division-name": "שם",
+    "save": "שמירה",
+    "schedule": "לוח זמנים",
+    "pit-map": "מפת פיטים"
+}, 
+"components:admin:edit-event-form": {
+    "saved-info": "פרטי האירוע נשמרו בהצלחה!",
+    "error-info": "אופס, שמירת פרטי האירוע נכשלה.", 
+    "event-info": "פרטי האירוע",
+    "event-name": "שם אירוע",
+    "event-location": "מיקום האירוע",
+    "event-start-date": "תאריך התחלה",
+    "event-end-date": "תאריך סיום",
+    "save": "שמירה"
+}, 
+"components:admin:generate-schedule": {
+    "generate-schedule": " יצירת לוח זמנים"
+}
+}
