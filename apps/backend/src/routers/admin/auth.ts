@@ -1,29 +1,34 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
-// import { ObjectId } from 'mongodb'; // Will be needed for actual admin user implementation
-// import * as db from '@lems/database'; // Will be needed for actual admin user implementation
 import { RecaptchaResponse } from '../../types/auth';
+import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
+import { verifyPassword } from '../../lib/security/credentials';
 
 const router = express.Router({ mergeParams: true });
 
 const jwtSecret = process.env.JWT_SECRET;
 
-interface AdminLoginRequest {
+if (!jwtSecret) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
+interface LoginRequest {
   username: string;
   password: string;
   captchaToken?: string;
 }
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-  console.log('Received admin login request', req.body); // Temporary debug log
-  const { captchaToken, ...loginDetails }: AdminLoginRequest = req.body;
+  const { captchaToken, ...loginDetails }: LoginRequest = req.body;
 
   if (process.env.RECAPTCHA === 'true') {
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
     if (!captcha.success || captcha['error-codes']?.length > 0) {
-      console.log(`🔏 Captcha failure: ${captcha['error-codes'] || []}`);
+      console.log(`Captcha failure: ${captcha['error-codes'] || []}`);
+      res.status(500).json({ error: 'CAPTCHA_FAILED' });
+      return;
     }
 
     if (captcha.action != 'submit' || captcha.score < 0.5) {
@@ -33,34 +38,47 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   }
 
   try {
-    // TODO: Implement admin user authentication logic
-    // This should validate against admin user database/collection
-    // const adminUser = await db.getAdminUser({ ...loginDetails });
+    if (!loginDetails.username || !loginDetails.password) {
+      res.status(400).json({ error: 'MISSING_CREDENTIALS' });
+      return;
+    }
 
-    // Placeholder logic - replace with actual admin authentication
-    const isValidAdmin = false; // Replace with actual validation logic
+    const adminUser = await db.users.getByUsername(loginDetails.username);
 
-    //TODO: Finish this route
-    if (!isValidAdmin) {
-      console.log(`🔑 Admin login failed: ${loginDetails.username}`);
+    if (!adminUser) {
+      console.log(`🔑 Admin login failed - user not found: ${loginDetails.username}`);
+      res.status(401).json({ error: 'INVALID_CREDENTIALS' });
+      return;
+    }
+
+    // Verify password
+    const isValidPassword = await verifyPassword(
+      loginDetails.password,
+      adminUser.password_hash,
+      adminUser.password_salt
+    );
+
+    if (!isValidPassword) {
+      console.log(`🔑 Admin login failed - invalid password: ${loginDetails.username}`);
       res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
 
     console.log(`🔑 Admin login successful: ${loginDetails.username}`);
+    await db.users.updateLastLogin(adminUser.id);
 
-    // Create longer-lived token for admin users (24 hours)
-    const expires = dayjs().add(24, 'hour');
+    const expires = dayjs().add(7, 'days');
     const expiresInSeconds = expires.diff(dayjs(), 'second');
 
     const token = jwt.sign(
       {
-        adminId: 'admin-user-id', // Replace with actual admin user ID
-        type: 'admin'
+        userId: adminUser.id,
+        username: adminUser.username,
+        userType: 'admin'
       },
       jwtSecret,
       {
-        issuer: 'FIRST-ADMIN',
+        issuer: 'FIRST',
         expiresIn: expiresInSeconds
       }
     );
@@ -72,13 +90,15 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       sameSite: 'strict'
     });
 
-    // Return admin user info (without sensitive data)
     res.json({
-      id: 'admin-user-id', // Replace with actual admin user ID
-      username: loginDetails.username,
+      id: adminUser.id,
+      username: adminUser.username,
+      firstName: adminUser.first_name,
+      lastName: adminUser.last_name,
       loginTime: new Date()
     });
   } catch (err) {
+    console.error('Admin login error:', err);
     next(err);
   }
 });
@@ -87,6 +107,11 @@ router.post('/logout', (req: Request, res: Response) => {
   console.log(`🔒 Admin logout successful`);
   res.clearCookie('admin-auth-token');
   res.json({ ok: true });
+});
+
+router.get('/verify', (req, res) => {
+  const user = req.user;
+  res.json({ ok: true, user });
 });
 
 export default router;

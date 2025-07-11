@@ -170,8 +170,12 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // TODO: Redirect if already logged in
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const response = await apiFetch('/admin/auth/verify', undefined, ctx);
+  if (response.ok) {
+    // User is already logged in, redirect to admin page
+    return { redirect: { destination: '/admin', permanent: false } };
+  }
 
   const recaptchaRequired = process.env.RECAPTCHA === 'true';
   return { props: { recaptchaRequired } };

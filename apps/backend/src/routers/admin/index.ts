@@ -1,10 +1,13 @@
 import express from 'express';
-import adminUsersRouter from './users/index';
-import adminAuthRouter from './auth';
+import usersRouter from './users/index';
+import authRouter from './auth';
+import { authMiddleware } from '../../middlewares/admin/auth';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/auth', adminAuthRouter);
-router.use('/users', adminUsersRouter);
+router.use(authMiddleware);
+
+router.use('/auth', authRouter);
+router.use('/users', usersRouter);
 
 export default router;

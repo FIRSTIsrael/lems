@@ -37,10 +37,17 @@ app.use('/timesync', timesyncServer.requestHandler);
 app.use(express.json());
 app.use('/', expressLogger);
 
-app.use('/auth', authRouter);
+// Public paths, currently used for static files and the portal app.
 app.use('/public', publicRouter);
+
+// Integrations
 app.use('/dashboard', dashboardRouter);
+
+// LEMS app
+app.use('/auth', authRouter);
 app.use('/api', apiRouter);
+
+// Admin app
 app.use('/admin', adminRouter);
 
 app.get('/status', (req, res) => {

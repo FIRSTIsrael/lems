@@ -32,7 +32,7 @@ export const expressLogger = expressWinston.logger({
   dynamicMeta: (req, res) => {
     const body = (res as any)?.body || {};
     return {
-      user: req.user?._id,
+      user: req.user,
       userAgent: req.get('user-agent'),
       ip: req.ip,
       error: body.error && body.code ? body : null,

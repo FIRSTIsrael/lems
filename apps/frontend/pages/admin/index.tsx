@@ -9,7 +9,7 @@ const Page: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  return { redirect: { destination: '/admin/login', permanent: false } };
+  return { props: {} };
 };
 
 export default Page;

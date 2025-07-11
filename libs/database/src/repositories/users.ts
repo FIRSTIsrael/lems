@@ -27,4 +27,12 @@ export class UsersRepository {
       .executeTakeFirst();
     return user || null;
   }
+
+  async updateLastLogin(userId: string): Promise<void> {
+    await this.db
+      .updateTable('users')
+      .set({ last_login: new Date() })
+      .where('id', '=', userId)
+      .execute();
+  }
 }
