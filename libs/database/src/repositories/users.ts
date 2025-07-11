@@ -1,6 +1,11 @@
 import { Kysely } from 'kysely';
 import { DatabaseSchema } from '../schema';
 import { InsertableUser, User } from '../schema/tables/users';
+import {
+  InsertableUserPermission,
+  PermissionType,
+  UserPermission
+} from '../schema/tables/user-permissions';
 
 export class UsersRepository {
   constructor(private db: Kysely<DatabaseSchema>) {}
@@ -34,5 +39,65 @@ export class UsersRepository {
       .set({ last_login: new Date() })
       .where('id', '=', userId)
       .execute();
+  }
+
+  // Permission-related methods
+  async grantPermission(userId: string, permission: PermissionType): Promise<UserPermission> {
+    const [grantedPermission] = await this.db
+      .insertInto('user_permissions')
+      .values({
+        user_id: userId,
+        permission: permission
+      })
+      .returningAll()
+      .execute();
+    return grantedPermission;
+  }
+
+  async revokePermission(userId: string, permission: PermissionType): Promise<void> {
+    await this.db
+      .deleteFrom('user_permissions')
+      .where('user_id', '=', userId)
+      .where('permission', '=', permission)
+      .execute();
+  }
+
+  async getPermissions(userId: string): Promise<PermissionType[]> {
+    const permissions = await this.db
+      .selectFrom('user_permissions')
+      .select('permission')
+      .where('user_id', '=', userId)
+      .execute();
+    return permissions.map(p => p.permission);
+  }
+
+  async hasPermission(userId: string, permission: PermissionType): Promise<boolean> {
+    const result = await this.db
+      .selectFrom('user_permissions')
+      .select('permission')
+      .where('user_id', '=', userId)
+      .where('permission', '=', permission)
+      .executeTakeFirst();
+    return !!result;
+  }
+
+  async getUsersWithPermission(permission: PermissionType): Promise<User[]> {
+    const users = await this.db
+      .selectFrom('users')
+      .innerJoin('user_permissions', 'users.id', 'user_permissions.user_id')
+      .selectAll('users')
+      .where('user_permissions.permission', '=', permission)
+      .execute();
+    return users;
+  }
+
+  async getUserWithPermissions(
+    userId: string
+  ): Promise<(User & { permissions: PermissionType[] }) | null> {
+    const user = await this.getById(userId);
+    if (!user) return null;
+
+    const permissions = await this.getPermissions(userId);
+    return { ...user, permissions };
   }
 }
