@@ -38,12 +38,6 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   // Create indexes for faster lookups
   await db.schema
-    .createIndex('idx_user_permissions_id')
-    .on('user_permissions')
-    .column('id')
-    .execute();
-
-  await db.schema
     .createIndex('idx_user_permissions_user_id')
     .on('user_permissions')
     .column('user_id')
@@ -58,7 +52,6 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 export async function down(db: Kysely<any>): Promise<void> {
   // Drop the indexes if they exist
-  await db.schema.dropIndex('idx_user_permissions_id').ifExists().execute();
   await db.schema.dropIndex('idx_user_permissions_user_id').ifExists().execute();
   await db.schema.dropIndex('idx_user_permissions_permission').ifExists().execute();
 
