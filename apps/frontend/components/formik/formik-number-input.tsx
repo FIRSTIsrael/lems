@@ -1,5 +1,5 @@
 import { FastField, FieldProps } from 'formik';
-import CustomNumberInput from '../../field/scoresheet/number-input';
+import CustomNumberInput from '../field/scoresheet/number-input';
 import { TextFieldProps } from '@mui/material/TextField';
 
 interface CustomNumberInputProps

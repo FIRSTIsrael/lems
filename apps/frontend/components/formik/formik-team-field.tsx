@@ -2,7 +2,7 @@ import { WithId } from 'mongodb';
 import { Field, FieldProps } from 'formik';
 import { Autocomplete, AutocompleteProps, TextField } from '@mui/material';
 import { Team } from '@lems/types';
-import { localizeTeam } from '../../../localization/teams';
+import { localizeTeam } from '../../localization/teams';
 
 type FormikTeamFieldProps = {
   teams: Array<WithId<Team>>;
