@@ -3,6 +3,18 @@ import { DatabaseSchema } from '../schema';
 import { InsertableUser, User } from '../schema/tables/users';
 import { PermissionType, UserPermission } from '../schema/tables/user-permissions';
 
+declare const WithPermissionsBrand: unique symbol;
+
+type UserWithPermissions = User & { permissions: PermissionType[] };
+
+type UserSelectorWithPermissions = UserSelector & {
+  readonly [WithPermissionsBrand]: true;
+};
+
+type UserSelectorWithoutPermissions = UserSelector & {
+  readonly [WithPermissionsBrand]: false;
+};
+
 class UserSelector {
   private includePermissions = false;
 
@@ -11,9 +23,10 @@ class UserSelector {
     private selector: { type: 'id' | 'username'; value: string }
   ) {}
 
-  withPermissions(): UserSelector {
-    this.includePermissions = true;
-    return this;
+  withPermissions(): UserSelectorWithPermissions {
+    const newSelector = new UserSelector(this.db, this.selector);
+    newSelector.includePermissions = true;
+    return newSelector as UserSelectorWithPermissions;
   }
 
   private getUserQuery() {
@@ -36,11 +49,11 @@ class UserSelector {
     }
   }
 
-  async get(): Promise<User | null>;
-  async get<T extends boolean>(
-    this: T extends true ? UserSelector & { includePermissions: true } : UserSelector
-  ): Promise<T extends true ? (User & { permissions: PermissionType[] }) | null : User | null>;
-  async get(): Promise<User | (User & { permissions: PermissionType[] }) | null> {
+  // Method overloads for type safety
+  get(this: UserSelectorWithPermissions): Promise<UserWithPermissions | null>;
+  get(this: UserSelectorWithoutPermissions): Promise<User | null>;
+  get(this: UserSelector): Promise<User | UserWithPermissions | null>;
+  async get(): Promise<User | UserWithPermissions | null> {
     const user = await this.getUserQuery().executeTakeFirst();
     if (!user) return null;
 
@@ -51,9 +64,7 @@ class UserSelector {
         .where('user_id', '=', user.id)
         .execute();
 
-      return { ...user, permissions: permissions.map(p => p.permission) } as User & {
-        permissions: PermissionType[];
-      };
+      return { ...user, permissions: permissions.map(p => p.permission) } as UserWithPermissions;
     }
 
     return user;
@@ -113,13 +124,16 @@ class UserSelector {
 export class UsersRepository {
   constructor(private db: Kysely<DatabaseSchema>) {}
 
-  // Fluent selector methods
-  byId(id: string): UserSelector {
-    return new UserSelector(this.db, { type: 'id', value: id });
+  // Fluent selector methods - properly typed
+  byId(id: string): UserSelectorWithoutPermissions {
+    return new UserSelector(this.db, { type: 'id', value: id }) as UserSelectorWithoutPermissions;
   }
 
-  byUsername(username: string): UserSelector {
-    return new UserSelector(this.db, { type: 'username', value: username });
+  byUsername(username: string): UserSelectorWithoutPermissions {
+    return new UserSelector(this.db, {
+      type: 'username',
+      value: username
+    }) as UserSelectorWithoutPermissions;
   }
 
   // Direct methods for operations that don't need selectors
