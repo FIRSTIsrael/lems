@@ -16,20 +16,32 @@ class UserSelector {
     return this;
   }
 
+  private getUserQuery() {
+    const query = this.db.selectFrom('users').selectAll();
+
+    if (this.selector.type === 'id') {
+      return query.where('id', '=', this.selector.value);
+    } else {
+      return query.where('username', '=', this.selector.value);
+    }
+  }
+
+  private getUserIdQuery() {
+    const query = this.db.selectFrom('users').select('id');
+
+    if (this.selector.type === 'id') {
+      return query.where('id', '=', this.selector.value);
+    } else {
+      return query.where('username', '=', this.selector.value);
+    }
+  }
+
   async get(): Promise<User | null>;
   async get<T extends boolean>(
     this: T extends true ? UserSelector & { includePermissions: true } : UserSelector
   ): Promise<T extends true ? (User & { permissions: PermissionType[] }) | null : User | null>;
   async get(): Promise<User | (User & { permissions: PermissionType[] }) | null> {
-    const query = this.db.selectFrom('users').selectAll();
-
-    let user: User | undefined;
-    if (this.selector.type === 'id') {
-      user = await query.where('id', '=', this.selector.value).executeTakeFirst();
-    } else {
-      user = await query.where('username', '=', this.selector.value).executeTakeFirst();
-    }
-
+    const user = await this.getUserQuery().executeTakeFirst();
     if (!user) return null;
 
     if (this.includePermissions) {
@@ -48,13 +60,13 @@ class UserSelector {
   }
 
   async grantPermission(permission: PermissionType): Promise<UserPermission> {
-    const user = await this.get();
-    if (!user) throw new Error(`User not found`);
+    const userIdResult = await this.getUserIdQuery().executeTakeFirst();
+    if (!userIdResult) throw new Error(`User not found`);
 
     const [grantedPermission] = await this.db
       .insertInto('user_permissions')
       .values({
-        user_id: user.id,
+        user_id: userIdResult.id,
         permission: permission
       })
       .returningAll()
@@ -63,49 +75,37 @@ class UserSelector {
   }
 
   async removePermission(permission: PermissionType): Promise<void> {
-    const user = await this.get();
-    if (!user) throw new Error(`User not found`);
-
     await this.db
       .deleteFrom('user_permissions')
-      .where('user_id', '=', user.id)
+      .where('user_id', '=', this.getUserIdQuery())
       .where('permission', '=', permission)
       .execute();
   }
 
   async hasPermission(permission: PermissionType): Promise<boolean> {
-    const user = await this.get();
-    if (!user) return false;
-
     const result = await this.db
       .selectFrom('user_permissions')
       .select('permission')
-      .where('user_id', '=', user.id)
+      .where('user_id', '=', this.getUserIdQuery())
       .where('permission', '=', permission)
       .executeTakeFirst();
     return !!result;
   }
 
   async getPermissions(): Promise<PermissionType[]> {
-    const user = await this.get();
-    if (!user) return [];
-
     const permissions = await this.db
       .selectFrom('user_permissions')
       .select('permission')
-      .where('user_id', '=', user.id)
+      .where('user_id', '=', this.getUserIdQuery())
       .execute();
     return permissions.map(p => p.permission);
   }
 
   async updateLastLogin(): Promise<void> {
-    const user = await this.get();
-    if (!user) throw new Error(`User not found`);
-
     await this.db
       .updateTable('users')
       .set({ last_login: new Date() })
-      .where('id', '=', user.id)
+      .where('id', '=', this.getUserIdQuery())
       .execute();
   }
 }
