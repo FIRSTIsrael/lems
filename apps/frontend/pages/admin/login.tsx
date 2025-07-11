@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Formik, Form, FormikHelpers } from 'formik';
-import { Button, Box, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
+import { Button, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Layout from '../../components/layout';
 import FormikTextField from '../../components/formik/formik-text-field';
 import { apiFetch } from '../../lib/utils/fetch';
-import { useRecaptcha } from '../../hooks/use-recaptcha';
+import {
+  useRecaptcha,
+  createRecaptchaToken,
+  removeRecaptchaBadge
+} from '../../hooks/use-recaptcha';
 
 interface LoginFormValues {
   username: string;
@@ -53,10 +57,11 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
     setSubmitting(true);
 
     try {
+      const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
       const response = await apiFetch('/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values)
+        body: JSON.stringify({ ...values, captchaToken })
       });
 
       if (!response.ok) {
@@ -69,7 +74,16 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
         throw new Error('server-error');
       }
 
-      const returnUrl = router.query.returnUrl || `/lems`;
+      removeRecaptchaBadge();
+      let returnUrl = '/admin';
+      if (router.query.returnUrl) {
+        returnUrl = Array.isArray(router.query.returnUrl)
+          ? router.query.returnUrl[0]
+          : router.query.returnUrl;
+      }
+      if (!returnUrl.startsWith('/admin')) {
+        returnUrl = '/admin';
+      }
       router.push(returnUrl as string);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'server-error';
@@ -130,25 +144,23 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
                   }}
                 />
 
+                <Button
+                  fullWidth
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={isSubmitting || !isValid}
+                  endIcon={<ChevronLeftIcon />}
+                  sx={{ borderRadius: 2, py: 1.5 }}
+                >
+                  {isSubmitting ? 'מתחבר...' : 'התחבר'}
+                </Button>
+
                 {status && (
                   <Typography color="error" variant="body2">
                     {status}
                   </Typography>
                 )}
-
-                <Box sx={{ pt: 2 }}>
-                  <Button
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={isSubmitting || !isValid}
-                    endIcon={<ChevronLeftIcon />}
-                    sx={{ borderRadius: 2, py: 1.5 }}
-                  >
-                    {isSubmitting ? 'מתחבר...' : 'התחבר'}
-                  </Button>
-                </Box>
               </Stack>
             </Form>
           )}
