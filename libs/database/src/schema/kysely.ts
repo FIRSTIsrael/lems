@@ -12,12 +12,8 @@ import { TeamDivisionsTable } from './tables/team-divisions';
 import { TeamDivisionNotificationsTable } from './tables/team-division-notifications';
 import { JudgingRoomsTable } from './tables/judging-rooms';
 import { JudgingSessionsTable } from './tables/judging-sessions';
-import { RobotGameTablesTable } from './tables/robot-game-tables';
-import { RobotGameMatchesTable } from './tables/robot-game-matches';
-import { RobotGameMatchParticipantsTable } from './tables/robot-game-match-participants';
-import { AwardsTable } from './tables/awards';
 
-export interface DatabaseSchema {
+export interface KyselyDatabaseSchema {
   admins: AdminsTable;
   admin_permissions: AdminPermissionTable;
   admin_events: AdminEventsTable;
@@ -32,8 +28,4 @@ export interface DatabaseSchema {
   team_division_notifications: TeamDivisionNotificationsTable;
   judging_rooms: JudgingRoomsTable;
   judging_sessions: JudgingSessionsTable;
-  robot_game_tables: RobotGameTablesTable;
-  robot_game_matches: RobotGameMatchesTable;
-  robot_game_match_participants: RobotGameMatchParticipantsTable;
-  awards: AwardsTable;
 }

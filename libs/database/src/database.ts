@@ -1,8 +1,8 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
 import { MongoClient, Db } from 'mongodb';
-import { UsersRepository } from './repositories/users';
-import { DatabaseSchema } from './schema/index';
+import { AdminsRepository } from './repositories/admins';
+import { KyselyDatabaseSchema } from './schema/kysely';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
@@ -12,14 +12,14 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = process.env.DB_NAME || 'lems-local';
 
 export class Database {
-  private kysely: Kysely<DatabaseSchema>;
+  private kysely: Kysely<KyselyDatabaseSchema>;
   private mongoClient: MongoClient;
   private mongoDB: Db;
 
-  public users: UsersRepository;
+  public admins: AdminsRepository;
 
   constructor() {
-    this.kysely = new Kysely<DatabaseSchema>({
+    this.kysely = new Kysely<KyselyDatabaseSchema>({
       dialect: new PostgresDialect({
         pool: new Pool({
           host: PG_HOST,
@@ -35,7 +35,7 @@ export class Database {
     });
     this.mongoDB = this.mongoClient.db(DB_NAME);
 
-    this.users = new UsersRepository(this.kysely);
+    this.admins = new AdminsRepository(this.kysely);
   }
 
   async connect(): Promise<void> {

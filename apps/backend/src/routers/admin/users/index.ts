@@ -42,14 +42,14 @@ router.post('/register', async (req, res) => {
       throw new RegistrationError(400, 'Invalid name length', 'name-too-long');
     }
 
-    const existingUser = await db.users.getByUsername(username);
+    const existingUser = await db.admins.byUsername(username).get();
     if (existingUser) {
       throw new RegistrationError(409, 'Username already exists', 'user-already-exists');
     }
 
     const { hash, salt } = await hashPassword(password);
 
-    const newUser = await db.users.create({
+    const newAdminUser = await db.admins.create({
       username: username.toLowerCase(), // Store usernames in lowercase for consistency
       password_hash: hash,
       password_salt: salt,
@@ -62,11 +62,11 @@ router.post('/register', async (req, res) => {
       ok: true,
       message: 'User registered successfully',
       user: {
-        id: newUser.id,
-        username: newUser.username,
-        firstName: newUser.first_name,
-        lastName: newUser.last_name,
-        createdAt: newUser.created_at
+        id: newAdminUser.id,
+        username: newAdminUser.username,
+        firstName: newAdminUser.first_name,
+        lastName: newAdminUser.last_name,
+        createdAt: newAdminUser.created_at
       }
     });
   } catch (error) {

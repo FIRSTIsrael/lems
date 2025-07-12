@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { Kysely, Migrator, PostgresDialect, MigrationProvider, Migration } from 'kysely';
-import { DatabaseSchema } from '../schema/index';
+import { KyselyDatabaseSchema } from '../schema/kysely';
 
 // Load environment variables with defaults
 const PG_HOST = process.env.PG_HOST || 'localhost';
@@ -43,7 +43,7 @@ async function migrateToLatest() {
   console.log(`Connecting to PostgreSQL at ${PG_HOST}:${PG_PORT} as ${PG_USER}`);
   console.log(`Database: ${PG_DATABASE}`);
 
-  const db = new Kysely<DatabaseSchema>({
+  const db = new Kysely<KyselyDatabaseSchema>({
     dialect: new PostgresDialect({
       pool: new Pool({
         host: PG_HOST,

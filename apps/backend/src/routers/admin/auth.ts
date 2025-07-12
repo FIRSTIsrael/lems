@@ -43,7 +43,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       return;
     }
 
-    const adminUser = await db.users.getByUsername(loginDetails.username);
+    const adminUser = await db.admins.byUsername(loginDetails.username).get();
 
     if (!adminUser) {
       console.log(`🔑 Admin login failed - user not found: ${loginDetails.username}`);
@@ -51,7 +51,6 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       return;
     }
 
-    // Verify password
     const isValidPassword = await verifyPassword(
       loginDetails.password,
       adminUser.password_hash,
@@ -65,7 +64,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     console.log(`🔑 Admin login successful: ${loginDetails.username}`);
-    await db.users.updateLastLogin(adminUser.id);
+    await db.admins.byId(adminUser.id).updateLastLogin();
 
     const expires = dayjs().add(7, 'days');
     const expiresInSeconds = expires.diff(dayjs(), 'second');
