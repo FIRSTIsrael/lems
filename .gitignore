@@ -1,8 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 #.env files
-apps/backend/.env.local
-apps/frontend/.env.local
+**/.env.local
 
 # compiled output
 dist
