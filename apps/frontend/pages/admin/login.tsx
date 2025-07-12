@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -83,8 +84,13 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
       }
       if (!returnUrl.startsWith('/admin')) {
         returnUrl = '/admin';
+      } else {
+        // Sanitize and encode the returnUrl
+        const DOMPurify = (await import('dompurify')).default;
+        returnUrl = DOMPurify.sanitize(returnUrl);
+        returnUrl = encodeURIComponent(returnUrl);
       }
-      router.push(returnUrl as string);
+      router.push(decodeURIComponent(returnUrl));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'server-error';
       setStatus(message);
