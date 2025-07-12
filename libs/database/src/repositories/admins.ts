@@ -3,31 +3,11 @@ import { DatabaseSchema } from '../schema';
 import { InsertableAdmin, Admin } from '../schema/tables/admins';
 import { PermissionType, AdminPermission } from '../schema/tables/admin-permissions';
 
-declare const WithPermissionsBrand: unique symbol;
-
-type AdminWithPermissions = Admin & { permissions: PermissionType[] };
-
-type AdminSelectorWithPermissions = AdminSelector & {
-  readonly [WithPermissionsBrand]: true;
-};
-
-type AdminSelectorWithoutPermissions = AdminSelector & {
-  readonly [WithPermissionsBrand]: false;
-};
-
 class AdminSelector {
-  private includePermissions = false;
-
   constructor(
     private db: Kysely<DatabaseSchema>,
     private selector: { type: 'id' | 'username'; value: string }
   ) {}
-
-  withPermissions(): AdminSelectorWithPermissions {
-    const newSelector = new AdminSelector(this.db, this.selector);
-    newSelector.includePermissions = true;
-    return newSelector as AdminSelectorWithPermissions;
-  }
 
   private getAdminQuery() {
     const query = this.db.selectFrom('admins').selectAll();
@@ -49,25 +29,9 @@ class AdminSelector {
     }
   }
 
-  // Method overloads for type safety
-  get(this: AdminSelectorWithPermissions): Promise<AdminWithPermissions | null>;
-  get(this: AdminSelectorWithoutPermissions): Promise<Admin | null>;
-  get(this: AdminSelector): Promise<Admin | AdminWithPermissions | null>;
-  async get(): Promise<Admin | AdminWithPermissions | null> {
+  async get(): Promise<Admin | null> {
     const admin = await this.getAdminQuery().executeTakeFirst();
-    if (!admin) return null;
-
-    if (this.includePermissions) {
-      const permissions = await this.db
-        .selectFrom('admin_permissions')
-        .select('permission')
-        .where('admin_id', '=', admin.id)
-        .execute();
-
-      return { ...admin, permissions: permissions.map(p => p.permission) } as AdminWithPermissions;
-    }
-
-    return admin;
+    return admin || null;
   }
 
   async grantPermission(permission: PermissionType): Promise<AdminPermission> {
@@ -112,6 +76,12 @@ class AdminSelector {
     return permissions.map(p => p.permission);
   }
 
+  async getEvents(): Promise<unknown[]> {
+    // Placeholder implementation for future events functionality
+    // TODO: Implement when events relationship is established
+    return [];
+  }
+
   async updateLastLogin(): Promise<void> {
     await this.db
       .updateTable('admins')
@@ -124,19 +94,17 @@ class AdminSelector {
 export class AdminsRepository {
   constructor(private db: Kysely<DatabaseSchema>) {}
 
-  // Fluent selector methods - properly typed
-  byId(id: string): AdminSelectorWithoutPermissions {
-    return new AdminSelector(this.db, { type: 'id', value: id }) as AdminSelectorWithoutPermissions;
+  byId(id: string): AdminSelector {
+    return new AdminSelector(this.db, { type: 'id', value: id });
   }
 
-  byUsername(username: string): AdminSelectorWithoutPermissions {
+  byUsername(username: string): AdminSelector {
     return new AdminSelector(this.db, {
       type: 'username',
       value: username
-    }) as AdminSelectorWithoutPermissions;
+    });
   }
 
-  // Direct methods for operations that don't need selectors
   async create(admin: InsertableAdmin): Promise<Admin> {
     const [createdAdmin] = await this.db
       .insertInto('admins')
