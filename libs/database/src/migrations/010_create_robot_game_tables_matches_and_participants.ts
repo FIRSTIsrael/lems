@@ -120,6 +120,33 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addUniqueConstraint('uk_robot_game_match_participants_table_match', ['table_id', 'match_id'])
     .execute();
 
+  // Add check constraint to ensure team is competing in the match's division
+  await db.schema
+    .alterTable('robot_game_match_participants')
+    .addCheckConstraint(
+      'ck_robot_game_match_participants_team_in_division',
+      sql`EXISTS (
+        SELECT 1 FROM team_divisions td 
+        JOIN robot_game_matches rgm ON rgm.id = robot_game_match_participants.match_id 
+        WHERE td.team_id = robot_game_match_participants.team_id 
+        AND td.division_id = rgm.division_id
+      )`
+    )
+    .execute();
+
+  // Add check constraint to ensure table belongs to the same division as the match
+  await db.schema
+    .alterTable('robot_game_match_participants')
+    .addCheckConstraint(
+      'ck_robot_game_match_participants_table_division_match',
+      sql`(
+        SELECT rgt.division_id FROM robot_game_tables rgt WHERE rgt.id = table_id
+      ) = (
+        SELECT rgm.division_id FROM robot_game_matches rgm WHERE rgm.id = match_id
+      )`
+    )
+    .execute();
+
   // Create indexes for robot_game_tables table
   await db.schema
     .createIndex('idx_robot_game_tables_id')

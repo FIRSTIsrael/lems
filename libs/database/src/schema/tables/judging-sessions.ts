@@ -6,6 +6,7 @@ export interface JudgingSessionsTable {
   number: number;
   team_id: string; // UUID foreign key to teams.id
   room_id: string; // UUID foreign key to judging_rooms.id
+  division_id: string; // UUID foreign key to divisions.id
   scheduled_time: Date;
 }
 

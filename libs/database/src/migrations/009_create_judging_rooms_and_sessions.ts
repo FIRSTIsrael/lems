@@ -36,6 +36,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('number', 'integer', col => col.notNull())
     .addColumn('team_id', 'uuid', col => col.notNull())
     .addColumn('room_id', 'uuid', col => col.notNull())
+    .addColumn('division_id', 'uuid', col => col.notNull())
     .addColumn('scheduled_time', 'timestamptz', col => col.notNull())
     .execute();
 
@@ -51,6 +52,33 @@ export async function up(db: Kysely<any>): Promise<void> {
     .alterTable('judging_sessions')
     .addForeignKeyConstraint('fk_judging_sessions_room_id', ['room_id'], 'judging_rooms', ['id'])
     .onDelete('cascade')
+    .execute();
+
+  // Create foreign key constraint for division_id
+  await db.schema
+    .alterTable('judging_sessions')
+    .addForeignKeyConstraint('fk_judging_sessions_division_id', ['division_id'], 'divisions', [
+      'id'
+    ])
+    .onDelete('cascade')
+    .execute();
+
+  // Add check constraint to ensure division_id matches the room's division
+  await db.schema
+    .alterTable('judging_sessions')
+    .addCheckConstraint(
+      'ck_judging_sessions_division_room_match',
+      sql`division_id = (SELECT division_id FROM judging_rooms WHERE id = room_id)`
+    )
+    .execute();
+
+  // Add check constraint to ensure team is competing in the division
+  await db.schema
+    .alterTable('judging_sessions')
+    .addCheckConstraint(
+      'ck_judging_sessions_team_in_division',
+      sql`EXISTS (SELECT 1 FROM team_divisions WHERE team_id = judging_sessions.team_id AND division_id = judging_sessions.division_id)`
+    )
     .execute();
 
   // Add unique constraint to prevent duplicate session numbers per room
@@ -89,6 +117,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column('room_id')
     .execute();
   await db.schema
+    .createIndex('idx_judging_sessions_division_id')
+    .on('judging_sessions')
+    .column('division_id')
+    .execute();
+  await db.schema
     .createIndex('idx_judging_sessions_scheduled_time')
     .on('judging_sessions')
     .column('scheduled_time')
@@ -105,6 +138,7 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropIndex('idx_judging_sessions_id').ifExists().execute();
   await db.schema.dropIndex('idx_judging_sessions_team_id').ifExists().execute();
   await db.schema.dropIndex('idx_judging_sessions_room_id').ifExists().execute();
+  await db.schema.dropIndex('idx_judging_sessions_division_id').ifExists().execute();
   await db.schema.dropIndex('idx_judging_sessions_scheduled_time').ifExists().execute();
   await db.schema.dropIndex('idx_judging_sessions_room_time').ifExists().execute();
 
