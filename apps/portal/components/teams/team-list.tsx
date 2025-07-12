@@ -18,7 +18,7 @@ interface TeamListProps {
 }
 
 const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
-  const t = useTranslations('components:teams:team-list');
+  const t = useTranslations('components.teams.team-list');
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (

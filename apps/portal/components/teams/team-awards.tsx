@@ -8,7 +8,7 @@ interface TeamAwardsProps {
 }
 
 const TeamAwards: React.FC<TeamAwardsProps> = ({ awards }) => {
-  const t = useTranslations('components:teams:team-awards');
+  const t = useTranslations('components.teams.team-awards');
 
   return (
     <Paper sx={{ p: 2, mt: 2, flexGrow: 1 }}>

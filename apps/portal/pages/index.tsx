@@ -15,7 +15,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ events }) => {
-  const t = useTranslations('pages:index');
+  const t = useTranslations('pages.index');
 
   const activeEvents = events.filter(event => {
     const eventDate = dayjs(event.date);

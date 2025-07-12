@@ -15,7 +15,7 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
-  const t = useTranslations('pages:events:id:scoreboard');
+  const t = useTranslations('pages.events.id.scoreboard');
   const matchStageToText = useLocaleMatchStage();
 
   const containerRef = useRef<HTMLDivElement>(null);
