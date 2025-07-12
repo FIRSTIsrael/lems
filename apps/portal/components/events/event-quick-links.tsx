@@ -10,7 +10,7 @@ interface EventQuickLinksProps {
 }
 
 const EventQuickLinks: React.FC<EventQuickLinksProps> = ({ event, hasAwards }) => {
-  const t = useTranslations('components:events:event-quick-links');
+  const t = useTranslations('components.events.event-quick-links');
 
   return (
     <Grid

@@ -22,7 +22,7 @@ class LemsRepository:
         connection_string = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
         self.divisionId = ObjectId(divisionId)
         self.client = MongoClient(
-            connection_string, tls=True, tlsAllowInvalidCertificates=True
+            connection_string, tls=os.getenv("PYTHON_ENV") == 'production', tlsAllowInvalidCertificates=True
         )
         self.db = self.client["lems"]
         logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")

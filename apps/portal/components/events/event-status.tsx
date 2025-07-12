@@ -10,7 +10,7 @@ interface EventStatusProps {
 }
 
 const EventStatus: React.FC<EventStatusProps> = ({ status }) => {
-  const t = useTranslations('components:events:event-status');
+  const t = useTranslations('components.events.event-status');
 
   const hasCurrentMatch = status.field.match.number > 0;
   const hasCurrentSession = status.judging.session.number > 0;

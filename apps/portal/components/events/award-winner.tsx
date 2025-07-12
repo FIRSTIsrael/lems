@@ -21,7 +21,7 @@ interface AwardWinnerProps {
 }
 
 const AwardWinner: React.FC<AwardWinnerProps> = ({ award, showWinner = true }) => {
-  const t = useTranslations('components:events:award-winner');
+  const t = useTranslations('components.events.award-winner');
   const awardNameToText = useLocaleAwardName();
 
   const isTeamAward = typeof award.winner !== 'string';

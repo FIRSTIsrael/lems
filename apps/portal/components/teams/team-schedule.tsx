@@ -9,7 +9,7 @@ interface TeamScheduleProps {
 }
 
 const TeamSchedule: React.FC<TeamScheduleProps> = ({ schedule }) => {
-  const t = useTranslations('components:teams:team-schedule');
+  const t = useTranslations('components.teams.team-schedule');
   const matchStageToText = useLocaleMatchStage();
 
   return (

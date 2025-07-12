@@ -18,7 +18,7 @@ interface TeamRobotScoresProps {
 }
 
 const TeamRobotScores: React.FC<TeamRobotScoresProps> = ({ score, currentStage }) => {
-  const t = useTranslations('components:teams:team-scores');
+  const t = useTranslations('components.teams.team-scores');
   const matchStageToText = useLocaleMatchStage();
 
   return (

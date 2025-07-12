@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { getMessages } from '../locale/get-messages';
 
 const Custom404: NextPage = () => {
-  const t = useTranslations('pages:404');
+  const t = useTranslations('pages.404');
 
   return (
     <Container
