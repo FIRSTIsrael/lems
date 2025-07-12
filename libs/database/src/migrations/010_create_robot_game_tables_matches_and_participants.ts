@@ -2,6 +2,12 @@
 import { Kysely, sql } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
+  // Create the robot_game_match_stage enum
+  await db.schema
+    .createType('robot_game_match_stage')
+    .asEnum(['PRACTICE', 'RANKING', 'TEST'])
+    .execute();
+
   // Create the robot_game_tables table first
   await db.schema
     .createTable('robot_game_tables')
@@ -37,7 +43,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn('round', 'integer', col => col.notNull())
     .addColumn('number', 'integer', col => col.notNull())
-    .addColumn('stage', 'text', col => col.notNull())
+    .addColumn('stage', sql`robot_game_match_stage`, col => col.notNull())
     .addColumn('scheduled_time', 'timestamptz', col => col.notNull())
     .addColumn('division_id', 'uuid', col => col.notNull())
     .execute();
@@ -49,15 +55,6 @@ export async function up(db: Kysely<any>): Promise<void> {
       'id'
     ])
     .onDelete('cascade')
-    .execute();
-
-  // Add check constraint for stage enum
-  await db.schema
-    .alterTable('robot_game_matches')
-    .addCheckConstraint(
-      'ck_robot_game_matches_stage',
-      sql`stage IN ('PRACTICE', 'RANKING', 'TEST')`
-    )
     .execute();
 
   // Add unique constraint for match number per division (global numbering within division)
@@ -253,4 +250,7 @@ export async function down(db: Kysely<any>): Promise<void> {
 
   // Drop the robot_game_tables table
   await db.schema.dropTable('robot_game_tables').execute();
+
+  // Drop the enum type
+  await sql`DROP TYPE IF EXISTS robot_game_match_stage`.execute(db);
 }
