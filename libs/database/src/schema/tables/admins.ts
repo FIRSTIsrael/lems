@@ -1,6 +1,7 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 
 export interface AdminsTable {
+  pk: ColumnType<number, never, never>; // Serial primary key
   id: ColumnType<string, never, never>; // UUID, generated
   username: string;
   password_hash: string;
