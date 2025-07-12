@@ -1,11 +1,11 @@
 import { Kysely } from 'kysely';
-import { DatabaseSchema } from '../schema';
+import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableAdmin, Admin } from '../schema/tables/admins';
 import { PermissionType, AdminPermission } from '../schema/tables/admin-permissions';
 
 class AdminSelector {
   constructor(
-    private db: Kysely<DatabaseSchema>,
+    private db: Kysely<KyselyDatabaseSchema>,
     private selector: { type: 'id' | 'username'; value: string }
   ) {}
 
@@ -92,7 +92,7 @@ class AdminSelector {
 }
 
 export class AdminsRepository {
-  constructor(private db: Kysely<DatabaseSchema>) {}
+  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byId(id: string): AdminSelector {
     return new AdminSelector(this.db, { type: 'id', value: id });

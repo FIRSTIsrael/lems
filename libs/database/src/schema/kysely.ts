@@ -10,8 +10,10 @@ import { TeamAffiliationsTable } from './tables/team-affiliations';
 import { TeamsTable } from './tables/teams';
 import { TeamDivisionsTable } from './tables/team-divisions';
 import { TeamDivisionNotificationsTable } from './tables/team-division-notifications';
+import { JudgingRoomsTable } from './tables/judging-rooms';
+import { JudgingSessionsTable } from './tables/judging-sessions';
 
-export interface DatabaseSchema {
+export interface KyselyDatabaseSchema {
   admins: AdminsTable;
   admin_permissions: AdminPermissionTable;
   admin_events: AdminEventsTable;
@@ -24,4 +26,6 @@ export interface DatabaseSchema {
   teams: TeamsTable;
   team_divisions: TeamDivisionsTable;
   team_division_notifications: TeamDivisionNotificationsTable;
+  judging_rooms: JudgingRoomsTable;
+  judging_sessions: JudgingSessionsTable;
 }
