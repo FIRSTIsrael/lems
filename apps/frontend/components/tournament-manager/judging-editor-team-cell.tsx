@@ -54,9 +54,11 @@ const JudgingEditorTeamCell: React.FC<JudgingEditorTeamCellProps> = ({ name, tea
                 <TextField
                   {...params}
                   variant="standard"
-                  InputProps={{
-                    ...params.InputProps,
-                    disableUnderline: true
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      disableUnderline: true
+                    }
                   }}
                 />
               )}
