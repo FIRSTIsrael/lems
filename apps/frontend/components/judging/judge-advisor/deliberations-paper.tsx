@@ -14,7 +14,7 @@ import {
 } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
 import { apiFetch } from '../../../lib/utils/fetch';
-import { useTime } from '../../../hooks/use-time';
+import { useTime } from '../../../hooks/time/use-time';
 import StatusIcon from '../../general/status-icon';
 
 interface DeliberationsPaperProps {

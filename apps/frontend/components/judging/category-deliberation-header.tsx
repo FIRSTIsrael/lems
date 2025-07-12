@@ -5,7 +5,7 @@ import { Paper, Typography, Button, Box, Avatar } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { Division, JUDGING_SESSION_LENGTH, JudgingDeliberation, JudgingSession } from '@lems/types';
-import { useTime } from '../../hooks/use-time';
+import { useTime } from '../../hooks/time/use-time';
 import { localizedJudgingCategory } from '@lems/season';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';

@@ -1,6 +1,6 @@
 import { Typography, TypographyProps } from '@mui/material';
-import useCountdown from '../../hooks/use-countdown';
-import useStopwatch from '../../hooks/use-stopwatch';
+import useCountdown from '../../hooks/time/use-countdown';
+import useStopwatch from '../../hooks/time/use-stopwatch';
 interface CountdownProps extends TypographyProps {
   targetDate: Date;
   expiredText?: string;

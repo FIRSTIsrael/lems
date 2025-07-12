@@ -13,7 +13,7 @@ import {
   WSServerEmittedEvents,
   WSClientEmittedEvents
 } from '@lems/types';
-import { useTime } from '../../hooks/use-time';
+import { useTime } from '../../hooks/time/use-time';
 import { enqueueSnackbar } from 'notistack';
 
 const getButtonColor = (status: Status) => {

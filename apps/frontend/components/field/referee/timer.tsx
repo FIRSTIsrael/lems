@@ -16,7 +16,7 @@ import {
 import { RobotGameMatch, RobotGameMatchParticipant, MATCH_LENGTH, Scoresheet } from '@lems/types';
 import Countdown from '../../general/countdown';
 import { localizeTeam } from '../../../localization/teams';
-import { useTime } from '../../../hooks/use-time';
+import { useTime } from '../../../hooks/time/use-time';
 
 interface TimerProps {
   participant: RobotGameMatchParticipant;

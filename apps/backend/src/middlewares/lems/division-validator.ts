@@ -7,13 +7,14 @@ const divisionValidator = (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  if (req.user?.divisionId?.toString() === req.params.divisionId || req.user.isAdmin) {
-    return next();
-  }
+  // TODO: Update this to use the new user type
+  // if (req.user?.divisionId?.toString() === req.params.divisionId || req.user.isAdmin) {
+  //   return next();
+  // }
 
-  if (req.user?.assignedDivisions?.find(id => id.toString() === req.params.divisionId)) {
-    return next();
-  }
+  // if (req.user?.assignedDivisions?.find(id => id.toString() === req.params.divisionId)) {
+  //   return next();
+  // }
 
   res.status(403).json({ error: 'FORBIDDEN' });
 };

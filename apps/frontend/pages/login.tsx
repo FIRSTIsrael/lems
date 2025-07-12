@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId, ObjectId } from 'mongodb';
-import { Paper, Box, Link, Stack, Typography } from '@mui/material';
+import { Paper, Stack, Typography } from '@mui/material';
 import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
 import Layout from '../components/layout';
 import EventSelector from '../components/general/event-selector';
 import DivisionLoginForm from '../components/login/division-login-form';
 import EventLoginForm from '../components/login/event-login-form';
-import AdminLoginForm from '../components/login/admin-login-form';
 import { apiFetch } from '../lib/utils/fetch';
 import { loadScriptByURL } from '../lib/utils/scripts';
 import { useNotes } from '../hooks/use-notes';
-
 interface PageProps {
   events: Array<WithId<FllEvent>>;
   recaptchaRequired: boolean;
 }
 
 const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
-  const [isAdminLogin, setIsAdminLogin] = useState<boolean>(false);
   const [event, setEvent] = useState<WithId<FllEvent> | undefined>(undefined);
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
@@ -74,9 +71,7 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   return (
     <Layout maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
-        {isAdminLogin ? (
-          <AdminLoginForm recaptchaRequired={recaptchaRequired} />
-        ) : event && event.eventUsers?.length > 0 && !division ? (
+        {event && event.eventUsers?.length > 0 && !division ? (
           <EventLoginForm
             event={event}
             onCancel={() => setEvent(undefined)}
@@ -113,26 +108,6 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
           </Stack>
         )}
       </Paper>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          mt: 1.5
-        }}
-      >
-        <Link
-          underline="none"
-          component="button"
-          onClick={() => {
-            setIsAdminLogin(!isAdminLogin);
-            setDivision(undefined);
-            setRooms(undefined);
-            setTables(undefined);
-          }}
-        >
-          {isAdminLogin ? 'כניסת מתנדבים' : 'התחברות כמנהל'}
-        </Link>
-      </Box>
     </Layout>
   );
 };

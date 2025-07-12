@@ -37,7 +37,7 @@ import { reorder } from '@lems/utils/arrays';
 import CustomNumberInput from '../field/scoresheet/number-input';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
-import FormikCheckbox from '../general/forms/formik-checkbox';
+import FormikCheckbox from '../formik/formik-checkbox';
 import EventSelectorModal from '../general/event-selector-modal';
 
 interface AwardItemProps {

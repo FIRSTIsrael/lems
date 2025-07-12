@@ -9,7 +9,7 @@ import { getLocalizedTheme } from '../lib/theme';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { Locales } from '../locale/locales';
 import { TimeSyncProvider } from '../lib/timesync';
-import { useHtmlDirection } from '../hooks/use-html-direction';
+import { useHtmlDirection } from '../hooks/layout/use-html-direction';
 import SnackbarCloseButton from '../components/general/snackbar-close-button';
 
 export default function LEMSApp(props: AppProps) {

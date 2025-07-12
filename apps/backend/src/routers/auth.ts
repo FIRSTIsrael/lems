@@ -64,7 +64,12 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       }
     );
 
-    res.cookie('auth-token', token, { expires: expires.toDate(), httpOnly: true, secure: true });
+    res.cookie('auth-token', token, {
+      expires: expires.toDate(),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
     res.json(user);
   } catch (err) {
     next(err);
