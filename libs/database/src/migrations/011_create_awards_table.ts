@@ -72,21 +72,29 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addCheckConstraint('ck_awards_positive_place', sql`place > 0`)
     .execute();
 
-  // Add check constraint: Team awards must have winner in the same division
-  await db.schema
-    .alterTable('awards')
-    .addCheckConstraint(
-      'ck_awards_team_in_division',
-      sql`
-        type = 'PERSONAL' OR winner_id IS NULL OR
-        EXISTS (
-          SELECT 1 FROM team_divisions td 
-          WHERE td.team_id = awards.winner_id 
-          AND td.division_id = awards.division_id
-        )
-      `
-    )
-    .execute();
+  // Create trigger function to validate team awards are in the correct division
+  await sql`
+    CREATE OR REPLACE FUNCTION validate_award_team_division()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- Check that team awards have winner in the same division
+      IF NEW.type = 'TEAM' AND NEW.winner_id IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.winner_id AND division_id = NEW.division_id) THEN
+          RAISE EXCEPTION 'Team award winner must be competing in the same division';
+        END IF;
+      END IF;
+      
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `.execute(db);
+
+  // Create trigger for awards table
+  await sql`
+    CREATE TRIGGER tr_validate_award_team_division
+    BEFORE INSERT OR UPDATE ON awards
+    FOR EACH ROW EXECUTE FUNCTION validate_award_team_division();
+  `.execute(db);
 
   // Add unique constraint to prevent duplicate awards for same division/name/place
   await db.schema
@@ -126,12 +134,9 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropIndex('idx_awards_division_type').ifExists().execute();
   await db.schema.dropIndex('idx_awards_division_place').ifExists().execute();
 
-  // Drop constraints (PostgreSQL will automatically drop them with the table, but being explicit)
-  await db.schema
-    .alterTable('awards')
-    .dropConstraint('ck_awards_team_in_division')
-    .ifExists()
-    .execute();
+  // Drop trigger and function
+  await sql`DROP TRIGGER IF EXISTS tr_validate_award_team_division ON awards`.execute(db);
+  await sql`DROP FUNCTION IF EXISTS validate_award_team_division()`.execute(db);
 
   // Drop the table
   await db.schema.dropTable('awards').execute();

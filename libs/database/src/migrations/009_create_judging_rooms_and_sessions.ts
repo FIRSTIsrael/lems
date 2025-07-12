@@ -63,23 +63,32 @@ export async function up(db: Kysely<any>): Promise<void> {
     .onDelete('cascade')
     .execute();
 
-  // Add check constraint to ensure division_id matches the room's division
-  await db.schema
-    .alterTable('judging_sessions')
-    .addCheckConstraint(
-      'ck_judging_sessions_division_room_match',
-      sql`division_id = (SELECT division_id FROM judging_rooms WHERE id = room_id)`
-    )
-    .execute();
+  // Create trigger function to validate judging session data integrity
+  await sql`
+    CREATE OR REPLACE FUNCTION validate_judging_session()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- Check that division_id matches the room's division
+      IF NEW.division_id != (SELECT division_id FROM judging_rooms WHERE id = NEW.room_id) THEN
+        RAISE EXCEPTION 'Division ID must match the room''s division';
+      END IF;
+      
+      -- Check that team is competing in the division
+      IF NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = NEW.division_id) THEN
+        RAISE EXCEPTION 'Team must be competing in the specified division';
+      END IF;
+      
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `.execute(db);
 
-  // Add check constraint to ensure team is competing in the division
-  await db.schema
-    .alterTable('judging_sessions')
-    .addCheckConstraint(
-      'ck_judging_sessions_team_in_division',
-      sql`EXISTS (SELECT 1 FROM team_divisions WHERE team_id = judging_sessions.team_id AND division_id = judging_sessions.division_id)`
-    )
-    .execute();
+  // Create trigger for judging_sessions table
+  await sql`
+    CREATE TRIGGER tr_validate_judging_session
+    BEFORE INSERT OR UPDATE ON judging_sessions
+    FOR EACH ROW EXECUTE FUNCTION validate_judging_session();
+  `.execute(db);
 
   // Add unique constraint to prevent duplicate session numbers per room
   await db.schema
@@ -146,6 +155,10 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropIndex('idx_judging_rooms_id').ifExists().execute();
   await db.schema.dropIndex('idx_judging_rooms_division_id').ifExists().execute();
   await db.schema.dropIndex('idx_judging_rooms_division_name').ifExists().execute();
+
+  // Drop trigger and function
+  await sql`DROP TRIGGER IF EXISTS tr_validate_judging_session ON judging_sessions`.execute(db);
+  await sql`DROP FUNCTION IF EXISTS validate_judging_session()`.execute(db);
 
   // Drop the judging_sessions table first (due to foreign key constraint)
   await db.schema.dropTable('judging_sessions').execute();

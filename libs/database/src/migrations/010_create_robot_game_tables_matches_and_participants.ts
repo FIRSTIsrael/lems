@@ -117,32 +117,32 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addUniqueConstraint('uk_robot_game_match_participants_table_match', ['table_id', 'match_id'])
     .execute();
 
-  // Add check constraint to ensure team is competing in the match's division
-  await db.schema
-    .alterTable('robot_game_match_participants')
-    .addCheckConstraint(
-      'ck_robot_game_match_participants_team_in_division',
-      sql`EXISTS (
-        SELECT 1 FROM team_divisions td 
-        JOIN robot_game_matches rgm ON rgm.id = robot_game_match_participants.match_id 
-        WHERE td.team_id = robot_game_match_participants.team_id 
-        AND td.division_id = rgm.division_id
-      )`
-    )
-    .execute();
+  // Create trigger function to validate robot game match participant data integrity
+  await sql`
+    CREATE OR REPLACE FUNCTION validate_robot_game_match_participant()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- Check that team is competing in the division
+      IF NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = (SELECT division_id FROM robot_game_matches WHERE id = NEW.match_id)) THEN
+        RAISE EXCEPTION 'Team must be competing in the match''s division';
+      END IF;
+      
+      -- Check that table belongs to the same division as the match
+      IF (SELECT division_id FROM robot_game_tables WHERE id = NEW.table_id) != (SELECT division_id FROM robot_game_matches WHERE id = NEW.match_id) THEN
+        RAISE EXCEPTION 'Table must belong to the same division as the match';
+      END IF;
+      
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `.execute(db);
 
-  // Add check constraint to ensure table belongs to the same division as the match
-  await db.schema
-    .alterTable('robot_game_match_participants')
-    .addCheckConstraint(
-      'ck_robot_game_match_participants_table_division_match',
-      sql`(
-        SELECT rgt.division_id FROM robot_game_tables rgt WHERE rgt.id = table_id
-      ) = (
-        SELECT rgm.division_id FROM robot_game_matches rgm WHERE rgm.id = match_id
-      )`
-    )
-    .execute();
+  // Create trigger for robot_game_match_participants table
+  await sql`
+    CREATE TRIGGER tr_validate_robot_game_match_participant
+    BEFORE INSERT OR UPDATE ON robot_game_match_participants
+    FOR EACH ROW EXECUTE FUNCTION validate_robot_game_match_participant();
+  `.execute(db);
 
   // Create indexes for robot_game_tables table
   await db.schema
@@ -241,6 +241,12 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropIndex('idx_robot_game_tables_id').ifExists().execute();
   await db.schema.dropIndex('idx_robot_game_tables_division_id').ifExists().execute();
   await db.schema.dropIndex('idx_robot_game_tables_division_name').ifExists().execute();
+
+  // Drop trigger and function
+  await sql`DROP TRIGGER IF EXISTS tr_validate_robot_game_match_participant ON robot_game_match_participants`.execute(
+    db
+  );
+  await sql`DROP FUNCTION IF EXISTS validate_robot_game_match_participant()`.execute(db);
 
   // Drop the robot_game_match_participants table first (due to foreign key constraints)
   await db.schema.dropTable('robot_game_match_participants').execute();
