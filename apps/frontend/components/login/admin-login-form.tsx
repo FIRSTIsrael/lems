@@ -58,7 +58,6 @@ const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
       <Typography variant="h2" textAlign="center">
         התחברות כמנהל
       </Typography>
-
       <TextField
         variant="outlined"
         type="username"
@@ -74,9 +73,10 @@ const AdminLoginForm: React.FC<Props> = ({ recaptchaRequired }) => {
         label="סיסמה"
         value={password}
         onChange={e => setPassword(e.target.value)}
-        inputProps={{ dir: 'ltr' }}
+        slotProps={{
+          htmlInput: { dir: 'ltr' }
+        }}
       />
-
       <Box justifyContent="flex-end" display="flex" pt={4}>
         <Button endIcon={<ChevronLeftIcon />} type="submit" variant="contained">
           התחבר

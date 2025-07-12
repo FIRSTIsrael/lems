@@ -39,9 +39,11 @@ const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
             {...field}
             label={label}
             disabled={disabled || readOnly ? false : !checked}
-            InputProps={{ readOnly }}
             value={field.value}
             onChange={e => form.setFieldValue(field.name, e.target.value)}
+            slotProps={{
+              input: { readOnly }
+            }}
           />
         </Stack>
       )}
