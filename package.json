@@ -58,7 +58,7 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "stylis": "^4.3.6",
-    "swr": "^2.3.3",
+    "swr": "^2.3.4",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
     "winston": "^3.17.0"
