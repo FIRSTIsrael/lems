@@ -2,6 +2,7 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableAdmin, Admin } from '../schema/tables/admins';
 import { PermissionType, AdminPermission } from '../schema/tables/admin-permissions';
+import { Event } from '../schema/tables/events';
 
 class AdminSelector {
   constructor(
@@ -76,10 +77,14 @@ class AdminSelector {
     return permissions.map(p => p.permission);
   }
 
-  async getEvents(): Promise<unknown[]> {
-    // Placeholder implementation for future events functionality
-    // TODO: Implement when events relationship is established
-    return [];
+  async getEvents(): Promise<Event[]> {
+    const events = await this.db
+      .selectFrom('admin_events')
+      .innerJoin('events', 'events.id', 'admin_events.event_id')
+      .selectAll('events')
+      .where('admin_events.admin_id', '=', this.getAdminIdQuery())
+      .execute();
+    return events;
   }
 
   async updateLastLogin(): Promise<void> {
