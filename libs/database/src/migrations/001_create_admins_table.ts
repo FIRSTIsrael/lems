@@ -2,9 +2,9 @@
 import { Kysely, sql } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
-  // Create the users table with the specified columns and constraints
+  // Create the admins table with the specified columns and constraints
   await db.schema
-    .createTable('users')
+    .createTable('admins')
     .addColumn('pk', 'serial', col => col.primaryKey())
     .addColumn('id', 'uuid', col =>
       col
@@ -24,15 +24,15 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   //Create an index on the id column for faster lookups
-  await db.schema.createIndex('idx_users_id').on('users').column('id').execute();
+  await db.schema.createIndex('idx_admins_id').on('admins').column('id').execute();
 
   // Create an index on the username column for faster lookups
-  await db.schema.createIndex('idx_users_username').on('users').column('username').execute();
+  await db.schema.createIndex('idx_admins_username').on('admins').column('username').execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable('users').execute();
+  await db.schema.dropTable('admins').execute();
   // Drop the indexes if they exist
-  await db.schema.dropIndex('idx_users_id').ifExists().execute();
-  await db.schema.dropIndex('idx_users_username').ifExists().execute();
+  await db.schema.dropIndex('idx_admins_id').ifExists().execute();
+  await db.schema.dropIndex('idx_admins_username').ifExists().execute();
 }

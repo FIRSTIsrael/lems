@@ -60,7 +60,7 @@ async function migrateToLatest() {
     provider: new ESMFileMigrationProvider('../migrations')
   });
 
-  const { error, results } = await migrator.migrateToLatest();
+  const { error, results } = await migrator.migrateDown();
 
   results?.forEach(it => {
     if (it.status === 'Success') {

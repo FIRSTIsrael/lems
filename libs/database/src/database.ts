@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
 import { MongoClient, Db } from 'mongodb';
-import { UsersRepository } from './repositories/users';
+import { AdminsRepository } from './repositories/admins';
 import { DatabaseSchema } from './schema/index';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
@@ -16,7 +16,7 @@ export class Database {
   private mongoClient: MongoClient;
   private mongoDB: Db;
 
-  public users: UsersRepository;
+  public admins: AdminsRepository;
 
   constructor() {
     this.kysely = new Kysely<DatabaseSchema>({
@@ -35,7 +35,7 @@ export class Database {
     });
     this.mongoDB = this.mongoClient.db(DB_NAME);
 
-    this.users = new UsersRepository(this.kysely);
+    this.admins = new AdminsRepository(this.kysely);
   }
 
   async connect(): Promise<void> {

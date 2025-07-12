@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 
-export interface UserTable {
+export interface AdminsTable {
   id: ColumnType<string, never, never>; // UUID, generated
   username: string;
   password_hash: string;
@@ -13,6 +13,6 @@ export interface UserTable {
   last_updated: ColumnType<Date, never, Date>; // Updated automatically
 }
 
-export type User = Selectable<UserTable>;
-export type InsertableUser = Insertable<UserTable>;
-export type UpdateableUser = Updateable<UserTable>;
+export type Admin = Selectable<AdminsTable>;
+export type InsertableAdmin = Insertable<AdminsTable>;
+export type UpdateableAdmin = Updateable<AdminsTable>;

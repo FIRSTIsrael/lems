@@ -1,7 +1,7 @@
-import { UserTable } from './tables/users';
-import { UserPermissionTable } from './tables/user-permissions';
+import { AdminsTable } from './tables/admins';
+import { AdminPermissionTable } from './tables/admin-permissions';
 
 export interface DatabaseSchema {
-  users: UserTable;
-  user_permissions: UserPermissionTable;
+  admins: AdminsTable;
+  admin_permissions: AdminPermissionTable;
 }

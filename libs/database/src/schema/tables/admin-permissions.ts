@@ -7,13 +7,13 @@ export type PermissionType =
   | 'MANAGE_TEAMS'
   | 'VIEW_INSIGHTS';
 
-export interface UserPermissionTable {
+export interface AdminPermissionTable {
   pk: ColumnType<number, never, never>; // Serial primary key
-  user_id: string; // UUID foreign key to users.id
+  admin_id: string; // UUID foreign key to admins.id
   permission: PermissionType;
   granted_at: ColumnType<Date, never, never>; // Generated on insert
 }
 
-export type UserPermission = Selectable<UserPermissionTable>;
-export type InsertableUserPermission = Insertable<UserPermissionTable>;
-export type UpdateableUserPermission = Updateable<UserPermissionTable>;
+export type AdminPermission = Selectable<AdminPermissionTable>;
+export type InsertableAdminPermission = Insertable<AdminPermissionTable>;
+export type UpdateableAdminPermission = Updateable<AdminPermissionTable>;
