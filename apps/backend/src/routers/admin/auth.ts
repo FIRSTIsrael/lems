@@ -1,3 +1,4 @@
+import rateLimit from 'express-rate-limit';
 import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
@@ -7,6 +8,13 @@ import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
 
 const router = express.Router({ mergeParams: true });
+
+// Configure rate limiter: max 10 requests per minute
+const loginRateLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: { error: 'TOO_MANY_REQUESTS' }, // Response when rate limit is exceeded
+});
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -20,7 +28,7 @@ interface LoginRequest {
   captchaToken?: string;
 }
 
-router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/login', loginRateLimiter, async (req: Request, res: Response, next: NextFunction) => {
   const { captchaToken, ...loginDetails }: LoginRequest = req.body;
 
   if (process.env.RECAPTCHA === 'true') {
