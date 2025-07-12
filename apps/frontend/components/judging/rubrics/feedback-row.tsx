@@ -1,5 +1,5 @@
 import { Typography, Box, TableRow, TableCell } from '@mui/material';
-import FormikTextField from '../../general/forms/formik-text-field';
+import FormikTextField from '../../formik/formik-text-field';
 import Markdown from 'react-markdown';
 import { JudgingCategory } from '@lems/types';
 

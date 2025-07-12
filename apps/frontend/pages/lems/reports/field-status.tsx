@@ -23,7 +23,7 @@ import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { useTime } from '../../../hooks/use-time';
+import { useTime } from '../../../hooks/time/use-time';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface MatchStatusTimerProps {

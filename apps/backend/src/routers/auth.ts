@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { User } from '@lems/types';
 import { RecaptchaResponse } from '../types/auth';
-import { getRecaptchaResponse } from '../lib/captcha';
+import { getRecaptchaResponse } from '../lib/security/captcha';
 
 const router = express.Router({ mergeParams: true });
 
@@ -64,7 +64,12 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       }
     );
 
-    res.cookie('auth-token', token, { expires: expires.toDate(), httpOnly: true, secure: true });
+    res.cookie('auth-token', token, {
+      expires: expires.toDate(),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
     res.json(user);
   } catch (err) {
     next(err);

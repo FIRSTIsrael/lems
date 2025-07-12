@@ -30,7 +30,7 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { cvFormSchema } from '@lems/season';
-import FormikTextField from '../general/forms/formik-text-field';
+import FormikTextField from '../formik/formik-text-field';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
 

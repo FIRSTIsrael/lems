@@ -15,9 +15,9 @@ import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
-import FormikTextField from '../../../components/general/forms/formik-text-field';
+import FormikTextField from '../../../components/formik/formik-text-field';
 import { Note, useNotes } from '../../../hooks/use-notes';
-import FormikTeamField from '../../../components/general/forms/formik-team-field';
+import FormikTeamField from '../../../components/formik/formik-team-field';
 import { localizeTeam } from '../../../localization/teams';
 
 interface ViewingNoteProps {
