@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { Button, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
@@ -15,6 +16,7 @@ import {
   createRecaptchaToken,
   removeRecaptchaBadge
 } from '../../hooks/use-recaptcha';
+import { getMessages } from '../../locale/get-messages';
 
 interface LoginFormValues {
   username: string;
@@ -40,6 +42,7 @@ const validateForm = (values: LoginFormValues) => {
 };
 
 const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
+  const t = useTranslations('pages.admin.login');
   const router = useRouter();
   useRecaptcha(recaptchaRequired);
 
@@ -86,7 +89,6 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
         returnUrl = '/admin';
       } else {
         // Sanitize and encode the returnUrl
-        const DOMPurify = (await import('dompurify')).default;
         returnUrl = DOMPurify.sanitize(returnUrl);
         returnUrl = encodeURIComponent(returnUrl);
       }
@@ -112,13 +114,13 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
             <Form>
               <Stack direction="column" spacing={3}>
                 <Typography variant="h2" textAlign="center" sx={{ mb: 2 }}>
-                  התחברות למערכת
+                  {t('title')}
                 </Typography>
 
                 <FormikTextField
                   name="username"
                   variant="outlined"
-                  label="שם משתמש"
+                  label={t('username')}
                   disabled={isSubmitting}
                   autoComplete="username"
                   required
@@ -128,7 +130,7 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
                   name="password"
                   variant="outlined"
                   type={showPassword ? 'text' : 'password'}
-                  label="סיסמה"
+                  label={t('password')}
                   disabled={isSubmitting}
                   autoComplete="current-password"
                   required
@@ -159,12 +161,12 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
                   endIcon={<ChevronLeftIcon />}
                   sx={{ borderRadius: 2, py: 1.5 }}
                 >
-                  {isSubmitting ? 'מתחבר...' : 'התחבר'}
+                  {isSubmitting ? t('logging-in') : t('login')}
                 </Button>
 
                 {status && (
                   <Typography color="error" variant="body2">
-                    {status}
+                    {t(status)}
                   </Typography>
                 )}
               </Stack>
@@ -184,7 +186,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   }
 
   const recaptchaRequired = process.env.RECAPTCHA === 'true';
-  return { props: { recaptchaRequired } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { recaptchaRequired, messages } };
 };
 
 export default Page;
