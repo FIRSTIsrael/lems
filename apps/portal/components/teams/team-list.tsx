@@ -8,8 +8,9 @@ import {
   TableHead,
   Link
 } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { PortalTeam } from '@lems/types';
+import ChevronEndIcon from '../icons/chevron-end';
+import { useTranslations } from 'next-intl';
 
 interface TeamListProps {
   eventId: string;
@@ -17,6 +18,7 @@ interface TeamListProps {
 }
 
 const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
+  const t = useTranslations('components.teams.team-list');
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
@@ -25,10 +27,10 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
         <TableHead>
           <TableRow>
             <TableCell>
-              <Typography fontWeight={500}>קבוצה</Typography>
+              <Typography fontWeight={500}>{t('team')}</Typography>
             </TableCell>
             <TableCell>
-              <Typography fontWeight={500}>מיקום</Typography>
+              <Typography fontWeight={500}>{t('location')}</Typography>
             </TableCell>
             <TableCell />
           </TableRow>
@@ -79,7 +81,7 @@ const TeamList: React.FC<TeamListProps> = ({ eventId, teams }) => {
                     display: 'block'
                   }}
                 >
-                  <ChevronLeftIcon />
+                  <ChevronEndIcon />
                 </Link>
               </TableCell>
             </TableRow>

@@ -1,9 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
-import { Container, Box, Typography, Stack } from '@mui/material';
-import { AwardNames, PortalAward, PortalEvent, PersonalAwardTypes, PersonalAwards } from '@lems/types';
-import { localizedAward } from '@lems/season';
+import { Container, Box, Typography } from '@mui/material';
+import {
+  AwardNames,
+  PortalAward,
+  PortalEvent,
+  PersonalAwardTypes,
+  PersonalAwards
+} from '@lems/types';
 import { fetchAwards, fetchEvent } from '../../../lib/api';
+import { getMessages } from '../../../locale/get-messages';
+import { useLocaleAwardName } from '../../../locale/hooks/use-locale-award';
 import AwardWinner from '../../../components/events/award-winner';
 import StyledEventSubtitle from '../../../components/events/styled-event-subtitle';
 
@@ -13,6 +21,9 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ awards, event }) => {
+  const t = useTranslations('pages.events.id.awards');
+  const awardNameToText = useLocaleAwardName();
+
   const awardsByName = awards.reduce(
     (acc, award) => {
       const copy = [...(acc[award.name] ?? []), award];
@@ -50,7 +61,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
         height: containerHeight ? `${containerHeight}px` : 'auto'
       }}
     >
-      <Typography variant="h1">פרסים</Typography>
+      <Typography variant="h1">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
 
       {/* Personal Awards First */}
@@ -60,18 +71,15 @@ const Page: NextPage<Props> = ({ awards, event }) => {
           if (awards.every(award => !award.winner)) return null;
 
           return (
-            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+            <Box
+              key={awardName}
+              sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
+            >
+              <Typography variant="h6">
+                {t('award-name', { award: awardNameToText(awardName as AwardNames) })}
+              </Typography>
               {awards.map((award, index) => (
-                <AwardWinner
-                  key={index}
-                  award={award}
-                  winnerText={
-                    typeof award.winner === 'string'
-                      ? award.winner
-                      : `${award.winner?.name} #${award.winner?.number}`
-                  }
-                />
+                <AwardWinner key={index} award={award} />
               ))}
             </Box>
           );
@@ -84,18 +92,15 @@ const Page: NextPage<Props> = ({ awards, event }) => {
           if (awards.every(award => !award.winner)) return null;
 
           return (
-            <Box key={awardName} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-              <Typography variant="h6">פרס {localizedAward[awardName as AwardNames].name}</Typography>
+            <Box
+              key={awardName}
+              sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}
+            >
+              <Typography variant="h6">
+                {t('award-name', { award: awardNameToText(awardName as AwardNames) })}
+              </Typography>
               {awards.map((award, index) => (
-                <AwardWinner
-                  key={index}
-                  award={award}
-                  winnerText={
-                    typeof award.winner === 'string'
-                      ? award.winner
-                      : `${award.winner?.name} #${award.winner?.number}`
-                  }
-                />
+                <AwardWinner key={index} award={award} />
               ))}
             </Box>
           );
@@ -103,7 +108,7 @@ const Page: NextPage<Props> = ({ awards, event }) => {
 
       {advancement?.length > 0 && (
         <Box sx={{ p: 2, mb: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-          <Typography variant="h6">מעפילות לתחרות האליפות</Typography>
+          <Typography variant="h6">{t('eligible-for-advancement')}</Typography>
           <Box sx={{ mt: 1 }}>
             {advancement.map((award, index) => {
               if (!award.winner || typeof award.winner === 'string') return null;
@@ -126,7 +131,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   const awards = await fetchAwards(eventId);
   if (awards === null) return { redirect: { destination: `/events/${eventId}`, permanent: false } };
 
-  return { props: { awards, event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { awards, event, messages } };
 };
 
 export default Page;

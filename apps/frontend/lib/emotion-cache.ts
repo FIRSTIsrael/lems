@@ -1,9 +1,19 @@
-import createCache from '@emotion/cache';
-import rtlPlugin from 'stylis-plugin-rtl';
-import theme from './theme';
+import { createEmotionCache } from '@mui/material-nextjs/v15-pagesRouter';
+import { prefixer } from 'stylis';
+import rtlPlugin from '@mui/stylis-plugin-rtl';
+import LEMSLocales, { Locales } from '../locale/locales';
 
-export const createEmotionCache = () =>
-  createCache({
-    key: 'css',
-    stylisPlugins: theme.direction === 'rtl' ? [rtlPlugin] : []
+export const createCustomEmotionCache = (locale: Locales = 'he') => {
+  const direction = LEMSLocales[locale].direction;
+
+  if (direction === 'rtl') {
+    return createEmotionCache({
+      key: 'muirtl',
+      stylisPlugins: [prefixer, rtlPlugin]
+    });
+  }
+
+  return createEmotionCache({
+    key: 'muiltr'
   });
+};

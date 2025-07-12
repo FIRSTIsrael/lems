@@ -38,6 +38,9 @@ const TimingStep: React.FC<TimingStepProps> = ({
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | null>(null);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isValidating, setisValidating] = useState<boolean>(false);
+  const [validationStatus, setValidationStatus] = useState<null | 'valid' | 'invalid'>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const fetchTeams = async () => {
     const response = await apiFetch(`/api/divisions/${division._id}/teams`);
@@ -64,9 +67,13 @@ const TimingStep: React.FC<TimingStepProps> = ({
       headers: { 'Content-Type': 'application/json' }
     }).then(res => {
       if (res.ok) {
+        setValidationStatus('valid');
+        setValidationError(null);
         return true;
       } else {
+        setValidationStatus('invalid');
         res.json().then(data => {
+          setValidationError(data.error)
           enqueueSnackbar(data.error, {
             variant: 'error'
           });
@@ -82,6 +89,11 @@ const TimingStep: React.FC<TimingStepProps> = ({
     fetchTables();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setValidationStatus(null)
+    setValidationError(null)
+  }, [settings])
 
   const canAdvanceStep = settings.matchesStart && settings.judgingStart;
 
@@ -132,7 +144,18 @@ const TimingStep: React.FC<TimingStepProps> = ({
             tables={tables}
           />
         )}
+        {validationStatus === 'valid' && (
+          <Stack alignItems="center">
+            <span style={{ color: 'green' }}>✅ הלו"ז תקין</span>
+          </Stack>
+        )}
 
+        {validationStatus === 'invalid' && validationError && (
+          <Stack alignItems="center">
+            <span style={{ color: 'red' }} >❌הלו"ז לא תקין, שגיאה:</span>
+            <span>{validationError}</span>
+          </Stack>
+        )}
         <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" px={2}>
           <Button variant="contained" onClick={goBack}>
             הקודם
@@ -148,9 +171,24 @@ const TimingStep: React.FC<TimingStepProps> = ({
               }
               setIsLoading(false);
             }}
-            disabled={!canAdvanceStep}
+            disabled={!canAdvanceStep || isValidating || validationStatus == 'invalid'}
           >
             הבא
+          </Button>
+          <Button
+            loading={isValidating}
+            variant="contained"
+            onClick={async () => {
+              setisValidating(true);
+              const isValid = await sendValidate();
+              if (isValid) {
+                enqueueSnackbar('לו"ז אומת בהצלחה', { variant: 'success' });
+              }
+              setisValidating(false);
+            }}
+            disabled={!canAdvanceStep}
+          >
+            אימות
           </Button>
         </Stack>
       </Stack>

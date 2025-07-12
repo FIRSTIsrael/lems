@@ -56,3 +56,6 @@ http-log.log
 **/__pycache__/
 **/.pytest_cache/
 **/.venv
+/.cursor\rules\nx-rules.mdc
+/.github/instructions/nx.instructions.md
+.cursor/rules/nx-rules.mdc

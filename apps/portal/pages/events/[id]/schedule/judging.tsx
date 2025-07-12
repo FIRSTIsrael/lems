@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
   TableContainer,
@@ -15,6 +16,7 @@ import {
 } from '@mui/material';
 import { PortalEvent, PortalJudgingSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
+import { getMessages } from '../../../../locale/get-messages';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
@@ -24,6 +26,8 @@ interface Props {
 }
 
 const Page: NextPage<Props> = ({ event }) => {
+  const t = useTranslations('pages.events.id.schedule.judging');
+
   const {
     data: schedule,
     isLoading,
@@ -32,7 +36,7 @@ const Page: NextPage<Props> = ({ event }) => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 2 }}>
-      <Typography variant="h2">לוח זמנים - שיפוט</Typography>
+      <Typography variant="h2">{t('title')}</Typography>
       <StyledEventSubtitle event={event} />
       <Box
         sx={{
@@ -49,10 +53,10 @@ const Page: NextPage<Props> = ({ event }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>
-                      <Typography fontWeight={500}>סבב</Typography>
+                      <Typography fontWeight={500}>{t('table.columns.round')}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontWeight={500}>זמן התחלה</Typography>
+                      <Typography fontWeight={500}>{t('table.columns.start-time')}</Typography>
                     </TableCell>
                     {schedule.columns.map(column => (
                       <TableCell key={column.id}>
@@ -101,9 +105,9 @@ const Page: NextPage<Props> = ({ event }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const eventId = ctx.params?.id as string;
-
   const { event } = await fetchEvent(eventId);
-  return { props: { event } };
+  const messages = await getMessages(ctx.locale);
+  return { props: { event, messages } };
 };
 
 export default Page;

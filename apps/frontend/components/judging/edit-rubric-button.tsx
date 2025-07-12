@@ -94,7 +94,7 @@ const EditRubricButton: React.FC<EditRubricButtonProps> = ({ ...props }) => {
         title={title}
         arrow
         enterDelay={1000}
-        componentsProps={{
+        slotProps={{
           tooltip: {
             sx: {
               fontSize: '0.75rem'
