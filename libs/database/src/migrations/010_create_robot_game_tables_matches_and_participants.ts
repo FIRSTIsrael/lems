@@ -67,7 +67,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('robot_game_match_participants')
     .addColumn('pk', 'serial', col => col.primaryKey())
-    .addColumn('team_id', 'uuid', col => col.notNull())
+    .addColumn('team_id', 'uuid')
     .addColumn('table_id', 'uuid', col => col.notNull())
     .addColumn('match_id', 'uuid', col => col.notNull())
     .execute();
@@ -105,25 +105,26 @@ export async function up(db: Kysely<any>): Promise<void> {
     .onDelete('cascade')
     .execute();
 
-  // Add unique constraint to prevent duplicate team-match assignments
-  await db.schema
-    .alterTable('robot_game_match_participants')
-    .addUniqueConstraint('uk_robot_game_match_participants_team_match', ['team_id', 'match_id'])
-    .execute();
-
   // Add unique constraint to prevent multiple teams on same table for same match
   await db.schema
     .alterTable('robot_game_match_participants')
     .addUniqueConstraint('uk_robot_game_match_participants_table_match', ['table_id', 'match_id'])
     .execute();
 
+  // Add partial unique constraint to prevent duplicate team-match assignments (only for non-null team_id)
+  await sql`
+    CREATE UNIQUE INDEX uk_robot_game_match_participants_team_match_not_null 
+    ON robot_game_match_participants (team_id, match_id) 
+    WHERE team_id IS NOT NULL
+  `.execute(db);
+
   // Create trigger function to validate robot game match participant data integrity
   await sql`
     CREATE OR REPLACE FUNCTION validate_robot_game_match_participant()
     RETURNS TRIGGER AS $$
     BEGIN
-      -- Check that team is competing in the division
-      IF NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = (SELECT division_id FROM robot_game_matches WHERE id = NEW.match_id)) THEN
+      -- Check that team is competing in the division (only if team_id is not null)
+      IF NEW.team_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = (SELECT division_id FROM robot_game_matches WHERE id = NEW.match_id)) THEN
         RAISE EXCEPTION 'Team must be competing in the match''s division';
       END IF;
       
@@ -222,6 +223,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
+  // Drop partial unique index for team-match assignments
+  await sql`DROP INDEX IF EXISTS uk_robot_game_match_participants_team_match_not_null`.execute(db);
+  
   // Drop indexes for robot_game_match_participants table
   await db.schema.dropIndex('idx_robot_game_match_participants_team_id').ifExists().execute();
   await db.schema.dropIndex('idx_robot_game_match_participants_table_id').ifExists().execute();

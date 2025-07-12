@@ -34,7 +34,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .defaultTo(sql`gen_random_uuid()`)
     )
     .addColumn('number', 'integer', col => col.notNull())
-    .addColumn('team_id', 'uuid', col => col.notNull())
+    .addColumn('team_id', 'uuid')
     .addColumn('room_id', 'uuid', col => col.notNull())
     .addColumn('division_id', 'uuid', col => col.notNull())
     .addColumn('scheduled_time', 'timestamptz', col => col.notNull())
@@ -73,8 +73,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         RAISE EXCEPTION 'Division ID must match the room''s division';
       END IF;
       
-      -- Check that team is competing in the division
-      IF NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = NEW.division_id) THEN
+      -- Check that team is competing in the division (only if team_id is not null)
+      IF NEW.team_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM team_divisions WHERE team_id = NEW.team_id AND division_id = NEW.division_id) THEN
         RAISE EXCEPTION 'Team must be competing in the specified division';
       END IF;
       
