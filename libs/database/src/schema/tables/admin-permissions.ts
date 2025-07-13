@@ -1,6 +1,7 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 
 export type PermissionType =
+  | 'MANAGE_SEASONS'
   | 'MANAGE_USERS'
   | 'MANAGE_EVENTS'
   | 'MANAGE_EVENT_DETAILS'

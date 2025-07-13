@@ -6,6 +6,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createType('permission_type')
     .asEnum([
+      'MANAGE_SEASONS',
       'MANAGE_USERS',
       'MANAGE_EVENTS',
       'MANAGE_EVENT_DETAILS',
