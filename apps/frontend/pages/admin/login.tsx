@@ -5,11 +5,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { Button, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Layout from '../../components/layout';
 import FormikTextField from '../../components/formik/formik-text-field';
+import ChevronEndIcon from '../../components/icons/chevron-end';
 import { apiFetch } from '../../lib/utils/fetch';
 import {
   useRecaptcha,
@@ -158,7 +158,7 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
                   variant="contained"
                   size="large"
                   disabled={isSubmitting || !isValid}
-                  endIcon={<ChevronLeftIcon />}
+                  endIcon={<ChevronEndIcon />}
                   sx={{ borderRadius: 2, py: 1.5 }}
                 >
                   {isSubmitting ? t('logging-in') : t('login')}
