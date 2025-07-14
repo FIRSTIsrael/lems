@@ -13,15 +13,13 @@ export async function middleware(request: NextRequest) {
   const adminPrefix = '/admin';
   if (pathname.startsWith(adminPrefix)) {
     const publicPaths = ['/login'];
-    if (publicPaths.some(path => pathname == `${adminPrefix}${path}`)) {
+    if (publicPaths.some(path => pathname === `${adminPrefix}${path}`)) {
       return NextResponse.next();
     }
 
     try {
       const response = await fetch(`${backendUrl}/admin/auth/verify`, {
-        headers: {
-          Cookie: request.headers.get('cookie') || ''
-        }
+        headers: { Cookie: request.headers.get('cookie') || '' }
       });
 
       if (!response.ok) {
@@ -32,9 +30,7 @@ export async function middleware(request: NextRequest) {
     } catch {
       await fetch(`${backendUrl}/admin/auth/logout`, {
         method: 'POST',
-        headers: {
-          Cookie: request.headers.get('cookie') || ''
-        }
+        headers: { Cookie: request.headers.get('cookie') || '' }
       });
       return NextResponse.redirect(
         new URL(`${adminPrefix}/login?returnUrl=${encodeURIComponent(pathname)}`, request.url)

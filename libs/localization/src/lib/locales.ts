@@ -1,7 +1,11 @@
 import { enUS, heIL } from '@mui/material/locale';
 import { heIL as xDataGridHeIL, enUS as xDataGridEnUS } from '@mui/x-data-grid/locales';
 
-const LEMSLocales = {
+/**
+ * This file contains the locales supported by LEMS
+ * and their respective settings.
+ */
+export const Locales = {
   he: {
     displayName: 'עברית',
     id: 'he',
@@ -18,6 +22,4 @@ const LEMSLocales = {
   }
 };
 
-export type Locales = keyof typeof LEMSLocales;
-
-export default LEMSLocales;
+export type Locale = keyof typeof Locales;

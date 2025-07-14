@@ -21,9 +21,12 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { createRecaptchaToken } from '../../lib/utils/captcha';
-import { localizedRoles, localizedRoleAssociations } from '../../localization/roles';
-import { localizedDivisionSection } from '../../localization/roles';
+import { createRecaptchaToken } from '../../hooks/use-recaptcha';
+import {
+  localizedRoles,
+  localizedRoleAssociations,
+  localizedDivisionSection
+} from '../../localization/roles';
 import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
@@ -125,7 +128,11 @@ const DivisionLoginForm: React.FC<Props> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
+    if (recaptchaRequired) {
+      createRecaptchaToken().then(token => login(token));
+    } else {
+      login();
+    }
   };
 
   return (

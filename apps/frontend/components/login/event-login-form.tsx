@@ -8,7 +8,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Role, FllEvent } from '@lems/types';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { createRecaptchaToken } from '../../lib/utils/captcha';
+import { createRecaptchaToken } from '../../hooks/use-recaptcha';
 import { localizedRoles } from '../../localization/roles';
 
 interface Props {
@@ -60,7 +60,11 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    recaptchaRequired ? createRecaptchaToken().then(token => login(token)) : login();
+    if (recaptchaRequired) {
+      createRecaptchaToken().then(token => login(token));
+    } else {
+      login();
+    }
   };
 
   return (

@@ -1,10 +1,11 @@
 import { GetServerSideProps, NextPage } from 'next';
+import { AdminLayout } from '../../components/admin/layout';
 
 const Page: NextPage = () => {
   return (
-    <>
-      <h1>Admin Dashboard</h1>
-    </>
+    <AdminLayout>
+      <p>Admin Dashboard</p>
+    </AdminLayout>
   );
 };
 

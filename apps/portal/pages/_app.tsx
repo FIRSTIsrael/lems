@@ -3,16 +3,15 @@ import Head from 'next/head';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { useHtmlDirection, Locale } from '@lems/localization';
 import '../lib/dayjs';
 import { getLocalizedTheme } from '../lib/theme';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
-import { Locales } from '../locale/locales';
-import { useHtmlDirection } from '../hooks/use-html-direction';
 
 export default function PortalApp(props: AppProps) {
   const { Component, pageProps, router } = props;
-  const locale = (router.locale ?? 'he') as Locales;
+  const locale = (router.locale ?? 'he') as Locale;
   const emotionCache = createCustomEmotionCache(locale);
   const theme = getLocalizedTheme(locale);
 
