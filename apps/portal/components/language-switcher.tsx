@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import PortalLocales, { Locales } from '../locale/locales';
-import { useLocalePreference } from '../hooks/use-locale-preference';
+import { useLocalePreference } from '@lems/localization';
 
 const LanguageSwitcher: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
