@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Locales, { Locale } from '../locales';
+import { Locales, Locale } from '../locales';
 
 /**
  * Custom hook that dynamically updates the HTML element's dir attribute

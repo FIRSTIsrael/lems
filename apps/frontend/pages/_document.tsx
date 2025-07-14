@@ -6,11 +6,11 @@ import {
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
 import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { baseTheme } from '../lib/theme';
-import LEMSLocales, { Locales } from '../locale/locales';
+import { Locales, Locale } from '@lems/localization';
 
 export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided
-  const dir = LEMSLocales[locale as Locales].direction;
+  const dir = Locales[locale as Locale].direction;
 
   return (
     <Html lang={locale} dir={dir}>
@@ -41,7 +41,7 @@ export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProp
 
 LEMSDocument.getInitialProps = async (ctx: DocumentContext) => {
   const locale = ctx.locale || 'he'; // Default to Hebrew if no locale is provided
-  const emotionCache = createCustomEmotionCache(locale as Locales);
+  const emotionCache = createCustomEmotionCache(locale as Locale);
   const finalProps = await documentGetInitialProps(ctx, {
     emotionCache
   });
