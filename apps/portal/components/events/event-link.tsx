@@ -15,7 +15,7 @@ import {
 import Grid, { GridProps } from '@mui/material/Grid';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
-import ChevronEndIcon from '../icons/chevron-end';
+import { ChevronEndIcon } from '@lems/localization';
 
 interface EventDescriptionProps extends GridProps {
   event: PortalEvent;

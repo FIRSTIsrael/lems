@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import {
   Table,
   Typography,
@@ -9,8 +10,7 @@ import {
   Link
 } from '@mui/material';
 import { PortalTeam } from '@lems/types';
-import ChevronEndIcon from '../icons/chevron-end';
-import { useTranslations } from 'next-intl';
+import { ChevronEndIcon } from '@lems/localization';
 
 interface TeamListProps {
   eventId: string;
