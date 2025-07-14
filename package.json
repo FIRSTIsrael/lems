@@ -22,7 +22,7 @@
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
     "@mui/material-nextjs": "^7.1.1",
-    "@mui/stylis-plugin-rtl": "^7.1.0",
+    "@mui/stylis-plugin-rtl": "^7.2.0",
     "@mui/x-data-grid": "^8.5.3",
     "@mui/x-date-pickers": "^8.7.0",
     "@nx/devkit": "21.2.3",
