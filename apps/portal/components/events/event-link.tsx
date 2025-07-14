@@ -83,7 +83,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           '& .MuiButton-endIcon svg': { fontSize: 24 },
           borderRadius: 3
         }}
-        endIcon={<ChevronEndIcon sxProps={{ position: 'relative' }} />}
+        endIcon={<ChevronEndIcon sx={{ position: 'relative' }} />}
         fullWidth
         size="small"
         LinkComponent={Link}
