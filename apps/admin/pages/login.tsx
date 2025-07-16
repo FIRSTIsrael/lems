@@ -45,7 +45,7 @@ const validateForm = (values: LoginFormValues) => {
 };
 
 const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
-  const t = useTranslations('pages.admin.login');
+  const t = useTranslations('pages.login');
   const router = useRouter();
   useRecaptcha(recaptchaRequired);
 
@@ -82,14 +82,14 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
       }
 
       removeRecaptchaBadge();
-      let returnUrl = '/admin';
+      let returnUrl = '/';
       if (router.query.returnUrl) {
         returnUrl = Array.isArray(router.query.returnUrl)
           ? router.query.returnUrl[0]
           : router.query.returnUrl;
       }
-      if (!returnUrl.startsWith('/admin')) {
-        returnUrl = '/admin';
+      if (!returnUrl.startsWith('/')) {
+        returnUrl = '/';
       } else {
         // Sanitize and encode the returnUrl
         returnUrl = DOMPurify.sanitize(returnUrl);
@@ -183,9 +183,13 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const response = await apiFetch('/admin/auth/verify', undefined, ctx);
+
+  console.log('Login page verification response:', response.status);
+
   if (response.ok) {
-    // User is already logged in, redirect to admin page
-    return { redirect: { destination: '/admin', permanent: false } };
+    // User is already logged in, redirect to homepage
+    console.log('User is already logged in, redirecting to homepage');
+    return { redirect: { destination: '/', permanent: false } };
   }
 
   const recaptchaRequired = process.env.RECAPTCHA === 'true';

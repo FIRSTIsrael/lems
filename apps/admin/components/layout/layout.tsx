@@ -1,11 +1,11 @@
 import { Box } from '@mui/material';
 import { AdminAppBar } from './app-bar';
 
-interface AdminLayoutProps {
+interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const drawerWidth = 240;
 
   return (

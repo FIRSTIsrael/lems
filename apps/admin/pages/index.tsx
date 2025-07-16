@@ -1,16 +1,12 @@
-import { GetServerSideProps, NextPage } from 'next';
-import { AdminLayout } from '../components/layout/layout';
+import { NextPage } from 'next';
+import { Layout } from '../components/layout/layout';
 
 const Page: NextPage = () => {
   return (
-    <AdminLayout>
+    <Layout>
       <p>Admin Dashboard</p>
-    </AdminLayout>
+    </Layout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return { props: {} };
 };
 
 export default Page;
