@@ -1,4 +1,5 @@
 export * from './lib/locales';
+export * from './lib/emotion-cache';
 
 // Hooks
 export * from './lib/hooks/use-html-direction';

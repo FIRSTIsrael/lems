@@ -1,19 +1,36 @@
 //@ts-check
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  // Use this to set Nx-specific options
-  // See: https://nx.dev/recipes/next/next-config-setup
-  nx: {},
+  nx: {
+    // Set this to true if you would like to to use SVGR
+    // See: https://github.com/gregberge/svgr
+    svgr: false
+  },
+
+  reactStrictMode: true,
 
   compiler: {
-    // For other options, see https://nextjs.org/docs/architecture/nextjs-compiler#emotion
     emotion: true
+  },
+
+  transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'emojicdn.elk.sh'
+      }
+    ]
+  },
+
+  i18n: {
+    locales: ['he', 'en'],
+    defaultLocale: 'he'
   }
 };
 

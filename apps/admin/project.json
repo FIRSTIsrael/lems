@@ -24,7 +24,9 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "admin:build",
-        "dev": true
+        "port": 4201,
+        "dev": true,
+        "turbo": true
       },
       "configurations": {
         "development": {

@@ -4,19 +4,22 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { Formik, Form, FormikHelpers } from 'formik';
-import { Button, Typography, Stack, Paper, IconButton, InputAdornment } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  InputAdornment,
+  Container
+} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
-import Layout from '../../components/layout';
 import FormikTextField from '../../components/formik/formik-text-field';
 import { apiFetch } from '../../lib/utils/fetch';
-import {
-  useRecaptcha,
-  createRecaptchaToken,
-  removeRecaptchaBadge
-} from '../../hooks/use-recaptcha';
-import { getMessages } from '../../locale/get-messages';
+import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
+import { getMessages } from '../locale/get-messages';
 
 interface LoginFormValues {
   username: string;
@@ -102,7 +105,7 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
   };
 
   return (
-    <Layout maxWidth="sm">
+    <Container maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
         <Formik
           initialValues={initialValues}
@@ -174,7 +177,7 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
           )}
         </Formik>
       </Paper>
-    </Layout>
+    </Container>
   );
 };
 

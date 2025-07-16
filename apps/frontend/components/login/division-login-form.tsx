@@ -21,7 +21,7 @@ import {
 import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { createRecaptchaToken } from '../../hooks/use-recaptcha';
+import { createRecaptchaToken } from '../../../../libs/shared/src/lib/hooks/use-recaptcha';
 import {
   localizedRoles,
   localizedRoleAssociations,

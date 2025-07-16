@@ -3,12 +3,12 @@ import { GetServerSideProps, NextPage } from 'next';
 import { WithId, ObjectId } from 'mongodb';
 import { Paper, Stack, Typography } from '@mui/material';
 import { FllEvent, Division, JudgingRoom, RobotGameTable, SafeUser } from '@lems/types';
+import { useRecaptcha } from '@lems/shared';
 import Layout from '../components/layout';
 import EventSelector from '../components/general/event-selector';
 import DivisionLoginForm from '../components/login/division-login-form';
 import EventLoginForm from '../components/login/event-login-form';
 import { apiFetch } from '../lib/utils/fetch';
-import { loadScriptByURL } from '../lib/utils/scripts';
 import { useNotes } from '../hooks/use-notes';
 interface PageProps {
   events: Array<WithId<FllEvent>>;
@@ -20,6 +20,8 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
   const [division, setDivision] = useState<WithId<Division> | undefined>(undefined);
   const [rooms, setRooms] = useState<Array<WithId<JudgingRoom>> | undefined>(undefined);
   const [tables, setTables] = useState<Array<WithId<RobotGameTable>> | undefined>(undefined);
+
+  useRecaptcha(recaptchaRequired);
 
   // Clear session speficic data when user is logged out.
   const { clearNotes } = useNotes();
@@ -41,16 +43,6 @@ const Page: NextPage<PageProps> = ({ events, recaptchaRequired }) => {
       setDivision(event.divisions?.find(d => String(d._id) === String(divisionId)));
     }
   };
-
-  useEffect(() => {
-    if (recaptchaRequired) {
-      loadScriptByURL(
-        'recaptcha-script',
-        `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (division) {

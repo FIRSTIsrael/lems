@@ -1,0 +1,20 @@
+{
+  "pages": {
+    "404": {
+      "title": "The page you are looking for does not exist",
+      "subtitle": "Error 404"
+    },
+    "login": {
+      "title": "Log In",
+      "username": "Username",
+      "password": "Password",
+      "logging-in": "Logging in...",
+      "login": "Log in",
+      "form-status": {
+        "server-error": "Server error, please try again.",
+        "invalid-credentials": "Invalid username or password.",
+        "too-many-requests": "Access denied, please try again later."
+      }
+    }
+  }
+}
