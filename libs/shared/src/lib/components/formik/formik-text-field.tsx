@@ -1,5 +1,5 @@
 import { KeyboardEventHandler, useRef } from 'react';
-import { FastField, FieldProps } from 'formik';
+import { Field, FieldProps } from 'formik';
 import { TextField, TextFieldProps } from '@mui/material';
 
 export type FormikTextFieldProps = {
@@ -23,7 +23,7 @@ export const FormikTextField: React.FC<FormikTextFieldProps> = ({
   };
 
   return (
-    <FastField name={name}>
+    <Field name={name}>
       {({ field, form }: FieldProps) => (
         <TextField
           inputRef={textFieldRef}
@@ -36,6 +36,6 @@ export const FormikTextField: React.FC<FormikTextFieldProps> = ({
           onKeyDown={handleKeyDown}
         />
       )}
-    </FastField>
+    </Field>
   );
 };
