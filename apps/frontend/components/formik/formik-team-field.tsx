@@ -8,12 +8,10 @@ type FormikTeamFieldProps = {
   teams: Array<WithId<Team>>;
   numberOnly?: boolean;
   name: string;
-  label?: string;
 } & Partial<AutocompleteProps<WithId<Team> | null, false, false, false>>;
 
 const FormikTeamField: React.FC<FormikTeamFieldProps> = ({
   name,
-  label,
   teams,
   numberOnly = false,
   ...props

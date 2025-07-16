@@ -1,20 +1,20 @@
 import { FastField, FieldProps } from 'formik';
-import { FormControlLabel, Checkbox, CheckboxProps } from '@mui/material';
+import { FormControlLabel, Switch, SwitchProps } from '@mui/material';
 
-interface FormikCheckboxProps extends CheckboxProps {
+export interface FormikSwitchProps extends SwitchProps {
   name: string;
   label: string;
   readOnly?: boolean;
 }
 
-const FormikCheckbox: React.FC<FormikCheckboxProps> = ({ name, label, readOnly, ...props }) => {
+export const FormikSwitch: React.FC<FormikSwitchProps> = ({ name, label, readOnly, ...props }) => {
   return (
     <FastField name={name}>
       {({ field, form }: FieldProps) => (
         <FormControlLabel
           label={label}
           control={
-            <Checkbox
+            <Switch
               {...props}
               {...field}
               checked={field.value}
@@ -28,5 +28,3 @@ const FormikCheckbox: React.FC<FormikCheckboxProps> = ({ name, label, readOnly, 
     </FastField>
   );
 };
-
-export default FormikCheckbox;

@@ -18,7 +18,7 @@ import Grid from '@mui/material/Grid';
 import { FastField, Field, FieldProps } from 'formik';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
-import CustomNumberInput from './number-input';
+import { NumberInput } from '@lems/shared';
 import NoEquipmentImage from '../../../public/assets/scoresheet/no-equipment.svg';
 
 interface MissionClauseProps {
@@ -115,7 +115,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
         ) : (
           <FastField name={`missions[${missionIndex}].clauses[${clauseIndex}].value`}>
             {({ field, form }: FieldProps) => (
-              <CustomNumberInput
+              <NumberInput
                 min={clause.min}
                 max={clause.max}
                 {...field}

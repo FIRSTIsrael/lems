@@ -2,13 +2,18 @@ import { KeyboardEventHandler, useRef } from 'react';
 import { FastField, FieldProps } from 'formik';
 import { TextField, TextFieldProps } from '@mui/material';
 
-type FormikTextFieldProps = {
+export type FormikTextFieldProps = {
   name: string;
   label?: string;
   blurOnEsc?: boolean;
 } & TextFieldProps;
 
-const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, blurOnEsc, ...props }) => {
+export const FormikTextField: React.FC<FormikTextFieldProps> = ({
+  name,
+  label,
+  blurOnEsc,
+  ...props
+}) => {
   const textFieldRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown: KeyboardEventHandler = e => {
@@ -34,5 +39,3 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({ name, label, blurOnEs
     </FastField>
   );
 };
-
-export default FormikTextField;

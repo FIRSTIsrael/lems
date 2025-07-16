@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { apiFetch } from '../../../lib/utils/fetch';
-import CustomNumberInput from '../../field/scoresheet/number-input';
+import { NumberInput } from '@lems/shared';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -157,7 +157,7 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
                 הגדרות
               </Typography>
               <Typography>מספר סבבי אימונים</Typography>
-              <CustomNumberInput
+              <NumberInput
                 min={1}
                 max={5}
                 value={settings.practiceRounds}
@@ -171,7 +171,7 @@ const VenueSetupStep: React.FC<VenueSetupStepProps> = ({
             </Stack>
             <Stack spacing={1}>
               <Typography>מספר סבבי דירוג</Typography>
-              <CustomNumberInput
+              <NumberInput
                 min={1}
                 max={5}
                 value={settings.rankingRounds}

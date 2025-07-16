@@ -1,14 +1,14 @@
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { FastField, FieldProps } from 'formik';
 import { LocalizationProvider, TimePicker, TimePickerProps } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-type FormikTimePickerProps = {
+export type FormikTimePickerProps = {
   name: string;
   label?: string;
 } & TimePickerProps;
 
-const FormikTimePicker: React.FC<FormikTimePickerProps> = ({ name, label, ...props }) => {
+export const FormikTimePicker: React.FC<FormikTimePickerProps> = ({ name, label, ...props }) => {
   return (
     <FastField name={name}>
       {({ field, form }: FieldProps) => (
@@ -32,5 +32,3 @@ const FormikTimePicker: React.FC<FormikTimePickerProps> = ({ name, label, ...pro
     </FastField>
   );
 };
-
-export default FormikTimePicker;

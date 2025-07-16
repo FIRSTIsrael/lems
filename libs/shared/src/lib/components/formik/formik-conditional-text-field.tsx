@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Field, FieldProps } from 'formik';
 import { TextField, Checkbox, Stack } from '@mui/material';
 
-interface FormikConditionalTextFieldProps {
+export interface FormikConditionalTextFieldProps {
   name: string;
   label: string;
   disabled?: boolean;
   readOnly?: boolean;
 }
 
-const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
+export const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
   name,
   label,
   disabled,
@@ -50,5 +50,3 @@ const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProps> = ({
     </Field>
   );
 };
-
-export default FormikConditionalTextField;

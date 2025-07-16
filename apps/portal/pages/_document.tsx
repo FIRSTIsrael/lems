@@ -3,9 +3,8 @@ import {
   DocumentHeadTagsProps,
   documentGetInitialProps
 } from '@mui/material-nextjs/v15-pagesRouter';
-import { Locale, Locales } from '@lems/localization';
+import { Locale, Locales, createCustomEmotionCache } from '@lems/localization';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
-import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { baseTheme } from '../lib/theme';
 
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {

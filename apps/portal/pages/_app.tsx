@@ -3,10 +3,9 @@ import Head from 'next/head';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { useHtmlDirection, Locale } from '@lems/localization';
+import { useHtmlDirection, Locale, createCustomEmotionCache } from '@lems/localization';
 import '../lib/dayjs';
 import { getLocalizedTheme } from '../lib/theme';
-import { createCustomEmotionCache } from '../lib/emotion-cache';
 import ResponsiveAppBar from '../components/app-bar';
 
 export default function PortalApp(props: AppProps) {

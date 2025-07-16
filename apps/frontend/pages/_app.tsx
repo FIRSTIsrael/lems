@@ -4,10 +4,9 @@ import { SnackbarProvider } from 'notistack';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, Grow, ThemeProvider } from '@mui/material';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
-import { useHtmlDirection, Locale } from '@lems/localization';
+import { useHtmlDirection, Locale, createCustomEmotionCache } from '@lems/localization';
 import '../lib/utils/dayjs';
 import { getLocalizedTheme } from '../lib/theme';
-import { createCustomEmotionCache } from '../lib/emotion-cache';
 import { TimeSyncProvider } from '../lib/timesync';
 import SnackbarCloseButton from '../components/general/snackbar-close-button';
 

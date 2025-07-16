@@ -1,6 +1,6 @@
 import { Form, Formik, FormikValues } from 'formik';
 import { Socket } from 'socket.io-client';
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
   Table,
@@ -30,7 +30,7 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { cvFormSchema } from '@lems/season';
-import FormikTextField from '../formik/formik-text-field';
+import { FormikTextField } from '@lems/shared';
 import CVFormHeader from './cv-form-header';
 import CVFormCategoryRow from './cv-form-category-row';
 

@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddRoundedIcon from '@mui/icons-material/Add';
 
-interface CustomNumberInputProps
+export interface NumberInputProps
   extends Omit<TextFieldProps, 'onChange' | 'value' | 'type' | 'disabled'> {
   value: number | null;
   onChange: (event: React.MouseEvent | React.ChangeEvent, value: number | null) => void;
@@ -15,8 +15,8 @@ interface CustomNumberInputProps
   disabled?: boolean;
 }
 
-const CustomNumberInput = React.forwardRef(function CustomNumberInput(
-  props: CustomNumberInputProps,
+export const NumberInput = React.forwardRef(function CustomNumberInput(
+  props: NumberInputProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   const {
@@ -100,5 +100,3 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(
     </Stack>
   );
 });
-
-export default CustomNumberInput;

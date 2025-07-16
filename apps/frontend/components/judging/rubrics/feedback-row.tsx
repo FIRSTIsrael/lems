@@ -1,6 +1,6 @@
 import { Typography, Box, TableRow, TableCell } from '@mui/material';
-import FormikTextField from '../../formik/formik-text-field';
 import Markdown from 'react-markdown';
+import { FormikTextField } from '@lems/shared';
 import { JudgingCategory } from '@lems/types';
 
 interface FeedbackRowProps {

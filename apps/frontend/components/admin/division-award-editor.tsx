@@ -34,10 +34,9 @@ import {
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { reorder } from '@lems/utils/arrays';
-import CustomNumberInput from '../field/scoresheet/number-input';
+import { FormikCheckbox, NumberInput } from '@lems/shared';
 import { apiFetch } from '../../lib/utils/fetch';
 import { enqueueSnackbar } from 'notistack';
-import FormikCheckbox from '../formik/formik-checkbox';
 import EventSelectorModal from '../general/event-selector-modal';
 
 interface AwardItemProps {
@@ -92,7 +91,7 @@ const AwardItem: React.FC<AwardItemProps> = ({ name, index, onRemove }) => {
                   <Typography>פרס {localizedAward[name].name || name}</Typography>
                 </Grid>
                 <Grid size={4}>
-                  <CustomNumberInput
+                  <NumberInput
                     min={1}
                     max={AwardLimits[name] ?? 5}
                     value={field.value}

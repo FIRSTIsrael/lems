@@ -15,7 +15,7 @@ export const apiFetch = async (
   let headers = { ...init?.headers };
 
   if (ctx) {
-    const cookieName = 'auth-token';
+    const cookieName = 'admin-auth-token';
 
     let token: string | undefined = undefined;
     const authHeader = ctx.req.headers.authorization as string;

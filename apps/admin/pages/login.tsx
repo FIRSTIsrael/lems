@@ -16,8 +16,8 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
-import FormikTextField from '../../components/formik/formik-text-field';
-import { apiFetch } from '../../lib/utils/fetch';
+import { FormikTextField } from '@lems/shared';
+import { apiFetch } from '../lib/utils/fetch';
 import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
 import { getMessages } from '../locale/get-messages';
 
