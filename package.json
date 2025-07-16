@@ -70,7 +70,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.25.1",
     "@firstisrael/prettier-config": "^1.1.0",
-    "@nx/eslint": "21.2.3",
+    "@nx/eslint": "21.2.4",
     "@nx/eslint-plugin": "21.2.3",
     "@nx/express": "21.2.3",
     "@nx/js": "21.2.3",
