@@ -5,10 +5,9 @@ import { Request } from 'express';
 declare global {
   namespace Express {
     interface Request {
-      // user?: string; // User id if the user is currently logged in
-      // userType?: 'admin' | 'event-user'; // Type of user, if the user is logged in
-
       // Old - should be removed or updated
+      user?: string; // User id if the user is currently logged in
+      userType?: 'admin' | 'event-user'; // Type of user, if the user is logged in
       division?: WithId<Division>;
       event?: WithId<FllEvent>;
       team?: WithId<Team>;
