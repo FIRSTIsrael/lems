@@ -1,5 +1,5 @@
 import express from 'express';
-import usersRouter from './users/index';
+import usersRouter from './users';
 import authRouter from './auth';
 import { authMiddleware } from '../../middlewares/admin/auth';
 

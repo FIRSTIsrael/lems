@@ -38,6 +38,7 @@ app.use(express.json());
 app.use('/', expressLogger);
 
 // Public paths, currently used for static files and the portal app.
+// TODO: Split portal into its own router
 app.use('/public', publicRouter);
 
 // Integrations

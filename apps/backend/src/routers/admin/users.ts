@@ -1,10 +1,7 @@
 import express from 'express';
-import db from '../../../lib/database';
-import {
-  hashPassword,
-  validatePassword,
-  validateUsername
-} from '../../../lib/security/credentials';
+import db from '../../lib/database';
+import { hashPassword, validatePassword, validateUsername } from '../../lib/security/credentials';
+import { AdminRequest } from '../../types/express';
 
 const router = express.Router({ mergeParams: true });
 
@@ -16,11 +13,11 @@ class RegistrationError extends Error {
     super(message);
     this.name = 'RegistrationError';
     this.status = status;
-    this.detail = detail;
+    this.detail = detail; // Localization key for error details
   }
 }
 
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: AdminRequest, res) => {
   try {
     const { username, password, firstName, lastName } = req.body;
 
@@ -87,6 +84,20 @@ router.post('/register', async (req, res) => {
       details: 'An error occurred while creating the user'
     });
   }
+});
+
+router.get('/', async (req: AdminRequest, res) => {
+  const users = await db.admins.getAll();
+  res.json({
+    ok: true,
+    users: users.map(user => ({
+      id: user.id,
+      username: user.username,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      createdAt: user.created_at
+    }))
+  });
 });
 
 export default router;
