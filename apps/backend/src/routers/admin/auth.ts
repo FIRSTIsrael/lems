@@ -111,7 +111,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   }
 });
 
-router.post('/logout', (_req: Request, res: Response) => {
+router.post('/logout', (req: Request, res: Response) => {
   console.log(`🔒 Admin logout successful`);
   res.clearCookie('admin-auth-token');
   res.json({ ok: true });

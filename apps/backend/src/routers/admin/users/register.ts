@@ -1,18 +1,14 @@
 import express from 'express';
-import { Admin } from '@lems/database';
-import db from '../../lib/database';
-import { hashPassword, validatePassword, validateUsername } from '../../lib/security/credentials';
-import { AdminRequest } from '../../types/express';
+import db from '../../../lib/database';
+import {
+  hashPassword,
+  validatePassword,
+  validateUsername
+} from '../../../lib/security/credentials';
+import { makeUserResponse } from '../../../lib/utils/users';
+import { AdminRequest } from '../../../types/express';
 
 const router = express.Router({ mergeParams: true });
-
-const makeUserResponse = (user: Admin) => ({
-  id: user.id,
-  username: user.username,
-  firstName: user.first_name,
-  lastName: user.last_name,
-  createdAt: user.created_at
-});
 
 class RegistrationError extends Error {
   status: number;
@@ -26,7 +22,7 @@ class RegistrationError extends Error {
   }
 }
 
-router.post('/register', async (req: AdminRequest, res) => {
+router.post('/', async (req: AdminRequest, res) => {
   try {
     const { username, password, firstName, lastName } = req.body;
 
@@ -87,25 +83,6 @@ router.post('/register', async (req: AdminRequest, res) => {
       details: 'An error occurred while creating the user'
     });
   }
-});
-
-router.get('/', async (req: AdminRequest, res) => {
-  const users = await db.admins.getAll();
-  res.json({
-    ok: true,
-    users: users.map(user => makeUserResponse(user))
-  });
-});
-
-router.get('/me', async (req: AdminRequest, res) => {
-  const user = await db.admins.byId(req.user).get();
-
-  if (!user) {
-    res.status(404).json({ ok: false, error: 'User not found' });
-    return;
-  }
-
-  res.json({ ok: true, user: makeUserResponse(user) });
 });
 
 export default router;
