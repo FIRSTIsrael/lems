@@ -1,5 +1,7 @@
 export { Database } from './database';
 
+export * from './schema/index';
+
 // Old exports for compatibility
 export { default as db } from './old/database';
 export * from './old/crud/users';

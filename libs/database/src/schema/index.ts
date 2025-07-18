@@ -37,3 +37,6 @@ export interface DatabaseSchema {
   robot_game_match_participants: RobotGameMatchParticipantsTable;
   awards: AwardsTable;
 }
+
+// Library exports
+export * from './tables/admins';

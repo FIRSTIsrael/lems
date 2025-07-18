@@ -1,9 +1,18 @@
 import express from 'express';
+import { Admin } from '@lems/database';
 import db from '../../lib/database';
 import { hashPassword, validatePassword, validateUsername } from '../../lib/security/credentials';
 import { AdminRequest } from '../../types/express';
 
 const router = express.Router({ mergeParams: true });
+
+const makeUserResponse = (user: Admin) => ({
+  id: user.id,
+  username: user.username,
+  firstName: user.first_name,
+  lastName: user.last_name,
+  createdAt: user.created_at
+});
 
 class RegistrationError extends Error {
   status: number;
@@ -58,13 +67,7 @@ router.post('/register', async (req: AdminRequest, res) => {
     res.status(201).json({
       ok: true,
       message: 'User registered successfully',
-      user: {
-        id: newAdminUser.id,
-        username: newAdminUser.username,
-        firstName: newAdminUser.first_name,
-        lastName: newAdminUser.last_name,
-        createdAt: newAdminUser.created_at
-      }
+      user: makeUserResponse(newAdminUser)
     });
   } catch (error) {
     console.error('User registration error:', error);
@@ -90,13 +93,7 @@ router.get('/', async (req: AdminRequest, res) => {
   const users = await db.admins.getAll();
   res.json({
     ok: true,
-    users: users.map(user => ({
-      id: user.id,
-      username: user.username,
-      firstName: user.first_name,
-      lastName: user.last_name,
-      createdAt: user.created_at
-    }))
+    users: users.map(user => makeUserResponse(user))
   });
 });
 
@@ -108,15 +105,7 @@ router.get('/me', async (req: AdminRequest, res) => {
     return;
   }
 
-  res.json({
-    ok: true,
-    user: {
-      id: user.id,
-      username: user.username,
-      firstName: user.first_name,
-      lastName: user.last_name
-    }
-  });
+  res.json({ ok: true, user: makeUserResponse(user) });
 });
 
 export default router;
