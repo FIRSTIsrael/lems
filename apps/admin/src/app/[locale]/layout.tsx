@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { Roboto, Heebo } from 'next/font/google';
 import { Locales } from '@lems/localization';
 import { routing } from '../../i18n/routing';
-import { baseTheme } from '../../../lib/theme';
 import { MuiProvider } from './mui-provider';
 
 export const metadata: Metadata = {
@@ -15,18 +14,20 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1.0,
-  themeColor: baseTheme.palette.primary.main,
+  themeColor: '#003d6a',
   colorScheme: 'light'
 };
 
 const heebo = Heebo({
   subsets: ['latin', 'hebrew'],
-  display: 'swap'
+  display: 'swap',
+  variable: '--font-heebo'
 });
 
 const roboto = Roboto({
   subsets: ['latin'],
-  display: 'swap'
+  display: 'swap',
+  variable: '--font-roboto'
 });
 
 interface RootLayoutProps {
@@ -43,7 +44,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   const dir = Locales[locale].direction as 'ltr' | 'rtl';
 
   return (
-    <html lang={locale} dir={dir} className={`${heebo.className} ${roboto.className}`}>
+    <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
           <MuiProvider locale={locale}>{children}</MuiProvider>

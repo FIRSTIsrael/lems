@@ -1,11 +1,10 @@
 'use client';
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { Locale, Locales, getEmotionCacheOptions } from '@lems/localization';
-import fontOptimizedTheme from '../../theme';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Locale, getEmotionCacheOptions } from '@lems/localization';
 import { routing } from '../../i18n/routing';
-import { getLocalizedTheme } from '../../../lib/theme';
+import { getLocalizedTheme } from '../../theme';
 
 export const MuiProvider = ({
   locale,
@@ -18,7 +17,7 @@ export const MuiProvider = ({
     throw new Error(`Locale ${locale} is not supported`);
   }
 
-  const theme = createTheme(fontOptimizedTheme, getLocalizedTheme(locale));
+  const theme = getLocalizedTheme(locale);
   const cacheConfig = getEmotionCacheOptions(locale);
 
   return (
