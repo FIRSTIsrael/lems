@@ -60,17 +60,12 @@ router.post('/', async (req: AdminRequest, res) => {
       last_password_set_date: new Date()
     });
 
-    res.status(201).json({
-      ok: true,
-      message: 'User registered successfully',
-      user: makeUserResponse(newAdminUser)
-    });
+    res.status(201).json(makeUserResponse(newAdminUser));
   } catch (error) {
     console.error('User registration error:', error);
 
     if (error instanceof RegistrationError) {
       res.status(error.status).json({
-        ok: false,
         error: error.message,
         details: error.detail
       });
@@ -78,7 +73,6 @@ router.post('/', async (req: AdminRequest, res) => {
     }
 
     res.status(500).json({
-      ok: false,
       error: 'Internal server error',
       details: 'An error occurred while creating the user'
     });

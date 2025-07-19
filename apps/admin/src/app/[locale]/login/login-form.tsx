@@ -12,13 +12,14 @@ import {
   Paper,
   IconButton,
   InputAdornment,
-  Container
+  Container,
+  Box
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
 import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '../../../../lib/utils/fetch';
+import { apiFetch } from '../../../../lib/fetch';
 import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
 
 interface LoginFormValues {
@@ -65,7 +66,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
-      const response = await apiFetch('/admin/auth/login', {
+      const { response } = await apiFetch('/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...values, captchaToken })
@@ -83,7 +84,6 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
       removeRecaptchaBadge();
 
-      // In App Router, we need to handle return URL differently
       const urlParams = new URLSearchParams(window.location.search);
       let returnUrl = urlParams.get('returnUrl') || '/';
 
@@ -154,21 +154,22 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                   }}
                 />
 
-                <Button
-                  fullWidth
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  disabled={isSubmitting || !isValid}
-                  endIcon={<ChevronEndIcon />}
-                  sx={{ borderRadius: 2, py: 1.5 }}
-                >
-                  {isSubmitting ? t('logging-in') : t('login')}
-                </Button>
+                <Box display="flex" justifyContent="center" width="100%">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting || !isValid}
+                    endIcon={<ChevronEndIcon />}
+                    sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
+                  >
+                    {isSubmitting ? t('logging-in') : t('login')}
+                  </Button>
+                </Box>
 
                 {status && (
                   <Typography color="error" variant="body2">
-                    {t(status)}
+                    {t(`form-status.${status}`)}
                   </Typography>
                 )}
               </Stack>

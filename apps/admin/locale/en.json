@@ -16,5 +16,16 @@
         "too-many-requests": "Access denied, please try again later."
       }
     }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "Seasons",
+        "users": "Users",
+        "events": "Events",
+        "teams": "Teams",
+        "insights": "Insights"
+      }
+    }
   }
 }

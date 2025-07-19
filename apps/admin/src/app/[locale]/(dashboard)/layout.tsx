@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import {
   Box,
   Toolbar,
@@ -9,14 +11,58 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
+import { PermissionType } from '@lems/database';
+import { apiFetch } from '../../../../lib/fetch';
+
+type Navigator = {
+  [key in PermissionType]?: {
+    icon: React.ReactNode;
+    label: string;
+    route: string;
+  };
+};
+
+const navigator: Navigator = {
+  MANAGE_SEASONS: {
+    icon: <CalendarMonthOutlinedIcon />,
+    label: 'seasons',
+    route: 'seasons'
+  },
+  MANAGE_USERS: {
+    icon: <PersonOutlinedIcon />,
+    label: 'users',
+    route: 'users'
+  },
+  MANAGE_EVENTS: {
+    icon: <EmojiEventsOutlinedIcon />,
+    label: 'events',
+    route: 'events'
+  },
+  MANAGE_TEAMS: {
+    icon: <GroupOutlinedIcon />,
+    label: 'teams',
+    route: 'teams'
+  },
+  VIEW_INSIGHTS: {
+    icon: <InsightsOutlinedIcon />,
+    label: 'insights',
+    route: 'insights'
+  }
+};
 
 interface AppBarProps {
   width: number;
+  permissions: PermissionType[];
 }
 
-const AppBar: React.FC<AppBarProps> = ({ width }) => {
+const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
+  const t = useTranslations('layouts.dashboard');
+
   return (
     <Drawer
       sx={{
@@ -33,25 +79,33 @@ const AppBar: React.FC<AppBarProps> = ({ width }) => {
       <Toolbar />
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {permissions.map(permission => {
+          const navItem = navigator[permission];
+          if (!navItem) return null;
+
+          return (
+            <Link key={permission} href={`/${navItem.route}`}>
+              <ListItem key={permission} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>{navItem.icon}</ListItemIcon>
+                  <ListItemText primary={t(`sidebar.${navItem.label}`)} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+          );
+        })}
       </List>
     </Drawer>
   );
 };
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const drawerWidth = 240;
+  const { data: permissions } = await apiFetch<PermissionType[]>('/admin/users/permissions/me');
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar width={drawerWidth} />
+      <AppBar width={drawerWidth} permissions={permissions} />
       <Box component="main" sx={{ flexGrow: 1, pl: 3 }}>
         {children}
       </Box>

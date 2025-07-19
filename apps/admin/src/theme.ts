@@ -80,6 +80,17 @@ export const baseTheme = createTheme({
           borderRadius: '1rem'
         }
       }
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        a: {
+          textDecoration: 'none',
+          color: 'inherit',
+          '&:hover': {
+            textDecoration: 'none'
+          }
+        }
+      }
     }
   },
   shadows: softShadows

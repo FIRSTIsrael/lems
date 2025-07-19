@@ -16,5 +16,16 @@
         "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
       }
     }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "עונות",
+        "users": "משתמשים",
+        "events": "אירועים",
+        "teams": "קבוצות",
+        "insights": "תובנות"
+      }
+    }
   }
 }
