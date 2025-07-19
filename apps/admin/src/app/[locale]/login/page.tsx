@@ -4,7 +4,7 @@ import { LoginForm } from './login-form';
 
 async function checkAuthStatus() {
   try {
-    const response = await apiFetch('/admin/auth/verify');
+    const { response } = await apiFetch('/admin/auth/verify');
     if (response.ok) {
       // User is already logged in, redirect to homepage
       redirect('/');

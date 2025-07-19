@@ -5,7 +5,7 @@ import {
   validatePassword,
   validateUsername
 } from '../../../lib/security/credentials';
-import { makeUserResponse } from '../../../lib/utils/users';
+import { makeAdminUserResponse } from './types';
 import { AdminRequest } from '../../../types/express';
 
 const router = express.Router({ mergeParams: true });
@@ -60,7 +60,7 @@ router.post('/', async (req: AdminRequest, res) => {
       last_password_set_date: new Date()
     });
 
-    res.status(201).json(makeUserResponse(newAdminUser));
+    res.status(201).json(makeAdminUserResponse(newAdminUser));
   } catch (error) {
     console.error('User registration error:', error);
 

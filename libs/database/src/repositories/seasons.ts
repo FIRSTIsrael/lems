@@ -1,10 +1,12 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
+import { ObjectStorage } from '../object-storage';
 import { InsertableSeason, Season } from '../schema/tables/seasons';
 
 class SeasonSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
+    private space: ObjectStorage,
     private selector: { type: 'id' | 'slug'; value: string }
   ) {}
 
@@ -22,17 +24,41 @@ class SeasonSelector {
     const season = await this.getSeasonQuery().executeTakeFirst();
     return season || null;
   }
+
+  async updateLogo(logo: Buffer): Promise<Season | null> {
+    const season = await this.get();
+    if (!season) return null;
+
+    const logoUrl = await this.space
+      .putObject(`seasons/${season.id}/logo.svg`, logo, 'image/svg+xml')
+      .catch(error => {
+        console.error('Error uploading logo:', error);
+        throw new Error('Failed to upload logo');
+      });
+
+    const updatedSeason = await this.db
+      .updateTable('seasons')
+      .set({ logo_url: logoUrl })
+      .where('id', '=', season.id)
+      .returningAll()
+      .executeTakeFirst();
+
+    return updatedSeason || null;
+  }
 }
 
 export class SeasonsRepository {
-  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private space: ObjectStorage
+  ) {}
 
   byId(id: string): SeasonSelector {
-    return new SeasonSelector(this.db, { type: 'id', value: id });
+    return new SeasonSelector(this.db, this.space, { type: 'id', value: id });
   }
 
   bySlug(slug: string): SeasonSelector {
-    return new SeasonSelector(this.db, {
+    return new SeasonSelector(this.db, this.space, {
       type: 'slug',
       value: slug
     });

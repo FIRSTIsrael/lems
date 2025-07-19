@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../../../lib/database';
-import { makeUserResponse } from '../../../lib/utils/users';
+import { makeAdminUserResponse } from './types';
 import { AdminRequest } from '../../../types/express';
 import registrationRouter from './register';
 import permissionsRouter from './permissions';
@@ -12,7 +12,7 @@ router.use('/permissions', permissionsRouter);
 
 router.get('/', async (req: AdminRequest, res) => {
   const users = await db.admins.getAll();
-  res.json(users.map(user => makeUserResponse(user)));
+  res.json(users.map(user => makeAdminUserResponse(user)));
 });
 
 router.get('/me', async (req: AdminRequest, res) => {
@@ -23,7 +23,7 @@ router.get('/me', async (req: AdminRequest, res) => {
     return;
   }
 
-  res.json(makeUserResponse(user));
+  res.json(makeAdminUserResponse(user));
 });
 
 router.get('/:userId', async (req: AdminRequest, res) => {
@@ -39,7 +39,7 @@ router.get('/:userId', async (req: AdminRequest, res) => {
     return;
   }
 
-  res.json(makeUserResponse(user));
+  res.json(makeAdminUserResponse(user));
 });
 
 export default router;

@@ -4,6 +4,7 @@ import { MongoClient, Db } from 'mongodb';
 import { AdminsRepository } from './repositories/admins';
 import { SeasonsRepository } from './repositories/seasons';
 import { KyselyDatabaseSchema } from './schema/kysely';
+import { ObjectStorage } from './object-storage';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
@@ -12,10 +13,16 @@ const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = process.env.DB_NAME || 'lems-local';
 
+const DIGITALOCEAN_ENDPOINT = process.env.DIGITALOCEAN_ENDPOINT || 'nyc3.digitaloceanspaces.com';
+const DIGITALOCEAN_SPACE = process.env.DIGITALOCEAN_SPACE || 'lems-dev';
+const DIGITALOCEAN_KEY = process.env.DIGITALOCEAN_KEY || '';
+const DIGITALOCEAN_SECRET = process.env.DIGITALOCEAN_SECRET || '';
+
 export class Database {
   private kysely: Kysely<KyselyDatabaseSchema>;
   private mongoClient: MongoClient;
   private mongoDB: Db;
+  private space: ObjectStorage;
 
   public admins: AdminsRepository;
   public seasons: SeasonsRepository;
@@ -32,13 +39,21 @@ export class Database {
         })
       })
     });
+
     this.mongoClient = new MongoClient(MONGODB_URI, {
       tlsAllowInvalidCertificates: true
     });
     this.mongoDB = this.mongoClient.db(DB_NAME);
 
+    this.space = new ObjectStorage({
+      endpoint: DIGITALOCEAN_ENDPOINT,
+      space: DIGITALOCEAN_SPACE,
+      accessKey: DIGITALOCEAN_KEY,
+      secretKey: DIGITALOCEAN_SECRET
+    });
+
     this.admins = new AdminsRepository(this.kysely);
-    this.seasons = new SeasonsRepository(this.kysely);
+    this.seasons = new SeasonsRepository(this.kysely, this.space);
   }
 
   async connect(): Promise<void> {

@@ -15,6 +15,9 @@
         "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
         "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
       }
+    },
+    "seasons": {
+      "title": "עונות"
     }
   },
   "layouts": {
