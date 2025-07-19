@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import PortalLocales, { Locales } from '../locale/locales';
-import { useLocalePreference } from '../hooks/use-locale-preference';
+import { useLocalePreference, Locale, Locales } from '@lems/localization';
 
 const LanguageSwitcher: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = !!anchorEl;
 
   const { changeLocale, currentLocale } = useLocalePreference();
-  const currentLocaleData = PortalLocales[currentLocale];
+  const currentLocaleData = Locales[currentLocale];
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -19,15 +18,16 @@ const LanguageSwitcher: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleLanguageChange = (locale: Locales) => {
+  const handleLanguageChange = (locale: Locale) => {
     changeLocale(locale);
     handleClose();
   };
 
   // Get available locales excluding current one
-  const availableLocales = Object.entries(PortalLocales).filter(
-    ([key]) => key !== currentLocale
-  ) as [Locales, (typeof PortalLocales)[Locales]][];
+  const availableLocales = Object.entries(Locales).filter(([key]) => key !== currentLocale) as [
+    Locale,
+    (typeof Locales)[Locale]
+  ][];
 
   return (
     <Box>

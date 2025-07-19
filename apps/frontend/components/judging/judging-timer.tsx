@@ -15,7 +15,7 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import useCountdown from '../../hooks/use-countdown';
+import useCountdown from '../../hooks/time/use-countdown';
 import Countdown from '../general/countdown';
 import { localizeTeam } from '../../localization/teams';
 import JudgingStageBox from './judging-stage-box';

@@ -7,9 +7,11 @@ import * as path from 'path';
 import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
+import './lib/database';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
+import adminRouter from './routers/admin/index';
 import publicRouter from './routers/public/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
@@ -35,10 +37,19 @@ app.use('/timesync', timesyncServer.requestHandler);
 app.use(express.json());
 app.use('/', expressLogger);
 
-app.use('/auth', authRouter);
+// Public paths, currently used for static files and the portal app.
+// TODO: Split portal into its own router
 app.use('/public', publicRouter);
+
+// Integrations
 app.use('/dashboard', dashboardRouter);
+
+// LEMS app
+app.use('/auth', authRouter);
 app.use('/api', apiRouter);
+
+// Admin app
+app.use('/admin', adminRouter);
 
 app.get('/status', (req, res) => {
   res.status(200).json({ ok: true });

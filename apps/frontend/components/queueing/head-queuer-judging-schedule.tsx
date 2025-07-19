@@ -27,7 +27,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
-import { useTime } from '../../hooks/use-time';
+import { useTime } from '../../hooks/time/use-time';
 
 interface HeadQueuerJudgingScheduleProps {
   divisionId: ObjectId;

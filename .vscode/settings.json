@@ -10,6 +10,7 @@
   "i18n-ally.localesPaths": [
     "apps/portal/locale",
     "apps/frontend/locale",
+    "apps/admin/locale"
   ],
   "i18n-ally.keystyle": "nested" 
 }

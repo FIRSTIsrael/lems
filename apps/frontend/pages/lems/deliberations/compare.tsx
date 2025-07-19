@@ -37,7 +37,7 @@ import CompareView from '../../../components/deliberations/compare/compare-view'
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import TeamSelection from '../../../components/general/team-selection';
-import useCountdown from '../../../hooks/use-countdown';
+import useCountdown from '../../../hooks/time/use-countdown';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {

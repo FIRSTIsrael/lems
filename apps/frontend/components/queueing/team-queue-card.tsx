@@ -6,8 +6,8 @@ import { red } from '@mui/material/colors';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { DivisionSection, Team } from '@lems/types';
 import dayjs from 'dayjs';
-import useCountdown from '../../hooks/use-countdown';
-import useStopwatch from '../../hooks/use-stopwatch';
+import useCountdown from '../../hooks/time/use-countdown';
+import useStopwatch from '../../hooks/time/use-stopwatch';
 interface TeamQueueCardProps {
   team: WithId<Team>;
   location?: string;

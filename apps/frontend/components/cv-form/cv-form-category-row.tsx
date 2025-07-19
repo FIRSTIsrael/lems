@@ -1,8 +1,7 @@
 import Image from 'next/image';
 import { Typography, TableCell, TableRow, Stack } from '@mui/material';
 import { CVFormSchemaCategory } from '@lems/season';
-import FormikCheckbox from '../general/forms/formik-checkbox';
-import FormikConditionalTextField from '../general/forms/formik-conditional-text-field';
+import { FormikCheckbox, FormikConditionalTextField } from '@lems/shared';
 
 interface CVFormCategoryRowProps {
   category: CVFormSchemaCategory;

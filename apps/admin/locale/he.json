@@ -1,0 +1,34 @@
+{
+  "pages": {
+    "404": {
+      "title": "הדף אליו נכנסתם לא נמצא",
+      "subtitle": "שגיאה 404"
+    },
+    "login": {
+      "title": "התחברות למערכת",
+      "username": "שם משתמש",
+      "password": "סיסמה",
+      "logging-in": "מתחבר...",
+      "login": "התחברות",
+      "form-status": {
+        "server-error": "משהו השתבש, אנא נסו שנית.",
+        "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
+        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
+      }
+    },
+    "seasons": {
+      "title": "עונות"
+    }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "עונות",
+        "users": "משתמשים",
+        "events": "אירועים",
+        "teams": "קבוצות",
+        "insights": "תובנות"
+      }
+    }
+  }
+}

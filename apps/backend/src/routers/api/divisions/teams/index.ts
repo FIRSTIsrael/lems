@@ -4,7 +4,7 @@ import * as db from '@lems/database';
 import rubricsRouter from './rubrics';
 import scoresheetsRouter from './scoresheets';
 import awardsRouter from './awards';
-import roleValidator from '../../../../middlewares/role-validator';
+import roleValidator from '../../../../middlewares/lems/role-validator';
 
 const router = express.Router({ mergeParams: true });
 

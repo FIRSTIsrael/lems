@@ -19,9 +19,23 @@ export const TimeSyncProvider: React.FC<{ children: ReactNode }> = ({ children }
       interval: 30 * 1000
     });
 
-    timesync.on('change', setOffset);
+    const handleOffsetChange = (newOffset: number) => {
+      setOffset(newOffset);
+    };
 
-    return () => timesync.off('change');
+    const handleError = (error: unknown) => {
+      console.warn('[TimeSyncProvider] Sync error:', error);
+      // Continue with local time if sync fails
+    };
+
+    timesync.on('change', handleOffsetChange);
+    timesync.on('error', handleError);
+
+    return () => {
+      timesync.off('change');
+      timesync.off('error');
+      timesync.destroy();
+    };
   }, []);
 
   return <TimeSyncContext.Provider value={{ offset }}>{children}</TimeSyncContext.Provider>;
