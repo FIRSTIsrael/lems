@@ -18,9 +18,8 @@ export const MuiProvider = ({
     throw new Error(`Locale ${locale} is not supported`);
   }
 
-  const dir = Locales[locale].direction as 'ltr' | 'rtl';
   const theme = createTheme(fontOptimizedTheme, getLocalizedTheme(locale));
-  const cacheConfig = getEmotionCacheOptions(dir);
+  const cacheConfig = getEmotionCacheOptions(locale);
 
   return (
     <AppRouterCacheProvider options={cacheConfig}>

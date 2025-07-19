@@ -1,11 +1,12 @@
 import {
   DocumentHeadTags,
   DocumentHeadTagsProps,
-  documentGetInitialProps
+  documentGetInitialProps,
+  createEmotionCache
 } from '@mui/material-nextjs/v15-pagesRouter';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
 import { baseTheme } from '../lib/theme';
-import { Locales, Locale, createCustomEmotionCache } from '@lems/localization';
+import { Locales, Locale, getEmotionCacheOptions } from '@lems/localization';
 
 export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided
@@ -40,7 +41,8 @@ export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProp
 
 LEMSDocument.getInitialProps = async (ctx: DocumentContext) => {
   const locale = ctx.locale || 'he'; // Default to Hebrew if no locale is provided
-  const emotionCache = createCustomEmotionCache(locale as Locale);
+  const emotionCacheOptions = getEmotionCacheOptions(locale as Locale);
+  const emotionCache = createEmotionCache(emotionCacheOptions);
   const finalProps = await documentGetInitialProps(ctx, {
     emotionCache
   });
