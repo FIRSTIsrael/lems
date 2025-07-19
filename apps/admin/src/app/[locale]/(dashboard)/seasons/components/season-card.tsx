@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import dayjs from 'dayjs';
+import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { AdminSeasonResponse } from '@lems/backend/schemas';
 
 interface SeasonCardProps {
