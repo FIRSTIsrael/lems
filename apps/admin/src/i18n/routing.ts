@@ -1,9 +1,10 @@
-import { Locales } from '@lems/localization';
+// import { Locales } from '@lems/localization';
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: Object.keys(Locales),
+  // locales: Object.keys(Locales),
+  locales: ['en', 'he'],
 
   // Used when no locale matches
   defaultLocale: 'he'

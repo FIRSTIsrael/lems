@@ -3,13 +3,12 @@ import { prefixer } from 'stylis';
 import rtlPlugin from '@mui/stylis-plugin-rtl';
 import { Locales, Locale } from '@lems/localization';
 
-export const ltrEmotionCache = {
-  key: 'muiltr'
-};
+export const getEmotionCacheOptions = (dir: 'ltr' | 'rtl') => {
+  if (dir === 'rtl') {
+    return { key: 'muirtl', stylisPlugins: [prefixer, rtlPlugin] };
+  }
 
-export const rtlEmotionCache = {
-  key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin]
+  return { key: 'muiltr' };
 };
 
 /**
@@ -20,7 +19,7 @@ export const rtlEmotionCache = {
 export const createCustomEmotionCache = (locale: Locale = 'he') => {
   const direction = Locales[locale].direction;
   if (direction === 'rtl') {
-    return createEmotionCache(rtlEmotionCache);
+    return createEmotionCache({ key: 'muirtl', stylisPlugins: [prefixer, rtlPlugin] });
   }
-  return createEmotionCache(ltrEmotionCache);
+  return createEmotionCache({ key: 'muiltr' });
 };

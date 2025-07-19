@@ -15,7 +15,11 @@ const nextConfig = {
   reactStrictMode: true,
 
   compiler: {
-    emotion: true
+    emotion: {
+      sourceMap: true,
+      autoLabel: 'dev-only',
+      labelFormat: '[local]'
+    }
   },
 
   transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
