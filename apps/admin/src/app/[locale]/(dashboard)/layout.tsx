@@ -1,4 +1,5 @@
 import {
+  Box,
   Toolbar,
   Drawer,
   Divider,
@@ -11,11 +12,11 @@ import {
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
-interface AdminAppBarProps {
+interface AppBarProps {
   width: number;
 }
 
-export const AdminAppBar: React.FC<AdminAppBarProps> = ({ width }) => {
+const AppBar: React.FC<AppBarProps> = ({ width }) => {
   return (
     <Drawer
       sx={{
@@ -44,3 +45,16 @@ export const AdminAppBar: React.FC<AdminAppBarProps> = ({ width }) => {
     </Drawer>
   );
 };
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const drawerWidth = 240;
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <AppBar width={drawerWidth} />
+      <Box component="main" sx={{ flexGrow: 1, pl: 3 }}>
+        {children}
+      </Box>
+    </Box>
+  );
+}
