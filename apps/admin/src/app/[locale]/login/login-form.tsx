@@ -1,8 +1,9 @@
+'use client';
+
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
-import { GetServerSideProps, NextPage } from 'next';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Formik, Form, FormikHelpers } from 'formik';
 import {
   Button,
@@ -11,22 +12,22 @@ import {
   Paper,
   IconButton,
   InputAdornment,
-  Container
+  Container,
+  Box
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
 import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '../lib/utils/fetch';
+import { apiFetch } from '../../../../lib/fetch';
 import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
-import { getMessages } from '../locale/get-messages';
 
 interface LoginFormValues {
   username: string;
   password: string;
 }
 
-interface PageProps {
+interface LoginFormProps {
   recaptchaRequired: boolean;
 }
 
@@ -44,7 +45,7 @@ const validateForm = (values: LoginFormValues) => {
   return errors;
 };
 
-const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
+export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   const t = useTranslations('pages.login');
   const router = useRouter();
   useRecaptcha(recaptchaRequired);
@@ -65,7 +66,7 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
 
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
-      const response = await apiFetch('/admin/auth/login', {
+      const { response } = await apiFetch('/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...values, captchaToken })
@@ -82,12 +83,10 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
       }
 
       removeRecaptchaBadge();
-      let returnUrl = '/';
-      if (router.query.returnUrl) {
-        returnUrl = Array.isArray(router.query.returnUrl)
-          ? router.query.returnUrl[0]
-          : router.query.returnUrl;
-      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let returnUrl = urlParams.get('returnUrl') || '/';
+
       if (!returnUrl.startsWith('/')) {
         returnUrl = '/';
       } else {
@@ -155,21 +154,22 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
                   }}
                 />
 
-                <Button
-                  fullWidth
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  disabled={isSubmitting || !isValid}
-                  endIcon={<ChevronEndIcon />}
-                  sx={{ borderRadius: 2, py: 1.5 }}
-                >
-                  {isSubmitting ? t('logging-in') : t('login')}
-                </Button>
+                <Box display="flex" justifyContent="center" width="100%">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting || !isValid}
+                    endIcon={<ChevronEndIcon />}
+                    sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
+                  >
+                    {isSubmitting ? t('logging-in') : t('login')}
+                  </Button>
+                </Box>
 
                 {status && (
                   <Typography color="error" variant="body2">
-                    {t(status)}
+                    {t(`form-status.${status}`)}
                   </Typography>
                 )}
               </Stack>
@@ -179,22 +179,4 @@ const Page: NextPage<PageProps> = ({ recaptchaRequired }) => {
       </Paper>
     </Container>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const response = await apiFetch('/admin/auth/verify', undefined, ctx);
-
-  console.log('Login page verification response:', response.status);
-
-  if (response.ok) {
-    // User is already logged in, redirect to homepage
-    console.log('User is already logged in, redirecting to homepage');
-    return { redirect: { destination: '/', permanent: false } };
-  }
-
-  const recaptchaRequired = process.env.RECAPTCHA === 'true';
-  const messages = await getMessages(ctx.locale);
-  return { props: { recaptchaRequired, messages } };
-};
-
-export default Page;
+}

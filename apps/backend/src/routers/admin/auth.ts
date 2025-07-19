@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
 import { RecaptchaResponse } from '../../types/auth';
+import { AdminRequest } from '../../types/express';
 import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
@@ -13,7 +14,7 @@ const router = express.Router({ mergeParams: true });
 const loginRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 10, // limit each IP to 10 requests per windowMs
-  message: { error: 'TOO_MANY_REQUESTS' }, // Response when rate limit is exceeded
+  message: { error: 'TOO_MANY_REQUESTS' } // Response when rate limit is exceeded
 });
 
 const jwtSecret = process.env.JWT_SECRET;
@@ -116,7 +117,7 @@ router.post('/logout', (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.get('/verify', (req, res) => {
+router.get('/verify', (req: AdminRequest, res) => {
   const user = req.user;
   res.json({ ok: true, user });
 });

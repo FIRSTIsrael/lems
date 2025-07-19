@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@lems/backend/schemas": ["apps/backend/src/schemas.ts"],
       "@lems/database": ["libs/database/src/index.ts"],
       "@lems/localization": ["libs/localization/src/index.ts"],
       "@lems/presentations": ["libs/presentations/src/index.ts"],

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import { JwtTokenData } from '../../types/auth';
+import { AdminRequest } from '../../types/express';
 import { extractToken } from '../../lib/security/auth';
 
 const jwtSecret = process.env.JWT_SECRET;
@@ -22,8 +23,9 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     if (tokenData.exp > Date.now() / 1000) {
-      req.user = tokenData.userId;
-      req.userType = tokenData.userType;
+      const adminReq = req as AdminRequest;
+      adminReq.user = tokenData.userId;
+      adminReq.userType = tokenData.userType;
       return next();
     }
   } catch {

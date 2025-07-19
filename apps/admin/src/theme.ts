@@ -1,4 +1,6 @@
-import { createTheme, Shadows } from '@mui/material/styles';
+'use client';
+import { Shadows } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { Locales, Locale } from '@lems/localization';
 
 const softShadows: Shadows = [
@@ -42,19 +44,11 @@ export const baseTheme = createTheme({
     }
   },
   typography: {
-    fontFamily: [
-      'Heebo',
-      'Roboto',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(','),
+    /**
+     * Integrate with Next.js' font optimization
+     * See: https://mui.com/material-ui/integrations/nextjs/#font-optimization
+     */
+    fontFamily: 'var(--font-heebo),var(--font-roboto)',
     h1: {
       fontWeight: 800,
       fontSize: '2rem'
@@ -84,6 +78,17 @@ export const baseTheme = createTheme({
       styleOverrides: {
         rounded: {
           borderRadius: '1rem'
+        }
+      }
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        a: {
+          textDecoration: 'none',
+          color: 'inherit',
+          '&:hover': {
+            textDecoration: 'none'
+          }
         }
       }
     }

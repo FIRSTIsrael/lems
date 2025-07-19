@@ -15,6 +15,20 @@
         "invalid-credentials": "Invalid username or password.",
         "too-many-requests": "Access denied, please try again later."
       }
+    },
+    "seasons": {
+      "title": "Seasons"
+    }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "Seasons",
+        "users": "Users",
+        "events": "Events",
+        "teams": "Teams",
+        "insights": "Insights"
+      }
     }
   }
 }

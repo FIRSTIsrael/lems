@@ -1,92 +1,45 @@
 import express from 'express';
 import db from '../../../lib/database';
-import {
-  hashPassword,
-  validatePassword,
-  validateUsername
-} from '../../../lib/security/credentials';
+import { makeAdminUserResponse } from './types';
+import { AdminRequest } from '../../../types/express';
+import registrationRouter from './register';
+import permissionsRouter from './permissions';
 
 const router = express.Router({ mergeParams: true });
 
-class RegistrationError extends Error {
-  status: number;
-  detail: string;
+router.use('/register', registrationRouter);
+router.use('/permissions', permissionsRouter);
 
-  constructor(status: number, message: string, detail: string) {
-    super(message);
-    this.name = 'RegistrationError';
-    this.status = status;
-    this.detail = detail;
+router.get('/', async (req: AdminRequest, res) => {
+  const users = await db.admins.getAll();
+  res.json(users.map(user => makeAdminUserResponse(user)));
+});
+
+router.get('/me', async (req: AdminRequest, res) => {
+  const user = await db.admins.byId(req.user).get();
+
+  if (!user) {
+    res.status(404).json({ error: 'User not found' });
+    return;
   }
-}
 
-router.post('/register', async (req, res) => {
-  try {
-    const { username, password, firstName, lastName } = req.body;
+  res.json(makeAdminUserResponse(user));
+});
 
-    if (!username || !password || !firstName || !lastName) {
-      throw new RegistrationError(400, 'Missing required fields', 'missing-required-fields');
-    }
-
-    const usernameValidation = validateUsername(username);
-    if (!usernameValidation.isValid) {
-      throw new RegistrationError(400, 'Invalid username', usernameValidation.error);
-    }
-
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-      throw new RegistrationError(400, 'Invalid password', passwordValidation.error);
-    }
-
-    if (firstName.length > 64 || lastName.length > 64) {
-      throw new RegistrationError(400, 'Invalid name length', 'name-too-long');
-    }
-
-    const existingUser = await db.admins.byUsername(username).get();
-    if (existingUser) {
-      throw new RegistrationError(409, 'Username already exists', 'user-already-exists');
-    }
-
-    const { hash, salt } = await hashPassword(password);
-
-    const newAdminUser = await db.admins.create({
-      username: username.toLowerCase(), // Store usernames in lowercase for consistency
-      password_hash: hash,
-      password_salt: salt,
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      last_password_set_date: new Date()
-    });
-
-    res.status(201).json({
-      ok: true,
-      message: 'User registered successfully',
-      user: {
-        id: newAdminUser.id,
-        username: newAdminUser.username,
-        firstName: newAdminUser.first_name,
-        lastName: newAdminUser.last_name,
-        createdAt: newAdminUser.created_at
-      }
-    });
-  } catch (error) {
-    console.error('User registration error:', error);
-
-    if (error instanceof RegistrationError) {
-      res.status(error.status).json({
-        ok: false,
-        error: error.message,
-        details: error.detail
-      });
-      return;
-    }
-
-    res.status(500).json({
-      ok: false,
-      error: 'Internal server error',
-      details: 'An error occurred while creating the user'
-    });
+router.get('/:userId', async (req: AdminRequest, res) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    res.status(400).json({ error: 'User ID is required' });
+    return;
   }
+
+  const user = await db.admins.byId(userId).get();
+  if (!user) {
+    res.status(404).json({ error: 'User not found' });
+    return;
+  }
+
+  res.json(makeAdminUserResponse(user));
 });
 
 export default router;

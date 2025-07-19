@@ -1,39 +1,28 @@
-import { AdminsTable } from './tables/admins';
-import { AdminPermissionTable } from './tables/admin-permissions';
-import { AdminEventsTable } from './tables/admin-events';
-import { SeasonsTable } from './tables/seasons';
-import { EventsTable } from './tables/events';
-import { DivisionsTable } from './tables/divisions';
-import { EventUsersTable } from './tables/event-users';
-import { EventUserDivisionsTable } from './tables/event-user-divisions';
-import { TeamAffiliationsTable } from './tables/team-affiliations';
-import { TeamsTable } from './tables/teams';
-import { TeamDivisionsTable } from './tables/team-divisions';
-import { TeamDivisionNotificationsTable } from './tables/team-division-notifications';
-import { JudgingRoomsTable } from './tables/judging-rooms';
-import { JudgingSessionsTable } from './tables/judging-sessions';
-import { RobotGameTablesTable } from './tables/robot-game-tables';
-import { RobotGameMatchesTable } from './tables/robot-game-matches';
-import { RobotGameMatchParticipantsTable } from './tables/robot-game-match-participants';
-import { AwardsTable } from './tables/awards';
+// SQL Type exports
 
-export interface DatabaseSchema {
-  admins: AdminsTable;
-  admin_permissions: AdminPermissionTable;
-  admin_events: AdminEventsTable;
-  seasons: SeasonsTable;
-  events: EventsTable;
-  divisions: DivisionsTable;
-  event_users: EventUsersTable;
-  event_user_divisions: EventUserDivisionsTable;
-  team_affiliations: TeamAffiliationsTable;
-  teams: TeamsTable;
-  team_divisions: TeamDivisionsTable;
-  team_division_notifications: TeamDivisionNotificationsTable;
-  judging_rooms: JudgingRoomsTable;
-  judging_sessions: JudgingSessionsTable;
-  robot_game_tables: RobotGameTablesTable;
-  robot_game_matches: RobotGameMatchesTable;
-  robot_game_match_participants: RobotGameMatchParticipantsTable;
-  awards: AwardsTable;
-}
+// Admins
+export * from './tables/admins';
+export * from './tables/admin-permissions';
+export * from './tables/admin-events';
+export * from './tables/seasons';
+
+// Events
+export * from './tables/events';
+export * from './tables/divisions';
+export * from './tables/event-users';
+export * from './tables/event-user-divisions';
+
+// Event Details
+export * from './tables/judging-rooms';
+export * from './tables/judging-sessions';
+export * from './tables/robot-game-tables';
+export * from './tables/robot-game-matches';
+export * from './tables/robot-game-match-participants';
+
+// Teams
+export * from './tables/teams';
+export * from './tables/team-affiliations';
+export * from './tables/team-divisions';
+export * from './tables/team-division-notifications';
+
+export * from './tables/awards';

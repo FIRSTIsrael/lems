@@ -105,6 +105,11 @@ export class AdminsRepository {
     });
   }
 
+  async getAll(): Promise<Admin[]> {
+    const admins = await this.db.selectFrom('admins').selectAll().execute();
+    return admins;
+  }
+
   async create(admin: InsertableAdmin): Promise<Admin> {
     const [createdAdmin] = await this.db
       .insertInto('admins')
