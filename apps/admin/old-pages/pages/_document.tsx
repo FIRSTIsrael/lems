@@ -5,7 +5,7 @@ import {
 } from '@mui/material-nextjs/v15-pagesRouter';
 import { Locale, Locales, createCustomEmotionCache } from '@lems/localization';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
-import { baseTheme } from '../lib/theme';
+import { baseTheme } from '../../lib/theme';
 
 export default function PortalDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided

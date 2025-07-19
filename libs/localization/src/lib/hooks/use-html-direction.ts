@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { Locales, Locale } from '../locales';
 
 /**
@@ -7,18 +6,16 @@ import { Locales, Locale } from '../locales';
  * based on the current locale direction. Call this hook in your main component
  * or layout to ensure the HTML direction is set correctly.
  */
-export const useHtmlDirection = () => {
-  const router = useRouter();
-  const currentLocale = (router.locale ?? 'he') as Locale;
-  const direction = Locales[currentLocale]?.direction || 'rtl';
+export const useHtmlDirection = (locale: Locale) => {
+  const direction = Locales[locale]?.direction || 'rtl';
 
   useEffect(() => {
     const htmlElement = document.documentElement;
     if (htmlElement) {
       htmlElement.dir = direction;
-      htmlElement.lang = currentLocale;
+      htmlElement.lang = locale;
     }
-  }, [direction, currentLocale]);
+  }, [direction, locale]);
 
   return direction;
 };

@@ -17,9 +17,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
 import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '../lib/utils/fetch';
+import { apiFetch } from '../../lib/utils/fetch';
 import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
-import { getMessages } from '../locale/get-messages';
+import { getMessages } from '../../locale/get-messages';
 
 interface LoginFormValues {
   username: string;

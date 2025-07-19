@@ -3,17 +3,14 @@ import Head from 'next/head';
 import { AppCacheProvider } from '@mui/material-nextjs/v15-pagesRouter';
 import { NextIntlClientProvider } from 'next-intl';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { useHtmlDirection, Locale, createCustomEmotionCache } from '@lems/localization';
-import { getLocalizedTheme } from '../lib/theme';
+import { Locale, createCustomEmotionCache } from '@lems/localization';
+import { getLocalizedTheme } from '../../lib/theme';
 
 export default function PortalApp(props: AppProps) {
   const { Component, pageProps, router } = props;
   const locale = (router.locale ?? 'he') as Locale;
   const emotionCache = createCustomEmotionCache(locale);
   const theme = getLocalizedTheme(locale);
-
-  // This hook will dynamically update the HTML dir and lang attributes
-  useHtmlDirection();
 
   return (
     <AppCacheProvider {...props} emotionCache={emotionCache}>

@@ -42,19 +42,6 @@ export const baseTheme = createTheme({
     }
   },
   typography: {
-    fontFamily: [
-      'Heebo',
-      'Roboto',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(','),
     h1: {
       fontWeight: 800,
       fontSize: '2rem'
