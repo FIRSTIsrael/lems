@@ -41,8 +41,8 @@ export default [
     plugins: {
       '@nx': nx,
       'react-hooks': reactHooks,
-      'react': reactPlugin,
-      'import': importPlugin,
+      react: reactPlugin,
+      import: importPlugin,
       '@typescript-eslint': tsEslint
     },
     languageOptions: {
@@ -99,7 +99,7 @@ export default [
           'newlines-between': 'never'
         }
       ],
-      
+
       // Override some base rules for TypeScript
       'no-unused-vars': 'off', // Use TypeScript version instead
       'no-undef': 'off' // TypeScript handles this
