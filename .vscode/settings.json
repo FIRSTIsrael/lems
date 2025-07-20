@@ -12,5 +12,7 @@
     "apps/frontend/locale",
     "apps/admin/locale"
   ],
-  "i18n-ally.keystyle": "nested" 
+  "i18n-ally.keystyle": "nested",
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": ["."]
 }

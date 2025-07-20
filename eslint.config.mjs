@@ -4,6 +4,7 @@ import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
 import tsEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import nextEslint from '@next/eslint-plugin-next';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
@@ -43,7 +44,8 @@ export default [
       'react-hooks': reactHooks,
       react: reactPlugin,
       import: importPlugin,
-      '@typescript-eslint': tsEslint
+      '@typescript-eslint': tsEslint,
+      '@next/next': nextEslint
     },
     languageOptions: {
       ecmaVersion: 2022,
