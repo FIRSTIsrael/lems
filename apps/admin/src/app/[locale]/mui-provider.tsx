@@ -2,6 +2,8 @@
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Locale, getEmotionCacheOptions } from '@lems/localization';
 import { routing } from '../../i18n/routing';
 import { getLocalizedTheme } from '../../theme';
@@ -23,8 +25,10 @@ export const MuiProvider = ({
   return (
     <AppRouterCacheProvider options={cacheConfig}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <CssBaseline />
+          {children}
+        </LocalizationProvider>
       </ThemeProvider>
     </AppRouterCacheProvider>
   );

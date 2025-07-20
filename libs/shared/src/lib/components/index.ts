@@ -1,4 +1,5 @@
 export * from './number-input';
+export * from './file-upload';
 
 // Formik helpers
 export * from './formik/formik-number-input';

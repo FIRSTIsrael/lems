@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import dayjs from 'dayjs';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { AdminSeasonResponse } from '@lems/backend/schemas';
@@ -21,12 +20,15 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
     >
       <CardMedia
         sx={{ height: 140, objectFit: 'contain' }}
-        src={season.logoUrl!}
+        src={season.logoUrl || '/images/default-season-logo.svg'}
         component="img"
         title={season.name}
       />
-      <CardContent>
-        <Typography variant="h4">
+      <CardContent sx={{ textAlign: 'center' }}>
+        <Typography variant="h5" gutterBottom>
+          {season.name}
+        </Typography>
+        <Typography variant="body1">
           {dayjs(season.startDate).format('DD/MM/YYYY')} -{' '}
           {dayjs(season.endDate).format('DD/MM/YYYY')}
         </Typography>
