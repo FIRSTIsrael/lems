@@ -2,21 +2,9 @@ import nx from '@nx/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
-import tsEslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
 import nextEslint from '@next/eslint-plugin-next';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-});
+import tseslint from 'typescript-eslint';
 
 export default [
   {
@@ -38,19 +26,18 @@ export default [
     ]
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     plugins: {
       '@nx': nx,
       'react-hooks': reactHooks,
       react: reactPlugin,
       import: importPlugin,
-      '@typescript-eslint': tsEslint,
       '@next/next': nextEslint
     },
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      parser: tsParser,
       globals: {
         console: 'readonly',
         setTimeout: 'readonly',
@@ -128,6 +115,7 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
+      // TypeScript-specific rules are already handled by typescript-eslint configs
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn'
     }
