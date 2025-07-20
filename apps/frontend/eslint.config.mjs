@@ -8,7 +8,7 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
-      // Admin-specific rule overrides
+      '@next/next/no-html-link-for-pages': ['error', 'apps/frontend/pages']
     }
   }
 ];
