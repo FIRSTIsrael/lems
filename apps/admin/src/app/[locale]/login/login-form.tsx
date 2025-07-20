@@ -67,17 +67,17 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
 
-      const { response } = await apiFetch('/admin/auth/login', {
+      const result = await apiFetch('/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...values, captchaToken })
       });
 
-      if (!response.ok) {
-        if (response.status === 429) {
+      if (!result.ok) {
+        if (result.status === 429) {
           throw new Error('too-many-requests');
         }
-        if (response.status === 401) {
+        if (result.status === 401) {
           throw new Error('invalid-credentials');
         }
         throw new Error('server-error');

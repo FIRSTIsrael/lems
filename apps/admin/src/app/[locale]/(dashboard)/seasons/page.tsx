@@ -8,7 +8,7 @@ import { CreateSeasonCard } from './components/create-season-card';
 export default async function SeasonsPage() {
   const t = await getTranslations('pages.seasons');
 
-  const { data: seasons } = await apiFetch(
+  const result = await apiFetch(
     '/admin/seasons',
     {
       next: {
@@ -18,6 +18,12 @@ export default async function SeasonsPage() {
     },
     AdminSeasonsResponseSchema
   );
+
+  if (!result.ok) {
+    throw new Error(`Failed to fetch seasons: ${result.status} ${result.statusText}`);
+  }
+
+  const { data: seasons } = result;
 
   return (
     <>

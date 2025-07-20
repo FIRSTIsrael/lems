@@ -97,7 +97,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
         formData.append('logo', selectedFile);
       }
 
-      const { response } = await apiFetch(
+      const result = await apiFetch(
         '/admin/seasons',
         {
           method: 'POST',
@@ -106,7 +106,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
         AdminSeasonResponseSchema
       );
 
-      if (response.ok) {
+      if (result.ok) {
         setSelectedFile(null);
         onSuccess?.();
       } else {

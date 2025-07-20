@@ -103,11 +103,17 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const drawerWidth = 240;
-  const { data: permissions } = await apiFetch(
+  const result = await apiFetch(
     '/admin/users/permissions/me',
     undefined,
     AdminUserPermissionsResponseSchema
   );
+
+  if (!result.ok) {
+    throw new Error(`Failed to fetch user permissions: ${result.status} ${result.statusText}`);
+  }
+
+  const { data: permissions } = result;
 
   return (
     <DialogProvider>

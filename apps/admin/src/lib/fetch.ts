@@ -5,20 +5,60 @@ export const getApiBase = (forceClient = false) => {
   return isSsr ? process.env.LOCAL_BASE_URL : process.env.NEXT_PUBLIC_BASE_URL;
 };
 
+export class ApiFetchError extends Error {
+  public readonly status: number;
+  public readonly statusText: string;
+  public readonly url: string;
+  public readonly response: Response;
+  public readonly responseData?: unknown;
+
+  constructor(message: string, response: Response, responseData?: unknown) {
+    super(message);
+    this.name = 'ApiFetchError';
+    this.status = response.status;
+    this.statusText = response.statusText;
+    this.url = response.url;
+    this.response = response;
+    this.responseData = responseData;
+  }
+}
+
+type ApiResult<TSchema extends z.ZodTypeAny = z.ZodUnknown, Typed extends boolean = false> =
+  | {
+      ok: true;
+      response: Response;
+      data: Typed extends true ? z.infer<TSchema> : unknown;
+    }
+  | {
+      ok: false;
+      response: Response;
+      status: number;
+      statusText: string;
+      error: unknown;
+    };
+
 /**
  * Makes a type-safe API request with optional Zod schema validation,
  * and handles authentication automatically based on the environment.
+ *
+ * When the response is not successful (non-2xx), it returns the response
+ * and any error data instead of throwing, allowing callers to handle
+ * errors appropriately.
  *
  * @param path - The API endpoint path (e.g., '/api/users')
  * @param init - Optional RequestInit options for the fetch request
  * @param schema - Optional Zod schema for response validation and type inference
  *
- * @returns Promise with response and parsed data
+ * @returns Promise with response, success status, and parsed data or error info
  *
  * @example
  * // Simple GET request without validation
- * const { data } = await apiFetch('/api/users');
- * // data is typed as 'unknown'
+ * const result = await apiFetch('/api/users');
+ * if (result.ok) {
+ *   console.log(result.data); // success data
+ * } else {
+ *   console.error(result.status, result.error); // error handling
+ * }
  *
  * @example
  * // GET request with schema validation
@@ -27,39 +67,29 @@ export const getApiBase = (forceClient = false) => {
  *   name: z.string(),
  *   email: z.string().email()
  * });
- * const { data } = await apiFetch('/api/users', undefined, userSchema);
- * // data is strongly typed as { id: number; name: string; email: string }
+ * const result = await apiFetch('/api/users', undefined, userSchema);
+ * if (result.ok) {
+ *   console.log(result.data); // strongly typed success data
+ * } else {
+ *   console.error(result.status, result.error); // error handling
+ * }
  *
- *
- * @throws {Error} When the API request fails (non-2xx status)
- * @throws {Error} When JSON parsing fails
+ * @throws {ApiFetchError} Only when network errors occur or JSON parsing fails for successful responses
  * @throws {Error} When Zod schema validation fails (if schema provided)
  */
 export async function apiFetch<TSchema extends z.ZodTypeAny>(
   path: string,
   init: RequestInit | undefined,
   schema: TSchema
-): Promise<{
-  response: Response;
-  data: z.infer<TSchema>;
-}>;
+): Promise<ApiResult<TSchema, true>>;
 
-export async function apiFetch(
-  path: string,
-  init?: RequestInit
-): Promise<{
-  response: Response;
-  data: unknown;
-}>;
+export async function apiFetch(path: string, init?: RequestInit): Promise<ApiResult>;
 
 export async function apiFetch<TSchema extends z.ZodTypeAny>(
   path: string,
   init?: RequestInit,
   schema?: TSchema
-): Promise<{
-  response: Response;
-  data: z.infer<TSchema>;
-}> {
+): Promise<ApiResult<TSchema, true> | ApiResult> {
   const isServer = typeof window === 'undefined';
 
   let fetchOptions: RequestInit = {
@@ -82,25 +112,52 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
     fetchOptions.credentials = 'include';
   }
 
-  const response = await fetch(getApiBase() + path, fetchOptions);
-
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-  }
-
   try {
-    const json = await response.json();
+    const response = await fetch(getApiBase() + path, fetchOptions);
 
-    if (schema) {
-      const parsedData = schema.parse(json);
-      return { response, data: parsedData } as { response: Response; data: z.infer<TSchema> };
-    } else {
-      return { response, data: json } as { response: Response; data: z.infer<TSchema> };
+    if (!response.ok) {
+      let errorData: unknown;
+      try {
+        errorData = await response.json();
+      } catch {
+        try {
+          errorData = await response.text();
+        } catch {
+          errorData = response.statusText;
+        }
+      }
+
+      return {
+        ok: false,
+        response,
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData
+      };
+    }
+
+    try {
+      const json = await response.json();
+
+      if (schema) {
+        const parsedData = schema.parse(json);
+        return { ok: true, response, data: parsedData };
+      } else {
+        return { ok: true, response, data: json };
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Response validation failed: ${error.message}`);
+      }
+      throw new ApiFetchError(`Failed to parse JSON response: ${error}`, response, undefined);
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new Error(`Response validation failed: ${error.message}`);
+    if (error instanceof Error && error.name !== 'ApiFetchError') {
+      throw new ApiFetchError(
+        `Network error: ${error.message}`,
+        new Response(null, { status: 0, statusText: 'Network Error' })
+      );
     }
-    throw new Error(`Failed to parse JSON response: ${error}`);
+    throw error;
   }
 }
