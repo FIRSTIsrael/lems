@@ -3,7 +3,6 @@
 import { Button, Grid, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useDialog } from '../../dialog-provider';
-import { SeasonCreator } from './season-creator';
 import { CreateSeasonDialog } from './create-season-dialog';
 
 export const CreateSeasonCard = () => {

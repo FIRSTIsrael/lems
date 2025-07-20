@@ -18,7 +18,9 @@ import { DatePicker } from '@mui/x-date-pickers';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { FileUpload } from '@lems/shared';
 import { AdminSeasonResponseSchema } from '@lems/backend/schemas';
-import { apiFetch } from '../../../../../../lib/fetch';
+import { FormikTextField } from '@lems/shared';
+import { apiFetch } from '@lems/admin/lib/fetch';
+import { DialogComponentProps } from '../../dialog-provider';
 
 interface SeasonFormValues {
   slug: string;
@@ -34,12 +36,12 @@ interface SeasonFormErrors {
   endDate?: string;
 }
 
-const CreationForm: React.FC = () => {
+interface CreationFormProps {
+  onSuccess?: () => void;
+}
+
+const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(
-    null
-  );
 
   const initialValues: SeasonFormValues = {
     slug: '',
@@ -80,9 +82,8 @@ const CreationForm: React.FC = () => {
     values: SeasonFormValues,
     { setSubmitting, setStatus }: FormikHelpers<SeasonFormValues>
   ) => {
-    setIsSubmitting(true);
+    setSubmitting(true);
     setStatus(null);
-    setSubmitResult(null);
 
     try {
       // Create FormData for multipart/form-data request
@@ -106,26 +107,20 @@ const CreationForm: React.FC = () => {
       );
 
       if (response.ok) {
-        setSubmitResult({
-          success: true,
-          message: `Season "${values.name}" created successfully with ID: ${data.id}`
-        });
-
         // Reset form
         setSelectedFile(null);
+
+        // Call onSuccess callback if provided (this will close the dialog)
+        onSuccess?.();
       } else {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error('Season creation error:', error);
-      setSubmitResult({
-        success: false,
-        message: error instanceof Error ? error.message : 'Failed to create season'
-      });
       setStatus(error instanceof Error ? error.message : 'Failed to create season');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
       setSubmitting(false);
     }
   };
@@ -138,14 +133,12 @@ const CreationForm: React.FC = () => {
         onSubmit={handleSubmit}
         validateOnMount
       >
-        {({ values, errors, touched, setFieldValue, isValid, status }) => (
+        {({ values, errors, touched, setFieldValue, isValid, status, isSubmitting }) => (
           <Form>
             <Stack spacing={3}>
-              <TextField
+              <FormikTextField
                 name="slug"
                 label="Slug"
-                value={values.slug}
-                onChange={e => setFieldValue('slug', e.target.value)}
                 error={touched.slug && !!errors.slug}
                 helperText={touched.slug && errors.slug}
                 placeholder="e.g., submerged"
@@ -153,11 +146,9 @@ const CreationForm: React.FC = () => {
                 disabled={isSubmitting}
               />
 
-              <TextField
+              <FormikTextField
                 name="name"
                 label="Season Name"
-                value={values.name}
-                onChange={e => setFieldValue('name', e.target.value)}
                 error={touched.name && !!errors.name}
                 helperText={touched.name && errors.name}
                 placeholder="e.g., SUBMERGED 2024-2025"
@@ -226,17 +217,15 @@ const CreationForm: React.FC = () => {
   );
 };
 
-// I want the hide prop to be passed from the dialog provider
-// when this component is set as the dialog component.
-export const CreateSeasonDialog: React.FC = ({ hide }) => {
+export const CreateSeasonDialog: React.FC<DialogComponentProps> = ({ close }) => {
   return (
     <>
       <DialogTitle>Season Creator</DialogTitle>
       <DialogContent>
-        <CreationForm onSubmit={hide} />
+        <CreationForm onSuccess={close} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={hideDialog}>Cancel</Button>
+        <Button onClick={close}>Cancel</Button>
       </DialogActions>
     </>
   );

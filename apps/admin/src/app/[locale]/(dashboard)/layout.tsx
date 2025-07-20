@@ -18,7 +18,7 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissionsResponseSchema } from '@lems/backend/schemas';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/admin/lib/fetch';
 import { DialogProvider } from './dialog-provider';
 
 type Navigator = {

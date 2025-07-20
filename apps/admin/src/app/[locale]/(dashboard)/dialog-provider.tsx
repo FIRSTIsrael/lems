@@ -1,7 +1,21 @@
 'use client';
 
-import { createContext, useState, useContext, ReactNode, useCallback } from 'react';
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useCallback,
+  cloneElement,
+  isValidElement
+} from 'react';
 import { Dialog } from '@mui/material';
+
+export interface DialogComponentProps {
+  close: () => void;
+}
+
+export type DialogComponent<T = {}> = React.FC<DialogComponentProps & T>;
 
 interface DialogContextType {
   showDialog: () => void;
@@ -17,7 +31,7 @@ interface DialogProviderProps {
 
 export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [DialogContent, setDialogContent] = useState<ReactNode | null>(null);
+  const [DialogContent, setDialogContent] = useState<DialogComponent | null>(null);
 
   const showDialog = useCallback(() => {
     setIsOpen(true);
@@ -37,11 +51,24 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
     setDialogComponent
   };
 
+  const renderDialogContent = useCallback(() => {
+    if (!DialogContent) return null;
+
+    if (isValidElement(DialogContent)) {
+      return cloneElement(DialogContent, {
+        close: hideDialog,
+        ...(DialogContent.props as unknown)
+      });
+    }
+
+    return DialogContent;
+  }, [DialogContent, hideDialog]);
+
   return (
     <DialogContext.Provider value={contextValue}>
       {children}
       <Dialog open={isOpen} onClose={hideDialog}>
-        {DialogContent}
+        {renderDialogContent()}
       </Dialog>
     </DialogContext.Provider>
   );
