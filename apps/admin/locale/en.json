@@ -17,7 +17,38 @@
       }
     },
     "seasons": {
-      "title": "Seasons"
+      "title": "Seasons",
+      "create-new-season": "Create New Season",
+      "creation-dialog": {
+        "title": "Create Season",
+        "actions": {
+          "cancel": "Cancel"
+        },
+        "form": {
+          "fields": {
+            "slug": { "label": "Slug", "placeholder": "e.g., submerged" },
+            "name": { "label": "Season Name", "placeholder": "e.g., SUBMERGED 2024-2025" },
+            "start-date": { "label": "Start Date" },
+            "end-date": { "label": "End Date" },
+            "logo": {
+              "label": "Logo",
+              "description": "Upload a logo in SVG format",
+              "placeholder": "Accepts files in SVG format"
+            }
+          },
+          "errors": {
+            "slug-required": "Slug is required.",
+            "slug-invalid": "Slug must contain only lowercase letters, numbers, and hyphens.",
+            "name-required": "Name is required.",
+            "start-date-required": "Start date is required.",
+            "end-date-required": "End date is required.",
+            "end-date-invalid": "End date must be after start date.",
+            "error": "An error occurred while creating the season."
+          },
+          "submit": "Create Season",
+          "submitting": "Creating season..."
+        }
+      }
     }
   },
   "layouts": {

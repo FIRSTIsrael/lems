@@ -1,13 +1,14 @@
 import { getTranslations } from 'next-intl/server';
 import { Grid, Typography } from '@mui/material';
 import { AdminSeasonsResponseSchema } from '@lems/backend/schemas';
-import { SeasonCard } from './season-card';
-import { apiFetch } from '../../../../../lib/fetch';
+import { apiFetch } from '@lems/admin/lib/fetch';
+import { SeasonCard } from './components/season-card';
+import { CreateSeasonCard } from './components/create-season-card';
 
 export default async function SeasonsPage() {
   const t = await getTranslations('pages.seasons');
 
-  const { data: seasons } = await apiFetch(
+  const result = await apiFetch(
     '/admin/seasons',
     {
       next: {
@@ -18,10 +19,19 @@ export default async function SeasonsPage() {
     AdminSeasonsResponseSchema
   );
 
+  if (!result.ok) {
+    throw new Error(`Failed to fetch seasons: ${result.status} ${result.statusText}`);
+  }
+
+  const { data: seasons } = result;
+
   return (
     <>
-      <Typography variant="h1">{t('title')}</Typography>
-      <Grid container spacing={2} justifyContent="center" alignItems="center">
+      <Typography variant="h1" gutterBottom>
+        {t('title')}
+      </Typography>
+      <Grid container spacing={2}>
+        <CreateSeasonCard />
         {seasons.map(season => (
           <SeasonCard key={season.id} season={season} />
         ))}

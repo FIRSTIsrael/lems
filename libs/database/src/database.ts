@@ -64,9 +64,9 @@ export class Database {
       if (tables.length === 0) {
         console.warn('No tables found in PostgreSQL database. Ensure the database is initialized.');
       }
-      console.log(`✓ PostgreSQL connected successfully with ${tables.length} tables.`);
+      console.log(`🐘 PostgreSQL connected successfully with ${tables.length} tables.`);
     } catch (error) {
-      console.error('✗ Failed to connect to PostgreSQL:', error);
+      console.error('❌ Failed to connect to PostgreSQL:', error);
       throw new Error(`PostgreSQL connection failed: ${error}`);
     }
 
@@ -74,9 +74,9 @@ export class Database {
       // Test MongoDB connection
       await this.mongoClient.connect();
       await this.mongoDB.admin().ping();
-      console.log('✓ MongoDB connected successfully');
+      console.log('🌲 MongoDB connected successfully');
     } catch (error) {
-      console.error('✗ Failed to connect to MongoDB:', error);
+      console.error('❌ Failed to connect to MongoDB:', error);
       throw new Error(`MongoDB connection failed: ${error}`);
     }
 

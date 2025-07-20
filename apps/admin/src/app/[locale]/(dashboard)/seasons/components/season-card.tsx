@@ -1,6 +1,5 @@
-import Image from 'next/image';
-import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import dayjs from 'dayjs';
+import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { AdminSeasonResponse } from '@lems/backend/schemas';
 
 interface SeasonCardProps {
@@ -10,21 +9,26 @@ interface SeasonCardProps {
 export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
   return (
     <Grid
-      size={3}
+      size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
       component={Card}
-      p={2}
+      pt={3}
       display="flex"
       justifyContent="center"
       alignItems="center"
+      flexDirection="column"
       variant="outlined"
     >
       <CardMedia
-        sx={{ height: 140 }}
-        src={season.logoUrl || '/default-logo.svg'}
+        sx={{ height: 140, objectFit: 'contain' }}
+        src={season.logoUrl || '/assets/FIRST-Logo.svg'}
+        component="img"
         title={season.name}
       />
-      <CardContent>
-        <Typography variant="h4">
+      <CardContent sx={{ textAlign: 'center' }}>
+        <Typography variant="h5" gutterBottom>
+          {season.name}
+        </Typography>
+        <Typography variant="body1">
           {dayjs(season.startDate).format('DD/MM/YYYY')} -{' '}
           {dayjs(season.endDate).format('DD/MM/YYYY')}
         </Typography>

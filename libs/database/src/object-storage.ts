@@ -43,7 +43,7 @@ export class ObjectStorage {
   constructor(private readonly config: ObjectStorageConfig) {
     this.s3Client = new S3Client({
       forcePathStyle: false, // Configures to use subdomain/virtual calling format.
-      endpoint: this.config.endpoint,
+      endpoint: `https://${this.config.endpoint}`,
       region: 'us-east-1', // Required by AWS SDK, but doesn't affect performance
       credentials: {
         accessKeyId: this.config.accessKey,

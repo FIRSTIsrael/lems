@@ -18,7 +18,8 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissionsResponseSchema } from '@lems/backend/schemas';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/admin/lib/fetch';
+import { DialogProvider } from './dialog-provider';
 
 type Navigator = {
   [key in PermissionType]?: {
@@ -102,18 +103,26 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const drawerWidth = 240;
-  const { data: permissions } = await apiFetch(
+  const result = await apiFetch(
     '/admin/users/permissions/me',
     undefined,
     AdminUserPermissionsResponseSchema
   );
 
+  if (!result.ok) {
+    throw new Error(`Failed to fetch user permissions: ${result.status} ${result.statusText}`);
+  }
+
+  const { data: permissions } = result;
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar width={drawerWidth} permissions={permissions} />
-      <Box component="main" sx={{ flexGrow: 1, pl: 3, pt: 2 }}>
-        {children}
+    <DialogProvider>
+      <Box sx={{ display: 'flex' }}>
+        <AppBar width={drawerWidth} permissions={permissions} />
+        <Box component="main" sx={{ flexGrow: 1, pl: 3, pt: 2 }}>
+          {children}
+        </Box>
       </Box>
-    </Box>
+    </DialogProvider>
   );
 }
