@@ -17,8 +17,22 @@
         "name": "next"
       }
     ],
-    "types": ["node", "@types/grecaptcha", "webpack-env"]
+    "types": [
+      "node",
+      "@types/grecaptcha",
+      "webpack-env"
+    ],
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "../admin/components/layout/layout.tsx", "../admin/components/layout/app-bar.tsx", "../../libs/shared/src/lib/hooks/use-recaptcha.ts", "../../libs/shared/src/lib/components/number-input.tsx"],
-  "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.test.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "next-env.d.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
 }
