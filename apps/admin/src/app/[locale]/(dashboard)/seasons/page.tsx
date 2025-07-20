@@ -1,9 +1,8 @@
-import { getTranslations } from 'next-intl/server';
-import { Grid, Typography, Box } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { AdminSeasonsResponseSchema } from '@lems/backend/schemas';
 import { SeasonCard } from './components/season-card';
-import { TemporarySeasonCreator } from './components/temp-season-creator';
 import { apiFetch } from '../../../../../lib/fetch';
+import { getTranslations } from 'next-intl/server';
 
 export default async function SeasonsPage() {
   const t = await getTranslations('pages.seasons');
@@ -21,15 +20,14 @@ export default async function SeasonsPage() {
 
   return (
     <>
-      <Typography variant="h1">{t('title')}</Typography>
-      <Grid container spacing={2} justifyContent="center" alignItems="center">
+      <Typography variant="h1" gutterBottom>
+        {t('title')}
+      </Typography>
+      <Grid container spacing={2}>
         {seasons.map(season => (
           <SeasonCard key={season.id} season={season} />
         ))}
       </Grid>
-      <Box sx={{ mt: 4 }}>
-        <TemporarySeasonCreator />
-      </Box>
     </>
   );
 }

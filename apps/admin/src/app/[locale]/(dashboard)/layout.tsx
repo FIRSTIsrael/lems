@@ -19,6 +19,7 @@ import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissionsResponseSchema } from '@lems/backend/schemas';
 import { apiFetch } from '../../../../lib/fetch';
+import { ModalProvider } from '../../../components/modal-provider';
 
 type Navigator = {
   [key in PermissionType]?: {
@@ -109,11 +110,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar width={drawerWidth} permissions={permissions} />
-      <Box component="main" sx={{ flexGrow: 1, pl: 3, pt: 2 }}>
-        {children}
+    <ModalProvider>
+      <Box sx={{ display: 'flex' }}>
+        <AppBar width={drawerWidth} permissions={permissions} />
+        <Box component="main" sx={{ flexGrow: 1, pl: 3, pt: 2 }}>
+          {children}
+        </Box>
       </Box>
-    </Box>
+    </ModalProvider>
   );
 }
