@@ -14,7 +14,7 @@ export default [
     ignores: ['**/dist']
   },
   ...baseConfig,
-  ...compat.extends('plugin:@nx/react-typescript', 'next', 'next/core-web-vitals'),
+  ...compat.extends('next', 'next/core-web-vitals'),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {

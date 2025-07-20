@@ -2,6 +2,8 @@ import nx from '@nx/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
+import tsEslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
@@ -34,11 +36,40 @@ export default [
       '**/.git'
     ]
   },
-  reactHooks.configs['recommended-latest'],
-  reactPlugin.configs.flat.recommended,
-  reactPlugin.configs.flat['jsx-runtime'],
-  importPlugin.flatConfigs.recommended,
+  js.configs.recommended,
   {
+    plugins: {
+      '@nx': nx,
+      'react-hooks': reactHooks,
+      'react': reactPlugin,
+      'import': importPlugin,
+      '@typescript-eslint': tsEslint
+    },
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      parser: tsParser,
+      globals: {
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        exports: 'writable',
+        module: 'writable',
+        require: 'readonly'
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      }
+    },
     settings: {
       'import/resolver': {
         typescript: true,
@@ -47,30 +78,41 @@ export default [
       react: {
         version: 'detect'
       }
-    }
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    },
     rules: {
+      // React Hooks rules
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // React rules
       'react/prop-types': 'off',
-      "import/no-unresolved": "off" //Disabled for now since its not detecting @lems imports
-    }
-  },
-  {
-    plugins: {
-      '@nx': nx
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
+
+      // Import rules
+      'import/no-unresolved': 'off', // Disabled for now since its not detecting @lems imports
+      'import/no-duplicates': 'warn',
+      'import/order': [
+        'warn',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'never'
+        }
+      ],
+      
+      // Override some base rules for TypeScript
+      'no-unused-vars': 'off', // Use TypeScript version instead
+      'no-undef': 'off' // TypeScript handles this
     }
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
         {
           enforceBuildableLibDependency: true,
           allow: [],
-
           depConstraints: [
             {
               sourceTag: '*',
@@ -81,7 +123,6 @@ export default [
       ]
     }
   },
-  ...compat.extends('plugin:@nx/typescript'),
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {

@@ -14,7 +14,6 @@ export default [
     ignores: ['**/dist']
   },
   ...baseConfig,
-  ...compat.extends('plugin:@nx/react'),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
