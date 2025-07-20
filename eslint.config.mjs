@@ -1,4 +1,3 @@
-import { defineConfig, globalIgnores } from 'eslint/config';
 import nx from '@nx/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
@@ -16,23 +15,25 @@ const compat = new FlatCompat({
   allConfig: js.configs.all
 });
 
-export default defineConfig([
-  globalIgnores([
-    '**/node_modules',
-    '**/.next',
-    'apps/backend/webpack.config.js',
-    './eslint.config.mjs',
-    '**/dist',
-    '**/build',
-    '**/out',
-    '**/coverage',
-    '**/.turbo',
-    '**/.cache',
-    '**/.vercel',
-    '**/.idea',
-    '**/.vscode',
-    '**/.git'
-  ]),
+export default [
+  {
+    ignores: [
+      '**/node_modules',
+      '**/.next',
+      'apps/backend/webpack.config.js',
+      './eslint.config.mjs',
+      '**/dist',
+      '**/build',
+      '**/out',
+      '**/coverage',
+      '**/.turbo',
+      '**/.cache',
+      '**/.vercel',
+      '**/.idea',
+      '**/.vscode',
+      '**/.git'
+    ]
+  },
   reactHooks.configs['recommended-latest'],
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
@@ -80,10 +81,9 @@ export default defineConfig([
       ]
     }
   },
+  ...compat.extends('plugin:@nx/typescript'),
   {
     files: ['**/*.ts', '**/*.tsx'],
-    extends: compat.extends('plugin:@nx/typescript'),
-
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn'
@@ -93,4 +93,4 @@ export default defineConfig([
     files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
     rules: {}
   }
-]);
+];
