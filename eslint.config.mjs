@@ -3,6 +3,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
 import nextEslint from '@next/eslint-plugin-next';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
@@ -33,7 +34,8 @@ export default [
       'react-hooks': reactHooks,
       react: reactPlugin,
       import: importPlugin,
-      '@next/next': nextEslint
+      '@next/next': nextEslint,
+      'jsx-a11y': jsxA11y
     },
     languageOptions: {
       ecmaVersion: 2022,
@@ -110,6 +112,26 @@ export default [
           ]
         }
       ]
+    }
+  },
+  {
+    files: ['**/*.jsx', '**/*.tsx'],
+    rules: {
+      // JSX Accessibility rules
+      ...jsxA11y.configs.recommended.rules,
+
+      'jsx-a11y/anchor-is-valid': [
+        'error',
+        {
+          components: ['Link'],
+          specialLink: ['hrefLeft', 'hrefRight'],
+          aspects: ['invalidHref', 'preferButton']
+        }
+      ],
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/alt-text': 'error',
+      'jsx-a11y/img-redundant-alt': 'warn'
     }
   },
   {
