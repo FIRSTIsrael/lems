@@ -1,21 +1,22 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Button, Grid, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useDialog } from '../../dialog-provider';
 import { CreateSeasonDialog } from './create-season-dialog';
 
 export const CreateSeasonCard = () => {
-  const { showDialog, setDialogComponent } = useDialog();
+  const t = useTranslations('pages.seasons');
+  const { showDialog } = useDialog();
 
   const showCreationDialog = () => {
-    setDialogComponent(<CreateSeasonDialog />);
-    showDialog();
+    showDialog(CreateSeasonDialog);
   };
 
   return (
     <Grid
-      size={2}
+      size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
       component={Button}
       p={2}
       display="flex"
@@ -28,7 +29,7 @@ export const CreateSeasonCard = () => {
     >
       <AddRoundedIcon fontSize="large" />
       <Typography variant="h4" align="center" gutterBottom>
-        Create New Season
+        {t('create-new-season')}
       </Typography>
     </Grid>
   );

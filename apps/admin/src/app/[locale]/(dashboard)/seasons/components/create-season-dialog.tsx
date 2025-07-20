@@ -10,7 +10,6 @@ import {
   Box,
   Stack,
   Button,
-  TextField,
   CircularProgress,
   Alert
 } from '@mui/material';
@@ -21,6 +20,7 @@ import { AdminSeasonResponseSchema } from '@lems/backend/schemas';
 import { FormikTextField } from '@lems/shared';
 import { apiFetch } from '@lems/admin/lib/fetch';
 import { DialogComponentProps } from '../../dialog-provider';
+import { useTranslations } from 'next-intl';
 
 interface SeasonFormValues {
   slug: string;
@@ -41,6 +41,7 @@ interface CreationFormProps {
 }
 
 const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
+  const t = useTranslations('pages.seasons.creation-dialog.form');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const initialValues: SeasonFormValues = {
@@ -54,25 +55,25 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
     const errors: SeasonFormErrors = {};
 
     if (!values.slug?.trim()) {
-      errors.slug = 'Slug is required';
+      errors.slug = 'slug-required';
     } else if (!/^[a-z0-9-]+$/.test(values.slug)) {
-      errors.slug = 'Slug must contain only lowercase letters, numbers, and hyphens';
+      errors.slug = 'slug-invalid';
     }
 
     if (!values.name?.trim()) {
-      errors.name = 'Name is required';
+      errors.name = 'name-required';
     }
 
     if (!values.startDate) {
-      errors.startDate = 'Start date is required';
+      errors.startDate = 'start-date-required';
     }
 
     if (!values.endDate) {
-      errors.endDate = 'End date is required';
+      errors.endDate = 'end-date-required';
     }
 
     if (values.startDate && values.endDate && values.startDate.isAfter(values.endDate)) {
-      errors.endDate = 'End date must be after start date';
+      errors.endDate = 'end-date-invalid';
     }
 
     return errors;
@@ -86,7 +87,6 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
     setStatus(null);
 
     try {
-      // Create FormData for multipart/form-data request
       const formData = new FormData();
       formData.append('slug', values.slug);
       formData.append('name', values.name);
@@ -97,7 +97,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
         formData.append('logo', selectedFile);
       }
 
-      const { response, data } = await apiFetch(
+      const { response } = await apiFetch(
         '/admin/seasons',
         {
           method: 'POST',
@@ -107,20 +107,14 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
       );
 
       if (response.ok) {
-        // Reset form
         setSelectedFile(null);
-
-        // Call onSuccess callback if provided (this will close the dialog)
         onSuccess?.();
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error();
       }
     } catch (error) {
-      console.error('Season creation error:', error);
-      setStatus(error instanceof Error ? error.message : 'Failed to create season');
+      setStatus(error instanceof Error ? error.message : 'error');
     } finally {
-      setSubmitting(false);
       setSubmitting(false);
     }
   };
@@ -138,27 +132,27 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
             <Stack spacing={3}>
               <FormikTextField
                 name="slug"
-                label="Slug"
+                label={t('fields.slug.label')}
                 error={touched.slug && !!errors.slug}
                 helperText={touched.slug && errors.slug}
-                placeholder="e.g., submerged"
+                placeholder={t('fields.slug.placeholder')}
                 fullWidth
                 disabled={isSubmitting}
               />
 
               <FormikTextField
                 name="name"
-                label="Season Name"
+                label={t('fields.name.label')}
                 error={touched.name && !!errors.name}
                 helperText={touched.name && errors.name}
-                placeholder="e.g., SUBMERGED 2024-2025"
+                placeholder={t('fields.name.placeholder')}
                 fullWidth
                 disabled={isSubmitting}
               />
 
               <Stack direction="row" spacing={2}>
                 <DatePicker
-                  label="Start Date"
+                  label={t('fields.start-date.label')}
                   value={values.startDate}
                   onChange={newDate => setFieldValue('startDate', newDate)}
                   slotProps={{
@@ -172,7 +166,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 />
 
                 <DatePicker
-                  label="End Date"
+                  label={t('fields.end-date.label')}
                   value={values.endDate}
                   onChange={newDate => setFieldValue('endDate', newDate)}
                   slotProps={{
@@ -187,16 +181,16 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
               </Stack>
 
               <FileUpload
-                label="Logo"
+                label={t('fields.logo.label')}
                 accept=".svg,image/svg+xml"
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
-                description="Upload a logo in SVG format"
+                description={t('fields.logo.description')}
                 disabled={isSubmitting}
-                placeholder="Accepts files in SVG format"
+                placeholder={t('fields.logo.placeholder')}
               />
 
-              {status && <Alert severity="error">{status}</Alert>}
+              {status && <Alert severity="error">{t(`status.${status}`)}</Alert>}
 
               <Stack direction="row" justifyContent="center" spacing={2}>
                 <Button
@@ -206,7 +200,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                   disabled={!isValid || isSubmitting}
                   sx={{ minWidth: 200 }}
                 >
-                  {isSubmitting ? 'Creating Season...' : 'Create Season'}
+                  {isSubmitting ? t('submitting') : t('submit')}
                 </Button>
               </Stack>
             </Stack>
@@ -218,14 +212,16 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
 };
 
 export const CreateSeasonDialog: React.FC<DialogComponentProps> = ({ close }) => {
+  const t = useTranslations('pages.seasons.creation-dialog');
+
   return (
     <>
-      <DialogTitle>Season Creator</DialogTitle>
+      <DialogTitle>{t('title')}</DialogTitle>
       <DialogContent>
         <CreationForm onSuccess={close} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={close}>Cancel</Button>
+        <Button onClick={close}>{t('actions.cancel')}</Button>
       </DialogActions>
     </>
   );

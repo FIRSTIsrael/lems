@@ -17,7 +17,38 @@
       }
     },
     "seasons": {
-      "title": "עונות"
+      "title": "עונות",
+      "create-new-season": "יצירת עונה חדשה",
+      "creation-dialog": {
+        "title": "יצירת עונה",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "fields": {
+            "slug": { "label": "מזהה", "placeholder": "למשל, submerged" },
+            "name": { "label": "שם", "placeholder": "למשל, SUBMERGED 2024-2025" },
+            "start-date": { "label": "תאריך התחלה" },
+            "end-date": { "label": "תאריך סיום" },
+            "logo": {
+              "label": "לוגו",
+              "description": "העלאת לוגו בפורמט SVG",
+              "placeholder": "מקבל קבצים בפורמט SVG"
+            }
+          },
+          "status": {
+            "slug-required": "שדה מזהה נדרש",
+            "slug-invalid": "שדה מזהה חייב להכיל רק אותיות קטנות, מספרים ומקפים.",
+            "name-required": "שדה שם נדרש.",
+            "start-date-required": "שדה תאריך התחלה נדרש.",
+            "end-date-required": "שדה תאריך סיום נדרש.",
+            "end-date-invalid": "תאריך הסיום חייב להיות אחרי תאריך ההתחלה.",
+            "error": "שגיאה התרחשה בעת יצירת העונה."
+          },
+          "submit": "יצירת עונה",
+          "submitting": "יוצר עונה..."
+        }
+      }
     }
   },
   "layouts": {

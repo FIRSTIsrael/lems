@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server';
 import { Grid, Typography } from '@mui/material';
 import { AdminSeasonsResponseSchema } from '@lems/backend/schemas';
+import { apiFetch } from '@lems/admin/lib/fetch';
 import { SeasonCard } from './components/season-card';
 import { CreateSeasonCard } from './components/create-season-card';
-import { apiFetch } from '../../../../../lib/fetch';
 
 export default async function SeasonsPage() {
   const t = await getTranslations('pages.seasons');

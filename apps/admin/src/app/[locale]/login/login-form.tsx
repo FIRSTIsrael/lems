@@ -19,7 +19,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
 import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/admin/lib/fetch';
 import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
 
 interface LoginFormValues {
@@ -66,6 +66,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
+
       const { response } = await apiFetch('/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

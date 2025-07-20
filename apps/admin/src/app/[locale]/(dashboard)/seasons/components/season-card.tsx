@@ -9,7 +9,7 @@ interface SeasonCardProps {
 export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
   return (
     <Grid
-      size={2}
+      size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
       component={Card}
       pt={3}
       display="flex"
@@ -20,7 +20,7 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
     >
       <CardMedia
         sx={{ height: 140, objectFit: 'contain' }}
-        src={season.logoUrl || '/images/default-season-logo.svg'}
+        src={season.logoUrl || '/FIRST-LOGO.svg'}
         component="img"
         title={season.name}
       />

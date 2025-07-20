@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/admin/lib/fetch';
 import { LoginForm } from './login-form';
 
 async function checkAuthStatus() {

@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useCallback,
-  cloneElement,
-  isValidElement
-} from 'react';
+import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { Dialog } from '@mui/material';
 
 export interface DialogComponentProps {
@@ -18,9 +10,9 @@ export interface DialogComponentProps {
 export type DialogComponent<T = {}> = React.FC<DialogComponentProps & T>;
 
 interface DialogContextType {
-  showDialog: () => void;
+  showDialog: (component?: DialogComponent) => void;
   hideDialog: () => void;
-  setDialogComponent: (component: ReactNode) => void;
+  setDialogComponent: (component: DialogComponent | null) => void;
 }
 
 const DialogContext = createContext<DialogContextType | null>(null);
@@ -33,16 +25,29 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [DialogContent, setDialogContent] = useState<DialogComponent | null>(null);
 
-  const showDialog = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
   const hideDialog = useCallback(() => {
     setIsOpen(false);
+    // Reset dialog content after a small delay to allow for smooth close animation
+    setTimeout(() => setDialogContent(null), 200);
   }, []);
 
-  const setDialogComponent = useCallback((component: ReactNode) => {
-    setDialogContent(component);
+  const showDialog = useCallback(
+    (component?: DialogComponent) => {
+      if (component) {
+        setDialogContent(() => component); // Use function to ensure component is stored correctly
+        setIsOpen(true);
+      } else if (DialogContent) {
+        // Only show if there's already a component set
+        setIsOpen(true);
+      } else {
+        console.warn('Cannot show dialog: no component provided and no component previously set');
+      }
+    },
+    [DialogContent]
+  );
+
+  const setDialogComponent = useCallback((component: DialogComponent | null) => {
+    setDialogContent(() => component);
   }, []);
 
   const contextValue: DialogContextType = {
@@ -51,23 +56,33 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
     setDialogComponent
   };
 
-  const renderDialogContent = useCallback(() => {
+  const renderDialogContent = () => {
     if (!DialogContent) return null;
 
-    if (isValidElement(DialogContent)) {
-      return cloneElement(DialogContent, {
-        close: hideDialog,
-        ...(DialogContent.props as unknown)
-      });
-    }
+    const dialogProps: DialogComponentProps = {
+      close: hideDialog
+    };
 
-    return DialogContent;
-  }, [DialogContent, hideDialog]);
+    try {
+      return React.createElement(DialogContent, dialogProps);
+    } catch (error) {
+      throw new Error(
+        `Error creating dialog component ${DialogContent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  };
 
   return (
     <DialogContext.Provider value={contextValue}>
       {children}
-      <Dialog open={isOpen} onClose={hideDialog}>
+      <Dialog
+        open={isOpen}
+        onClose={hideDialog}
+        maxWidth="sm"
+        fullWidth
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+      >
         {renderDialogContent()}
       </Dialog>
     </DialogContext.Provider>
