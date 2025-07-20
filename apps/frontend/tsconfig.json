@@ -22,13 +22,14 @@
       "@types/grecaptcha",
       "webpack-env"
     ],
+    "module": "esnext"
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "next-env.d.ts",
+    "next-env.d.ts"
   ],
   "exclude": [
     "node_modules",
