@@ -121,12 +121,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
-      <Formik
-        initialValues={initialValues}
-        validate={validateForm}
-        onSubmit={handleSubmit}
-        validateOnMount
-      >
+      <Formik initialValues={initialValues} validate={validateForm} onSubmit={handleSubmit}>
         {({ values, errors, touched, setFieldValue, isValid, status, isSubmitting }) => (
           <Form>
             <Stack spacing={3}>
@@ -134,7 +129,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 name="slug"
                 label={t('fields.slug.label')}
                 error={touched.slug && !!errors.slug}
-                helperText={touched.slug && errors.slug}
+                helperText={touched.slug && errors.slug ? t(`errors.${errors.slug}`) : undefined}
                 placeholder={t('fields.slug.placeholder')}
                 fullWidth
                 disabled={isSubmitting}
@@ -144,7 +139,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 name="name"
                 label={t('fields.name.label')}
                 error={touched.name && !!errors.name}
-                helperText={touched.name && errors.name}
+                helperText={touched.name && errors.name ? t(`errors.${errors.name}`) : undefined}
                 placeholder={t('fields.name.placeholder')}
                 fullWidth
                 disabled={isSubmitting}
@@ -158,7 +153,10 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                   slotProps={{
                     textField: {
                       error: touched.startDate && !!errors.startDate,
-                      helperText: touched.startDate && errors.startDate,
+                      helperText:
+                        touched.startDate && errors.startDate
+                          ? t(`errors.${errors.startDate}`)
+                          : undefined,
                       fullWidth: true,
                       disabled: isSubmitting
                     }
@@ -172,7 +170,10 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                   slotProps={{
                     textField: {
                       error: touched.endDate && !!errors.endDate,
-                      helperText: touched.endDate && errors.endDate,
+                      helperText:
+                        touched.endDate && errors.endDate
+                          ? t(`errors.${errors.endDate}`)
+                          : undefined,
                       fullWidth: true,
                       disabled: isSubmitting
                     }
@@ -190,14 +191,14 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 placeholder={t('fields.logo.placeholder')}
               />
 
-              {status && <Alert severity="error">{t(`status.${status}`)}</Alert>}
+              {status && <Alert severity="error">{t(`errors.${status}`)}</Alert>}
 
               <Stack direction="row" justifyContent="center" spacing={2}>
                 <Button
                   type="submit"
                   variant="contained"
                   startIcon={isSubmitting ? <CircularProgress size={20} /> : <CloudUploadIcon />}
-                  disabled={!isValid || isSubmitting}
+                  loading={isSubmitting}
                   sx={{ minWidth: 200 }}
                 >
                   {isSubmitting ? t('submitting') : t('submit')}

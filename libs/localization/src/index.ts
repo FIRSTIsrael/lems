@@ -1,5 +1,6 @@
 export * from './lib/locales';
 export * from './lib/emotion-cache';
+export * from './lib/dayjs-config';
 
 // Hooks
 export * from './lib/hooks/use-html-direction';

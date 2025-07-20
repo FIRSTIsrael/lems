@@ -36,7 +36,7 @@
               "placeholder": "Accepts files in SVG format"
             }
           },
-          "status": {
+          "errors": {
             "slug-required": "Slug is required.",
             "slug-invalid": "Slug must contain only lowercase letters, numbers, and hyphens.",
             "name-required": "Name is required.",
