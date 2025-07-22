@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { RobotGameMatch, MATCH_LENGTH } from '@lems/types';
 import Countdown from '../../general/countdown';
-import { useTime } from '../../../hooks/use-time';
+import { useTime } from '../../../hooks/time/use-time';
 import { localizedMatchStage } from '../../../localization/field';
 
 interface ScoreboardCurrentMatchProps extends GridProps {

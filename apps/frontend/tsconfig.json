@@ -17,8 +17,23 @@
         "name": "next"
       }
     ],
-    "types": ["node", "@types/grecaptcha", "webpack-env"]
+    "types": [
+      "node",
+      "@types/grecaptcha",
+      "webpack-env"
+    ],
+    "module": "esnext"
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
-  "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.test.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
 }

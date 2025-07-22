@@ -4,7 +4,7 @@ import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Team } from '@lems/types';
-import { useDimensions } from '../../hooks/use-dimensions';
+import { useDimensions } from '../../hooks/layout/use-dimensions';
 
 interface TeamPoolItemProps {
   droppableId: string;

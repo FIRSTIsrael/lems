@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
-import LEMSLocales, { Locales } from '../locale/locales';
+import { Locales, Locale } from '@lems/localization';
 
 const mainColor = '#0071e3';
 const fourthShadow = '0 8px 12px 0 rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 4%)';
@@ -163,7 +163,7 @@ export const baseTheme = createTheme({
   }
 });
 
-export const getLocalizedTheme = (locale: Locales = 'he') => {
-  const { direction, muiLocale, xDataGridLocale } = LEMSLocales[locale];
+export const getLocalizedTheme = (locale: Locale = 'he') => {
+  const { direction, muiLocale, xDataGridLocale } = Locales[locale];
   return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale);
 };
