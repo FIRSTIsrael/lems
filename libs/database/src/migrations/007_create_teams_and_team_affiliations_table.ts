@@ -30,6 +30,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('name', 'varchar(64)', col => col.notNull())
     .addColumn('number', 'integer', col => col.notNull().unique())
     .addColumn('affiliation_id', 'uuid', col => col.notNull())
+    .addColumn('logo_url', 'text')
     .execute();
 
   // Create foreign key constraint for affiliation_id

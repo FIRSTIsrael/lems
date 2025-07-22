@@ -6,6 +6,7 @@ export interface TeamsTable {
   name: string; // VARCHAR(64)
   number: number; // int, unique
   affiliation_id: string; // UUID foreign key to team_affiliations.id
+  logo_url: string | null; // URL to team logo, optional
 }
 
 export type Team = Selectable<TeamsTable>;
