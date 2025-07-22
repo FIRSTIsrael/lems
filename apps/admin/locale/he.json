@@ -49,6 +49,9 @@
           "submitting": "יוצר עונה..."
         }
       }
+    },
+    "teams": {
+      "title": "קבוצות"
     }
   },
   "layouts": {

@@ -49,6 +49,9 @@
           "submitting": "Creating season..."
         }
       }
+    },
+    "teams": {
+      "title": "Teams"
     }
   },
   "layouts": {

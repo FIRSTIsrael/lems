@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import { MongoClient, Db } from 'mongodb';
 import { AdminsRepository } from './repositories/admins';
 import { SeasonsRepository } from './repositories/seasons';
+import { TeamsRepository } from './repositories/teams';
 import { KyselyDatabaseSchema } from './schema/kysely';
 import { ObjectStorage } from './object-storage';
 
@@ -26,6 +27,7 @@ export class Database {
 
   public admins: AdminsRepository;
   public seasons: SeasonsRepository;
+  public teams: TeamsRepository;
 
   constructor() {
     this.kysely = new Kysely<KyselyDatabaseSchema>({
@@ -54,6 +56,7 @@ export class Database {
 
     this.admins = new AdminsRepository(this.kysely);
     this.seasons = new SeasonsRepository(this.kysely, this.space);
+    this.teams = new TeamsRepository(this.kysely, this.space);
   }
 
   async connect(): Promise<void> {
