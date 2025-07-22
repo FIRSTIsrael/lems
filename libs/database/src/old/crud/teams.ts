@@ -1,31 +1,30 @@
 import { Filter, ObjectId } from 'mongodb';
-import { Team } from '@lems/types';
 import db from '../database';
 
-export const getTeam = (filter: Filter<Team>) => {
-  return db.collection<Team>('teams').findOne(filter);
+export const getTeam = (filter: Filter<any>) => {
+  return db.collection<any>('teams').findOne(filter);
 };
 
 export const getDivisionTeams = (divisionId: ObjectId) => {
-  return db.collection<Team>('teams').find({ divisionId }).toArray();
+  return db.collection<any>('teams').find({ divisionId }).toArray();
 };
 
-export const addTeam = (team: Team) => {
-  return db.collection<Team>('teams').insertOne(team);
+export const addTeam = (team: any) => {
+  return db.collection<any>('teams').insertOne(team);
 };
 
-export const addTeams = (teams: Array<Team>) => {
-  return db.collection<Team>('teams').insertMany(teams);
+export const addTeams = (teams: Array<any>) => {
+  return db.collection<any>('teams').insertMany(teams);
 };
 
-export const updateTeam = (filter: Filter<Team>, newTeam: Partial<Team>, upsert = false) => {
-  return db.collection<Team>('teams').updateOne(filter, { $set: newTeam }, { upsert });
+export const updateTeam = (filter: Filter<any>, newTeam: Partial<any>, upsert = false) => {
+  return db.collection<any>('teams').updateOne(filter, { $set: newTeam }, { upsert });
 };
 
-export const deleteTeam = (filter: Filter<Team>) => {
-  return db.collection<Team>('teams').deleteOne(filter);
+export const deleteTeam = (filter: Filter<any>) => {
+  return db.collection<any>('teams').deleteOne(filter);
 };
 
 export const deleteDivisionTeams = (divisionId: ObjectId) => {
-  return db.collection<Team>('teams').deleteMany({ divisionId });
+  return db.collection<any>('teams').deleteMany({ divisionId });
 };

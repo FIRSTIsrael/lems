@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import dayjs, { Dayjs } from 'dayjs';
+import { useTranslations } from 'next-intl';
 import {
   DialogTitle,
   DialogContent,
@@ -15,12 +16,10 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { FileUpload } from '@lems/shared';
-import { AdminSeasonResponseSchema } from '@lems/backend/schemas';
-import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '@lems/admin/lib/fetch';
+import { FileUpload, FormikTextField } from '@lems/shared';
+import { AdminSeasonResponseSchema } from '@lems/types/api/admin';
+import { apiFetch } from '../../../../../lib/fetch';
 import { DialogComponentProps } from '../../dialog-provider';
-import { useTranslations } from 'next-intl';
 
 interface SeasonFormValues {
   slug: string;

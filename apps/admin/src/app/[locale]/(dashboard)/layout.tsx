@@ -17,8 +17,8 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
-import { AdminUserPermissionsResponseSchema } from '@lems/backend/schemas';
-import { apiFetch } from '@lems/admin/lib/fetch';
+import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin';
+import { apiFetch } from '../../../lib/fetch';
 import { DialogProvider } from './dialog-provider';
 
 type Navigator = {

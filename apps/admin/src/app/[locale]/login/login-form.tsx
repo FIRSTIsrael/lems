@@ -18,9 +18,13 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ChevronEndIcon } from '@lems/localization';
-import { FormikTextField } from '@lems/shared';
-import { apiFetch } from '@lems/admin/lib/fetch';
-import { useRecaptcha, createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
+import {
+  useRecaptcha,
+  createRecaptchaToken,
+  removeRecaptchaBadge,
+  FormikTextField
+} from '@lems/shared';
+import { apiFetch } from '../../../lib/fetch';
 
 interface LoginFormValues {
   username: string;

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
-import { AdminSeasonResponse } from '@lems/backend/schemas';
+import { AdminSeasonResponse } from '@lems/types/api/admin';
 
 interface SeasonCardProps {
   season: AdminSeasonResponse;
@@ -25,7 +25,7 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
         title={season.name}
       />
       <CardContent sx={{ textAlign: 'center' }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom sx={{ direction: 'ltr' }}>
           {season.name}
         </Typography>
         <Typography variant="body1">

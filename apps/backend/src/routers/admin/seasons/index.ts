@@ -2,7 +2,7 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
-import { makeAdminSeasonResponse } from './types';
+import { makeAdminSeasonResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 

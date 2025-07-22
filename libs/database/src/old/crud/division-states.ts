@@ -1,29 +1,26 @@
 import { Filter, ObjectId } from 'mongodb';
-import { DivisionState } from '@lems/types';
 import db from '../database';
 
-export const getDivisionState = (filter: Filter<DivisionState>) => {
-  return db.collection<DivisionState>('division-states').findOne(filter);
+export const getDivisionState = (filter: Filter<any>) => {
+  return db.collection('division-states').findOne(filter);
 };
 
 export const getDivisionStateFromDivision = (divisionId: ObjectId) => {
-  return db.collection<DivisionState>('division-states').findOne({ divisionId });
+  return db.collection('division-states').findOne({ divisionId });
 };
 
-export const addDivisionState = (state: DivisionState) => {
-  return db.collection<DivisionState>('division-states').insertOne(state);
+export const addDivisionState = (state: any) => {
+  return db.collection('division-states').insertOne(state);
 };
 
 export const updateDivisionState = (
-  filter: Filter<DivisionState>,
-  newDivisionState: Partial<DivisionState>,
+  filter: Filter<any>,
+  newDivisionState: Partial<any>,
   upsert = false
 ) => {
-  return db
-    .collection<DivisionState>('division-states')
-    .updateOne(filter, { $set: newDivisionState }, { upsert });
+  return db.collection('division-states').updateOne(filter, { $set: newDivisionState }, { upsert });
 };
 
-export const deleteDivisionState = (filter: Filter<DivisionState>) => {
-  return db.collection<DivisionState>('division-states').deleteOne(filter);
+export const deleteDivisionState = (filter: Filter<any>) => {
+  return db.collection('division-states').deleteOne(filter);
 };

@@ -1,9 +1,9 @@
 import { UpdateFilter, Filter, ObjectId, WithId, AggregationCursor } from 'mongodb';
-import { RobotGameMatch } from '@lems/types';
 import db from '../database';
+import { RobotGameMatch } from '../../schema';
 
-export const findMatches = (filter: Filter<RobotGameMatch>) => {
-  return db.collection<RobotGameMatch>('matches').aggregate([
+export const findMatches = (filter: Filter<any>) => {
+  return db.collection<any>('matches').aggregate([
     { $match: filter },
     ...(filter.stage !== 'test'
       ? [
@@ -41,10 +41,10 @@ export const findMatches = (filter: Filter<RobotGameMatch>) => {
         ]
       : []),
     { $sort: { number: 1 } }
-  ]) as AggregationCursor<WithId<RobotGameMatch>>;
+  ]) as AggregationCursor<WithId<any>>;
 };
 
-export const getMatch = (filter: Filter<RobotGameMatch>) => {
+export const getMatch = (filter: Filter<any>) => {
   return findMatches(filter).next();
 };
 
@@ -60,37 +60,34 @@ export const getTableMatches = (tableId: string) => {
   }).toArray();
 };
 
-export const addMatch = (match: RobotGameMatch) => {
-  return db.collection<RobotGameMatch>('matches').insertOne(match);
+export const addMatch = (match: any) => {
+  return db.collection<any>('matches').insertOne(match);
 };
 
-export const addMatches = (matches: Array<RobotGameMatch>) => {
-  return db.collection<RobotGameMatch>('matches').insertMany(matches);
+export const addMatches = (matches: Array<any>) => {
+  return db.collection<any>('matches').insertMany(matches);
 };
 
 export const updateMatch = (
-  filter: Filter<RobotGameMatch>,
-  newMatch: Partial<RobotGameMatch> | UpdateFilter<RobotGameMatch>,
+  filter: Filter<any>,
+  newMatch: Partial<any> | UpdateFilter<any>,
   upsert = false
 ) => {
-  return db.collection<RobotGameMatch>('matches').updateOne(filter, { $set: newMatch }, { upsert });
+  return db.collection<any>('matches').updateOne(filter, { $set: newMatch }, { upsert });
 };
 
-export const updateMatches = (
-  filter: Filter<RobotGameMatch>,
-  newMatch: Partial<RobotGameMatch>
-) => {
-  return db.collection<RobotGameMatch>('matches').updateMany(filter, { $set: newMatch });
+export const updateMatches = (filter: Filter<any>, newMatch: Partial<any>) => {
+  return db.collection<any>('matches').updateMany(filter, { $set: newMatch });
 };
 
-export const deleteMatch = (filter: Filter<RobotGameMatch>) => {
-  return db.collection<RobotGameMatch>('matches').deleteOne(filter);
+export const deleteMatch = (filter: Filter<any>) => {
+  return db.collection<any>('matches').deleteOne(filter);
 };
 
 export const deleteDivisionMatches = (divisionId: ObjectId) => {
-  return db.collection<RobotGameMatch>('matches').deleteMany({ divisionId: divisionId });
+  return db.collection<any>('matches').deleteMany({ divisionId: divisionId });
 };
 
 export const deleteTableMatches = (tableId: ObjectId) => {
-  return db.collection<RobotGameMatch>('matches').deleteMany({ table: tableId });
+  return db.collection<any>('matches').deleteMany({ table: tableId });
 };

@@ -14,7 +14,7 @@ const divisionValidator = async (req: Request, res: Response, next: NextFunction
     return;
   }
 
-  req.division = division;
+  req.division = division as any;
 
   return next();
 };

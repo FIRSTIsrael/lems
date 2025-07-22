@@ -1,7 +1,7 @@
 import express from 'express';
 import db from '../../../lib/database';
-import { makeAdminUserResponse } from './types';
 import { AdminRequest } from '../../../types/express';
+import { makeAdminUserResponse } from './util';
 import registrationRouter from './register';
 import permissionsRouter from './permissions';
 

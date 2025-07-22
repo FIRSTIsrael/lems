@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-
 import fileUpload from 'express-fileupload';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
@@ -17,7 +16,7 @@ router.post('/', fileUpload(), async (req: Request, res: Response) => {
   try {
     console.log('👓 Parsing file...');
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
-    const teams = parseTeamList(division, csvData);
+    const teams = parseTeamList(division as any, csvData);
     await db.deleteDivisionTeams(division._id);
     await db.addTeams(teams);
     console.log('Successfully uploaded team list');

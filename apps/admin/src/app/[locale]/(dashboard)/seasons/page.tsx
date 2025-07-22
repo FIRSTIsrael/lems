@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Grid, Typography } from '@mui/material';
-import { AdminSeasonsResponseSchema } from '@lems/backend/schemas';
-import { apiFetch } from '@lems/admin/lib/fetch';
+import { AdminSeasonsResponseSchema } from '@lems/types/api/admin';
+import { apiFetch } from '../../../../lib/fetch';
 import { SeasonCard } from './components/season-card';
 import { CreateSeasonCard } from './components/create-season-card';
 

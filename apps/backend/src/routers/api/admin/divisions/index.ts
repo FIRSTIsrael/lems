@@ -1,14 +1,13 @@
-import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-
+import express, { Request, Response } from 'express';
 import { Division } from '@lems/types';
 import * as db from '@lems/database';
+import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 import divisionScheduleRouter from './schedule';
 import divisionUsersRouter from './users';
 import divisionAwardsRouter from './awards';
 import divisionPitMapRouter from './pit-map';
 import divisionTeamListRouter from './team-list';
-import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 
 const router = express.Router({ mergeParams: true });
 
@@ -41,7 +40,7 @@ router.delete('/:divisionId/data', async (req: Request, res: Response) => {
 
   console.log(`🚮 Deleting data from division ${req.params.divisionId}`);
   try {
-    await cleanDivisionData(division);
+    await cleanDivisionData(division as any);
     await db.updateDivision({ _id: division._id }, { hasState: false });
   } catch (error) {
     res.status(500).json(error.message);

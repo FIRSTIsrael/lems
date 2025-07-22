@@ -1,13 +1,12 @@
 import { WithId, AggregationCursor, Filter } from 'mongodb';
-import { FllEvent } from '@lems/types';
 import db from '../database';
 
-export const getFllEvent = (filter: Filter<FllEvent>) => {
+export const getFllEvent = (filter: Filter<any>) => {
   return findFllEvents(filter).next();
 };
 
-export const findFllEvents = (filter: Filter<FllEvent>) => {
-  return db.collection<FllEvent>('fll-events').aggregate([
+export const findFllEvents = (filter: Filter<any>) => {
+  return db.collection('fll-events').aggregate([
     { $match: filter },
     {
       $lookup: {
@@ -17,10 +16,10 @@ export const findFllEvents = (filter: Filter<FllEvent>) => {
         as: 'divisions'
       }
     }
-  ]) as AggregationCursor<WithId<FllEvent>>;
+  ]) as AggregationCursor<WithId<any>>;
 };
 
-export const getFllEvents = (filter: Filter<FllEvent>) => {
+export const getFllEvents = (filter: Filter<any>) => {
   return findFllEvents(filter).toArray();
 };
 
@@ -28,18 +27,14 @@ export const getAllFllEvents = () => {
   return findFllEvents({}).toArray();
 };
 
-export const updateFllEvent = (
-  filter: Filter<FllEvent>,
-  newFllEvent: Partial<FllEvent>,
-  upsert = false
-) => {
-  return db.collection<FllEvent>('fll-events').updateOne(filter, { $set: newFllEvent }, { upsert });
+export const updateFllEvent = (filter: Filter<any>, newFllEvent: Partial<any>, upsert = false) => {
+  return db.collection('fll-events').updateOne(filter, { $set: newFllEvent }, { upsert });
 };
 
-export const addFllEvent = (fllEvent: FllEvent) => {
-  return db.collection<FllEvent>('fll-events').insertOne(fllEvent);
+export const addFllEvent = (fllEvent: any) => {
+  return db.collection('fll-events').insertOne(fllEvent);
 };
 
-export const deleteFllEvent = (filter: Filter<FllEvent>) => {
-  return db.collection<FllEvent>('fll-events').deleteOne(filter);
+export const deleteFllEvent = (filter: Filter<any>) => {
+  return db.collection('fll-events').deleteOne(filter);
 };

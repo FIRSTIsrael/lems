@@ -1,35 +1,30 @@
 import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
-import { RobotGameTable } from '@lems/types';
 
-export const getTable = (filter: Filter<RobotGameTable>) => {
-  return db.collection<RobotGameTable>('tables').findOne(filter);
+export const getTable = (filter: Filter<any>) => {
+  return db.collection<any>('tables').findOne(filter);
 };
 
 export const getDivisionTables = (divisionId: ObjectId) => {
-  return db.collection<RobotGameTable>('tables').find({ divisionId }).toArray();
+  return db.collection<any>('tables').find({ divisionId }).toArray();
 };
 
-export const addTable = (table: RobotGameTable) => {
-  return db.collection<RobotGameTable>('tables').insertOne(table);
+export const addTable = (table: any) => {
+  return db.collection<any>('tables').insertOne(table);
 };
 
-export const addTables = (tables: Array<RobotGameTable>) => {
-  return db.collection<RobotGameTable>('tables').insertMany(tables);
+export const addTables = (tables: Array<any>) => {
+  return db.collection<any>('tables').insertMany(tables);
 };
 
-export const updateTable = (
-  filter: Filter<RobotGameTable>,
-  newTable: Partial<RobotGameTable>,
-  upsert = false
-) => {
-  return db.collection<RobotGameTable>('tables').updateOne(filter, { $set: newTable }, { upsert });
+export const updateTable = (filter: Filter<any>, newTable: Partial<any>, upsert = false) => {
+  return db.collection<any>('tables').updateOne(filter, { $set: newTable }, { upsert });
 };
 
-export const deleteTable = (filter: Filter<RobotGameTable>) => {
-  return db.collection<RobotGameTable>('tables').deleteOne(filter);
+export const deleteTable = (filter: Filter<any>) => {
+  return db.collection<any>('tables').deleteOne(filter);
 };
 
 export const deleteDivisionTables = (divisionId: ObjectId) => {
-  return db.collection<RobotGameTable>('tables').deleteMany({ divisionId });
+  return db.collection<any>('tables').deleteMany({ divisionId });
 };

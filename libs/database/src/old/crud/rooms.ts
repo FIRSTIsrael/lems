@@ -1,35 +1,30 @@
 import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
-import { JudgingRoom } from '@lems/types';
 
-export const getRoom = (filter: Filter<JudgingRoom>) => {
-  return db.collection<JudgingRoom>('rooms').findOne(filter);
+export const getRoom = (filter: Filter<any>) => {
+  return db.collection<any>('rooms').findOne(filter);
 };
 
 export const getDivisionRooms = (divisionId: ObjectId) => {
-  return db.collection<JudgingRoom>('rooms').find({ divisionId }).toArray();
+  return db.collection<any>('rooms').find({ divisionId }).toArray();
 };
 
-export const addRoom = (room: JudgingRoom) => {
-  return db.collection<JudgingRoom>('rooms').insertOne(room);
+export const addRoom = (room: any) => {
+  return db.collection<any>('rooms').insertOne(room);
 };
 
-export const addRooms = (rooms: Array<JudgingRoom>) => {
-  return db.collection<JudgingRoom>('rooms').insertMany(rooms);
+export const addRooms = (rooms: Array<any>) => {
+  return db.collection<any>('rooms').insertMany(rooms);
 };
 
-export const updateRoom = (
-  filter: Filter<JudgingRoom>,
-  newRoom: Partial<JudgingRoom>,
-  upsert = false
-) => {
-  return db.collection<JudgingRoom>('rooms').updateOne(filter, { $set: newRoom }, { upsert });
+export const updateRoom = (filter: Filter<any>, newRoom: Partial<any>, upsert = false) => {
+  return db.collection<any>('rooms').updateOne(filter, { $set: newRoom }, { upsert });
 };
 
-export const deleteRoom = (filter: Filter<JudgingRoom>) => {
-  return db.collection<JudgingRoom>('rooms').deleteOne(filter);
+export const deleteRoom = (filter: Filter<any>) => {
+  return db.collection<any>('rooms').deleteOne(filter);
 };
 
 export const deleteDivisionRooms = (divisionId: ObjectId) => {
-  return db.collection<JudgingRoom>('rooms').deleteMany({ divisionId });
+  return db.collection<any>('rooms').deleteMany({ divisionId });
 };
