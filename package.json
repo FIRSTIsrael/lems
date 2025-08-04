@@ -27,7 +27,7 @@
     "@mui/stylis-plugin-rtl": "^7.2.0",
     "@mui/x-data-grid": "^8.5.3",
     "@mui/x-date-pickers": "^8.7.0",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
