@@ -5,6 +5,7 @@ import { ScoresheetError, SEASON_SCORESHEET, localizedScoresheet } from '@lems/s
 
 export interface Score {
   id: 'score'; // Can support multiple scores in the future
+  season: string;
   missions: Mission[];
   missionErrors: ErrorWithMessage[];
   validatorErrors: ErrorWithMessage[];
@@ -78,7 +79,7 @@ export const useScore = () => {
       });
 
       const currentScore = await db.get('scores', 'score');
-      if (currentScore) setScore(currentScore);
+      if (currentScore && currentScore.season === SEASON_SCORESHEET.season) setScore(currentScore);
       setLoading(false);
     };
 
@@ -91,6 +92,7 @@ export const useScore = () => {
 
     const newScore: Score = {
       id: 'score',
+      season: SEASON_SCORESHEET.season,
       missions,
       points,
       missionErrors,
