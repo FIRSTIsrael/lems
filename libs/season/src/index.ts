@@ -1,4 +1,4 @@
-export * from './lib/data/scoresheet';
+export { scoresheet as SEASON_SCORESHEET } from './lib/data/scoresheet';
 export * from './lib/data/scoresheet-types';
 export * from './lib/rubrics';
 export * from './lib/localization/cv-form/index';
@@ -12,4 +12,3 @@ export * from './lib/localization/scoresheet/general';
 export * from './lib/localization/judging';
 export * from './lib/localization/rubrics';
 export * from './lib/constants';
-export { scoresheet as SEASON_SCORESHEET } from './lib/data/scoresheet';
