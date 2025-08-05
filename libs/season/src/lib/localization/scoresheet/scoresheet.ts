@@ -21,7 +21,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
           labels: ['0', '1', '2']
         },
         {
-          description: 'המברשת של הארכיאולוגים אינה נוגעת מאתר החפירה:'
+          description: 'המברשת של הארכיאולוגים אינה נוגעת באתר החפירה:'
         }
       ]
     },
@@ -30,7 +30,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'חשיפת מפה',
       clauses: [
         {
-          description: 'מספר מקטעי שכבת הקרקר העליונה אשר הוסטו לחלוטין:',
+          description: 'מספר מקטעי שכבת קרקע העליונה אשר הוסטו לחלוטין:',
           labels: ['0', '1', '2', '3']
         }
       ]
@@ -43,7 +43,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
           description: 'עגלת המכרות שלכם נמצאת נמצאת במגרש של הקבוצה השנייה:'
         },
         {
-          description: '**בונוס**: עגלת המכרות של הקבוצ השנייה נמצאת במגרש שלכם:'
+          description: '**בונוס**: עגלת המכרות של הקבוצה השנייה נמצאת במגרש שלכם:'
         }
       ],
       errors: [
