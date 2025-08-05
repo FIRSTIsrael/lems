@@ -129,7 +129,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'לדוג חפצים',
       clauses: [
         { description: 'החפצים מורמים מעל לפני הקרקע:' },
-        { description: '**בונוס:** גדל המנוף התקרב למנוף לפחות חלקית:' }
+        { description: '**בונוס:** דגל המנוף התקרב למנוף לפחות חלקית:' }
       ],
       errors: [
         {
