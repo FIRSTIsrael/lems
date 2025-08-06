@@ -54,6 +54,9 @@
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",
       "import-teams": "ייבוא קבוצות מקובץ CSV",
+      "search": {
+        "placeholder": "חיפוש קבוצות לפי מספר, שם או שיוך..."
+      },
       "list": {
         "columns": {
           "number": "מספר קבוצה",
