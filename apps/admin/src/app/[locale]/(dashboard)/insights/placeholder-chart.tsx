@@ -29,7 +29,11 @@ export default function PlaceholderChart() {
   return (
     <Box sx={{ width: '100%', maxWidth: 750, mx: 'auto', height: 400, mb: 4 }}>
       <ResponsiveContainer width="100%" height="90%">
-        <ComposedChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+        <ComposedChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+          style={{ direction: 'ltr' }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />

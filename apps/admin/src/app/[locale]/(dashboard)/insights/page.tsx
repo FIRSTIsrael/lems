@@ -1,7 +1,10 @@
+import { useTranslations } from 'next-intl';
 import { Container, Paper, Typography } from '@mui/material';
 import PlaceholderChart from './placeholder-chart';
 
 export default function InsightsPage() {
+  const t = useTranslations('pages.insights');
+
   return (
     <Container
       maxWidth="lg"
@@ -21,7 +24,7 @@ export default function InsightsPage() {
         }}
       >
         <Typography variant="h1" align="center" gutterBottom>
-          Coming Soon...
+          {t('coming-soon')}
         </Typography>
         <PlaceholderChart />
       </Paper>

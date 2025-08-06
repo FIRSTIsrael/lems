@@ -50,6 +50,9 @@
         }
       }
     },
+    "insights": {
+      "coming-soon": "בקרוב..."
+    },
     "teams": {
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",

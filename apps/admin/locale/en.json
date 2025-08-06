@@ -50,6 +50,9 @@
         }
       }
     },
+    "insights": {
+      "coming-soon": "Coming soon..."
+    },
     "teams": {
       "title": "Teams",
       "create-new-team": "Create New Team",
