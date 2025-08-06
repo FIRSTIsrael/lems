@@ -49,6 +49,9 @@
           "submitting": "Creating season..."
         }
       }
+    },
+    "insights": {
+      "coming-soon": "Coming soon..."
     }
   },
   "layouts": {
