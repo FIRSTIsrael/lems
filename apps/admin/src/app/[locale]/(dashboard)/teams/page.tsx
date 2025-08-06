@@ -3,6 +3,7 @@ import { Typography, Box } from '@mui/material';
 import { AdminTeamsResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../lib/fetch';
 import { CreateTeamButton } from './components/create-team-button';
+import { TeamsDataGrid } from './components/teams-data-grid';
 
 export default async function TeamsPage() {
   const t = await getTranslations('pages.teams');
@@ -23,7 +24,7 @@ export default async function TeamsPage() {
         </Typography>
         <CreateTeamButton />
       </Box>
-      {teams.map(team => JSON.stringify(team))}
+      <TeamsDataGrid teams={teams} />
     </>
   );
 }

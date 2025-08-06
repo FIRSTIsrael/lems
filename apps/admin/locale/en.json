@@ -53,6 +53,14 @@
     "teams": {
       "title": "Teams",
       "create-new-team": "Create New Team",
+      "list": {
+        "columns": {
+          "number": "Team #",
+          "name": "Team Name",
+          "affiliation": "Affiliation",
+          "actions": "Actions"
+        }
+      },
       "creation-dialog": {
         "title": "Create Team",
         "actions": {

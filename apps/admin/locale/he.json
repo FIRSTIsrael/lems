@@ -53,6 +53,14 @@
     "teams": {
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",
+      "list": {
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם הקבוצה",
+          "affiliation": "שיוך",
+          "actions": "פעולות"
+        }
+      },
       "creation-dialog": {
         "title": "יצירת קבוצה",
         "actions": {

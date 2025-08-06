@@ -119,7 +119,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <DialogProvider>
       <Box sx={{ display: 'flex' }}>
         <AppBar width={drawerWidth} permissions={permissions} />
-        <Box component="main" sx={{ flexGrow: 1, pl: 3, pt: 2 }}>
+        <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
           {children}
         </Box>
       </Box>
