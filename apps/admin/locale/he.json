@@ -53,6 +53,7 @@
     "teams": {
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",
+      "import-teams": "ייבוא קבוצות מקובץ CSV",
       "list": {
         "columns": {
           "number": "מספר קבוצה",

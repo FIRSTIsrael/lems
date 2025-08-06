@@ -1,9 +1,10 @@
 import { getTranslations } from 'next-intl/server';
-import { Typography, Box } from '@mui/material';
+import { Typography, Stack } from '@mui/material';
 import { AdminTeamsResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../lib/fetch';
 import { CreateTeamButton } from './components/create-team-button';
 import { TeamsDataGrid } from './components/teams-data-grid';
+import { ImportTeamButton } from './components/import-team-button';
 
 export default async function TeamsPage() {
   const t = await getTranslations('pages.teams');
@@ -18,12 +19,13 @@ export default async function TeamsPage() {
 
   return (
     <>
-      <Box display="flex" alignItems="center" gap={2} mb={3}>
+      <Stack direction="row" alignItems="center" gap={2} mb={3}>
         <Typography variant="h1" gutterBottom sx={{ mb: 0 }}>
           {t('title')}
         </Typography>
         <CreateTeamButton />
-      </Box>
+        <ImportTeamButton />
+      </Stack>
       <TeamsDataGrid teams={teams} />
     </>
   );

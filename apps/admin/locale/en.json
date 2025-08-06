@@ -53,6 +53,7 @@
     "teams": {
       "title": "Teams",
       "create-new-team": "Create New Team",
+      "import-teams": "Import from CSV file",
       "list": {
         "columns": {
           "number": "Team #",
