@@ -18,11 +18,6 @@ class TeamSelector {
     private selector: TeamSelectorType
   ) {}
 
-  private getTeamQuery() {
-    const query = this.db.selectFrom('teams').selectAll();
-    return query.where(this.selector.type, '=', this.selector.value);
-  }
-
   private getTeamWithAffiliationQuery() {
     const query = this.db
       .selectFrom('teams')

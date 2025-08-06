@@ -15,6 +15,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('name', 'text', col => col.notNull())
     .addColumn('city', 'text', col => col.notNull())
     .addColumn('coordinates', sql`point`) // PostGIS point type for lat/long
+    .addColumn('logo_url', 'text')
     .execute();
 
   // Create the teams table

@@ -4,7 +4,14 @@ export const AdminTeamResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   number: z.number(),
-  logoUrl: z.string().nullable()
+  logoUrl: z.string().nullable(),
+  affiliation: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      city: z.string()
+    })
+    .nullable()
 });
 
 export type AdminTeamResponse = z.infer<typeof AdminTeamResponseSchema>;
