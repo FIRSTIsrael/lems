@@ -24,7 +24,7 @@ router.post('/', fileUpload(), async (req: AdminRequest, res) => {
     const affiliation = await db.teamAffiliations.create({
       name: affiliationName,
       city: affiliationCity,
-      coordinates: null
+      coordinates: null //TODO: Add support for coordinates on team creation
     });
 
     let team = await db.teams.create({

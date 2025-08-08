@@ -5,8 +5,8 @@ import {
   validatePassword,
   validateUsername
 } from '../../../lib/security/credentials';
-import { makeAdminUserResponse } from './util';
 import { AdminRequest } from '../../../types/express';
+import { makeAdminUserResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
