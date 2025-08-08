@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
-import dayjs, { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import {
   DialogTitle,
@@ -14,25 +13,24 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { FileUpload, FormikTextField } from '@lems/shared';
-import { AdminSeasonResponseSchema } from '@lems/types/api/admin';
+import { AdminTeamResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../lib/fetch';
 import { DialogComponentProps } from '../../dialog-provider';
 
-interface SeasonFormValues {
-  slug: string;
+interface TeamFormValues {
   name: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
+  number: string;
+  affiliationName: string;
+  affiliationCity: string;
 }
 
-interface SeasonFormErrors {
-  slug?: string;
+interface TeamFormErrors {
   name?: string;
-  startDate?: string;
-  endDate?: string;
+  number?: string;
+  affiliationName?: string;
+  affiliationCity?: string;
 }
 
 interface CreationFormProps {
@@ -40,76 +38,81 @@ interface CreationFormProps {
 }
 
 const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
-  const t = useTranslations('pages.seasons.creation-dialog.form');
+  const t = useTranslations('pages.teams.creation-dialog.form');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const initialValues: SeasonFormValues = {
-    slug: '',
+  const initialValues: TeamFormValues = {
     name: '',
-    startDate: dayjs().startOf('year'),
-    endDate: dayjs().endOf('year')
+    number: '',
+    affiliationName: '',
+    affiliationCity: ''
   };
 
-  const validateForm = (values: SeasonFormValues): SeasonFormErrors => {
-    const errors: SeasonFormErrors = {};
-
-    if (!values.slug?.trim()) {
-      errors.slug = 'slug-required';
-    } else if (!/^[a-z0-9-]+$/.test(values.slug)) {
-      errors.slug = 'slug-invalid';
-    }
+  const validateForm = (values: TeamFormValues): TeamFormErrors => {
+    const errors: TeamFormErrors = {};
 
     if (!values.name?.trim()) {
       errors.name = 'name-required';
     }
 
-    if (!values.startDate) {
-      errors.startDate = 'start-date-required';
+    if (!values.number?.trim()) {
+      errors.number = 'number-required';
+    } else if (!/^\d+$/.test(values.number)) {
+      errors.number = 'number-invalid';
     }
 
-    if (!values.endDate) {
-      errors.endDate = 'end-date-required';
+    if (!values.affiliationName?.trim()) {
+      errors.affiliationName = 'affiliation-name-required';
     }
 
-    if (values.startDate && values.endDate && values.startDate.isAfter(values.endDate)) {
-      errors.endDate = 'end-date-invalid';
+    if (!values.affiliationCity?.trim()) {
+      errors.affiliationCity = 'affiliation-city-required';
     }
 
     return errors;
   };
 
   const handleSubmit = async (
-    values: SeasonFormValues,
-    { setSubmitting, setStatus }: FormikHelpers<SeasonFormValues>
+    values: TeamFormValues,
+    { setSubmitting, setStatus }: FormikHelpers<TeamFormValues>
   ) => {
     setSubmitting(true);
     setStatus(null);
 
     try {
       const formData = new FormData();
-      formData.append('slug', values.slug);
       formData.append('name', values.name);
-      formData.append('startDate', values.startDate!.toISOString());
-      formData.append('endDate', values.endDate!.toISOString());
+      formData.append('number', values.number);
+      formData.append('affiliationName', values.affiliationName);
+      formData.append('affiliationCity', values.affiliationCity);
 
       if (selectedFile) {
         formData.append('logo', selectedFile);
       }
 
       const result = await apiFetch(
-        '/admin/seasons',
+        '/admin/teams',
         {
           method: 'POST',
           body: formData
         },
-        AdminSeasonResponseSchema
+        AdminTeamResponseSchema
       );
 
       if (result.ok) {
         setSelectedFile(null);
         onSuccess?.();
       } else {
-        throw new Error();
+        if (result.status === 400) {
+          const errorData = await result.response.json();
+          if (errorData.error?.includes('number already exists')) {
+            setStatus('number-exists');
+          } else {
+            setStatus('error');
+          }
+        } else {
+          throw new Error();
+        }
       }
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'error');
@@ -121,19 +124,9 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
       <Formik initialValues={initialValues} validate={validateForm} onSubmit={handleSubmit}>
-        {({ values, errors, touched, setFieldValue, status, isSubmitting }) => (
+        {({ errors, touched, status, isSubmitting }) => (
           <Form>
             <Stack spacing={3}>
-              <FormikTextField
-                name="slug"
-                label={t('fields.slug.label')}
-                error={touched.slug && !!errors.slug}
-                helperText={touched.slug && errors.slug ? t(`errors.${errors.slug}`) : undefined}
-                placeholder={t('fields.slug.placeholder')}
-                fullWidth
-                disabled={isSubmitting}
-              />
-
               <FormikTextField
                 name="name"
                 label={t('fields.name.label')}
@@ -144,45 +137,51 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 disabled={isSubmitting}
               />
 
+              <FormikTextField
+                name="number"
+                label={t('fields.number.label')}
+                error={touched.number && !!errors.number}
+                helperText={
+                  touched.number && errors.number ? t(`errors.${errors.number}`) : undefined
+                }
+                placeholder={t('fields.number.placeholder')}
+                fullWidth
+                disabled={isSubmitting}
+              />
+
               <Stack direction="row" spacing={2}>
-                <DatePicker
-                  label={t('fields.start-date.label')}
-                  value={values.startDate}
-                  onChange={newDate => setFieldValue('startDate', newDate)}
-                  slotProps={{
-                    textField: {
-                      error: touched.startDate && !!errors.startDate,
-                      helperText:
-                        touched.startDate && errors.startDate
-                          ? t(`errors.${errors.startDate}`)
-                          : undefined,
-                      fullWidth: true,
-                      disabled: isSubmitting
-                    }
-                  }}
+                <FormikTextField
+                  name="affiliationName"
+                  label={t('fields.affiliation-name.label')}
+                  error={touched.affiliationName && !!errors.affiliationName}
+                  helperText={
+                    touched.affiliationName && errors.affiliationName
+                      ? t(`errors.${errors.affiliationName}`)
+                      : undefined
+                  }
+                  placeholder={t('fields.affiliation-name.placeholder')}
+                  fullWidth
+                  disabled={isSubmitting}
                 />
 
-                <DatePicker
-                  label={t('fields.end-date.label')}
-                  value={values.endDate}
-                  onChange={newDate => setFieldValue('endDate', newDate)}
-                  slotProps={{
-                    textField: {
-                      error: touched.endDate && !!errors.endDate,
-                      helperText:
-                        touched.endDate && errors.endDate
-                          ? t(`errors.${errors.endDate}`)
-                          : undefined,
-                      fullWidth: true,
-                      disabled: isSubmitting
-                    }
-                  }}
+                <FormikTextField
+                  name="affiliationCity"
+                  label={t('fields.affiliation-city.label')}
+                  error={touched.affiliationCity && !!errors.affiliationCity}
+                  helperText={
+                    touched.affiliationCity && errors.affiliationCity
+                      ? t(`errors.${errors.affiliationCity}`)
+                      : undefined
+                  }
+                  placeholder={t('fields.affiliation-city.placeholder')}
+                  fullWidth
+                  disabled={isSubmitting}
                 />
               </Stack>
 
               <FileUpload
                 label={t('fields.logo.label')}
-                accept=".svg,image/svg+xml"
+                accept=".jpg,.jpeg,.png,.svg,image/*"
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
                 description={t('fields.logo.description')}
@@ -211,8 +210,8 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
   );
 };
 
-export const CreateSeasonDialog: React.FC<DialogComponentProps> = ({ close }) => {
-  const t = useTranslations('pages.seasons.creation-dialog');
+export const CreateTeamDialog: React.FC<DialogComponentProps> = ({ close }) => {
+  const t = useTranslations('pages.teams.creation-dialog');
 
   return (
     <>

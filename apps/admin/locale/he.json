@@ -52,6 +52,55 @@
     },
     "insights": {
       "coming-soon": "בקרוב..."
+    },
+    "teams": {
+      "title": "קבוצות",
+      "create-new-team": "יצירת קבוצה חדשה",
+      "import-teams": "ייבוא קבוצות מקובץ CSV",
+      "search": {
+        "placeholder": "חיפוש קבוצות לפי מספר, שם או שיוך..."
+      },
+      "list": {
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם הקבוצה",
+          "affiliation": "שיוך",
+          "actions": "פעולות"
+        }
+      },
+      "creation-dialog": {
+        "title": "יצירת קבוצה",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "fields": {
+            "name": { "label": "שם הקבוצה", "placeholder": "למשל, אבירי הברזל" },
+            "number": { "label": "מספר הקבוצה", "placeholder": "למשל, 1234" },
+            "affiliation-name": {
+              "label": "בית ספר/ארגון",
+              "placeholder": "למשל, בית ספר יצחק שדה"
+            },
+            "affiliation-city": { "label": "עיר", "placeholder": "למשל, תל אביב" },
+            "logo": {
+              "label": "לוגו הקבוצה",
+              "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
+              "placeholder": "מקבל קבצי תמונה"
+            }
+          },
+          "errors": {
+            "name-required": "שדה שם הקבוצה נדרש.",
+            "number-required": "שדה מספר הקבוצה נדרש.",
+            "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
+            "number-exists": "מספר קבוצה זה כבר קיים.",
+            "affiliation-name-required": "שדה שם בית הספר/ארגון נדרש.",
+            "affiliation-city-required": "שדה עיר נדרש.",
+            "error": "שגיאה התרחשה בעת יצירת הקבוצה."
+          },
+          "submit": "יצירת קבוצה",
+          "submitting": "יוצר קבוצה..."
+        }
+      }
     }
   },
   "layouts": {

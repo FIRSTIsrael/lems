@@ -52,6 +52,55 @@
     },
     "insights": {
       "coming-soon": "Coming soon..."
+    },
+    "teams": {
+      "title": "Teams",
+      "create-new-team": "Create New Team",
+      "import-teams": "Import from CSV file",
+      "search": {
+        "placeholder": "Search teams by number, name, or affiliation..."
+      },
+      "list": {
+        "columns": {
+          "number": "Team #",
+          "name": "Team Name",
+          "affiliation": "Affiliation",
+          "actions": "Actions"
+        }
+      },
+      "creation-dialog": {
+        "title": "Create Team",
+        "actions": {
+          "cancel": "Cancel"
+        },
+        "form": {
+          "fields": {
+            "name": { "label": "Team Name", "placeholder": "e.g., Iron Patriots" },
+            "number": { "label": "Team Number", "placeholder": "e.g., 1234" },
+            "affiliation-name": {
+              "label": "School/Organization",
+              "placeholder": "e.g., Lincoln Elementary"
+            },
+            "affiliation-city": { "label": "City", "placeholder": "e.g., New York" },
+            "logo": {
+              "label": "Team Logo",
+              "description": "Upload a team logo (JPG, PNG, or SVG)",
+              "placeholder": "Accepts image files"
+            }
+          },
+          "errors": {
+            "name-required": "Team name is required.",
+            "number-required": "Team number is required.",
+            "number-invalid": "Team number must be a valid number.",
+            "number-exists": "This team number already exists.",
+            "affiliation-name-required": "School/Organization name is required.",
+            "affiliation-city-required": "City is required.",
+            "error": "An error occurred while creating the team."
+          },
+          "submit": "Create Team",
+          "submitting": "Creating team..."
+        }
+      }
     }
   },
   "layouts": {

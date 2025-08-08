@@ -1,7 +1,7 @@
-import { Pool } from 'pg';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { Pool } from 'pg';
 import { Kysely, Migrator, PostgresDialect, MigrationProvider, Migration } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 

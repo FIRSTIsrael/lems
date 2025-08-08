@@ -12,12 +12,7 @@ class SeasonSelector {
 
   private getSeasonQuery() {
     const query = this.db.selectFrom('seasons').selectAll();
-
-    if (this.selector.type === 'id') {
-      return query.where('id', '=', this.selector.value);
-    } else {
-      return query.where('slug', '=', this.selector.value);
-    }
+    return query.where(this.selector.type, '=', this.selector.value);
   }
 
   async get(): Promise<Season | null> {

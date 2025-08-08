@@ -11,12 +11,7 @@ class AdminSelector {
 
   private getAdminQuery() {
     const query = this.db.selectFrom('admins').selectAll();
-
-    if (this.selector.type === 'id') {
-      return query.where('id', '=', this.selector.value);
-    } else {
-      return query.where('username', '=', this.selector.value);
-    }
+    return query.where(this.selector.type, '=', this.selector.value);
   }
 
   private getAdminIdQuery() {
@@ -74,12 +69,6 @@ class AdminSelector {
       .where('admin_id', '=', this.getAdminIdQuery())
       .execute();
     return permissions.map(p => p.permission);
-  }
-
-  async getEvents(): Promise<unknown[]> {
-    // Placeholder implementation for future events functionality
-    // TODO: Implement when events relationship is established
-    return [];
   }
 
   async updateLastLogin(): Promise<void> {
