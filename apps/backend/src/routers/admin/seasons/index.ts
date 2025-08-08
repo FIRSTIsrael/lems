@@ -1,50 +1,56 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import db from '../../../lib/database';
+import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminSeasonResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', fileUpload(), async (req: AdminRequest, res) => {
-  const { slug, name, startDate, endDate } = req.body;
+router.post(
+  '/',
+  requirePermission('MANAGE_SEASONS'),
+  fileUpload(),
+  async (req: AdminRequest, res) => {
+    const { slug, name, startDate, endDate } = req.body;
 
-  if (!slug || !name || !startDate || !endDate) {
-    res.status(400).json({ error: 'All fields are required' });
-    return;
-  }
-
-  // Create the season first
-  let season = await db.seasons.create({
-    slug,
-    name,
-    start_date: startDate,
-    end_date: endDate,
-    logo_url: null
-  });
-
-  if (req.files && req.files.logo) {
-    const logoFile = req.files.logo as fileUpload.UploadedFile;
-
-    if (!logoFile.mimetype?.startsWith('image/svg') || !logoFile.name.endsWith('.svg')) {
-      res.status(400).json({ error: 'Logo must be an SVG file' });
+    if (!slug || !name || !startDate || !endDate) {
+      res.status(400).json({ error: 'All fields are required' });
       return;
     }
 
-    try {
-      const updatedSeason = await db.seasons.byId(season.id).updateLogo(logoFile.data);
-      if (updatedSeason) {
-        season = updatedSeason;
+    // Create the season first
+    let season = await db.seasons.create({
+      slug,
+      name,
+      start_date: startDate,
+      end_date: endDate,
+      logo_url: null
+    });
+
+    if (req.files && req.files.logo) {
+      const logoFile = req.files.logo as fileUpload.UploadedFile;
+
+      if (!logoFile.mimetype?.startsWith('image/svg') || !logoFile.name.endsWith('.svg')) {
+        res.status(400).json({ error: 'Logo must be an SVG file' });
+        return;
       }
-    } catch (error) {
-      console.error('Error uploading logo:', error);
-      res.status(500).json({ error: 'Failed to upload logo' });
-      return;
-    }
-  }
 
-  res.status(201).json(makeAdminSeasonResponse(season));
-});
+      try {
+        const updatedSeason = await db.seasons.byId(season.id).updateLogo(logoFile.data);
+        if (updatedSeason) {
+          season = updatedSeason;
+        }
+      } catch (error) {
+        console.error('Error uploading logo:', error);
+        res.status(500).json({ error: 'Failed to upload logo' });
+        return;
+      }
+    }
+
+    res.status(201).json(makeAdminSeasonResponse(season));
+  }
+);
 
 router.get('/', async (req: AdminRequest, res) => {
   const seasons = await db.seasons.getAll();
