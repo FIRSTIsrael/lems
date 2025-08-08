@@ -121,7 +121,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
       <Formik initialValues={initialValues} validate={validateForm} onSubmit={handleSubmit}>
-        {({ values, errors, touched, setFieldValue, isValid, status, isSubmitting }) => (
+        {({ values, errors, touched, setFieldValue, status, isSubmitting }) => (
           <Form>
             <Stack spacing={3}>
               <FormikTextField
