@@ -21,6 +21,7 @@ import { PermissionType } from '@lems/database';
 import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../lib/fetch';
 import { DialogProvider } from './dialog-provider';
+import { PermissionGuard } from './components/permission-guard';
 
 type Navigator = {
   [key in PermissionType]?: {
@@ -123,13 +124,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: permissions } = result;
 
   return (
-    <DialogProvider>
-      <Box sx={{ display: 'flex' }}>
-        <AppBar width={drawerWidth} permissions={permissions} />
-        <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
-          {children}
+    <PermissionGuard permissions={permissions}>
+      <DialogProvider>
+        <Box sx={{ display: 'flex' }}>
+          <AppBar width={drawerWidth} permissions={permissions} />
+          <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
+            {children}
+          </Box>
         </Box>
-      </Box>
-    </DialogProvider>
+      </DialogProvider>
+    </PermissionGuard>
   );
 }
