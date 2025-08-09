@@ -20,7 +20,7 @@ import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../lib/fetch';
-import { DialogProvider } from './dialog-provider';
+import { DialogProvider } from './components/dialog-provider';
 import { PermissionGuard } from './components/permission-guard';
 
 type Navigator = {

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Button, Grid, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { useDialog } from '../../dialog-provider';
+import { useDialog } from '../../components/dialog-provider';
 import { CreateSeasonDialog } from './create-season-dialog';
 
 export const CreateSeasonCard = () => {
