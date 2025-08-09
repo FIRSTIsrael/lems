@@ -6,7 +6,7 @@ export const AdminUserResponseSchema = z.object({
   username: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  createdAt: z.date()
+  createdAt: z.iso.datetime()
 });
 
 export type AdminUserResponse = z.infer<typeof AdminUserResponseSchema>;

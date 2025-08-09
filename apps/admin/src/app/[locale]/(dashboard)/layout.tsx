@@ -18,10 +18,15 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
-import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin';
+import {
+  AdminUserPermissionsResponseSchema,
+  AdminUserResponse,
+  AdminUserResponseSchema
+} from '@lems/types/api/admin';
 import { apiFetch } from '../../../lib/fetch';
 import { DialogProvider } from './components/dialog-provider';
 import { PermissionGuard } from './components/permission-guard';
+import { UserMenu } from './components/user-menu';
 
 type Navigator = {
   [key in PermissionType]?: {
@@ -62,9 +67,10 @@ const navigator: Navigator = {
 interface AppBarProps {
   width: number;
   permissions: PermissionType[];
+  user: AdminUserResponse;
 }
 
-const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
+const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
   const t = useTranslations('layouts.dashboard');
 
   return (
@@ -74,7 +80,9 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
         flexShrink: 0,
         '& .MuiDrawer-paper': {
           width,
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column'
         }
       }}
       variant="permanent"
@@ -88,7 +96,7 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
         </Box>
       </Toolbar>
       <Divider />
-      <List>
+      <List sx={{ flexGrow: 1 }}>
         {Object.keys(navigator).map(permissionKey => {
           const permission = permissionKey as PermissionType;
           if (!permissions.includes(permission)) return null;
@@ -108,29 +116,40 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
           );
         })}
       </List>
+      <Divider />
+      <Box sx={{ p: 2 }}>
+        <UserMenu user={user} />
+      </Box>
     </Drawer>
   );
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const drawerWidth = 240;
-  const result = await apiFetch(
-    '/admin/users/permissions/me',
-    undefined,
-    AdminUserPermissionsResponseSchema
-  );
 
-  if (!result.ok) {
-    throw new Error(`Failed to fetch user permissions: ${result.status} ${result.statusText}`);
+  const [permissionsResult, userResult] = await Promise.all([
+    apiFetch('/admin/users/permissions/me', undefined, AdminUserPermissionsResponseSchema),
+    apiFetch('/admin/users/me', undefined, AdminUserResponseSchema)
+  ]);
+
+  if (!permissionsResult.ok) {
+    throw new Error(
+      `Failed to fetch user permissions: ${permissionsResult.status} ${permissionsResult.statusText}`
+    );
   }
 
-  const { data: permissions } = result;
+  if (!userResult.ok) {
+    throw new Error(`Failed to fetch user data: ${userResult.status} ${userResult.statusText}`);
+  }
+
+  const { data: permissions } = permissionsResult;
+  const { data: user } = userResult;
 
   return (
     <PermissionGuard permissions={permissions}>
       <DialogProvider>
         <Box sx={{ display: 'flex' }}>
-          <AppBar width={drawerWidth} permissions={permissions} />
+          <AppBar width={drawerWidth} permissions={permissions} user={user} />
           <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
             {children}
           </Box>

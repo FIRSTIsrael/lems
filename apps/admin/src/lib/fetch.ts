@@ -92,7 +92,7 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
 ): Promise<ApiResult<TSchema, true> | ApiResult> {
   const isServer = typeof window === 'undefined';
 
-  let fetchOptions: RequestInit = {
+  const fetchOptions: RequestInit = {
     cache: 'no-cache', // Disable caching by default
     ...init
   };
@@ -155,7 +155,7 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
     if (error instanceof Error && error.name !== 'ApiFetchError') {
       throw new ApiFetchError(
         `Network error: ${error.message}`,
-        new Response(null, { status: 0, statusText: 'Network Error' })
+        new Response(null, { status: 500, statusText: 'Network Error' })
       );
     }
     throw error;
