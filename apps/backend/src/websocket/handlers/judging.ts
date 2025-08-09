@@ -452,8 +452,8 @@ export const handleDisqualifyTeam = async (
       (acc, [awardName, picklist]) => {
         const _picklist = picklist as unknown as Array<string>;
         acc[awardName as AwardNames] = _picklist.includes(teamId)
-          ? picklist.filter(id => String(id) !== teamId)
-          : [...picklist];
+          ? (picklist as Array<any>).filter(id => String(id) !== teamId)
+          : [...(picklist as Array<any>)];
         return acc;
       },
       {} as { [key in AwardNames]: Array<ObjectId> }

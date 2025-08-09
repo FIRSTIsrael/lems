@@ -1,0 +1,168 @@
+{
+  "pages": {
+    "404": {
+      "title": "הדף אליו נכנסתם לא נמצא",
+      "subtitle": "שגיאה 404"
+    },
+    "login": {
+      "title": "התחברות למערכת",
+      "username": "שם משתמש",
+      "password": "סיסמה",
+      "logging-in": "מתחבר...",
+      "login": "התחברות",
+      "form-status": {
+        "server-error": "משהו השתבש, אנא נסו שנית.",
+        "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
+        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
+      }
+    },
+    "seasons": {
+      "title": "עונות",
+      "create-new-season": "יצירת עונה חדשה",
+      "creation-dialog": {
+        "title": "יצירת עונה",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "fields": {
+            "slug": {
+              "label": "מזהה",
+              "placeholder": "למשל, submerged"
+            },
+            "name": {
+              "label": "שם",
+              "placeholder": "למשל, SUBMERGED 2024-2025"
+            },
+            "start-date": {
+              "label": "תאריך התחלה"
+            },
+            "end-date": {
+              "label": "תאריך סיום"
+            },
+            "logo": {
+              "label": "לוגו",
+              "description": "העלאת לוגו בפורמט SVG",
+              "placeholder": "מקבל קבצים בפורמט SVG"
+            }
+          },
+          "errors": {
+            "slug-required": "שדה מזהה נדרש",
+            "slug-invalid": "שדה מזהה חייב להכיל רק אותיות קטנות, מספרים ומקפים.",
+            "name-required": "שדה שם נדרש.",
+            "start-date-required": "שדה תאריך התחלה נדרש.",
+            "end-date-required": "שדה תאריך סיום נדרש.",
+            "end-date-invalid": "תאריך הסיום חייב להיות אחרי תאריך ההתחלה.",
+            "error": "שגיאה התרחשה בעת יצירת העונה."
+          },
+          "submit": "יצירת עונה",
+          "submitting": "יוצר עונה..."
+        }
+      }
+    },
+    "insights": {
+      "coming-soon": "בקרוב..."
+    },
+    "teams": {
+      "title": "קבוצות",
+      "create-new-team": "יצירת קבוצה חדשה",
+      "import-teams": "ייבוא קבוצות מקובץ CSV",
+      "search": {
+        "placeholder": "חיפוש קבוצות לפי מספר, שם או שיוך..."
+      },
+      "list": {
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם הקבוצה",
+          "affiliation": "שיוך",
+          "actions": "פעולות"
+        }
+      },
+      "creation-dialog": {
+        "title": "יצירת קבוצה",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "fields": {
+            "name": {
+              "label": "שם הקבוצה",
+              "placeholder": "למשל, אבירי הברזל"
+            },
+            "number": {
+              "label": "מספר הקבוצה",
+              "placeholder": "למשל, 1234"
+            },
+            "affiliation-name": {
+              "label": "בית ספר/ארגון",
+              "placeholder": "למשל, בית ספר יצחק שדה"
+            },
+            "affiliation-city": {
+              "label": "עיר",
+              "placeholder": "למשל, תל אביב"
+            },
+            "logo": {
+              "label": "לוגו הקבוצה",
+              "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
+              "placeholder": "מקבל קבצי תמונה"
+            }
+          },
+          "errors": {
+            "name-required": "שדה שם הקבוצה נדרש.",
+            "number-required": "שדה מספר הקבוצה נדרש.",
+            "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
+            "number-exists": "מספר קבוצה זה כבר קיים.",
+            "affiliation-name-required": "שדה שם בית הספר/ארגון נדרש.",
+            "affiliation-city-required": "שדה עיר נדרש.",
+            "error": "שגיאה התרחשה בעת יצירת הקבוצה."
+          },
+          "submit": "יצירת קבוצה",
+          "submitting": "יוצר קבוצה..."
+        }
+      }
+    },
+    "index": {
+      "title": "ממשק ניהול",
+      "alerts": {
+        "no-permissions": "לא הקצו לך הרשאות. יש ליצור קשר עם מנהל המערכת."
+      },
+      "widgets": {
+        "current-season": {
+          "current-season": "עונה נוכחית",
+          "days-left": "{count, plural, =1 {יום אחד נותר} other {# ימים נותרו}}",
+          "ends-today": "מסתיימת היום",
+          "ended": "{count, plural, =1 {הסתיימה לפני יום אחד} other {הסתיימה לפני # ימים}}",
+          "error": "שגיאה בטעינת העונה",
+          "error-description": "לא הצלחנו לקבל מידע על העונה הנוכחית"
+        },
+        "registered-teams": {
+          "description": "קבוצות רשומות"
+        },
+        "upcoming-events": {
+          "title": "אירועים קרובים",
+          "no-events": "אין אירועים קרובים"
+        }
+      }
+    },
+    "events": {
+      "title": "אירועים"
+    },
+    "users": {
+      "title": "משתמשים"
+    }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "עונות",
+        "users": "משתמשים",
+        "events": "אירועים",
+        "teams": "קבוצות",
+        "insights": "תובנות"
+      },
+      "user-menu": {
+        "logout": "התנתקות"
+      }
+    }
+  }
+}

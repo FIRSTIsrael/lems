@@ -15,7 +15,7 @@ import {
 import Grid, { GridProps } from '@mui/material/Grid';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PortalEvent } from '@lems/types';
-import ChevronEndIcon from '../icons/chevron-end';
+import { ChevronEndIcon } from '@lems/localization';
 
 interface EventDescriptionProps extends GridProps {
   event: PortalEvent;
@@ -83,7 +83,7 @@ const EventLink: React.FC<EventLinkProps> = ({ event, includeDate = false }) => 
           '& .MuiButton-endIcon svg': { fontSize: 24 },
           borderRadius: 3
         }}
-        endIcon={<ChevronEndIcon sxProps={{ position: 'relative' }} />}
+        endIcon={<ChevronEndIcon sx={{ position: 'relative' }} />}
         fullWidth
         size="small"
         LinkComponent={Link}

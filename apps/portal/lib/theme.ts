@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import PortalLocales, { Locales } from '../locale/locales';
+import { Locales, Locale } from '@lems/localization';
 
 export const baseTheme = createTheme({
   palette: {
@@ -45,7 +45,7 @@ export const baseTheme = createTheme({
   }
 });
 
-export const getLocalizedTheme = (locale: Locales = 'he') => {
-  const { direction, muiLocale, xDataGridLocale } = PortalLocales[locale];
+export const getLocalizedTheme = (locale: Locale = 'he') => {
+  const { direction, muiLocale, xDataGridLocale } = Locales[locale];
   return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale);
 };

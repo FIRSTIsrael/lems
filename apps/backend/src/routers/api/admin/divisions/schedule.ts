@@ -1,17 +1,16 @@
 import express, { Request, Response } from 'express';
+import dayjs from 'dayjs';
 import { ObjectId } from 'mongodb';
 import fileUpload from 'express-fileupload';
-
 import * as db from '@lems/database';
-import { parseDivisionData, parseSessionsAndMatches } from '../../../../lib/schedule/parser';
-import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 import {
   JUDGING_SESSION_LENGTH,
   MATCH_LENGTH,
   ScheduleGenerationSettings,
   SchedulerRequest
 } from '@lems/types';
-import dayjs from 'dayjs';
+import { parseDivisionData, parseSessionsAndMatches } from '../../../../lib/schedule/parser';
+import { cleanDivisionData } from '../../../../lib/schedule/cleaner';
 import { initializeDivision } from '../../../../lib/schedule/initializer';
 
 const router = express.Router({ mergeParams: true });
@@ -30,7 +29,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     const timezone = req.body.timezone;
     const csvData = (req.files.file as fileUpload.UploadedFile)?.data.toString();
 
-    const { teams, tables, rooms } = parseDivisionData(division, csvData);
+    const { teams, tables, rooms } = parseDivisionData(division as any, csvData);
 
     console.log('📄 Inserting teams, tables, and rooms');
 
@@ -47,7 +46,7 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
     const { matches, sessions } = parseSessionsAndMatches(
       csvData,
       event,
-      division,
+      division as any,
       dbTeams,
       dbTables,
       dbRooms,
@@ -60,13 +59,13 @@ router.post('/parse', fileUpload(), async (req: Request, res: Response) => {
 
     console.log('✅ Finished parsing schedule!');
 
-    await initializeDivision(division, event);
+    await initializeDivision(division as any, event);
 
     res.status(200).json({ ok: true });
   } catch (error) {
     console.log('❌ Error parsing schedule');
     console.log(error);
-    await cleanDivisionData(division);
+    await cleanDivisionData(division as any);
     console.log('✅ Deleted division data!');
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
   }
@@ -167,14 +166,14 @@ router.post('/generate', withScheduleRequest, async (req: Request, res: Response
     }).then(res => {
       if (!res.ok) throw new Error('Scheduler failed to run');
     });
-    await initializeDivision(division, event);
+    await initializeDivision(division as any, event);
 
     res.json({ ok: true });
   } catch (error) {
     console.log('❌ Error generating schedule');
     console.debug(error);
     const division = await db.getDivision({ _id: new ObjectId(req.params.divisionId) });
-    await cleanDivisionData(division, true);
+    await cleanDivisionData(division as any, true);
     console.log('✅ Deleted division data!');
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
   }

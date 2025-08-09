@@ -26,7 +26,7 @@ import {
 } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
-import { useTime } from '../../hooks/use-time';
+import { useTime } from '../../hooks/time/use-time';
 
 interface HeadQueuerFieldScheduleProps {
   divisionId: ObjectId;
