@@ -37,25 +37,25 @@ const navigator: Navigator = {
     label: 'seasons',
     route: 'seasons'
   },
-  MANAGE_USERS: {
-    icon: <PersonOutlinedIcon />,
-    label: 'users',
-    route: 'users'
+  MANAGE_TEAMS: {
+    icon: <GroupOutlinedIcon />,
+    label: 'teams',
+    route: 'teams'
   },
   MANAGE_EVENTS: {
     icon: <EmojiEventsOutlinedIcon />,
     label: 'events',
     route: 'events'
   },
-  MANAGE_TEAMS: {
-    icon: <GroupOutlinedIcon />,
-    label: 'teams',
-    route: 'teams'
-  },
   VIEW_INSIGHTS: {
     icon: <InsightsOutlinedIcon />,
     label: 'insights',
     route: 'insights'
+  },
+  MANAGE_USERS: {
+    icon: <PersonOutlinedIcon />,
+    label: 'users',
+    route: 'users'
   }
 };
 
@@ -89,7 +89,10 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
       </Toolbar>
       <Divider />
       <List>
-        {permissions.map(permission => {
+        {Object.keys(navigator).map(permissionKey => {
+          const permission = permissionKey as PermissionType;
+          if (!permissions.includes(permission)) return null;
+
           const navItem = navigator[permission];
           if (!navItem) return null;
 
