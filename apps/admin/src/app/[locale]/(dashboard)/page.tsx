@@ -24,7 +24,7 @@ export default async function HomePage() {
   return (
     <>
       <Typography variant="h1">{t('title')}</Typography>
-      <Stack spacing={2} sx={{ mt: 2 }}>
+      <Stack spacing={2} sx={{ mt: 3 }}>
         {permissions.length === 0 && (
           <Alert sx={{ maxWidth: 600 }} severity="info">
             {t('alerts.no-permissions')}
