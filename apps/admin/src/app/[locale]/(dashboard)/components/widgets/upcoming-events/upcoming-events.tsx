@@ -27,7 +27,7 @@ export default async function UpcomingEventsWidget() {
         </Typography>
 
         {upcomingEvents.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ py: 2 }} ml={2}>
             {t('no-events')}
           </Typography>
         ) : (
