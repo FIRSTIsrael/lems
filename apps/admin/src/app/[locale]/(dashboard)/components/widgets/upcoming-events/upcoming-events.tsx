@@ -14,14 +14,7 @@ export default async function UpcomingEventsWidget() {
   const t = await getTranslations('pages.index.widgets.upcoming-events');
 
   // TODO: Replace with actual backend call
-  const events: Event[] = [
-    {
-      id: 'no',
-      name: 'My Event',
-      location: 'My Location',
-      startDate: '2023-10-01T10:00:00Z'
-    }
-  ];
+  const events: Event[] = [];
 
   // Show max 4 upcoming events
   const upcomingEvents = events.slice(0, 4);
