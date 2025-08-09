@@ -3,6 +3,7 @@ import { Alert, Grid, Stack, Typography } from '@mui/material';
 import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin/users';
 import { apiFetch } from '../../../lib/fetch';
 import CurrentSeasonWidget from './components/widgets/current-season';
+import RegisteredTeamsWidget from './components/widgets/registered-teams';
 
 export default async function HomePage() {
   const t = await getTranslations('pages.index');
@@ -31,6 +32,9 @@ export default async function HomePage() {
         <Grid container columns={{ xs: 4, sm: 8, md: 8, lg: 12, xl: 16 }} spacing={3}>
           <Grid size={4}>
             <CurrentSeasonWidget />
+          </Grid>
+          <Grid size={4}>
+            <RegisteredTeamsWidget />
           </Grid>
         </Grid>
       </Stack>

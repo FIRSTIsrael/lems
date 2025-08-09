@@ -134,6 +134,9 @@
           "ended": "{count, plural, =1 {הסתיימה לפני יום אחד} other {הסתיימה לפני # ימים}}",
           "error": "שגיאה בטעינת העונה",
           "error-description": "לא הצלחנו לקבל מידע על העונה הנוכחית"
+        },
+        "registered-teams": {
+          "description": "קבוצות רשומות"
         }
       }
     },

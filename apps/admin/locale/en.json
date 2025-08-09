@@ -134,6 +134,9 @@
           "ended": "{count, plural, =1 {Ended 1 day ago} other {Ended # days ago}}",
           "error": "Unable to load season",
           "error-description": "Failed to fetch current season information"
+        },
+        "registered-teams": {
+          "description": "Registered Teams"
         }
       }
     },
