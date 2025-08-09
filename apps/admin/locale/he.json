@@ -26,10 +26,20 @@
         },
         "form": {
           "fields": {
-            "slug": { "label": "מזהה", "placeholder": "למשל, submerged" },
-            "name": { "label": "שם", "placeholder": "למשל, SUBMERGED 2024-2025" },
-            "start-date": { "label": "תאריך התחלה" },
-            "end-date": { "label": "תאריך סיום" },
+            "slug": {
+              "label": "מזהה",
+              "placeholder": "למשל, submerged"
+            },
+            "name": {
+              "label": "שם",
+              "placeholder": "למשל, SUBMERGED 2024-2025"
+            },
+            "start-date": {
+              "label": "תאריך התחלה"
+            },
+            "end-date": {
+              "label": "תאריך סיום"
+            },
             "logo": {
               "label": "לוגו",
               "description": "העלאת לוגו בפורמט SVG",
@@ -75,13 +85,22 @@
         },
         "form": {
           "fields": {
-            "name": { "label": "שם הקבוצה", "placeholder": "למשל, אבירי הברזל" },
-            "number": { "label": "מספר הקבוצה", "placeholder": "למשל, 1234" },
+            "name": {
+              "label": "שם הקבוצה",
+              "placeholder": "למשל, אבירי הברזל"
+            },
+            "number": {
+              "label": "מספר הקבוצה",
+              "placeholder": "למשל, 1234"
+            },
             "affiliation-name": {
               "label": "בית ספר/ארגון",
               "placeholder": "למשל, בית ספר יצחק שדה"
             },
-            "affiliation-city": { "label": "עיר", "placeholder": "למשל, תל אביב" },
+            "affiliation-city": {
+              "label": "עיר",
+              "placeholder": "למשל, תל אביב"
+            },
             "logo": {
               "label": "לוגו הקבוצה",
               "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
@@ -101,6 +120,35 @@
           "submitting": "יוצר קבוצה..."
         }
       }
+    },
+    "index": {
+      "title": "ממשק ניהול",
+      "alerts": {
+        "no-permissions": "לא הקצו לך הרשאות. יש ליצור קשר עם מנהל המערכת."
+      },
+      "widgets": {
+        "current-season": {
+          "current-season": "עונה נוכחית",
+          "days-left": "{count, plural, =1 {יום אחד נותר} other {# ימים נותרו}}",
+          "ends-today": "מסתיימת היום",
+          "ended": "{count, plural, =1 {הסתיימה לפני יום אחד} other {הסתיימה לפני # ימים}}",
+          "error": "שגיאה בטעינת העונה",
+          "error-description": "לא הצלחנו לקבל מידע על העונה הנוכחית"
+        },
+        "registered-teams": {
+          "description": "קבוצות רשומות"
+        },
+        "upcoming-events": {
+          "title": "אירועים קרובים",
+          "no-events": "אין אירועים קרובים"
+        }
+      }
+    },
+    "events": {
+      "title": "אירועים"
+    },
+    "users": {
+      "title": "משתמשים"
     }
   },
   "layouts": {
@@ -111,6 +159,9 @@
         "events": "אירועים",
         "teams": "קבוצות",
         "insights": "תובנות"
+      },
+      "user-menu": {
+        "logout": "התנתקות"
       }
     }
   }

@@ -1,6 +1,8 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
+import { PermissionType } from '@lems/database';
 import { routing } from './i18n/routing';
+import { getRequiredPermission } from './lib/permissions';
 
 const publicPages = ['/login'];
 
@@ -20,7 +22,6 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Authentication check
   const { pathname } = request.nextUrl;
   const backendUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3333';
 
@@ -33,6 +34,33 @@ export default async function middleware(request: NextRequest) {
       throw new Error('Admin authentication failed');
     }
 
+    // Auth succeeded, check page permissions
+    const currentPage = segments[0];
+    const requiredPermission = getRequiredPermission(currentPage);
+
+    if (requiredPermission) {
+      try {
+        const permissionsResponse = await fetch(`${backendUrl}/admin/users/permissions/me`, {
+          headers: { Cookie: request.headers.get('cookie') || '' }
+        });
+
+        if (permissionsResponse.ok) {
+          const permissions: PermissionType[] = await permissionsResponse.json();
+
+          if (Array.isArray(permissions) && !permissions.includes(requiredPermission)) {
+            const homeUrl = locale ? `/${locale}` : '/';
+            return NextResponse.redirect(new URL(homeUrl, request.url));
+          }
+        }
+      } catch {
+        // This should never happen so we treat it as if the user is logged out.
+        throw new Error('Permission check failed');
+      }
+    }
+
+    // Add the current page to headers for the PermissionGuard component to use
+    response.headers.set('x-current-page', currentPage || '');
+
     return response;
   } catch {
     // Authentication failed
@@ -42,10 +70,11 @@ export default async function middleware(request: NextRequest) {
     });
 
     const loginUrl = locale ? `/${locale}/login` : '/login';
-    const redirectUrl = new URL(
-      `${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`,
-      request.url
-    );
+
+    const isAlreadyOnLogin = pathname.endsWith('/login');
+    const redirectUrl = isAlreadyOnLogin
+      ? new URL(loginUrl, request.url)
+      : new URL(`${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`, request.url);
 
     return NextResponse.redirect(redirectUrl);
   }

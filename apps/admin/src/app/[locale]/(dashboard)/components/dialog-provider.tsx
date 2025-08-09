@@ -7,7 +7,7 @@ export interface DialogComponentProps {
   close: () => void;
 }
 
-export type DialogComponent<T = {}> = React.FC<DialogComponentProps & T>;
+export type DialogComponent<T = unknown> = React.FC<DialogComponentProps & T>;
 
 interface DialogContextType {
   showDialog: (component?: DialogComponent) => void;

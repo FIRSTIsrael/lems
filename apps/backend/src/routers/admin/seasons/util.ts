@@ -9,7 +9,7 @@ export const makeAdminSeasonResponse = (season: Season): AdminSeasonResponse => 
   id: season.id,
   slug: season.slug,
   name: season.name,
-  startDate: season.start_date.toISOString(),
-  endDate: season.end_date.toISOString(),
+  startDate: season.start_date,
+  endDate: season.end_date,
   logoUrl: season.logo_url
 });
