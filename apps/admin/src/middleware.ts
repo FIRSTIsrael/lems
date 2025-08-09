@@ -70,10 +70,11 @@ export default async function middleware(request: NextRequest) {
     });
 
     const loginUrl = locale ? `/${locale}/login` : '/login';
-    const redirectUrl = new URL(
-      `${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`,
-      request.url
-    );
+
+    const isAlreadyOnLogin = pathname.endsWith('/login');
+    const redirectUrl = isAlreadyOnLogin
+      ? new URL(loginUrl, request.url)
+      : new URL(`${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`, request.url);
 
     return NextResponse.redirect(redirectUrl);
   }
