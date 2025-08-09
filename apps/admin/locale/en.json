@@ -122,7 +122,20 @@
       }
     },
     "index": {
-      "title": "Admin Dashboard"
+      "title": "Admin Dashboard",
+      "alerts": {
+        "no-permissions": "You do not have any permissions assigned. Contact your administrator for access."
+      },
+      "widgets": {
+        "current-season": {
+          "current-season": "Current Season",
+          "days-left": "{count, plural, =1 {1 day left} other {# days left}}",
+          "ends-today": "Ends today",
+          "ended": "{count, plural, =1 {Ended 1 day ago} other {Ended # days ago}}",
+          "error": "Unable to load season",
+          "error-description": "Failed to fetch current season information"
+        }
+      }
     },
     "events": {
       "title": "Events"

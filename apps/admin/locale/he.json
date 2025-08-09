@@ -122,7 +122,20 @@
       }
     },
     "index": {
-      "title": "ממשק ניהול"
+      "title": "ממשק ניהול",
+      "alerts": {
+        "no-permissions": "לא הקצו לך הרשאות. יש ליצור קשר עם מנהל המערכת."
+      },
+      "widgets": {
+        "current-season": {
+          "current-season": "עונה נוכחית",
+          "days-left": "{count, plural, =1 {יום אחד נותר} other {# ימים נותרו}}",
+          "ends-today": "מסתיימת היום",
+          "ended": "{count, plural, =1 {הסתיימה לפני יום אחד} other {הסתיימה לפני # ימים}}",
+          "error": "שגיאה בטעינת העונה",
+          "error-description": "לא הצלחנו לקבל מידע על העונה הנוכחית"
+        }
+      }
     },
     "events": {
       "title": "אירועים"

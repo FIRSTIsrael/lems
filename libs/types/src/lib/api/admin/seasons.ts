@@ -4,8 +4,8 @@ export const AdminSeasonResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  startDate: z.iso.datetime(),
-  endDate: z.iso.datetime(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
   logoUrl: z.string().nullable()
 });
 
