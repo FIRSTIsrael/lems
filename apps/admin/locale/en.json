@@ -26,10 +26,20 @@
         },
         "form": {
           "fields": {
-            "slug": { "label": "Slug", "placeholder": "e.g., submerged" },
-            "name": { "label": "Season Name", "placeholder": "e.g., SUBMERGED 2024-2025" },
-            "start-date": { "label": "Start Date" },
-            "end-date": { "label": "End Date" },
+            "slug": {
+              "label": "Slug",
+              "placeholder": "e.g., submerged"
+            },
+            "name": {
+              "label": "Season Name",
+              "placeholder": "e.g., SUBMERGED 2024-2025"
+            },
+            "start-date": {
+              "label": "Start Date"
+            },
+            "end-date": {
+              "label": "End Date"
+            },
             "logo": {
               "label": "Logo",
               "description": "Upload a logo in SVG format",
@@ -75,13 +85,22 @@
         },
         "form": {
           "fields": {
-            "name": { "label": "Team Name", "placeholder": "e.g., Iron Patriots" },
-            "number": { "label": "Team Number", "placeholder": "e.g., 1234" },
+            "name": {
+              "label": "Team Name",
+              "placeholder": "e.g., Iron Patriots"
+            },
+            "number": {
+              "label": "Team Number",
+              "placeholder": "e.g., 1234"
+            },
             "affiliation-name": {
               "label": "School/Organization",
               "placeholder": "e.g., Lincoln Elementary"
             },
-            "affiliation-city": { "label": "City", "placeholder": "e.g., New York" },
+            "affiliation-city": {
+              "label": "City",
+              "placeholder": "e.g., New York"
+            },
             "logo": {
               "label": "Team Logo",
               "description": "Upload a team logo (JPG, PNG, or SVG)",
@@ -101,6 +120,9 @@
           "submitting": "Creating team..."
         }
       }
+    },
+    "index": {
+      "title": "Admin Dashboard"
     }
   },
   "layouts": {
