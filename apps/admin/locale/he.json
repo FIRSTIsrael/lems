@@ -137,6 +137,10 @@
         },
         "registered-teams": {
           "description": "קבוצות רשומות"
+        },
+        "upcoming-events": {
+          "title": "אירועים קרובים",
+          "no-events": "אין אירועים קרובים"
         }
       }
     },

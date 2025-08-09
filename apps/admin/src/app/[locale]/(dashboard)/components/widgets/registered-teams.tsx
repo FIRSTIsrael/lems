@@ -9,5 +9,11 @@ export default async function RegisteredTeamsWidget() {
   const teams: unknown[] = [];
   const teamCount = teams.length;
 
-  return <NumberWidget value={teamCount} description={t('description')} icon={<GroupsIcon />} />;
+  return (
+    <NumberWidget
+      value={teamCount}
+      description={t('description')}
+      icon={<GroupsIcon sx={{ width: 48, height: 48 }} />}
+    />
+  );
 }

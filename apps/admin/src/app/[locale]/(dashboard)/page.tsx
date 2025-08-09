@@ -4,6 +4,7 @@ import { AdminUserPermissionsResponseSchema } from '@lems/types/api/admin/users'
 import { apiFetch } from '../../../lib/fetch';
 import CurrentSeasonWidget from './components/widgets/current-season';
 import RegisteredTeamsWidget from './components/widgets/registered-teams';
+import UpcomingEventsWidget from './components/widgets/upcoming-events/upcoming-events';
 
 export default async function HomePage() {
   const t = await getTranslations('pages.index');
@@ -35,6 +36,9 @@ export default async function HomePage() {
           </Grid>
           <Grid size={4}>
             <RegisteredTeamsWidget />
+          </Grid>
+          <Grid size={{ xs: 4, sm: 8, md: 8, lg: 8, xl: 8 }}>
+            <UpcomingEventsWidget />
           </Grid>
         </Grid>
       </Stack>

@@ -137,6 +137,10 @@
         },
         "registered-teams": {
           "description": "Registered Teams"
+        },
+        "upcoming-events": {
+          "title": "Upcoming Events",
+          "no-events": "No upcoming events"
         }
       }
     },
