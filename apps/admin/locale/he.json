@@ -123,6 +123,12 @@
     },
     "index": {
       "title": "ממשק ניהול"
+    },
+    "events": {
+      "title": "אירועים"
+    },
+    "users": {
+      "title": "משתמשים"
     }
   },
   "layouts": {

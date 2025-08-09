@@ -123,6 +123,12 @@
     },
     "index": {
       "title": "Admin Dashboard"
+    },
+    "events": {
+      "title": "Events"
+    },
+    "users": {
+      "title": "Users"
     }
   },
   "layouts": {
