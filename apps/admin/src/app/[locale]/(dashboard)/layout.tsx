@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Box,
   Toolbar,
@@ -78,7 +79,13 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions }) => {
       variant="permanent"
       anchor="left"
     >
-      <Toolbar />
+      <Toolbar>
+        <Box width="100%" height="80%" position="relative">
+          <Link href="/">
+            <Image src="/assets/FLLC-Logo.svg" alt="" fill />
+          </Link>
+        </Box>
+      </Toolbar>
       <Divider />
       <List>
         {permissions.map(permission => {
