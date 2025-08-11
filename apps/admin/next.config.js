@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 //@ts-check
 const { composePlugins, withNx } = require('@nx/next');
 const createNextIntlPlugin = require('next-intl/plugin');

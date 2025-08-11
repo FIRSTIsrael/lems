@@ -1,6 +1,5 @@
 'use client';
-import { Shadows } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
+import { createTheme, Shadows } from '@mui/material/styles';
 import { Locales, Locale } from '@lems/localization';
 
 const softShadows: Shadows = [
