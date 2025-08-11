@@ -2,11 +2,11 @@
 
 import React, { createContext, useContext } from 'react';
 import { PermissionType } from '@lems/database';
-import { User } from '@lems/types/api/admin';
+import { AdminUser } from '@lems/types/api/admin';
 
 export interface SessionValue {
   permissions: PermissionType[];
-  user: User;
+  user: AdminUser;
 }
 
 const SessionContext = createContext<SessionValue | null>(null);

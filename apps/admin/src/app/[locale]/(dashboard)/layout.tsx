@@ -20,7 +20,7 @@ import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import {
   AdminUserPermissionsResponseSchema,
-  User,
+  AdminUser,
   AdminUserResponseSchema
 } from '@lems/types/api/admin';
 import { apiFetch } from '../../../lib/fetch';
@@ -68,7 +68,7 @@ const navigator: Navigator = {
 interface AppBarProps {
   width: number;
   permissions: PermissionType[];
-  user: User;
+  user: AdminUser;
 }
 
 const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
