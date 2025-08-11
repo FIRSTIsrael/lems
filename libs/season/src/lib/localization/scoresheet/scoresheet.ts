@@ -17,7 +17,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'ניקוי משטחים',
       clauses: [
         {
-          description: 'מספר משטחי האדמה שנוקו לחלוטין, ונוגעים בשטיח המשחק:',
+          description: 'מספר משקעי האדמה שנוקו לחלוטין, ונוגעים בשטיח המשחק:',
           labels: ['0', '1', '2']
         },
         {
@@ -30,7 +30,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'חשיפת מפה',
       clauses: [
         {
-          description: 'מספר מקטעי שכבת קרקע העליונה אשר הוסטו לחלוטין:',
+          description: 'מספר מקטעי שכבת קרקע העליונה שהוסטו לחלוטין:',
           labels: ['0', '1', '2', '3']
         }
       ]
@@ -53,7 +53,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
         }
       ],
       remarks: [
-        'עגלת המכרות שלכם חייבת לעבור לחלוטין דרך הכניסה למכרה כדי לקבל בנקודות במשימה זו.',
+        'עגלת המכרות שלכם חייבת לעבור לחלוטין דרך הכניסה למכרה כדי לקבל נקודות במשימה זו.',
         'לא ניתן לקבל ניקוד בונוס אם אין קבוצה מולכם או בתחרויות מרוחקות.'
       ]
     },
@@ -102,7 +102,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
       title: 'ממגורה',
       clauses: [
         {
-          description: 'מספר הפיסות המשומרות הנמצאות מחוץ לממגורה:',
+          description: 'מספר הפיסות המשומרות שנמצאות מחוץ לממגורה:',
           labels: ['0', '1', '2', '3']
         }
       ]
@@ -158,7 +158,7 @@ export const localizedScoresheet: LocalizedScoresheet = {
           labels: [
             'אף אחד',
             'מברשת',
-            'עגלת מכרות',
+            'עגלת מכרות של הקבוצה השנייה',
             'מגש מאזניים',
             'שכבת קרקע עליונה',
             'גוש עפרה עם חפץ מאובן',
