@@ -22,15 +22,15 @@ import { DialogComponentProps } from '../../components/dialog-provider';
 interface TeamFormValues {
   name: string;
   number: string;
-  affiliationName: string;
-  affiliationCity: string;
+  affiliation: string;
+  city: string;
 }
 
 interface TeamFormErrors {
   name?: string;
   number?: string;
-  affiliationName?: string;
-  affiliationCity?: string;
+  affiliation?: string;
+  city?: string;
 }
 
 interface CreationFormProps {
@@ -44,8 +44,8 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
   const initialValues: TeamFormValues = {
     name: '',
     number: '',
-    affiliationName: '',
-    affiliationCity: ''
+    affiliation: '',
+    city: ''
   };
 
   const validateForm = (values: TeamFormValues): TeamFormErrors => {
@@ -61,12 +61,12 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
       errors.number = 'number-invalid';
     }
 
-    if (!values.affiliationName?.trim()) {
-      errors.affiliationName = 'affiliation-name-required';
+    if (!values.affiliation?.trim()) {
+      errors.affiliation = 'affiliation-required';
     }
 
-    if (!values.affiliationCity?.trim()) {
-      errors.affiliationCity = 'affiliation-city-required';
+    if (!values.city?.trim()) {
+      errors.city = 'city-required';
     }
 
     return errors;
@@ -83,8 +83,8 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
       const formData = new FormData();
       formData.append('name', values.name);
       formData.append('number', values.number);
-      formData.append('affiliationName', values.affiliationName);
-      formData.append('affiliationCity', values.affiliationCity);
+      formData.append('affiliation', values.affiliation);
+      formData.append('city', values.city);
 
       if (selectedFile) {
         formData.append('logo', selectedFile);
@@ -151,29 +151,25 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
 
               <Stack direction="row" spacing={2}>
                 <FormikTextField
-                  name="affiliationName"
-                  label={t('fields.affiliation-name.label')}
-                  error={touched.affiliationName && !!errors.affiliationName}
+                  name="affiliation"
+                  label={t('fields.affiliation.label')}
+                  error={touched.affiliation && !!errors.affiliation}
                   helperText={
-                    touched.affiliationName && errors.affiliationName
-                      ? t(`errors.${errors.affiliationName}`)
+                    touched.affiliation && errors.affiliation
+                      ? t(`errors.${errors.affiliation}`)
                       : undefined
                   }
-                  placeholder={t('fields.affiliation-name.placeholder')}
+                  placeholder={t('fields.affiliation.placeholder')}
                   fullWidth
                   disabled={isSubmitting}
                 />
 
                 <FormikTextField
-                  name="affiliationCity"
-                  label={t('fields.affiliation-city.label')}
-                  error={touched.affiliationCity && !!errors.affiliationCity}
-                  helperText={
-                    touched.affiliationCity && errors.affiliationCity
-                      ? t(`errors.${errors.affiliationCity}`)
-                      : undefined
-                  }
-                  placeholder={t('fields.affiliation-city.placeholder')}
+                  name="city"
+                  label={t('fields.city.label')}
+                  error={touched.city && !!errors.city}
+                  helperText={touched.city && errors.city ? t(`errors.${errors.city}`) : undefined}
+                  placeholder={t('fields.city.placeholder')}
                   fullWidth
                   disabled={isSubmitting}
                 />

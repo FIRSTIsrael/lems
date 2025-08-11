@@ -21,7 +21,6 @@ export * from './tables/robot-game-match-participants';
 
 // Teams
 export * from './tables/teams';
-export * from './tables/team-affiliations';
 export * from './tables/team-divisions';
 export * from './tables/team-division-notifications';
 

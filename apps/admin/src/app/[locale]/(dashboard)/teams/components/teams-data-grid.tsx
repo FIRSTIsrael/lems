@@ -25,11 +25,10 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams }) => {
     return teams.filter(team => {
       const numberMatch = team.number.toString().includes(searchLower);
       const nameMatch = team.name.toLowerCase().includes(searchLower);
-      const affiliationMatch = team.affiliation
-        ? `${team.affiliation.name} ${team.affiliation.city}`.toLowerCase().includes(searchLower)
-        : false;
+      const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
+      const cityMatch = team.city.toLowerCase().includes(searchLower);
 
-      return numberMatch || nameMatch || affiliationMatch;
+      return numberMatch || nameMatch || affiliationMatch || cityMatch;
     });
   }, [teams, searchValue]);
 
@@ -69,12 +68,14 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams }) => {
     {
       field: 'affiliation',
       headerName: t('columns.affiliation'),
-      width: 300,
-      sortable: true,
-      valueGetter: (value, row) => {
-        if (!row.affiliation) return '';
-        return `${row.affiliation.name}, ${row.affiliation.city}`;
-      }
+      width: 200,
+      sortable: true
+    },
+    {
+      field: 'city',
+      headerName: t('columns.city'),
+      width: 120,
+      sortable: true
     },
     {
       field: 'actions',

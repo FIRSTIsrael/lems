@@ -75,7 +75,8 @@
           "number": "Team #",
           "name": "Team Name",
           "affiliation": "Affiliation",
-          "actions": "Actions"
+          "actions": "Actions",
+          "city": "City"
         }
       },
       "creation-dialog": {
@@ -93,11 +94,11 @@
               "label": "Team Number",
               "placeholder": "e.g., 1234"
             },
-            "affiliation-name": {
+            "affiliation": {
               "label": "School/Organization",
               "placeholder": "e.g., Lincoln Elementary"
             },
-            "affiliation-city": {
+            "city": {
               "label": "City",
               "placeholder": "e.g., New York"
             },
@@ -112,8 +113,8 @@
             "number-required": "Team number is required.",
             "number-invalid": "Team number must be a valid number.",
             "number-exists": "This team number already exists.",
-            "affiliation-name-required": "School/Organization name is required.",
-            "affiliation-city-required": "City is required.",
+            "affiliation-required": "School/Organization name is required.",
+            "city-required": "City is required.",
             "error": "An error occurred while creating the team."
           },
           "submit": "Create Team",

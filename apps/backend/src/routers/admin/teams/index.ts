@@ -12,9 +12,9 @@ router.post(
   requirePermission('MANAGE_TEAMS'),
   fileUpload(),
   async (req: AdminRequest, res) => {
-    const { name, number, affiliationName, affiliationCity } = req.body;
+    const { name, number, affiliation, city } = req.body;
 
-    if (!name || !number || !affiliationName || !affiliationCity) {
+    if (!name || !number || !affiliation || !city) {
       res.status(400).json({ error: 'All fields are required' });
       return;
     }
@@ -26,16 +26,12 @@ router.post(
     }
 
     try {
-      const affiliation = await db.teamAffiliations.create({
-        name: affiliationName,
-        city: affiliationCity,
-        coordinates: null //TODO: Add support for coordinates on team creation
-      });
-
       let team = await db.teams.create({
         name,
         number: teamNumber,
-        affiliation_id: affiliation.id,
+        affiliation,
+        city,
+        coordinates: null,
         logo_url: null
       });
 
@@ -54,10 +50,7 @@ router.post(
         }
 
         try {
-          const updatedTeam = await db.teams.byId(team.id).updateLogo(logoFile.data);
-          if (updatedTeam) {
-            team = updatedTeam;
-          }
+          team = await db.teams.byId(team.id).updateLogo(logoFile.data);
         } catch (error) {
           console.error('Error uploading team logo:', error);
           res.status(500).json({ error: 'Failed to upload team logo' });
@@ -65,14 +58,12 @@ router.post(
         }
       }
 
-      // Get the team with affiliation for response
-      const teamWithAffiliation = await db.teams.byId(team.id).get();
-      if (!teamWithAffiliation) {
+      if (!team) {
         res.status(500).json({ error: 'Failed to retrieve created team' });
         return;
       }
 
-      res.status(201).json(makeAdminTeamResponse(teamWithAffiliation));
+      res.status(201).json(makeAdminTeamResponse(team));
     } catch (error) {
       console.error('Error creating team:', error);
       if (error instanceof Error && error.message.includes('unique')) {

@@ -1,13 +1,7 @@
 import { Kysely } from 'kysely';
-import { jsonObjectFrom } from 'kysely/helpers/postgres';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team } from '../schema/tables/teams';
-import { TeamAffiliation } from '../schema/tables/team-affiliations';
-
-type TeamWithAffiliation = Team & {
-  affiliation: TeamAffiliation | null;
-};
 
 type TeamSelectorType = { type: 'id'; value: string } | { type: 'number'; value: number };
 
@@ -18,23 +12,13 @@ class TeamSelector {
     private selector: TeamSelectorType
   ) {}
 
-  private getTeamWithAffiliationQuery() {
-    const query = this.db
-      .selectFrom('teams')
-      .selectAll('teams')
-      .select(eb =>
-        jsonObjectFrom(
-          eb
-            .selectFrom('team_affiliations')
-            .selectAll('team_affiliations')
-            .whereRef('team_affiliations.id', '=', 'teams.affiliation_id')
-        ).as('affiliation')
-      );
+  private getTeamQuery() {
+    const query = this.db.selectFrom('teams').selectAll('teams');
     return query.where(this.selector.type, '=', this.selector.value);
   }
 
-  async get(): Promise<TeamWithAffiliation | null> {
-    const team = await this.getTeamWithAffiliationQuery().executeTakeFirst();
+  async get(): Promise<Team | null> {
+    const team = await this.getTeamQuery().executeTakeFirst();
     return team || null;
   }
 
@@ -91,21 +75,12 @@ export class TeamsRepository {
     });
   }
 
-  async getAll(): Promise<TeamWithAffiliation[]> {
+  async getAll(): Promise<Team[]> {
     const teams = await this.db
       .selectFrom('teams')
       .selectAll('teams')
-      .select(eb =>
-        jsonObjectFrom(
-          eb
-            .selectFrom('team_affiliations')
-            .selectAll('team_affiliations')
-            .whereRef('team_affiliations.id', '=', 'teams.affiliation_id')
-        ).as('affiliation')
-      )
       .orderBy('number', 'asc')
       .execute();
-
     return teams;
   }
 

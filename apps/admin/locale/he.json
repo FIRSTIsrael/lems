@@ -75,7 +75,8 @@
           "number": "מספר קבוצה",
           "name": "שם הקבוצה",
           "affiliation": "שיוך",
-          "actions": "פעולות"
+          "actions": "פעולות",
+          "city": "עיר"
         }
       },
       "creation-dialog": {
@@ -93,11 +94,11 @@
               "label": "מספר הקבוצה",
               "placeholder": "למשל, 1234"
             },
-            "affiliation-name": {
+            "affiliation": {
               "label": "בית ספר/ארגון",
               "placeholder": "למשל, בית ספר יצחק שדה"
             },
-            "affiliation-city": {
+            "city": {
               "label": "עיר",
               "placeholder": "למשל, תל אביב"
             },
@@ -112,8 +113,8 @@
             "number-required": "שדה מספר הקבוצה נדרש.",
             "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
             "number-exists": "מספר קבוצה זה כבר קיים.",
-            "affiliation-name-required": "שדה שם בית הספר/ארגון נדרש.",
-            "affiliation-city-required": "שדה עיר נדרש.",
+            "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
+            "city-required": "שדה עיר נדרש.",
             "error": "שגיאה התרחשה בעת יצירת הקבוצה."
           },
           "submit": "יצירת קבוצה",

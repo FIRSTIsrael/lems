@@ -5,7 +5,9 @@ export interface TeamsTable {
   id: ColumnType<string, never, never>; // UUID, generated
   name: string; // VARCHAR(64)
   number: number; // int, unique
-  affiliation_id: string; // UUID foreign key to team_affiliations.id
+  affiliation: string;
+  city: string;
+  coordinates: string | null; // PostGIS point stored as string
   logo_url: string | null; // URL to team logo, optional
 }
 
