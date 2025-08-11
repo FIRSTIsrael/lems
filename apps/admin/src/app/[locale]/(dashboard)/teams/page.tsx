@@ -12,7 +12,7 @@ export default async function TeamsPage() {
   const result = await apiFetch('/admin/teams', {}, AdminTeamsResponseSchema);
 
   if (!result.ok) {
-    throw new Error(`Failed to fetch teams: ${result.status} ${result.statusText}`);
+    throw new Error('Failed to load teams');
   }
 
   const { data: teams } = result;

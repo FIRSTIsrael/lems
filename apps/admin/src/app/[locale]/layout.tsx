@@ -5,6 +5,7 @@ import { Roboto, Heebo } from 'next/font/google';
 import { Locales } from '@lems/localization';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
+import { SWRProvider } from './swr-provider';
 
 export const metadata: Metadata = {
   title: 'ניהול אירועים - FIRST LEGO League Challenge',
@@ -47,7 +48,9 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <MuiProvider locale={locale}>{children}</MuiProvider>
+          <SWRProvider>
+            <MuiProvider locale={locale}>{children}</MuiProvider>
+          </SWRProvider>
         </NextIntlClientProvider>
       </body>
     </html>

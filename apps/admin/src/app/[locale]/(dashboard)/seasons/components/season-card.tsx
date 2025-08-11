@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
-import { AdminSeasonResponse } from '@lems/types/api/admin';
+import { Season } from '@lems/types/api/admin';
 
 interface SeasonCardProps {
-  season: AdminSeasonResponse;
+  season: Season;
 }
 
 export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
+import { mutate } from 'swr';
 import {
   DialogTitle,
   DialogContent,
@@ -106,6 +107,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
       );
 
       if (result.ok) {
+        mutate('/admin/seasons');
         setSelectedFile(null);
         onSuccess?.();
       } else {

@@ -20,11 +20,12 @@ import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import { PermissionType } from '@lems/database';
 import {
   AdminUserPermissionsResponseSchema,
-  AdminUserResponse,
+  User,
   AdminUserResponseSchema
 } from '@lems/types/api/admin';
 import { apiFetch } from '../../../lib/fetch';
 import { DialogProvider } from './components/dialog-provider';
+import { SessionProvider } from './components/session-context';
 import { PermissionGuard } from './components/permission-guard';
 import { UserMenu } from './components/user-menu';
 
@@ -67,7 +68,7 @@ const navigator: Navigator = {
 interface AppBarProps {
   width: number;
   permissions: PermissionType[];
-  user: AdminUserResponse;
+  user: User;
 }
 
 const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
@@ -147,14 +148,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <PermissionGuard permissions={permissions}>
-      <DialogProvider>
-        <Box sx={{ display: 'flex' }}>
-          <AppBar width={drawerWidth} permissions={permissions} user={user} />
-          <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
-            {children}
+      <SessionProvider value={{ permissions, user }}>
+        <DialogProvider>
+          <Box sx={{ display: 'flex' }}>
+            <AppBar width={drawerWidth} permissions={permissions} user={user} />
+            <Box component="main" sx={{ flexGrow: 1, px: 3, pt: 2 }}>
+              {children}
+            </Box>
           </Box>
-        </Box>
-      </DialogProvider>
+        </DialogProvider>
+      </SessionProvider>
     </PermissionGuard>
   );
 }
