@@ -6,11 +6,11 @@ import { Avatar, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslations } from 'next-intl';
-import { AdminTeamResponse } from '@lems/types/api/admin';
+import { Team } from '@lems/types/api/admin';
 import { TeamsSearch } from './teams-search';
 
 interface TeamsDataGridProps {
-  teams: AdminTeamResponse[];
+  teams: Team[];
 }
 
 export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams }) => {

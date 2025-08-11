@@ -10,8 +10,6 @@ export const AdminTeamResponseSchema = z.object({
   coordinates: z.string().nullable()
 });
 
-export type AdminTeamResponse = z.infer<typeof AdminTeamResponseSchema>;
+export type Team = z.infer<typeof AdminTeamResponseSchema>;
 
 export const AdminTeamsResponseSchema = z.array(AdminTeamResponseSchema);
-
-export type AdminTeamsResponse = z.infer<typeof AdminTeamsResponseSchema>;

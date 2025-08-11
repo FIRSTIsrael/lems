@@ -14,11 +14,11 @@ import {
   ListItemText
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { AdminUserResponse } from '@lems/types/api/admin';
+import { User } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../lib/fetch';
 
 interface UserMenuProps {
-  user: AdminUserResponse;
+  user: User;
 }
 
 export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {

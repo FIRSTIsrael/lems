@@ -9,8 +9,6 @@ export const AdminSeasonResponseSchema = z.object({
   logoUrl: z.string().nullable()
 });
 
-export type AdminSeasonResponse = z.infer<typeof AdminSeasonResponseSchema>;
+export type Season = z.infer<typeof AdminSeasonResponseSchema>;
 
 export const AdminSeasonsResponseSchema = z.array(AdminSeasonResponseSchema);
-
-export type AdminSeasonsResponse = z.infer<typeof AdminSeasonsResponseSchema>;
