@@ -1,12 +1,12 @@
-import { Admin } from '@lems/database';
-import { AdminUserResponse } from '@lems/types/api/admin';
+import { Admin as DbAdmin } from '@lems/database';
+import { AdminUser } from '@lems/types/api/admin';
 
 /**
  * Transforms a user object into a response format.
  * Removes sensitive information and formats the response.
- * @param {Admin} user - The user object to transform.
+ * @param user - The user object to transform.
  */
-export const makeAdminUserResponse = (user: Admin): AdminUserResponse => ({
+export const makeAdminUserResponse = (user: DbAdmin): AdminUser => ({
   id: user.id,
   username: user.username,
   firstName: user.first_name,

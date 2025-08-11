@@ -1,11 +1,11 @@
-import { Season } from '@lems/database';
-import { AdminSeasonResponse } from '@lems/types/api/admin';
+import { Season as DbSeason } from '@lems/database';
+import { Season } from '@lems/types/api/admin';
 
 /**
  * Transforms a season object into a response format.
- * @param {Season} season - The season object to transform.
+ * @param season - The season object to transform.
  */
-export const makeAdminSeasonResponse = (season: Season): AdminSeasonResponse => ({
+export const makeAdminSeasonResponse = (season: DbSeason): Season => ({
   id: season.id,
   slug: season.slug,
   name: season.name,

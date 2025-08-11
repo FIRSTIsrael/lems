@@ -9,7 +9,7 @@ export const AdminUserResponseSchema = z.object({
   createdAt: z.coerce.date()
 });
 
-export type User = z.infer<typeof AdminUserResponseSchema>;
+export type AdminUser = z.infer<typeof AdminUserResponseSchema>;
 
 const PERMISSION_VALUES = [
   'MANAGE_SEASONS',
@@ -22,4 +22,4 @@ const PERMISSION_VALUES = [
 
 export const AdminUserPermissionsResponseSchema = z.array(z.enum(PERMISSION_VALUES));
 
-export type UserPermissions = z.infer<typeof AdminUserPermissionsResponseSchema>;
+export type AdminUserPermissions = z.infer<typeof AdminUserPermissionsResponseSchema>;
