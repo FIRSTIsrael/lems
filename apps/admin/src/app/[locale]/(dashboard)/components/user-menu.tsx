@@ -16,6 +16,7 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AdminUser } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../lib/fetch';
+import { LanguageSwitcher } from './language-switcher';
 
 interface UserMenuProps {
   user: AdminUser;
@@ -109,6 +110,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         anchorOrigin={{ horizontal: -5, vertical: -10 }}
       >
+        <LanguageSwitcher onClose={() => setOpen(false)} />
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
