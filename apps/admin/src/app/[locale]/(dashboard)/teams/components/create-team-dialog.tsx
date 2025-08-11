@@ -104,12 +104,9 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
         onSuccess?.();
       } else {
         if (result.status === 400) {
-          const errorData = await result.response.json();
-          if (errorData.error?.includes('number already exists')) {
-            setStatus('number-exists');
-          } else {
-            setStatus('error');
-          }
+          setStatus('error');
+        } else if (result.status === 409) {
+          setStatus('number-exists');
         } else {
           throw new Error();
         }

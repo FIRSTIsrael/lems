@@ -10,7 +10,7 @@ export default async function SeasonsPage() {
   const result = await apiFetch('/admin/seasons', {}, AdminSeasonsResponseSchema);
 
   if (!result.ok) {
-    throw new Error(`Failed to fetch seasons: ${result.status} ${result.statusText}`);
+    throw new Error('Failed to load seasons');
   }
 
   const { data: seasons } = result;

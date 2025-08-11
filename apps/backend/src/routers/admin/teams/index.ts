@@ -67,7 +67,7 @@ router.post(
     } catch (error) {
       console.error('Error creating team:', error);
       if (error instanceof Error && error.message.includes('unique')) {
-        res.status(400).json({ error: 'Team number already exists' });
+        res.status(409).json({ error: 'Team number already exists' });
       } else {
         res.status(500).json({ error: 'Failed to create team' });
       }
