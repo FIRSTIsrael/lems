@@ -17,7 +17,6 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
 
-  // Filter teams based on search value
   const filteredTeams = useMemo(() => {
     if (!searchValue.trim()) return teams;
 

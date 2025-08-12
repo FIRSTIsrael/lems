@@ -17,7 +17,6 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users }) => {
   const t = useTranslations('pages.users.list');
   const [searchValue, setSearchValue] = useState('');
 
-  // Filter users based on search value
   const filteredUsers = useMemo(() => {
     if (!searchValue.trim()) return users;
 
@@ -58,7 +57,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users }) => {
       headerName: t('columns.name'),
       width: 250,
       sortable: true,
-      valueGetter: (value, row) => `${row.firstName} ${row.lastName}`
+      valueGetter: (_, row) => `${row.firstName} ${row.lastName}`
     },
     {
       field: 'username',

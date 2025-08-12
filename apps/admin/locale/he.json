@@ -186,13 +186,21 @@
               "placeholder": "לדוגמה: כהן"
             }
           },
+          "password-validation": {
+            "title": "דרישות סיסמה:",
+            "minLength": "לפחות 8 תווים",
+            "hasUppercase": "לפחות אות גדולה אחת (A-Z)",
+            "hasLowercase": "לפחות אות קטנה אחת (a-z)",
+            "hasNumber": "לפחות מספר אחד (0-9)",
+            "hasSpecialChar": "לפחות תו מיוחד אחד (!@#$%^&*)"
+          },
           "errors": {
             "username-required": "שם משתמש נדרש.",
-            "username-too-short": "שם המשתמש חייב להיות באורך של לפחות 3 תווים.",
+            "username-too-short": "שם המשתמש חייב להיות באורך 3 תווים לפחות.",
             "username-invalid": "שם המשתמש יכול להכיל רק אותיות, מספרים וקווים תחתונים.",
             "username-exists": "שם משתמש זה כבר קיים.",
             "password-required": "סיסמה נדרשת.",
-            "password-too-short": "הסיסמה חייבת להיות באורך של לפחות 6 תווים.",
+            "password-invalid": "הסיסמה לא עומדת בדרישות.",
             "firstName-required": "שם פרטי נדרש.",
             "lastName-required": "שם משפחה נדרש.",
             "error": "אירעה שגיאה בעת יצירת המשתמש."
