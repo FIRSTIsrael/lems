@@ -149,7 +149,58 @@
       "title": "Events"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "create-new-user": "Create New User",
+      "search": {
+        "placeholder": "Search users by username, first name, or last name..."
+      },
+      "list": {
+        "columns": {
+          "username": "Username",
+          "name": "Name",
+          "createdAt": "Created",
+          "actions": "Actions"
+        }
+      },
+      "creation-dialog": {
+        "title": "Create User",
+        "actions": {
+          "cancel": "Cancel"
+        },
+        "form": {
+          "fields": {
+            "username": {
+              "label": "Username",
+              "placeholder": "e.g., john_doe"
+            },
+            "password": {
+              "label": "Password",
+              "placeholder": "Enter a secure password"
+            },
+            "firstName": {
+              "label": "First Name",
+              "placeholder": "e.g., John"
+            },
+            "lastName": {
+              "label": "Last Name",
+              "placeholder": "e.g., Doe"
+            }
+          },
+          "errors": {
+            "username-required": "Username is required.",
+            "username-too-short": "Username must be at least 3 characters long.",
+            "username-invalid": "Username can only contain letters, numbers, and underscores.",
+            "username-exists": "This username already exists.",
+            "password-required": "Password is required.",
+            "password-too-short": "Password must be at least 6 characters long.",
+            "firstName-required": "First name is required.",
+            "lastName-required": "Last name is required.",
+            "error": "An error occurred while creating the user."
+          },
+          "submit": "Create User",
+          "submitting": "Creating user..."
+        }
+      }
     }
   },
   "layouts": {

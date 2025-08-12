@@ -11,6 +11,8 @@ export const AdminUserResponseSchema = z.object({
 
 export type AdminUser = z.infer<typeof AdminUserResponseSchema>;
 
+export const AdminUsersResponseSchema = z.array(AdminUserResponseSchema);
+
 const PERMISSION_VALUES = [
   'MANAGE_SEASONS',
   'MANAGE_USERS',
