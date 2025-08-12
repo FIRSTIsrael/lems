@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,22 +14,28 @@ interface UsersDataGridProps {
   users: AdminUser[];
 }
 
-export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users }) => {
+export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
   const [searchValue, setSearchValue] = useState('');
+
+  const { data: users } = useSWR<AdminUser[]>('/admin/users', {
+    fallbackData: initialUsers
+  });
 
   const filteredUsers = useMemo(() => {
     if (!searchValue.trim()) return users;
 
     const searchLower = searchValue.toLowerCase();
-    return users.filter(user => {
-      const usernameMatch = user.username.toLowerCase().includes(searchLower);
-      const fullNameMatch = `${user.firstName} ${user.lastName}`
-        .toLowerCase()
-        .includes(searchLower);
+    return (
+      users?.filter(user => {
+        const usernameMatch = user.username.toLowerCase().includes(searchLower);
+        const fullNameMatch = `${user.firstName} ${user.lastName}`
+          .toLowerCase()
+          .includes(searchLower);
 
-      return usernameMatch || fullNameMatch;
-    });
+        return usernameMatch || fullNameMatch;
+      }) || []
+    );
   }, [users, searchValue]);
 
   const getInitial = (firstName: string) => {

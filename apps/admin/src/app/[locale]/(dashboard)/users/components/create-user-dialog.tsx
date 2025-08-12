@@ -3,6 +3,7 @@
 import React from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useTranslations } from 'next-intl';
+import { mutate } from 'swr';
 import {
   DialogTitle,
   DialogContent,
@@ -101,6 +102,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
       );
 
       if (result.ok) {
+        mutate('/admin/users');
         onSuccess?.();
       } else {
         if (result.status === 400) {
