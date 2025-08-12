@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,22 +14,26 @@ interface TeamsDataGridProps {
   teams: Team[];
 }
 
-export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams }) => {
+export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
+
+  const { data: teams } = useSWR<Team[]>('/admin/teams', {
+    fallbackData: initialTeams
+  });
 
   const filteredTeams = useMemo(() => {
     if (!searchValue.trim()) return teams;
 
     const searchLower = searchValue.toLowerCase();
-    return teams.filter(team => {
+    return teams?.filter(team => {
       const numberMatch = team.number.toString().includes(searchLower);
       const nameMatch = team.name.toLowerCase().includes(searchLower);
       const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
       const cityMatch = team.city.toLowerCase().includes(searchLower);
 
       return numberMatch || nameMatch || affiliationMatch || cityMatch;
-    });
+    }) || [];
   }, [teams, searchValue]);
 
   const columns: GridColDef[] = [
