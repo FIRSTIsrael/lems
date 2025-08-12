@@ -7,5 +7,10 @@ export const routing = defineRouting({
   locales: ['en', 'he'],
 
   // Used when no locale matches
-  defaultLocale: 'he'
+  defaultLocale: 'he',
+
+  localeCookie: {
+    name: 'LEMS_LOCALE',
+    maxAge: 60 * 60 * 24 * 365
+  }
 });
