@@ -6,7 +6,6 @@ import { MenuItem, Menu, ListItemIcon, ListItemText, Typography } from '@mui/mat
 import LanguageIcon from '@mui/icons-material/Language';
 import { ChevronEndIcon, Locale, Locales } from '@lems/localization';
 import { useRouter, usePathname } from '../../../../i18n/navigation';
-import { routing } from '../../../../i18n/routing';
 
 interface LanguageSubmenuProps {
   anchorEl: HTMLButtonElement | null;
@@ -69,13 +68,12 @@ const LanguageSubmenu: React.FC<LanguageSubmenuProps> = ({ anchorEl, onClose, on
         }
       }}
     >
-      {routing.locales.map(localeKey => {
-        const localeData = Locales[localeKey];
+      {Object.entries(Locales).map(([localeKey, localeData]) => {
         return (
           <MenuItem
             key={localeKey}
             selected={localeKey === currentLocale}
-            onClick={() => onChangeLocale(localeKey)}
+            onClick={() => onChangeLocale(localeKey as Locale)}
             sx={{ dir: localeData.direction }}
           >
             <ListItemText primary={localeData.displayName} />
