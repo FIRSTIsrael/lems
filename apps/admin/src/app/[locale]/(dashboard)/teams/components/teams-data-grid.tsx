@@ -26,14 +26,16 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
     if (!searchValue.trim()) return teams;
 
     const searchLower = searchValue.toLowerCase();
-    return teams?.filter(team => {
-      const numberMatch = team.number.toString().includes(searchLower);
-      const nameMatch = team.name.toLowerCase().includes(searchLower);
-      const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
-      const cityMatch = team.city.toLowerCase().includes(searchLower);
+    return (
+      teams?.filter(team => {
+        const numberMatch = team.number.toString().includes(searchLower);
+        const nameMatch = team.name.toLowerCase().includes(searchLower);
+        const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
+        const cityMatch = team.city.toLowerCase().includes(searchLower);
 
-      return numberMatch || nameMatch || affiliationMatch || cityMatch;
-    }) || [];
+        return numberMatch || nameMatch || affiliationMatch || cityMatch;
+      }) || []
+    );
   }, [teams, searchValue]);
 
   const columns: GridColDef[] = [
