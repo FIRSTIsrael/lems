@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import {
   Dialog,
@@ -47,17 +47,27 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
   const t = useTranslations('pages.users.permissions-dialog');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const prevUserPermissionsRef = useRef<AdminUserPermissions>();
 
   const { data: userPermissions = [] } = useSWR<AdminUserPermissions>(
     userId ? `/admin/users/permissions/${userId}` : null,
     { suspense: true }
   );
 
-  const [selectedPermissions, setSelectedPermissions] = useState<PermissionType[]>(userPermissions);
+  const [selectedPermissions, setSelectedPermissions] = useState<PermissionType[]>([]);
 
   useEffect(() => {
-    setSelectedPermissions(userPermissions);
-    setError(null);
+    const prevPermissions = prevUserPermissionsRef.current;
+
+    if (
+      !prevPermissions ||
+      userPermissions.length !== prevPermissions.length ||
+      userPermissions.some((permission, index) => permission !== prevPermissions[index])
+    ) {
+      setSelectedPermissions([...userPermissions]);
+      setError(null);
+      prevUserPermissionsRef.current = userPermissions;
+    }
   }, [userPermissions]);
 
   const handlePermissionChange = (permission: PermissionType, checked: boolean) => {
@@ -175,7 +185,7 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
             </DialogContent>
           }
         >
-          <PermissionsForm userId={userId} onClose={onClose} />
+          <PermissionsForm key={userId} userId={userId} onClose={onClose} />
         </Suspense>
       </ErrorBoundary>
     </Dialog>

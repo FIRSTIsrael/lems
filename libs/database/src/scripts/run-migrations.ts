@@ -4,6 +4,7 @@ import path from 'node:path';
 import { Pool } from 'pg';
 import { Kysely, Migrator, PostgresDialect, MigrationProvider, Migration } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
+import { syncAllSequences } from '../utils/sequence-sync.js';
 
 // Load environment variables with defaults
 const PG_HOST = process.env.PG_HOST || 'localhost';
@@ -74,6 +75,21 @@ async function migrateToLatest() {
     console.error('failed to migrate');
     console.error(error);
     process.exit(1);
+  }
+
+  const successfulMigrations = results?.filter(it => it.status === 'Success') || [];
+
+  console.log(
+    `\n🔄 Synchronizing sequences after ${successfulMigrations.length} successful migration(s)...`
+  );
+  try {
+    await syncAllSequences(db, { verbose: false });
+    console.log('✅ Sequences synchronized successfully');
+  } catch (syncError) {
+    console.warn('⚠️  Warning: Failed to sync sequences after migrations:', syncError);
+    console.warn(
+      '   You may need to run sequence sync manually if you encounter duplicate key errors'
+    );
   }
 
   await db.destroy();
