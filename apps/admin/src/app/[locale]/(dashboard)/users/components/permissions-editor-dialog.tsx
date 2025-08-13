@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import {
   Dialog,
@@ -34,20 +34,10 @@ interface PermissionsFormProps {
   onClose: () => void;
 }
 
-const PERMISSION_LABELS = {
-  MANAGE_SEASONS: 'permissions.manage-seasons',
-  MANAGE_USERS: 'permissions.manage-users',
-  MANAGE_EVENTS: 'permissions.manage-events',
-  MANAGE_EVENT_DETAILS: 'permissions.manage-event-details',
-  MANAGE_TEAMS: 'permissions.manage-teams',
-  VIEW_INSIGHTS: 'permissions.view-insights'
-} as const;
-
 const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
   const t = useTranslations('pages.users.permissions-dialog');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const prevUserPermissionsRef = useRef<AdminUserPermissions>();
 
   const { data: userPermissions = [] } = useSWR<AdminUserPermissions>(
     userId ? `/admin/users/permissions/${userId}` : null,
@@ -56,28 +46,17 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
 
   const [selectedPermissions, setSelectedPermissions] = useState<PermissionType[]>([]);
 
-  useEffect(() => {
-    const prevPermissions = prevUserPermissionsRef.current;
+  const permissionsString = JSON.stringify([...userPermissions].sort());
 
-    if (
-      !prevPermissions ||
-      userPermissions.length !== prevPermissions.length ||
-      userPermissions.some((permission, index) => permission !== prevPermissions[index])
-    ) {
-      setSelectedPermissions([...userPermissions]);
-      setError(null);
-      prevUserPermissionsRef.current = userPermissions;
-    }
-  }, [userPermissions]);
+  useEffect(() => {
+    setSelectedPermissions([...userPermissions]);
+    setError(null);
+  }, [permissionsString]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePermissionChange = (permission: PermissionType, checked: boolean) => {
-    setSelectedPermissions(prev => {
-      if (checked) {
-        return [...prev, permission];
-      } else {
-        return prev.filter(p => p !== permission);
-      }
-    });
+    setSelectedPermissions(prev =>
+      checked ? [...prev, permission] : prev.filter(p => p !== permission)
+    );
   };
 
   const handleSubmit = async () => {
@@ -87,24 +66,21 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
     try {
       const result = await apiFetch(`/admin/users/permissions/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          permissions: selectedPermissions
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ permissions: selectedPermissions })
       });
 
       if (!result.ok) {
-        throw new Error('Failed to update permissions');
+        const errorData = await result.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to update permissions');
       }
 
-      await mutate(`/admin/users/permissions/${userId}`);
-      await mutate('/admin/users'); // Also refresh the users list
+      // Refresh both permissions and users list
+      await Promise.all([mutate(`/admin/users/permissions/${userId}`), mutate('/admin/users')]);
 
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +110,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
                   disabled={isSubmitting}
                 />
               }
-              label={t(PERMISSION_LABELS[permission])}
+              label={t(`permissions.${permission.toLowerCase().replace(/_/g, '-')}`)}
             />
           ))}
         </FormGroup>
@@ -185,7 +161,7 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
             </DialogContent>
           }
         >
-          <PermissionsForm key={userId} userId={userId} onClose={onClose} />
+          <PermissionsForm userId={userId} onClose={onClose} />
         </Suspense>
       </ErrorBoundary>
     </Dialog>
