@@ -71,8 +71,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
       });
 
       if (!result.ok) {
-        const errorData = await result.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to update permissions');
+        throw new Error('Failed to update permissions');
       }
 
       // Refresh both permissions and users list
