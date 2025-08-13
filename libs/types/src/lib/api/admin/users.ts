@@ -13,7 +13,7 @@ export type AdminUser = z.infer<typeof AdminUserResponseSchema>;
 
 export const AdminUsersResponseSchema = z.array(AdminUserResponseSchema);
 
-const PERMISSION_VALUES = [
+export const ALL_ADMIN_PERMISSIONS = [
   'MANAGE_SEASONS',
   'MANAGE_USERS',
   'MANAGE_EVENTS',
@@ -22,6 +22,6 @@ const PERMISSION_VALUES = [
   'VIEW_INSIGHTS'
 ] as const satisfies readonly PermissionType[];
 
-export const AdminUserPermissionsResponseSchema = z.array(z.enum(PERMISSION_VALUES));
+export const AdminUserPermissionsResponseSchema = z.array(z.enum(ALL_ADMIN_PERMISSIONS));
 
 export type AdminUserPermissions = z.infer<typeof AdminUserPermissionsResponseSchema>;

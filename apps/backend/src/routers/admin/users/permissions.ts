@@ -1,5 +1,5 @@
 import express from 'express';
-import { ADMIN_PERMISSIONS } from '@lems/database';
+import { ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
@@ -46,7 +46,7 @@ router.put('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminReque
     return;
   }
 
-  const invalidPermissions = permissions.filter(p => !ADMIN_PERMISSIONS.includes(p));
+  const invalidPermissions = permissions.filter(p => !ALL_ADMIN_PERMISSIONS.includes(p));
   if (invalidPermissions.length > 0) {
     res.status(400).json({
       error: 'Invalid permissions',

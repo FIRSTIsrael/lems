@@ -7,16 +7,6 @@ export type PermissionType =
   | 'MANAGE_EVENT_DETAILS'
   | 'MANAGE_TEAMS'
   | 'VIEW_INSIGHTS';
-
-export const ADMIN_PERMISSIONS: readonly PermissionType[] = [
-  'MANAGE_SEASONS',
-  'MANAGE_USERS',
-  'MANAGE_EVENTS',
-  'MANAGE_EVENT_DETAILS',
-  'MANAGE_TEAMS',
-  'VIEW_INSIGHTS'
-] as const;
-
 export interface AdminPermissionTable {
   pk: ColumnType<number, never, never>; // Serial primary key
   admin_id: string; // UUID foreign key to admins.id

@@ -1,6 +1,7 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import {
   Dialog,
   DialogTitle,
@@ -17,8 +18,8 @@ import {
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import useSWR, { mutate } from 'swr';
-import { PermissionType, ADMIN_PERMISSIONS } from '@lems/database';
-import { AdminUserPermissions } from '@lems/types/api/admin';
+import { PermissionType } from '@lems/database';
+import { AdminUserPermissions, ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 
 interface PermissionsEditorDialogProps {
   open: boolean;
@@ -47,14 +48,21 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: userPermissions, error: fetchError } = useSWR<AdminUserPermissions>(
-    `/admin/users/permissions/${userId}`,
-    {
-      onSuccess: data => {
-        setSelectedPermissions(data);
-      }
-    }
+  const { data: userPermissions } = useSWR<AdminUserPermissions>(
+    userId ? `/admin/users/permissions/${userId}` : null,
+    { suspense: true }
   );
+
+  useEffect(() => {
+    if (userPermissions) {
+      setSelectedPermissions(userPermissions);
+    }
+  }, [userPermissions]);
+
+  useEffect(() => {
+    setSelectedPermissions([]);
+    setError(null);
+  }, [userId]);
 
   const handlePermissionChange = (permission: PermissionType, checked: boolean) => {
     setSelectedPermissions(prev => {
@@ -97,18 +105,6 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
     }
   };
 
-  if (fetchError) {
-    return <Alert severity="error">{t('errors.fetch-error')}</Alert>;
-  }
-
-  if (!userPermissions) {
-    return (
-      <Box display="flex" justifyContent="center" p={3}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
     <>
       <DialogContent>
@@ -123,7 +119,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         )}
 
         <FormGroup>
-          {ADMIN_PERMISSIONS.map(permission => (
+          {ALL_ADMIN_PERMISSIONS.map(permission => (
             <FormControlLabel
               key={permission}
               control={
@@ -168,17 +164,25 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{t('title', { userName })}</DialogTitle>
 
-      <Suspense
+      <ErrorBoundary
         fallback={
           <DialogContent>
-            <Box display="flex" justifyContent="center" p={3}>
-              <CircularProgress />
-            </Box>
+            <Alert severity="error">{t('errors.fetch-error')}</Alert>
           </DialogContent>
         }
       >
-        <PermissionsForm userId={userId} onClose={onClose} />
-      </Suspense>
+        <Suspense
+          fallback={
+            <DialogContent>
+              <Box display="flex" justifyContent="center" p={3}>
+                <CircularProgress />
+              </Box>
+            </DialogContent>
+          }
+        >
+          <PermissionsForm userId={userId} onClose={onClose} />
+        </Suspense>
+      </ErrorBoundary>
     </Dialog>
   );
 };
