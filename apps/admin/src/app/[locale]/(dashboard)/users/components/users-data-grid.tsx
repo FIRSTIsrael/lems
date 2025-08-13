@@ -6,9 +6,11 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SecurityIcon from '@mui/icons-material/Security';
 import { useTranslations } from 'next-intl';
 import { AdminUser } from '@lems/types/api/admin';
 import { UsersSearch } from './users-search';
+import { PermissionsEditorDialog } from './permissions-editor-dialog';
 
 interface UsersDataGridProps {
   users: AdminUser[];
@@ -17,6 +19,15 @@ interface UsersDataGridProps {
 export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
   const [searchValue, setSearchValue] = useState('');
+  const [permissionsDialog, setPermissionsDialog] = useState<{
+    open: boolean;
+    userId: string;
+    userName: string;
+  }>({
+    open: false,
+    userId: '',
+    userName: ''
+  });
 
   const { data: users } = useSWR<AdminUser[]>('/admin/users', {
     fallbackData: initialUsers
@@ -40,6 +51,22 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
 
   const getInitial = (firstName: string) => {
     return firstName.charAt(0).toUpperCase();
+  };
+
+  const openPermissionsDialog = (userId: string, firstName: string, lastName: string) => {
+    setPermissionsDialog({
+      open: true,
+      userId,
+      userName: `${firstName} ${lastName}`
+    });
+  };
+
+  const closePermissionsDialog = () => {
+    setPermissionsDialog({
+      open: false,
+      userId: '',
+      userName: ''
+    });
   };
 
   const columns: GridColDef[] = [
@@ -84,9 +111,17 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
       field: 'actions',
       type: 'actions',
       headerName: t('columns.actions'),
-      width: 120,
+      width: 160,
       sortable: false,
       getActions: params => [
+        <GridActionsCellItem
+          key="permissions"
+          icon={<SecurityIcon />}
+          label="Edit permissions"
+          onClick={() => {
+            openPermissionsDialog(params.row.id, params.row.firstName, params.row.lastName);
+          }}
+        />,
         <GridActionsCellItem
           key="edit"
           icon={<EditIcon />}
@@ -142,6 +177,13 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           }}
         />
       </Box>
+
+      <PermissionsEditorDialog
+        open={permissionsDialog.open}
+        onClose={closePermissionsDialog}
+        userId={permissionsDialog.userId}
+        userName={permissionsDialog.userName}
+      />
     </>
   );
 };

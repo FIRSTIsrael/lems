@@ -208,6 +208,26 @@
           "submit": "Create User",
           "submitting": "Creating user..."
         }
+      },
+      "permissions-dialog": {
+        "title": "Edit Permissions for {userName}",
+        "description": "Select the permissions you want to grant to this user.",
+        "permissions": {
+          "manage-seasons": "Manage Seasons",
+          "manage-users": "Manage Users",
+          "manage-events": "Manage Events",
+          "manage-event-details": "Manage Event Details",
+          "manage-teams": "Manage Teams",
+          "view-insights": "View Insights"
+        },
+        "actions": {
+          "save": "Save",
+          "saving": "Saving...",
+          "cancel": "Cancel"
+        },
+        "errors": {
+          "fetch-error": "Failed to load user permissions."
+        }
       }
     }
   },
