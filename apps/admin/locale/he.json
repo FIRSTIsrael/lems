@@ -149,7 +149,88 @@
       "title": "אירועים"
     },
     "users": {
-      "title": "משתמשים"
+      "title": "משתמשים",
+      "create-new-user": "צור משתמש חדש",
+      "search": {
+        "placeholder": "חפש משתמשים לפי שם משתמש, שם פרטי או שם משפחה..."
+      },
+      "list": {
+        "columns": {
+          "username": "שם משתמש",
+          "name": "שם",
+          "createdAt": "נוצר",
+          "actions": "פעולות"
+        }
+      },
+      "creation-dialog": {
+        "title": "צור משתמש",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "fields": {
+            "username": {
+              "label": "שם משתמש",
+              "placeholder": "לדוגמה: john_doe"
+            },
+            "password": {
+              "label": "סיסמה",
+              "placeholder": "הזן סיסמה בטוחה"
+            },
+            "firstName": {
+              "label": "שם פרטי",
+              "placeholder": "לדוגמה: יוחנן"
+            },
+            "lastName": {
+              "label": "שם משפחה",
+              "placeholder": "לדוגמה: כהן"
+            }
+          },
+          "password-validation": {
+            "title": "דרישות סיסמה:",
+            "minLength": "לפחות 8 תווים",
+            "hasUppercase": "לפחות אות גדולה אחת (A-Z)",
+            "hasLowercase": "לפחות אות קטנה אחת (a-z)",
+            "hasNumber": "לפחות מספר אחד (0-9)",
+            "hasSpecialChar": "לפחות תו מיוחד אחד (!@#$%^&*)"
+          },
+          "errors": {
+            "username-required": "שם משתמש נדרש.",
+            "username-too-short": "שם המשתמש חייב להיות באורך 3 תווים לפחות.",
+            "username-invalid": "שם המשתמש יכול להכיל רק אותיות, מספרים וקווים תחתונים.",
+            "username-exists": "שם משתמש זה כבר קיים.",
+            "password-required": "סיסמה נדרשת.",
+            "password-invalid": "הסיסמה לא עומדת בדרישות.",
+            "firstName-required": "שם פרטי נדרש.",
+            "lastName-required": "שם משפחה נדרש.",
+            "error": "אירעה שגיאה בעת יצירת המשתמש."
+          },
+          "submit": "צור משתמש",
+          "submitting": "יוצר משתמש..."
+        }
+      },
+      "permissions-dialog": {
+        "title": "עריכת הרשאות עבור {userName}",
+        "description": "בחר את הההרשאות שברצונך להעניק למשתמש זה.",
+        "actions": {
+          "save": "שמור",
+          "saving": "שומר...",
+          "cancel": "ביטול"
+        },
+        "errors": {
+          "fetch-error": "נכשל בטעינת הרשאות המשתמש."
+        }
+      }
+    }
+  },
+  "general": {
+    "permissions": {
+      "manage-seasons": "ניהול עונות",
+      "manage-users": "ניהול משתמשים",
+      "manage-events": "ניהול אירועים",
+      "manage-event-details": "ניהול פרטי אירועים",
+      "manage-teams": "ניהול קבוצות",
+      "view-insights": "צפייה בתובנות"
     }
   },
   "layouts": {

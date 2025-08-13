@@ -1,9 +1,12 @@
-import { Locales } from '@lems/localization';
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: Object.keys(Locales),
+  locales: ['he', 'en'],
+
+  // TODO: We should use this but since the library uses a context
+  // hook somewhere this errors on the server side.
+  // locales: Object.keys(Locales),
 
   // Used when no locale matches
   defaultLocale: 'he',

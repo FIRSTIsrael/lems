@@ -71,6 +71,37 @@ class AdminSelector {
     return permissions.map(p => p.permission);
   }
 
+  async updatePermissions(newPermissions: PermissionType[]): Promise<PermissionType[]> {
+    const adminIdResult = await this.getAdminIdQuery().executeTakeFirst();
+    if (!adminIdResult) throw new Error(`Admin not found`);
+
+    const currentPermissions = await this.getPermissions();
+    const permissionsToRemove = currentPermissions.filter(p => !newPermissions.includes(p));
+    const permissionsToAdd = newPermissions.filter(p => !currentPermissions.includes(p));
+
+    if (permissionsToRemove.length > 0) {
+      await this.db
+        .deleteFrom('admin_permissions')
+        .where('admin_id', '=', adminIdResult.id)
+        .where('permission', 'in', permissionsToRemove)
+        .execute();
+    }
+
+    if (permissionsToAdd.length > 0) {
+      await this.db
+        .insertInto('admin_permissions')
+        .values(
+          permissionsToAdd.map(permission => ({
+            admin_id: adminIdResult.id,
+            permission: permission
+          }))
+        )
+        .execute();
+    }
+
+    return await this.getPermissions();
+  }
+
   async updateLastLogin(): Promise<void> {
     await this.db
       .updateTable('admins')
