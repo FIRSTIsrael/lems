@@ -212,14 +212,6 @@
       "permissions-dialog": {
         "title": "עריכת הרשאות עבור {userName}",
         "description": "בחר את הההרשאות שברצונך להעניק למשתמש זה.",
-        "permissions": {
-          "manage-seasons": "ניהול עונות",
-          "manage-users": "ניהול משתמשים",
-          "manage-events": "ניהול אירועים",
-          "manage-event-details": "ניהול פרטי אירועים",
-          "manage-teams": "ניהול קבוצות",
-          "view-insights": "צפייה בתובנות"
-        },
         "actions": {
           "save": "שמור",
           "saving": "שומר...",
@@ -229,6 +221,16 @@
           "fetch-error": "נכשל בטעינת הרשאות המשתמש."
         }
       }
+    }
+  },
+  "general": {
+    "permissions": {
+      "manage-seasons": "ניהול עונות",
+      "manage-users": "ניהול משתמשים",
+      "manage-events": "ניהול אירועים",
+      "manage-event-details": "ניהול פרטי אירועים",
+      "manage-teams": "ניהול קבוצות",
+      "view-insights": "צפייה בתובנות"
     }
   },
   "layouts": {

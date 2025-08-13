@@ -21,6 +21,7 @@ import useSWR, { mutate } from 'swr';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissions, ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../lib/fetch';
+import { useLocalePermissionName } from '../../../../hooks/localization';
 
 interface PermissionsEditorDialogProps {
   open: boolean;
@@ -36,6 +37,7 @@ interface PermissionsFormProps {
 
 const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
   const t = useTranslations('pages.users.permissions-dialog');
+  const getPermissionName = useLocalePermissionName();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,7 +111,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
                   disabled={isSubmitting}
                 />
               }
-              label={t(`permissions.${permission.toLowerCase().replace(/_/g, '-')}`)}
+              label={getPermissionName(permission)}
             />
           ))}
         </FormGroup>
