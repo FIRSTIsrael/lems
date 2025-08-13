@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import useSWR, { mutate } from 'swr';
 import { PermissionType } from '@lems/database';
 import { AdminUserPermissions, ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
+import { apiFetch } from '../../../../../lib/fetch';
 
 interface PermissionsEditorDialogProps {
   open: boolean;
@@ -44,25 +45,20 @@ const PERMISSION_LABELS = {
 
 const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
   const t = useTranslations('pages.users.permissions-dialog');
-  const [selectedPermissions, setSelectedPermissions] = useState<PermissionType[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: userPermissions } = useSWR<AdminUserPermissions>(
+  const { data: userPermissions = [] } = useSWR<AdminUserPermissions>(
     userId ? `/admin/users/permissions/${userId}` : null,
     { suspense: true }
   );
 
-  useEffect(() => {
-    if (userPermissions) {
-      setSelectedPermissions(userPermissions);
-    }
-  }, [userPermissions]);
+  const [selectedPermissions, setSelectedPermissions] = useState<PermissionType[]>(userPermissions);
 
   useEffect(() => {
-    setSelectedPermissions([]);
+    setSelectedPermissions(userPermissions);
     setError(null);
-  }, [userId]);
+  }, [userPermissions]);
 
   const handlePermissionChange = (permission: PermissionType, checked: boolean) => {
     setSelectedPermissions(prev => {
@@ -79,7 +75,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
     setError(null);
 
     try {
-      const response = await fetch(`/admin/users/permissions/${userId}`, {
+      const result = await apiFetch(`/admin/users/permissions/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -89,9 +85,8 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update permissions');
+      if (!result.ok) {
+        throw new Error('Failed to update permissions');
       }
 
       await mutate(`/admin/users/permissions/${userId}`);

@@ -62,19 +62,7 @@ router.put('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminReque
       return;
     }
 
-    const currentPermissions = await db.admins.byId(userId).getPermissions();
-
-    const permissionsToRemove = currentPermissions.filter(p => !permissions.includes(p));
-    for (const permission of permissionsToRemove) {
-      await db.admins.byId(userId).removePermission(permission);
-    }
-
-    const permissionsToAdd = permissions.filter(p => !currentPermissions.includes(p));
-    for (const permission of permissionsToAdd) {
-      await db.admins.byId(userId).grantPermission(permission);
-    }
-
-    const updatedPermissions = await db.admins.byId(userId).getPermissions();
+    const updatedPermissions = await db.admins.byId(userId).updatePermissions(permissions);
     res.json(updatedPermissions);
   } catch (error) {
     console.error('Error updating permissions:', error);
