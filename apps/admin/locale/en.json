@@ -185,7 +185,25 @@
       }
     },
     "events": {
-      "title": "Events"
+      "title": "Events",
+      "create-button": "Create",
+      "grid": {
+        "empty-state": {
+          "no-events": "No events found",
+          "no-events-description": "Create your first event to get started",
+          "create-new-event": "Create New Event"
+        }
+      },
+      "card": {
+        "teams": "Teams",
+        "divisions": "Divisions",
+        "more-divisions": "...and {count} more",
+        "fully-set-up": "Fully set up",
+        "missing-details": "Some details are missing",
+        "edit": "Edit",
+        "delete": "Delete",
+        "copy": "Copy"
+      }
     },
     "users": {
       "title": "Users",

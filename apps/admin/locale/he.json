@@ -185,7 +185,25 @@
       }
     },
     "events": {
-      "title": "אירועים"
+      "title": "אירועים",
+      "create-button": "יצירה",
+      "grid": {
+        "empty-state": {
+          "no-events": "לא נמצאו אירועים",
+          "no-events-description": "צור את האירוע הראשון שלך כדי להתחיל",
+          "create-new-event": "צור אירוע חדש"
+        }
+      },
+      "card": {
+        "teams": "קבוצות",
+        "divisions": "בתים",
+        "more-divisions": "{count, plural, =1 {...ועוד בית אחד} other {...ועוד # בתים}}",
+        "fully-set-up": "הוגדר במלואו",
+        "missing-details": "חסרים פרטים",
+        "edit": "ערוך",
+        "delete": "מחק",
+        "copy": "העתק"
+      }
     },
     "users": {
       "title": "משתמשים",
