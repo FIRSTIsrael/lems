@@ -1,6 +1,6 @@
 import React, { useState, useRef, CSSProperties } from 'react';
 import { Paper, Popper, ClickAwayListener, Stack, Box, useTheme, alpha } from '@mui/material';
-import { Saturation, Hue, HsvaColor } from '@uiw/react-color';
+import { Saturation, Hue, hsvaToHex, HsvaColor } from '@uiw/react-color';
 
 interface ColorPickerProps {
   value: HsvaColor;
@@ -106,12 +106,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                 />
               </Box>
 
-              {/* <Box
+              <Box
                 width="100%"
                 height={32}
                 borderRadius={theme.shape.borderRadius}
                 sx={{ backgroundColor: hsvaToHex(value) }}
-              /> */}
+              />
             </Stack>
           </Paper>
         </ClickAwayListener>
