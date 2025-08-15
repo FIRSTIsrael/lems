@@ -1,4 +1,5 @@
 import React, { useState, useRef, CSSProperties } from 'react';
+import { motion } from 'motion/react';
 import { Paper, Popper, ClickAwayListener, Stack, Box, useTheme, alpha } from '@mui/material';
 import { Saturation, Hue, hsvaToHex, HsvaColor } from '@uiw/react-color';
 
@@ -77,6 +78,14 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       >
         <ClickAwayListener onClickAway={handleClickAway}>
           <Paper
+            component={motion.div}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{
+              duration: 0.12,
+              ease: [0.4, 0.0, 0.2, 1] // Material Design easing
+            }}
             elevation={8}
             sx={{
               p: 2,
@@ -85,7 +94,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
               minWidth: 280,
               transformOrigin: 'top left',
-              animation: 'colorPickerPop 0.12s ease-out',
               position: 'relative',
               '&::before': {
                 content: '""',
@@ -110,20 +118,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                 borderRight: '6px solid transparent',
                 borderBottom: `6px solid ${alpha(theme.palette.divider, 0.12)}`,
                 zIndex: 1
-              },
-              '@keyframes colorPickerPop': {
-                '0%': {
-                  opacity: 0,
-                  transform: 'scale(0.85)'
-                },
-                '85%': {
-                  opacity: 1,
-                  transform: 'scale(1.01)'
-                },
-                '100%': {
-                  opacity: 1,
-                  transform: 'scale(1)'
-                }
               },
               ...sx
             }}
