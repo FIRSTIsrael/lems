@@ -237,7 +237,12 @@
             }
           },
           "actions": {
-            "add-division": "הוסף בית"
+            "add-division": "הוסף בית",
+            "creating": "יוצר אירוע...",
+            "create-event": "צור אירוע"
+          },
+          "messages": {
+            "success": "האירוע נוצר בהצלחה!"
           },
           "validation": {
             "name": {
@@ -266,7 +271,8 @@
       },
       "alerts": {
         "no-current-season": "אין עונה פעילה כעת. ניתן לייצר אירועים רק במהלך עונה."
-      }
+      },
+      "loading": "טוען אירועים..."
     },
     "users": {
       "title": "משתמשים",

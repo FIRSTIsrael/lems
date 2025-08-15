@@ -15,3 +15,20 @@ export interface EventsTable {
 export type Event = Selectable<EventsTable>;
 export type InsertableEvent = Insertable<EventsTable>;
 export type UpdateableEvent = Updateable<EventsTable>;
+
+// Utility types
+
+export interface EventSummary {
+  id: string;
+  name: string;
+  slug: string;
+  date: string;
+  location: string;
+  teamCount: number;
+  divisions: {
+    id: string;
+    name: string;
+    color: string;
+  }[];
+  isFullySetUp: boolean;
+}

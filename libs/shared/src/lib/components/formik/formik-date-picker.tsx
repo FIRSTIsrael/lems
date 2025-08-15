@@ -11,24 +11,33 @@ type FormikDatePickerProps = {
 export const FormikDatePicker: React.FC<FormikDatePickerProps> = ({ name, label, ...props }) => {
   return (
     <FastField name={name}>
-      {({ field, form }: FieldProps) => (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label={label}
-            {...props}
-            value={field.value ? dayjs(field.value) : null}
-            onChange={newDate => {
-              if (newDate) {
-                form.setFieldValue(field.name, newDate.toDate());
-              } else {
-                form.setFieldValue(field.name, null);
-              }
-            }}
-            format="DD/MM/YYYY"
-            slotProps={{ textField: { fullWidth: true } }}
-          />
-        </LocalizationProvider>
-      )}
+      {({ field, form }: FieldProps) => {
+        const fieldError = form.touched[field.name] && form.errors[field.name];
+        return (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={label}
+              {...props}
+              value={field.value ? dayjs(field.value) : null}
+              onChange={newDate => {
+                if (newDate) {
+                  form.setFieldValue(field.name, newDate.toDate());
+                } else {
+                  form.setFieldValue(field.name, null);
+                }
+              }}
+              format="DD/MM/YYYY"
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  error: Boolean(fieldError),
+                  helperText: fieldError as string
+                }
+              }}
+            />
+          </LocalizationProvider>
+        );
+      }}
     </FastField>
   );
 };

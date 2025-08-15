@@ -60,7 +60,7 @@ export const PreviousSeason: React.FC<PreviousSeasonProps> = ({ season }) => {
             minHeight: 200
           }}
         >
-          <EventGrid events={[]} disableCreation />
+          <EventGrid season={season} disableCreation />
         </Box>
       </Collapse>
     </Box>

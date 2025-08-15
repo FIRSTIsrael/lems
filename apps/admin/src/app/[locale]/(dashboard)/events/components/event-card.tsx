@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardContent,
@@ -23,22 +24,9 @@ import {
   CheckCircle,
   Warning
 } from '@mui/icons-material';
-import { useTranslations } from 'next-intl';
+import { EventSummary } from '@lems/types/api/admin';
 
-interface Division {
-  id: string;
-  name: string;
-  color?: string;
-}
-
-interface EventCardProps {
-  id: string;
-  name: string;
-  location: string;
-  date: string;
-  teamCount: number;
-  divisions: Division[];
-  isFullySetUp: boolean;
+interface EventCardProps extends EventSummary {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onCopy?: (id: string) => void;
@@ -48,7 +36,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   id,
   name,
   location,
-  date,
+  startDate: date,
   teamCount,
   divisions,
   isFullySetUp,
@@ -75,14 +63,11 @@ export const EventCard: React.FC<EventCardProps> = ({
       }}
     >
       <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-        {/* Event Name */}
         <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
           {name}
         </Typography>
 
-        {/* Event Details */}
         <Stack spacing={1.5} sx={{ mb: 2 }}>
-          {/* Location */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOn color="action" fontSize="small" />
             <Typography variant="body2" color="text.secondary">
@@ -90,11 +75,10 @@ export const EventCard: React.FC<EventCardProps> = ({
             </Typography>
           </Box>
 
-          {/* Date */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CalendarMonth color="action" fontSize="small" />
             <Typography variant="body2" color="text.secondary">
-              {date}
+              {dayjs(date).format('DD/MM/YYYY')}
             </Typography>
           </Box>
 
@@ -107,7 +91,6 @@ export const EventCard: React.FC<EventCardProps> = ({
           </Box>
         </Stack>
 
-        {/* Divisions */}
         {divisions.length > 1 && (
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
@@ -138,7 +121,6 @@ export const EventCard: React.FC<EventCardProps> = ({
           </Box>
         )}
 
-        {/* Status */}
         <Box sx={{ mt: 'auto' }}>
           {isFullySetUp ? (
             <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
@@ -155,17 +137,17 @@ export const EventCard: React.FC<EventCardProps> = ({
       {/* Action Buttons */}
       <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
         <Tooltip title={t('edit')}>
-          <IconButton onClick={handleEdit} size="small">
+          <IconButton onClick={handleEdit} size="small" disabled>
             <Edit />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('delete')}>
-          <IconButton onClick={handleDelete} size="small">
+          <IconButton onClick={handleDelete} size="small" disabled>
             <Delete />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('copy')}>
-          <IconButton onClick={handleCopy} size="small">
+          <IconButton onClick={handleCopy} size="small" disabled>
             <ContentCopy />
           </IconButton>
         </Tooltip>

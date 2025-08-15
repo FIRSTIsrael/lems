@@ -1,12 +1,14 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Formik, Form, FormikErrors } from 'formik';
-import { Paper, Typography, Box, Stack, IconButton, Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { Formik, Form, FormikErrors, FormikHelpers } from 'formik';
+import { Paper, Typography, Box, Stack, IconButton, Button, Alert } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Add as AddIcon } from '@mui/icons-material';
-import { FormikDatePicker, FormikTextField, ColorPicker } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
+import { FormikDatePicker, FormikTextField, ColorPicker } from '@lems/shared';
+import { apiFetch } from '../../../../../../lib/fetch';
 import { defaultColor } from '../../../../../../theme';
 import { isValidSlug } from '../../utils';
 import { DivisionItem } from './division-item';
@@ -34,6 +36,7 @@ const initialValues: EventFormValues = {
 
 export const CreateEventLayout = () => {
   const t = useTranslations('pages.events.create.form');
+  const router = useRouter();
 
   const validate = (values: EventFormValues): FormikErrors<EventFormValues> => {
     const errors: FormikErrors<EventFormValues> = {};
@@ -86,21 +89,58 @@ export const CreateEventLayout = () => {
     return errors;
   };
 
-  const handleSubmit = (values: EventFormValues) => {
-    const submissionData = {
-      ...values,
-      divisions: values.divisions.map(division => ({
-        ...division,
-        color: hsvaToHex(division.color) // Convert to hex string for backend
-      }))
-    };
-    console.log('Form submitted:', submissionData);
+  const handleSubmit = async (
+    values: EventFormValues,
+    { setStatus, setSubmitting }: FormikHelpers<EventFormValues>
+  ) => {
+    setSubmitting(true);
+    setStatus(null);
+
+    try {
+      const submissionData = {
+        name: values.name,
+        slug: values.slug,
+        date: values.date?.toISOString() || '',
+        location: values.location,
+        divisions: values.divisions.map(division => ({
+          name: division.name,
+          color: hsvaToHex(division.color) // Convert to hex string for backend
+        }))
+      };
+
+      const result = await apiFetch('/admin/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      });
+
+      if (result.ok) {
+        setStatus(true);
+        setTimeout(() => {
+          router.push(`/${document.documentElement.lang}/events`);
+          setSubmitting(false);
+        }, 2000);
+      } else {
+        if (result.error && typeof result.error === 'object' && 'error' in result.error) {
+          setStatus((result.error as { error: string }).error);
+        } else {
+          setStatus(`Failed to create event: ${result.statusText}`);
+        }
+        setSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+      setStatus('An unexpected error occurred. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
-        {({ values, setFieldValue }) => {
+        {({ values, setFieldValue, status, setStatus, isSubmitting }) => {
           const isMultipleDivisions = values.divisions.length > 1;
 
           const addDivision = () => {
@@ -160,6 +200,14 @@ export const CreateEventLayout = () => {
 
               <Form>
                 <Stack spacing={3}>
+                  {status && typeof status === 'string' && (
+                    <Alert severity="error" onClose={() => setStatus(null)}>
+                      {status}
+                    </Alert>
+                  )}
+
+                  {status === true && <Alert severity="success">{t('messages.success')}</Alert>}
+
                   <Grid container spacing={3}>
                     <Grid size={6}>
                       <FormikTextField
@@ -212,16 +260,20 @@ export const CreateEventLayout = () => {
                     </Box>
                   )}
 
-                  <Box mt={2}>
+                  <Stack direction="row" spacing={2} mt={2}>
                     <Button
                       startIcon={<AddIcon />}
                       onClick={addDivision}
                       variant="outlined"
+                      disabled={isSubmitting}
                       sx={{ alignSelf: 'flex-start' }}
                     >
                       {t('actions.add-division')}
                     </Button>
-                  </Box>
+                    <Button type="submit" variant="contained" loading={isSubmitting}>
+                      {isSubmitting ? t('actions.creating') : t('actions.create-event')}
+                    </Button>
+                  </Stack>
                 </Stack>
               </Form>
             </>

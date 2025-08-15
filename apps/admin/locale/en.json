@@ -237,7 +237,12 @@
             }
           },
           "actions": {
-            "add-division": "Add Division"
+            "add-division": "Add Division",
+            "creating": "Creating...",
+            "create-event": "Create Event"
+          },
+          "messages": {
+            "success": "Event created successfully!"
           },
           "validation": {
             "name": {
@@ -266,7 +271,8 @@
       },
       "alerts": {
         "no-current-season": "No season is currently active. Events can only be created when a season is in progress."
-      }
+      },
+      "loading": "Loading events..."
     },
     "users": {
       "title": "Users",

@@ -1,3 +1,5 @@
+'use client';
+
 import { Box } from '@mui/material';
 import { Season } from '@lems/types/api/admin';
 import { SeasonHeader } from './season-header';
@@ -25,7 +27,7 @@ export const CurrentSeason: React.FC<CurrentSeasonProps> = ({ season }) => {
           minHeight: 200
         }}
       >
-        <EventGrid events={[]} />
+        <EventGrid season={season} />
       </Box>
     </>
   );

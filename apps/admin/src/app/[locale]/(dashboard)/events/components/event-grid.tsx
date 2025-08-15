@@ -1,29 +1,40 @@
 'use client';
 
+import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography, CircularProgress } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { Season, EventSummary } from '@lems/types/api/admin';
 import { EventCard } from './event-card';
 
 interface EventGridProps {
-  events: {
-    id: string;
-    name: string;
-    date: string;
-    location: string;
-    teamCount: number;
-    divisions: { id: string; name: string; color: string }[];
-    isFullySetUp: boolean;
-  }[];
+  season: Season;
   disableCreation?: boolean;
 }
 
-export const EventGrid: React.FC<EventGridProps> = ({ events, disableCreation }) => {
+export const EventGrid: React.FC<EventGridProps> = ({ season, disableCreation }) => {
   const t = useTranslations('pages.events.grid');
+
+  const { data: events = [], isLoading } = useSWR<EventSummary[]>(
+    `/admin/events/season/${season.id}/summary`
+  );
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          textAlign: 'center',
+          py: 8,
+          color: 'text.secondary'
+        }}
+      >
+        <CircularProgress size={40} />
+      </Box>
+    );
+  }
 
   return (
     <>
-      {/* Events Grid */}
       <Grid container spacing={3}>
         {events.map(event => (
           <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={event.id}>
@@ -32,7 +43,6 @@ export const EventGrid: React.FC<EventGridProps> = ({ events, disableCreation })
         ))}
       </Grid>
 
-      {/* Empty State */}
       {events.length === 0 && (
         <Box
           sx={{
