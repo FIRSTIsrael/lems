@@ -10,13 +10,18 @@ import { EventCard } from './event-card';
 interface EventGridProps {
   season: Season;
   disableCreation?: boolean;
+  shouldFetch?: boolean;
 }
 
-export const EventGrid: React.FC<EventGridProps> = ({ season, disableCreation }) => {
+export const EventGrid: React.FC<EventGridProps> = ({
+  season,
+  disableCreation = false,
+  shouldFetch = true
+}) => {
   const t = useTranslations('pages.events.grid');
 
   const { data: events = [], isLoading } = useSWR<EventSummary[]>(
-    `/admin/events/season/${season.id}/summary`
+    shouldFetch ? `/admin/events/season/${season.id}/summary` : null
   );
 
   if (isLoading) {
