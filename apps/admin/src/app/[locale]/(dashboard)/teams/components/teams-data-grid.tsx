@@ -50,7 +50,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         <Box
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
         >
-          <Avatar src={params.row.logoUrl || undefined} alt={params.row.name}>
+          <Avatar src={params.row.logoUrl || '/assets/default-avatar.svg'} alt={params.row.name}>
             #{params.row.number}
           </Avatar>
         </Box>
@@ -63,7 +63,8 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       align: 'left',
       headerAlign: 'left',
       type: 'number',
-      sortable: true
+      sortable: true,
+      valueFormatter: (value: number) => value.toString()
     },
     {
       field: 'name',
@@ -124,13 +125,13 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 10 }
+              paginationModel: { page: 0, pageSize: 50 }
             },
             sorting: {
               sortModel: [{ field: 'number', sort: 'asc' }]
             }
           }}
-          pageSizeOptions={[5, 10, 25, 50]}
+          pageSizeOptions={[25, 50, 100]}
           disableRowSelectionOnClick
           disableColumnFilter
           disableColumnMenu

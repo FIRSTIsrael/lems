@@ -13,3 +13,8 @@ export const AdminTeamResponseSchema = z.object({
 export type Team = z.infer<typeof AdminTeamResponseSchema>;
 
 export const AdminTeamsResponseSchema = z.array(AdminTeamResponseSchema);
+
+export const AdminTeamsImportResponseSchema = z.object({
+  created: z.array(AdminTeamResponseSchema),
+  updated: z.array(AdminTeamResponseSchema)
+});

@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import { Division, Team } from '@lems/types';
 
 export const parseTeamList = (division: WithId<Division>, csvData: string): Array<Team> => {
-  const file: string[] = parse(csvData.trim());
+  const file: string[][] = parse(csvData.trim());
   const version = parseInt(file.shift()?.[1]); // Version number: 2nd cell of 1st row.
   if (version !== 1) {
     console.error('LEMS can only parse version 1 team lists');

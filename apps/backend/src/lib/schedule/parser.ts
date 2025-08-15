@@ -15,7 +15,7 @@ import {
   AwardNameTypes,
   JudgingCategoryTypes
 } from '@lems/types';
-import { Line, getBlock, extractBlocksFromFile } from '../csv';
+import { Line, getBlock, extractBlocksFromFile, CSVLine } from '../csv';
 
 const TEAMS_BLOCK_ID = 1;
 const PRACTICE_MATCHES_BLOCK_ID = 4;
@@ -89,7 +89,7 @@ export const parseDivisionData = (
     return { teams: [], tables: [], rooms: [] };
   }
 
-  const blocks = extractBlocksFromFile(file);
+  const blocks = extractBlocksFromFile(file as unknown as CSVLine[]);
   const teams = extractTeamsFromBlock(getBlock(blocks, TEAMS_BLOCK_ID), division);
   const tables = extractTablesFromBlock(getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID), division);
   const rooms = extractJudgingRoomsFromBlock(getBlock(blocks, JUDGING_SESSIONS_BLOCK_ID), division);
@@ -216,7 +216,7 @@ export const parseSessionsAndMatches = (
   const version = parseInt(file.shift()?.[1]); //Version number: 2nd cell of 1st row.
   if (version !== 2) Promise.reject('LEMS can only parse version 2 schedules');
 
-  const blocks = extractBlocksFromFile(file);
+  const blocks = extractBlocksFromFile(file as unknown as CSVLine[]);
   const practiceMatches = extractMatchesFromMatchBlock(
     getBlock(blocks, PRACTICE_MATCHES_BLOCK_ID),
     'practice',

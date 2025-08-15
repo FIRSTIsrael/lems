@@ -1,9 +1,10 @@
 import express from 'express';
-import fileUpload from 'express-fileupload';
+import fileUpload, { UploadedFile } from 'express-fileupload';
+import { UpdateableTeam } from '@lems/database';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
-import { makeAdminTeamResponse } from './util';
+import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -75,9 +76,90 @@ router.post(
   }
 );
 
+router.post('/import', fileUpload(), async (req: AdminRequest, res) => {
+  if (!req.files || !req.files.file) {
+    res.status(400).json({ error: 'No file uploaded' });
+    return;
+  }
+
+  const importFile = req.files.file as UploadedFile;
+
+  if (!importFile.name.endsWith('.csv')) {
+    res.status(400).json({ error: 'File must be a CSV' });
+    return;
+  }
+
+  try {
+    const teams = await parseTeamList(importFile.data);
+    const { created, updated } = await db.teams.upsertMany(teams);
+    res.status(201).json({
+      created: created.map(team => makeAdminTeamResponse(team)),
+      updated: updated.map(team => makeAdminTeamResponse(team))
+    });
+  } catch (error) {
+    console.error('Error importing teams:', error);
+    res.status(500).json({ error: 'Failed to import teams' });
+  }
+});
+
 router.get('/', async (req: AdminRequest, res) => {
   const teams = await db.teams.getAll();
   res.json(teams.map(team => makeAdminTeamResponse(team)));
+});
+
+router.get('/:number', async (req: AdminRequest, res) => {
+  const number = Number(req.params.number);
+  if (Number.isNaN(number)) {
+    res.status(400).json({ error: 'Invalid team number' });
+    return;
+  }
+
+  const team = await db.teams.byNumber(number).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+  res.json(makeAdminTeamResponse(team));
+});
+
+router.delete('/:number', async (req: AdminRequest, res) => {
+  const number = Number(req.params.number);
+  if (Number.isNaN(number)) {
+    res.status(400).json({ error: 'Invalid team number' });
+    return;
+  }
+
+  const success = await db.teams.byNumber(number).delete();
+  if (!success) {
+    res.status(500).json({ error: 'Could not delete team' });
+    return;
+  }
+  res.status(200);
+});
+
+router.patch('/:number', async (req: AdminRequest, res) => {
+  const number = Number(req.params.number);
+  if (Number.isNaN(number)) {
+    res.status(400).json({ error: 'Invalid team number' });
+    return;
+  }
+
+  const team = await db.teams.byNumber(number).update(req.body as Partial<UpdateableTeam>);
+  if (!team) {
+    res.status(500).json({ error: 'Updating team failed' });
+    return;
+  }
+  res.status(200).json(makeAdminTeamResponse(team));
+});
+
+router.get('/id/:id', async (req: AdminRequest, res) => {
+  const id = req.params.id;
+  const team = await db.teams.byId(id).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+  res.json(makeAdminTeamResponse(team));
 });
 
 export default router;
