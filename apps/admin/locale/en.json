@@ -208,7 +208,8 @@
         "title": "Create Event",
         "form": {
           "sections": {
-            "event-details": "Event Details"
+            "event-details": "Event Details",
+            "divisions": "Divisions"
           },
           "fields": {
             "name": {
@@ -226,7 +227,17 @@
             "location": {
               "label": "Location",
               "placeholder": "Enter event location..."
+            },
+            "division": {
+              "title": "Division {number}",
+              "name": {
+                "label": "Division Name",
+                "placeholder": "Enter division name..."
+              }
             }
+          },
+          "actions": {
+            "add-division": "Add Division"
           },
           "validation": {
             "name": {
@@ -243,6 +254,12 @@
             "location": {
               "required": "Location is required",
               "min": "Location must be at least {min} characters"
+            },
+            "division": {
+              "name": {
+                "required": "Division name is required",
+                "min": "Division name must be at least {min} characters"
+              }
             }
           }
         }

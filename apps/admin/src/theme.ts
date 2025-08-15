@@ -2,6 +2,8 @@
 import { createTheme, Shadows } from '@mui/material/styles';
 import { Locales, Locale } from '@lems/localization';
 
+export const defaultColor = '#003d6a';
+
 const softShadows: Shadows = [
   'none',
   '0px 1px 2px 0px rgb(0 0 0 / 3%), 0px 2px 10px 0px rgb(0 0 0 / 12%)',
@@ -36,7 +38,7 @@ export const baseTheme = createTheme({
   },
   palette: {
     primary: {
-      main: '#003d6a'
+      main: defaultColor
     },
     secondary: {
       main: '#fafafa'

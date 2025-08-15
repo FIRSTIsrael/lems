@@ -208,7 +208,8 @@
         "title": "יצירת אירוע",
         "form": {
           "sections": {
-            "event-details": "פרטי האירוע"
+            "event-details": "פרטי האירוע",
+            "divisions": "בתים"
           },
           "fields": {
             "name": {
@@ -226,7 +227,17 @@
             "location": {
               "label": "מיקום",
               "placeholder": "הזן מיקום האירוע..."
+            },
+            "division": {
+              "title": "בית {number}",
+              "name": {
+                "label": "שם הבית",
+                "placeholder": "הזן שם בית..."
+              }
             }
+          },
+          "actions": {
+            "add-division": "הוסף בית"
           },
           "validation": {
             "name": {
@@ -243,6 +254,12 @@
             "location": {
               "required": "מיקום נדרש",
               "min": "המיקום חייב להכיל לפחות {min} תווים"
+            },
+            "division": {
+              "name": {
+                "required": "שם הבית נדרש",
+                "min": "שם הבית חייב להכיל לפחות {min} תווים"
+              }
             }
           }
         }
