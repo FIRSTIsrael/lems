@@ -2,9 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import { Formik, Form, FormikErrors } from 'formik';
-import { Paper, Typography, Box, Stack } from '@mui/material';
+import { Paper, Typography, Box, Stack, useTheme, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { FormikDatePicker, FormikTextField } from '@lems/shared';
+import { FormikDatePicker, FormikTextField, ColorPicker } from '@lems/shared';
+import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
 import { isValidSlug } from '../../utils';
 
 interface EventFormValues {
@@ -12,17 +13,20 @@ interface EventFormValues {
   slug: string;
   date: Date | null;
   location: string;
+  color: HsvaColor; // Store as HSVA internally
 }
 
 const initialValues: EventFormValues = {
   name: '',
   slug: '',
   date: null,
-  location: ''
+  location: '',
+  color: hexToHsva('#003d6a') // Convert default hex to HSVA
 };
 
 export const CreateEventLayout = () => {
   const t = useTranslations('pages.events.create.form');
+  const theme = useTheme();
 
   const validate = (values: EventFormValues): FormikErrors<EventFormValues> => {
     const errors: FormikErrors<EventFormValues> = {};
@@ -57,54 +61,83 @@ export const CreateEventLayout = () => {
   };
 
   const handleSubmit = (values: EventFormValues) => {
-    console.log('Form submitted:', values);
+    // Convert HSVA color to hex for submission
+    const submissionData = {
+      ...values,
+      color: hsvaToHex(values.color) // Convert to hex string for backend
+    };
+    console.log('Form submitted:', submissionData);
+    // submissionData.color is now a hex string like "#ff0000"
     // TODO: Implement form submission
   };
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
-      <Box mb={3}>
-        <Typography variant="h2" gutterBottom>
-          {t('sections.event-details')}
-        </Typography>
-      </Box>
-
       <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
-        {() => (
-          <Form>
-            <Stack spacing={3}>
-              <Grid container spacing={3}>
-                <Grid size={6}>
-                  <FormikTextField
-                    name="name"
-                    label={t('fields.name.label')}
-                    placeholder={t('fields.name.placeholder')}
-                  />
-                </Grid>
+        {({ values, setFieldValue }) => (
+          <>
+            <Box mb={3} display="flex" alignItems="center" gap={2}>
+              <Typography variant="h2" gutterBottom>
+                {t('sections.event-details')}
+              </Typography>
+              <ColorPicker
+                value={values.color}
+                onChange={(hsvaColor: HsvaColor) => setFieldValue('color', hsvaColor)}
+              >
+                <IconButton
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    mt: -1,
+                    backgroundColor: hsvaToHex(values.color),
+                    border: `2px solid ${theme.palette.divider}`,
+                    '&:hover': {
+                      backgroundColor: hsvaToHex(values.color),
+                      opacity: 0.8,
+                      transform: 'scale(1.1)'
+                    },
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                  aria-label="Choose event color"
+                />
+              </ColorPicker>
+            </Box>
 
-                <Grid size={6}>
-                  <FormikTextField
-                    name="slug"
-                    label={t('fields.slug.label')}
-                    placeholder={t('fields.slug.placeholder')}
-                    helperText={t('fields.slug.helper-text')}
-                  />
-                </Grid>
+            <Form>
+              <Stack spacing={3}>
+                <Grid container spacing={3}>
+                  <Grid size={6}>
+                    <FormikTextField
+                      name="name"
+                      label={t('fields.name.label')}
+                      placeholder={t('fields.name.placeholder')}
+                    />
+                  </Grid>
 
-                <Grid size={6}>
-                  <FormikDatePicker name="date" label={t('fields.date.label')} />
-                </Grid>
+                  <Grid size={6}>
+                    <FormikTextField
+                      name="slug"
+                      label={t('fields.slug.label')}
+                      placeholder={t('fields.slug.placeholder')}
+                      helperText={t('fields.slug.helper-text')}
+                    />
+                  </Grid>
 
-                <Grid size={6}>
-                  <FormikTextField
-                    name="location"
-                    label={t('fields.location.label')}
-                    placeholder={t('fields.location.placeholder')}
-                  />
+                  <Grid size={6}>
+                    <FormikDatePicker name="date" label={t('fields.date.label')} />
+                  </Grid>
+
+                  <Grid size={6}>
+                    <FormikTextField
+                      name="location"
+                      label={t('fields.location.label')}
+                      placeholder={t('fields.location.placeholder')}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Stack>
-          </Form>
+              </Stack>
+            </Form>
+          </>
         )}
       </Formik>
     </Paper>

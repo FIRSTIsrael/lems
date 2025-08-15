@@ -1,5 +1,6 @@
 export * from './number-input';
 export * from './file-upload';
+export * from './color-picker';
 
 // Formik helpers
 export * from './formik/formik-number-input';
