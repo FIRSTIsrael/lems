@@ -24,18 +24,23 @@ export const FormikTextField: React.FC<FormikTextFieldProps> = ({
 
   return (
     <Field name={name}>
-      {({ field, form }: FieldProps) => (
-        <TextField
-          inputRef={textFieldRef}
-          fullWidth
-          {...props}
-          {...field}
-          label={label}
-          value={field.value}
-          onChange={e => form.setFieldValue(field.name, e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-      )}
+      {({ field, form }: FieldProps) => {
+        const fieldError = form.touched[field.name] && form.errors[field.name];
+        return (
+          <TextField
+            inputRef={textFieldRef}
+            fullWidth
+            {...props}
+            {...field}
+            label={label}
+            value={field.value}
+            onChange={e => form.setFieldValue(field.name, e.target.value)}
+            onKeyDown={handleKeyDown}
+            error={Boolean(fieldError)}
+            helperText={(fieldError as string) || props.helperText}
+          />
+        );
+      }}
     </Field>
   );
 };

@@ -6,6 +6,8 @@ import { SeasonsRepository } from './repositories/seasons';
 import { TeamsRepository } from './repositories/teams';
 import { KyselyDatabaseSchema } from './schema/kysely';
 import { ObjectStorage } from './object-storage';
+import { EventsRepository } from './repositories/events';
+import { DivisionsRepository } from './repositories/divisions';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
@@ -28,6 +30,8 @@ export class Database {
   public admins: AdminsRepository;
   public seasons: SeasonsRepository;
   public teams: TeamsRepository;
+  public events: EventsRepository;
+  public divisions: DivisionsRepository;
 
   constructor() {
     this.kysely = new Kysely<KyselyDatabaseSchema>({
@@ -57,6 +61,8 @@ export class Database {
     this.admins = new AdminsRepository(this.kysely);
     this.seasons = new SeasonsRepository(this.kysely, this.space);
     this.teams = new TeamsRepository(this.kysely, this.space);
+    this.events = new EventsRepository(this.kysely);
+    this.divisions = new DivisionsRepository(this.kysely);
   }
 
   async connect(): Promise<void> {

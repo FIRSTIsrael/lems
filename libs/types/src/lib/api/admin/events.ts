@@ -1,0 +1,27 @@
+import { z } from 'zod';
+
+export const AdminEventResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  startDate: z.string().transform(val => new Date(val)),
+  endDate: z.string().transform(val => new Date(val)),
+  location: z.string(),
+  coordinates: z.string().nullable(),
+  seasonId: z.string()
+});
+
+export const AdminEventSummaryResponseSchema = z.object({
+  ...AdminEventResponseSchema.shape,
+  divisions: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
+  teamCount: z.number(),
+  isFullySetUp: z.boolean()
+});
+
+export type Event = z.infer<typeof AdminEventResponseSchema>;
+
+export type EventSummary = z.infer<typeof AdminEventSummaryResponseSchema>;
+
+export const AdminEventsResponseSchema = z.array(AdminEventResponseSchema);
+
+export const AdminSummarizedEventsResponseSchema = z.array(AdminEventSummaryResponseSchema);

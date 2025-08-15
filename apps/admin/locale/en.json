@@ -185,7 +185,93 @@
       }
     },
     "events": {
-      "title": "Events"
+      "title": "Events",
+      "create-button": "Create",
+      "grid": {
+        "empty-state": {
+          "no-events": "No events found",
+          "no-events-description": "Create your first event to get started",
+          "create-new-event": "Create New Event"
+        }
+      },
+      "card": {
+        "teams": "Teams",
+        "divisions": "Divisions",
+        "more-divisions": "...and {count} more",
+        "fully-set-up": "Fully set up",
+        "missing-details": "Some details are missing",
+        "edit": "Edit",
+        "delete": "Delete",
+        "copy": "Copy"
+      },
+      "create": {
+        "title": "Create Event",
+        "form": {
+          "sections": {
+            "event-details": "Event Details",
+            "divisions": "Divisions"
+          },
+          "fields": {
+            "name": {
+              "label": "Event Name",
+              "placeholder": "Enter event name..."
+            },
+            "slug": {
+              "label": "Event Slug",
+              "placeholder": "e.g., regional-championship-2025",
+              "helper-text": "Lowercase letters, numbers, and dashes only. Must be unique."
+            },
+            "date": {
+              "label": "Event Date"
+            },
+            "location": {
+              "label": "Location",
+              "placeholder": "Enter event location..."
+            },
+            "division": {
+              "title": "Division {number}",
+              "name": {
+                "label": "Division Name",
+                "placeholder": "Enter division name..."
+              }
+            }
+          },
+          "actions": {
+            "add-division": "Add Division",
+            "creating": "Creating...",
+            "create-event": "Create Event"
+          },
+          "messages": {
+            "success": "Event created successfully!"
+          },
+          "validation": {
+            "name": {
+              "required": "Event name is required",
+              "min": "Event name must be at least {min} characters"
+            },
+            "slug": {
+              "required": "Event slug is required",
+              "format": "Slug must contain only lowercase letters, numbers, and dashes"
+            },
+            "date": {
+              "required": "Event date is required"
+            },
+            "location": {
+              "required": "Location is required",
+              "min": "Location must be at least {min} characters"
+            },
+            "division": {
+              "name": {
+                "required": "Division name is required",
+                "min": "Division name must be at least {min} characters"
+              }
+            }
+          }
+        }
+      },
+      "alerts": {
+        "no-current-season": "No season is currently active. Events can only be created when a season is in progress."
+      }
     },
     "users": {
       "title": "Users",

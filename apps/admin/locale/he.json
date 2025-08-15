@@ -185,7 +185,93 @@
       }
     },
     "events": {
-      "title": "אירועים"
+      "title": "אירועים",
+      "create-button": "יצירה",
+      "grid": {
+        "empty-state": {
+          "no-events": "לא נמצאו אירועים",
+          "no-events-description": "צור את האירוע הראשון שלך כדי להתחיל",
+          "create-new-event": "צור אירוע חדש"
+        }
+      },
+      "card": {
+        "teams": "קבוצות",
+        "divisions": "בתים",
+        "more-divisions": "{count, plural, =1 {...ועוד בית אחד} other {...ועוד # בתים}}",
+        "fully-set-up": "הוגדר במלואו",
+        "missing-details": "חסרים פרטים",
+        "edit": "ערוך",
+        "delete": "מחק",
+        "copy": "העתק"
+      },
+      "create": {
+        "title": "יצירת אירוע",
+        "form": {
+          "sections": {
+            "event-details": "פרטי האירוע",
+            "divisions": "בתים"
+          },
+          "fields": {
+            "name": {
+              "label": "שם האירוע",
+              "placeholder": "הזן שם אירוע..."
+            },
+            "slug": {
+              "label": "מזהה האירוע",
+              "placeholder": "לדוגמה: איזורי-2025",
+              "helper-text": "אותיות קטנות באנגלית, מספרים ומקפים בלבד. חייב להיות ייחודי."
+            },
+            "date": {
+              "label": "תאריך האירוע"
+            },
+            "location": {
+              "label": "מיקום",
+              "placeholder": "הזן מיקום האירוע..."
+            },
+            "division": {
+              "title": "בית {number}",
+              "name": {
+                "label": "שם הבית",
+                "placeholder": "הזן שם בית..."
+              }
+            }
+          },
+          "actions": {
+            "add-division": "הוסף בית",
+            "creating": "יוצר אירוע...",
+            "create-event": "צור אירוע"
+          },
+          "messages": {
+            "success": "האירוע נוצר בהצלחה!"
+          },
+          "validation": {
+            "name": {
+              "required": "שם האירוע נדרש",
+              "min": "שם האירוע חייב להכיל לפחות {min} תווים"
+            },
+            "slug": {
+              "required": "מזהה האירוע נדרש",
+              "format": "המזהה חייב להכיל רק אותיות קטנות באנגלית, מספרים ומקפים"
+            },
+            "date": {
+              "required": "תאריך האירוע נדרש"
+            },
+            "location": {
+              "required": "מיקום נדרש",
+              "min": "המיקום חייב להכיל לפחות {min} תווים"
+            },
+            "division": {
+              "name": {
+                "required": "שם הבית נדרש",
+                "min": "שם הבית חייב להכיל לפחות {min} תווים"
+              }
+            }
+          }
+        }
+      },
+      "alerts": {
+        "no-current-season": "אין עונה פעילה כעת. ניתן לייצר אירועים רק במהלך עונה."
+      }
     },
     "users": {
       "title": "משתמשים",
