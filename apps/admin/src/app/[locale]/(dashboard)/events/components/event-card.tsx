@@ -82,7 +82,6 @@ export const EventCard: React.FC<EventCardProps> = ({
             </Typography>
           </Box>
 
-          {/* Team Count */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Group color="action" fontSize="small" />
             <Typography variant="body2" color="text.secondary">
@@ -134,7 +133,6 @@ export const EventCard: React.FC<EventCardProps> = ({
         </Box>
       </CardContent>
 
-      {/* Action Buttons */}
       <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
         <Tooltip title={t('edit')}>
           <IconButton onClick={handleEdit} size="small" disabled>

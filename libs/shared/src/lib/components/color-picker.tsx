@@ -84,6 +84,22 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               backgroundColor: theme.palette.background.paper,
               border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
               minWidth: 280,
+              transformOrigin: 'top left',
+              animation: 'colorPickerPop 0.12s ease-out',
+              '@keyframes colorPickerPop': {
+                '0%': {
+                  opacity: 0,
+                  transform: 'scale(0.85)'
+                },
+                '85%': {
+                  opacity: 1,
+                  transform: 'scale(1.01)'
+                },
+                '100%': {
+                  opacity: 1,
+                  transform: 'scale(1)'
+                }
+              },
               ...sx
             }}
           >
