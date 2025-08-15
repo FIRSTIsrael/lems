@@ -1,7 +1,8 @@
 'use client';
 
 import useSWR from 'swr';
-import { Box } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { Alert, Box } from '@mui/material';
 import { Season } from '@lems/types/api/admin';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -13,6 +14,8 @@ interface EventsLayoutProps {
 }
 
 export const EventsLayout: React.FC<EventsLayoutProps> = ({ seasons: initialSeasons }) => {
+  const t = useTranslations('pages.events');
+
   const { data: seasons = [] } = useSWR<Season[]>('/admin/seasons', {
     fallbackData: initialSeasons
   });
@@ -31,6 +34,8 @@ export const EventsLayout: React.FC<EventsLayoutProps> = ({ seasons: initialSeas
 
   return (
     <Box>
+      {!currentSeason && <Alert severity="warning">{t('alerts.no-current-season')}</Alert>}
+
       {currentSeason && <CurrentSeason season={currentSeason} />}
 
       {previousSeasons.map(season => (
