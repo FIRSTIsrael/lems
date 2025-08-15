@@ -271,6 +271,20 @@
       },
       "alerts": {
         "no-current-season": "אין עונה פעילה כעת. ניתן לייצר אירועים רק במהלך עונה."
+      },
+      "edit": {
+        "location": "מיקום",
+        "date": "תאריך",
+        "cards": {
+          "awards": "פרסים",
+          "schedule": "לוח זמנים",
+          "teams": "קבוצות",
+          "venue": "היכל",
+          "integrations": "אינטגרציות",
+          "settings": "הגדרות",
+          "users": "משתמשים",
+          "divisions": "בתים"
+        }
       }
     },
     "users": {
