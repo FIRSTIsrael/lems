@@ -8,11 +8,11 @@ import { AdminEventResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../lib/fetch';
 import { EditEventGrid } from './components/edit-event-grid';
 
-interface CreateEventPageProps {
+interface EditEventPageProps {
   params: { slug: string };
 }
 
-export default async function CreateEventPage({ params }: CreateEventPageProps) {
+export default async function EditEventPage({ params }: EditEventPageProps) {
   const { slug } = await params;
 
   const t = await getTranslations('pages.events.edit');

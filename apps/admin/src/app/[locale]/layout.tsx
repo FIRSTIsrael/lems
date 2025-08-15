@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Roboto, Heebo } from 'next/font/google';
-import { Locales } from '@lems/localization';
+import { Locales, configureDayjs } from '@lems/localization';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
 import { SWRProvider } from './swr-provider';
@@ -41,6 +41,8 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  configureDayjs(locale);
 
   const dir = Locales[locale].direction as 'ltr' | 'rtl';
 
