@@ -271,8 +271,7 @@
       },
       "alerts": {
         "no-current-season": "No season is currently active. Events can only be created when a season is in progress."
-      },
-      "loading": "Loading events..."
+      }
     },
     "users": {
       "title": "Users",
