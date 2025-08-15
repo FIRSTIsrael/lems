@@ -156,13 +156,13 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 10 }
+              paginationModel: { page: 0, pageSize: 50 }
             },
             sorting: {
               sortModel: [{ field: 'createdAt', sort: 'desc' }]
             }
           }}
-          pageSizeOptions={[5, 10, 25, 50]}
+          pageSizeOptions={[25, 50, 100]}
           disableRowSelectionOnClick
           disableColumnFilter
           disableColumnMenu

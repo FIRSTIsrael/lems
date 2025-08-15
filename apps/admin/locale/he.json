@@ -120,6 +120,45 @@
           "submit": "יצירת קבוצה",
           "submitting": "יוצר קבוצה..."
         }
+      },
+      "import-dialog": {
+        "title": "ייבוא קבוצות מקובץ CSV",
+        "actions": {
+          "cancel": "ביטול"
+        },
+        "form": {
+          "instructions": {
+            "title": "דרישות קובץ CSV",
+            "description": "העלה קובץ CSV המכיל מידע על קבוצות. הקובץ יעובד והקבוצות ייווצרו או יעודכנו בהתאם.",
+            "csv-format": "פורמט CSV נדרש:",
+            "requirements": {
+              "header": "לא צריכה להיות שורת כותרת בקובץ",
+              "columns": "כל ארבעת העמודות (number, name, affiliation, city) נדרשות, לפי הסדר הזה",
+              "encoding": "הקובץ חייב להיות שמור בקידוד UTF-8"
+            },
+            "example": "דוגמה לתוכן CSV:"
+          },
+          "fields": {
+            "file": {
+              "label": "קובץ CSV",
+              "description": "בחרו קובץ CSV עם נתוני קבוצות",
+              "placeholder": "בחרו קובץ CSV"
+            }
+          },
+          "errors": {
+            "invalid-file": "פורמט קובץ לא תקין. אנא העלה קובץ CSV תקין.",
+            "upload-error": "שגיאה התרחשה בעת העלאת הקובץ. אנא נסה שוב."
+          },
+          "upload": "ייבוא קבוצות",
+          "uploading": "מייבא קבוצות..."
+        },
+        "success": {
+          "title": "הקבוצות יובאו בהצלחה!",
+          "created": "{count, plural, =1 {קבוצה אחת נוצרה:} other {# קבוצות נוצרו:}}",
+          "updated": "{count, plural, =1 {קבוצה אחת עודכנה:} other {# קבוצות עודכנו:}}",
+          "and-more": "...ועוד {count}",
+          "close": "סגור"
+        }
       }
     },
     "index": {
