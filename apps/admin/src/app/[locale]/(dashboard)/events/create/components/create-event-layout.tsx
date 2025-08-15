@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Formik, Form, FormikErrors } from 'formik';
-import { Paper, Typography, Box, Stack, useTheme, IconButton } from '@mui/material';
+import { Paper, Typography, Box, Stack, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { FormikDatePicker, FormikTextField, ColorPicker } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
@@ -26,7 +26,6 @@ const initialValues: EventFormValues = {
 
 export const CreateEventLayout = () => {
   const t = useTranslations('pages.events.create.form');
-  const theme = useTheme();
 
   const validate = (values: EventFormValues): FormikErrors<EventFormValues> => {
     const errors: FormikErrors<EventFormValues> = {};
@@ -90,7 +89,6 @@ export const CreateEventLayout = () => {
                     height: 32,
                     mt: -1,
                     backgroundColor: hsvaToHex(values.color),
-                    border: `2px solid ${theme.palette.divider}`,
                     '&:hover': {
                       backgroundColor: hsvaToHex(values.color),
                       opacity: 0.8,
