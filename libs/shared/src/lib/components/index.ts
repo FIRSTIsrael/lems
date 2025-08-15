@@ -9,3 +9,4 @@ export * from './formik/formik-time-picker';
 export * from './formik/formik-radio-group';
 export * from './formik/formik-switch';
 export * from './formik/formik-conditional-text-field';
+export * from './formik/formik-date-picker';

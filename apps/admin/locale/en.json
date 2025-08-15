@@ -205,7 +205,47 @@
         "copy": "Copy"
       },
       "create": {
-        "title": "Create Event"
+        "title": "Create Event",
+        "form": {
+          "sections": {
+            "event-details": "Event Details"
+          },
+          "fields": {
+            "name": {
+              "label": "Event Name",
+              "placeholder": "Enter event name..."
+            },
+            "slug": {
+              "label": "Event Slug",
+              "placeholder": "e.g., regional-championship-2025",
+              "helper-text": "Lowercase letters, numbers, and dashes only. Must be unique."
+            },
+            "date": {
+              "label": "Event Date"
+            },
+            "location": {
+              "label": "Location",
+              "placeholder": "Enter event location..."
+            }
+          },
+          "validation": {
+            "name": {
+              "required": "Event name is required",
+              "min": "Event name must be at least {min} characters"
+            },
+            "slug": {
+              "required": "Event slug is required",
+              "format": "Slug must contain only lowercase letters, numbers, and dashes"
+            },
+            "date": {
+              "required": "Event date is required"
+            },
+            "location": {
+              "required": "Location is required",
+              "min": "Location must be at least {min} characters"
+            }
+          }
+        }
       }
     },
     "users": {

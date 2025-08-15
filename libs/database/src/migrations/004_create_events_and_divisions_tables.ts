@@ -12,6 +12,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .unique()
         .defaultTo(sql`gen_random_uuid()`)
     )
+    .addColumn('name', 'text', col => col.notNull())
     .addColumn('slug', 'text', col => col.notNull().unique())
     .addColumn('start_date', 'timestamptz', col => col.notNull())
     .addColumn('end_date', 'timestamptz', col => col.notNull())

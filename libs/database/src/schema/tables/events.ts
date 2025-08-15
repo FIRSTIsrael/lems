@@ -3,6 +3,7 @@ import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 export interface EventsTable {
   pk: ColumnType<number, never, never>; // Serial primary key
   id: ColumnType<string, never, never>; // UUID, generated
+  name: string;
   slug: string;
   start_date: Date;
   end_date: Date;
