@@ -11,12 +11,7 @@ export const CurrentSeason: React.FC<CurrentSeasonProps> = ({ season }) => {
   return (
     <>
       <Box p={3}>
-        <SeasonHeader
-          seasonName={season.name}
-          logoUrl={season.logoUrl}
-          onCreateEvent={() => {}}
-          allowCreate
-        />
+        <SeasonHeader seasonName={season.name} logoUrl={season.logoUrl} allowCreate />
       </Box>
 
       <Box

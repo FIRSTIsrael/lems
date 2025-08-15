@@ -41,7 +41,6 @@ export const PreviousSeason: React.FC<PreviousSeasonProps> = ({ season }) => {
           <SeasonHeader
             logoUrl={season.logoUrl}
             seasonName={season.name}
-            onCreateEvent={() => {}}
             allowCreate={false}
             numberOfEvents={0}
           />

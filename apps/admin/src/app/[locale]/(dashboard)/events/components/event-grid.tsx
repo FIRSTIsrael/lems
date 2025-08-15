@@ -49,7 +49,7 @@ export const EventGrid: React.FC<EventGridProps> = ({ events, disableCreation })
               <Typography variant="body2" sx={{ mb: 3 }}>
                 {t('empty-state.no-events-description')}
               </Typography>
-              <Button variant="contained" startIcon={<Add />} onClick={() => {}}>
+              <Button variant="contained" startIcon={<Add />} href="/events/create">
                 {t('empty-state.create-new-event')}
               </Button>
             </>

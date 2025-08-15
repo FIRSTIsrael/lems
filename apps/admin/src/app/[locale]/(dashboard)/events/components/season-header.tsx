@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl';
 interface SeasonHeaderProps {
   seasonName: string;
   logoUrl: string | null;
-  onCreateEvent: () => void;
   numberOfEvents?: number;
   allowCreate?: boolean;
 }
@@ -16,7 +15,6 @@ interface SeasonHeaderProps {
 export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
   seasonName,
   logoUrl,
-  onCreateEvent,
   numberOfEvents = 0,
   allowCreate = false
 }) => {
@@ -46,7 +44,7 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={onCreateEvent}
+          href="/events/create"
           sx={{ borderRadius: 8 }}
         >
           {t('create-button')}

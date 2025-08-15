@@ -203,6 +203,9 @@
         "edit": "Edit",
         "delete": "Delete",
         "copy": "Copy"
+      },
+      "create": {
+        "title": "Create Event"
       }
     },
     "users": {
