@@ -80,12 +80,37 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             elevation={8}
             sx={{
               p: 2,
-              borderRadius: (theme.shape.borderRadius as number) / 4, // Use theme border radius
+              borderRadius: (theme.shape.borderRadius as number) / 4,
               backgroundColor: theme.palette.background.paper,
               border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
               minWidth: 280,
               transformOrigin: 'top left',
               animation: 'colorPickerPop 0.12s ease-out',
+              position: 'relative',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: -6,
+                left: 12,
+                width: 0,
+                height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderBottom: `6px solid ${theme.palette.background.paper}`,
+                zIndex: 2
+              },
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: -7,
+                left: 12,
+                width: 0,
+                height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderBottom: `6px solid ${alpha(theme.palette.divider, 0.12)}`,
+                zIndex: 1
+              },
               '@keyframes colorPickerPop': {
                 '0%': {
                   opacity: 0,
