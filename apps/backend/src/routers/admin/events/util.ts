@@ -1,5 +1,5 @@
-import { Event as DbEvent } from '@lems/database';
-import { Event } from '@lems/types/api/admin';
+import { Event as DbEvent, EventSummary as DbEventSummary } from '@lems/database';
+import { Event, EventSummary } from '@lems/types/api/admin';
 
 /**
  * Transforms an event object into a response format.
@@ -14,4 +14,17 @@ export const makeAdminEventResponse = (event: DbEvent): Event => ({
   location: event.location,
   coordinates: event.coordinates,
   seasonId: event.season_id
+});
+
+export const makeAdminEventSummaryResponse = (event: DbEventSummary): EventSummary => ({
+  id: event.id,
+  name: event.name,
+  slug: event.slug,
+  startDate: new Date(event.date),
+  endDate: new Date(event.date),
+  location: event.location,
+  seasonId: event.season_id,
+  divisions: event.divisions,
+  teamCount: event.teamCount,
+  isFullySetUp: event.is_fully_set_up
 });

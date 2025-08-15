@@ -34,6 +34,7 @@ class EventSelector {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.season_id',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color'
@@ -46,6 +47,7 @@ class EventSelector {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.season_id',
         'divisions.id',
         'divisions.name',
         'divisions.color'
@@ -64,14 +66,14 @@ class EventSelector {
           slug: row.slug,
           date: row.start_date.toISOString(),
           location: row.location,
-          teamCount: 0,
+          team_count: 0,
           divisions: [],
-          isFullySetUp: false
+          is_fully_set_up: false
         });
       }
 
       const event = eventsMap.get(eventId);
-      event.teamCount += Number(row.team_count);
+      event.team_count += Number(row.team_count);
       event.divisions.push({
         id: row.division_id,
         name: row.division_name,

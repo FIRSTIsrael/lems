@@ -43,7 +43,7 @@ export const EventGrid: React.FC<EventGridProps> = ({
       <Grid container spacing={3}>
         {events.map(event => (
           <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={event.id}>
-            <EventCard {...event} onEdit={() => {}} onDelete={() => {}} onCopy={() => {}} />
+            <EventCard {...event} onDelete={() => {}} onCopy={() => {}} />
           </Grid>
         ))}
       </Grid>

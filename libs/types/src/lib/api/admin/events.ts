@@ -4,8 +4,8 @@ export const AdminEventResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  startDate: z.string().transform(val => new Date(val)),
-  endDate: z.string().transform(val => new Date(val)),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
   location: z.string(),
   coordinates: z.string().nullable(),
   seasonId: z.string()

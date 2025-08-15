@@ -2,6 +2,7 @@ import express from 'express';
 import db from '../../../lib/database';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminRequest } from '../../../types/express';
+import { makeAdminEventResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -96,7 +97,17 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
 
 router.get('/', async (req, res) => {
   const events = await db.events.getAll();
-  res.json(events);
+  res.json(events.map(event => makeAdminEventResponse(event)));
+});
+
+router.get('/:slug', async (req, res) => {
+  const event = await db.events.bySlug(req.params.slug).get();
+  res.json(makeAdminEventResponse(event));
+});
+
+router.get('/id/:id', async (req, res) => {
+  const event = await db.events.byId(req.params.id).get();
+  res.json(makeAdminEventResponse(event));
 });
 
 router.get('/season/:id', async (req, res) => {
