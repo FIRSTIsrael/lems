@@ -1,7 +1,7 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableEvent, Event, EventSummary } from '../schema/tables/events';
-import { Team } from '../schema';
+import { InsertableEvent, Event } from '../schema/tables/events';
+import { TeamWithDivision } from '../schema';
 
 class EventSelector {
   constructor(
@@ -19,23 +19,33 @@ class EventSelector {
     return event || null;
   }
 
-  async getTeams(): Promise<Team[]> {
+  async getTeams(): Promise<TeamWithDivision[]> {
     const event = await this.get();
 
     if (!event) {
       throw new Error('Event not found');
     }
 
-    const teams = await this.db
+    const teamsWithDivisions = await this.db
       .selectFrom('teams')
       .innerJoin('team_divisions', 'team_divisions.team_id', 'teams.id')
       .innerJoin('divisions', 'divisions.id', 'team_divisions.division_id')
       .where('divisions.event_id', '=', event.id)
-      .selectAll('teams')
+      .select([
+        'teams.id',
+        'teams.number',
+        'teams.name',
+        'teams.logo_url',
+        'divisions.id as division_id',
+        'divisions.name as division_name',
+        'divisions.color as division_color',
+        'divisions.event_id as division_event_id'
+      ])
+      .orderBy('divisions.name', 'asc')
       .orderBy('teams.number', 'asc')
       .execute();
 
-    return teams;
+    return teamsWithDivisions;
   }
 }
 

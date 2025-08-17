@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridSortModel } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -52,28 +52,12 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
     );
   }, [teams, searchValue]);
 
+  const hasMultipleDivisions = useMemo(() => {
+    const divisionIds = new Set(teams?.map(team => team.division.id));
+    return divisionIds.size > 1;
+  }, [teams]);
+
   const columns: GridColDef[] = [
-    {
-      field: 'division',
-      headerName: t('columns.division'),
-      width: 140,
-      sortable: true,
-      renderCell: params => (
-        <Chip
-          label={params.row.division.name}
-          size="small"
-          sx={{
-            backgroundColor: params.row.division.color,
-            color: 'white',
-            fontWeight: 'bold',
-            '& .MuiChip-label': {
-              px: 1
-            }
-          }}
-        />
-      ),
-      valueGetter: (value, row) => row.division.name
-    },
     {
       field: 'logo',
       headerName: '',
@@ -94,13 +78,38 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
     {
       field: 'number',
       headerName: t('columns.number'),
-      width: 160,
+      width: 80,
       align: 'left',
       headerAlign: 'left',
       type: 'number',
       sortable: true,
       valueFormatter: (value: number) => value.toString()
     },
+    ...((hasMultipleDivisions
+      ? [
+          {
+            field: 'division',
+            headerName: t('columns.division'),
+            width: 140,
+            sortable: true,
+            renderCell: params => (
+              <Chip
+                label={params.row.division.name}
+                size="small"
+                sx={{
+                  backgroundColor: params.row.division.color,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  '& .MuiChip-label': {
+                    px: 1
+                  }
+                }}
+              />
+            ),
+            valueGetter: (value, row) => row.division.name
+          }
+        ]
+      : []) as GridColDef[]),
     {
       field: 'name',
       headerName: t('columns.name'),
@@ -164,7 +173,9 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             },
             sorting: {
               sortModel: [
-                { field: 'division', sort: 'asc' },
+                ...((hasMultipleDivisions
+                  ? [{ field: 'division', sort: 'asc' }]
+                  : []) as GridSortModel),
                 { field: 'number', sort: 'asc' }
               ]
             }
