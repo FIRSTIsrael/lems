@@ -20,12 +20,14 @@ export const UnifiedTeamsSearch: React.FC<UnifiedTeamsSearchProps> = ({ value, o
       value={value}
       onChange={e => onChange(e.target.value)}
       sx={{ mb: 2 }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        )
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          )
+        }
       }}
     />
   );

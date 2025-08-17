@@ -16,10 +16,11 @@ export const UsersSearch: React.FC<UsersSearchProps> = ({ value, onChange }) => 
   return (
     <TextField
       fullWidth
-      variant="outlined"
+      size="small"
       placeholder={t('placeholder')}
       value={value}
       onChange={e => onChange(e.target.value)}
+      sx={{ mb: 2 }}
       slotProps={{
         input: {
           startAdornment: (
@@ -29,7 +30,6 @@ export const UsersSearch: React.FC<UsersSearchProps> = ({ value, onChange }) => 
           )
         }
       }}
-      sx={{ mb: 2 }}
     />
   );
 };

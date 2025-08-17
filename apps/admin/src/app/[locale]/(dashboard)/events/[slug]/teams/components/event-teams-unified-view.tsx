@@ -19,12 +19,12 @@ interface UnifiedTeam extends Team {
   };
 }
 
-interface UnifiedTeamsDataGridProps {
+interface EventTeamsUnifiedViewProps {
   teams: UnifiedTeam[];
   eventId: string;
 }
 
-export const UnifiedTeamsDataGrid: React.FC<UnifiedTeamsDataGridProps> = ({
+export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   teams: initialTeams,
   eventId
 }) => {

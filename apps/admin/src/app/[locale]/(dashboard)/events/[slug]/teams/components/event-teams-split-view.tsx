@@ -3,11 +3,11 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 
-interface SplitTeamsViewProps {
+interface EventTeamsSplitView {
   eventId: string;
 }
 
-export const SplitTeamsView: React.FC<SplitTeamsViewProps> = ({ eventId }) => {
+export const EventTeamsSplitView: React.FC<EventTeamsSplitView> = ({ eventId }) => {
   const t = useTranslations('pages.events.teams.split');
 
   return (
