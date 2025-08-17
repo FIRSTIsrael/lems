@@ -16,89 +16,62 @@ export interface EditEeventGridProps {
   event: Event;
 }
 
-export const EditEventGrid: React.FC<EditEeventGridProps> = () => {
+export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
   const cardSize = { xs: 12, md: 6, lg: 3 };
 
   return (
     <Grid container spacing={3} sx={{ mt: 2 }}>
       <Grid size={cardSize}>
+        <EditEventCard icon={<GroupIcon />} title="teams" href={`/events/${event.slug}/teams`} />
+      </Grid>
+      <Grid size={cardSize}>
         <EditEventCard
           icon={<EmojiEventsIcon />}
           title="awards"
-          onClick={() => {
-            // TODO: Navigate to awards page
-            console.log('Navigate to awards');
-          }}
+          href={`/events/${event.slug}/awards`}
         />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
           icon={<ScheduleIcon />}
           title="schedule"
-          onClick={() => {
-            // TODO: Navigate to schedule page
-            console.log('Navigate to schedule');
-          }}
+          href={`/events/${event.slug}/schedule`}
         />
       </Grid>
-      <Grid size={cardSize}>
-        <EditEventCard
-          icon={<GroupIcon />}
-          title="teams"
-          onClick={() => {
-            // TODO: Navigate to teams page
-            console.log('Navigate to teams');
-          }}
-        />
-      </Grid>
+
       <Grid size={cardSize}>
         <EditEventCard
           icon={<LocationOnIcon />}
           title="venue"
-          onClick={() => {
-            // TODO: Navigate to venue page
-            console.log('Navigate to venue');
-          }}
+          href={`/events/${event.slug}/venue`}
         />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
           icon={<IntegrationInstructionsIcon />}
           title="integrations"
-          onClick={() => {
-            // TODO: Navigate to integrations page
-            console.log('Navigate to integrations');
-          }}
+          href={`/events/${event.slug}/integrations`}
         />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
           icon={<SettingsIcon />}
           title="settings"
-          onClick={() => {
-            // TODO: Navigate to settings page
-            console.log('Navigate to settings');
-          }}
+          href={`/events/${event.slug}/settings`}
         />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
           icon={<ManageAccountsIcon />}
           title="users"
-          onClick={() => {
-            // TODO: Navigate to users page
-            console.log('Navigate to users');
-          }}
+          href={`/events/${event.slug}/users`}
         />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
           icon={<AccountTreeIcon />}
           title="divisions"
-          onClick={() => {
-            // TODO: Navigate to divisions page
-            console.log('Navigate to divisions');
-          }}
+          href={`/events/${event.slug}/divisions`}
         />
       </Grid>
     </Grid>

@@ -285,6 +285,25 @@
           "users": "משתמשים",
           "divisions": "בתים"
         }
+      },
+      "teams": {
+        "title": "{eventName}: קבוצות",
+        "registration-button": {
+          "title": "רישום קבוצות",
+          "alert": "לאירוע זה כבר יש לוח זמנים. לא ניתן לשנות את רישום הקבוצות כעת."
+        },
+        "registration-dialog": {
+          "title": "רישום קבוצות לבתים",
+          "division": "בית",
+          "available-teams": "קבוצות שנותרו",
+          "no-available-teams": "לא נותרו קבוצות",
+          "registered-teams": "קבוצות לרישום ({count})",
+          "actions": {
+            "register": "רישום {count, plural, =1 {קבוצה אחת} other {{count} קבוצות}}",
+            "cancel": "ביטול"
+          },
+          "no-teams-selected": "לא נבחרו קבוצות"
+        }
       }
     },
     "users": {

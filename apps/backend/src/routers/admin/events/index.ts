@@ -102,11 +102,23 @@ router.get('/', async (req, res) => {
 
 router.get('/:slug', async (req, res) => {
   const event = await db.events.bySlug(req.params.slug).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
   res.json(makeAdminEventResponse(event));
 });
 
 router.get('/id/:id', async (req, res) => {
   const event = await db.events.byId(req.params.id).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
   res.json(makeAdminEventResponse(event));
 });
 
