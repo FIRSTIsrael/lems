@@ -3,8 +3,11 @@ import db from '../../../lib/database';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminEventResponse } from './util';
+import eventTeamsRouter from './teams/index';
 
 const router = express.Router({ mergeParams: true });
+
+router.use('/:slug/teams', eventTeamsRouter);
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
@@ -123,12 +126,12 @@ router.get('/id/:id', async (req, res) => {
 });
 
 router.get('/season/:id', async (req, res) => {
-  const events = await db.events.bySeason(req.params.id).getAll();
+  const events = await db.seasons.byId(req.params.id).getEvents();
   res.json(events);
 });
 
 router.get('/season/:id/summary', async (req, res) => {
-  const events = await db.events.bySeason(req.params.id).summarizeAll();
+  const events = await db.seasons.byId(req.params.id).getSummarizedEvents();
   res.json(events);
 });
 

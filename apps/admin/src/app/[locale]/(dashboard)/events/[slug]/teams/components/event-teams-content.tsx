@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Stack, Switch, Typography, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Event } from '@lems/types/api/admin';
-import { UnifiedTeamsDataGrid } from './unified-teams-data-grid';
-import { SplitTeamsView } from './split-teams-view';
+import { EventTeamsUnifiedView } from './event-teams-unified-view';
+import { EventTeamsSplitView } from './event-teams-split-view';
 import RegisterTeamsButton from './register-teams-button';
 
 interface EventTeamsContentProps {
@@ -103,9 +103,9 @@ export default function EventTeamsContent({ event }: EventTeamsContentProps) {
 
       <Box sx={{ flex: 1, minHeight: 0 }}>
         {isUnified ? (
-          <UnifiedTeamsDataGrid teams={MOCK_UNIFIED_TEAMS} eventId={event.id} />
+          <EventTeamsUnifiedView teams={MOCK_UNIFIED_TEAMS} eventId={event.id} />
         ) : (
-          <SplitTeamsView eventId={event.id} />
+          <EventTeamsSplitView eventId={event.id} />
         )}
       </Box>
     </Box>
