@@ -22,13 +22,20 @@ export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
   return (
     <Grid container spacing={3} sx={{ mt: 2 }}>
       <Grid size={cardSize}>
+        <EditEventCard
+          icon={<AccountTreeIcon />}
+          title="divisions"
+          href={`/events/${event.slug}/divisions`}
+        />
+      </Grid>
+      <Grid size={cardSize}>
         <EditEventCard icon={<GroupIcon />} title="teams" href={`/events/${event.slug}/teams`} />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
-          icon={<EmojiEventsIcon />}
-          title="awards"
-          href={`/events/${event.slug}/awards`}
+          icon={<LocationOnIcon />}
+          title="venue"
+          href={`/events/${event.slug}/venue`}
         />
       </Grid>
       <Grid size={cardSize}>
@@ -38,12 +45,11 @@ export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
           href={`/events/${event.slug}/schedule`}
         />
       </Grid>
-
       <Grid size={cardSize}>
         <EditEventCard
-          icon={<LocationOnIcon />}
-          title="venue"
-          href={`/events/${event.slug}/venue`}
+          icon={<EmojiEventsIcon />}
+          title="awards"
+          href={`/events/${event.slug}/awards`}
         />
       </Grid>
       <Grid size={cardSize}>
@@ -55,13 +61,6 @@ export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
-          icon={<SettingsIcon />}
-          title="settings"
-          href={`/events/${event.slug}/settings`}
-        />
-      </Grid>
-      <Grid size={cardSize}>
-        <EditEventCard
           icon={<ManageAccountsIcon />}
           title="users"
           href={`/events/${event.slug}/users`}
@@ -69,9 +68,9 @@ export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
-          icon={<AccountTreeIcon />}
-          title="divisions"
-          href={`/events/${event.slug}/divisions`}
+          icon={<SettingsIcon />}
+          title="settings"
+          href={`/events/${event.slug}/settings`}
         />
       </Grid>
     </Grid>
