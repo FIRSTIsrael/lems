@@ -3,22 +3,35 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, Chip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
-import { TeamsSearch } from './teams-search';
+import { UnifiedTeamsSearch } from './unified-teams-search';
 
-interface TeamsDataGridProps {
-  teams: Team[];
+// Extended team interface for unified view
+interface UnifiedTeam extends Team {
+  division: {
+    id: string;
+    name: string;
+    color: string;
+  };
 }
 
-export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
-  const t = useTranslations('pages.teams.list');
+interface UnifiedTeamsDataGridProps {
+  teams: UnifiedTeam[];
+  eventId: string;
+}
+
+export const UnifiedTeamsDataGrid: React.FC<UnifiedTeamsDataGridProps> = ({
+  teams: initialTeams,
+  eventId
+}) => {
+  const t = useTranslations('pages.events.teams.unified');
   const [searchValue, setSearchValue] = useState('');
 
-  const { data: teams } = useSWR<Team[]>('/admin/teams', {
+  const { data: teams } = useSWR<UnifiedTeam[]>(`/admin/events/${eventId}/teams/unified`, {
     fallbackData: initialTeams
   });
 
@@ -32,13 +45,35 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         const nameMatch = team.name.toLowerCase().includes(searchLower);
         const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
         const cityMatch = team.city.toLowerCase().includes(searchLower);
+        const divisionMatch = team.division.name.toLowerCase().includes(searchLower);
 
-        return numberMatch || nameMatch || affiliationMatch || cityMatch;
+        return numberMatch || nameMatch || affiliationMatch || cityMatch || divisionMatch;
       }) || []
     );
   }, [teams, searchValue]);
 
   const columns: GridColDef[] = [
+    {
+      field: 'division',
+      headerName: t('columns.division'),
+      width: 140,
+      sortable: true,
+      renderCell: params => (
+        <Chip
+          label={params.row.division.name}
+          size="small"
+          sx={{
+            backgroundColor: params.row.division.color,
+            color: 'white',
+            fontWeight: 'bold',
+            '& .MuiChip-label': {
+              px: 1
+            }
+          }}
+        />
+      ),
+      valueGetter: (value, row) => row.division.name
+    },
     {
       field: 'logo',
       headerName: '',
@@ -117,7 +152,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <TeamsSearch value={searchValue} onChange={setSearchValue} />
+      <UnifiedTeamsSearch value={searchValue} onChange={setSearchValue} />
 
       <Box sx={{ flex: 1, width: '100%', minHeight: 0 }}>
         <DataGrid
@@ -128,7 +163,10 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
               paginationModel: { page: 0, pageSize: 50 }
             },
             sorting: {
-              sortModel: [{ field: 'number', sort: 'asc' }]
+              sortModel: [
+                { field: 'division', sort: 'asc' },
+                { field: 'number', sort: 'asc' }
+              ]
             }
           }}
           pageSizeOptions={[25, 50, 100]}

@@ -288,6 +288,10 @@
       },
       "teams": {
         "title": "{eventName}: Teams",
+        "view-toggle": {
+          "unified": "Unified",
+          "split": "Split"
+        },
         "registration-button": {
           "title": "Register Teams",
           "alert": "This event already has a schedule set. Team registration can no longer be modified."
@@ -303,6 +307,22 @@
             "cancel": "Cancel"
           },
           "no-teams-selected": "No teams selected"
+        },
+        "unified": {
+          "columns": {
+            "division": "Division",
+            "number": "Number",
+            "name": "Name",
+            "affiliation": "Affiliation",
+            "city": "City",
+            "actions": "Actions"
+          },
+          "search": {
+            "placeholder": "Search teams by number, name, affiliation, city, or division..."
+          }
+        },
+        "split": {
+          "placeholder": "Split view coming soon"
         }
       }
     },

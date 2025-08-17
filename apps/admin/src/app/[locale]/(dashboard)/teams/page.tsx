@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Typography, Stack } from '@mui/material';
+import { Typography, Stack, Box } from '@mui/material';
 import { AdminTeamsResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../lib/fetch';
 import { CreateTeamButton } from './components/create-team-button';
@@ -18,7 +18,13 @@ export default async function TeamsPage() {
   const { data: teams } = result;
 
   return (
-    <>
+    <Box
+      sx={{
+        height: 'calc(100vh - 120px)', // Adjust based on header/padding
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <Stack direction="row" alignItems="center" gap={2} mb={3}>
         <Typography variant="h1" gutterBottom sx={{ mb: 0 }}>
           {t('title')}
@@ -26,7 +32,9 @@ export default async function TeamsPage() {
         <CreateTeamButton />
         <ImportTeamButton />
       </Stack>
-      <TeamsDataGrid teams={teams} />
-    </>
+      <Box sx={{ flex: 1, minHeight: 0 }}>
+        <TeamsDataGrid teams={teams} />
+      </Box>
+    </Box>
   );
 }

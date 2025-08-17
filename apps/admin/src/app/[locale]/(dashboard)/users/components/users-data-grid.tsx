@@ -147,10 +147,10 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
   ];
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <UsersSearch value={searchValue} onChange={setSearchValue} />
 
-      <Box sx={{ height: '85vh', width: '100%' }}>
+      <Box sx={{ flex: 1, width: '100%', minHeight: 0 }}>
         <DataGrid
           rows={filteredUsers}
           columns={columns}
@@ -168,11 +168,15 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           disableColumnMenu
           disableColumnSelector
           sx={{
+            height: '100%',
             '& .MuiDataGrid-cell:focus': {
               outline: 'none'
             },
             '& .MuiDataGrid-row:hover': {
               cursor: 'default'
+            },
+            '& .MuiDataGrid-main': {
+              overflow: 'hidden'
             }
           }}
         />
@@ -184,6 +188,6 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         userId={permissionsDialog.userId}
         userName={permissionsDialog.userName}
       />
-    </>
+    </Box>
   );
 };

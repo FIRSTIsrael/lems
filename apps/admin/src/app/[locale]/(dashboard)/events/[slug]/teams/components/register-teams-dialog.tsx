@@ -43,7 +43,7 @@ interface RegisteredTeam {
   divisionColor: string;
 }
 
-interface RegisterTeamsModalProps {
+interface RegisterTeamsDialogProps {
   open: boolean;
   onClose: () => void;
   eventId: string;
@@ -67,7 +67,7 @@ const DUMMY_TEAMS: Team[] = [
   { id: '8', number: 9753, name: 'Team Theta' }
 ];
 
-export default function RegisterTeamsModal({ open, onClose, eventId }: RegisterTeamsModalProps) {
+export default function RegisterTeamsDialog({ open, onClose, eventId }: RegisterTeamsDialogProps) {
   const t = useTranslations('pages.events.teams.registration-dialog');
 
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>(

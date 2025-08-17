@@ -288,6 +288,10 @@
       },
       "teams": {
         "title": "{eventName}: קבוצות",
+        "view-toggle": {
+          "unified": "מאוחד",
+          "split": "מפוצל"
+        },
         "registration-button": {
           "title": "רישום קבוצות",
           "alert": "לאירוע זה כבר יש לוח זמנים. לא ניתן לשנות את רישום הקבוצות כעת."
@@ -303,6 +307,22 @@
             "cancel": "ביטול"
           },
           "no-teams-selected": "לא נבחרו קבוצות"
+        },
+        "unified": {
+          "columns": {
+            "division": "בית",
+            "number": "מספר",
+            "name": "שם",
+            "affiliation": "שיוך",
+            "city": "עיר",
+            "actions": "פעולות"
+          },
+          "search": {
+            "placeholder": "חפש קבוצות לפי מספר, שם, שיוך, עיר או בית..."
+          }
+        },
+        "split": {
+          "placeholder": "תצוגה מפוצלת: בקרוב"
         }
       }
     },

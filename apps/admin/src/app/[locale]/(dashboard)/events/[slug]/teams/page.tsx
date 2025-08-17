@@ -1,9 +1,8 @@
-import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';
-import { Stack, Switch, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { AdminEventResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../lib/fetch';
-import RegisterTeamsButton from './components/register-teams-button';
+import EventTeamsContent from './components/event-teams-content';
 
 interface EventTeamsPageProps {
   params: { slug: string };
@@ -11,8 +10,6 @@ interface EventTeamsPageProps {
 
 export default async function EventTeamsPage({ params }: EventTeamsPageProps) {
   const { slug } = await params;
-
-  const t = await getTranslations('pages.events.teams');
 
   const result = await apiFetch(`/admin/events/${slug}`, {}, AdminEventResponseSchema);
 
@@ -27,18 +24,14 @@ export default async function EventTeamsPage({ params }: EventTeamsPageProps) {
   }
 
   return (
-    <>
-      <Stack direction="row" justifyContent="space-between">
-        <Typography variant="h1" gutterBottom>
-          {t('title', { eventName: event.name })}
-        </Typography>
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          <Typography>Unified</Typography>
-          <Switch />
-          <Typography>Split</Typography>
-        </Stack>
-      </Stack>
-      <RegisterTeamsButton event={event} />
-    </>
+    <Box
+      sx={{
+        height: 'calc(100vh - 40px)',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      <EventTeamsContent event={event} />
+    </Box>
   );
 }
