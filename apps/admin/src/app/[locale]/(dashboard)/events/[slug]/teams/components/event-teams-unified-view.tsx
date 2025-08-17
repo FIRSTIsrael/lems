@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef, GridActionsCellItem, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -172,12 +172,10 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
               paginationModel: { page: 0, pageSize: 50 }
             },
             sorting: {
-              sortModel: [
-                ...((hasMultipleDivisions
-                  ? [{ field: 'division', sort: 'asc' }]
-                  : []) as GridSortModel),
-                { field: 'number', sort: 'asc' }
-              ]
+              // We would like to sort this by division and then
+              // by number, but the community version of MUI
+              // does not support multiple sorts in datagrid :(
+              sortModel: [{ field: 'number', sort: 'asc' }]
             }
           }}
           pageSizeOptions={[25, 50, 100]}
