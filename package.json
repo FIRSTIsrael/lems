@@ -79,7 +79,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.33.0",
     "@firstisrael/prettier-config": "^1.1.0",
-    "@next/eslint-plugin-next": "^15.2.4",
+    "@next/eslint-plugin-next": "^15.4.7",
     "@nx/devkit": "21.3.11",
     "@nx/eslint": "21.3.11",
     "@nx/eslint-plugin": "21.3.11",
