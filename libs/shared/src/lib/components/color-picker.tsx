@@ -1,4 +1,4 @@
-import React, { useState, useRef, CSSProperties } from 'react';
+import React, { useState, useRef, useEffect, CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import { Paper, Popper, ClickAwayListener, Stack, Box, useTheme, alpha } from '@mui/material';
 import { Saturation, Hue, hsvaToHex, HsvaColor } from '@uiw/react-color';
@@ -19,8 +19,15 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   sx = {}
 }) => {
   const theme = useTheme();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
+
+  // Handle defaultOpen after component mounts to ensure anchorRef is available
+  useEffect(() => {
+    if (defaultOpen) {
+      setOpen(true);
+    }
+  }, [defaultOpen]);
 
   const handleSaturationChange = (newHsva: { h: number; s: number; v: number; a: number }) => {
     onChange(newHsva);

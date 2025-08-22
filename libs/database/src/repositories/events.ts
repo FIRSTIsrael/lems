@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableEvent, Event } from '../schema/tables/events';
+import { InsertableEvent, Event, UpdateableEvent } from '../schema/tables/events';
 import { TeamWithDivision, Team, Division } from '../schema';
 
 class EventSelector {
@@ -17,6 +17,17 @@ class EventSelector {
   async get(): Promise<Event | null> {
     const event = await this.getEventQuery().executeTakeFirst();
     return event || null;
+  }
+
+  async update(updateData: UpdateableEvent): Promise<Event | null> {
+    const updatedEvent = await this.db
+      .updateTable('events')
+      .set(updateData)
+      .where(this.selector.type, '=', this.selector.value)
+      .returningAll()
+      .executeTakeFirst();
+
+    return updatedEvent || null;
   }
 
   async getDivisions(): Promise<Division[]> {

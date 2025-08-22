@@ -12,7 +12,8 @@ router.put(
     const { divisionId } = req.params;
     const { name, color } = req.body;
 
-    if (!name || !color) {
+    // Name can be empty, but has to exist
+    if (name === null || name === undefined || !color) {
       res.status(400).json({ error: 'Name and color are required' });
       return;
     }
