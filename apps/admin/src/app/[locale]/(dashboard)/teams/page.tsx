@@ -20,7 +20,7 @@ export default async function TeamsPage() {
   return (
     <Box
       sx={{
-        height: 'calc(100vh - 120px)', // Adjust based on header/padding
+        height: 'calc(100vh - 52px)', // Adjust based on header/padding
         display: 'flex',
         flexDirection: 'column'
       }}
