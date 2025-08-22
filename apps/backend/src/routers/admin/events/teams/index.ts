@@ -23,7 +23,7 @@ router.post(
       return;
     }
 
-    await db.divisions.byEventId(event.id).registerTeams(registration);
+    await db.events.byId(event.id).registerTeams(registration);
 
     res.status(200).json({ success: true });
   }
