@@ -1,6 +1,12 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableDivision, Division, UpdateableDivision } from '../schema/tables/divisions';
+import {
+  InsertableJudgingRoom,
+  InsertableRobotGameTable,
+  JudgingRoom,
+  RobotGameTable
+} from '../schema';
 
 class DivisionSelector {
   constructor(
@@ -35,6 +41,52 @@ class DivisionSelector {
     const result = await this.db
       .deleteFrom('divisions')
       .where(this.selector.type, '=', this.selector.value)
+      .execute();
+    return result.length > 0;
+  }
+
+  async getTables(): Promise<RobotGameTable[]> {
+    const division = await this.get();
+
+    if (!division) {
+      throw new Error('Division not found');
+    }
+
+    return await this.db
+      .selectFrom('robot_game_tables')
+      .selectAll()
+      .where('division_id', '=', division.id)
+      .execute();
+  }
+
+  async createTable(newTable: InsertableRobotGameTable): Promise<boolean> {
+    const result = await this.db
+      .insertInto('robot_game_tables')
+      .values(newTable)
+      .returningAll()
+      .execute();
+    return result.length > 0;
+  }
+
+  async getRooms(): Promise<JudgingRoom[]> {
+    const division = await this.get();
+
+    if (!division) {
+      throw new Error('Division not found');
+    }
+
+    return await this.db
+      .selectFrom('judging_rooms')
+      .selectAll()
+      .where('division_id', '=', division.id)
+      .execute();
+  }
+
+  async createRoom(newRoom: InsertableJudgingRoom): Promise<boolean> {
+    const result = await this.db
+      .insertInto('judging_rooms')
+      .values(newRoom)
+      .returningAll()
       .execute();
     return result.length > 0;
   }

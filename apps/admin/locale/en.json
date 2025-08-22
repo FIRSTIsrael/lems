@@ -371,6 +371,50 @@
             "submitting": "Creating division..."
           }
         }
+      },
+      "venue": {
+        "title": "{eventName}: Venue",
+        "division-selector": {
+          "label": "Division",
+          "single-division": "Single Division Event"
+        },
+        "rooms": {
+          "title": "Judging Rooms",
+          "add-button": "Add Room",
+          "name-placeholder": "Room name",
+          "save-button": "Save",
+          "delete-button": "Delete",
+          "empty-state": "No rooms added yet",
+          "validation": {
+            "name-required": "Room name is required"
+          }
+        },
+        "tables": {
+          "title": "Robot Game Tables",
+          "add-button": "Add Table",
+          "name-placeholder": "Table name",
+          "save-button": "Save",
+          "delete-button": "Delete",
+          "empty-state": "No tables added yet",
+          "validation": {
+            "name-required": "Table name is required"
+          }
+        },
+        "pit-map": {
+          "title": "Pit Map",
+          "upload-button": "Upload Pit Map",
+          "current-map": "Current Pit Map",
+          "view-button": "View Current Map",
+          "no-map": "No pit map uploaded",
+          "upload-success": "Pit map uploaded successfully",
+          "upload-error": "Failed to upload pit map"
+        },
+        "messages": {
+          "save-success": "Changes saved successfully",
+          "save-error": "Failed to save changes",
+          "delete-success": "Item deleted successfully",
+          "delete-error": "Failed to delete item"
+        }
       }
     },
     "users": {
