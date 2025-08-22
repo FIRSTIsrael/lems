@@ -186,6 +186,11 @@
     },
     "events": {
       "title": "אירועים",
+      "layout": {
+        "event-page-title": {
+          "back-to-event": "חזרה לאירוע"
+        }
+      },
       "create-button": "יצירה",
       "grid": {
         "empty-state": {
@@ -284,7 +289,8 @@
           "settings": "הגדרות",
           "users": "משתמשים",
           "divisions": "בתים"
-        }
+        },
+        "color": "צבע"
       },
       "teams": {
         "title": "{eventName}: קבוצות",
@@ -323,6 +329,47 @@
         },
         "split": {
           "placeholder": "תצוגה מפוצלת: בקרוב"
+        }
+      },
+      "divisions": {
+        "title": "{eventName}: בתים",
+        "create-new-division": "יצירת בית חדש",
+        "list": {
+          "columns": {
+            "name": "שם הבית",
+            "color": "צבע",
+            "actions": "פעולות"
+          },
+          "validation": {
+            "name-required": "שם הבית הוא שדה חובה."
+          },
+          "alerts": {
+            "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
+          }
+        },
+        "creation-dialog": {
+          "title": "יצירת בית",
+          "actions": {
+            "cancel": "ביטול",
+            "save": "שמירה"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "שם הבית",
+                "placeholder": "לדוגמה: בית א'"
+              },
+              "color": {
+                "label": "צבע הבית"
+              }
+            },
+            "errors": {
+              "name-required": "שם הבית נדרש.",
+              "color-required": "צבע הבית נדרש.",
+              "error": "אירעה שגיאה ביצירת הבית."
+            },
+            "submitting": "יוצר בית..."
+          }
         }
       }
     },

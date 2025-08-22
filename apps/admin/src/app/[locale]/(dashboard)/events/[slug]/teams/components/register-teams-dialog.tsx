@@ -46,6 +46,7 @@ export const RegisterTeamsDialog = ({ open, onClose, event }: RegisterTeamsDialo
     });
 
     mutate(`/admin/events/${event.slug}/teams`);
+    mutate(`/admin/events/${event.slug}/teams/available`);
     onClose();
   };
 

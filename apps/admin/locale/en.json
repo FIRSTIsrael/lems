@@ -186,6 +186,11 @@
     },
     "events": {
       "title": "Events",
+      "layout": {
+        "event-page-title": {
+          "back-to-event": "חזרה לאירוע"
+        }
+      },
       "create-button": "Create",
       "grid": {
         "empty-state": {
@@ -284,7 +289,8 @@
           "settings": "Settings",
           "users": "Users",
           "divisions": "Divisions"
-        }
+        },
+        "color": "Color"
       },
       "teams": {
         "title": "{eventName}: Teams",
@@ -323,6 +329,47 @@
         },
         "split": {
           "placeholder": "Split view coming soon"
+        }
+      },
+      "divisions": {
+        "title": "{eventName}: Divisions",
+        "create-new-division": "Create New Division",
+        "list": {
+          "columns": {
+            "name": "Division Name",
+            "color": "Color",
+            "actions": "Actions"
+          },
+          "validation": {
+            "name-required": "Division name is required."
+          },
+          "alerts": {
+            "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
+          }
+        },
+        "creation-dialog": {
+          "title": "Create Division",
+          "actions": {
+            "cancel": "Cancel",
+            "save": "Save"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Division Name",
+                "placeholder": "e.g., House A"
+              },
+              "color": {
+                "label": "Division Color"
+              }
+            },
+            "errors": {
+              "name-required": "Division name is required.",
+              "color-required": "Division color is required.",
+              "error": "An error occurred while creating the division."
+            },
+            "submitting": "Creating division..."
+          }
         }
       }
     },

@@ -1,4 +1,5 @@
 import express from 'express';
+import { UpdateableEvent } from '@lems/database';
 import db from '../../../lib/database';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminRequest } from '../../../types/express';
@@ -96,6 +97,67 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
     });
   } catch (error) {
     console.error('Error creating event:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/:slug', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
+  try {
+    const { slug } = req.params;
+    const { name, date, location } = req.body;
+
+    const existingEvent = await db.events.bySlug(slug).get();
+    if (!existingEvent) {
+      res.status(404).json({ error: 'Event not found' });
+      return;
+    }
+
+    const updateData: Partial<UpdateableEvent> = {};
+
+    if (name !== undefined) {
+      if (!name.trim()) {
+        res.status(400).json({ error: 'Name cannot be empty' });
+        return;
+      }
+      updateData.name = name;
+    }
+
+    if (date !== undefined) {
+      const eventDate = new Date(date);
+      if (isNaN(eventDate.getTime())) {
+        res.status(400).json({ error: 'Invalid date format' });
+        return;
+      }
+      updateData.start_date = eventDate;
+      updateData.end_date = eventDate; // For now, using same date for start and end
+    }
+
+    if (location !== undefined) {
+      if (!location.trim()) {
+        res.status(400).json({ error: 'Location cannot be empty' });
+        return;
+      }
+      updateData.location = location;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ error: 'No valid fields to update' });
+      return;
+    }
+
+    const updatedEvent = await db.events.bySlug(slug).update(updateData);
+
+    if (!updatedEvent) {
+      res.status(500).json({ error: 'Failed to update event' });
+      return;
+    }
+
+    res.json({
+      message: 'Event updated successfully',
+      event: makeAdminEventResponse(updatedEvent)
+    });
+  } catch (error) {
+    console.error('Error updating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

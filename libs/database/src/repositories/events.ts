@@ -1,7 +1,7 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableEvent, Event } from '../schema/tables/events';
-import { TeamWithDivision, Team } from '../schema';
+import { InsertableEvent, Event, UpdateableEvent } from '../schema/tables/events';
+import { TeamWithDivision, Team, Division } from '../schema';
 
 class EventSelector {
   constructor(
@@ -17,6 +17,33 @@ class EventSelector {
   async get(): Promise<Event | null> {
     const event = await this.getEventQuery().executeTakeFirst();
     return event || null;
+  }
+
+  async update(updateData: UpdateableEvent): Promise<Event | null> {
+    const updatedEvent = await this.db
+      .updateTable('events')
+      .set(updateData)
+      .where(this.selector.type, '=', this.selector.value)
+      .returningAll()
+      .executeTakeFirst();
+
+    return updatedEvent || null;
+  }
+
+  async getDivisions(): Promise<Division[]> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const divisions = await this.db
+      .selectFrom('divisions')
+      .where('event_id', '=', event.id)
+      .selectAll()
+      .execute();
+
+    return divisions;
   }
 
   async getRegisteredTeams(): Promise<TeamWithDivision[]> {
@@ -58,15 +85,17 @@ class EventSelector {
       throw new Error('Event not found');
     }
 
+    const registeredTeams = await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('divisions', 'divisions.id', 'team_divisions.division_id')
+      .where('divisions.event_id', '=', event.id)
+      .select('team_divisions.team_id')
+      .execute();
+
+    const registeredTeamIds = new Set(registeredTeams.map(row => row.team_id));
+
     const availableTeams = await this.db
       .selectFrom('teams')
-      .leftJoin('team_divisions', 'team_divisions.team_id', 'teams.id')
-      .leftJoin('divisions', join =>
-        join
-          .onRef('divisions.id', '=', 'team_divisions.division_id')
-          .on('divisions.event_id', '=', event.id)
-      )
-      .where('divisions.id', 'is', null)
       .select([
         'teams.id',
         'teams.pk',
@@ -77,10 +106,52 @@ class EventSelector {
         'teams.city',
         'teams.coordinates'
       ])
+      .where('teams.id', 'not in', Array.from(registeredTeamIds))
       .orderBy('teams.number', 'asc')
       .execute();
 
     return availableTeams;
+  }
+
+  /**
+   * Registers teams for a specific event.
+   * @param registration An object mapping division IDs to arrays of team IDs.
+   * @returns
+   */
+  async registerTeams(registration: Record<string, string[]>): Promise<void> {
+    return this.db.transaction().execute(async trx => {
+      const divisions = await this.getDivisions();
+      if (!divisions || divisions.length === 0) {
+        throw new Error('Event divisions not found');
+      }
+      const divisionIds = divisions.map(division => division.id);
+      const teamIds = [...new Set(Object.values(registration).flat())];
+
+      const teamsInEvent = new Set(
+        await trx
+          .selectFrom('team_divisions')
+          .select('team_id')
+          .where('division_id', 'in', divisionIds)
+          .where('team_id', 'in', teamIds)
+          .execute()
+          .then(rows => rows.map(row => row.team_id))
+      );
+
+      const rows = Object.entries(registration).flatMap(([divisionId, _teamIds]) => {
+        return _teamIds
+          .filter(id => !teamsInEvent.has(id))
+          .map(teamId => ({
+            team_id: teamId,
+            division_id: divisionId
+          }));
+      });
+
+      await Promise.all(
+        rows.map(({ team_id, division_id }) =>
+          trx.insertInto('team_divisions').values({ team_id, division_id }).execute()
+        )
+      );
+    });
   }
 }
 

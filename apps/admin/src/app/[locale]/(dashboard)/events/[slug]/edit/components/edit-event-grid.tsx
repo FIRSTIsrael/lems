@@ -1,6 +1,5 @@
 'use client';
 
-import { Event } from '@lems/types/api/admin';
 import { Grid } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import ScheduleIcon from '@mui/icons-material/Schedule';
@@ -10,13 +9,11 @@ import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstruct
 import SettingsIcon from '@mui/icons-material/Settings';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { useEvent } from '../../layout';
 import EditEventCard from './edit-event-card';
 
-export interface EditEeventGridProps {
-  event: Event;
-}
-
-export const EditEventGrid: React.FC<EditEeventGridProps> = ({ event }) => {
+export const EditEventGrid: React.FC = () => {
+  const event = useEvent();
   const cardSize = { xs: 12, md: 6, lg: 3 };
 
   return (

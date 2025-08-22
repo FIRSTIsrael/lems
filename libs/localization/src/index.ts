@@ -9,3 +9,5 @@ export * from './lib/hooks/use-locale-preference';
 // Icons
 export * from './lib/icons/chevron-end';
 export * from './lib/icons/chevron-start';
+export * from './lib/icons/arrow-end';
+export * from './lib/icons/arrow-start';

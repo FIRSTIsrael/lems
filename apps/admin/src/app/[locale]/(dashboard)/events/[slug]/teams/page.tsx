@@ -1,27 +1,26 @@
-import { redirect, RedirectType } from 'next/navigation';
-import { Box } from '@mui/material';
-import { AdminEventResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../lib/fetch';
-import EventTeamsContent from './components/event-teams-content';
+'use client';
 
-interface EventTeamsPageProps {
-  params: { slug: string };
-}
+import { useState } from 'react';
+import useSWR from 'swr';
+import { Stack, Switch, Typography, Box } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { TeamWithDivision } from '@lems/types/api/admin';
+import { useEvent } from '../layout';
+import { EventPageTitle } from '../components/event-page-title';
+import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
+import { EventTeamsSplitView } from './components/event-teams-split-view';
+import RegisterTeamsButton from './components/register-teams-button';
 
-export default async function EventTeamsPage({ params }: EventTeamsPageProps) {
-  const { slug } = await params;
+export default function EventTeamsPage() {
+  const event = useEvent();
 
-  const result = await apiFetch(`/admin/events/${slug}`, {}, AdminEventResponseSchema);
+  const t = useTranslations('pages.events.teams');
+  const [isUnified, setIsUnified] = useState(true);
 
-  if (!result.ok) {
-    throw new Error('Failed to load event');
-  }
-
-  const { data: event } = result;
-
-  if (!event) {
-    redirect('/events', RedirectType.replace);
-  }
+  const { data: divisions = [] } = useSWR<TeamWithDivision[]>(
+    `/admin/events/${event.slug}/divisions`
+  );
+  const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.slug}/teams`);
 
   return (
     <Box
@@ -31,7 +30,35 @@ export default async function EventTeamsPage({ params }: EventTeamsPageProps) {
         flexDirection: 'column'
       }}
     >
-      <EventTeamsContent event={event} />
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <EventPageTitle title={t('title', { eventName: event.name })}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <Typography color={isUnified ? 'primary' : 'text.secondary'}>
+              {t('view-toggle.unified')}
+            </Typography>
+            <Switch
+              checked={!isUnified}
+              onChange={e => setIsUnified(!e.target.checked)}
+              color="primary"
+            />
+            <Typography color={!isUnified ? 'primary' : 'text.secondary'}>
+              {t('view-toggle.split')}
+            </Typography>
+          </Stack>
+        </EventPageTitle>
+
+        <Box sx={{ mb: 2 }}>
+          <RegisterTeamsButton event={event} />
+        </Box>
+
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          {isUnified ? (
+            <EventTeamsUnifiedView teams={teams} hasMultipleDivisions={divisions.length > 1} />
+          ) : (
+            <EventTeamsSplitView eventId={event.id} />
+          )}
+        </Box>
+      </Box>
     </Box>
   );
 }
