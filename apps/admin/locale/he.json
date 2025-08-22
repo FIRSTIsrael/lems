@@ -271,6 +271,59 @@
       },
       "alerts": {
         "no-current-season": "אין עונה פעילה כעת. ניתן לייצר אירועים רק במהלך עונה."
+      },
+      "edit": {
+        "location": "מיקום",
+        "date": "תאריך",
+        "cards": {
+          "awards": "פרסים",
+          "schedule": "לוח זמנים",
+          "teams": "קבוצות",
+          "venue": "היכל",
+          "integrations": "אינטגרציות",
+          "settings": "הגדרות",
+          "users": "משתמשים",
+          "divisions": "בתים"
+        }
+      },
+      "teams": {
+        "title": "{eventName}: קבוצות",
+        "view-toggle": {
+          "unified": "מאוחד",
+          "split": "מפוצל"
+        },
+        "registration-button": {
+          "title": "רישום קבוצות",
+          "alert": "לאירוע זה כבר יש לוח זמנים. לא ניתן לשנות את רישום הקבוצות כעת."
+        },
+        "registration-dialog": {
+          "title": "רישום קבוצות {divisions, plural, =1 {} other {לבתים}",
+          "division": "בית",
+          "available-teams": "קבוצות שנותרו",
+          "no-available-teams": "לא נותרו קבוצות",
+          "registered-teams": "קבוצות לרישום ({count})",
+          "actions": {
+            "register": "רישום {count, plural, =1 {קבוצה אחת} other {{count} קבוצות}}",
+            "cancel": "ביטול"
+          },
+          "no-teams-selected": "לא נבחרו קבוצות"
+        },
+        "unified": {
+          "columns": {
+            "division": "בית",
+            "number": "מספר",
+            "name": "שם",
+            "affiliation": "שיוך",
+            "city": "עיר",
+            "actions": "פעולות"
+          },
+          "search": {
+            "placeholder": "חפש קבוצות לפי מספר, שם, שיוך, עיר או בית..."
+          }
+        },
+        "split": {
+          "placeholder": "תצוגה מפוצלת: בקרוב"
+        }
       }
     },
     "users": {

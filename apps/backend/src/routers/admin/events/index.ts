@@ -2,8 +2,14 @@ import express from 'express';
 import db from '../../../lib/database';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminRequest } from '../../../types/express';
+import { makeAdminEventResponse } from './util';
+import eventTeamsRouter from './teams/index';
+import eventDivisionsRouter from './divisions/index';
 
 const router = express.Router({ mergeParams: true });
+
+router.use('/:slug/divisions', eventDivisionsRouter);
+router.use('/:slug/teams', eventTeamsRouter);
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
@@ -96,16 +102,38 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
 
 router.get('/', async (req, res) => {
   const events = await db.events.getAll();
-  res.json(events);
+  res.json(events.map(event => makeAdminEventResponse(event)));
+});
+
+router.get('/:slug', async (req, res) => {
+  const event = await db.events.bySlug(req.params.slug).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
+  res.json(makeAdminEventResponse(event));
+});
+
+router.get('/id/:id', async (req, res) => {
+  const event = await db.events.byId(req.params.id).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
+  res.json(makeAdminEventResponse(event));
 });
 
 router.get('/season/:id', async (req, res) => {
-  const events = await db.events.bySeason(req.params.id).getAll();
+  const events = await db.seasons.byId(req.params.id).getEvents();
   res.json(events);
 });
 
 router.get('/season/:id/summary', async (req, res) => {
-  const events = await db.events.bySeason(req.params.id).summarizeAll();
+  const events = await db.seasons.byId(req.params.id).getSummarizedEvents();
   res.json(events);
 });
 

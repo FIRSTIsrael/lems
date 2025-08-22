@@ -1,6 +1,7 @@
 'use client';
 
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Card,
@@ -27,7 +28,6 @@ import {
 import { EventSummary } from '@lems/types/api/admin';
 
 interface EventCardProps extends EventSummary {
-  onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onCopy?: (id: string) => void;
 }
@@ -35,18 +35,18 @@ interface EventCardProps extends EventSummary {
 export const EventCard: React.FC<EventCardProps> = ({
   id,
   name,
+  slug,
   location,
   startDate: date,
   teamCount,
   divisions,
   isFullySetUp,
-  onEdit,
   onDelete,
   onCopy
 }) => {
+  const router = useRouter();
   const t = useTranslations('pages.events.card');
 
-  const handleEdit = () => onEdit?.(id);
   const handleDelete = () => onDelete?.(id);
   const handleCopy = () => onCopy?.(id);
 
@@ -135,7 +135,12 @@ export const EventCard: React.FC<EventCardProps> = ({
 
       <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
         <Tooltip title={t('edit')}>
-          <IconButton onClick={handleEdit} size="small" disabled>
+          <IconButton
+            onClick={() => {
+              router.push(`/events/${slug}/edit`);
+            }}
+            size="small"
+          >
             <Edit />
           </IconButton>
         </Tooltip>

@@ -1,17 +1,16 @@
 'use client';
 
-import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
 
-interface UsersSearchProps {
+interface UnifiedTeamsSearchProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-export const UsersSearch: React.FC<UsersSearchProps> = ({ value, onChange }) => {
-  const t = useTranslations('pages.users.search');
+export const UnifiedTeamsSearch: React.FC<UnifiedTeamsSearchProps> = ({ value, onChange }) => {
+  const t = useTranslations('pages.events.teams.unified.search');
 
   return (
     <TextField

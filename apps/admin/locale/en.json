@@ -271,6 +271,59 @@
       },
       "alerts": {
         "no-current-season": "No season is currently active. Events can only be created when a season is in progress."
+      },
+      "edit": {
+        "location": "Location",
+        "date": "Date",
+        "cards": {
+          "awards": "Awards",
+          "schedule": "Schedule",
+          "teams": "Teams",
+          "venue": "Venue",
+          "integrations": "Integrations",
+          "settings": "Settings",
+          "users": "Users",
+          "divisions": "Divisions"
+        }
+      },
+      "teams": {
+        "title": "{eventName}: Teams",
+        "view-toggle": {
+          "unified": "Unified",
+          "split": "Split"
+        },
+        "registration-button": {
+          "title": "Register Teams",
+          "alert": "This event already has a schedule set. Team registration can no longer be modified."
+        },
+        "registration-dialog": {
+          "title": "Register Teams {divisions, plural, =1 {} other {to Divisions}}",
+          "division": "Division",
+          "available-teams": "Available Teams",
+          "no-available-teams": "No available teams",
+          "registered-teams": "Teams to Register ({count})",
+          "actions": {
+            "register": "Register {count} {count, plural, =1 {team} other {teams}}",
+            "cancel": "Cancel"
+          },
+          "no-teams-selected": "No teams selected"
+        },
+        "unified": {
+          "columns": {
+            "division": "Division",
+            "number": "Number",
+            "name": "Name",
+            "affiliation": "Affiliation",
+            "city": "City",
+            "actions": "Actions"
+          },
+          "search": {
+            "placeholder": "Search teams by number, name, affiliation, city, or division..."
+          }
+        },
+        "split": {
+          "placeholder": "Split view coming soon"
+        }
       }
     },
     "users": {

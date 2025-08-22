@@ -30,5 +30,6 @@ export interface EventSummary {
     name: string;
     color: string;
   }[];
-  isFullySetUp: boolean;
+  season_id: string;
+  is_fully_set_up: boolean;
 }
