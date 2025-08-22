@@ -1,33 +1,16 @@
-import { redirect, RedirectType } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { Typography, Paper, Box, Stack } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import dayjs from 'dayjs';
-import { AdminEventResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../lib/fetch';
+import { useEvent } from '../layout';
 import { EditEventGrid } from './components/edit-event-grid';
 
-interface EditEventPageProps {
-  params: { slug: string };
-}
-
-export default async function EditEventPage({ params }: EditEventPageProps) {
-  const { slug } = await params;
-
-  const t = await getTranslations('pages.events.edit');
-
-  const result = await apiFetch(`/admin/events/${slug}`, {}, AdminEventResponseSchema);
-
-  if (!result.ok) {
-    throw new Error('Failed to load event');
-  }
-
-  const { data: event } = result;
-
-  if (!event) {
-    redirect('/events', RedirectType.replace);
-  }
+export default function EditEventPage() {
+  const event = useEvent();
+  const t = useTranslations('pages.events.edit');
 
   return (
     <>

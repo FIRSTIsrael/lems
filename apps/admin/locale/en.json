@@ -324,6 +324,9 @@
         "split": {
           "placeholder": "Split view coming soon"
         }
+      },
+      "divisions": {
+        "title": "{eventName}: Divisions"
       }
     },
     "users": {

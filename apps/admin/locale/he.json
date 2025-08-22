@@ -324,6 +324,9 @@
         "split": {
           "placeholder": "תצוגה מפוצלת: בקרוב"
         }
+      },
+      "divisions": {
+        "title": "{eventName}: בתים"
       }
     },
     "users": {
