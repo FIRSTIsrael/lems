@@ -18,7 +18,7 @@ export function EventPageTitle({ title, children }: EventPageTitleProps) {
   const t = useTranslations('pages.events.layout.event-page-title');
 
   const handleBackClick = () => {
-    router.push(`/events/${event.slug}`);
+    router.push(`/events/${event.slug}/edit`);
   };
 
   return (
