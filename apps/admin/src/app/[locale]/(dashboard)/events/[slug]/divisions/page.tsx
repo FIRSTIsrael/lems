@@ -1,18 +1,17 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Typography } from '@mui/material';
 import { useEvent } from '../layout';
+import { EventPageTitle } from '../components/event-page-title';
 
-export default function EditEventPage() {
+export default function EventDivisionsPage() {
   const event = useEvent();
   const t = useTranslations('pages.events.divisions');
 
   return (
     <>
-      <Typography variant="h1" gutterBottom>
-        {t('title', { eventName: event.name })}
-      </Typography>
+      <EventPageTitle title={t('title', { eventName: event.name })} />
+      {/* Division content will go here */}
     </>
   );
 }

@@ -6,6 +6,7 @@ import { Stack, Switch, Typography, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision } from '@lems/types/api/admin';
 import { useEvent } from '../layout';
+import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';
 import RegisterTeamsButton from './components/register-teams-button';
@@ -30,10 +31,7 @@ export default function EventTeamsPage() {
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
-          <Typography variant="h1" gutterBottom>
-            {t('title', { eventName: event.name })}
-          </Typography>
+        <EventPageTitle title={t('title', { eventName: event.name })}>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography color={isUnified ? 'primary' : 'text.secondary'}>
               {t('view-toggle.unified')}
@@ -47,7 +45,7 @@ export default function EventTeamsPage() {
               {t('view-toggle.split')}
             </Typography>
           </Stack>
-        </Stack>
+        </EventPageTitle>
 
         <Box sx={{ mb: 2 }}>
           <RegisterTeamsButton event={event} />
