@@ -4,9 +4,11 @@ import { requirePermission } from '../../../middlewares/admin/require-permission
 import { AdminRequest } from '../../../types/express';
 import { makeAdminEventResponse } from './util';
 import eventTeamsRouter from './teams/index';
+import eventDivisionsRouter from './divisions/index';
 
 const router = express.Router({ mergeParams: true });
 
+router.use('/:slug/divisions', eventDivisionsRouter);
 router.use('/:slug/teams', eventTeamsRouter);
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {

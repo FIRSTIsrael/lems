@@ -80,25 +80,6 @@ class TeamSelector {
     return updatedTeam || null;
   }
 }
-
-class TeamEventSelector {
-  constructor(
-    private db: Kysely<KyselyDatabaseSchema>,
-    private eventId: string
-  ) {}
-
-  async getAll(): Promise<Team[]> {
-    const teams = await this.db
-      .selectFrom('teams')
-      .innerJoin('team_divisions', 'team_divisions.team_id', 'teams.id')
-      .innerJoin('divisions', 'divisions.id', 'team_divisions.division_id')
-      .where('divisions.event_id', '=', this.eventId)
-      .selectAll('teams')
-      .orderBy('teams.number', 'asc')
-      .execute();
-    return teams;
-  }
-}
 export class TeamsRepository {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -114,10 +95,6 @@ export class TeamsRepository {
       type: 'number',
       value: number
     });
-  }
-
-  byEvent(eventId: string): TeamEventSelector {
-    return new TeamEventSelector(this.db, eventId);
   }
 
   async getAll(): Promise<Team[]> {

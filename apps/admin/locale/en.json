@@ -297,7 +297,7 @@
           "alert": "This event already has a schedule set. Team registration can no longer be modified."
         },
         "registration-dialog": {
-          "title": "Register Teams to Divisions",
+          "title": "Register Teams {divisions, plural, =1 {} other {to Divisions}}",
           "division": "Division",
           "available-teams": "Available Teams",
           "no-available-teams": "No available teams",

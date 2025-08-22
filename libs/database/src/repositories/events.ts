@@ -1,7 +1,7 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event } from '../schema/tables/events';
-import { TeamWithDivision } from '../schema';
+import { TeamWithDivision, Team } from '../schema';
 
 class EventSelector {
   constructor(
@@ -19,7 +19,7 @@ class EventSelector {
     return event || null;
   }
 
-  async getTeams(): Promise<TeamWithDivision[]> {
+  async getRegisteredTeams(): Promise<TeamWithDivision[]> {
     const event = await this.get();
 
     if (!event) {
@@ -36,6 +36,9 @@ class EventSelector {
         'teams.number',
         'teams.name',
         'teams.logo_url',
+        'teams.affiliation',
+        'teams.city',
+        'teams.coordinates',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -46,6 +49,38 @@ class EventSelector {
       .execute();
 
     return teamsWithDivisions;
+  }
+
+  async getAvailableTeams(): Promise<Team[]> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const availableTeams = await this.db
+      .selectFrom('teams')
+      .leftJoin('team_divisions', 'team_divisions.team_id', 'teams.id')
+      .leftJoin('divisions', join =>
+        join
+          .onRef('divisions.id', '=', 'team_divisions.division_id')
+          .on('divisions.event_id', '=', event.id)
+      )
+      .where('divisions.id', 'is', null)
+      .select([
+        'teams.id',
+        'teams.pk',
+        'teams.number',
+        'teams.name',
+        'teams.logo_url',
+        'teams.affiliation',
+        'teams.city',
+        'teams.coordinates'
+      ])
+      .orderBy('teams.number', 'asc')
+      .execute();
+
+    return availableTeams;
   }
 }
 

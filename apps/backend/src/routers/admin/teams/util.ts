@@ -1,6 +1,10 @@
 import { parse } from 'csv-parse';
-import { Team as DbTeam, InsertableTeam } from '@lems/database';
-import { Team } from '@lems/types/api/admin';
+import {
+  Team as DbTeam,
+  InsertableTeam,
+  TeamWithDivision as DbTeamWithDivision
+} from '@lems/database';
+import { Team, TeamWithDivision } from '@lems/types/api/admin';
 
 /**
  * Transforms a Team object into a response format.
@@ -15,6 +19,25 @@ export const makeAdminTeamResponse = (team: DbTeam): Team => ({
   city: team.city,
   coordinates: team.coordinates
 });
+
+export const makeAdminTeamWithDivisionResponse = (
+  teamWithDivision: DbTeamWithDivision
+): TeamWithDivision => {
+  return {
+    id: teamWithDivision.id,
+    name: teamWithDivision.name,
+    number: teamWithDivision.number,
+    logoUrl: teamWithDivision.logo_url,
+    affiliation: teamWithDivision.affiliation,
+    city: teamWithDivision.city,
+    coordinates: teamWithDivision.coordinates,
+    division: {
+      id: teamWithDivision.division_id,
+      name: teamWithDivision.division_name,
+      color: teamWithDivision.division_color
+    }
+  };
+};
 
 export const parseTeamList = (data: Buffer<ArrayBufferLike>) => {
   return new Promise<InsertableTeam[]>((resolve, reject) => {

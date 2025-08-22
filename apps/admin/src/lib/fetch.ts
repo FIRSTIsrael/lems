@@ -110,6 +110,10 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
   } else {
     // Client-side: Use credentials include to send cookies automatically
     fetchOptions.credentials = 'include';
+    fetchOptions.headers = {
+      ...fetchOptions.headers,
+      ...init?.headers
+    };
   }
 
   try {

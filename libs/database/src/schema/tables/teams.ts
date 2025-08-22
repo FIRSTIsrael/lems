@@ -22,6 +22,9 @@ export type TeamWithDivision = {
   number: number;
   name: string;
   logo_url: string | null;
+  city: string;
+  affiliation: string;
+  coordinates: string | null;
   division_id: string;
   division_name: string;
   division_color: string;

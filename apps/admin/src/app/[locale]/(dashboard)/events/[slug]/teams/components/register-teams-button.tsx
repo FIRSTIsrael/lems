@@ -3,13 +3,11 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Alert, Button, Box } from '@mui/material';
-import RegisterTeamsDialog from './register-teams-dialog';
+import { Event } from '@lems/types/api/admin';
+import { RegisterTeamsDialog } from './register-teams-dialog';
 
 interface RegisterTeamsButtonProps {
-  event: {
-    id: string;
-    name: string;
-  };
+  event: Event;
 }
 
 export default function RegisterTeamsButton({ event }: RegisterTeamsButtonProps) {
@@ -31,11 +29,7 @@ export default function RegisterTeamsButton({ event }: RegisterTeamsButtonProps)
         {t('title')}
       </Button>
 
-      <RegisterTeamsDialog
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        eventId={event.id}
-      />
+      <RegisterTeamsDialog open={modalOpen} onClose={() => setModalOpen(false)} event={event} />
     </Box>
   );
 }

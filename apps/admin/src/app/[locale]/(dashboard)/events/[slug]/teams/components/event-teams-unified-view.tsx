@@ -1,39 +1,25 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslations } from 'next-intl';
-import { Team } from '@lems/types/api/admin';
+import { TeamWithDivision } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 
-// Extended team interface for unified view
-interface UnifiedTeam extends Team {
-  division: {
-    id: string;
-    name: string;
-    color: string;
-  };
-}
-
 interface EventTeamsUnifiedViewProps {
-  teams: UnifiedTeam[];
-  eventId: string;
+  teams: TeamWithDivision[];
+  hasMultipleDivisions: boolean;
 }
 
 export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
-  teams: initialTeams,
-  eventId
+  teams,
+  hasMultipleDivisions
 }) => {
   const t = useTranslations('pages.events.teams.unified');
   const [searchValue, setSearchValue] = useState('');
-
-  const { data: teams } = useSWR<UnifiedTeam[]>(`/admin/events/${eventId}/teams/unified`, {
-    fallbackData: initialTeams
-  });
 
   const filteredTeams = useMemo(() => {
     if (!searchValue.trim()) return teams;
@@ -51,11 +37,6 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       }) || []
     );
   }, [teams, searchValue]);
-
-  const hasMultipleDivisions = useMemo(() => {
-    const divisionIds = new Set(teams?.map(team => team.division.id));
-    return divisionIds.size > 1;
-  }, [teams]);
 
   const columns: GridColDef[] = [
     {

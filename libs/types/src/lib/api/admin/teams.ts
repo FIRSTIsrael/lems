@@ -12,6 +12,16 @@ export const AdminTeamResponseSchema = z.object({
 
 export type Team = z.infer<typeof AdminTeamResponseSchema>;
 
+export const AdminTeamWithDivisionResponseSchema = AdminTeamResponseSchema.extend({
+  division: z.object({
+    id: z.string(),
+    name: z.string(),
+    color: z.string()
+  })
+});
+
+export type TeamWithDivision = z.infer<typeof AdminTeamWithDivisionResponseSchema>;
+
 export const AdminTeamsResponseSchema = z.array(AdminTeamResponseSchema);
 
 export const AdminTeamsImportResponseSchema = z.object({
