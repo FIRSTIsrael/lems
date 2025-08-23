@@ -9,17 +9,14 @@ import {
   Box,
   Button,
   TextField,
-  IconButton,
   Stack,
   Alert,
   CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../../lib/fetch';
+import { AssetCell } from './asset-cell';
 
 type AssetType = JudgingRoom | RobotGameTable;
 
@@ -93,19 +90,19 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
     }
   };
 
-  const handleSaveAsset = async (assetId: string) => {
-    const name = editingAssets[assetId]?.trim();
+  const handleSaveAsset = async (asset: T) => {
+    const name = editingAssets[asset.id]?.trim();
     if (!name) {
-      setErrors({ [assetId]: t('messages.validation.name-required') });
+      setErrors({ [asset.id]: t('messages.validation.name-required') });
       return;
     }
 
     clearMessages();
-    setSaving(prev => ({ ...prev, [assetId]: true }));
+    setSaving(prev => ({ ...prev, [asset.id]: true }));
 
     try {
       const result = await makeApiRequest(
-        `/admin/divisions/${divisionId}/${assetType}/${assetId}`,
+        `/admin/divisions/${divisionId}/${assetType}/${asset.id}`,
         'PUT',
         { name }
       );
@@ -113,24 +110,24 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
       if (result.ok) {
         setEditingAssets(prev => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { [assetId]: removed, ...rest } = prev;
+          const { [asset.id]: removed, ...rest } = prev;
           return rest;
         });
         showSuccess();
         mutate(`/admin/divisions/${divisionId}/${assetType}`);
       } else {
-        setErrors({ [assetId]: t('messages.save-error') });
+        setErrors({ [asset.id]: t('messages.save-error') });
       }
     } catch {
-      setErrors({ [assetId]: t('messages.save-error') });
+      setErrors({ [asset.id]: t('messages.save-error') });
     } finally {
-      setSaving(prev => ({ ...prev, [assetId]: false }));
+      setSaving(prev => ({ ...prev, [asset.id]: false }));
     }
   };
 
-  const handleDeleteAsset = async (assetId: string) => {
+  const handleDeleteAsset = async (asset: T) => {
     clearMessages();
-    console.log('Deleting asset:', assetId);
+    console.log('Deleting asset:', asset.id);
     // TODO: Implement DELETE functionality
   };
 
@@ -139,10 +136,10 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
     clearMessages();
   };
 
-  const cancelEditing = (assetId: string) => {
+  const cancelEditing = (asset: T) => {
     setEditingAssets(prev => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [assetId]: removed, ...rest } = prev;
+      const { [asset.id]: removed, ...rest } = prev;
       return rest;
     });
     clearMessages();
@@ -219,108 +216,25 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
         </Typography>
       ) : (
         <Stack spacing={2}>
-          {assets.map(asset => (
-            <Box key={asset.id}>
-              {isEditing(asset.id) ? (
-                <Box>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <TextField
-                      size="small"
-                      value={editingAssets[asset.id]}
-                      onChange={e => {
-                        setEditingAssets({ ...editingAssets, [asset.id]: e.target.value });
-                        if (errors[asset.id]) {
-                          setErrors({ ...errors, [asset.id]: '' });
-                        }
-                      }}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          handleSaveAsset(asset.id);
-                        } else if (e.key === 'Escape') {
-                          cancelEditing(asset.id);
-                        }
-                      }}
-                      disabled={saving[asset.id]}
-                      error={!!errors[asset.id]}
-                      sx={{
-                        flexGrow: 1,
-                        '& .MuiInputBase-input': {
-                          padding: '8.5px 14px' // Match size="small" standard padding
-                        }
-                      }}
-                    />
-                    <IconButton
-                      size="small"
-                      onClick={() => handleSaveAsset(asset.id)}
-                      disabled={saving[asset.id]}
-                      color="primary"
-                    >
-                      {saving[asset.id] ? <CircularProgress size={16} /> : <CheckIcon />}
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => cancelEditing(asset.id)}
-                      disabled={saving[asset.id]}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Stack>
-                  {errors[asset.id] && (
-                    <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                      {errors[asset.id]}
-                    </Typography>
-                  )}
-                </Box>
-              ) : (
-                <Box>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{
-                      px: 2,
-                      border: '1px solid',
-                      borderColor: errors[asset.id] ? 'error.main' : 'divider',
-                      borderRadius: 1,
-                      minHeight: '40px', // Match the height of TextField size="small"
-                      '&:hover': {
-                        backgroundColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      onClick={() => startEditing(asset)}
-                      sx={{
-                        cursor: 'pointer',
-                        flexGrow: 1,
-                        userSelect: 'none'
-                      }}
-                    >
-                      {asset.name}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDeleteAsset(asset.id)}
-                      color="error"
-                      title={t(`${assetType as string}.delete-button`)}
-                      disabled
-                    >
-                      {saving[asset.id] ? <CircularProgress size={16} /> : <DeleteIcon />}
-                    </IconButton>
-                  </Stack>
-                  {errors[asset.id] && (
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      sx={{ mt: 0.5, display: 'block', px: 2 }}
-                    >
-                      {errors[asset.id]}
-                    </Typography>
-                  )}
-                </Box>
-              )}
-            </Box>
+          {assets.map((asset, index) => (
+            <AssetCell
+              key={asset.id}
+              assetType={assetType}
+              asset={asset}
+              index={index}
+              disabled={saving[asset.id]}
+              isEditing={isEditing(asset.id)}
+              editingValue={editingAssets[asset.id] ?? ''}
+              onChange={(value: string) => {
+                setEditingAssets({ ...editingAssets, [asset.id]: value });
+              }}
+              onDelete={() => handleDeleteAsset(asset)}
+              onStartEditing={() => startEditing(asset)}
+              onStopEditing={() => cancelEditing(asset)}
+              onSave={() => handleSaveAsset(asset)}
+              error={errors[asset.id] ?? null}
+              setError={(error: string) => setErrors({ ...errors, [asset.id]: error })}
+            />
           ))}
         </Stack>
       )}
