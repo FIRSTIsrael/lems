@@ -13,9 +13,23 @@ router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), async (req, res) => 
     return;
   }
 
-  await db.divisions.byId(id).createTable({ name });
+  await db.divisions.byId(id).createTable({ division_id: id, name });
 
   res.status(201).json({});
+});
+
+router.put('/:id', requirePermission('MANAGE_EVENT_DETAILS'), async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (!name) {
+    res.status(400).json({ error: 'Name is required' });
+    return;
+  }
+
+  await db.tables.byId(id).update({ name });
+
+  res.status(204).json({});
 });
 
 router.get('/', async (req, res) => {

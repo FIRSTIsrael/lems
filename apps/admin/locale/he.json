@@ -189,6 +189,9 @@
       "layout": {
         "event-page-title": {
           "back-to-event": "חזרה לאירוע"
+        },
+        "division-selector": {
+          "label": "בית"
         }
       },
       "create-button": "יצירה",
@@ -374,10 +377,6 @@
       },
       "venue": {
         "title": "{eventName}: היכל",
-        "division-selector": {
-          "label": "בית",
-          "single-division": "אירוע בית יחיד"
-        },
         "rooms": {
           "title": "חדרי שיפוט",
           "add-button": "הוסף חדר",
@@ -413,7 +412,11 @@
           "save-success": "השינויים נשמרו בהצלחה",
           "save-error": "שגיאה בשמירת השינויים",
           "delete-success": "הפריט נמחק בהצלחה",
-          "delete-error": "שגיאה במחיקת הפריט"
+          "delete-error": "שגיאה במחיקת הפריט",
+          "load-error": "שגיאה בטעינת המידע",
+          "validation": {
+            "name-required": "שם נדרש"
+          }
         }
       }
     },

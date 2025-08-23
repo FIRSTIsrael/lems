@@ -17,7 +17,6 @@ import {
 import UploadIcon from '@mui/icons-material/Upload';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useTranslations } from 'next-intl';
-import { useSnackbar } from 'notistack';
 import useSWR, { mutate } from 'swr';
 import { apiFetch } from '../../../../../../../lib/fetch';
 
@@ -27,15 +26,16 @@ interface PitMapManagerProps {
 
 const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
   const t = useTranslations('pages.events.venue.pit-map');
-  const { enqueueSnackbar } = useSnackbar();
   const [uploading, setUploading] = useState(false);
   const [viewMapOpen, setViewMapOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
 
   const {
     data: pitMapInfo,
-    error,
+    error: swrError,
     isLoading
   } = useSWR<{ exists: boolean; url?: string }>(
     divisionId ? `/admin/divisions/${divisionId}/pit-map` : null,
@@ -49,16 +49,21 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.type !== 'image/png') {
-        enqueueSnackbar('Please select a PNG image file', { variant: 'error' });
+        setErrorMessage('Please select a PNG image file');
+        setSuccessMessage('');
         return;
       }
       setSelectedFile(file);
       setUploadDialogOpen(true);
+      setErrorMessage('');
     }
   };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
+
+    setErrorMessage('');
+    setSuccessMessage('');
 
     try {
       setUploading(true);
@@ -71,15 +76,17 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
       });
 
       if (result.ok) {
-        enqueueSnackbar(t('upload-success'), { variant: 'success' });
+        setSuccessMessage(t('upload-success'));
         mutate(`/admin/divisions/${divisionId}/pit-map`);
         setUploadDialogOpen(false);
         setSelectedFile(null);
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
-        enqueueSnackbar(t('upload-error'), { variant: 'error' });
+        setErrorMessage(t('upload-error'));
       }
     } catch {
-      enqueueSnackbar(t('upload-error'), { variant: 'error' });
+      setErrorMessage(t('upload-error'));
     } finally {
       setUploading(false);
     }
@@ -93,7 +100,7 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
     );
   }
 
-  if (error) {
+  if (swrError) {
     return (
       <Paper sx={{ p: 3 }}>
         <Alert severity="error">Failed to load pit map information</Alert>
@@ -135,6 +142,20 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
           </Button>
         )}
       </Stack>
+
+      {/* Error message */}
+      {errorMessage && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {/* Success message */}
+      {successMessage && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          {successMessage}
+        </Alert>
+      )}
 
       {/* Status text */}
       <Box sx={{ mt: 2 }}>
@@ -178,12 +199,7 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
       </Dialog>
 
       {/* View map dialog */}
-      <Dialog
-        open={viewMapOpen}
-        onClose={() => setViewMapOpen(false)}
-        maxWidth="lg"
-        fullWidth
-      >
+      <Dialog open={viewMapOpen} onClose={() => setViewMapOpen(false)} maxWidth="lg" fullWidth>
         <DialogTitle>{t('current-map')}</DialogTitle>
         <DialogContent>
           {pitMapInfo?.url && (

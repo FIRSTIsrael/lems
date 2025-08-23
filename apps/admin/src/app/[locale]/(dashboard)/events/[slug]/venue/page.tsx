@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import { Box, Typography, Grid } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { useEvent } from '../layout';
-import DivisionSelector from './components/division-selector';
-import RoomsManager from './components/rooms-manager';
-import TablesManager from './components/tables-manager';
+import DivisionSelector from '../components/division-selector';
 import PitMapManager from './components/pit-map-manager';
+import AssetManager from './components/asset-manager';
 
 const VenuePage: React.FC = () => {
   const t = useTranslations('pages.events.venue');
@@ -26,34 +25,32 @@ const VenuePage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h1" gutterBottom>
         {t('title', { eventName: event.name })}
       </Typography>
 
+      {divisions.length > 1 && (
+        <Box sx={{ mb: 3 }}>
+          <DivisionSelector
+            divisions={divisions}
+            selectedDivisionId={selectedDivisionId}
+            onDivisionChange={setSelectedDivisionId}
+          />
+        </Box>
+      )}
+
       {selectedDivision && (
         <Grid container spacing={3}>
-          {divisions.length > 1 && (
-            <Grid size={12}>
-              <Paper sx={{ p: 3 }}>
-                <DivisionSelector
-                  divisions={divisions}
-                  selectedDivisionId={selectedDivisionId}
-                  onDivisionChange={setSelectedDivisionId}
-                />
-              </Paper>
-            </Grid>
-          )}
-
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <RoomsManager divisionId={selectedDivision.id} />
+            <AssetManager divisionId={selectedDivision.id} assetType="rooms" />
           </Grid>
 
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <TablesManager divisionId={selectedDivision.id} />
+            <AssetManager key="tables" divisionId={selectedDivision.id} assetType="tables" />
           </Grid>
 
           <Grid size={12}>
-            <PitMapManager divisionId={selectedDivision.id} />
+            <PitMapManager key="rooms" divisionId={selectedDivision.id} />
           </Grid>
         </Grid>
       )}

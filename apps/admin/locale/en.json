@@ -189,6 +189,9 @@
       "layout": {
         "event-page-title": {
           "back-to-event": "חזרה לאירוע"
+        },
+        "division-selector": {
+          "label": "Division"
         }
       },
       "create-button": "Create",
@@ -374,10 +377,6 @@
       },
       "venue": {
         "title": "{eventName}: Venue",
-        "division-selector": {
-          "label": "Division",
-          "single-division": "Single Division Event"
-        },
         "rooms": {
           "title": "Judging Rooms",
           "add-button": "Add Room",
@@ -413,7 +412,11 @@
           "save-success": "Changes saved successfully",
           "save-error": "Failed to save changes",
           "delete-success": "Item deleted successfully",
-          "delete-error": "Failed to delete item"
+          "delete-error": "Failed to delete item",
+          "load-error": "Failed to load event data",
+          "validation": {
+            "name-required": "Name is required"
+          }
         }
       }
     },
