@@ -68,12 +68,12 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisionUpdat
         <Box maxWidth={300}>
           <FileUpload
             label={t('upload-button')}
+            placeholder={t('upload-placeholder')}
             accept="image/jpeg,image/jpg,image/png"
             selectedFile={selectedFile}
             setSelectedFile={handleFileChange}
             description="JPG, JPEG, or PNG format"
             disabled={uploading}
-            placeholder="Choose File"
           />
         </Box>
 

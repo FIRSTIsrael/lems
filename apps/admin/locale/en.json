@@ -417,7 +417,8 @@
             "cancel": "Cancel",
             "upload": "Upload",
             "uploading": "Uploading..."
-          }
+          },
+          "upload-placeholder": "Choose file"
         },
         "messages": {
           "save-success": "Changes saved successfully",

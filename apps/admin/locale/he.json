@@ -417,7 +417,8 @@
             "cancel": "ביטול",
             "upload": "העלה",
             "uploading": "מעלה..."
-          }
+          },
+          "upload-placeholder": "בחרו קובץ"
         },
         "messages": {
           "save-success": "השינויים נשמרו בהצלחה",
