@@ -66,7 +66,7 @@ export class Database {
     this.seasons = new SeasonsRepository(this.kysely, this.space);
     this.teams = new TeamsRepository(this.kysely, this.space);
     this.events = new EventsRepository(this.kysely);
-    this.divisions = new DivisionsRepository(this.kysely);
+    this.divisions = new DivisionsRepository(this.kysely, this.space);
     this.rooms = new RoomsRepository(this.kysely);
     this.tables = new TablesRepository(this.kysely);
   }
