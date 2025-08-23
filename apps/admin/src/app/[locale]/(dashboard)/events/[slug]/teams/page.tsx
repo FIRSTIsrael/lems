@@ -18,9 +18,9 @@ export default function EventTeamsPage() {
   const [isUnified, setIsUnified] = useState(true);
 
   const { data: divisions = [] } = useSWR<TeamWithDivision[]>(
-    `/admin/events/${event.slug}/divisions`
+    `/admin/events/${event.id}/divisions`
   );
-  const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.slug}/teams`);
+  const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`);
 
   return (
     <Box

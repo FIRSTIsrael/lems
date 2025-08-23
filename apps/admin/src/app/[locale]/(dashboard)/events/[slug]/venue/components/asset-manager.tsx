@@ -14,18 +14,18 @@ import {
   CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
+import { Division, JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../../lib/fetch';
 import { AssetCell } from './asset-cell';
 
 type AssetType = JudgingRoom | RobotGameTable;
 
 interface AssetManagerProps {
-  divisionId: string;
+  division: Division;
   assetType: 'rooms' | 'tables';
 }
 
-const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManagerProps) => {
+const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
   const t = useTranslations(`pages.events.venue`);
   const [editingAssets, setEditingAssets] = useState<{ [key: string]: string }>({});
   const [newAssetName, setNewAssetName] = useState('');
@@ -37,10 +37,13 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
     data: assets = [] as T[],
     error,
     isLoading
-  } = useSWR<T[]>(divisionId ? `/admin/divisions/${divisionId}/${assetType}` : null, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true
-  });
+  } = useSWR<T[]>(
+    division ? `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}` : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true
+    }
+  );
 
   const clearMessages = () => {
     setErrors({});
@@ -72,14 +75,18 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
     setSaving(prev => ({ ...prev, new: true }));
 
     try {
-      const result = await makeApiRequest(`/admin/divisions/${divisionId}/${assetType}`, 'POST', {
-        name
-      });
+      const result = await makeApiRequest(
+        `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`,
+        'POST',
+        {
+          name
+        }
+      );
 
       if (result.ok) {
         setNewAssetName('');
         showSuccess();
-        mutate(`/admin/divisions/${divisionId}/${assetType}`);
+        mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
       } else {
         setErrors({ new: t('messages.save-error') });
       }
@@ -102,7 +109,7 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
 
     try {
       const result = await makeApiRequest(
-        `/admin/divisions/${divisionId}/${assetType}/${asset.id}`,
+        `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}/${asset.id}`,
         'PUT',
         { name }
       );
@@ -114,7 +121,7 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
           return rest;
         });
         showSuccess();
-        mutate(`/admin/divisions/${divisionId}/${assetType}`);
+        mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
       } else {
         setErrors({ [asset.id]: t('messages.save-error') });
       }

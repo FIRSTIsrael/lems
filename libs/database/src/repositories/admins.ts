@@ -2,6 +2,7 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableAdmin, Admin } from '../schema/tables/admins';
 import { PermissionType, AdminPermission } from '../schema/tables/admin-permissions';
+import { Event } from '../schema/tables/events';
 
 class AdminSelector {
   constructor(
@@ -108,6 +109,33 @@ class AdminSelector {
       .set({ last_login: new Date() })
       .where('id', '=', this.getAdminIdQuery())
       .execute();
+  }
+
+  async getEvents(): Promise<Event[]> {
+    const adminIdResult = await this.getAdminIdQuery().executeTakeFirst();
+    if (!adminIdResult) return [];
+
+    const events = await this.db
+      .selectFrom('admin_events')
+      .innerJoin('events', 'admin_events.event_id', 'events.id')
+      .selectAll('events')
+      .where('admin_events.admin_id', '=', adminIdResult.id)
+      .execute();
+
+    return events;
+  }
+
+  async isAssignedToEvent(eventId: string): Promise<boolean> {
+    const adminIdResult = await this.getAdminIdQuery().executeTakeFirst();
+    if (!adminIdResult) return false;
+
+    const result = await this.db
+      .selectFrom('admin_events')
+      .select('admin_id')
+      .where('admin_id', '=', adminIdResult.id)
+      .where('event_id', '=', eventId)
+      .executeTakeFirst();
+    return !!result;
   }
 }
 

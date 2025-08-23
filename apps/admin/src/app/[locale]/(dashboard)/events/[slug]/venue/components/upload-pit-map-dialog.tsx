@@ -46,10 +46,13 @@ export const UploadPitMapDialog: React.FC<UploadPitMapDialogProps> = ({
       const formData = new FormData();
       formData.append('pitMap', selectedFile);
 
-      const result = await apiFetch(`/admin/divisions/${division.id}/pit-map`, {
-        method: 'POST',
-        body: formData
-      });
+      const result = await apiFetch(
+        `/admin/events/${division.eventId}/divisions/${division.id}/pit-map`,
+        {
+          method: 'POST',
+          body: formData
+        }
+      );
 
       if (result.ok) {
         onSuccess?.();

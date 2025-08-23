@@ -14,7 +14,7 @@ const VenuePage: React.FC = () => {
   const event = useEvent();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
 
-  const { data: divisions = [], mutate } = useSWR(`/admin/events/${event.slug}/divisions`);
+  const { data: divisions = [], mutate } = useSWR(`/admin/events/${event.id}/divisions`);
 
   if (!selectedDivisionId && divisions.length > 0) {
     setSelectedDivisionId(divisions[0].id);
@@ -41,11 +41,11 @@ const VenuePage: React.FC = () => {
       {selectedDivision && (
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <AssetManager divisionId={selectedDivision.id} assetType="rooms" />
+            <AssetManager division={selectedDivision} assetType="rooms" />
           </Grid>
 
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <AssetManager key="tables" divisionId={selectedDivision.id} assetType="tables" />
+            <AssetManager key="tables" division={selectedDivision} assetType="tables" />
           </Grid>
 
           <Grid size={12}>

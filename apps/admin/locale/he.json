@@ -404,8 +404,6 @@
           "upload-button": "העלה מפת פיטים",
           "view-button": "צפה במפה הנוכחית",
           "no-map": "לא הועלתה מפת פיטים",
-          "upload-success": "מפת פיטים הועלתה בהצלחה",
-          "upload-error": "שגיאה בהעלאת מפת פיטים",
           "view-dialog": {
             "current-map": "מפת פיטים נוכחית",
             "close": "סגירה"
@@ -413,6 +411,8 @@
           "upload-dialog": {
             "upload-button": "העלה מפת פיטים",
             "upload-confirmation": "האם אתם בטוחים שברצונכם להעלות את מפת הפיטים? ההעלאה תחליף את המפה הקיימת.",
+            "upload-error": "שגיאה בהעלאת מפת פיטים",
+            "upload-success": "מפת פיטים הועלתה בהצלחה",
             "file-label": "קובץ",
             "cancel": "ביטול",
             "upload": "העלה",

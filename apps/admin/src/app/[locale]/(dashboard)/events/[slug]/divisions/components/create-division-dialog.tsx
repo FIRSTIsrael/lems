@@ -67,7 +67,7 @@ export const CreateDivisionDialog: React.FC<CreateDivisionModalProps> = ({
     setStatus(null);
 
     try {
-      const result = await apiFetch(`/admin/events/${event.slug}/divisions`, {
+      const result = await apiFetch(`/admin/events/${event.id}/divisions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

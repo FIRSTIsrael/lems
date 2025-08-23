@@ -16,7 +16,7 @@ export const EventInformation = () => {
   const t = useTranslations('pages.events.edit');
 
   const { data: divisions = [], mutate } = useSWR<Division[]>(
-    `/admin/events/${event.slug}/divisions`,
+    `/admin/events/${event.id}/divisions`,
     async (url: string) => {
       const result = await apiFetch(url, undefined, AdminDivisionsResponseSchema);
       if (result.ok) {

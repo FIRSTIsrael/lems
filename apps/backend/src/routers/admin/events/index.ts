@@ -1,16 +1,45 @@
 import express from 'express';
 import { UpdateableEvent } from '@lems/database';
 import db from '../../../lib/database';
+import { attachEvent } from '../../../middlewares/admin/attach-event';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
-import { AdminRequest } from '../../../types/express';
+import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import { makeAdminEventResponse } from './util';
 import eventTeamsRouter from './teams/index';
 import eventDivisionsRouter from './divisions/index';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:slug/divisions', eventDivisionsRouter);
-router.use('/:slug/teams', eventTeamsRouter);
+router.get('/', async (req: AdminEventRequest, res) => {
+  const events = await db.events.getAll();
+  res.json(events.map(event => makeAdminEventResponse(event)));
+});
+
+router.get('/me', async (req: AdminRequest, res) => {
+  const events = await db.admins.byId(req.userId).getEvents();
+  res.json(events.map(event => makeAdminEventResponse(event)));
+});
+
+router.get('/slug/:slug', async (req, res) => {
+  const event = await db.events.bySlug(req.params.slug).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
+  res.json(makeAdminEventResponse(event));
+});
+
+router.get('/season/:seasonId', async (req, res) => {
+  const events = await db.seasons.byId(req.params.seasonId).getEvents();
+  res.json(events);
+});
+
+router.get('/season/:seasonId/summary', async (req, res) => {
+  const events = await db.seasons.byId(req.params.seasonId).getSummarizedEvents();
+  res.json(events);
+});
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
@@ -92,18 +121,24 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       return;
     }
 
-    res.status(201).json({
-      message: 'Event created successfully',
-      event: eventResult,
-      divisions: divisionsResult
-    });
+    res.status(201).end();
   } catch (error) {
     console.error('Error creating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.put('/:slug', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
+router.use('/:eventId', attachEvent());
+
+router.use('/:eventId/divisions', eventDivisionsRouter);
+router.use('/:eventId/teams', eventTeamsRouter);
+
+router.get('/:eventId', async (req: AdminEventRequest, res) => {
+  const event = await db.events.byId(req.eventId).get();
+  res.json(makeAdminEventResponse(event));
+});
+
+router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
     const { slug } = req.params;
     const { name, date, location } = req.body;
@@ -154,51 +189,11 @@ router.put('/:slug', requirePermission('MANAGE_EVENTS'), async (req: AdminReques
       return;
     }
 
-    res.json({
-      message: 'Event updated successfully',
-      event: makeAdminEventResponse(updatedEvent)
-    });
+    res.status(200).end();
   } catch (error) {
     console.error('Error updating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
-
-router.get('/', async (req, res) => {
-  const events = await db.events.getAll();
-  res.json(events.map(event => makeAdminEventResponse(event)));
-});
-
-router.get('/:slug', async (req, res) => {
-  const event = await db.events.bySlug(req.params.slug).get();
-
-  if (!event) {
-    res.status(404).json({ error: 'Event not found' });
-    return;
-  }
-
-  res.json(makeAdminEventResponse(event));
-});
-
-router.get('/id/:id', async (req, res) => {
-  const event = await db.events.byId(req.params.id).get();
-
-  if (!event) {
-    res.status(404).json({ error: 'Event not found' });
-    return;
-  }
-
-  res.json(makeAdminEventResponse(event));
-});
-
-router.get('/season/:id', async (req, res) => {
-  const events = await db.seasons.byId(req.params.id).getEvents();
-  res.json(events);
-});
-
-router.get('/season/:id/summary', async (req, res) => {
-  const events = await db.seasons.byId(req.params.id).getSummarizedEvents();
-  res.json(events);
 });
 
 export default router;

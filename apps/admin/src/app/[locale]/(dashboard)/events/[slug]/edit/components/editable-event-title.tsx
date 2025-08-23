@@ -50,7 +50,7 @@ export const EditableEventTitle: React.FC = () => {
 
     setNameError('');
 
-    const result = await apiFetch(`/admin/events/${event.slug}`, {
+    const result = await apiFetch(`/admin/events/${event.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ export const EditableEventTitle: React.FC = () => {
 
     if (result.ok) {
       setIsEditing(false);
-      mutate(`/admin/events/${event.slug}`);
+      mutate(`/admin/events/${event.id}`);
       mutate(`/admin/events`);
     } else {
       setNameError('Failed to update event name');

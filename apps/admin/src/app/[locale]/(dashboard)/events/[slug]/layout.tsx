@@ -28,7 +28,7 @@ export default function EventLayout({ children }: EventLayoutProps) {
     data: event,
     error,
     isLoading
-  } = useSWR<Event>(`/admin/events/${slug}`, {
+  } = useSWR<Event>(`/admin/events/slug/${slug}`, {
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
     shouldRetryOnError: false
