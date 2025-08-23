@@ -13,7 +13,7 @@ import db from '../../lib/database';
 export const requirePermission = (permission: PermissionType) => {
   return async (req: AdminRequest, res: Response, next: NextFunction) => {
     try {
-      const hasPermission = await db.admins.byId(req.user).hasPermission(permission);
+      const hasPermission = await db.admins.byId(req.userId).hasPermission(permission);
 
       if (!hasPermission) {
         res.status(403).json({ error: 'INSUFFICIENT_PERMISSIONS' });

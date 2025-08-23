@@ -22,6 +22,6 @@ declare global {
  * - The request contains non-nullable user ID and userType='admin'
  */
 export interface AdminRequest extends Request {
-  user: string; // Non-nullable user ID for admin requests
+  userId: string; // Non-nullable user ID for admin requests
   userType: 'admin'; // Always admin for AdminRequest
 }

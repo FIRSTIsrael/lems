@@ -24,7 +24,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     if (tokenData.exp > Date.now() / 1000) {
       const adminReq = req as AdminRequest;
-      adminReq.user = tokenData.userId;
+      adminReq.userId = tokenData.userId;
       adminReq.userType = tokenData.userType;
       return next();
     }

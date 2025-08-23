@@ -16,7 +16,7 @@ router.get('/', async (req: AdminRequest, res) => {
 });
 
 router.get('/me', async (req: AdminRequest, res) => {
-  const user = await db.admins.byId(req.user).get();
+  const user = await db.admins.byId(req.userId).get();
 
   if (!user) {
     res.status(404).json({ error: 'User not found' });

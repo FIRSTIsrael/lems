@@ -1,7 +1,7 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent } from '../schema/tables/events';
-import { TeamWithDivision, Team, Division } from '../schema';
+import { TeamWithDivision, Team, Division, Admin } from '../schema';
 
 class EventSelector {
   constructor(
@@ -28,6 +28,39 @@ class EventSelector {
       .executeTakeFirst();
 
     return updatedEvent || null;
+  }
+
+  async getAdmins(): Promise<Admin[]> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const users = await this.db
+      .selectFrom('admin_events')
+      .innerJoin('admins', 'admins.id', 'admin_events.admin_id')
+      .where('admin_events.event_id', '=', event.id)
+      .selectAll()
+      .execute();
+
+    return users;
+  }
+
+  async addAdmin(adminId: string): Promise<void> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db
+      .insertInto('admin_events')
+      .values({
+        event_id: event.id,
+        admin_id: adminId
+      })
+      .execute();
   }
 
   async getDivisions(): Promise<Division[]> {

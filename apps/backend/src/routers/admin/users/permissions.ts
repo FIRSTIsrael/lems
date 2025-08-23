@@ -7,7 +7,7 @@ import { requirePermission } from '../../../middlewares/admin/require-permission
 const router = express.Router({ mergeParams: true });
 
 router.get('/me', async (req: AdminRequest, res) => {
-  const permissions = await db.admins.byId(req.user).getPermissions();
+  const permissions = await db.admins.byId(req.userId).getPermissions();
 
   if (!permissions) {
     res.status(404).json({ error: 'Permissions not found' });

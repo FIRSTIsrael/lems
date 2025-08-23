@@ -118,7 +118,7 @@ router.post('/logout', (req: Request, res: Response) => {
 });
 
 router.get('/verify', (req: AdminRequest, res) => {
-  const user = req.user;
+  const user = req.userId;
   res.json({ ok: true, user });
 });
 

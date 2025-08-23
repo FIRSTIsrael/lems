@@ -77,6 +77,8 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       return;
     }
 
+    await db.events.byId(eventResult.id).addAdmin(req.userId);
+
     const divisionsResult = await db.divisions.createMany(
       divisions.map(division => ({
         name: division.name,
