@@ -26,6 +26,7 @@ import {
   Warning
 } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/admin';
+import { useSession } from '../../components/session-context';
 
 interface EventCardProps extends EventSummary {
   onDelete?: (id: string) => void;
@@ -41,11 +42,15 @@ export const EventCard: React.FC<EventCardProps> = ({
   teamCount,
   divisions,
   isFullySetUp,
+  adminIds,
   onDelete,
   onCopy
 }) => {
+  const { user } = useSession();
   const router = useRouter();
   const t = useTranslations('pages.events.card');
+
+  const isAssigned = adminIds.includes(user.id);
 
   const handleDelete = () => onDelete?.(id);
   const handleCopy = () => onCopy?.(id);
@@ -133,28 +138,30 @@ export const EventCard: React.FC<EventCardProps> = ({
         </Box>
       </CardContent>
 
-      <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
-        <Tooltip title={t('edit')}>
-          <IconButton
-            onClick={() => {
-              router.push(`/events/${slug}/edit`);
-            }}
-            size="small"
-          >
-            <Edit />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('delete')}>
-          <IconButton onClick={handleDelete} size="small" disabled>
-            <Delete />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('copy')}>
-          <IconButton onClick={handleCopy} size="small" disabled>
-            <ContentCopy />
-          </IconButton>
-        </Tooltip>
-      </CardActions>
+      {isAssigned && (
+        <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
+          <Tooltip title={t('edit')}>
+            <IconButton
+              onClick={() => {
+                router.push(`/events/${slug}/edit`);
+              }}
+              size="small"
+            >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={t('delete')}>
+            <IconButton onClick={handleDelete} size="small" disabled>
+              <Delete />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={t('copy')}>
+            <IconButton onClick={handleCopy} size="small" disabled>
+              <ContentCopy />
+            </IconButton>
+          </Tooltip>
+        </CardActions>
+      )}
     </Card>
   );
 };

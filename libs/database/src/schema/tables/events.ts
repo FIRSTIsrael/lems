@@ -24,7 +24,7 @@ export interface EventSummary {
   slug: string;
   date: string;
   location: string;
-  teamCount: number;
+  team_count: number;
   divisions: {
     id: string;
     name: string;
@@ -32,4 +32,5 @@ export interface EventSummary {
   }[];
   season_id: string;
   is_fully_set_up: boolean;
+  assigned_admin_ids: string[];
 }

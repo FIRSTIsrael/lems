@@ -66,7 +66,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     }
   };
 
-  const handleEditSave = async (divisionId: string) => {
+  const handleEditSave = async (division: Division) => {
     if (!editForm.name.trim()) {
       setNameError(t('list.validation.name-required'));
       return;
@@ -74,7 +74,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
 
     setNameError('');
 
-    const result = await apiFetch(`/admin/divisions/${divisionId}`, {
+    const result = await apiFetch(`/admin/events/${division.eventId}/divisions/${division.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -172,7 +172,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                   {editingDivision === division.id ? (
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       <IconButton
-                        onClick={() => handleEditSave(division.id)}
+                        onClick={() => handleEditSave(division)}
                         color="primary"
                         size="small"
                       >

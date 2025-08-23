@@ -17,11 +17,11 @@ export const RegisterTeamsDialog = ({ open, onClose, event }: RegisterTeamsDialo
   const t = useTranslations('pages.events.teams.registration-dialog');
 
   const { data: divisions = [], isLoading: divisionsLoading } = useSWR<Division[]>(
-    `/admin/events/${event.slug}/divisions`
+    `/admin/events/${event.id}/divisions`
   );
 
   const { data: teams = [], isLoading: teamsLoading } = useSWR<Team[]>(
-    `/admin/events/${event.slug}/teams/available`
+    `/admin/events/${event.id}/teams/available`
   );
 
   const isLoading = divisionsLoading || teamsLoading;
@@ -39,14 +39,14 @@ export const RegisterTeamsDialog = ({ open, onClose, event }: RegisterTeamsDialo
       {} as Record<string, string[]>
     );
 
-    await apiFetch(`/admin/events/${event.slug}/teams/register`, {
+    await apiFetch(`/admin/events/${event.id}/teams/register`, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }
     });
 
-    mutate(`/admin/events/${event.slug}/teams`);
-    mutate(`/admin/events/${event.slug}/teams/available`);
+    mutate(`/admin/events/${event.id}/teams`);
+    mutate(`/admin/events/${event.id}/teams/available`);
     onClose();
   };
 

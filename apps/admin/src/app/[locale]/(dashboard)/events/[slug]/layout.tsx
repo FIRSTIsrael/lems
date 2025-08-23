@@ -25,16 +25,26 @@ export default function EventLayout({ children }: EventLayoutProps) {
   const slug = params.slug as string;
 
   const {
-    data: event,
-    error,
-    isLoading
-  } = useSWR<Event>(`/admin/events/${slug}`, {
+    data: userEvents,
+    error: userEventsError,
+    isLoading: userEventsLoading
+  } = useSWR<Event[]>(`/admin/events/me`, {
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
     shouldRetryOnError: false
   });
 
-  if (isLoading) {
+  const {
+    data: event,
+    error,
+    isLoading
+  } = useSWR<Event>(`/admin/events/slug/${slug}`, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    shouldRetryOnError: false
+  });
+
+  if (isLoading || userEventsLoading) {
     return (
       <Box
         sx={{
@@ -52,12 +62,16 @@ export default function EventLayout({ children }: EventLayoutProps) {
     );
   }
 
-  if (error) {
-    console.error('Failed to load event:', error);
+  if (error || userEventsError) {
+    console.error('Failed to load event:', error || userEventsError);
     redirect('/events');
   }
 
   if (!event) {
+    redirect('/events');
+  }
+
+  if (userEvents && !userEvents.some(userEvent => userEvent.slug === slug)) {
     redirect('/events');
   }
 

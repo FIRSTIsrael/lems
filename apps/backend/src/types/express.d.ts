@@ -16,12 +16,15 @@ declare global {
   }
 }
 
-/**
- * AdminRequest is a branded type that represents an Express request where:
- * - The user is authenticated as an admin
- * - The request contains non-nullable user ID and userType='admin'
- */
 export interface AdminRequest extends Request {
-  userId: string; // Non-nullable user ID for admin requests
+  userId: string;
   userType: 'admin'; // Always admin for AdminRequest
+}
+
+export interface AdminEventRequest extends AdminRequest {
+  eventId: string;
+}
+
+export interface AdminDivisionRequest extends AdminEventRequest {
+  divisionId: string;
 }

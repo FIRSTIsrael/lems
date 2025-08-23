@@ -8,6 +8,36 @@ import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });
 
+router.get('/', async (req: AdminRequest, res) => {
+  const teams = await db.teams.getAll();
+  res.json(teams.map(team => makeAdminTeamResponse(team)));
+});
+
+router.get('/:number', async (req: AdminRequest, res) => {
+  const number = Number(req.params.number);
+  if (Number.isNaN(number)) {
+    res.status(400).json({ error: 'Invalid team number' });
+    return;
+  }
+
+  const team = await db.teams.byNumber(number).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+  res.json(makeAdminTeamResponse(team));
+});
+
+router.get('/id/:teamId', async (req: AdminRequest, res) => {
+  const id = req.params.teamId;
+  const team = await db.teams.byId(id).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+  res.json(makeAdminTeamResponse(team));
+});
+
 router.post(
   '/',
   requirePermission('MANAGE_TEAMS'),
@@ -106,37 +136,7 @@ router.post(
   }
 );
 
-router.get('/', async (req: AdminRequest, res) => {
-  const teams = await db.teams.getAll();
-  res.json(teams.map(team => makeAdminTeamResponse(team)));
-});
-
-router.get('/:number', async (req: AdminRequest, res) => {
-  const number = Number(req.params.number);
-  if (Number.isNaN(number)) {
-    res.status(400).json({ error: 'Invalid team number' });
-    return;
-  }
-
-  const team = await db.teams.byNumber(number).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
-  res.json(makeAdminTeamResponse(team));
-});
-
-router.get('/id/:id', async (req: AdminRequest, res) => {
-  const id = req.params.id;
-  const team = await db.teams.byId(id).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
-  res.json(makeAdminTeamResponse(team));
-});
-
-router.patch('/:number', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
+router.put('/:number', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
   const number = Number(req.params.number);
   if (Number.isNaN(number)) {
     res.status(400).json({ error: 'Invalid team number' });

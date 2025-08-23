@@ -34,7 +34,7 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
   };
 
   const handleColorEditSave = async () => {
-    const result = await apiFetch(`/admin/divisions/${division.id}`, {
+    const result = await apiFetch(`/admin/events/${division.eventId}/divisions/${division.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
