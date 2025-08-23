@@ -189,6 +189,9 @@
       "layout": {
         "event-page-title": {
           "back-to-event": "חזרה לאירוע"
+        },
+        "division-selector": {
+          "label": "בית"
         }
       },
       "create-button": "יצירה",
@@ -369,6 +372,62 @@
               "error": "אירעה שגיאה ביצירת הבית."
             },
             "submitting": "יוצר בית..."
+          }
+        }
+      },
+      "venue": {
+        "title": "{eventName}: היכל",
+        "rooms": {
+          "title": "חדרי שיפוט",
+          "add-button": "הוסף חדר",
+          "name-placeholder": "שם החדר",
+          "save-button": "שמור",
+          "delete-button": "מחק",
+          "empty-state": "לא נוספו חדרים עדיין",
+          "validation": {
+            "name-required": "שם החדר נדרש"
+          }
+        },
+        "tables": {
+          "title": "שולחנות משחק רובוט",
+          "add-button": "הוסף שולחן",
+          "name-placeholder": "שם השולחן",
+          "save-button": "שמור",
+          "delete-button": "מחק",
+          "empty-state": "לא נוספו שולחנות עדיין",
+          "validation": {
+            "name-required": "שם השולחן נדרש"
+          }
+        },
+        "pit-map": {
+          "title": "מפת פיטים",
+          "upload-button": "העלה מפת פיטים",
+          "view-button": "צפה במפה הנוכחית",
+          "no-map": "לא הועלתה מפת פיטים",
+          "upload-success": "מפת פיטים הועלתה בהצלחה",
+          "upload-error": "שגיאה בהעלאת מפת פיטים",
+          "view-dialog": {
+            "current-map": "מפת פיטים נוכחית",
+            "close": "סגירה"
+          },
+          "upload-dialog": {
+            "upload-button": "העלה מפת פיטים",
+            "upload-confirmation": "האם אתם בטוחים שברצונכם להעלות את מפת הפיטים? ההעלאה תחליף את המפה הקיימת.",
+            "file-label": "קובץ",
+            "cancel": "ביטול",
+            "upload": "העלה",
+            "uploading": "מעלה..."
+          },
+          "upload-placeholder": "בחרו קובץ"
+        },
+        "messages": {
+          "save-success": "השינויים נשמרו בהצלחה",
+          "save-error": "שגיאה בשמירת השינויים",
+          "delete-success": "הפריט נמחק בהצלחה",
+          "delete-error": "שגיאה במחיקת הפריט",
+          "load-error": "שגיאה בטעינת המידע",
+          "validation": {
+            "name-required": "שם נדרש"
           }
         }
       }

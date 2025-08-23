@@ -6,6 +6,7 @@ export interface DivisionsTable {
   name: string;
   event_id: string; // UUID foreign key to events.id
   color: string;
+  pit_map_url: string | null;
   initialized: Generated<boolean>; // Default false
   stagger_matches: Generated<boolean>; // Default false
   allow_advancement: Generated<boolean>; // Default false

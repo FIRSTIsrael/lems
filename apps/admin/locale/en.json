@@ -189,6 +189,9 @@
       "layout": {
         "event-page-title": {
           "back-to-event": "חזרה לאירוע"
+        },
+        "division-selector": {
+          "label": "Division"
         }
       },
       "create-button": "Create",
@@ -369,6 +372,62 @@
               "error": "An error occurred while creating the division."
             },
             "submitting": "Creating division..."
+          }
+        }
+      },
+      "venue": {
+        "title": "{eventName}: Venue",
+        "rooms": {
+          "title": "Judging Rooms",
+          "add-button": "Add Room",
+          "name-placeholder": "Room name",
+          "save-button": "Save",
+          "delete-button": "Delete",
+          "empty-state": "No rooms added yet",
+          "validation": {
+            "name-required": "Room name is required"
+          }
+        },
+        "tables": {
+          "title": "Robot Game Tables",
+          "add-button": "Add Table",
+          "name-placeholder": "Table name",
+          "save-button": "Save",
+          "delete-button": "Delete",
+          "empty-state": "No tables added yet",
+          "validation": {
+            "name-required": "Table name is required"
+          }
+        },
+        "pit-map": {
+          "title": "Pit Map",
+          "upload-button": "Upload Pit Map",
+          "view-button": "View Current Map",
+          "no-map": "No pit map uploaded",
+          "upload-success": "Pit map uploaded successfully",
+          "upload-error": "Failed to upload pit map",
+          "view-dialog": {
+            "close": "Close",
+            "current-map": "Current Pit Map"
+          },
+          "upload-dialog": {
+            "upload-button": "Upload Pit Map",
+            "upload-confirmation": "Are you sure you want to upload this pit map? This will replace any existing pit map.",
+            "file-label": "File",
+            "cancel": "Cancel",
+            "upload": "Upload",
+            "uploading": "Uploading..."
+          },
+          "upload-placeholder": "Choose file"
+        },
+        "messages": {
+          "save-success": "Changes saved successfully",
+          "save-error": "Failed to save changes",
+          "delete-success": "Item deleted successfully",
+          "delete-error": "Failed to delete item",
+          "load-error": "Failed to load event data",
+          "validation": {
+            "name-required": "Name is required"
           }
         }
       }
