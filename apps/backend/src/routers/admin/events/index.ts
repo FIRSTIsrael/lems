@@ -4,7 +4,7 @@ import db from '../../../lib/database';
 import { attachEvent } from '../../../middlewares/admin/attach-event';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
-import { makeAdminEventResponse } from './util';
+import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
 import eventTeamsRouter from './teams/index';
 import eventDivisionsRouter from './divisions/index';
 
@@ -38,7 +38,7 @@ router.get('/season/:seasonId', async (req, res) => {
 
 router.get('/season/:seasonId/summary', async (req, res) => {
   const events = await db.seasons.byId(req.params.seasonId).getSummarizedEvents();
-  res.json(events);
+  res.json(events.map(event => makeAdminEventSummaryResponse(event)));
 });
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {

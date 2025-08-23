@@ -25,6 +25,7 @@ export const makeAdminEventSummaryResponse = (event: DbEventSummary): EventSumma
   location: event.location,
   seasonId: event.season_id,
   divisions: event.divisions,
-  teamCount: event.teamCount,
-  isFullySetUp: event.is_fully_set_up
+  teamCount: event.team_count,
+  isFullySetUp: event.is_fully_set_up,
+  adminIds: event.assigned_admin_ids
 });

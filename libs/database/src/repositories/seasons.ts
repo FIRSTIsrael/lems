@@ -91,6 +91,21 @@ class SeasonSelector {
       ])
       .execute();
 
+    const adminAssignments = await this.db
+      .selectFrom('admin_events')
+      .innerJoin('events', 'events.id', 'admin_events.event_id')
+      .select(['admin_events.event_id', 'admin_events.admin_id'])
+      .where('events.season_id', '=', season.id)
+      .execute();
+
+    const adminsByEvent = new Map<string, string[]>();
+    for (const assignment of adminAssignments) {
+      if (!adminsByEvent.has(assignment.event_id)) {
+        adminsByEvent.set(assignment.event_id, []);
+      }
+      adminsByEvent.get(assignment.event_id)!.push(assignment.admin_id);
+    }
+
     const eventsMap = new Map();
 
     for (const row of result) {
@@ -105,17 +120,24 @@ class SeasonSelector {
           location: row.location,
           team_count: 0,
           divisions: [],
-          is_fully_set_up: false
+          is_fully_set_up: false,
+          assigned_admin_ids: adminsByEvent.get(eventId) || []
         });
       }
 
       const event = eventsMap.get(eventId);
       event.team_count += Number(row.team_count);
-      event.divisions.push({
-        id: row.division_id,
-        name: row.division_name,
-        color: row.division_color
-      });
+
+      const divisionExists = event.divisions.some(
+        (div: { id: string; name: string; color: string }) => div.id === row.division_id
+      );
+      if (!divisionExists) {
+        event.divisions.push({
+          id: row.division_id,
+          name: row.division_name,
+          color: row.division_color
+        });
+      }
     }
 
     return Array.from(eventsMap.values());

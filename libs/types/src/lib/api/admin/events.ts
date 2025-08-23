@@ -15,7 +15,8 @@ export const AdminEventSummaryResponseSchema = z.object({
   ...AdminEventResponseSchema.shape,
   divisions: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
   teamCount: z.number(),
-  isFullySetUp: z.boolean()
+  isFullySetUp: z.boolean(),
+  adminIds: z.array(z.string())
 });
 
 export type Event = z.infer<typeof AdminEventResponseSchema>;
