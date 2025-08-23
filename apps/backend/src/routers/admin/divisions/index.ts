@@ -4,11 +4,13 @@ import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import divisionRoomsRouter from './rooms/index';
 import divisionTablesRouter from './tables/index';
+import divisionPitMapRouter from './pit-map/index';
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/:id/rooms', divisionRoomsRouter);
 router.use('/:id/tables', divisionTablesRouter);
+router.use('/:id/pit-map', divisionPitMapRouter);
 
 router.put('/:id', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminRequest, res) => {
   const { id } = req.params;

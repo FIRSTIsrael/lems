@@ -9,5 +9,6 @@ export const makeAdminDivisionResponse = (division: DbDivision): Division => ({
   id: division.id,
   name: division.name,
   eventId: division.event_id,
-  color: division.color
+  color: division.color,
+  pitMapUrl: division.pit_map_url
 });

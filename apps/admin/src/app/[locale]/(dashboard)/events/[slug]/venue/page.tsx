@@ -14,9 +14,8 @@ const VenuePage: React.FC = () => {
   const event = useEvent();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
 
-  const { data: divisions = [] } = useSWR(`/admin/events/${event.slug}/divisions`);
+  const { data: divisions = [], mutate } = useSWR(`/admin/events/${event.slug}/divisions`);
 
-  // Set default division if not set and divisions are loaded
   if (!selectedDivisionId && divisions.length > 0) {
     setSelectedDivisionId(divisions[0].id);
   }
@@ -50,7 +49,7 @@ const VenuePage: React.FC = () => {
           </Grid>
 
           <Grid size={12}>
-            <PitMapManager key="rooms" divisionId={selectedDivision.id} />
+            <PitMapManager key="rooms" division={selectedDivision} onDivisionUpdate={mutate} />
           </Grid>
         </Grid>
       )}

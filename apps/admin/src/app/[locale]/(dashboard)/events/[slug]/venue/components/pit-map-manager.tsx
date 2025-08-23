@@ -1,112 +1,62 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Paper,
-  Typography,
-  Box,
-  Button,
-  Stack,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress
-} from '@mui/material';
+import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { Paper, Typography, Box, Button, Stack, Alert } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useTranslations } from 'next-intl';
-import useSWR, { mutate } from 'swr';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { Division } from '@lems/types/api/admin';
+import { FileUpload } from '@lems/shared';
+import { UploadPitMapDialog } from './upload-pit-map-dialog';
+import { ViewPitMapDialog } from './view-pit-map-dialog';
 
 interface PitMapManagerProps {
-  divisionId: string;
+  division: Division;
+  onDivisionUpdate?: () => void;
 }
 
-const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
+const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisionUpdate }) => {
   const t = useTranslations('pages.events.venue.pit-map');
-  const [uploading, setUploading] = useState(false);
-  const [viewMapOpen, setViewMapOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [viewMapOpen, setViewMapOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
 
-  const {
-    data: pitMapInfo,
-    error: swrError,
-    isLoading
-  } = useSWR<{ exists: boolean; url?: string }>(
-    divisionId ? `/admin/divisions/${divisionId}/pit-map` : null,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true
-    }
-  );
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileChange = (file: File | null) => {
     if (file) {
-      if (file.type !== 'image/png') {
-        setErrorMessage('Please select a PNG image file');
+      if (!file.type.startsWith('image/')) {
+        setErrorMessage('Please select an image file');
         setSuccessMessage('');
         return;
       }
       setSelectedFile(file);
-      setUploadDialogOpen(true);
       setErrorMessage('');
+    } else {
+      setSelectedFile(null);
     }
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-
+  const handleUpload = () => {
     setErrorMessage('');
     setSuccessMessage('');
-
-    try {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const result = await apiFetch(`/admin/divisions/${divisionId}/pit-map`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (result.ok) {
-        setSuccessMessage(t('upload-success'));
-        mutate(`/admin/divisions/${divisionId}/pit-map`);
-        setUploadDialogOpen(false);
-        setSelectedFile(null);
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(''), 3000);
-      } else {
-        setErrorMessage(t('upload-error'));
-      }
-    } catch {
-      setErrorMessage(t('upload-error'));
-    } finally {
-      setUploading(false);
-    }
+    setUploading(true);
   };
 
-  if (isLoading) {
-    return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
-        <CircularProgress />
-      </Paper>
-    );
-  }
+  const handleUploadSuccess = () => {
+    setSuccessMessage(t('upload-success'));
+    setUploadDialogOpen(false);
+    setSelectedFile(null);
+    onDivisionUpdate?.();
+    setUploading(false);
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
 
-  if (swrError) {
-    return (
-      <Paper sx={{ p: 3 }}>
-        <Alert severity="error">Failed to load pit map information</Alert>
-      </Paper>
-    );
-  }
+  const handleUploadError = (message: string) => {
+    setErrorMessage(message);
+    setUploading(false);
+  };
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -114,112 +64,80 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ divisionId }) => {
         {t('title')}
       </Typography>
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        {/* Upload button */}
-        <Button
-          variant="contained"
-          component="label"
-          startIcon={<UploadIcon />}
-          disabled={uploading}
-        >
-          {t('upload-button')}
-          <input
-            type="file"
-            accept="image/png"
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
+      <Stack spacing={2}>
+        <Box maxWidth={300}>
+          <FileUpload
+            label={t('upload-button')}
+            accept="image/jpeg,image/jpg,image/png"
+            selectedFile={selectedFile}
+            setSelectedFile={handleFileChange}
+            description="JPG, JPEG, or PNG format"
+            disabled={uploading}
+            placeholder="Choose File"
           />
-        </Button>
+        </Box>
 
-        {/* View current map button */}
-        {pitMapInfo?.exists && (
-          <Button
-            variant="outlined"
-            startIcon={<VisibilityIcon />}
-            onClick={() => setViewMapOpen(true)}
-          >
-            {t('view-button')}
-          </Button>
+        {(selectedFile || division.pitMapUrl) && (
+          <Stack direction="row" spacing={2} alignItems="center">
+            {selectedFile && (
+              <Button
+                variant="contained"
+                startIcon={<UploadIcon />}
+                onClick={() => setUploadDialogOpen(true)}
+                disabled={uploading}
+              >
+                {t('upload-button')}
+              </Button>
+            )}
+
+            {division.pitMapUrl && (
+              <Button
+                variant="outlined"
+                startIcon={<VisibilityIcon />}
+                onClick={() => setViewMapOpen(true)}
+              >
+                {t('view-button')}
+              </Button>
+            )}
+          </Stack>
+        )}
+
+        {errorMessage && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+
+        {successMessage && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+
+        {!division.pitMapUrl && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('no-map')}
+            </Typography>
+          </Box>
         )}
       </Stack>
 
-      {/* Error message */}
-      {errorMessage && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {errorMessage}
-        </Alert>
-      )}
+      <UploadPitMapDialog
+        open={uploadDialogOpen}
+        onClose={() => !uploading && setUploadDialogOpen(false)}
+        division={division}
+        selectedFile={selectedFile}
+        onUpload={handleUpload}
+        onSuccess={handleUploadSuccess}
+        onError={handleUploadError}
+      />
 
-      {/* Success message */}
-      {successMessage && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          {successMessage}
-        </Alert>
-      )}
-
-      {/* Status text */}
-      <Box sx={{ mt: 2 }}>
-        {pitMapInfo?.exists ? (
-          <Typography variant="body2" color="success.main">
-            {t('current-map')}
-          </Typography>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {t('no-map')}
-          </Typography>
-        )}
-      </Box>
-
-      {/* Upload confirmation dialog */}
-      <Dialog open={uploadDialogOpen} onClose={() => !uploading && setUploadDialogOpen(false)}>
-        <DialogTitle>{t('upload-button')}</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to upload this pit map? This will replace any existing pit map.
-          </Typography>
-          {selectedFile && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>File:</strong> {selectedFile.name}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setUploadDialogOpen(false)} disabled={uploading}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleUpload}
-            variant="contained"
-            disabled={uploading}
-            startIcon={uploading ? <CircularProgress size={16} /> : undefined}
-          >
-            {uploading ? 'Uploading...' : 'Upload'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* View map dialog */}
-      <Dialog open={viewMapOpen} onClose={() => setViewMapOpen(false)} maxWidth="lg" fullWidth>
-        <DialogTitle>{t('current-map')}</DialogTitle>
-        <DialogContent>
-          {pitMapInfo?.url && (
-            <Box sx={{ textAlign: 'center' }}>
-              <img
-                src={pitMapInfo.url}
-                alt="Pit Map"
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '70vh',
-                  objectFit: 'contain'
-                }}
-              />
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setViewMapOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      <ViewPitMapDialog
+        open={viewMapOpen}
+        onClose={() => setViewMapOpen(false)}
+        division={division}
+      />
     </Paper>
   );
 };

@@ -402,11 +402,22 @@
         "pit-map": {
           "title": "מפת פיטים",
           "upload-button": "העלה מפת פיטים",
-          "current-map": "מפת פיטים נוכחית",
           "view-button": "צפה במפה הנוכחית",
           "no-map": "לא הועלתה מפת פיטים",
           "upload-success": "מפת פיטים הועלתה בהצלחה",
-          "upload-error": "שגיאה בהעלאת מפת פיטים"
+          "upload-error": "שגיאה בהעלאת מפת פיטים",
+          "view-dialog": {
+            "current-map": "מפת פיטים נוכחית",
+            "close": "סגירה"
+          },
+          "upload-dialog": {
+            "upload-button": "העלה מפת פיטים",
+            "upload-confirmation": "האם אתם בטוחים שברצונכם להעלות את מפת הפיטים? ההעלאה תחליף את המפה הקיימת.",
+            "file-label": "קובץ",
+            "cancel": "ביטול",
+            "upload": "העלה",
+            "uploading": "מעלה..."
+          }
         },
         "messages": {
           "save-success": "השינויים נשמרו בהצלחה",

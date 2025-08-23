@@ -402,11 +402,22 @@
         "pit-map": {
           "title": "Pit Map",
           "upload-button": "Upload Pit Map",
-          "current-map": "Current Pit Map",
           "view-button": "View Current Map",
           "no-map": "No pit map uploaded",
           "upload-success": "Pit map uploaded successfully",
-          "upload-error": "Failed to upload pit map"
+          "upload-error": "Failed to upload pit map",
+          "view-dialog": {
+            "close": "Close",
+            "current-map": "Current Pit Map"
+          },
+          "upload-dialog": {
+            "upload-button": "Upload Pit Map",
+            "upload-confirmation": "Are you sure you want to upload this pit map? This will replace any existing pit map.",
+            "file-label": "File",
+            "cancel": "Cancel",
+            "upload": "Upload",
+            "uploading": "Uploading..."
+          }
         },
         "messages": {
           "save-success": "Changes saved successfully",

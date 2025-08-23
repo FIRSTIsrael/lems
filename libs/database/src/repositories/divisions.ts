@@ -47,7 +47,7 @@ class DivisionSelector {
     return result.length > 0;
   }
 
-  async uploadPitMap(pitMap: Buffer): Promise<Division | null> {
+  async updatePitMap(pitMap: Buffer): Promise<Division | null> {
     const division = await this.get();
     if (!division) return null;
 

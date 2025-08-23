@@ -6,7 +6,7 @@ export const AdminSeasonResponseSchema = z.object({
   slug: z.string(),
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
-  logoUrl: z.string().nullable()
+  logoUrl: z.url().nullable()
 });
 
 export type Season = z.infer<typeof AdminSeasonResponseSchema>;

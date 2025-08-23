@@ -4,7 +4,7 @@ export const AdminTeamResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   number: z.number(),
-  logoUrl: z.string().nullable(),
+  logoUrl: z.url().nullable(),
   affiliation: z.string(),
   city: z.string(),
   coordinates: z.string().nullable()

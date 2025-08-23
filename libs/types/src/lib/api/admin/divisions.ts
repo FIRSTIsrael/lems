@@ -4,7 +4,8 @@ export const AdminDivisionResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   eventId: z.string(),
-  color: z.string()
+  color: z.string(),
+  pitMapUrl: z.url().nullable()
 });
 
 export type Division = z.infer<typeof AdminDivisionResponseSchema>;
