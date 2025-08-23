@@ -29,7 +29,7 @@ router.put('/:id', requirePermission('MANAGE_EVENT_DETAILS'), async (req, res) =
 
   await db.tables.byId(id).update({ name });
 
-  res.status(204).json({});
+  res.status(200).json({});
 });
 
 router.get('/', async (req, res) => {
