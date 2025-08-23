@@ -45,97 +45,107 @@ const AssetManager = <T extends AssetType>({ divisionId, assetType }: AssetManag
     revalidateOnReconnect: true
   });
 
+  const clearMessages = () => {
+    setErrors({});
+    setSuccessMessage('');
+  };
+
+  const showSuccess = () => {
+    setSuccessMessage(t('messages.save-success'));
+    setErrors({});
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const makeApiRequest = async (url: string, method: string, body?: object) => {
+    return apiFetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      ...(body && { body: JSON.stringify(body) })
+    });
+  };
+
   const handleAddAsset = async () => {
-    if (!newAssetName.trim()) {
+    const name = newAssetName.trim();
+    if (!name) {
       setErrors({ new: t('messages.validation.name-required') });
       return;
     }
 
-    setErrors({});
-    setSuccessMessage('');
+    clearMessages();
+    setSaving(prev => ({ ...prev, new: true }));
 
     try {
-      setSaving({ ...saving, new: true });
-      const result = await apiFetch(`/admin/divisions/${divisionId}/${assetType}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newAssetName.trim() })
+      const result = await makeApiRequest(`/admin/divisions/${divisionId}/${assetType}`, 'POST', {
+        name
       });
 
       if (result.ok) {
         setNewAssetName('');
-        setSuccessMessage(t('messages.save-success'));
-        setErrors({}); // Clear all errors on successful save
+        showSuccess();
         mutate(`/admin/divisions/${divisionId}/${assetType}`);
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         setErrors({ new: t('messages.save-error') });
       }
     } catch {
       setErrors({ new: t('messages.save-error') });
     } finally {
-      setSaving({ ...saving, new: false });
+      setSaving(prev => ({ ...prev, new: false }));
     }
   };
 
   const handleSaveAsset = async (assetId: string) => {
-    const newName = editingAssets[assetId]?.trim();
-    if (!newName) {
+    const name = editingAssets[assetId]?.trim();
+    if (!name) {
       setErrors({ [assetId]: t('messages.validation.name-required') });
       return;
     }
 
-    setErrors({});
-    setSuccessMessage('');
+    clearMessages();
+    setSaving(prev => ({ ...prev, [assetId]: true }));
 
     try {
-      setSaving({ ...saving, [assetId]: true });
-      const result = await apiFetch(`/admin/divisions/${divisionId}/${assetType}/${assetId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName })
-      });
+      const result = await makeApiRequest(
+        `/admin/divisions/${divisionId}/${assetType}/${assetId}`,
+        'PUT',
+        { name }
+      );
 
       if (result.ok) {
-        const newEditingAssets = { ...editingAssets };
-        delete newEditingAssets[assetId];
-        setEditingAssets(newEditingAssets);
-
-        setSuccessMessage(t('messages.save-success'));
-        setErrors({}); // Clear all errors on successful save
+        setEditingAssets(prev => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [assetId]: removed, ...rest } = prev;
+          return rest;
+        });
+        showSuccess();
         mutate(`/admin/divisions/${divisionId}/${assetType}`);
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         setErrors({ [assetId]: t('messages.save-error') });
       }
     } catch {
       setErrors({ [assetId]: t('messages.save-error') });
     } finally {
-      setSaving({ ...saving, [assetId]: false });
+      setSaving(prev => ({ ...prev, [assetId]: false }));
     }
   };
 
   const handleDeleteAsset = async (assetId: string) => {
-    setErrors({});
-    setSuccessMessage('');
+    clearMessages();
     console.log('Deleting asset:', assetId);
     // TODO: Implement DELETE functionality
   };
 
   const startEditing = (asset: T) => {
-    setEditingAssets({ ...editingAssets, [asset.id]: asset.name });
-    setErrors({}); // Clear all errors when starting to edit
-    setSuccessMessage(''); // Clear success message when starting to edit
+    setEditingAssets(prev => ({ ...prev, [asset.id]: asset.name }));
+    clearMessages();
   };
 
   const cancelEditing = (assetId: string) => {
-    const newEditingAssets = { ...editingAssets };
-    delete newEditingAssets[assetId];
-    setEditingAssets(newEditingAssets);
-    setErrors({}); // Clear all errors when canceling edit
-    setSuccessMessage(''); // Clear success message when canceling edit
+    setEditingAssets(prev => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [assetId]: removed, ...rest } = prev;
+      return rest;
+    });
+    clearMessages();
   };
 
   const isEditing = (assetId: string) => assetId in editingAssets;
