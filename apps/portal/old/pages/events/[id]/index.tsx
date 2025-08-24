@@ -7,7 +7,7 @@ import EventInfo from '../../../components/events/event-info';
 import EventQuickLinks from '../../../components/events/event-quick-links';
 import TeamList from '../../../components/teams/team-list';
 import EventStatus from '../../../components/events/event-status';
-import { useRealtimeData } from '../../../hooks/use-realtime-data';
+import { useRealtimeData } from '../../../../src/hooks/use-realtime-data';
 import { getMessages } from '../../../locale/get-messages';
 
 interface Props {
