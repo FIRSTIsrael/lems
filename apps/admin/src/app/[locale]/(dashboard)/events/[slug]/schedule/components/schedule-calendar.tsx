@@ -24,7 +24,8 @@ import {
   createScheduleBlock,
   calculateBlockPosition,
   reducePreviousBreak,
-  deleteBlockAndMergeBreaks
+  deleteBlockAndMergeBreaks,
+  renumberRounds
 } from './calendar-utils';
 import { ScheduleBlockComponent } from './schedule-block';
 
@@ -257,21 +258,12 @@ export const ScheduleCalendar: React.FC = () => {
           blocks: removeBreak(prev.blocks, blockId)
         }));
       } else if (block.type === 'practice-match') {
-        // Remove practice round and convert first ranking to practice, then merge breaks
+        // Simply remove the practice round and merge breaks, then renumber
         setCalendarState(prev => {
           let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev.blocks, blockId);
 
-          const firstRanking = blocksAfterRemoval.find(
-            b => b.type === 'ranking-match' && b.roundNumber === 1
-          );
-
-          if (firstRanking) {
-            blocksAfterRemoval = blocksAfterRemoval.map(b =>
-              b.id === firstRanking.id
-                ? { ...b, type: 'practice-match' as const, title: 'Practice Round 1' }
-                : b
-            );
-          }
+          // Renumber all rounds after deletion to maintain separate numbering
+          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
 
           return {
             ...prev,
@@ -280,12 +272,19 @@ export const ScheduleCalendar: React.FC = () => {
           };
         });
       } else if (block.type === 'ranking-match') {
-        // Remove ranking round and merge breaks
-        setCalendarState(prev => ({
-          ...prev,
-          blocks: deleteBlockAndMergeBreaks(prev.blocks, blockId),
-          rankingRounds: prev.rankingRounds - 1
-        }));
+        // Simply remove the ranking round and merge breaks, then renumber
+        setCalendarState(prev => {
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev.blocks, blockId);
+
+          // Renumber all rounds after deletion to maintain separate numbering
+          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
+
+          return {
+            ...prev,
+            blocks: blocksAfterRemoval,
+            rankingRounds: prev.rankingRounds - 1
+          };
+        });
       }
     },
     [calendarState.blocks]
@@ -293,50 +292,60 @@ export const ScheduleCalendar: React.FC = () => {
 
   // Handle adding rounds
   const handleAddPracticeRound = useCallback(() => {
-    // Convert first ranking to practice and add new ranking at end
+    // Find the first ranking round to insert a practice round before it
     const firstRanking = calendarState.blocks.find(
       b => b.type === 'ranking-match' && b.roundNumber === 1
     );
     if (!firstRanking) return;
 
-    const lastFieldBlock = columnBlocks.field[columnBlocks.field.length - 1];
-    const newRankingStart = lastFieldBlock.endTime;
+    // Calculate the duration for a practice round
     const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-    const newRankingEnd = newRankingStart.add(
-      (rankingCycleTime.minute() * 60 + rankingCycleTime.second()) * matchesPerRound,
-      'second'
-    );
+    const practiceRoundDuration =
+      (practiceCycleTime.minute() * 60 + practiceCycleTime.second()) * matchesPerRound;
 
-    setCalendarState(prev => ({
-      ...prev,
-      blocks: [
-        ...prev.blocks.map(b =>
-          b.id === firstRanking.id
-            ? {
-                ...b,
-                type: 'practice-match' as const,
-                title: `Practice Round ${prev.practiceRounds + 1}`
-              }
-            : b
-        ),
-        createScheduleBlock(
-          'ranking-match',
-          'field',
-          newRankingStart,
-          newRankingEnd,
-          prev.rankingRounds + 1
-        )
-      ],
-      practiceRounds: prev.practiceRounds + 1
-    }));
-  }, [
-    calendarState.blocks,
-    columnBlocks.field,
-    teamsCount,
-    tablesCount,
-    staggerMatches,
-    rankingCycleTime
-  ]);
+    // The insertion time is where the first ranking round currently starts
+    const insertionTime = firstRanking.startTime;
+    const newPracticeStart = insertionTime;
+    const newPracticeEnd = insertionTime.add(practiceRoundDuration, 'second');
+
+    setCalendarState(prev => {
+      // Create the new practice round
+      const newPracticeRound = createScheduleBlock(
+        'practice-match',
+        'field',
+        newPracticeStart,
+        newPracticeEnd,
+        prev.practiceRounds + 1 // This will be renumbered correctly
+      );
+
+      // Shift all field blocks that start at or after the insertion time forward by the practice round duration
+      const updatedBlocks = prev.blocks.map(block => {
+        if (
+          block.column === 'field' &&
+          (block.startTime.isSame(insertionTime) || block.startTime.isAfter(insertionTime))
+        ) {
+          return {
+            ...block,
+            startTime: block.startTime.add(practiceRoundDuration, 'second'),
+            endTime: block.endTime.add(practiceRoundDuration, 'second')
+          };
+        }
+        return block;
+      });
+
+      // Add the new practice round to the shifted blocks
+      let finalBlocks = [...updatedBlocks, newPracticeRound];
+
+      // Renumber all rounds to ensure correct sequential numbering
+      finalBlocks = renumberRounds(finalBlocks);
+
+      return {
+        ...prev,
+        blocks: finalBlocks,
+        practiceRounds: prev.practiceRounds + 1
+      };
+    });
+  }, [calendarState.blocks, teamsCount, tablesCount, staggerMatches, practiceCycleTime]);
 
   const handleAddRankingRound = useCallback(() => {
     const lastFieldBlock = columnBlocks.field[columnBlocks.field.length - 1];
@@ -347,9 +356,8 @@ export const ScheduleCalendar: React.FC = () => {
       'second'
     );
 
-    setCalendarState(prev => ({
-      ...prev,
-      blocks: [
+    setCalendarState(prev => {
+      let updatedBlocks = [
         ...prev.blocks,
         createScheduleBlock(
           'ranking-match',
@@ -358,9 +366,17 @@ export const ScheduleCalendar: React.FC = () => {
           newRankingEnd,
           prev.rankingRounds + 1
         )
-      ],
-      rankingRounds: prev.rankingRounds + 1
-    }));
+      ];
+
+      // Renumber all rounds to ensure consistency
+      updatedBlocks = renumberRounds(updatedBlocks);
+
+      return {
+        ...prev,
+        blocks: updatedBlocks,
+        rankingRounds: prev.rankingRounds + 1
+      };
+    });
   }, [columnBlocks.field, teamsCount, tablesCount, staggerMatches, rankingCycleTime]);
 
   // Test function to offset judging start time
@@ -565,22 +581,22 @@ export const ScheduleCalendar: React.FC = () => {
       <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
         <Stack direction="row" spacing={4}>
           <Typography variant="body2" color="text.secondary">
-            `{t('stats.total-matches')} {totalMatches}`
+            {`${t('stats.total-matches')}: ${totalMatches}`}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            `{t('stats.total-sessions')} {totalSessions}`
+            {`${t('stats.total-sessions')}: ${totalSessions}`}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Practice Rounds: {calendarState.practiceRounds}`{t('stats.practice-rounds')} {c}`
+            {`${t('stats.practice-rounds')}: ${calendarState.practiceRounds}`}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Ranking Rounds: {calendarState.rankingRounds}
+            {`${t('stats.ranking-rounds')}: ${calendarState.rankingRounds}`}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Judging Start: {calendarState.judgingStartTime.format('HH:mm')}
+            {`${t('stats.judging-start')}: ${calendarState.judgingStartTime.format('HH:mm')}`}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Field Start: {calendarState.fieldStartTime.format('HH:mm')}
+            {`${t('stats.field-start')}: ${calendarState.fieldStartTime.format('HH:mm')}`}
           </Typography>
         </Stack>
       </Box>

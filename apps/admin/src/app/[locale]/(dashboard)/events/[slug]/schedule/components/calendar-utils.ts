@@ -50,6 +50,57 @@ export function getColumnStartTime(
   return column === 'judging' ? judgingStartTime : fieldStartTime;
 }
 
+export function renumberRounds(blocks: ScheduleBlock[]): ScheduleBlock[] {
+  // Get practice rounds sorted by start time
+  const practiceRounds = blocks
+    .filter(b => b.type === 'practice-match')
+    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+  // Get ranking rounds sorted by start time
+  const rankingRounds = blocks
+    .filter(b => b.type === 'ranking-match')
+    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+  // Create a map of old ID to new round number and title
+  const roundUpdates = new Map<string, { roundNumber: number; title: string }>();
+
+  // Renumber practice rounds separately (1, 2, 3, ...)
+  practiceRounds.forEach((block, index) => {
+    const newRoundNumber = index + 1;
+    roundUpdates.set(block.id, {
+      roundNumber: newRoundNumber,
+      title: `Practice Round ${newRoundNumber}`
+    });
+  });
+
+  // Renumber ranking rounds separately (1, 2, 3, ...)
+  rankingRounds.forEach((block, index) => {
+    const newRoundNumber = index + 1;
+    roundUpdates.set(block.id, {
+      roundNumber: newRoundNumber,
+      title: `Ranking Round ${newRoundNumber}`
+    });
+  });
+
+  // Apply the updates to all blocks
+  return blocks.map(block => {
+    const update = roundUpdates.get(block.id);
+    if (update) {
+      return {
+        ...block,
+        roundNumber: update.roundNumber,
+        title: update.title,
+        canDelete:
+          block.type !== 'break' &&
+          block.type !== 'judging-session' &&
+          !(block.type === 'practice-match' && update.roundNumber === 1) &&
+          !(block.type === 'ranking-match' && update.roundNumber === 1)
+      };
+    }
+    return block;
+  });
+}
+
 export function deleteBlockAndMergeBreaks(
   blocks: ScheduleBlock[],
   blockIdToDelete: string
@@ -163,7 +214,11 @@ export function createScheduleBlock(
     endTime,
     title,
     roundNumber,
-    canDelete: type !== 'break' && type !== 'judging-session' && roundNumber !== 1 // Can't delete breaks, judging sessions, or first round
+    canDelete:
+      type !== 'break' &&
+      type !== 'judging-session' &&
+      !(type === 'practice-match' && roundNumber === 1) &&
+      !(type === 'ranking-match' && roundNumber === 1)
   };
 }
 
