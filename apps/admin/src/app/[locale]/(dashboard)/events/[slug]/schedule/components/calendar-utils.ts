@@ -50,6 +50,86 @@ export function getColumnStartTime(
   return column === 'judging' ? judgingStartTime : fieldStartTime;
 }
 
+export function deleteBlockAndMergeBreaks(
+  blocks: ScheduleBlock[],
+  blockIdToDelete: string
+): ScheduleBlock[] {
+  const blockToDelete = blocks.find(b => b.id === blockIdToDelete);
+  if (!blockToDelete) return blocks;
+
+  const column = blockToDelete.column;
+  const columnBlocks = blocks
+    .filter(b => b.column === column)
+    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+  const otherBlocks = blocks.filter(b => b.column !== column);
+
+  // Find the index of the block to delete
+  const deleteIndex = columnBlocks.findIndex(b => b.id === blockIdToDelete);
+  if (deleteIndex === -1) return blocks;
+
+  // Check if this is the last block in the column
+  const isLastBlock = deleteIndex === columnBlocks.length - 1;
+
+  // Find breaks before and after the deleted block
+  const blockBefore = deleteIndex > 0 ? columnBlocks[deleteIndex - 1] : null;
+  const blockAfter = deleteIndex < columnBlocks.length - 1 ? columnBlocks[deleteIndex + 1] : null;
+
+  let updatedColumnBlocks = columnBlocks.filter(b => b.id !== blockIdToDelete);
+
+  // Special case: if deleting the last block and there's a break before it, remove the break too
+  if (isLastBlock && blockBefore?.type === 'break') {
+    updatedColumnBlocks = updatedColumnBlocks.filter(b => b.id !== blockBefore.id);
+  } else if (blockBefore?.type === 'break' && blockAfter?.type === 'break') {
+    // If there are breaks before and after, merge them
+    const mergedBreak: ScheduleBlock = {
+      ...blockBefore,
+      endTime: blockAfter.endTime
+    };
+
+    // Remove both original breaks and add the merged one
+    updatedColumnBlocks = updatedColumnBlocks
+      .filter(b => b.id !== blockBefore.id && b.id !== blockAfter.id)
+      .concat(mergedBreak)
+      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+  } else if (blockBefore?.type === 'break') {
+    // Extend the break before to fill the deleted block's time
+    const extendedBreak: ScheduleBlock = {
+      ...blockBefore,
+      endTime: blockToDelete.endTime
+    };
+
+    updatedColumnBlocks = updatedColumnBlocks
+      .map(b => (b.id === blockBefore.id ? extendedBreak : b))
+      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+  } else if (blockAfter?.type === 'break') {
+    // Extend the break after to fill the deleted block's time
+    const extendedBreak: ScheduleBlock = {
+      ...blockAfter,
+      startTime: blockToDelete.startTime
+    };
+
+    updatedColumnBlocks = updatedColumnBlocks
+      .map(b => (b.id === blockAfter.id ? extendedBreak : b))
+      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+  } else if (!isLastBlock) {
+    // No adjacent breaks and not the last block - create a new break in the deleted block's place
+    const newBreak = createScheduleBlock(
+      'break',
+      column,
+      blockToDelete.startTime,
+      blockToDelete.endTime
+    );
+
+    updatedColumnBlocks = updatedColumnBlocks
+      .concat(newBreak)
+      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+  }
+  // If it's the last block and no break before, just remove it without creating a break
+
+  return [...otherBlocks, ...updatedColumnBlocks];
+}
+
 export function createScheduleBlock(
   type: ScheduleBlockType,
   column: 'judging' | 'field',
@@ -83,7 +163,7 @@ export function createScheduleBlock(
     endTime,
     title,
     roundNumber,
-    canDelete: type !== 'break' && roundNumber !== 1 // Can't delete first round
+    canDelete: type !== 'break' && type !== 'judging-session' && roundNumber !== 1 // Can't delete breaks, judging sessions, or first round
   };
 }
 

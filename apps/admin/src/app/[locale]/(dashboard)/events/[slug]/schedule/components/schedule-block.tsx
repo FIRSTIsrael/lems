@@ -31,6 +31,9 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   const finalTop = isDragging && dragPosition !== undefined ? dragPosition - 40 : position.top;
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Breaks cannot be dragged
+    if (block.type === 'break') return;
+
     if (e.button === 0) {
       // Left click only
       onDragStart(block, e.clientY);
@@ -57,9 +60,9 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
         backgroundColor: BLOCK_COLORS[block.type],
         border: isFirstBlock ? '2px solid #1976d2' : '1px solid rgba(0,0,0,0.1)',
         borderRadius: 1,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: block.type === 'break' ? 'default' : isDragging ? 'grabbing' : 'grab',
         zIndex: isDragging ? 1000 : 1,
-        opacity: isDragging ? 0.9 : 1,
+        opacity: block.type === 'break' ? 0.7 : isDragging ? 0.9 : 1,
         boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
         transition: isDragging ? 'none' : 'all 0.2s ease',
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',
@@ -68,13 +71,16 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
         justifyContent: 'space-between',
         p: 1,
         minHeight: 40,
-        '&:hover': {
-          boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.2)',
-          transform: isDragging ? 'scale(1.02)' : 'scale(1.01)',
-          '& .delete-button': {
-            opacity: 1
-          }
-        }
+        '&:hover':
+          block.type === 'break'
+            ? {}
+            : {
+                boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.2)',
+                transform: isDragging ? 'scale(1.02)' : 'scale(1.01)',
+                '& .delete-button': {
+                  opacity: 1
+                }
+              }
       }}
       onMouseDown={handleMouseDown}
     >

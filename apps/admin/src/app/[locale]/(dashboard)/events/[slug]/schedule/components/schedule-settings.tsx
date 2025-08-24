@@ -95,9 +95,6 @@ export const ScheduleSettings: React.FC = () => {
         </Box>
 
         <Box>
-          <Typography variant="subtitle2" color="text.secondary" mb={2}>
-            {t('information.calculated')}
-          </Typography>
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
               <SportsIcon color="primary" />

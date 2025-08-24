@@ -466,12 +466,20 @@
           },
           "field": {
             "title": "Field",
-            "add-practice-match": "Add Practice Match",
-            "add-ranking-match": "Add Ranking Match",
-            "ranking-match-name": "Ranking Match #{number}",
-            "practice-match-name": "Practice Match #{number}",
+            "add-practice-round": "Add Practice Match",
+            "add-ranking-round": "Add Ranking Match",
+            "ranking-round-name": "Ranking Match #{number}",
+            "practice-round-name": "Practice Match #{number}",
             "add-break": "Add Field break",
             "break": "Field break"
+          },
+          "stats": {
+            "total-matches": "Total Matches",
+            "total-sessions": "Total Judging Sessions",
+            "practice-rounds": "Practice Rounds",
+            "ranking-rounds": "Ranking Rounds",
+            "judging-start": "Judging start time",
+            "field-start": "Field start time"
           }
         }
       }

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Box, Paper, Typography, Stack, Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useSchedule } from './schedule-context';
@@ -19,15 +19,14 @@ import {
   generateTimeSlots,
   generateInitialSchedule,
   adjustOrCreateBreak,
-  insertBreak,
   removeBreak,
   snapToGrid,
   createScheduleBlock,
   calculateBlockPosition,
-  reducePreviousBreak
+  reducePreviousBreak,
+  deleteBlockAndMergeBreaks
 } from './calendar-utils';
 import { ScheduleBlockComponent } from './schedule-block';
-import { BreakIndicator } from './break-indicator';
 
 export const ScheduleCalendar: React.FC = () => {
   const t = useTranslations('pages.events.schedule.calendar');
@@ -127,6 +126,9 @@ export const ScheduleCalendar: React.FC = () => {
   // Handle drag start
   const handleDragStart = useCallback(
     (block: ScheduleBlock, startY: number) => {
+      // Prevent dragging breaks - they are calculated components
+      if (block.type === 'break') return;
+
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
 
@@ -190,25 +192,7 @@ export const ScheduleCalendar: React.FC = () => {
       const isFirstBlock =
         columnNonBreakBlocks.length > 0 && columnNonBreakBlocks[0].id === block.id;
 
-      if (block.type === 'break') {
-        // Handle break resizing
-        const newDuration = block.endTime.diff(block.startTime, 'minute') + timeDiff;
-        if (newDuration <= 0) {
-          // Remove break if duration becomes 0 or negative
-          setCalendarState(prev => ({
-            ...prev,
-            blocks: removeBreak(prev.blocks, block.id)
-          }));
-        } else {
-          // Resize break
-          setCalendarState(prev => ({
-            ...prev,
-            blocks: prev.blocks.map(b =>
-              b.id === block.id ? { ...b, endTime: b.endTime.add(timeDiff, 'minute') } : b
-            )
-          }));
-        }
-      } else if (isFirstBlock) {
+      if (isFirstBlock) {
         // This is the first block - shift only this column's schedule and update start time
         const columnStartTimeKey =
           block.column === 'judging' ? 'judgingStartTime' : 'fieldStartTime';
@@ -254,57 +238,52 @@ export const ScheduleCalendar: React.FC = () => {
     });
   }, [dragState, columnBlocks]);
 
-  // Handle adding breaks
-  const handleAddBreak = useCallback((column: 'judging' | 'field', insertTime: Dayjs) => {
-    setCalendarState(prev => ({
-      ...prev,
-      blocks: insertBreak(prev.blocks, column, insertTime, 15) // Default 15 minute break
-    }));
-  }, []);
-
   // Handle deleting blocks
   const handleDeleteBlock = useCallback(
     (blockId: string) => {
       const block = calendarState.blocks.find(b => b.id === blockId);
       if (!block) return;
 
+      // Prevent deletion of judging sessions
+      if (block.type === 'judging-session') {
+        console.warn('Judging sessions cannot be deleted');
+        return;
+      }
+
       if (block.type === 'break') {
+        // For breaks, just remove them without merging
         setCalendarState(prev => ({
           ...prev,
           blocks: removeBreak(prev.blocks, blockId)
         }));
       } else if (block.type === 'practice-match') {
-        // Remove practice round and convert first ranking to practice
+        // Remove practice round and convert first ranking to practice, then merge breaks
         setCalendarState(prev => {
-          const newBlocks = prev.blocks.filter(b => b.id !== blockId);
-          const firstRanking = newBlocks.find(
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev.blocks, blockId);
+
+          const firstRanking = blocksAfterRemoval.find(
             b => b.type === 'ranking-match' && b.roundNumber === 1
           );
 
           if (firstRanking) {
-            const updatedBlocks = newBlocks.map(b =>
+            blocksAfterRemoval = blocksAfterRemoval.map(b =>
               b.id === firstRanking.id
                 ? { ...b, type: 'practice-match' as const, title: 'Practice Round 1' }
                 : b
             );
-            return {
-              ...prev,
-              blocks: updatedBlocks,
-              practiceRounds: prev.practiceRounds - 1
-            };
           }
 
           return {
             ...prev,
-            blocks: newBlocks,
+            blocks: blocksAfterRemoval,
             practiceRounds: prev.practiceRounds - 1
           };
         });
       } else if (block.type === 'ranking-match') {
-        // Remove ranking round
+        // Remove ranking round and merge breaks
         setCalendarState(prev => ({
           ...prev,
-          blocks: prev.blocks.filter(b => b.id !== blockId),
+          blocks: deleteBlockAndMergeBreaks(prev.blocks, blockId),
           rankingRounds: prev.rankingRounds - 1
         }));
       }
@@ -435,7 +414,7 @@ export const ScheduleCalendar: React.FC = () => {
             startIcon={<Add />}
             onClick={handleAddPracticeRound}
           >
-            Add Practice Round
+            {t('field.add-practice-round')}
           </Button>
           <Button
             size="small"
@@ -443,7 +422,7 @@ export const ScheduleCalendar: React.FC = () => {
             startIcon={<Add />}
             onClick={handleAddRankingRound}
           >
-            Add Ranking Round
+            {t('field.add-ranking-round')}
           </Button>
           <Button
             size="small"
@@ -451,7 +430,7 @@ export const ScheduleCalendar: React.FC = () => {
             color="secondary"
             onClick={handleOffsetJudgingStart}
           >
-            Offset Judging +30min (Test)
+            Offset Judging +30min (Test)??????
           </Button>
         </Stack>
       </Box>
@@ -540,19 +519,6 @@ export const ScheduleCalendar: React.FC = () => {
                   />
                 );
               })}
-              {/* Break indicators */}
-              {columnBlocks.judging.map((block, index) => {
-                const nextBlock = columnBlocks.judging[index + 1];
-                return (
-                  <BreakIndicator
-                    key={`break-indicator-judging-${block.id}`}
-                    topBlock={block}
-                    bottomBlock={nextBlock}
-                    startTime={timeRange.start}
-                    onAddBreak={time => handleAddBreak('judging', time)}
-                  />
-                );
-              })}
             </Box>
           </Stack>
 
@@ -590,19 +556,6 @@ export const ScheduleCalendar: React.FC = () => {
                   />
                 );
               })}
-              {/* Break indicators */}
-              {columnBlocks.field.map((block, index) => {
-                const nextBlock = columnBlocks.field[index + 1];
-                return (
-                  <BreakIndicator
-                    key={`break-indicator-field-${block.id}`}
-                    topBlock={block}
-                    bottomBlock={nextBlock}
-                    startTime={timeRange.start}
-                    onAddBreak={time => handleAddBreak('field', time)}
-                  />
-                );
-              })}
             </Box>
           </Stack>
         </Box>
@@ -612,13 +565,13 @@ export const ScheduleCalendar: React.FC = () => {
       <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
         <Stack direction="row" spacing={4}>
           <Typography variant="body2" color="text.secondary">
-            Total Matches: {totalMatches}
+            `{t('stats.total-matches')} {totalMatches}`
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Total Sessions: {totalSessions}
+            `{t('stats.total-sessions')} {totalSessions}`
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Practice Rounds: {calendarState.practiceRounds}
+            Practice Rounds: {calendarState.practiceRounds}`{t('stats.practice-rounds')} {c}`
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Ranking Rounds: {calendarState.rankingRounds}

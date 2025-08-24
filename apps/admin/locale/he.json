@@ -466,12 +466,20 @@
           },
           "field": {
             "title": "זירה",
-            "add-practice-match": "הוספת מקצה אימונים",
-            "add-ranking-match": "הוספת מקצה דירוג",
-            "ranking-match-name": "מקצה דירוג #{number}",
-            "practice-match-name": "מקצה אימונים #{number}",
+            "add-practice-round": "הוספת מקצה אימונים",
+            "add-ranking-round": "הוספת מקצה דירוג",
+            "ranking-round-name": "מקצה דירוג #{number}",
+            "practice-round-name": "מקצה אימונים #{number}",
             "add-break": "הוספת הפסקה",
             "break": "הפסקת זירה"
+          },
+          "stats": {
+            "total-matches": "סה\"כ מקצים",
+            "total-sessions": "סה\"כ סבבי שיפוט",
+            "practice-rounds": "סבבי אימונים",
+            "ranking-rounds": "סבבי דירוג",
+            "judging-start": "תחילת שיפוט",
+            "field-start": "תחילת זירה"
           }
         }
       }
