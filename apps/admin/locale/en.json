@@ -436,6 +436,26 @@
         "alerts": {
           "schedule-set-up": "This event already has a schedule set. You can modify team schedules, or delete the schedule entirely.",
           "missing-details": "Some details are missing. Teams, rooms, and tables are required to generate a schedule."
+        },
+        "settings": {
+          "title": "Schedule Settings",
+          "information": {
+            "title": "Information",
+            "teams": "Teams",
+            "rooms": "Rooms",
+            "tables": "Tables"
+          },
+          "settings": {
+            "title": "Settings",
+            "stagger-matches": "Stagger matches"
+          },
+          "timing": {
+            "practice-cycle-time": "Practice Match cycle time",
+            "ranking-cycle-time": "Ranking Match cycle time",
+            "judging-session-cycle-time": "Judging Session cycle time",
+            "match-length": "Match length",
+            "judging-session-length": "Judging Session length"
+          }
         }
       }
     },

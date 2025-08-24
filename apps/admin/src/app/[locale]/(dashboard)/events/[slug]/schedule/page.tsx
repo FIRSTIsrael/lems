@@ -1,12 +1,10 @@
 'use client';
 
-import { Suspense, useState } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
+import { useState } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Alert } from '@mui/material';
 import CheckCircle from '@mui/icons-material/CheckCircle';
-import { Warning } from '@mui/icons-material';
 import { useEvent } from '../layout';
 import { DivisionSelector } from '../components/division-selector';
 import { ScheduleManager } from './components/schedule-manager';
@@ -16,7 +14,7 @@ export default function EventDivisionsPage() {
   const event = useEvent();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
 
-  const { data: divisions = [] } = useSWR(`/admin/events/${event.id}/divisions`, {
+  const { data: divisions } = useSWR(`/admin/events/${event.id}/divisions`, {
     suspense: true
   });
 
@@ -44,11 +42,7 @@ export default function EventDivisionsPage() {
 
       {selectedDivision && <ScheduleManager division={selectedDivision} />}
 
-      {/* <Alert severity="warning" icon={<Warning />} sx={{ py: 0.5 }}>
-        {t('alerts.missing-details')}
-      </Alert>
-
-      <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
+      {/* <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
         {t('alerts.schedule-set-up')}
       </Alert> */}
     </Box>

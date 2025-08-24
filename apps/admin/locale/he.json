@@ -436,6 +436,26 @@
         "alerts": {
           "schedule-set-up": "לאירוע זה כבר יש לוח זמנים. תוכלו לערוך את לוחות הזמנים של כל קבוצה, או למחוק את לוח הזמנים.",
           "missing-details": "חלק מהפרטים חסרים. נדרש למלא קבוצות, חדרים, ושולחנות על מנת לייצר לוח זמנים."
+        },
+        "settings": {
+          "title": "הגדרות לוח הזמנים",
+          "information": {
+            "title": "מידע",
+            "teams": "קבוצות",
+            "rooms": "חדרים",
+            "tables": "שולחנות"
+          },
+          "settings": {
+            "title": "הגדרות",
+            "stagger-matches": "הרצה מדורגת"
+          },
+          "timing": {
+            "practice-cycle-time": "מחזור משחקי אימון",
+            "ranking-cycle-time": "מחזור משחקי דירוג",
+            "judging-session-cycle-time": "מחזור מפגש שיפוט",
+            "match-length": "אורך מקצה",
+            "judging-session-length": "אורך מפגש שיפוט"
+          }
         }
       }
     },
