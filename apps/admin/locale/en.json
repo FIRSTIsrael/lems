@@ -430,6 +430,13 @@
             "name-required": "Name is required"
           }
         }
+      },
+      "schedule": {
+        "title": "{eventName}: Schedule",
+        "alerts": {
+          "schedule-set-up": "This event already has a schedule set. You can modify team schedules, or delete the schedule entirely.",
+          "missing-details": "Some details are missing. Teams, rooms, and tables are required to generate a schedule."
+        }
       }
     },
     "users": {

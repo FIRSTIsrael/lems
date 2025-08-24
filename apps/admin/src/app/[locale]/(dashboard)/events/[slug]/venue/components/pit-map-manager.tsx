@@ -15,7 +15,7 @@ interface PitMapManagerProps {
   onDivisionUpdate?: () => void;
 }
 
-const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisionUpdate }) => {
+export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisionUpdate }) => {
   const t = useTranslations('pages.events.venue.pit-map');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -141,5 +141,3 @@ const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisionUpdat
     </Paper>
   );
 };
-
-export default PitMapManager;

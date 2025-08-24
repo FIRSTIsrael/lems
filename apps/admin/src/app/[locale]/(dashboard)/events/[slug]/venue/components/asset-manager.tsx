@@ -25,7 +25,7 @@ interface AssetManagerProps {
   assetType: 'rooms' | 'tables';
 }
 
-const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
+export const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
   const t = useTranslations(`pages.events.venue`);
   const [editingAssets, setEditingAssets] = useState<{ [key: string]: string }>({});
   const [newAssetName, setNewAssetName] = useState('');
@@ -248,5 +248,3 @@ const AssetManager = <T extends AssetType>({ division, assetType }: AssetManager
     </Paper>
   );
 };
-
-export default AssetManager;

@@ -13,7 +13,7 @@ export default function Loading() {
     >
       <CircularProgress
         size={80}
-        thickness={5}
+        thickness={3}
         sx={{ [`& .${circularProgressClasses.circle}`]: { strokeLinecap: 'round' } }}
       />
     </Box>

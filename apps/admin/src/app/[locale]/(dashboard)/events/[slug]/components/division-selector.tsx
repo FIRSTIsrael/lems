@@ -10,7 +10,7 @@ interface DivisionSelectorProps {
   onDivisionChange: (divisionId: string) => void;
 }
 
-const DivisionSelector: React.FC<DivisionSelectorProps> = ({
+export const DivisionSelector: React.FC<DivisionSelectorProps> = ({
   divisions,
   selectedDivisionId,
   onDivisionChange
@@ -79,5 +79,3 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
     </Box>
   );
 };
-
-export default DivisionSelector;

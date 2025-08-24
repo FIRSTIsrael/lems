@@ -3,7 +3,6 @@
 import React, { createContext, useContext } from 'react';
 import { redirect, useParams } from 'next/navigation';
 import useSWR from 'swr';
-import { Box, CircularProgress, Typography } from '@mui/material';
 import { Event } from '@lems/types/api/admin';
 
 interface EventLayoutProps {
@@ -24,43 +23,15 @@ export default function EventLayout({ children }: EventLayoutProps) {
   const params = useParams();
   const slug = params.slug as string;
 
-  const {
-    data: userEvents,
-    error: userEventsError,
-    isLoading: userEventsLoading
-  } = useSWR<Event[]>(`/admin/events/me`, {
-    revalidateOnFocus: false,
+  const { data: userEvents, error: userEventsError } = useSWR<Event[]>(`/admin/events/me`, {
     revalidateOnReconnect: true,
-    shouldRetryOnError: false
+    suspense: true
   });
 
-  const {
-    data: event,
-    error,
-    isLoading
-  } = useSWR<Event>(`/admin/events/slug/${slug}`, {
-    revalidateOnFocus: false,
+  const { data: event, error } = useSWR<Event>(`/admin/events/slug/${slug}`, {
     revalidateOnReconnect: true,
-    shouldRetryOnError: false
+    suspense: true
   });
-
-  if (isLoading || userEventsLoading) {
-    return (
-      <Box
-        sx={{
-          height: 'calc(100vh - 40px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: 2
-        }}
-      >
-        <CircularProgress />
-        <Typography>Loading event...</Typography>
-      </Box>
-    );
-  }
 
   if (error || userEventsError) {
     console.error('Failed to load event:', error || userEventsError);
