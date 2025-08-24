@@ -456,6 +456,23 @@
             "match-length": "Match length",
             "judging-session-length": "Judging Session length"
           }
+        },
+        "calendar": {
+          "judging": {
+            "title": "Judging",
+            "judging-session-name": "Judging Session #{number}",
+            "add-break": "Add Judging break",
+            "break": "Judging break"
+          },
+          "field": {
+            "title": "Field",
+            "add-practice-match": "Add Practice Match",
+            "add-ranking-match": "Add Ranking Match",
+            "ranking-match-name": "Ranking Match #{number}",
+            "practice-match-name": "Practice Match #{number}",
+            "add-break": "Add Field break",
+            "break": "Field break"
+          }
         }
       }
     },

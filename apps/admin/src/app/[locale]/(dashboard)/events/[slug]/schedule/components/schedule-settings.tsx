@@ -17,6 +17,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import GroupIcon from '@mui/icons-material/Group';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
+import SportsIcon from '@mui/icons-material/Sports';
+import EventIcon from '@mui/icons-material/Event';
 import { useSchedule } from './schedule-context';
 
 export const ScheduleSettings: React.FC = () => {
@@ -38,6 +40,17 @@ export const ScheduleSettings: React.FC = () => {
     setMatchLength,
     setJudgingSessionLength
   } = useSchedule();
+
+  // Calculate derived values that will be shown in calendar
+  const totalMatches = React.useMemo(() => {
+    // This would be calculated based on practice + ranking rounds from calendar state
+    // For now, showing a basic calculation
+    return teamsCount * 4; // Assuming 1 practice + 3 ranking rounds
+  }, [teamsCount]);
+
+  const totalSessions = React.useMemo(() => {
+    return Math.ceil(teamsCount / roomsCount);
+  }, [teamsCount, roomsCount]);
 
   return (
     <Paper
@@ -77,6 +90,22 @@ export const ScheduleSettings: React.FC = () => {
               <Typography variant="body2">
                 {t('information.tables')}: {tablesCount}
               </Typography>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Box>
+          <Typography variant="subtitle2" color="text.secondary" mb={2}>
+            {t('information.calculated')}
+          </Typography>
+          <Stack direction="row" spacing={4} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
+              <SportsIcon color="primary" />
+              <Typography variant="body2">Total Matches: {totalMatches}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <EventIcon color="primary" />
+              <Typography variant="body2">Total Sessions: {totalSessions}</Typography>
             </Stack>
           </Stack>
         </Box>

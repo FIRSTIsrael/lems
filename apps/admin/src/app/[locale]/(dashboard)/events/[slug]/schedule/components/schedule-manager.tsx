@@ -7,6 +7,7 @@ import { Division } from '@lems/types/api/admin';
 import { Warning } from '@mui/icons-material';
 import { ScheduleProvider, useSchedule } from './schedule-context';
 import { ScheduleSettings } from './schedule-settings';
+import { ScheduleCalendar } from './schedule-calendar';
 
 interface ScheduleManagerProp {
   division: Division;
@@ -28,9 +29,11 @@ const ScheduleManagerContent: React.FC = () => {
   }
 
   return (
-    <Grid container component={Box} spacing={3} padding={3} sx={{ backgroundColor: 'grey.50' }}>
-      <Grid size={8}>Calendar</Grid>
-      <Grid size={4}>
+    <Grid container component={Box} spacing={3}>
+      <Grid size={7}>
+        <ScheduleCalendar />
+      </Grid>
+      <Grid size={5}>
         <ScheduleSettings />
       </Grid>
     </Grid>

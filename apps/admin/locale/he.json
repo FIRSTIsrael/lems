@@ -456,6 +456,23 @@
             "match-length": "אורך מקצה",
             "judging-session-length": "אורך מפגש שיפוט"
           }
+        },
+        "calendar": {
+          "judging": {
+            "title": "שיפוט",
+            "judging-session-name": "סבב שיפוט #{number}",
+            "add-break": "הוספת הפסקה",
+            "break": "הפסקת שיפוט"
+          },
+          "field": {
+            "title": "זירה",
+            "add-practice-match": "הוספת מקצה אימונים",
+            "add-ranking-match": "הוספת מקצה דירוג",
+            "ranking-match-name": "מקצה דירוג #{number}",
+            "practice-match-name": "מקצה אימונים #{number}",
+            "add-break": "הוספת הפסקה",
+            "break": "הפסקת זירה"
+          }
         }
       }
     },
