@@ -9,7 +9,7 @@ import { useEvent } from '../layout';
 import { DivisionSelector } from '../components/division-selector';
 import { ScheduleManager } from './components/schedule-manager';
 
-export default function EventDivisionsPage() {
+export default function EventSchedulePage() {
   const t = useTranslations('pages.events.schedule');
   const event = useEvent();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
