@@ -23,18 +23,28 @@ export default function EventLayout({ children }: EventLayoutProps) {
   const params = useParams();
   const slug = params.slug as string;
 
-  const { data: userEvents, error: userEventsError } = useSWR<Event[]>(`/admin/events/me`, {
-    revalidateOnReconnect: true,
-    suspense: true
+  const {
+    data: userEvents,
+    error: userEventsError,
+    isLoading: userEventsLoading
+  } = useSWR<Event[]>(`/admin/events/me`, {
+    revalidateOnReconnect: true
   });
 
-  const { data: event, error } = useSWR<Event>(`/admin/events/slug/${slug}`, {
-    revalidateOnReconnect: true,
-    suspense: true
+  const {
+    data: event,
+    error: eventError,
+    isLoading: eventLoading
+  } = useSWR<Event>(`/admin/events/slug/${slug}`, {
+    revalidateOnReconnect: true
   });
 
-  if (error || userEventsError) {
-    console.error('Failed to load event:', error || userEventsError);
+  if (userEventsLoading || eventLoading) {
+    return null;
+  }
+
+  if (eventError || userEventsError) {
+    console.error('Failed to load event:', eventError || userEventsError);
     redirect('/events');
   }
 
