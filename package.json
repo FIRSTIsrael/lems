@@ -101,7 +101,7 @@
     "@types/grecaptcha": "^3.0.9",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.15.2",
-    "@types/pg": "^8.15.4",
+    "@types/pg": "^8.15.5",
     "@types/react": "19.1.2",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "19.1.6",
