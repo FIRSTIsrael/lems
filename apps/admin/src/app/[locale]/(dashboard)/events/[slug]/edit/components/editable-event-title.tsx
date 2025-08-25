@@ -6,7 +6,7 @@ import { Typography, TextField, IconButton, Stack, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEvent } from '../../layout';
+import { useEvent } from '../../components/event-context';
 import { apiFetch } from '../../../../../../../lib/fetch';
 
 export const EditableEventTitle: React.FC = () => {

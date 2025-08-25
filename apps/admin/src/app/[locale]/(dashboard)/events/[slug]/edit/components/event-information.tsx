@@ -7,7 +7,7 @@ import { Typography, Paper, Box, Stack } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Division, AdminDivisionsResponseSchema } from '@lems/types/api/admin';
-import { useEvent } from '../../layout';
+import { useEvent } from '../../components/event-context';
 import { apiFetch } from '../../../../../../../lib/fetch';
 import { DivisionColorEditor } from './division-color-editor';
 

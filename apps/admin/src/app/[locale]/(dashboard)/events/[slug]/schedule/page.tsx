@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Box, Typography, Alert } from '@mui/material';
 import CheckCircle from '@mui/icons-material/CheckCircle';
-import { useEvent } from '../layout';
+import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
 import { ScheduleManager } from './components/schedule-manager';
 
@@ -15,7 +15,8 @@ export default function EventSchedulePage() {
   const searchParams = useSearchParams();
 
   const { data: divisions } = useSWR(`/admin/events/${event.id}/divisions`, {
-    suspense: true
+    suspense: true,
+    fallbackData: []
   });
 
   const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;

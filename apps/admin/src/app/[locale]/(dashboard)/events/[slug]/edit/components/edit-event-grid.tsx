@@ -9,7 +9,7 @@ import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstruct
 import SettingsIcon from '@mui/icons-material/Settings';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { useEvent } from '../../layout';
+import { useEvent } from '../../components/event-context';
 import EditEventCard from './edit-event-card';
 
 export const EditEventGrid: React.FC = () => {

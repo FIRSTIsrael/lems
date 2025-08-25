@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Box, Typography, Grid } from '@mui/material';
 import useSWR from 'swr';
-import { useEvent } from '../layout';
+import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
 import { PitMapManager } from './components/pit-map-manager';
 import { AssetManager } from './components/asset-manager';
@@ -15,7 +15,8 @@ const VenuePage: React.FC = () => {
   const searchParams = useSearchParams();
 
   const { data: divisions, mutate } = useSWR(`/admin/events/${event.id}/divisions`, {
-    suspense: true
+    suspense: true,
+    fallbackData: []
   });
 
   const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;

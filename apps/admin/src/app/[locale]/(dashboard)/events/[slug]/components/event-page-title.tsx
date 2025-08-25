@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, IconButton, Stack } from '@mui/material';
 import { ArrowStartIcon } from '@lems/localization';
-import { useEvent } from '../layout';
+import { useEvent } from '../components/event-context';
 
 interface EventPageTitleProps {
   title: string;
