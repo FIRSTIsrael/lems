@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Box, Typography, Grid } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { Box, Typography, Grid } from '@mui/material';
 import useSWR from 'swr';
 import { useEvent } from '../layout';
 import { DivisionSelector } from '../components/division-selector';
@@ -12,16 +12,13 @@ import { AssetManager } from './components/asset-manager';
 const VenuePage: React.FC = () => {
   const t = useTranslations('pages.events.venue');
   const event = useEvent();
-  const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
+  const searchParams = useSearchParams();
 
   const { data: divisions, mutate } = useSWR(`/admin/events/${event.id}/divisions`, {
     suspense: true
   });
 
-  if (!selectedDivisionId && divisions.length > 0) {
-    setSelectedDivisionId(divisions[0].id);
-  }
-
+  const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
   const selectedDivision = divisions.find((d: { id: string }) => d.id === selectedDivisionId);
 
   return (
@@ -32,11 +29,7 @@ const VenuePage: React.FC = () => {
 
       {divisions.length > 1 && (
         <Box sx={{ mb: 3 }}>
-          <DivisionSelector
-            divisions={divisions}
-            selectedDivisionId={selectedDivisionId}
-            onDivisionChange={setSelectedDivisionId}
-          />
+          <DivisionSelector divisions={divisions} />
         </Box>
       )}
 
