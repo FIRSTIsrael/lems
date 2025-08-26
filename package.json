@@ -88,7 +88,7 @@
     "@nx/next": "21.3.11",
     "@nx/node": "21.3.11",
     "@nx/react": "21.3.11",
-    "@nx/webpack": "21.3.11",
+    "@nx/webpack": "21.4.1",
     "@nx/workspace": "21.3.11",
     "@swc-node/register": "^1.10.10",
     "@swc/cli": "~0.6.0",
