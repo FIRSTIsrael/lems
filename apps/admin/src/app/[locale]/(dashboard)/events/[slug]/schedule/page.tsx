@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Box, Typography, Alert } from '@mui/material';
 import CheckCircle from '@mui/icons-material/CheckCircle';
+import { EventPageTitle } from '../components/event-page-title';
 import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
 import { ScheduleManager } from './components/schedule-manager';
@@ -24,9 +25,7 @@ export default function EventSchedulePage() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h1" gutterBottom>
-        {t('title', { eventName: event.name })}
-      </Typography>
+      <EventPageTitle title={t('title', { eventName: event.name })} />
 
       {divisions.length > 1 && (
         <Box sx={{ mb: 3 }}>
