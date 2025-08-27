@@ -37,7 +37,7 @@ export const FormikTextField: React.FC<FormikTextFieldProps> = ({
             onChange={e => form.setFieldValue(field.name, e.target.value)}
             onKeyDown={handleKeyDown}
             error={Boolean(fieldError)}
-            helperText={(fieldError as string) || props.helperText}
+            helperText={props.helperText || (fieldError as string)}
           />
         );
       }}
