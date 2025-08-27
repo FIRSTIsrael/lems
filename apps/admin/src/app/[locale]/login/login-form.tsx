@@ -128,6 +128,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                   name="username"
                   variant="outlined"
                   label={t('username')}
+                  helperText={t('no-username')}
                   disabled={isSubmitting}
                   autoComplete="username"
                   required
@@ -138,6 +139,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                   variant="outlined"
                   type={showPassword ? 'text' : 'password'}
                   label={t('password')}
+                  helperText={t('no-password')}
                   disabled={isSubmitting}
                   autoComplete="current-password"
                   required

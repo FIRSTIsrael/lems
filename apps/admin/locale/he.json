@@ -8,6 +8,8 @@
       "title": "התחברות למערכת",
       "username": "שם משתמש",
       "password": "סיסמה",
+      "no-username": "נא להזין שם משתמש.",
+      "no-password": "נא להזין סיסמה.",
       "logging-in": "מתחבר...",
       "login": "התחברות",
       "form-status": {

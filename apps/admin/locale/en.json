@@ -7,6 +7,8 @@
     "login": {
       "title": "Log In",
       "username": "Username",
+      "no-username": "Please enter your username.",
+      "no-password": "Please enter your password.",
       "password": "Password",
       "logging-in": "Logging in...",
       "login": "Log in",
