@@ -33,7 +33,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csv-parse": "^6.1.0",
-    "dayjs": "^1.11.13",
+    "dayjs": "^1.11.15",
     "dompurify": "^3.2.6",
     "express": "^5.1.0",
     "express-fileupload": "^1.5.2",
