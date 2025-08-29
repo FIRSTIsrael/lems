@@ -28,6 +28,7 @@ export interface ScheduleContextType {
   judgingSessions: number;
 
   staggerMatches: boolean;
+  matchesPerRound: number;
   practiceCycleTime: Dayjs;
   rankingCycleTime: Dayjs;
   judgingSessionCycleTime: Dayjs;
@@ -163,6 +164,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     judgingSessionCycleTime,
     matchLength,
     judgingSessionLength,
+    matchesPerRound: Math.ceil(teams.length / tables.length) * (staggerMatches ? 2 : 1),
 
     judgingStart,
     fieldStart,

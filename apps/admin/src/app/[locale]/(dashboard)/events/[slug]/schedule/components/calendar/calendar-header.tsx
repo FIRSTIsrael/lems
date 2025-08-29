@@ -12,13 +12,11 @@ export const CalendarHeader: React.FC = () => {
   const t = useTranslations('pages.events.schedule.calendar');
 
   const {
-    teamsCount,
-    tablesCount,
     practiceRounds,
     rankingRounds,
-    staggerMatches,
     practiceCycleTime,
     rankingCycleTime,
+    matchesPerRound,
     addPracticeRound,
     addRankingRound
   } = useSchedule();
@@ -29,15 +27,16 @@ export const CalendarHeader: React.FC = () => {
     const firstRanking = blocks.find(b => b.type === 'ranking-round' && b.roundNumber === 1);
     if (!firstRanking) return;
 
-    // Calculate the duration for a practice round
-    const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-    const practiceRoundDuration =
-      (practiceCycleTime.minute() * 60 + practiceCycleTime.second()) * matchesPerRound;
+    const practiceMatchDuration =
+      (practiceCycleTime.hour() * 3600 +
+        practiceCycleTime.minute() * 60 +
+        practiceCycleTime.second()) *
+      matchesPerRound;
 
     // The insertion time is where the first ranking round currently starts
     const insertionTime = firstRanking.startTime;
     const newPracticeStart = insertionTime;
-    const newPracticeEnd = insertionTime.add(practiceRoundDuration, 'second');
+    const newPracticeEnd = insertionTime.add(practiceMatchDuration, 'second');
 
     setBlocks(prev => {
       // Create the new practice round
@@ -57,8 +56,8 @@ export const CalendarHeader: React.FC = () => {
         ) {
           return {
             ...block,
-            startTime: block.startTime.add(practiceRoundDuration, 'second'),
-            endTime: block.endTime.add(practiceRoundDuration, 'second')
+            startTime: block.startTime.add(practiceMatchDuration, 'second'),
+            endTime: block.endTime.add(practiceMatchDuration, 'second')
           };
         }
         return block;
@@ -74,26 +73,19 @@ export const CalendarHeader: React.FC = () => {
     });
 
     addPracticeRound();
-  }, [
-    blocks,
-    teamsCount,
-    tablesCount,
-    staggerMatches,
-    practiceCycleTime,
-    setBlocks,
-    practiceRounds,
-    addPracticeRound
-  ]);
+  }, [blocks, practiceCycleTime, matchesPerRound, setBlocks, addPracticeRound, practiceRounds]);
 
   const onAddRankingRound = useCallback(() => {
     const fieldBlocks = blocks.filter(b => b.column === 'field');
     const lastFieldBlock = fieldBlocks[fieldBlocks.length - 1];
     const newRankingStart = lastFieldBlock.endTime;
-    const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-    const newRankingEnd = newRankingStart.add(
-      (rankingCycleTime.minute() * 60 + rankingCycleTime.second()) * matchesPerRound,
-      'second'
-    );
+    const rankingRoundDuration =
+      (rankingCycleTime.hour() * 3600 +
+        rankingCycleTime.minute() * 60 +
+        rankingCycleTime.second()) *
+      matchesPerRound;
+
+    const newRankingEnd = newRankingStart.add(rankingRoundDuration, 'second');
 
     setBlocks(prev => {
       let updatedBlocks = [
@@ -113,16 +105,7 @@ export const CalendarHeader: React.FC = () => {
     });
 
     addRankingRound();
-  }, [
-    addRankingRound,
-    blocks,
-    rankingCycleTime,
-    rankingRounds,
-    setBlocks,
-    staggerMatches,
-    tablesCount,
-    teamsCount
-  ]);
+  }, [addRankingRound, blocks, matchesPerRound, rankingCycleTime, rankingRounds, setBlocks]);
 
   return (
     <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
