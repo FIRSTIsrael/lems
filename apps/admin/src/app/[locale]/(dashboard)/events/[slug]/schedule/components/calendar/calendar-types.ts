@@ -31,13 +31,11 @@ export interface DragState {
   originalPosition: number;
 }
 
-// Time constants
-export const MINUTES_PER_SLOT = 5;
-export const TIME_SLOT_HEIGHT = 4; // pixels per minute
-export const COLUMN_WIDTH = 400;
+export const INTERVAL_MINUTES = 5;
+export const TIME_SLOT_HEIGHT = 3; // pixels per minute
 export const TIME_AXIS_WIDTH = 80;
+export const HEADER_HEIGHT = 40;
 
-// Colors for different block types
 export const BLOCK_COLORS = {
   'practice-match': '#4CAF50',
   'ranking-match': '#2196F3',

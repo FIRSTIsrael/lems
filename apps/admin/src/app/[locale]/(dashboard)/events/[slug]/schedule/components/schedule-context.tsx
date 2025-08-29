@@ -3,19 +3,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
-import { TeamWithDivision } from '@lems/types/api/admin';
 
-const DEFAULT_STAGGER_MATCHES = false;
-const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
+const DEFAULT_STAGGER_MATCHES = true;
+const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
 const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
-const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(25).second(0);
+const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
 const DEFAULT_MATCH_LENGTH = dayjs().hour(0).minute(2).second(30);
-const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(15).second(0);
+const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
 
 export interface ScheduleContextType {
-  teams: TeamWithDivision[];
-  rooms: TeamWithDivision[];
-  tables: TeamWithDivision[];
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
@@ -50,17 +46,17 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   eventId,
   divisionId
 }) => {
-  const { data: teams = [] } = useSWR<TeamWithDivision[]>(
+  const { data: teams = [] } = useSWR<unknown[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/teams`,
     { suspense: true }
   );
 
-  const { data: rooms = [] } = useSWR<TeamWithDivision[]>(
+  const { data: rooms = [] } = useSWR<unknown[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/rooms`,
     { suspense: true }
   );
 
-  const { data: tables = [] } = useSWR<TeamWithDivision[]>(
+  const { data: tables = [] } = useSWR<unknown[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/tables`,
     { suspense: true }
   );
@@ -108,9 +104,6 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   };
 
   const contextValue: ScheduleContextType = {
-    teams,
-    rooms,
-    tables,
     teamsCount: teams.length,
     roomsCount: rooms.length,
     tablesCount: tables.length,

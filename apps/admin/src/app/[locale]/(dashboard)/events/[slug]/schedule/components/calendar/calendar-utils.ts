@@ -2,21 +2,9 @@ import { Dayjs } from 'dayjs';
 import {
   ScheduleBlock,
   ScheduleBlockType,
-  MINUTES_PER_SLOT,
+  INTERVAL_MINUTES,
   TIME_SLOT_HEIGHT
 } from './calendar-types';
-
-export function generateTimeSlots(startTime: Dayjs, endTime: Dayjs): Dayjs[] {
-  const slots: Dayjs[] = [];
-  let current = startTime.clone();
-
-  while (current.isBefore(endTime) || current.isSame(endTime)) {
-    slots.push(current.clone());
-    current = current.add(MINUTES_PER_SLOT, 'minute');
-  }
-
-  return slots;
-}
 
 export function calculateBlockPosition(
   startTime: Dayjs,
@@ -33,7 +21,7 @@ export function calculateBlockPosition(
 }
 
 export function snapToGrid(yPosition: number): number {
-  const slotHeight = MINUTES_PER_SLOT * TIME_SLOT_HEIGHT;
+  const slotHeight = INTERVAL_MINUTES * TIME_SLOT_HEIGHT;
   return Math.round(yPosition / slotHeight) * slotHeight;
 }
 

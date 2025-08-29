@@ -15,9 +15,9 @@ interface ScheduleManagerProp {
 
 const ScheduleManagerContent: React.FC = () => {
   const t = useTranslations('pages.events.schedule');
-  const { teams, rooms, tables } = useSchedule();
+  const { teamsCount, roomsCount, tablesCount } = useSchedule();
 
-  if (!teams.length || !rooms.length || !tables.length) {
+  if (teamsCount === 0 || roomsCount === 0 || tablesCount === 0) {
     return (
       <>
         <Alert severity="warning" icon={<Warning />} sx={{ py: 0.5 }}>

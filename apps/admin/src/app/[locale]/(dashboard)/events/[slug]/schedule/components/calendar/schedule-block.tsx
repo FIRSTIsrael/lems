@@ -4,7 +4,7 @@ import React from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { Dayjs } from 'dayjs';
-import { ScheduleBlock, BLOCK_COLORS } from './calendar-types';
+import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
 import { calculateBlockPosition } from './calendar-utils';
 
 interface ScheduleBlockComponentProps {
@@ -28,7 +28,8 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
 }) => {
   const position = calculateBlockPosition(startTime, block.startTime, block.endTime);
   // When dragging, use dragPosition but subtract header height since dragPosition includes it
-  const finalTop = isDragging && dragPosition !== undefined ? dragPosition - 40 : position.top;
+  const finalTop =
+    isDragging && dragPosition !== undefined ? dragPosition - HEADER_HEIGHT : position.top;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     // Breaks cannot be dragged

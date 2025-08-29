@@ -3,20 +3,16 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Box, Paper, Typography, Stack, Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Box, Paper, Typography, Stack } from '@mui/material';
 import { useSchedule } from '../schedule-context';
 import {
   ScheduleBlock,
   CalendarState,
   DragState,
   TIME_SLOT_HEIGHT,
-  COLUMN_WIDTH,
-  TIME_AXIS_WIDTH,
-  MINUTES_PER_SLOT
+  INTERVAL_MINUTES
 } from './calendar-types';
 import {
-  generateTimeSlots,
   generateInitialSchedule,
   adjustOrCreateBreak,
   removeBreak,
@@ -27,7 +23,9 @@ import {
   deleteBlockAndMergeBreaks,
   renumberRounds
 } from './calendar-utils';
-import { ScheduleBlockComponent } from './schedule-block';
+import { CalendarGrid } from './calendar-grid';
+import { CalendarColumn } from './calender-column';
+import { CalendarHeader } from './calendar-header';
 
 export const ScheduleCalendar: React.FC = () => {
   const t = useTranslations('pages.events.schedule.calendar');
@@ -72,15 +70,6 @@ export const ScheduleCalendar: React.FC = () => {
       end: earliestStart.hour(20).minute(0)
     };
   }, [calendarState.judgingStartTime, calendarState.fieldStartTime]);
-
-  // Calculate derived values
-  const totalMatches = useMemo(() => {
-    return teamsCount * (calendarState.practiceRounds + calendarState.rankingRounds);
-  }, [teamsCount, calendarState.practiceRounds, calendarState.rankingRounds]);
-
-  const totalSessions = useMemo(() => {
-    return Math.ceil(teamsCount / roomsCount);
-  }, [teamsCount, roomsCount]);
 
   // Initialize schedule when context changes
   useEffect(() => {
@@ -181,7 +170,7 @@ export const ScheduleCalendar: React.FC = () => {
     const block = dragState.draggedBlock;
     const positionDiff = dragState.draggedPosition - dragState.originalPosition;
     const timeDiffMinutes = Math.round(positionDiff / TIME_SLOT_HEIGHT);
-    const timeDiff = Math.round(timeDiffMinutes / MINUTES_PER_SLOT) * MINUTES_PER_SLOT; // Snap to 5-minute intervals
+    const timeDiff = Math.round(timeDiffMinutes / INTERVAL_MINUTES) * INTERVAL_MINUTES; // Snap to 5-minute intervals
 
     if (Math.abs(timeDiff) >= 5) {
       // Only apply changes if moved at least 5 minutes
@@ -379,25 +368,6 @@ export const ScheduleCalendar: React.FC = () => {
     });
   }, [columnBlocks.field, teamsCount, tablesCount, staggerMatches, rankingCycleTime]);
 
-  // Test function to offset judging start time
-  const handleOffsetJudgingStart = useCallback(() => {
-    const offsetMinutes = 30; // Offset judging by 30 minutes
-    setCalendarState(prev => ({
-      ...prev,
-      judgingStartTime: prev.judgingStartTime.add(offsetMinutes, 'minute'),
-      blocks: prev.blocks.map(b => {
-        if (b.column === 'judging') {
-          return {
-            ...b,
-            startTime: b.startTime.add(offsetMinutes, 'minute'),
-            endTime: b.endTime.add(offsetMinutes, 'minute')
-          };
-        }
-        return b;
-      })
-    }));
-  }, []);
-
   // Set up event listeners
   useEffect(() => {
     if (dragState.isDragging) {
@@ -421,171 +391,33 @@ export const ScheduleCalendar: React.FC = () => {
         cursor: dragState.isDragging ? 'grabbing' : 'default'
       }}
     >
-      {/* Action buttons */}
-      <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Stack direction="row" spacing={2}>
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<Add />}
-            onClick={handleAddPracticeRound}
-          >
-            {t('field.add-practice-round')}
-          </Button>
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<Add />}
-            onClick={handleAddRankingRound}
-          >
-            {t('field.add-ranking-round')}
-          </Button>
-          <Button
-            size="small"
-            variant="outlined"
-            color="secondary"
-            onClick={handleOffsetJudgingStart}
-          >
-            Offset Judging +30min (Test)??????
-          </Button>
-        </Stack>
-      </Box>
+      <CalendarHeader
+        onAddPracticeRound={handleAddPracticeRound}
+        onAddRankingRound={handleAddRankingRound}
+      />
 
-      {/* Calendar grid */}
-      <Stack direction="row" sx={{ position: 'relative' }}>
-        {/* Time axis */}
-        <Stack
-          width={TIME_AXIS_WIDTH}
-          flexShrink={0}
-          sx={{ borderRight: '1px solid', borderColor: 'divider' }}
-        >
-          <Box height={40} sx={{ borderTop: '1px solid', borderColor: 'divider' }} />
-          <Box>
-            {generateTimeSlots(timeRange.start, timeRange.end).map((time, index) => (
-              <Box
-                key={index}
-                height={TIME_SLOT_HEIGHT * MINUTES_PER_SLOT}
-                display="flex"
-                alignItems="center"
-                px={1}
-                sx={{
-                  borderTop: index % (60 / MINUTES_PER_SLOT) === 0 ? '1px solid' : '1px solid',
-                  borderColor:
-                    index % (60 / MINUTES_PER_SLOT) === 0 ? 'divider' : 'rgba(0,0,0,0.06)',
-                  backgroundColor: index % (60 / MINUTES_PER_SLOT) === 0 ? 'grey.50' : 'transparent'
-                }}
-              >
-                {index % (60 / MINUTES_PER_SLOT) === 0 && (
-                  <Typography variant="caption" color="text.secondary">
-                    {time.format('HH:mm')}
-                  </Typography>
-                )}
-              </Box>
-            ))}
-          </Box>
-        </Stack>
-
-        {/* Content area with background grid */}
-        <Box
-          sx={{
-            display: 'flex',
-            flex: 1,
-            backgroundImage: `
-              linear-gradient(rgba(0,0,0,0.12) 1px, transparent 1px),
-              linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)
-            `,
-            backgroundSize: `
-              100% ${TIME_SLOT_HEIGHT * (60 / MINUTES_PER_SLOT)}px,
-              100% ${TIME_SLOT_HEIGHT * (15 / MINUTES_PER_SLOT)}px
-            `,
-            backgroundPosition: '0 40px'
-          }}
-        >
-          {/* Judging Column */}
-          <Stack width={COLUMN_WIDTH} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
-            <Box
-              sx={{
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'grey.100',
-                borderTop: '1px solid',
-                borderBottom: '1px solid',
-                borderColor: 'divider'
-              }}
-            >
-              <Typography variant="h6">{t('judging.title')}</Typography>
-            </Box>
-            <Box sx={{ position: 'relative', minHeight: '100%' }}>
-              {columnBlocks.judging.map(block => {
-                const nonBreakBlocks = columnBlocks.judging.filter(b => b.type !== 'break');
-                const isFirstBlock = nonBreakBlocks.length > 0 && nonBreakBlocks[0].id === block.id;
-
-                return (
-                  <ScheduleBlockComponent
-                    key={block.id}
-                    block={block}
-                    startTime={timeRange.start}
-                    onDragStart={handleDragStart}
-                    onDelete={handleDeleteBlock}
-                    isDragging={dragState.isDragging && dragState.draggedBlock?.id === block.id}
-                    dragPosition={dragState.draggedPosition}
-                    isFirstBlock={isFirstBlock}
-                  />
-                );
-              })}
-            </Box>
-          </Stack>
-
-          {/* Field Column */}
-          <Stack width={COLUMN_WIDTH}>
-            <Box
-              sx={{
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'grey.100',
-                borderTop: '1px solid',
-                borderBottom: '1px solid',
-                borderColor: 'divider'
-              }}
-            >
-              <Typography variant="h6">{t('field.title')}</Typography>
-            </Box>
-            <Box sx={{ position: 'relative', minHeight: '100%' }}>
-              {columnBlocks.field.map(block => {
-                const nonBreakBlocks = columnBlocks.field.filter(b => b.type !== 'break');
-                const isFirstBlock = nonBreakBlocks.length > 0 && nonBreakBlocks[0].id === block.id;
-
-                return (
-                  <ScheduleBlockComponent
-                    key={block.id}
-                    block={block}
-                    startTime={timeRange.start}
-                    onDragStart={handleDragStart}
-                    onDelete={handleDeleteBlock}
-                    isDragging={dragState.isDragging && dragState.draggedBlock?.id === block.id}
-                    dragPosition={dragState.draggedPosition}
-                    isFirstBlock={isFirstBlock}
-                  />
-                );
-              })}
-            </Box>
-          </Stack>
-        </Box>
-      </Stack>
+      <CalendarGrid>
+        <CalendarColumn
+          title={t('judging.title')}
+          blocks={columnBlocks.judging}
+          handleDragStart={handleDragStart}
+          handleDeleteBlock={handleDeleteBlock}
+          dragState={dragState}
+          timeRange={timeRange}
+        />
+        <CalendarColumn
+          title={t('field.title')}
+          blocks={columnBlocks.field}
+          handleDragStart={handleDragStart}
+          handleDeleteBlock={handleDeleteBlock}
+          dragState={dragState}
+          timeRange={timeRange}
+        />
+      </CalendarGrid>
 
       {/* Stats display */}
       <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
         <Stack direction="row" spacing={4}>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.total-matches')}: ${totalMatches}`}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.total-sessions')}: ${totalSessions}`}
-          </Typography>
           <Typography variant="body2" color="text.secondary">
             {`${t('stats.practice-rounds')}: ${calendarState.practiceRounds}`}
           </Typography>
