@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Box, Paper, Typography, Stack, Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useSchedule } from './schedule-context';
+import { useSchedule } from '../schedule-context';
 import {
   ScheduleBlock,
   CalendarState,

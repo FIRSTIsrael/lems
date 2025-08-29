@@ -7,7 +7,7 @@ import { Division } from '@lems/types/api/admin';
 import { Warning } from '@mui/icons-material';
 import { ScheduleProvider, useSchedule } from './schedule-context';
 import { ScheduleSettings } from './schedule-settings';
-import { ScheduleCalendar } from './schedule-calendar';
+import { ScheduleCalendar } from './calendar/schedule-calendar';
 
 interface ScheduleManagerProp {
   division: Division;
