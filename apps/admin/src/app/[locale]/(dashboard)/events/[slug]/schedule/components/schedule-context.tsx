@@ -5,16 +5,27 @@ import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 
 const DEFAULT_STAGGER_MATCHES = true;
-const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
-const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
-const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
 const DEFAULT_MATCH_LENGTH = dayjs().hour(0).minute(2).second(30);
+const DEFAULT_FIELD_START = dayjs().hour(8).minute(0).second(0);
+
+const DEFAULT_PRACTICE_ROUNDS = 1;
+const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
+
+const DEFAULT_RANKING_ROUNDS = 3;
+const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
+
 const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
+const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
+const DEFAULT_JUDGING_START = dayjs().hour(8).minute(0).second(0);
 
 export interface ScheduleContextType {
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
+
+  practiceRounds: number;
+  rankingRounds: number;
+  judgingSessions: number;
 
   staggerMatches: boolean;
   practiceCycleTime: Dayjs;
@@ -23,12 +34,22 @@ export interface ScheduleContextType {
   matchLength: Dayjs;
   judgingSessionLength: Dayjs;
 
+  judgingStart: Dayjs;
+  fieldStart: Dayjs;
+
   setStaggerMatches: (value: boolean) => void;
-  setPracticeCycleTime: (value: Dayjs | null) => void;
-  setRankingCycleTime: (value: Dayjs | null) => void;
-  setJudgingSessionCycleTime: (value: Dayjs | null) => void;
-  setMatchLength: (value: Dayjs | null) => void;
-  setJudgingSessionLength: (value: Dayjs | null) => void;
+  setPracticeCycleTime: (value: Dayjs) => void;
+  setRankingCycleTime: (value: Dayjs) => void;
+  setJudgingSessionCycleTime: (value: Dayjs) => void;
+  setMatchLength: (value: Dayjs) => void;
+  setJudgingSessionLength: (value: Dayjs) => void;
+  setJudgingStart: React.Dispatch<React.SetStateAction<Dayjs>>;
+  setFieldStart: React.Dispatch<React.SetStateAction<Dayjs>>;
+
+  addPracticeRound: () => void;
+  removePracticeRound: () => void;
+  addRankingRound: () => void;
+  removeRankingRound: () => void;
 
   resetSettings: () => void;
 }
@@ -62,6 +83,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   );
 
   const [staggerMatches, setStaggerMatches] = useState(DEFAULT_STAGGER_MATCHES);
+  const [practiceRounds, setPracticeRounds] = useState(DEFAULT_PRACTICE_ROUNDS);
+  const [rankingRounds, setRankingRounds] = useState(DEFAULT_RANKING_ROUNDS);
   const [practiceCycleTime, setPracticeCycleTimeState] = useState<Dayjs>(
     DEFAULT_PRACTICE_CYCLE_TIME
   );
@@ -73,6 +96,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [judgingSessionLength, setJudgingSessionLengthState] = useState<Dayjs>(
     DEFAULT_JUDGING_SESSION_LENGTH
   );
+  const [fieldStart, setFieldStart] = useState<Dayjs>(DEFAULT_FIELD_START);
+  const [judgingStart, setJudgingStart] = useState<Dayjs>(DEFAULT_JUDGING_START);
 
   const setPracticeCycleTime = (value: Dayjs | null) => {
     if (value) setPracticeCycleTimeState(value);
@@ -94,19 +119,43 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     if (value) setJudgingSessionLengthState(value);
   };
 
+  const addPracticeRound = () => {
+    setPracticeRounds(prev => prev + 1);
+  };
+
+  const removePracticeRound = () => {
+    setPracticeRounds(prev => Math.max(prev - 1, 0));
+  };
+
+  const addRankingRound = () => {
+    setRankingRounds(prev => prev + 1);
+  };
+
+  const removeRankingRound = () => {
+    setRankingRounds(prev => Math.max(prev - 1, 0));
+  };
+
   const resetSettings = () => {
     setStaggerMatches(DEFAULT_STAGGER_MATCHES);
+    setPracticeRounds(DEFAULT_PRACTICE_ROUNDS);
+    setRankingRounds(DEFAULT_RANKING_ROUNDS);
     setPracticeCycleTimeState(DEFAULT_PRACTICE_CYCLE_TIME);
     setRankingCycleTimeState(DEFAULT_RANKING_CYCLE_TIME);
     setJudgingSessionCycleTimeState(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
     setMatchLengthState(DEFAULT_MATCH_LENGTH);
     setJudgingSessionLengthState(DEFAULT_JUDGING_SESSION_LENGTH);
+    setFieldStart(DEFAULT_FIELD_START);
+    setJudgingStart(DEFAULT_JUDGING_START);
   };
 
   const contextValue: ScheduleContextType = {
     teamsCount: teams.length,
     roomsCount: rooms.length,
     tablesCount: tables.length,
+
+    practiceRounds,
+    rankingRounds,
+    judgingSessions: Math.ceil(teams.length / rooms.length),
 
     staggerMatches,
     practiceCycleTime,
@@ -115,12 +164,21 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     matchLength,
     judgingSessionLength,
 
+    judgingStart,
+    fieldStart,
+
     setStaggerMatches,
     setPracticeCycleTime,
     setRankingCycleTime,
     setJudgingSessionCycleTime,
     setMatchLength,
     setJudgingSessionLength,
+    addPracticeRound,
+    removePracticeRound,
+    addRankingRound,
+    removeRankingRound,
+    setJudgingStart,
+    setFieldStart,
     resetSettings
   };
 

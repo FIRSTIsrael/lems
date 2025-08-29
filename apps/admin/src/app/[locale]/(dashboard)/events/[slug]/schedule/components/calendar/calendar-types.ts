@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs';
 
-export type ScheduleBlockType = 'practice-match' | 'ranking-match' | 'judging-session' | 'break';
+export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session' | 'break';
 export type ScheduleColumn = 'judging' | 'field';
 
 export interface ScheduleBlock {
@@ -13,14 +13,6 @@ export interface ScheduleBlock {
   roundNumber?: number;
   isDragging?: boolean;
   canDelete?: boolean;
-}
-
-export interface CalendarState {
-  blocks: ScheduleBlock[];
-  practiceRounds: number;
-  rankingRounds: number;
-  judgingStartTime: Dayjs;
-  fieldStartTime: Dayjs;
 }
 
 export interface DragState {

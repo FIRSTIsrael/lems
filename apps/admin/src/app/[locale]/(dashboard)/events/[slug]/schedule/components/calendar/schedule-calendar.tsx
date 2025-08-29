@@ -1,19 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Box, Paper, Typography, Stack } from '@mui/material';
+import { Paper } from '@mui/material';
+import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
+import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
 import {
-  ScheduleBlock,
-  CalendarState,
-  DragState,
-  TIME_SLOT_HEIGHT,
-  INTERVAL_MINUTES
-} from './calendar-types';
-import {
-  generateInitialSchedule,
   adjustOrCreateBreak,
   removeBreak,
   snapToGrid,
@@ -26,94 +20,47 @@ import {
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
 import { CalendarHeader } from './calendar-header';
+import CalendarProvider, { useCalendar } from './calendar-context';
 
-export const ScheduleCalendar: React.FC = () => {
+const ScheduleCalendarContent: React.FC = () => {
   const t = useTranslations('pages.events.schedule.calendar');
+
+  // Event start time for some reason
+  const event = useEvent();
+  const startTime = dayjs(event.startDate).hour(6);
 
   const {
     teamsCount,
-    roomsCount,
     tablesCount,
+    practiceRounds,
+    rankingRounds,
     staggerMatches,
     practiceCycleTime,
     rankingCycleTime,
-    judgingSessionCycleTime
+    setFieldStart,
+    setJudgingStart,
+    addRankingRound,
+    removeRankingRound,
+    addPracticeRound,
+    removePracticeRound
   } = useSchedule();
 
+  const { blocks, dragState, setBlocks, setDragState } = useCalendar();
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dragState, setDragState] = useState<DragState>({
-    isDragging: false,
-    dragStartY: 0,
-    draggedPosition: 0,
-    originalPosition: 0
-  });
-
-  // Calendar state with initial schedule
-  const [calendarState, setCalendarState] = useState<CalendarState>(() => {
-    const baseStartTime = dayjs().hour(8).minute(0).second(0);
-    return {
-      blocks: [],
-      practiceRounds: 1,
-      rankingRounds: 3,
-      judgingStartTime: baseStartTime,
-      fieldStartTime: baseStartTime
-    };
-  });
-
-  // Time range for the calendar (6 AM to 8 PM) - based on the earlier start time
-  const timeRange = useMemo(() => {
-    const earliestStart = calendarState.judgingStartTime.isBefore(calendarState.fieldStartTime)
-      ? calendarState.judgingStartTime
-      : calendarState.fieldStartTime;
-    return {
-      start: earliestStart.hour(6).minute(0),
-      end: earliestStart.hour(20).minute(0)
-    };
-  }, [calendarState.judgingStartTime, calendarState.fieldStartTime]);
-
-  // Initialize schedule when context changes
-  useEffect(() => {
-    const baseStartTime = dayjs().hour(8).minute(0).second(0);
-    const { blocks, judgingStartTime, fieldStartTime } = generateInitialSchedule(
-      baseStartTime,
-      teamsCount,
-      roomsCount,
-      tablesCount,
-      staggerMatches,
-      practiceCycleTime,
-      rankingCycleTime,
-      judgingSessionCycleTime
-    );
-
-    setCalendarState(prev => ({
-      ...prev,
-      blocks,
-      judgingStartTime,
-      fieldStartTime
-    }));
-  }, [
-    teamsCount,
-    roomsCount,
-    tablesCount,
-    staggerMatches,
-    practiceCycleTime,
-    rankingCycleTime,
-    judgingSessionCycleTime
-  ]);
 
   // Group blocks by column
   const columnBlocks = useMemo(() => {
     return {
-      judging: calendarState.blocks
+      judging: blocks
         .filter(b => b.column === 'judging')
         .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf()),
-      field: calendarState.blocks
+      field: blocks
         .filter(b => b.column === 'field')
         .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf())
     };
-  }, [calendarState.blocks]);
+  }, [blocks]);
 
-  // Handle drag start
   const handleDragStart = useCallback(
     (block: ScheduleBlock, startY: number) => {
       // Prevent dragging breaks - they are calculated components
@@ -123,9 +70,8 @@ export const ScheduleCalendar: React.FC = () => {
       if (!rect) return;
 
       // Calculate the block's current position
-      const blockPosition = calculateBlockPosition(timeRange.start, block.startTime, block.endTime);
-      // Account for header height (40px)
-      const blockTop = blockPosition.top + 40;
+      const blockPosition = calculateBlockPosition(startTime, block.startTime, block.endTime);
+      const blockTop = blockPosition.top + HEADER_HEIGHT;
 
       setDragState({
         isDragging: true,
@@ -135,10 +81,9 @@ export const ScheduleCalendar: React.FC = () => {
         originalPosition: blockTop
       });
     },
-    [timeRange.start]
+    [setDragState, startTime]
   );
 
-  // Handle mouse move during drag
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!dragState.isDragging || !containerRef.current || !dragState.draggedBlock) return;
@@ -152,10 +97,15 @@ export const ScheduleCalendar: React.FC = () => {
         draggedPosition: snappedPosition
       }));
     },
-    [dragState.isDragging, dragState.dragStartY, dragState.originalPosition, dragState.draggedBlock]
+    [
+      dragState.isDragging,
+      dragState.draggedBlock,
+      dragState.dragStartY,
+      dragState.originalPosition,
+      setDragState
+    ]
   );
 
-  // Handle mouse up (end drag)
   const handleMouseUp = useCallback(() => {
     if (!dragState.isDragging || !dragState.draggedBlock) {
       setDragState({
@@ -184,13 +134,14 @@ export const ScheduleCalendar: React.FC = () => {
 
       if (isFirstBlock) {
         // This is the first block - shift only this column's schedule and update start time
-        const columnStartTimeKey =
-          block.column === 'judging' ? 'judgingStartTime' : 'fieldStartTime';
+        if (block.column === 'judging') {
+          setJudgingStart(prev => prev.add(timeDiff, 'minute'));
+        } else {
+          setFieldStart(prev => prev.add(timeDiff, 'minute'));
+        }
 
-        setCalendarState(prev => ({
-          ...prev,
-          [columnStartTimeKey]: prev[columnStartTimeKey].add(timeDiff, 'minute'),
-          blocks: prev.blocks.map(b => {
+        setBlocks(prev =>
+          prev.map(b => {
             // Only shift blocks in the same column
             if (b.column === block.column) {
               return {
@@ -201,21 +152,15 @@ export const ScheduleCalendar: React.FC = () => {
             }
             return b;
           })
-        }));
+        );
       } else {
         // Handle regular block movement (creates/adjusts breaks)
         if (timeDiff > 0) {
           // Moving forward - create or extend break before this block
-          setCalendarState(prev => ({
-            ...prev,
-            blocks: adjustOrCreateBreak(prev.blocks, block.column, block, timeDiff)
-          }));
+          setBlocks(prev => adjustOrCreateBreak(prev, block.column, block, timeDiff));
         } else if (timeDiff < 0) {
           // Moving backward - try to reduce previous break
-          setCalendarState(prev => ({
-            ...prev,
-            blocks: reducePreviousBreak(prev.blocks, block.column, block, timeDiff)
-          }));
+          setBlocks(prev => reducePreviousBreak(prev, block.column, block, timeDiff));
         }
       }
     }
@@ -226,12 +171,22 @@ export const ScheduleCalendar: React.FC = () => {
       draggedPosition: 0,
       originalPosition: 0
     });
-  }, [dragState, columnBlocks]);
+  }, [
+    dragState.isDragging,
+    dragState.draggedBlock,
+    dragState.draggedPosition,
+    dragState.originalPosition,
+    setDragState,
+    columnBlocks,
+    setBlocks,
+    setJudgingStart,
+    setFieldStart
+  ]);
 
   // Handle deleting blocks
   const handleDeleteBlock = useCallback(
     (blockId: string) => {
-      const block = calendarState.blocks.find(b => b.id === blockId);
+      const block = blocks.find(b => b.id === blockId);
       if (!block) return;
 
       // Prevent deletion of judging sessions
@@ -242,49 +197,33 @@ export const ScheduleCalendar: React.FC = () => {
 
       if (block.type === 'break') {
         // For breaks, just remove them without merging
-        setCalendarState(prev => ({
-          ...prev,
-          blocks: removeBreak(prev.blocks, blockId)
-        }));
-      } else if (block.type === 'practice-match') {
+        setBlocks(prev => removeBreak(prev, blockId));
+      } else if (block.type === 'practice-round') {
         // Simply remove the practice round and merge breaks, then renumber
-        setCalendarState(prev => {
-          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev.blocks, blockId);
-
-          // Renumber all rounds after deletion to maintain separate numbering
+        setBlocks(prev => {
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, blockId);
           blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-
-          return {
-            ...prev,
-            blocks: blocksAfterRemoval,
-            practiceRounds: prev.practiceRounds - 1
-          };
+          return blocksAfterRemoval;
         });
-      } else if (block.type === 'ranking-match') {
+        removePracticeRound();
+      } else if (block.type === 'ranking-round') {
         // Simply remove the ranking round and merge breaks, then renumber
-        setCalendarState(prev => {
-          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev.blocks, blockId);
-
-          // Renumber all rounds after deletion to maintain separate numbering
+        setBlocks(prev => {
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, blockId);
           blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-
-          return {
-            ...prev,
-            blocks: blocksAfterRemoval,
-            rankingRounds: prev.rankingRounds - 1
-          };
+          return blocksAfterRemoval;
         });
+
+        removeRankingRound();
       }
     },
-    [calendarState.blocks]
+    [blocks, removePracticeRound, removeRankingRound, setBlocks]
   );
 
   // Handle adding rounds
   const handleAddPracticeRound = useCallback(() => {
     // Find the first ranking round to insert a practice round before it
-    const firstRanking = calendarState.blocks.find(
-      b => b.type === 'ranking-match' && b.roundNumber === 1
-    );
+    const firstRanking = blocks.find(b => b.type === 'ranking-round' && b.roundNumber === 1);
     if (!firstRanking) return;
 
     // Calculate the duration for a practice round
@@ -297,18 +236,18 @@ export const ScheduleCalendar: React.FC = () => {
     const newPracticeStart = insertionTime;
     const newPracticeEnd = insertionTime.add(practiceRoundDuration, 'second');
 
-    setCalendarState(prev => {
+    setBlocks(prev => {
       // Create the new practice round
       const newPracticeRound = createScheduleBlock(
-        'practice-match',
+        'practice-round',
         'field',
         newPracticeStart,
         newPracticeEnd,
-        prev.practiceRounds + 1 // This will be renumbered correctly
+        practiceRounds + 1 // This will be renumbered correctly
       );
 
       // Shift all field blocks that start at or after the insertion time forward by the practice round duration
-      const updatedBlocks = prev.blocks.map(block => {
+      const updatedBlocks = prev.map(block => {
         if (
           block.column === 'field' &&
           (block.startTime.isSame(insertionTime) || block.startTime.isAfter(insertionTime))
@@ -328,13 +267,20 @@ export const ScheduleCalendar: React.FC = () => {
       // Renumber all rounds to ensure correct sequential numbering
       finalBlocks = renumberRounds(finalBlocks);
 
-      return {
-        ...prev,
-        blocks: finalBlocks,
-        practiceRounds: prev.practiceRounds + 1
-      };
+      return finalBlocks;
     });
-  }, [calendarState.blocks, teamsCount, tablesCount, staggerMatches, practiceCycleTime]);
+
+    addPracticeRound();
+  }, [
+    blocks,
+    teamsCount,
+    tablesCount,
+    staggerMatches,
+    practiceCycleTime,
+    setBlocks,
+    practiceRounds,
+    addPracticeRound
+  ]);
 
   const handleAddRankingRound = useCallback(() => {
     const lastFieldBlock = columnBlocks.field[columnBlocks.field.length - 1];
@@ -345,28 +291,34 @@ export const ScheduleCalendar: React.FC = () => {
       'second'
     );
 
-    setCalendarState(prev => {
+    setBlocks(prev => {
       let updatedBlocks = [
-        ...prev.blocks,
+        ...prev,
         createScheduleBlock(
-          'ranking-match',
+          'ranking-round',
           'field',
           newRankingStart,
           newRankingEnd,
-          prev.rankingRounds + 1
+          rankingRounds + 1
         )
       ];
 
-      // Renumber all rounds to ensure consistency
       updatedBlocks = renumberRounds(updatedBlocks);
 
-      return {
-        ...prev,
-        blocks: updatedBlocks,
-        rankingRounds: prev.rankingRounds + 1
-      };
+      return updatedBlocks;
     });
-  }, [columnBlocks.field, teamsCount, tablesCount, staggerMatches, rankingCycleTime]);
+
+    addRankingRound();
+  }, [
+    columnBlocks.field,
+    teamsCount,
+    tablesCount,
+    staggerMatches,
+    rankingCycleTime,
+    setBlocks,
+    addRankingRound,
+    rankingRounds
+  ]);
 
   // Set up event listeners
   useEffect(() => {
@@ -403,7 +355,6 @@ export const ScheduleCalendar: React.FC = () => {
           handleDragStart={handleDragStart}
           handleDeleteBlock={handleDeleteBlock}
           dragState={dragState}
-          timeRange={timeRange}
         />
         <CalendarColumn
           title={t('field.title')}
@@ -411,27 +362,16 @@ export const ScheduleCalendar: React.FC = () => {
           handleDragStart={handleDragStart}
           handleDeleteBlock={handleDeleteBlock}
           dragState={dragState}
-          timeRange={timeRange}
         />
       </CalendarGrid>
-
-      {/* Stats display */}
-      <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
-        <Stack direction="row" spacing={4}>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.practice-rounds')}: ${calendarState.practiceRounds}`}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.ranking-rounds')}: ${calendarState.rankingRounds}`}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.judging-start')}: ${calendarState.judgingStartTime.format('HH:mm')}`}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {`${t('stats.field-start')}: ${calendarState.fieldStartTime.format('HH:mm')}`}
-          </Typography>
-        </Stack>
-      </Box>
     </Paper>
+  );
+};
+
+export const ScheduleCalendar: React.FC = () => {
+  return (
+    <CalendarProvider>
+      <ScheduleCalendarContent />
+    </CalendarProvider>
   );
 };

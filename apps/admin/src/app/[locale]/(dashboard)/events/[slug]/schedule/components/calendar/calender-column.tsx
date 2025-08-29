@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Dayjs } from 'dayjs';
 import { Box, Typography, Stack } from '@mui/material';
 import { ScheduleBlock, HEADER_HEIGHT, DragState } from './calendar-types';
 import { ScheduleBlockComponent } from './schedule-block';
@@ -12,10 +11,6 @@ interface CalendarColumnProps {
   handleDragStart: (block: ScheduleBlock, startY: number) => void;
   handleDeleteBlock: (blockId: string) => void;
   dragState: DragState;
-  timeRange: {
-    start: Dayjs;
-    end: Dayjs;
-  };
 }
 
 export const CalendarColumn: React.FC<CalendarColumnProps> = ({
@@ -23,8 +18,7 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({
   blocks,
   handleDragStart,
   handleDeleteBlock,
-  dragState,
-  timeRange
+  dragState
 }) => {
   return (
     <Stack width="50%">
@@ -50,7 +44,6 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({
             <ScheduleBlockComponent
               key={block.id}
               block={block}
-              startTime={timeRange.start}
               onDragStart={handleDragStart}
               onDelete={handleDeleteBlock}
               isDragging={dragState.isDragging && dragState.draggedBlock?.id === block.id}

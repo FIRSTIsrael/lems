@@ -41,12 +41,12 @@ export function getColumnStartTime(
 export function renumberRounds(blocks: ScheduleBlock[]): ScheduleBlock[] {
   // Get practice rounds sorted by start time
   const practiceRounds = blocks
-    .filter(b => b.type === 'practice-match')
+    .filter(b => b.type === 'practice-round')
     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
 
   // Get ranking rounds sorted by start time
   const rankingRounds = blocks
-    .filter(b => b.type === 'ranking-match')
+    .filter(b => b.type === 'ranking-round')
     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
 
   // Create a map of old ID to new round number and title
@@ -81,8 +81,8 @@ export function renumberRounds(blocks: ScheduleBlock[]): ScheduleBlock[] {
         canDelete:
           block.type !== 'break' &&
           block.type !== 'judging-session' &&
-          !(block.type === 'practice-match' && update.roundNumber === 1) &&
-          !(block.type === 'ranking-match' && update.roundNumber === 1)
+          !(block.type === 'practice-round' && update.roundNumber === 1) &&
+          !(block.type === 'ranking-round' && update.roundNumber === 1)
       };
     }
     return block;
@@ -180,10 +180,10 @@ export function createScheduleBlock(
   let title = '';
 
   switch (type) {
-    case 'practice-match':
+    case 'practice-round':
       title = `Practice Round ${roundNumber}`;
       break;
-    case 'ranking-match':
+    case 'ranking-round':
       title = `Ranking Round ${roundNumber}`;
       break;
     case 'judging-session':
@@ -205,67 +205,9 @@ export function createScheduleBlock(
     canDelete:
       type !== 'break' &&
       type !== 'judging-session' &&
-      !(type === 'practice-match' && roundNumber === 1) &&
-      !(type === 'ranking-match' && roundNumber === 1)
+      !(type === 'practice-round' && roundNumber === 1) &&
+      !(type === 'ranking-round' && roundNumber === 1)
   };
-}
-
-export function generateInitialSchedule(
-  baseStartTime: Dayjs,
-  teamsCount: number,
-  roomsCount: number,
-  tablesCount: number,
-  staggerMatches: boolean,
-  practiceCycleTime: Dayjs,
-  rankingCycleTime: Dayjs,
-  judgingSessionCycleTime: Dayjs
-): { blocks: ScheduleBlock[]; judgingStartTime: Dayjs; fieldStartTime: Dayjs } {
-  const blocks: ScheduleBlock[] = [];
-
-  // Calculate sessions and matches
-  const judgingSessions = Math.ceil(teamsCount / roomsCount);
-  const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-
-  // Both columns start at the same time initially, but can diverge
-  const judgingStartTime = baseStartTime.clone();
-  const fieldStartTime = baseStartTime.clone();
-
-  let currentTime = judgingStartTime.clone();
-
-  // Generate judging sessions
-  for (let i = 1; i <= judgingSessions; i++) {
-    const endTime = currentTime.add(
-      judgingSessionCycleTime.minute() * 60 + judgingSessionCycleTime.second(),
-      'second'
-    );
-
-    blocks.push(createScheduleBlock('judging-session', 'judging', currentTime, endTime, i));
-    currentTime = endTime.clone();
-  }
-
-  // Reset time for field events
-  currentTime = fieldStartTime.clone();
-
-  // Generate practice round
-  const practiceEndTime = currentTime.add(
-    (practiceCycleTime.minute() * 60 + practiceCycleTime.second()) * matchesPerRound,
-    'second'
-  );
-  blocks.push(createScheduleBlock('practice-match', 'field', currentTime, practiceEndTime, 1));
-
-  // Generate ranking rounds (default to 3)
-  currentTime = practiceEndTime.clone();
-  for (let i = 1; i <= 3; i++) {
-    const endTime = currentTime.add(
-      (rankingCycleTime.minute() * 60 + rankingCycleTime.second()) * matchesPerRound,
-      'second'
-    );
-
-    blocks.push(createScheduleBlock('ranking-match', 'field', currentTime, endTime, i));
-    currentTime = endTime.clone();
-  }
-
-  return { blocks, judgingStartTime, fieldStartTime };
 }
 
 export function adjustOrCreateBreak(

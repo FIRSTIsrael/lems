@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
+import dayjs, { Dayjs } from 'dayjs';
 import { Box, Typography, IconButton } from '@mui/material';
 import { Delete } from '@mui/icons-material';
-import { Dayjs } from 'dayjs';
+import { useEvent } from '../../../components/event-context';
 import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
 import { calculateBlockPosition } from './calendar-utils';
 
 interface ScheduleBlockComponentProps {
   block: ScheduleBlock;
-  startTime: Dayjs;
   onDragStart: (block: ScheduleBlock, startY: number) => void;
   onDelete?: (blockId: string) => void;
   isDragging?: boolean;
@@ -19,13 +19,16 @@ interface ScheduleBlockComponentProps {
 
 export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   block,
-  startTime,
   onDragStart,
   onDelete,
   isDragging = false,
   dragPosition,
   isFirstBlock = false
 }) => {
+  // Start time of the event
+  const event = useEvent();
+  const startTime = dayjs(event.startDate).hour(6).minute(0).second(0);
+
   const position = calculateBlockPosition(startTime, block.startTime, block.endTime);
   // When dragging, use dragPosition but subtract header height since dragPosition includes it
   const finalTop =

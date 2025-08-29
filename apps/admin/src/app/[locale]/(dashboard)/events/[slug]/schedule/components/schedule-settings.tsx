@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import {
   Box,
@@ -19,6 +20,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import SportsIcon from '@mui/icons-material/Sports';
 import EventIcon from '@mui/icons-material/Event';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { useSchedule } from './schedule-context';
 
 export const ScheduleSettings: React.FC = () => {
@@ -38,7 +41,11 @@ export const ScheduleSettings: React.FC = () => {
     setRankingCycleTime,
     setJudgingSessionCycleTime,
     setMatchLength,
-    setJudgingSessionLength
+    setJudgingSessionLength,
+    practiceRounds,
+    rankingRounds,
+    judgingStart,
+    fieldStart
   } = useSchedule();
 
   // Calculate derived values that will be shown in calendar
@@ -104,6 +111,27 @@ export const ScheduleSettings: React.FC = () => {
               <EventIcon color="primary" />
               <Typography variant="body2">Total Sessions: {totalSessions}</Typography>
             </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <SportsScoreIcon color="primary" />
+              <Typography variant="body2">Practice Rounds: {practiceRounds}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <SportsScoreIcon color="primary" />
+              <Typography variant="body2">Ranking Rounds: {rankingRounds}</Typography>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Box>
+          <Stack direction="row" spacing={4} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
+              <WatchLaterIcon color="primary" />
+              <Typography variant="body2">Judging start: {judgingStart.format('HH:mm')}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <WatchLaterIcon color="primary" />
+              <Typography variant="body2">Matches start: {fieldStart.format('HH:mm')}</Typography>
+            </Stack>
           </Stack>
         </Box>
 
@@ -132,7 +160,10 @@ export const ScheduleSettings: React.FC = () => {
               <TimePicker
                 label={t('timing.practice-cycle-time')}
                 value={practiceCycleTime}
-                onChange={setPracticeCycleTime}
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  setPracticeCycleTime(value);
+                }}
                 ampm={false}
                 format="mm:ss"
                 views={['minutes', 'seconds']}
@@ -148,7 +179,10 @@ export const ScheduleSettings: React.FC = () => {
               <TimePicker
                 label={t('timing.ranking-cycle-time')}
                 value={rankingCycleTime}
-                onChange={setRankingCycleTime}
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  setRankingCycleTime(value);
+                }}
                 ampm={false}
                 format="mm:ss"
                 views={['minutes', 'seconds']}
@@ -164,7 +198,10 @@ export const ScheduleSettings: React.FC = () => {
               <TimePicker
                 label={t('timing.judging-session-cycle-time')}
                 value={judgingSessionCycleTime}
-                onChange={setJudgingSessionCycleTime}
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  setJudgingSessionCycleTime(value);
+                }}
                 ampm={false}
                 format="mm:ss"
                 views={['minutes', 'seconds']}
@@ -181,7 +218,10 @@ export const ScheduleSettings: React.FC = () => {
               <TimePicker
                 label={t('timing.match-length')}
                 value={matchLength}
-                onChange={setMatchLength}
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  setMatchLength(value);
+                }}
                 ampm={false}
                 format="mm:ss"
                 views={['minutes', 'seconds']}
@@ -197,7 +237,10 @@ export const ScheduleSettings: React.FC = () => {
               <TimePicker
                 label={t('timing.judging-session-length')}
                 value={judgingSessionLength}
-                onChange={setJudgingSessionLength}
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  setJudgingSessionLength(value);
+                }}
                 ampm={false}
                 format="mm:ss"
                 views={['minutes', 'seconds']}
