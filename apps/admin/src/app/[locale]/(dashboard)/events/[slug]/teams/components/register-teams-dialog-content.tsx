@@ -134,7 +134,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                   <ListItem>
                     <ListItemText
                       primary={t('no-available-teams')}
-                      sx={{ textAlign: 'center', color: 'text.secondary' }}
+                      sx={{ textAlign: 'center', color: 'text.secondary', mt: 2 }}
                     />
                   </ListItem>
                 )}
