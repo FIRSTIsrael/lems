@@ -10,14 +10,9 @@ import { useCalendar } from './calendar-context';
 interface CalendarColumnProps {
   name: ScheduleColumn;
   handleDragStart: (block: ScheduleBlock, startY: number) => void;
-  handleDeleteBlock: (blockId: string) => void;
 }
 
-export const CalendarColumn: React.FC<CalendarColumnProps> = ({
-  name,
-  handleDragStart,
-  handleDeleteBlock
-}) => {
+export const CalendarColumn: React.FC<CalendarColumnProps> = ({ name, handleDragStart }) => {
   const t = useTranslations(`pages.events.schedule.calendar.${name}`);
 
   const { blocks } = useCalendar();
@@ -47,9 +42,8 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({
             <ScheduleBlockComponent
               key={block.id}
               block={block}
-              onDragStart={handleDragStart}
-              onDelete={handleDeleteBlock}
               isFirstBlock={isFirstBlock}
+              onDragStart={handleDragStart}
             />
           );
         })}

@@ -1,28 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { Box, Typography, IconButton } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { useEvent } from '../../../components/event-context';
+import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
-import { calculateBlockPosition } from './calendar-utils';
+import {
+  calculateBlockPosition,
+  deleteBlockAndMergeBreaks,
+  removeBreak,
+  renumberRounds
+} from './calendar-utils';
 import { useCalendar } from './calendar-context';
 
 interface ScheduleBlockComponentProps {
   block: ScheduleBlock;
   onDragStart: (block: ScheduleBlock, startY: number) => void;
-  onDelete?: (blockId: string) => void;
   isFirstBlock?: boolean;
 }
 
 export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   block,
   onDragStart,
-  onDelete,
   isFirstBlock = false
 }) => {
-  const { dragState } = useCalendar();
+  const { removePracticeRound, removeRankingRound } = useSchedule();
+  const { dragState, setBlocks } = useCalendar();
+
   const isDragging = dragState.isDragging && dragState.draggedBlock?.id === block.id;
   const dragPosition = dragState.draggedPosition;
 
@@ -45,12 +51,40 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
     }
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onDelete) {
-      onDelete(block.id);
-    }
-  };
+  const handleDelete = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+
+      // Prevent deletion of judging sessions
+      if (block.type === 'judging-session') {
+        console.warn('Judging sessions cannot be deleted');
+        return;
+      }
+
+      if (block.type === 'break') {
+        // For breaks, just remove them without merging
+        setBlocks(prev => removeBreak(prev, block.id));
+      } else if (block.type === 'practice-round') {
+        // Simply remove the practice round and merge breaks, then renumber
+        setBlocks(prev => {
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, block.id);
+          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
+          return blocksAfterRemoval;
+        });
+        removePracticeRound();
+      } else if (block.type === 'ranking-round') {
+        // Simply remove the ranking round and merge breaks, then renumber
+        setBlocks(prev => {
+          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, block.id);
+          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
+          return blocksAfterRemoval;
+        });
+
+        removeRankingRound();
+      }
+    },
+    [block, removePracticeRound, removeRankingRound, setBlocks]
+  );
 
   const formatTime = (time: Dayjs) => time.format('HH:mm');
 
@@ -108,7 +142,7 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
         >
           {block.title}
         </Typography>
-        {block.canDelete && onDelete && (
+        {block.canDelete && (
           <IconButton
             className="delete-button"
             size="small"

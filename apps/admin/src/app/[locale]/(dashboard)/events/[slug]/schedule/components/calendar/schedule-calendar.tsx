@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
@@ -9,13 +8,9 @@ import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
 import {
   adjustOrCreateBreak,
-  removeBreak,
   snapToGrid,
-  createScheduleBlock,
-  calculateBlockPosition,
   reducePreviousBreak,
-  deleteBlockAndMergeBreaks,
-  renumberRounds
+  calculateBlockPosition
 } from './calendar-utils';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
@@ -23,28 +18,10 @@ import { CalendarHeader } from './calendar-header';
 import CalendarProvider, { useCalendar } from './calendar-context';
 
 const ScheduleCalendarContent: React.FC = () => {
-  const t = useTranslations('pages.events.schedule.calendar');
-
-  // Event start time for some reason
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6);
 
-  const {
-    teamsCount,
-    tablesCount,
-    practiceRounds,
-    rankingRounds,
-    staggerMatches,
-    practiceCycleTime,
-    rankingCycleTime,
-    setFieldStart,
-    setJudgingStart,
-    addRankingRound,
-    removeRankingRound,
-    addPracticeRound,
-    removePracticeRound
-  } = useSchedule();
-
+  const { setFieldStart, setJudgingStart } = useSchedule();
   const { blocks, dragState, setBlocks, setDragState } = useCalendar();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -183,143 +160,6 @@ const ScheduleCalendarContent: React.FC = () => {
     setFieldStart
   ]);
 
-  // Handle deleting blocks
-  const handleDeleteBlock = useCallback(
-    (blockId: string) => {
-      const block = blocks.find(b => b.id === blockId);
-      if (!block) return;
-
-      // Prevent deletion of judging sessions
-      if (block.type === 'judging-session') {
-        console.warn('Judging sessions cannot be deleted');
-        return;
-      }
-
-      if (block.type === 'break') {
-        // For breaks, just remove them without merging
-        setBlocks(prev => removeBreak(prev, blockId));
-      } else if (block.type === 'practice-round') {
-        // Simply remove the practice round and merge breaks, then renumber
-        setBlocks(prev => {
-          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, blockId);
-          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-          return blocksAfterRemoval;
-        });
-        removePracticeRound();
-      } else if (block.type === 'ranking-round') {
-        // Simply remove the ranking round and merge breaks, then renumber
-        setBlocks(prev => {
-          let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, blockId);
-          blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-          return blocksAfterRemoval;
-        });
-
-        removeRankingRound();
-      }
-    },
-    [blocks, removePracticeRound, removeRankingRound, setBlocks]
-  );
-
-  // Handle adding rounds
-  const handleAddPracticeRound = useCallback(() => {
-    // Find the first ranking round to insert a practice round before it
-    const firstRanking = blocks.find(b => b.type === 'ranking-round' && b.roundNumber === 1);
-    if (!firstRanking) return;
-
-    // Calculate the duration for a practice round
-    const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-    const practiceRoundDuration =
-      (practiceCycleTime.minute() * 60 + practiceCycleTime.second()) * matchesPerRound;
-
-    // The insertion time is where the first ranking round currently starts
-    const insertionTime = firstRanking.startTime;
-    const newPracticeStart = insertionTime;
-    const newPracticeEnd = insertionTime.add(practiceRoundDuration, 'second');
-
-    setBlocks(prev => {
-      // Create the new practice round
-      const newPracticeRound = createScheduleBlock(
-        'practice-round',
-        'field',
-        newPracticeStart,
-        newPracticeEnd,
-        practiceRounds + 1 // This will be renumbered correctly
-      );
-
-      // Shift all field blocks that start at or after the insertion time forward by the practice round duration
-      const updatedBlocks = prev.map(block => {
-        if (
-          block.column === 'field' &&
-          (block.startTime.isSame(insertionTime) || block.startTime.isAfter(insertionTime))
-        ) {
-          return {
-            ...block,
-            startTime: block.startTime.add(practiceRoundDuration, 'second'),
-            endTime: block.endTime.add(practiceRoundDuration, 'second')
-          };
-        }
-        return block;
-      });
-
-      // Add the new practice round to the shifted blocks
-      let finalBlocks = [...updatedBlocks, newPracticeRound];
-
-      // Renumber all rounds to ensure correct sequential numbering
-      finalBlocks = renumberRounds(finalBlocks);
-
-      return finalBlocks;
-    });
-
-    addPracticeRound();
-  }, [
-    blocks,
-    teamsCount,
-    tablesCount,
-    staggerMatches,
-    practiceCycleTime,
-    setBlocks,
-    practiceRounds,
-    addPracticeRound
-  ]);
-
-  const handleAddRankingRound = useCallback(() => {
-    const lastFieldBlock = columnBlocks.field[columnBlocks.field.length - 1];
-    const newRankingStart = lastFieldBlock.endTime;
-    const matchesPerRound = Math.ceil(teamsCount / tablesCount) * (staggerMatches ? 0.5 : 1);
-    const newRankingEnd = newRankingStart.add(
-      (rankingCycleTime.minute() * 60 + rankingCycleTime.second()) * matchesPerRound,
-      'second'
-    );
-
-    setBlocks(prev => {
-      let updatedBlocks = [
-        ...prev,
-        createScheduleBlock(
-          'ranking-round',
-          'field',
-          newRankingStart,
-          newRankingEnd,
-          rankingRounds + 1
-        )
-      ];
-
-      updatedBlocks = renumberRounds(updatedBlocks);
-
-      return updatedBlocks;
-    });
-
-    addRankingRound();
-  }, [
-    columnBlocks.field,
-    teamsCount,
-    tablesCount,
-    staggerMatches,
-    rankingCycleTime,
-    setBlocks,
-    addRankingRound,
-    rankingRounds
-  ]);
-
   // Set up event listeners
   useEffect(() => {
     if (dragState.isDragging) {
@@ -343,22 +183,11 @@ const ScheduleCalendarContent: React.FC = () => {
         cursor: dragState.isDragging ? 'grabbing' : 'default'
       }}
     >
-      <CalendarHeader
-        onAddPracticeRound={handleAddPracticeRound}
-        onAddRankingRound={handleAddRankingRound}
-      />
+      <CalendarHeader />
 
       <CalendarGrid>
-        <CalendarColumn
-          name="judging"
-          handleDragStart={handleDragStart}
-          handleDeleteBlock={handleDeleteBlock}
-        />
-        <CalendarColumn
-          name="field"
-          handleDragStart={handleDragStart}
-          handleDeleteBlock={handleDeleteBlock}
-        />
+        <CalendarColumn name="judging" handleDragStart={handleDragStart} />
+        <CalendarColumn name="field" handleDragStart={handleDragStart} />
       </CalendarGrid>
     </Paper>
   );
