@@ -7,13 +7,12 @@ import { Delete } from '@mui/icons-material';
 import { useEvent } from '../../../components/event-context';
 import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
 import { calculateBlockPosition } from './calendar-utils';
+import { useCalendar } from './calendar-context';
 
 interface ScheduleBlockComponentProps {
   block: ScheduleBlock;
   onDragStart: (block: ScheduleBlock, startY: number) => void;
   onDelete?: (blockId: string) => void;
-  isDragging?: boolean;
-  dragPosition?: number;
   isFirstBlock?: boolean;
 }
 
@@ -21,10 +20,12 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   block,
   onDragStart,
   onDelete,
-  isDragging = false,
-  dragPosition,
   isFirstBlock = false
 }) => {
+  const { dragState } = useCalendar();
+  const isDragging = dragState.isDragging && dragState.draggedBlock?.id === block.id;
+  const dragPosition = dragState.draggedPosition;
+
   // Start time of the event
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6).minute(0).second(0);

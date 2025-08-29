@@ -1,25 +1,28 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack } from '@mui/material';
-import { ScheduleBlock, HEADER_HEIGHT, DragState } from './calendar-types';
+import { ScheduleBlock, HEADER_HEIGHT, ScheduleColumn } from './calendar-types';
 import { ScheduleBlockComponent } from './schedule-block';
+import { useCalendar } from './calendar-context';
 
 interface CalendarColumnProps {
-  title: string;
-  blocks: ScheduleBlock[];
+  name: ScheduleColumn;
   handleDragStart: (block: ScheduleBlock, startY: number) => void;
   handleDeleteBlock: (blockId: string) => void;
-  dragState: DragState;
 }
 
 export const CalendarColumn: React.FC<CalendarColumnProps> = ({
-  title,
-  blocks,
+  name,
   handleDragStart,
-  handleDeleteBlock,
-  dragState
+  handleDeleteBlock
 }) => {
+  const t = useTranslations(`pages.events.schedule.calendar.${name}`);
+
+  const { blocks } = useCalendar();
+  const columnBlocks = blocks.filter(block => block.column === name);
+
   return (
     <Stack width="50%">
       <Box
@@ -33,11 +36,11 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({
           flexShrink: 0
         }}
       >
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h6">{t('title')}</Typography>
       </Box>
       <Box sx={{ position: 'relative', minHeight: '100%' }}>
-        {blocks.map(block => {
-          const nonBreakBlocks = blocks.filter(b => b.type !== 'break');
+        {columnBlocks.map(block => {
+          const nonBreakBlocks = columnBlocks.filter(b => b.type !== 'break');
           const isFirstBlock = nonBreakBlocks.length > 0 && nonBreakBlocks[0].id === block.id;
 
           return (
@@ -46,8 +49,6 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({
               block={block}
               onDragStart={handleDragStart}
               onDelete={handleDeleteBlock}
-              isDragging={dragState.isDragging && dragState.draggedBlock?.id === block.id}
-              dragPosition={dragState.draggedPosition}
               isFirstBlock={isFirstBlock}
             />
           );

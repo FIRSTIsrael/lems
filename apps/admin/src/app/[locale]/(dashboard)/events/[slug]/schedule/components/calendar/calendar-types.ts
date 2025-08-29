@@ -28,9 +28,9 @@ export const TIME_SLOT_HEIGHT = 3; // pixels per minute
 export const TIME_AXIS_WIDTH = 80;
 export const HEADER_HEIGHT = 40;
 
-export const BLOCK_COLORS = {
-  'practice-match': '#4CAF50',
-  'ranking-match': '#2196F3',
+export const BLOCK_COLORS: Record<ScheduleBlockType, string> = {
+  'practice-round': '#4CAF50',
+  'ranking-round': '#2196F3',
   'judging-session': '#FF9800',
   break: '#757575'
 } as const;

@@ -350,18 +350,14 @@ const ScheduleCalendarContent: React.FC = () => {
 
       <CalendarGrid>
         <CalendarColumn
-          title={t('judging.title')}
-          blocks={columnBlocks.judging}
+          name="judging"
           handleDragStart={handleDragStart}
           handleDeleteBlock={handleDeleteBlock}
-          dragState={dragState}
         />
         <CalendarColumn
-          title={t('field.title')}
-          blocks={columnBlocks.field}
+          name="field"
           handleDragStart={handleDragStart}
           handleDeleteBlock={handleDeleteBlock}
-          dragState={dragState}
         />
       </CalendarGrid>
     </Paper>
