@@ -129,13 +129,16 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
    */
   useEffect(() => {
     const judgingCycleDuration = getDuration(judgingSessionCycleTime);
+    const startTimeDiff = judgingStart.diff(blocks.judging[0].startTime, 'seconds');
 
     for (let index = 0; index < blocks.judging.length; index++) {
       const block = { ...blocks.judging[index] };
 
       const timeDiff = judgingCycleDuration - block.durationSeconds;
       block.durationSeconds = judgingCycleDuration;
-      block.startTime = block.startTime.add(index * timeDiff, 'seconds');
+      block.startTime = block.startTime
+        .add(index * timeDiff, 'seconds')
+        .add(startTimeDiff, 'seconds');
       updateBlock('judging', block.id, block);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,6 +154,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
   useEffect(() => {
     const practiceCycleDuration = getDuration(practiceCycleTime) * matchesPerRound;
     const rankingCycleDuration = getDuration(rankingCycleTime) * matchesPerRound;
+    const startTimeDiff = fieldStart.diff(blocks.field[0].startTime, 'seconds');
 
     for (let index = 0; index < blocks.field.length; index++) {
       const block = { ...blocks.field[index] };
@@ -168,14 +172,17 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
 
       if (block.type === 'practice-round') {
         block.durationSeconds = practiceCycleDuration;
-        block.startTime = block.startTime.add(index * practiceTimeDiff, 'seconds');
+        block.startTime = block.startTime
+          .add(index * practiceTimeDiff, 'seconds')
+          .add(startTimeDiff, 'seconds');
       }
 
       if (block.type === 'ranking-round') {
         block.durationSeconds = rankingCycleDuration;
         block.startTime = block.startTime
           .add(practiceRounds * practiceTimeDiff, 'seconds')
-          .add((index - practiceRounds) * rankingTimeDiff, 'seconds');
+          .add((index - practiceRounds) * rankingTimeDiff, 'seconds')
+          .add(startTimeDiff, 'seconds');
       }
 
       updateBlock('field', block.id, block);
