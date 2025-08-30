@@ -86,7 +86,8 @@ const ScheduleCalendarContent: React.FC = () => {
     blocks,
     setDragState,
     setJudgingStart,
-    setFieldStart
+    setFieldStart,
+    updateColumn
   ]);
 
   const handleDragStart = useCallback(
