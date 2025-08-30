@@ -1,26 +1,5 @@
 import { Dayjs } from 'dayjs';
-import { nanoid } from 'nanoid';
-import {
-  ScheduleBlock,
-  ScheduleBlockType,
-  ScheduleColumn,
-  TIME_SLOT_HEIGHT
-} from './calendar-types';
-
-export function createScheduleBlock(
-  type: ScheduleBlockType,
-  startTime: Dayjs,
-  durationSeconds: number
-): ScheduleBlock {
-  const id = nanoid(12);
-
-  return {
-    id,
-    type,
-    startTime,
-    durationSeconds
-  };
-}
+import { ScheduleBlock, ScheduleColumn, TIME_SLOT_HEIGHT } from './calendar-types';
 
 export function getBlockColumn(block: ScheduleBlock): ScheduleColumn {
   if (block.type === 'judging-session') return 'judging';

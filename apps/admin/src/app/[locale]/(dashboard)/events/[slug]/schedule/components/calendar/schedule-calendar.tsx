@@ -22,7 +22,7 @@ const ScheduleCalendarContent: React.FC = () => {
   const startTime = dayjs(event.startDate).hour(6);
 
   const { setFieldStart, setJudgingStart } = useSchedule();
-  const { blocks, dragState, setDragState } = useCalendar();
+  const { blocks, dragState, setDragState, updateColumn } = useCalendar();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback(
@@ -53,18 +53,23 @@ const ScheduleCalendarContent: React.FC = () => {
     }
 
     const block = dragState.draggedBlock;
+
     const positionDiff = dragState.draggedPosition - dragState.originalPosition;
     const timeDiffMinutes = Math.round(positionDiff / TIME_SLOT_HEIGHT);
     const timeDiff = Math.round(timeDiffMinutes / INTERVAL_MINUTES) * INTERVAL_MINUTES; // Snap to 5-minute intervals
 
-    if (Math.abs(timeDiff) >= 5) {
-      const blockColumn = getBlockColumn(block);
-
-      if (blockColumn === 'judging') {
-        setJudgingStart(prev => prev.add(timeDiff, 'minute'));
-      } else {
-        setFieldStart(prev => prev.add(timeDiff, 'minute'));
+    const blockColumn = getBlockColumn(block);
+    const isFirstBlock = blocks[`${blockColumn}`][0].id === block.id;
+    if (isFirstBlock) {
+      if (Math.abs(timeDiff) >= 5) {
+        if (blockColumn === 'judging') {
+          setJudgingStart(prev => prev.add(timeDiff, 'minute'));
+        } else {
+          setFieldStart(prev => prev.add(timeDiff, 'minute'));
+        }
       }
+    } else {
+      updateColumn(blockColumn, block.id, block.startTime.add(timeDiff, 'minute'));
     }
 
     setDragState({
@@ -73,7 +78,16 @@ const ScheduleCalendarContent: React.FC = () => {
       draggedPosition: 0,
       originalPosition: 0
     });
-  }, [dragState, setDragState, setJudgingStart, setFieldStart]);
+  }, [
+    dragState.isDragging,
+    dragState.draggedBlock,
+    dragState.draggedPosition,
+    dragState.originalPosition,
+    blocks,
+    setDragState,
+    setJudgingStart,
+    setFieldStart
+  ]);
 
   const handleDragStart = useCallback(
     (block: ScheduleBlock, startY: number) => {
@@ -83,11 +97,6 @@ const ScheduleCalendarContent: React.FC = () => {
       const blockPosition = calculateBlockPosition(startTime, block);
       const blockTop = blockPosition.top + HEADER_HEIGHT;
 
-      // For now, only allow dragging the first block
-      const blockColumn = getBlockColumn(block);
-      const isFirstBlock = blocks[`${blockColumn}`][0].id === block.id;
-      if (!isFirstBlock) return;
-
       setDragState({
         isDragging: true,
         draggedBlock: block,
@@ -96,7 +105,7 @@ const ScheduleCalendarContent: React.FC = () => {
         originalPosition: blockTop
       });
     },
-    [setDragState, blocks, startTime]
+    [setDragState, startTime]
   );
 
   // Set up event listeners

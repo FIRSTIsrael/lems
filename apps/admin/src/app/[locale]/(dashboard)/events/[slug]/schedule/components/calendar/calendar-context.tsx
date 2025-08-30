@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Dayjs } from 'dayjs';
+import { nanoid } from 'nanoid';
 import { useSchedule } from '../schedule-context';
 import {
   BlocksByType,
@@ -10,9 +11,24 @@ import {
   ScheduleBlockType,
   ScheduleColumn
 } from './calendar-types';
-import { createScheduleBlock, getDuration } from './calendar-utils';
+import { getDuration } from './calendar-utils';
 
-const createBlocks = (
+const createBlock = (
+  type: ScheduleBlockType,
+  startTime: Dayjs,
+  durationSeconds: number
+): ScheduleBlock => {
+  const id = nanoid(12);
+
+  return {
+    id,
+    type,
+    startTime,
+    durationSeconds
+  };
+};
+
+const createInitialBlocks = (
   blockType: ScheduleBlockType,
   startTime: Dayjs,
   number: number,
@@ -24,7 +40,7 @@ const createBlocks = (
 
   for (let index = 1; index <= number; index++) {
     const eventDurationSeconds = getDuration(cycleTime) * eventsPerBlock;
-    blocks.push(createScheduleBlock(blockType, currentTime, eventDurationSeconds));
+    blocks.push(createBlock(blockType, currentTime, eventDurationSeconds));
     currentTime = currentTime.add(eventDurationSeconds, 'second');
   }
 
@@ -35,10 +51,10 @@ export interface CalendarContextType {
   blocks: BlocksByType;
   dragState: DragState;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
-  updateBlock: (column: ScheduleColumn, blockId: string, updates: Partial<ScheduleBlock>) => void;
   addPracticeRound: () => void;
   addRankingRound: () => void;
   deleteFieldBlock: (blockId: string) => void;
+  updateColumn: (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => void;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined);
@@ -67,11 +83,21 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     let fieldBlocks: ScheduleBlock[] = [];
 
     judgingBlocks = judgingBlocks.concat(
-      createBlocks('judging-session', judgingStart, judgingSessions, judgingSessionCycleTime)
+      createInitialBlocks('judging-session', judgingStart, judgingSessions, judgingSessionCycleTime)
     );
 
     fieldBlocks = fieldBlocks.concat(
-      createBlocks('practice-round', fieldStart, practiceRounds, practiceCycleTime, matchesPerRound)
+      createInitialBlocks(
+        'practice-round',
+
+        fieldStart,
+
+        practiceRounds,
+
+        practiceCycleTime,
+
+        matchesPerRound
+      )
     );
 
     const lastPracticeMatch = fieldBlocks[fieldBlocks.length - 1];
@@ -80,7 +106,17 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
       'seconds'
     );
     fieldBlocks = fieldBlocks.concat(
-      createBlocks('ranking-round', rankingStart, rankingRounds, rankingCycleTime, matchesPerRound)
+      createInitialBlocks(
+        'ranking-round',
+
+        rankingStart,
+
+        rankingRounds,
+
+        rankingCycleTime,
+
+        matchesPerRound
+      )
     );
 
     return { field: fieldBlocks, judging: judgingBlocks };
@@ -97,8 +133,9 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     for (let index = 0; index < blocks.judging.length; index++) {
       const block = { ...blocks.judging[index] };
 
+      const timeDiff = judgingCycleDuration - block.durationSeconds;
       block.durationSeconds = judgingCycleDuration;
-      block.startTime = judgingStart.add(index * judgingCycleDuration, 'seconds');
+      block.startTime = block.startTime.add(index * timeDiff, 'seconds');
       updateBlock('judging', block.id, block);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,16 +155,27 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     for (let index = 0; index < blocks.field.length; index++) {
       const block = { ...blocks.field[index] };
 
+      const firstPractice = blocks.field.find(b => b.type === 'practice-round');
+      const firstRanking = blocks.field.find(b => b.type === 'ranking-round');
+
+      if (!firstPractice || !firstRanking) {
+        console.error('No practice or ranking rounds found in field blocks');
+        return; // Should never happen
+      }
+
+      const practiceTimeDiff = practiceCycleDuration - (firstPractice?.durationSeconds || 0);
+      const rankingTimeDiff = rankingCycleDuration - (firstRanking?.durationSeconds || 0);
+
       if (block.type === 'practice-round') {
         block.durationSeconds = practiceCycleDuration;
-        block.startTime = fieldStart.add(index * practiceCycleDuration, 'seconds');
+        block.startTime = block.startTime.add(index * practiceTimeDiff, 'seconds');
       }
 
       if (block.type === 'ranking-round') {
         block.durationSeconds = rankingCycleDuration;
-        block.startTime = fieldStart
-          .add(practiceRounds * practiceCycleDuration, 'seconds')
-          .add((index - practiceRounds) * rankingCycleDuration, 'seconds');
+        block.startTime = block.startTime
+          .add(practiceRounds * practiceTimeDiff, 'seconds')
+          .add((index - practiceRounds) * rankingTimeDiff, 'seconds');
       }
 
       updateBlock('field', block.id, block);
@@ -142,17 +190,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     originalPosition: 0
   });
 
-  const updateBlock = (
-    column: ScheduleColumn,
-    blockId: string,
-    updates: Partial<ScheduleBlock>
-  ) => {
-    setBlocks(prev => ({
-      ...prev,
-      [column]: prev[column].map(block => (block.id === blockId ? { ...block, ...updates } : block))
-    }));
-  };
-
   const addPracticeRound = () => {
     const currentPracticeRounds = practiceRounds;
     const newFieldBlocks = [...blocks.field];
@@ -165,7 +202,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     newFieldBlocks.splice(
       currentPracticeRounds,
       0,
-      createScheduleBlock('practice-round', startTime, practiceCycleDuration)
+      createBlock('practice-round', startTime, practiceCycleDuration)
     );
 
     for (const block of newFieldBlocks) {
@@ -185,10 +222,35 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     const startTime = lastRound.startTime.add(lastRound.durationSeconds, 'seconds');
     const rankingCycleDuration = getDuration(rankingCycleTime) * matchesPerRound;
 
-    newFieldBlocks.push(createScheduleBlock('ranking-round', startTime, rankingCycleDuration));
+    newFieldBlocks.push(createBlock('ranking-round', startTime, rankingCycleDuration));
 
     setBlocks(prev => ({ ...prev, field: newFieldBlocks }));
     setRankingRounds(prev => prev + 1);
+  };
+
+  const updateBlock = (
+    column: ScheduleColumn,
+    blockId: string,
+    updates: Partial<ScheduleBlock>
+  ) => {
+    setBlocks(prev => ({
+      ...prev,
+      [column]: prev[column].map(block => (block.id === blockId ? { ...block, ...updates } : block))
+    }));
+  };
+
+  const updateColumn = (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => {
+    const blockIndex = blocks[column].findIndex(block => block.id === blockId);
+    if (blockIndex === -1) return; // Block not found
+
+    const originalBlock = { ...blocks[column][blockIndex] };
+    const timeDiff = newStartTime.diff(originalBlock.startTime, 'seconds');
+
+    for (let index = blockIndex; index < blocks[column].length; index++) {
+      const block = { ...blocks[column][index] };
+      block.startTime = block.startTime.add(timeDiff, 'seconds');
+      updateBlock(column, block.id, block);
+    }
   };
 
   const deleteFieldBlock = (blockId: string) => {
@@ -210,10 +272,10 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     blocks,
     dragState,
     setDragState,
-    updateBlock,
     addPracticeRound,
     addRankingRound,
-    deleteFieldBlock
+    deleteFieldBlock,
+    updateColumn
   };
 
   return <CalendarContext.Provider value={contextValue}>{children}</CalendarContext.Provider>;
