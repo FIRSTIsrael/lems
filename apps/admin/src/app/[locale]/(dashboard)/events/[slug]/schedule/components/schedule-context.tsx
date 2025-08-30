@@ -19,6 +19,17 @@ const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
 const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
 const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
+const multiplyCycleTime = (cycleTime: Dayjs, multiplier: number) => {
+  const newTime = cycleTime.clone();
+  newTime.set('hour', 0).set('minute', 0).set('second', 0);
+
+  const durationSeconds =
+    (cycleTime.hour() * 3600 + cycleTime.minute() * 60 + cycleTime.second()) * multiplier;
+
+  newTime.add(durationSeconds, 'second');
+  return newTime;
+};
+
 export interface ScheduleContextType {
   teamsCount: number;
   roomsCount: number;
@@ -86,42 +97,34 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     { suspense: true }
   );
 
-  const [staggerMatches, setStaggerMatches] = useState(DEFAULT_STAGGER_MATCHES);
+  const [staggerMatches, setStaggerMatchesState] = useState(DEFAULT_STAGGER_MATCHES);
   const [practiceRounds, setPracticeRounds] = useState(DEFAULT_PRACTICE_ROUNDS);
   const [rankingRounds, setRankingRounds] = useState(DEFAULT_RANKING_ROUNDS);
-  const [practiceCycleTime, setPracticeCycleTimeState] = useState<Dayjs>(
-    DEFAULT_PRACTICE_CYCLE_TIME
-  );
-  const [rankingCycleTime, setRankingCycleTimeState] = useState<Dayjs>(DEFAULT_RANKING_CYCLE_TIME);
-  const [judgingSessionCycleTime, setJudgingSessionCycleTimeState] = useState<Dayjs>(
+  const [practiceCycleTime, setPracticeCycleTime] = useState<Dayjs>(DEFAULT_PRACTICE_CYCLE_TIME);
+  const [rankingCycleTime, setRankingCycleTime] = useState<Dayjs>(DEFAULT_RANKING_CYCLE_TIME);
+  const [judgingSessionCycleTime, setJudgingSessionCycleTime] = useState<Dayjs>(
     DEFAULT_JUDGING_SESSION_CYCLE_TIME
   );
-  const [matchLength, setMatchLengthState] = useState<Dayjs>(DEFAULT_MATCH_LENGTH);
-  const [judgingSessionLength, setJudgingSessionLengthState] = useState<Dayjs>(
+  const [matchLength, setMatchLength] = useState<Dayjs>(DEFAULT_MATCH_LENGTH);
+  const [judgingSessionLength, setJudgingSessionLength] = useState<Dayjs>(
     DEFAULT_JUDGING_SESSION_LENGTH
   );
 
   const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
   const [judgingStart, setJudgingStart] = useState<Dayjs>(getJudgingStart(event.startDate));
 
-  const setPracticeCycleTime = (value: Dayjs | null) => {
-    if (value) setPracticeCycleTimeState(value);
-  };
+  const setStaggerMatches = (value: boolean) => {
+    if (value === staggerMatches) return;
 
-  const setRankingCycleTime = (value: Dayjs | null) => {
-    if (value) setRankingCycleTimeState(value);
-  };
-
-  const setJudgingSessionCycleTime = (value: Dayjs | null) => {
-    if (value) setJudgingSessionCycleTimeState(value);
-  };
-
-  const setMatchLength = (value: Dayjs | null) => {
-    if (value) setMatchLengthState(value);
-  };
-
-  const setJudgingSessionLength = (value: Dayjs | null) => {
-    if (value) setJudgingSessionLengthState(value);
+    if (staggerMatches) {
+      multiplyCycleTime(practiceCycleTime, 2);
+      multiplyCycleTime(rankingCycleTime, 2);
+      setStaggerMatchesState(false);
+    } else {
+      multiplyCycleTime(practiceCycleTime, 0.5);
+      multiplyCycleTime(rankingCycleTime, 0.5);
+      setStaggerMatchesState(true);
+    }
   };
 
   const addPracticeRound = () => {
@@ -144,11 +147,11 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     setStaggerMatches(DEFAULT_STAGGER_MATCHES);
     setPracticeRounds(DEFAULT_PRACTICE_ROUNDS);
     setRankingRounds(DEFAULT_RANKING_ROUNDS);
-    setPracticeCycleTimeState(DEFAULT_PRACTICE_CYCLE_TIME);
-    setRankingCycleTimeState(DEFAULT_RANKING_CYCLE_TIME);
-    setJudgingSessionCycleTimeState(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
-    setMatchLengthState(DEFAULT_MATCH_LENGTH);
-    setJudgingSessionLengthState(DEFAULT_JUDGING_SESSION_LENGTH);
+    setPracticeCycleTime(DEFAULT_PRACTICE_CYCLE_TIME);
+    setRankingCycleTime(DEFAULT_RANKING_CYCLE_TIME);
+    setJudgingSessionCycleTime(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
+    setMatchLength(DEFAULT_MATCH_LENGTH);
+    setJudgingSessionLength(DEFAULT_JUDGING_SESSION_LENGTH);
     setFieldStart(getFieldStart(event.startDate));
     setJudgingStart(getJudgingStart(event.startDate));
   };

@@ -11,16 +11,17 @@ const createBlocks = (
   column: ScheduleColumn,
   startTime: Dayjs,
   number: number,
-  cycleTime: Dayjs
+  cycleTime: Dayjs,
+  eventsPerBlock: number = 1
 ) => {
   const blocks: ScheduleBlock[] = [];
   let currentTime = startTime.clone();
 
   for (let index = 1; index <= number; index++) {
-    const endTime = currentTime
-      .add(cycleTime.hour(), 'hour')
-      .add(cycleTime.minute(), 'minute')
-      .add(cycleTime.second(), 'second');
+    const eventDurationSeconds =
+      (cycleTime.hour() * 3600 + cycleTime.minute() * 60 + cycleTime.second()) * eventsPerBlock;
+    const endTime = currentTime.add(eventDurationSeconds, 'second');
+
     blocks.push(createScheduleBlock(blockType, column, currentTime, endTime, index));
     currentTime = endTime.clone();
   }
@@ -51,6 +52,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     practiceRounds,
     rankingCycleTime,
     rankingRounds,
+    matchesPerRound,
     judgingStart,
     judgingSessions,
     judgingSessionCycleTime
@@ -70,12 +72,26 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     );
 
     blocks_ = blocks_.concat(
-      createBlocks('practice-round', 'field', fieldStart, practiceRounds, practiceCycleTime)
+      createBlocks(
+        'practice-round',
+        'field',
+        fieldStart,
+        practiceRounds,
+        practiceCycleTime,
+        matchesPerRound
+      )
     );
 
     const rankingStart = blocks_[blocks_.length - 1].endTime;
     blocks_ = blocks_.concat(
-      createBlocks('ranking-round', 'field', rankingStart, rankingRounds, rankingCycleTime)
+      createBlocks(
+        'ranking-round',
+        'field',
+        rankingStart,
+        rankingRounds,
+        rankingCycleTime,
+        matchesPerRound
+      )
     );
 
     return blocks_;
