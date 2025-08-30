@@ -28,7 +28,7 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   const startTime = dayjs(event.startDate).hour(6).minute(0).second(0);
 
   const { practiceRounds } = useSchedule();
-  const { dragState } = useCalendar();
+  const { dragState, deleteFieldBlock } = useCalendar();
 
   const isDragging = dragState.isDragging && dragState.draggedBlock?.id === block.id;
   const dragPosition = dragState.draggedPosition;
@@ -58,40 +58,6 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
       onDragStart(block, e.clientY);
     }
   };
-
-  // const handleDelete = useCallback(
-  //   (e: React.MouseEvent) => {
-  //     e.stopPropagation();
-
-  //     // Prevent deletion of judging sessions
-  //     if (block.type === 'judging-session') {
-  //       console.warn('Judging sessions cannot be deleted');
-  //       return;
-  //     }
-
-  //     if (block.type === 'practice-round') {
-  //       // Simply remove the practice round and merge breaks, then renumber
-  //       setBlocks(prev => {
-  //         let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, block.id);
-  //         blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-  //         return blocksAfterRemoval;
-  //       });
-  //       removePracticeRound();
-  //     } else if (block.type === 'ranking-round') {
-  //       // Simply remove the ranking round and merge breaks, then renumber
-  //       setBlocks(prev => {
-  //         let blocksAfterRemoval = deleteBlockAndMergeBreaks(prev, block.id);
-  //         blocksAfterRemoval = renumberRounds(blocksAfterRemoval);
-  //         return blocksAfterRemoval;
-  //       });
-
-  //       removeRankingRound();
-  //     }
-  //   },
-  //   [block, removePracticeRound, removeRankingRound, setBlocks]
-  // );
-
-  const handleDelete = () => {};
 
   const formatTime = (time: Dayjs) => time.format('HH:mm');
 
@@ -174,7 +140,7 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
           <IconButton
             className="delete-button"
             size="small"
-            onClick={handleDelete}
+            onClick={() => deleteFieldBlock(block.id)}
             sx={{
               opacity: 0,
               transition: 'opacity 0.2s ease',

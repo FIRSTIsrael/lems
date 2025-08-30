@@ -80,7 +80,6 @@ const ScheduleCalendarContent: React.FC = () => {
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
 
-      // Calculate the block's current position
       const blockPosition = calculateBlockPosition(startTime, block);
       const blockTop = blockPosition.top + HEADER_HEIGHT;
 

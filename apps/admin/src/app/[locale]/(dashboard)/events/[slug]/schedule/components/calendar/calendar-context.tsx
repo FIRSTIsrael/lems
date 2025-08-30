@@ -38,6 +38,7 @@ export interface CalendarContextType {
   updateBlock: (column: ScheduleColumn, blockId: string, updates: Partial<ScheduleBlock>) => void;
   addPracticeRound: () => void;
   addRankingRound: () => void;
+  deleteFieldBlock: (blockId: string) => void;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined);
@@ -190,13 +191,29 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     setRankingRounds(prev => prev + 1);
   };
 
+  const deleteFieldBlock = (blockId: string) => {
+    const newBlocks = [...blocks.field];
+    const index = newBlocks.findIndex(block => block.id === blockId);
+    if (index === -1) return; // Block not found
+
+    const [deleted] = newBlocks.splice(index, 1);
+
+    for (let i = index; i < newBlocks.length; i++) {
+      const block = newBlocks[i];
+      block.startTime = block.startTime.subtract(deleted.durationSeconds, 'seconds');
+    }
+
+    setBlocks(prev => ({ ...prev, field: newBlocks }));
+  };
+
   const contextValue: CalendarContextType = {
     blocks,
     dragState,
     setDragState,
     updateBlock,
     addPracticeRound,
-    addRankingRound
+    addRankingRound,
+    deleteFieldBlock
   };
 
   return <CalendarContext.Provider value={contextValue}>{children}</CalendarContext.Provider>;
