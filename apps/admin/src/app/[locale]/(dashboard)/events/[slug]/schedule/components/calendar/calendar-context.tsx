@@ -100,6 +100,8 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     setBlocks(prev => prev.map(block => (block.id === blockId ? { ...block, ...updates } : block)));
   };
 
+  console.log(blocks[0]?.startTime.toString());
+
   const contextValue: CalendarContextType = {
     blocks,
     dragState,

@@ -28,9 +28,7 @@ interface CalendarGridProps {
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({ children }) => {
   const event = useEvent();
-
   const timeRange = { start: dayjs(event.startDate).hour(6), end: dayjs(event.endDate).hour(20) };
-
   const slots = generateTimeSlots(timeRange.start, timeRange.end);
 
   return (

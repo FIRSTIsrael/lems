@@ -3,10 +3,11 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
+import { useEvent } from '../../components/event-context';
 
 const DEFAULT_STAGGER_MATCHES = true;
 const DEFAULT_MATCH_LENGTH = dayjs().hour(0).minute(2).second(30);
-const DEFAULT_FIELD_START = dayjs().hour(8).minute(0).second(0);
+const getFieldStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
 const DEFAULT_PRACTICE_ROUNDS = 1;
 const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
@@ -16,7 +17,7 @@ const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
 
 const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
 const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
-const DEFAULT_JUDGING_START = dayjs().hour(8).minute(0).second(0);
+const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
 export interface ScheduleContextType {
   teamsCount: number;
@@ -68,6 +69,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   eventId,
   divisionId
 }) => {
+  const event = useEvent();
+
   const { data: teams = [] } = useSWR<unknown[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/teams`,
     { suspense: true }
@@ -97,8 +100,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [judgingSessionLength, setJudgingSessionLengthState] = useState<Dayjs>(
     DEFAULT_JUDGING_SESSION_LENGTH
   );
-  const [fieldStart, setFieldStart] = useState<Dayjs>(DEFAULT_FIELD_START);
-  const [judgingStart, setJudgingStart] = useState<Dayjs>(DEFAULT_JUDGING_START);
+
+  const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
+  const [judgingStart, setJudgingStart] = useState<Dayjs>(getJudgingStart(event.startDate));
 
   const setPracticeCycleTime = (value: Dayjs | null) => {
     if (value) setPracticeCycleTimeState(value);
@@ -145,8 +149,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     setJudgingSessionCycleTimeState(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
     setMatchLengthState(DEFAULT_MATCH_LENGTH);
     setJudgingSessionLengthState(DEFAULT_JUDGING_SESSION_LENGTH);
-    setFieldStart(DEFAULT_FIELD_START);
-    setJudgingStart(DEFAULT_JUDGING_START);
+    setFieldStart(getFieldStart(event.startDate));
+    setJudgingStart(getJudgingStart(event.startDate));
   };
 
   const contextValue: ScheduleContextType = {
