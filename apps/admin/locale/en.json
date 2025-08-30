@@ -445,7 +445,14 @@
             "title": "Information",
             "teams": "Teams",
             "rooms": "Rooms",
-            "tables": "Tables"
+            "tables": "Tables",
+            "total-matches": "Total Matches",
+            "total-sessions": "Total Judging Sessions",
+            "practice-rounds": "Practice Rounds",
+            "ranking-rounds": "Ranking Rounds",
+            "judging-start": "Judging start time",
+            "field-start": "Field start time",
+            "matches-per-round": "Matches per round"
           },
           "settings": {
             "title": "Settings",
@@ -460,9 +467,13 @@
           }
         },
         "calendar": {
+          "blocks": {
+            "judging-session": "Judging Session #{number}",
+            "practice-round": "Practice Match #{number}",
+            "ranking-round": "Ranking Match #{number}"
+          },
           "judging": {
             "title": "Judging",
-            "judging-session-name": "Judging Session #{number}",
             "add-break": "Add Judging break",
             "break": "Judging break"
           },
@@ -470,18 +481,8 @@
             "title": "Field",
             "add-practice-round": "Add Practice Match",
             "add-ranking-round": "Add Ranking Match",
-            "ranking-round-name": "Ranking Match #{number}",
-            "practice-round-name": "Practice Match #{number}",
             "add-break": "Add Field break",
             "break": "Field break"
-          },
-          "stats": {
-            "total-matches": "Total Matches",
-            "total-sessions": "Total Judging Sessions",
-            "practice-rounds": "Practice Rounds",
-            "ranking-rounds": "Ranking Rounds",
-            "judging-start": "Judging start time",
-            "field-start": "Field start time"
           }
         }
       }

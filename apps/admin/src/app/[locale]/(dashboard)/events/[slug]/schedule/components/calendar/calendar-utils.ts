@@ -1,434 +1,404 @@
 import { Dayjs } from 'dayjs';
+import { nanoid } from 'nanoid';
 import {
   ScheduleBlock,
   ScheduleBlockType,
-  INTERVAL_MINUTES,
+  ScheduleColumn,
   TIME_SLOT_HEIGHT
 } from './calendar-types';
 
-export function calculateBlockPosition(
-  startTime: Dayjs,
-  blockStartTime: Dayjs,
-  blockEndTime: Dayjs
-) {
-  const minutesFromStart = blockStartTime.diff(startTime, 'minute');
-  const durationMinutes = blockEndTime.diff(blockStartTime, 'minute');
-
-  return {
-    top: minutesFromStart * TIME_SLOT_HEIGHT,
-    height: durationMinutes * TIME_SLOT_HEIGHT
-  };
-}
-
-export function snapToGrid(yPosition: number): number {
-  const slotHeight = INTERVAL_MINUTES * TIME_SLOT_HEIGHT;
-  return Math.round(yPosition / slotHeight) * slotHeight;
-}
-
-export function calculateTimeFromPosition(position: number, startTime: Dayjs): Dayjs {
-  const minutes = Math.round(position / TIME_SLOT_HEIGHT);
-  return startTime.add(minutes, 'minute');
-}
-
-export function getColumnStartTime(
-  column: 'judging' | 'field',
-  judgingStartTime: Dayjs,
-  fieldStartTime: Dayjs
-): Dayjs {
-  return column === 'judging' ? judgingStartTime : fieldStartTime;
-}
-
-export function renumberRounds(blocks: ScheduleBlock[]): ScheduleBlock[] {
-  // Get practice rounds sorted by start time
-  const practiceRounds = blocks
-    .filter(b => b.type === 'practice-round')
-    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-
-  // Get ranking rounds sorted by start time
-  const rankingRounds = blocks
-    .filter(b => b.type === 'ranking-round')
-    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-
-  // Create a map of old ID to new round number and title
-  const roundUpdates = new Map<string, { roundNumber: number; title: string }>();
-
-  // Renumber practice rounds separately (1, 2, 3, ...)
-  practiceRounds.forEach((block, index) => {
-    const newRoundNumber = index + 1;
-    roundUpdates.set(block.id, {
-      roundNumber: newRoundNumber,
-      title: `Practice Round ${newRoundNumber}`
-    });
-  });
-
-  // Renumber ranking rounds separately (1, 2, 3, ...)
-  rankingRounds.forEach((block, index) => {
-    const newRoundNumber = index + 1;
-    roundUpdates.set(block.id, {
-      roundNumber: newRoundNumber,
-      title: `Ranking Round ${newRoundNumber}`
-    });
-  });
-
-  // Apply the updates to all blocks
-  return blocks.map(block => {
-    const update = roundUpdates.get(block.id);
-    if (update) {
-      return {
-        ...block,
-        roundNumber: update.roundNumber,
-        title: update.title,
-        canDelete:
-          block.type !== 'break' &&
-          block.type !== 'judging-session' &&
-          !(block.type === 'practice-round' && update.roundNumber === 1) &&
-          !(block.type === 'ranking-round' && update.roundNumber === 1)
-      };
-    }
-    return block;
-  });
-}
-
-export function deleteBlockAndMergeBreaks(
-  blocks: ScheduleBlock[],
-  blockIdToDelete: string
-): ScheduleBlock[] {
-  const blockToDelete = blocks.find(b => b.id === blockIdToDelete);
-  if (!blockToDelete) return blocks;
-
-  const column = blockToDelete.column;
-  const columnBlocks = blocks
-    .filter(b => b.column === column)
-    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-
-  const otherBlocks = blocks.filter(b => b.column !== column);
-
-  // Find the index of the block to delete
-  const deleteIndex = columnBlocks.findIndex(b => b.id === blockIdToDelete);
-  if (deleteIndex === -1) return blocks;
-
-  // Check if this is the last block in the column
-  const isLastBlock = deleteIndex === columnBlocks.length - 1;
-
-  // Find breaks before and after the deleted block
-  const blockBefore = deleteIndex > 0 ? columnBlocks[deleteIndex - 1] : null;
-  const blockAfter = deleteIndex < columnBlocks.length - 1 ? columnBlocks[deleteIndex + 1] : null;
-
-  let updatedColumnBlocks = columnBlocks.filter(b => b.id !== blockIdToDelete);
-
-  // Special case: if deleting the last block and there's a break before it, remove the break too
-  if (isLastBlock && blockBefore?.type === 'break') {
-    updatedColumnBlocks = updatedColumnBlocks.filter(b => b.id !== blockBefore.id);
-  } else if (blockBefore?.type === 'break' && blockAfter?.type === 'break') {
-    // If there are breaks before and after, merge them
-    const mergedBreak: ScheduleBlock = {
-      ...blockBefore,
-      endTime: blockAfter.endTime
-    };
-
-    // Remove both original breaks and add the merged one
-    updatedColumnBlocks = updatedColumnBlocks
-      .filter(b => b.id !== blockBefore.id && b.id !== blockAfter.id)
-      .concat(mergedBreak)
-      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-  } else if (blockBefore?.type === 'break') {
-    // Extend the break before to fill the deleted block's time
-    const extendedBreak: ScheduleBlock = {
-      ...blockBefore,
-      endTime: blockToDelete.endTime
-    };
-
-    updatedColumnBlocks = updatedColumnBlocks
-      .map(b => (b.id === blockBefore.id ? extendedBreak : b))
-      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-  } else if (blockAfter?.type === 'break') {
-    // Extend the break after to fill the deleted block's time
-    const extendedBreak: ScheduleBlock = {
-      ...blockAfter,
-      startTime: blockToDelete.startTime
-    };
-
-    updatedColumnBlocks = updatedColumnBlocks
-      .map(b => (b.id === blockAfter.id ? extendedBreak : b))
-      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-  } else if (!isLastBlock) {
-    // No adjacent breaks and not the last block - create a new break in the deleted block's place
-    const newBreak = createScheduleBlock(
-      'break',
-      column,
-      blockToDelete.startTime,
-      blockToDelete.endTime
-    );
-
-    updatedColumnBlocks = updatedColumnBlocks
-      .concat(newBreak)
-      .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-  }
-  // If it's the last block and no break before, just remove it without creating a break
-
-  return [...otherBlocks, ...updatedColumnBlocks];
-}
-
 export function createScheduleBlock(
   type: ScheduleBlockType,
-  column: 'judging' | 'field',
   startTime: Dayjs,
-  endTime: Dayjs,
-  roundNumber?: number
+  durationSeconds: number
 ): ScheduleBlock {
-  const id = `${type}-${column}-${roundNumber || Date.now()}`;
-  let title = '';
-
-  switch (type) {
-    case 'practice-round':
-      title = `Practice Round ${roundNumber}`;
-      break;
-    case 'ranking-round':
-      title = `Ranking Round ${roundNumber}`;
-      break;
-    case 'judging-session':
-      title = `Judging Session ${roundNumber}`;
-      break;
-    case 'break':
-      title = 'Break';
-      break;
-  }
+  const id = nanoid(12);
 
   return {
     id,
     type,
-    column,
     startTime,
-    endTime,
-    title,
-    roundNumber,
-    canDelete:
-      type !== 'break' &&
-      type !== 'judging-session' &&
-      !(type === 'practice-round' && roundNumber === 1) &&
-      !(type === 'ranking-round' && roundNumber === 1)
+    durationSeconds
   };
 }
 
-export function adjustOrCreateBreak(
-  blocks: ScheduleBlock[],
-  column: 'judging' | 'field',
-  targetBlock: ScheduleBlock,
-  timeDiff: number // in minutes (positive = forward, negative = backward)
-): ScheduleBlock[] {
-  const columnBlocks = blocks
-    .filter(b => b.column === column)
-    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-
-  const targetIndex = columnBlocks.findIndex(b => b.id === targetBlock.id);
-  if (targetIndex === -1) return blocks;
-
-  // Find the block immediately before the target
-  const previousBlock = targetIndex > 0 ? columnBlocks[targetIndex - 1] : null;
-
-  if (timeDiff > 0) {
-    // Moving forward - need to create or extend break before target block
-    if (previousBlock && previousBlock.type === 'break') {
-      // There's already a break before this block - extend it
-      return blocks.map(block => {
-        if (block.id === previousBlock.id) {
-          return {
-            ...block,
-            endTime: block.endTime.add(timeDiff, 'minute')
-          };
-        } else if (
-          block.column === column &&
-          (block.startTime.isAfter(previousBlock.endTime) ||
-            block.startTime.isSame(previousBlock.endTime))
-        ) {
-          // Shift this block and all subsequent blocks
-          return {
-            ...block,
-            startTime: block.startTime.add(timeDiff, 'minute'),
-            endTime: block.endTime.add(timeDiff, 'minute')
-          };
-        }
-        return block;
-      });
-    } else {
-      // No break before this block - create a new one
-      return insertBreak(blocks, column, targetBlock.startTime, timeDiff);
-    }
-  } else {
-    // Moving backward - try to reduce previous break
-    return reducePreviousBreak(blocks, column, targetBlock, timeDiff);
-  }
+export function getBlockColumn(block: ScheduleBlock): ScheduleColumn {
+  if (block.type === 'judging-session') return 'judging';
+  return 'field';
 }
 
-export function insertBreak(
-  blocks: ScheduleBlock[],
-  column: 'judging' | 'field',
-  insertTime: Dayjs,
-  duration: number // in minutes
-): ScheduleBlock[] {
-  const columnBlocks = blocks.filter(b => b.column === column && b.type !== 'break');
-  const otherBlocks = blocks.filter(b => b.column !== column);
-  const existingBreaks = blocks.filter(b => b.column === column && b.type === 'break');
+export function calculateBlockPosition(startTime: Dayjs, block: ScheduleBlock) {
+  const minutesFromStart = block.startTime.diff(startTime, 'minute');
 
-  // Find the block that should be pushed back
-  const blockToShift = columnBlocks.find(
-    b => b.startTime.isAfter(insertTime) || b.startTime.isSame(insertTime)
-  );
-
-  if (!blockToShift) return blocks;
-
-  // Check if there's already a break at the exact insertion time
-  const existingBreakAtTime = existingBreaks.find(b => b.startTime.isSame(insertTime));
-
-  if (existingBreakAtTime) {
-    // Modify existing break instead of creating a new one
-    const newDuration =
-      existingBreakAtTime.endTime.diff(existingBreakAtTime.startTime, 'minute') + duration;
-
-    if (newDuration <= 0) {
-      // Remove the break if duration becomes 0 or negative
-      return removeBreak(blocks, existingBreakAtTime.id);
-    } else {
-      // Extend the existing break and shift subsequent blocks
-      const extendedBreak = {
-        ...existingBreakAtTime,
-        endTime: existingBreakAtTime.endTime.add(duration, 'minute')
-      };
-
-      // Shift all blocks that come after the extended break
-      const shiftedBlocks = columnBlocks.map(block => {
-        if (
-          block.startTime.isAfter(existingBreakAtTime.endTime) ||
-          block.startTime.isSame(existingBreakAtTime.endTime)
-        ) {
-          return {
-            ...block,
-            startTime: block.startTime.add(duration, 'minute'),
-            endTime: block.endTime.add(duration, 'minute')
-          };
-        }
-        return block;
-      });
-
-      // Shift other breaks that come after the extended break
-      const shiftedBreaks = existingBreaks.map(breakBlock => {
-        if (breakBlock.id === existingBreakAtTime.id) {
-          return extendedBreak;
-        } else if (breakBlock.startTime.isAfter(existingBreakAtTime.endTime)) {
-          return {
-            ...breakBlock,
-            startTime: breakBlock.startTime.add(duration, 'minute'),
-            endTime: breakBlock.endTime.add(duration, 'minute')
-          };
-        }
-        return breakBlock;
-      });
-
-      return [...otherBlocks, ...shiftedBlocks, ...shiftedBreaks];
-    }
-  } else {
-    // Create new break block
-    const breakBlock = createScheduleBlock(
-      'break',
-      column,
-      insertTime,
-      insertTime.add(duration, 'minute')
-    );
-
-    // Shift all subsequent blocks (including breaks)
-    const shiftedBlocks = columnBlocks.map(block => {
-      if (block.startTime.isAfter(insertTime) || block.startTime.isSame(insertTime)) {
-        const shiftAmount = duration;
-        return {
-          ...block,
-          startTime: block.startTime.add(shiftAmount, 'minute'),
-          endTime: block.endTime.add(shiftAmount, 'minute')
-        };
-      }
-      return block;
-    });
-
-    // Also shift existing breaks that come after the insertion point
-    const shiftedBreaks = existingBreaks.map(breakBlock => {
-      if (breakBlock.startTime.isAfter(insertTime) || breakBlock.startTime.isSame(insertTime)) {
-        return {
-          ...breakBlock,
-          startTime: breakBlock.startTime.add(duration, 'minute'),
-          endTime: breakBlock.endTime.add(duration, 'minute')
-        };
-      }
-      return breakBlock;
-    });
-
-    return [...otherBlocks, ...shiftedBlocks, ...shiftedBreaks, breakBlock];
-  }
+  return {
+    top: minutesFromStart * TIME_SLOT_HEIGHT,
+    height: (block.durationSeconds / 60) * TIME_SLOT_HEIGHT
+  };
 }
 
-export function removeBreak(blocks: ScheduleBlock[], breakId: string): ScheduleBlock[] {
-  const breakBlock = blocks.find(b => b.id === breakId);
-  if (!breakBlock || breakBlock.type !== 'break') return blocks;
-
-  const breakDuration = breakBlock.endTime.diff(breakBlock.startTime, 'minute');
-  const column = breakBlock.column;
-
-  // Remove the break and shift subsequent blocks back
-  const filteredBlocks = blocks.filter(b => b.id !== breakId);
-
-  return filteredBlocks.map(block => {
-    if (block.column === column && block.startTime.isAfter(breakBlock.startTime)) {
-      return {
-        ...block,
-        startTime: block.startTime.subtract(breakDuration, 'minute'),
-        endTime: block.endTime.subtract(breakDuration, 'minute')
-      };
-    }
-    return block;
-  });
+export function getDuration(date: Dayjs): number {
+  return date.hour() * 3600 + date.minute() * 60 + date.second();
 }
 
-export function reducePreviousBreak(
-  blocks: ScheduleBlock[],
-  column: 'judging' | 'field',
-  targetBlock: ScheduleBlock,
-  reductionMinutes: number
-): ScheduleBlock[] {
-  // Find the break immediately before the target block
-  const columnBlocks = blocks
-    .filter(b => b.column === column)
-    .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+/////// OLD
 
-  const targetIndex = columnBlocks.findIndex(b => b.id === targetBlock.id);
-  if (targetIndex <= 0) return blocks;
+// export function calculateTimeFromPosition(position: number, startTime: Dayjs): Dayjs {
+//   const minutes = Math.round(position / TIME_SLOT_HEIGHT);
+//   return startTime.add(minutes, 'minute');
+// }
 
-  const previousBlock = columnBlocks[targetIndex - 1];
-  if (previousBlock.type !== 'break') return blocks;
+// export function getColumnStartTime(
+//   column: 'judging' | 'field',
+//   judgingStartTime: Dayjs,
+//   fieldStartTime: Dayjs
+// ): Dayjs {
+//   return column === 'judging' ? judgingStartTime : fieldStartTime;
+// }
 
-  const currentBreakDuration = previousBlock.endTime.diff(previousBlock.startTime, 'minute');
-  const newDuration = currentBreakDuration + reductionMinutes; // reductionMinutes is negative
+// export function renumberRounds(blocks: ScheduleBlock[]): ScheduleBlock[] {
+//   // Get practice rounds sorted by start time
+//   const practiceRounds = blocks
+//     .filter(b => b.type === 'practice-round')
+//     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
 
-  if (newDuration <= 0) {
-    // Remove the break entirely and shift everything back
-    return removeBreak(blocks, previousBlock.id);
-  } else {
-    // Reduce the break duration and shift the target block and everything after it
-    return blocks.map(block => {
-      if (block.id === previousBlock.id) {
-        return {
-          ...block,
-          endTime: block.startTime.add(newDuration, 'minute')
-        };
-      } else if (
-        block.column === column &&
-        (block.startTime.isAfter(previousBlock.startTime) ||
-          block.startTime.isSame(previousBlock.endTime))
-      ) {
-        return {
-          ...block,
-          startTime: block.startTime.add(reductionMinutes, 'minute'),
-          endTime: block.endTime.add(reductionMinutes, 'minute')
-        };
-      }
-      return block;
-    });
-  }
-}
+//   // Get ranking rounds sorted by start time
+//   const rankingRounds = blocks
+//     .filter(b => b.type === 'ranking-round')
+//     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+//   // Create a map of old ID to new round number and title
+//   const roundUpdates = new Map<string, { roundNumber: number; title: string }>();
+
+//   // Renumber practice rounds separately (1, 2, 3, ...)
+//   practiceRounds.forEach((block, index) => {
+//     const newRoundNumber = index + 1;
+//     roundUpdates.set(block.id, {
+//       roundNumber: newRoundNumber,
+//       title: `Practice Round ${newRoundNumber}`
+//     });
+//   });
+
+//   // Renumber ranking rounds separately (1, 2, 3, ...)
+//   rankingRounds.forEach((block, index) => {
+//     const newRoundNumber = index + 1;
+//     roundUpdates.set(block.id, {
+//       roundNumber: newRoundNumber,
+//       title: `Ranking Round ${newRoundNumber}`
+//     });
+//   });
+
+//   // Apply the updates to all blocks
+//   return blocks.map(block => {
+//     const update = roundUpdates.get(block.id);
+//     if (update) {
+//       return {
+//         ...block,
+//         roundNumber: update.roundNumber,
+//         title: update.title,
+//         canDelete:
+//           /block.type !== 'break' &&
+//           block.type !== 'judging-session' &&
+//           !(block.type === 'practice-round' && update.roundNumber === 1) &&
+//           !(block.type === 'ranking-round' && update.roundNumber === 1)
+//       };
+//     }
+//     return block;
+//   });
+// }
+
+// export function deleteBlockAndMergeBreaks(
+//   blocks: BlocksByType,
+//   blockIdToDelete: string
+// ): ScheduleBlock[] {
+//   const column = getBlockColumn(blockToDelete);
+
+//   const blockToDelete = blocks[column].find(b => b.id === blockIdToDelete);
+//   if (!blockToDelete) return blocks;
+
+//   const columnBlocks = blocks[column].sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+//   const otherBlocks = blocks.filter(b => b.column !== column);
+
+//   // Find the index of the block to delete
+//   const deleteIndex = columnBlocks.findIndex(b => b.id === blockIdToDelete);
+//   if (deleteIndex === -1) return blocks;
+
+//   // Check if this is the last block in the column
+//   const isLastBlock = deleteIndex === columnBlocks.length - 1;
+
+//   // Find breaks before and after the deleted block
+//   const blockBefore = deleteIndex > 0 ? columnBlocks[deleteIndex - 1] : null;
+//   const blockAfter = deleteIndex < columnBlocks.length - 1 ? columnBlocks[deleteIndex + 1] : null;
+
+//   let updatedColumnBlocks = columnBlocks.filter(b => b.id !== blockIdToDelete);
+
+//   // Special case: if deleting the last block and there's a break before it, remove the break too
+//   if (isLastBlock && blockBefore?.type === 'break') {
+//     updatedColumnBlocks = updatedColumnBlocks.filter(b => b.id !== blockBefore.id);
+//   } else if (blockBefore?.type === 'break' && blockAfter?.type === 'break') {
+//     // If there are breaks before and after, merge them
+//     const mergedBreak: ScheduleBlock = {
+//       ...blockBefore,
+//       endTime: blockAfter.endTime
+//     };
+
+//     // Remove both original breaks and add the merged one
+//     updatedColumnBlocks = updatedColumnBlocks
+//       .filter(b => b.id !== blockBefore.id && b.id !== blockAfter.id)
+//       .concat(mergedBreak)
+//       .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+//   } else if (blockBefore?.type === 'break') {
+//     // Extend the break before to fill the deleted block's time
+//     const extendedBreak: ScheduleBlock = {
+//       ...blockBefore,
+//       endTime: blockToDelete.endTime
+//     };
+
+//     updatedColumnBlocks = updatedColumnBlocks
+//       .map(b => (b.id === blockBefore.id ? extendedBreak : b))
+//       .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+//   } else if (blockAfter?.type === 'break') {
+//     // Extend the break after to fill the deleted block's time
+//     const extendedBreak: ScheduleBlock = {
+//       ...blockAfter,
+//       startTime: blockToDelete.startTime
+//     };
+
+//     updatedColumnBlocks = updatedColumnBlocks
+//       .map(b => (b.id === blockAfter.id ? extendedBreak : b))
+//       .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+//   } else if (!isLastBlock) {
+//     // No adjacent breaks and not the last block - create a new break in the deleted block's place
+//     const newBreak = createScheduleBlock('break', blockToDelete.startTime, blockToDelete.endTime);
+
+//     updatedColumnBlocks = updatedColumnBlocks
+//       .concat(newBreak)
+//       .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+//   }
+//   // If it's the last block and no break before, just remove it without creating a break
+
+//   return [...otherBlocks, ...updatedColumnBlocks];
+// }
+
+// export function adjustOrCreateBreak(
+//   blocks: ScheduleBlock[],
+//   column: 'judging' | 'field',
+//   targetBlock: ScheduleBlock,
+//   timeDiff: number // in minutes (positive = forward, negative = backward)
+// ): ScheduleBlock[] {
+//   const columnBlocks = blocks
+//     .filter(b => b.column === column)
+//     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+//   const targetIndex = columnBlocks.findIndex(b => b.id === targetBlock.id);
+//   if (targetIndex === -1) return blocks;
+
+//   // Find the block immediately before the target
+//   const previousBlock = targetIndex > 0 ? columnBlocks[targetIndex - 1] : null;
+
+//   if (timeDiff > 0) {
+//     // Moving forward - need to create or extend break before target block
+//     if (previousBlock && previousBlock.type === 'break') {
+//       // There's already a break before this block - extend it
+//       return blocks.map(block => {
+//         if (block.id === previousBlock.id) {
+//           return {
+//             ...block,
+//             endTime: block.endTime.add(timeDiff, 'minute')
+//           };
+//         } else if (
+//           block.column === column &&
+//           (block.startTime.isAfter(previousBlock.endTime) ||
+//             block.startTime.isSame(previousBlock.endTime))
+//         ) {
+//           // Shift this block and all subsequent blocks
+//           return {
+//             ...block,
+//             startTime: block.startTime.add(timeDiff, 'minute'),
+//             endTime: block.endTime.add(timeDiff, 'minute')
+//           };
+//         }
+//         return block;
+//       });
+//     } else {
+//       // No break before this block - create a new one
+//       return insertBreak(blocks, column, targetBlock.startTime, timeDiff);
+//     }
+//   } else {
+//     // Moving backward - try to reduce previous break
+//     return reducePreviousBreak(blocks, column, targetBlock, timeDiff);
+//   }
+// }
+
+// export function insertBreak(
+//   blocks: ScheduleBlock[],
+//   column: 'judging' | 'field',
+//   insertTime: Dayjs,
+//   duration: number // in minutes
+// ): ScheduleBlock[] {
+//   const columnBlocks = blocks.filter(b => b.column === column && b.type !== 'break');
+//   const otherBlocks = blocks.filter(b => b.column !== column);
+//   const existingBreaks = blocks.filter(b => b.column === column && b.type === 'break');
+
+//   // Find the block that should be pushed back
+//   const blockToShift = columnBlocks.find(
+//     b => b.startTime.isAfter(insertTime) || b.startTime.isSame(insertTime)
+//   );
+
+//   if (!blockToShift) return blocks;
+
+//   // Check if there's already a break at the exact insertion time
+//   const existingBreakAtTime = existingBreaks.find(b => b.startTime.isSame(insertTime));
+
+//   if (existingBreakAtTime) {
+//     // Modify existing break instead of creating a new one
+//     const newDuration =
+//       existingBreakAtTime.endTime.diff(existingBreakAtTime.startTime, 'minute') + duration;
+
+//     if (newDuration <= 0) {
+//       // Remove the break if duration becomes 0 or negative
+//       return removeBreak(blocks, existingBreakAtTime.id);
+//     } else {
+//       // Extend the existing break and shift subsequent blocks
+//       const extendedBreak = {
+//         ...existingBreakAtTime,
+//         endTime: existingBreakAtTime.endTime.add(duration, 'minute')
+//       };
+
+//       // Shift all blocks that come after the extended break
+//       const shiftedBlocks = columnBlocks.map(block => {
+//         if (
+//           block.startTime.isAfter(existingBreakAtTime.endTime) ||
+//           block.startTime.isSame(existingBreakAtTime.endTime)
+//         ) {
+//           return {
+//             ...block,
+//             startTime: block.startTime.add(duration, 'minute'),
+//             endTime: block.endTime.add(duration, 'minute')
+//           };
+//         }
+//         return block;
+//       });
+
+//       // Shift other breaks that come after the extended break
+//       const shiftedBreaks = existingBreaks.map(breakBlock => {
+//         if (breakBlock.id === existingBreakAtTime.id) {
+//           return extendedBreak;
+//         } else if (breakBlock.startTime.isAfter(existingBreakAtTime.endTime)) {
+//           return {
+//             ...breakBlock,
+//             startTime: breakBlock.startTime.add(duration, 'minute'),
+//             endTime: breakBlock.endTime.add(duration, 'minute')
+//           };
+//         }
+//         return breakBlock;
+//       });
+
+//       return [...otherBlocks, ...shiftedBlocks, ...shiftedBreaks];
+//     }
+//   } else {
+//     // Create new break block
+//     const breakBlock = createScheduleBlock(
+//       'break',
+//       column,
+//       insertTime,
+//       insertTime.add(duration, 'minute')
+//     );
+
+//     // Shift all subsequent blocks (including breaks)
+//     const shiftedBlocks = columnBlocks.map(block => {
+//       if (block.startTime.isAfter(insertTime) || block.startTime.isSame(insertTime)) {
+//         const shiftAmount = duration;
+//         return {
+//           ...block,
+//           startTime: block.startTime.add(shiftAmount, 'minute'),
+//           endTime: block.endTime.add(shiftAmount, 'minute')
+//         };
+//       }
+//       return block;
+//     });
+
+//     // Also shift existing breaks that come after the insertion point
+//     const shiftedBreaks = existingBreaks.map(breakBlock => {
+//       if (breakBlock.startTime.isAfter(insertTime) || breakBlock.startTime.isSame(insertTime)) {
+//         return {
+//           ...breakBlock,
+//           startTime: breakBlock.startTime.add(duration, 'minute'),
+//           endTime: breakBlock.endTime.add(duration, 'minute')
+//         };
+//       }
+//       return breakBlock;
+//     });
+
+//     return [...otherBlocks, ...shiftedBlocks, ...shiftedBreaks, breakBlock];
+//   }
+// }
+
+// export function removeBreak(blocks: ScheduleBlock[], breakId: string): ScheduleBlock[] {
+//   const breakBlock = blocks.find(b => b.id === breakId);
+//   if (!breakBlock || breakBlock.type !== 'break') return blocks;
+
+//   const breakDuration = breakBlock.endTime.diff(breakBlock.startTime, 'minute');
+//   const column = breakBlock.column;
+
+//   // Remove the break and shift subsequent blocks back
+//   const filteredBlocks = blocks.filter(b => b.id !== breakId);
+
+//   return filteredBlocks.map(block => {
+//     if (block.column === column && block.startTime.isAfter(breakBlock.startTime)) {
+//       return {
+//         ...block,
+//         startTime: block.startTime.subtract(breakDuration, 'minute'),
+//         endTime: block.endTime.subtract(breakDuration, 'minute')
+//       };
+//     }
+//     return block;
+//   });
+// }
+
+// export function reducePreviousBreak(
+//   blocks: ScheduleBlock[],
+//   column: 'judging' | 'field',
+//   targetBlock: ScheduleBlock,
+//   reductionMinutes: number
+// ): ScheduleBlock[] {
+//   // Find the break immediately before the target block
+//   const columnBlocks = blocks
+//     .filter(b => b.column === column)
+//     .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
+
+//   const targetIndex = columnBlocks.findIndex(b => b.id === targetBlock.id);
+//   if (targetIndex <= 0) return blocks;
+
+//   const previousBlock = columnBlocks[targetIndex - 1];
+//   if (previousBlock.type !== 'break') return blocks;
+
+//   const currentBreakDuration = previousBlock.endTime.diff(previousBlock.startTime, 'minute');
+//   const newDuration = currentBreakDuration + reductionMinutes; // reductionMinutes is negative
+
+//   if (newDuration <= 0) {
+//     // Remove the break entirely and shift everything back
+//     return removeBreak(blocks, previousBlock.id);
+//   } else {
+//     // Reduce the break duration and shift the target block and everything after it
+//     return blocks.map(block => {
+//       if (block.id === previousBlock.id) {
+//         return {
+//           ...block,
+//           endTime: block.startTime.add(newDuration, 'minute')
+//         };
+//       } else if (
+//         block.column === column &&
+//         (block.startTime.isAfter(previousBlock.startTime) ||
+//           block.startTime.isSame(previousBlock.endTime))
+//       ) {
+//         return {
+//           ...block,
+//           startTime: block.startTime.add(reductionMinutes, 'minute'),
+//           endTime: block.endTime.add(reductionMinutes, 'minute')
+//         };
+//       }
+//       return block;
+//     });
+//   }
+// }

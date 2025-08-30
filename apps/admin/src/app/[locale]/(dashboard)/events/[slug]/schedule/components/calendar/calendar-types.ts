@@ -1,19 +1,18 @@
 import { Dayjs } from 'dayjs';
 
-export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session' | 'break';
+export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session';
 export type ScheduleColumn = 'judging' | 'field';
 
 export interface ScheduleBlock {
   id: string;
   type: ScheduleBlockType;
-  column: ScheduleColumn;
   startTime: Dayjs;
-  endTime: Dayjs;
-  title: string;
-  roundNumber?: number;
+  durationSeconds: number;
   isDragging?: boolean;
   canDelete?: boolean;
 }
+
+export type BlocksByType = Record<ScheduleColumn, ScheduleBlock[]>;
 
 export interface DragState {
   isDragging: boolean;
@@ -31,6 +30,6 @@ export const HEADER_HEIGHT = 40;
 export const BLOCK_COLORS: Record<ScheduleBlockType, string> = {
   'practice-round': '#4CAF50',
   'ranking-round': '#2196F3',
-  'judging-session': '#FF9800',
-  break: '#757575'
+  'judging-session': '#FF9800'
+  // break: '#757575'
 } as const;

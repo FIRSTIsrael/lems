@@ -1,65 +1,29 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { Paper } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
-import {
-  adjustOrCreateBreak,
-  snapToGrid,
-  reducePreviousBreak,
-  calculateBlockPosition
-} from './calendar-utils';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
+import { CalendarProvider, useCalendar } from './calendar-context';
 import { CalendarHeader } from './calendar-header';
-import CalendarProvider, { useCalendar } from './calendar-context';
+import { calculateBlockPosition, getBlockColumn } from './calendar-utils';
+
+function snapToGrid(yPosition: number): number {
+  const slotHeight = INTERVAL_MINUTES * TIME_SLOT_HEIGHT;
+  return Math.round(yPosition / slotHeight) * slotHeight;
+}
 
 const ScheduleCalendarContent: React.FC = () => {
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6);
 
   const { setFieldStart, setJudgingStart } = useSchedule();
-  const { blocks, dragState, setBlocks, setDragState } = useCalendar();
-
+  const { blocks, dragState, setDragState } = useCalendar();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Group blocks by column
-  const columnBlocks = useMemo(() => {
-    return {
-      judging: blocks
-        .filter(b => b.column === 'judging')
-        .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf()),
-      field: blocks
-        .filter(b => b.column === 'field')
-        .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf())
-    };
-  }, [blocks]);
-
-  const handleDragStart = useCallback(
-    (block: ScheduleBlock, startY: number) => {
-      // Prevent dragging breaks - they are calculated components
-      if (block.type === 'break') return;
-
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-
-      // Calculate the block's current position
-      const blockPosition = calculateBlockPosition(startTime, block.startTime, block.endTime);
-      const blockTop = blockPosition.top + HEADER_HEIGHT;
-
-      setDragState({
-        isDragging: true,
-        draggedBlock: block,
-        dragStartY: startY,
-        draggedPosition: blockTop, // Start at current block position
-        originalPosition: blockTop
-      });
-    },
-    [setDragState, startTime]
-  );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -67,20 +31,14 @@ const ScheduleCalendarContent: React.FC = () => {
 
       const mouseDelta = e.clientY - dragState.dragStartY;
       const newPosition = dragState.originalPosition + mouseDelta;
-      const snappedPosition = snapToGrid(newPosition - 40) + 40; // Account for header
+      const snappedPosition = snapToGrid(newPosition - HEADER_HEIGHT) + HEADER_HEIGHT; // Account for header
 
       setDragState(prev => ({
         ...prev,
         draggedPosition: snappedPosition
       }));
     },
-    [
-      dragState.isDragging,
-      dragState.draggedBlock,
-      dragState.dragStartY,
-      dragState.originalPosition,
-      setDragState
-    ]
+    [dragState, setDragState]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -100,45 +58,12 @@ const ScheduleCalendarContent: React.FC = () => {
     const timeDiff = Math.round(timeDiffMinutes / INTERVAL_MINUTES) * INTERVAL_MINUTES; // Snap to 5-minute intervals
 
     if (Math.abs(timeDiff) >= 5) {
-      // Only apply changes if moved at least 5 minutes
+      const blockColumn = getBlockColumn(block);
 
-      // Check if this is the first block in its column (non-break blocks only)
-      const columnNonBreakBlocks = columnBlocks[block.column]
-        .filter(b => b.type !== 'break')
-        .sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf());
-      const isFirstBlock =
-        columnNonBreakBlocks.length > 0 && columnNonBreakBlocks[0].id === block.id;
-
-      if (isFirstBlock) {
-        // This is the first block - shift only this column's schedule and update start time
-        if (block.column === 'judging') {
-          setJudgingStart(prev => prev.add(timeDiff, 'minute'));
-        } else {
-          setFieldStart(prev => prev.add(timeDiff, 'minute'));
-        }
-
-        setBlocks(prev =>
-          prev.map(b => {
-            // Only shift blocks in the same column
-            if (b.column === block.column) {
-              return {
-                ...b,
-                startTime: b.startTime.add(timeDiff, 'minute'),
-                endTime: b.endTime.add(timeDiff, 'minute')
-              };
-            }
-            return b;
-          })
-        );
+      if (blockColumn === 'judging') {
+        setJudgingStart(prev => prev.add(timeDiff, 'minute'));
       } else {
-        // Handle regular block movement (creates/adjusts breaks)
-        if (timeDiff > 0) {
-          // Moving forward - create or extend break before this block
-          setBlocks(prev => adjustOrCreateBreak(prev, block.column, block, timeDiff));
-        } else if (timeDiff < 0) {
-          // Moving backward - try to reduce previous break
-          setBlocks(prev => reducePreviousBreak(prev, block.column, block, timeDiff));
-        }
+        setFieldStart(prev => prev.add(timeDiff, 'minute'));
       }
     }
 
@@ -148,17 +73,32 @@ const ScheduleCalendarContent: React.FC = () => {
       draggedPosition: 0,
       originalPosition: 0
     });
-  }, [
-    dragState.isDragging,
-    dragState.draggedBlock,
-    dragState.draggedPosition,
-    dragState.originalPosition,
-    setDragState,
-    columnBlocks,
-    setBlocks,
-    setJudgingStart,
-    setFieldStart
-  ]);
+  }, [dragState, setDragState, setJudgingStart, setFieldStart]);
+
+  const handleDragStart = useCallback(
+    (block: ScheduleBlock, startY: number) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      // Calculate the block's current position
+      const blockPosition = calculateBlockPosition(startTime, block);
+      const blockTop = blockPosition.top + HEADER_HEIGHT;
+
+      // For now, only allow dragging the first block
+      const blockColumn = getBlockColumn(block);
+      const isFirstBlock = blocks[`${blockColumn}`][0].id === block.id;
+      if (!isFirstBlock) return;
+
+      setDragState({
+        isDragging: true,
+        draggedBlock: block,
+        dragStartY: startY,
+        draggedPosition: blockTop, // Start at current block position
+        originalPosition: blockTop
+      });
+    },
+    [setDragState, blocks, startTime]
+  );
 
   // Set up event listeners
   useEffect(() => {

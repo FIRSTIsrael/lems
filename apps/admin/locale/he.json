@@ -445,7 +445,14 @@
             "title": "מידע",
             "teams": "קבוצות",
             "rooms": "חדרים",
-            "tables": "שולחנות"
+            "tables": "שולחנות",
+            "total-matches": "סה\"כ מקצים",
+            "total-sessions": "סה\"כ סבבי שיפוט",
+            "practice-rounds": "סבבי אימונים",
+            "ranking-rounds": "סבבי דירוג",
+            "judging-start": "תחילת שיפוט",
+            "field-start": "תחילת זירה",
+            "matches-per-round": "מקצים בכל סבב"
           },
           "settings": {
             "title": "הגדרות",
@@ -460,9 +467,13 @@
           }
         },
         "calendar": {
+          "blocks": {
+            "judging-session": "סבב שיפוט #{number}",
+            "practice-round": "מקצה אימונים #{number}",
+            "ranking-round": "מקצה דירוג #{number}"
+          },
           "judging": {
             "title": "שיפוט",
-            "judging-session-name": "סבב שיפוט #{number}",
             "add-break": "הוספת הפסקה",
             "break": "הפסקת שיפוט"
           },
@@ -470,18 +481,8 @@
             "title": "זירה",
             "add-practice-round": "הוספת מקצה אימונים",
             "add-ranking-round": "הוספת מקצה דירוג",
-            "ranking-round-name": "מקצה דירוג #{number}",
-            "practice-round-name": "מקצה אימונים #{number}",
             "add-break": "הוספת הפסקה",
             "break": "הפסקת זירה"
-          },
-          "stats": {
-            "total-matches": "סה\"כ מקצים",
-            "total-sessions": "סה\"כ סבבי שיפוט",
-            "practice-rounds": "סבבי אימונים",
-            "ranking-rounds": "סבבי דירוג",
-            "judging-start": "תחילת שיפוט",
-            "field-start": "תחילת זירה"
           }
         }
       }

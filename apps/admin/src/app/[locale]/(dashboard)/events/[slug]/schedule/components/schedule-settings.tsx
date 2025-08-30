@@ -23,6 +23,7 @@ import EventIcon from '@mui/icons-material/Event';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { useSchedule } from './schedule-context';
+import { getDuration } from './calendar/calendar-utils';
 
 export const ScheduleSettings: React.FC = () => {
   const t = useTranslations('pages.events.schedule.settings');
@@ -45,7 +46,8 @@ export const ScheduleSettings: React.FC = () => {
     practiceRounds,
     rankingRounds,
     judgingStart,
-    fieldStart
+    fieldStart,
+    matchesPerRound
   } = useSchedule();
 
   // Calculate derived values that will be shown in calendar
@@ -105,19 +107,38 @@ export const ScheduleSettings: React.FC = () => {
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
               <SportsIcon color="primary" />
-              <Typography variant="body2">Total Matches: {totalMatches}</Typography>
+              <Typography variant="body2">
+                {t('information.total-matches')}: {totalMatches}
+              </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <EventIcon color="primary" />
-              <Typography variant="body2">Total Sessions: {totalSessions}</Typography>
+              <Typography variant="body2">
+                {t('information.total-sessions')}: {totalSessions}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Box>
+          <Stack direction="row" spacing={4} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
+              <SportsScoreIcon color="primary" />
+              <Typography variant="body2">
+                {t('information.practice-rounds')}: {practiceRounds}
+              </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <SportsScoreIcon color="primary" />
-              <Typography variant="body2">Practice Rounds: {practiceRounds}</Typography>
+              <Typography variant="body2">
+                {t('information.ranking-rounds')}: {rankingRounds}
+              </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <SportsScoreIcon color="primary" />
-              <Typography variant="body2">Ranking Rounds: {rankingRounds}</Typography>
+              <Typography variant="body2">
+                {t('information.matches-per-round')}: {matchesPerRound}
+              </Typography>
             </Stack>
           </Stack>
         </Box>
@@ -126,11 +147,15 @@ export const ScheduleSettings: React.FC = () => {
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
               <WatchLaterIcon color="primary" />
-              <Typography variant="body2">Judging start: {judgingStart.format('HH:mm')}</Typography>
+              <Typography variant="body2">
+                {t('information.judging-start')}: {judgingStart.format('HH:mm')}
+              </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <WatchLaterIcon color="primary" />
-              <Typography variant="body2">Matches start: {fieldStart.format('HH:mm')}</Typography>
+              <Typography variant="body2">
+                {t('information.field-start')}: {fieldStart.format('HH:mm')}
+              </Typography>
             </Stack>
           </Stack>
         </Box>
@@ -173,6 +198,7 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                minTime={matchLength}
               />
             </Grid>
             <Grid size={6}>
@@ -192,6 +218,7 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                minTime={matchLength}
               />
             </Grid>
             <Grid size={6}>
@@ -211,6 +238,7 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                minTime={judgingSessionLength}
               />
             </Grid>
             <Grid size={12} />
@@ -231,6 +259,11 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                maxTime={
+                  getDuration(practiceCycleTime) < getDuration(rankingCycleTime)
+                    ? practiceCycleTime
+                    : rankingCycleTime
+                }
               />
             </Grid>
             <Grid size={6}>
@@ -250,6 +283,7 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                maxTime={judgingSessionCycleTime}
               />
             </Grid>
           </Grid>

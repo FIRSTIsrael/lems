@@ -16,7 +16,7 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({ name, handleDrag
   const t = useTranslations(`pages.events.schedule.calendar.${name}`);
 
   const { blocks } = useCalendar();
-  const columnBlocks = blocks.filter(block => block.column === name);
+  const columnBlocks = blocks[name];
 
   return (
     <Stack width="50%">
@@ -34,15 +34,12 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({ name, handleDrag
         <Typography variant="h6">{t('title')}</Typography>
       </Box>
       <Box sx={{ position: 'relative', minHeight: '100%' }}>
-        {columnBlocks.map(block => {
-          const nonBreakBlocks = columnBlocks.filter(b => b.type !== 'break');
-          const isFirstBlock = nonBreakBlocks.length > 0 && nonBreakBlocks[0].id === block.id;
-
+        {columnBlocks.map((block, index) => {
           return (
             <ScheduleBlockComponent
               key={block.id}
               block={block}
-              isFirstBlock={isFirstBlock}
+              index={index}
               onDragStart={handleDragStart}
             />
           );
