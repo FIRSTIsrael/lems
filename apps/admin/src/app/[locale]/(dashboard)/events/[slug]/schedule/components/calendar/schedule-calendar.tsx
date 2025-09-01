@@ -12,14 +12,27 @@ import { CalendarProvider, useCalendar } from './calendar-context';
 import { CalendarHeader } from './calendar-header';
 import { calculateBlockPosition, getBlockColumn } from './calendar-utils';
 
-function snapToGrid(yPosition: number): number {
-  const slotHeight = INTERVAL_MINUTES * TIME_SLOT_HEIGHT;
-  return Math.round(yPosition / slotHeight) * slotHeight;
+function snapToGrid(yPosition: number, startTime: Dayjs): number {
+  const currentTime = positionToTime(yPosition, startTime);
+
+  // Snap to nearest 5-minute clock interval
+  const currentMinute = currentTime.minute();
+  const snappedMinute = Math.round(currentMinute / INTERVAL_MINUTES) * INTERVAL_MINUTES;
+  const snappedTime = currentTime.minute(snappedMinute).second(0);
+
+  return timeToPosition(snappedTime, startTime);
 }
 
 function timeToPosition(time: Dayjs, startTime: Dayjs): number {
   const minutesFromStart = time.diff(startTime, 'minute');
   return minutesFromStart * TIME_SLOT_HEIGHT + HEADER_HEIGHT;
+}
+
+function positionToTime(position: number, startTime: Dayjs): Dayjs {
+  const adjustedPosition = position - HEADER_HEIGHT;
+  const minutesFromStart = adjustedPosition / TIME_SLOT_HEIGHT;
+  const currentTime = startTime.add(minutesFromStart, 'minute');
+  return currentTime;
 }
 
 const ScheduleCalendarContent: React.FC = () => {
@@ -56,7 +69,7 @@ const ScheduleCalendarContent: React.FC = () => {
 
       const mouseDelta = e.clientY - dragState.dragStartY;
       const newPosition = dragState.originalPosition + mouseDelta;
-      const snappedPosition = snapToGrid(newPosition - HEADER_HEIGHT) + HEADER_HEIGHT; // Account for header
+      const snappedPosition = snapToGrid(newPosition, startTime);
 
       const finalPosition = Math.min(Math.max(snappedPosition, minPosition), maxPosition);
 
@@ -81,9 +94,9 @@ const ScheduleCalendarContent: React.FC = () => {
 
     const block = dragState.draggedBlock;
 
-    const positionDiff = dragState.draggedPosition - dragState.originalPosition;
-    const timeDiffMinutes = Math.round(positionDiff / TIME_SLOT_HEIGHT);
-    const timeDiff = Math.round(timeDiffMinutes / INTERVAL_MINUTES) * INTERVAL_MINUTES; // Snap to 5-minute intervals
+    const finalTime = positionToTime(dragState.draggedPosition, startTime);
+    const originalTime = positionToTime(dragState.originalPosition, startTime);
+    const timeDiff = finalTime.diff(originalTime, 'minute');
 
     const blockColumn = getBlockColumn(block);
     const isFirstBlock = blocks[`${blockColumn}`][0].id === block.id;
@@ -114,7 +127,8 @@ const ScheduleCalendarContent: React.FC = () => {
     setDragState,
     setJudgingStart,
     setFieldStart,
-    updateColumn
+    updateColumn,
+    startTime
   ]);
 
   const handleDragStart = useCallback(
