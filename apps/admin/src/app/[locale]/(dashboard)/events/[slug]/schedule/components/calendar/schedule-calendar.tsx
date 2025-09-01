@@ -166,7 +166,7 @@ const ScheduleCalendarContent: React.FC = () => {
     <Paper
       ref={containerRef}
       sx={{
-        height: '1000px', // TODO: Dynamic height that takes up the viewport
+        height: '100%',
         overflowY: 'auto',
         position: 'relative',
         userSelect: dragState.isDragging ? 'none' : 'auto',

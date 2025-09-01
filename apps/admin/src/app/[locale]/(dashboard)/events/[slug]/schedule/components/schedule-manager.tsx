@@ -29,11 +29,11 @@ const ScheduleManagerContent: React.FC = () => {
   }
 
   return (
-    <Grid container component={Box} spacing={3}>
-      <Grid size={7}>
+    <Grid container component={Box} spacing={3} sx={{ height: '100%' }}>
+      <Grid size={7} sx={{ height: '100%' }}>
         <ScheduleCalendar />
       </Grid>
-      <Grid size={5}>
+      <Grid size={5} sx={{ height: '100%' }}>
         <ScheduleSettings />
       </Grid>
     </Grid>

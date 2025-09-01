@@ -69,7 +69,9 @@ export const ScheduleSettings: React.FC = () => {
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 2,
-        backgroundColor: 'background.paper'
+        backgroundColor: 'background.paper',
+        maxHeight: '100%',
+        overflowY: 'auto'
       }}
     >
       <Stack spacing={3}>

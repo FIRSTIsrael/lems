@@ -3,8 +3,7 @@
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Box, Typography, Alert } from '@mui/material';
-import CheckCircle from '@mui/icons-material/CheckCircle';
+import { Box } from '@mui/material';
 import { EventPageTitle } from '../components/event-page-title';
 import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
@@ -24,16 +23,18 @@ export default function EventSchedulePage() {
   const selectedDivision = divisions.find((d: { id: string }) => d.id === selectedDivisionId);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, height: 'calc(100vh - 40px)', display: 'flex', flexDirection: 'column' }}>
       <EventPageTitle title={t('title', { eventName: event.name })} />
 
       {divisions.length > 1 && (
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3, flexShrink: 0 }}>
           <DivisionSelector divisions={divisions} />
         </Box>
       )}
 
-      {selectedDivision && <ScheduleManager division={selectedDivision} />}
+      <Box sx={{ flex: 1, minHeight: 0 }}>
+        {selectedDivision && <ScheduleManager division={selectedDivision} />}
+      </Box>
 
       {/* <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
         {t('alerts.schedule-set-up')}
