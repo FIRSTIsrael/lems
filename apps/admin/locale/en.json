@@ -469,20 +469,16 @@
         "calendar": {
           "blocks": {
             "judging-session": "Judging Session #{number}",
-            "practice-round": "Practice Match #{number}",
-            "ranking-round": "Ranking Match #{number}"
+            "practice-round": "Practice Round #{number}",
+            "ranking-round": "Ranking Round #{number}"
           },
           "judging": {
-            "title": "Judging",
-            "add-break": "Add Judging break",
-            "break": "Judging break"
+            "title": "Judging"
           },
           "field": {
             "title": "Field",
-            "add-practice-round": "Add Practice Match",
-            "add-ranking-round": "Add Ranking Match",
-            "add-break": "Add Field break",
-            "break": "Field break"
+            "add-practice-round": "Add Practice Round",
+            "add-ranking-round": "Add Ranking Round"
           }
         }
       }

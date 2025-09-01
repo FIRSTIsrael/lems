@@ -469,20 +469,16 @@
         "calendar": {
           "blocks": {
             "judging-session": "סבב שיפוט #{number}",
-            "practice-round": "מקצה אימונים #{number}",
-            "ranking-round": "מקצה דירוג #{number}"
+            "practice-round": "סבב אימונים #{number}",
+            "ranking-round": "סבב דירוג #{number}"
           },
           "judging": {
-            "title": "שיפוט",
-            "add-break": "הוספת הפסקה",
-            "break": "הפסקת שיפוט"
+            "title": "שיפוט"
           },
           "field": {
             "title": "זירה",
-            "add-practice-round": "הוספת מקצה אימונים",
-            "add-ranking-round": "הוספת מקצה דירוג",
-            "add-break": "הוספת הפסקה",
-            "break": "הפסקת זירה"
+            "add-practice-round": "הוספת סבב אימונים",
+            "add-ranking-round": "הוספת סבב דירוג"
           }
         }
       }
