@@ -232,8 +232,8 @@ export const ScheduleSettings: React.FC = () => {
                   setJudgingSessionCycleTime(value);
                 }}
                 ampm={false}
-                format="mm:ss"
-                views={['minutes', 'seconds']}
+                format="HH:mm:ss"
+                views={['hours', 'minutes', 'seconds']}
                 slotProps={{
                   textField: {
                     size: 'small',
