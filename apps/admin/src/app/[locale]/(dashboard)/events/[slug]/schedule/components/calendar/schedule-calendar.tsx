@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Paper } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
@@ -17,9 +17,15 @@ function snapToGrid(yPosition: number): number {
   return Math.round(yPosition / slotHeight) * slotHeight;
 }
 
+function timeToPosition(time: Dayjs, startTime: Dayjs): number {
+  const minutesFromStart = time.diff(startTime, 'minute');
+  return minutesFromStart * TIME_SLOT_HEIGHT + HEADER_HEIGHT;
+}
+
 const ScheduleCalendarContent: React.FC = () => {
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6);
+  const endTime = dayjs(event.endDate).hour(20);
 
   const { setFieldStart, setJudgingStart } = useSchedule();
   const { blocks, dragState, setDragState, updateColumn } = useCalendar();
@@ -29,16 +35,37 @@ const ScheduleCalendarContent: React.FC = () => {
     (e: MouseEvent) => {
       if (!dragState.isDragging || !containerRef.current || !dragState.draggedBlock) return;
 
+      const column = getBlockColumn(dragState.draggedBlock);
+      const blockIndex = blocks[column].findIndex(block => block.id === dragState.draggedBlock?.id);
+      if (blockIndex === -1) return;
+
+      let minPosition = HEADER_HEIGHT; // Start of column
+      const maxPosition = timeToPosition(
+        endTime.subtract(dragState.draggedBlock.durationSeconds, 'second'),
+        startTime
+      ); // End of column
+
+      // Prevent overlap with previous block
+      if (blockIndex > 0) {
+        const previousBlockEnd = blocks[column][blockIndex - 1].startTime.add(
+          blocks[column][blockIndex - 1].durationSeconds,
+          'second'
+        );
+        minPosition = timeToPosition(previousBlockEnd, startTime);
+      }
+
       const mouseDelta = e.clientY - dragState.dragStartY;
       const newPosition = dragState.originalPosition + mouseDelta;
       const snappedPosition = snapToGrid(newPosition - HEADER_HEIGHT) + HEADER_HEIGHT; // Account for header
 
+      const finalPosition = Math.min(Math.max(snappedPosition, minPosition), maxPosition);
+
       setDragState(prev => ({
         ...prev,
-        draggedPosition: snappedPosition
+        draggedPosition: finalPosition
       }));
     },
-    [dragState, setDragState]
+    [dragState, blocks, endTime, startTime, setDragState]
   );
 
   const handleMouseUp = useCallback(() => {
