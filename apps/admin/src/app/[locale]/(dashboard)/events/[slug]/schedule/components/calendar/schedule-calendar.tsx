@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { Paper } from '@mui/material';
+import { Paper, Box } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
@@ -173,7 +173,9 @@ const ScheduleCalendarContent: React.FC = () => {
         cursor: dragState.isDragging ? 'grabbing' : 'default'
       }}
     >
-      <CalendarHeader />
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'background.paper' }}>
+        <CalendarHeader />
+      </Box>
 
       <CalendarGrid>
         <CalendarColumn name="judging" handleDragStart={handleDragStart} />
