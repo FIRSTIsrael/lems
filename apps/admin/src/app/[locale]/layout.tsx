@@ -8,8 +8,8 @@ import { MuiProvider } from './mui-provider';
 import { SWRProvider } from './swr-provider';
 
 export const metadata: Metadata = {
-  title: 'ניהול אירועים - FIRST LEGO League Challenge',
-  description: 'Admin Dashboard for FIRST LEGO League Challenge events'
+  title: 'Admin Portal: FIRST LEGO League Challenge IL',
+  description: 'Admin Dashboard for FIRST LEGO League Challenge events in Israel'
 };
 
 export const viewport: Viewport = {
