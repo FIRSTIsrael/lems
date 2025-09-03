@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 
+// TODO: implement this in the apps for rich text support
+
 type Tag = 'b' | 'i';
 
 type Props = {

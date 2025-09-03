@@ -5,6 +5,7 @@ import { Roboto, Heebo } from 'next/font/google';
 import { Locales, configureDayjs } from '@lems/localization';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
+import { PortalAppBar } from './components/app-bar';
 
 export const metadata: Metadata = {
   title: 'Events Portal: FIRST LEGO League Challenge IL',
@@ -49,7 +50,9 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <MuiProvider locale={locale}>{children}</MuiProvider>
+          <MuiProvider locale={locale}>
+            <PortalAppBar>{children}</PortalAppBar>
+          </MuiProvider>
         </NextIntlClientProvider>
       </body>
     </html>
