@@ -17,7 +17,7 @@ import TeamAwards from '../../../../components/teams/team-awards';
 import TeamScores from '../../../../components/teams/team-scores';
 import LoadingAnimation from '../../../../components/loading-animation';
 import EventStatus from '../../../../components/events/event-status';
-import { useRealtimeData } from '../../../../../src/hooks/use-realtime-data';
+import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 
 interface Props {
   team: PortalTeam;

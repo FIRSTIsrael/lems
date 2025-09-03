@@ -21,7 +21,7 @@ import { PortalEvent, PortalFieldSchedule } from '@lems/types';
 import { getMessages } from '../../../../locale/get-messages';
 import { useLocaleMatchStage } from '../../../../locale/hooks/use-locale-match-stage';
 import { fetchEvent } from '../../../../lib/api';
-import { useRealtimeData } from '../../../../../src/hooks/use-realtime-data';
+import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 

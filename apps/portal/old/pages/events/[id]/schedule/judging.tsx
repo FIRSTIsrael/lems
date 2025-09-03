@@ -17,7 +17,7 @@ import {
 import { PortalEvent, PortalJudgingSchedule } from '@lems/types';
 import { fetchEvent } from '../../../../lib/api';
 import { getMessages } from '../../../../locale/get-messages';
-import { useRealtimeData } from '../../../../../src/hooks/use-realtime-data';
+import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import LoadingAnimation from '../../../../components/loading-animation';
 import StyledEventSubtitle from '../../../../components/events/styled-event-subtitle';
 

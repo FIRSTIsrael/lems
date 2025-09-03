@@ -6,7 +6,7 @@ import { PortalScore, PortalEvent, PortalEventStatus } from '@lems/types';
 import { fetchEvent } from '../../../lib/api';
 import { getMessages } from '../../../locale/get-messages';
 import { useLocaleMatchStage } from '../../../locale/hooks/use-locale-match-stage';
-import { useRealtimeData } from '../../../../src/hooks/use-realtime-data';
+import { useRealtimeData } from '../../../hooks/use-realtime-data';
 import ScoreboardGrid from '../../../components/scoreboard/scoreboard-grid';
 import LoadingAnimation from '../../../components/loading-animation';
 
