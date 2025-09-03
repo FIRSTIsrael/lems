@@ -93,7 +93,7 @@
     "@swc/cli": "~0.6.0",
     "@swc/core": "^1.13.0",
     "@swc/helpers": "~0.5.11",
-    "@swc/plugin-emotion": "^9.0.4",
+    "@swc/plugin-emotion": "^11.1.0",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
     "@types/express-fileupload": "^1.5.1",
