@@ -1,14 +1,20 @@
+'use client';
+
 import React, { useState } from 'react';
+import { useLocale } from 'next-intl';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { useLocalePreference, Locale, Locales } from '@lems/localization';
+import { Locale, Locales } from '@lems/localization';
+import { useRouter, usePathname } from '../../../i18n/navigation';
 
-const LanguageSwitcher: React.FC = () => {
+export const LanguageSwitcher: React.FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const currentLocale = useLocale() as Locale;
+  const currentLocaleData = Locales[currentLocale];
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = !!anchorEl;
-
-  const { changeLocale, currentLocale } = useLocalePreference();
-  const currentLocaleData = Locales[currentLocale];
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -19,7 +25,7 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   const handleLanguageChange = (locale: Locale) => {
-    changeLocale(locale);
+    router.replace(pathname, { locale });
     handleClose();
   };
 
@@ -86,5 +92,3 @@ const LanguageSwitcher: React.FC = () => {
     </Box>
   );
 };
-
-export default LanguageSwitcher;

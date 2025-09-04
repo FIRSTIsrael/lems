@@ -1,29 +1,19 @@
 import { createTheme } from '@mui/material/styles';
 import { Locales, Locale } from '@lems/localization';
 
+export const defaultColor = '#003d6a';
+
 export const baseTheme = createTheme({
   palette: {
     primary: {
-      main: '#003d6a'
+      main: defaultColor
     },
     secondary: {
       main: '#fafafa'
     }
   },
   typography: {
-    fontFamily: [
-      'Heebo',
-      'Roboto',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(','),
+    fontFamily: 'var(--font-heebo),var(--font-roboto)',
     h1: {
       fontWeight: 800,
       fontSize: '2rem'
@@ -46,6 +36,6 @@ export const baseTheme = createTheme({
 });
 
 export const getLocalizedTheme = (locale: Locale = 'he') => {
-  const { direction, muiLocale, xDataGridLocale } = Locales[locale];
-  return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale);
+  const { direction, muiLocale, xDataGridLocale, xDatePickersLocale } = Locales[locale];
+  return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale, xDatePickersLocale);
 };

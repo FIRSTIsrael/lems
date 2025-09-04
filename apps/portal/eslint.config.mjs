@@ -8,8 +8,7 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
-      '@next/next/no-html-link-for-pages': ['error', 'apps/portal/pages'],
-      'react/jsx-no-literals': 'warn'
+      // Admin-specific rule overrides
     }
   }
 ];
