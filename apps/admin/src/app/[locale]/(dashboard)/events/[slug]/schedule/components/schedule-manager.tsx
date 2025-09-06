@@ -64,7 +64,7 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
   return (
     <Grid container component={Box} spacing={3} sx={{ height: '100%' }}>
       <Grid size={7} sx={{ height: '100%' }}>
-        <ScheduleCalendar />
+        <ScheduleCalendar division={division} />
       </Grid>
       <Grid size={5} sx={{ height: '100%' }}>
         <ScheduleSettings />
