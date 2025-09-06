@@ -14,7 +14,7 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { PersonAdd } from '@mui/icons-material';
 import { FormikTextField } from '@lems/shared';
 import { AdminUserResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../lib/fetch';
@@ -193,7 +193,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 <Button
                   type="submit"
                   variant="contained"
-                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <PersonAddIcon />}
+                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <PersonAdd />}
                   loading={isSubmitting}
                   sx={{ minWidth: 200 }}
                 >

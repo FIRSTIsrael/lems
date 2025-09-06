@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Button, Grid, Typography } from '@mui/material';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { AddRounded } from '@mui/icons-material';
 import { useDialog } from '../../components/dialog-provider';
 import { CreateSeasonDialog } from './create-season-dialog';
 
@@ -28,7 +28,7 @@ export const CreateSeasonCard = () => {
       color="text.primary"
       onClick={showCreationDialog}
     >
-      <AddRoundedIcon fontSize="large" />
+      <AddRounded fontSize="large" />
       <Typography variant="h4" align="center" gutterBottom>
         {t('create-new-season')}
       </Typography>

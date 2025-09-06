@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import { getTranslations } from 'next-intl/server';
 import { Avatar, Box, Card, CardContent, Stack, Typography } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { AdminSeasonResponseSchema } from '@lems/types/api/admin/seasons';
 import { apiFetch } from '../../../../../lib/fetch';
 
@@ -47,15 +46,13 @@ export default async function CurrentSeasonWidget() {
         <Box display="flex" alignItems="flex-start" gap={2}>
           <Avatar
             variant="square"
-            src={season.logoUrl || undefined}
+            src={season.logoUrl || '/assets/FIRST-Logo.svg'}
             sx={{
               width: 150,
               height: 150,
               flexShrink: 0
             }}
-          >
-            {!season.logoUrl && <CalendarTodayIcon />}
-          </Avatar>
+          />
 
           <Stack spacing={1} sx={{ minWidth: 0, mt: 1.5 }}>
             <Typography

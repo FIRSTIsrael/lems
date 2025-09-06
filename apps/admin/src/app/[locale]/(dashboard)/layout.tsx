@@ -12,11 +12,13 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
-import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
+import {
+  CalendarMonthOutlined,
+  PersonOutlined,
+  EmojiEventsOutlined,
+  GroupOutlined,
+  InsightsOutlined
+} from '@mui/icons-material';
 import { PermissionType } from '@lems/database';
 import {
   AdminUserPermissionsResponseSchema,
@@ -39,27 +41,27 @@ type Navigator = {
 
 const navigator: Navigator = {
   MANAGE_SEASONS: {
-    icon: <CalendarMonthOutlinedIcon />,
+    icon: <CalendarMonthOutlined />,
     label: 'seasons',
     route: 'seasons'
   },
   MANAGE_TEAMS: {
-    icon: <GroupOutlinedIcon />,
+    icon: <GroupOutlined />,
     label: 'teams',
     route: 'teams'
   },
   MANAGE_EVENTS: {
-    icon: <EmojiEventsOutlinedIcon />,
+    icon: <EmojiEventsOutlined />,
     label: 'events',
     route: 'events'
   },
   VIEW_INSIGHTS: {
-    icon: <InsightsOutlinedIcon />,
+    icon: <InsightsOutlined />,
     label: 'insights',
     route: 'insights'
   },
   MANAGE_USERS: {
-    icon: <PersonOutlinedIcon />,
+    icon: <PersonOutlined />,
     label: 'users',
     route: 'users'
   }

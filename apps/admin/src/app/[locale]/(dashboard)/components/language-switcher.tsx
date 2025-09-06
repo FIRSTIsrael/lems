@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { MenuItem, Menu, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import LanguageIcon from '@mui/icons-material/Language';
+import { Language } from '@mui/icons-material';
 import { ChevronEndIcon, Locale, Locales } from '@lems/localization';
 import { useRouter, usePathname } from '../../../../i18n/navigation';
 
@@ -132,7 +132,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
           aria-controls={submenuOpen ? 'language-switcher-submenu' : undefined}
         >
           <ListItemIcon>
-            <LanguageIcon fontSize="small" />
+            <Language fontSize="small" />
           </ListItemIcon>
           <ListItemText>
             <Typography variant="body2" component="span">

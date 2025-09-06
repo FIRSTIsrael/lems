@@ -2,9 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Typography, Box, TextField, IconButton, Stack, CircularProgress } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Check, Close, Delete } from '@mui/icons-material';
 import { JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
 import React from 'react';
 
@@ -91,10 +89,10 @@ export const AssetCell: React.FC<AssetCellProps> = ({
                   disabled={disabled}
                   color="primary"
                 >
-                  {disabled ? <CircularProgress size={16} /> : <CheckIcon />}
+                  {disabled ? <CircularProgress size={16} /> : <Check />}
                 </IconButton>
                 <IconButton size="small" onClick={() => onStopEditing()} disabled={disabled}>
-                  <CloseIcon />
+                  <Close />
                 </IconButton>
               </Stack>
               {error && (
@@ -138,7 +136,7 @@ export const AssetCell: React.FC<AssetCellProps> = ({
                   title={t(`${assetType}.delete-button`)}
                   disabled
                 >
-                  {disabled ? <CircularProgress size={16} /> : <DeleteIcon />}
+                  {disabled ? <CircularProgress size={16} /> : <Delete />}
                 </IconButton>
               </Stack>
               {error && (

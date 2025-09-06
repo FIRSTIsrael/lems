@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Box, Stack, IconButton } from '@mui/material';
-import PaletteIcon from '@mui/icons-material/Palette';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import { Palette, Check, Close } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { ColorPicker } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
@@ -53,7 +51,7 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
 
   return (
     <Box display="flex" alignItems="center" gap={1}>
-      <PaletteIcon color="primary" />
+      <Palette color="primary" />
       <Stack>
         <Typography variant="body2" color="text.secondary">
           {t('color')}
@@ -81,10 +79,10 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
               {hsvaToHex(editColor)}
             </Typography>
             <IconButton onClick={handleColorEditSave} color="primary" size="small">
-              <CheckIcon />
+              <Check />
             </IconButton>
             <IconButton onClick={handleColorEditCancel} size="small">
-              <CloseIcon />
+              <Close />
             </IconButton>
           </Stack>
         ) : (

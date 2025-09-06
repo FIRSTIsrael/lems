@@ -4,8 +4,7 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { Typography, Paper, Box, Stack } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { CalendarToday, LocationOn } from '@mui/icons-material';
 import { Division, AdminDivisionsResponseSchema } from '@lems/types/api/admin';
 import { useEvent } from '../../components/event-context';
 import { apiFetch } from '../../../../../../../lib/fetch';
@@ -40,7 +39,7 @@ export const EventInformation = () => {
         )}
 
         <Box display="flex" alignItems="center" gap={1}>
-          <CalendarTodayIcon color="primary" />
+          <CalendarToday color="primary" />
           <Stack>
             <Typography variant="body2" color="text.secondary">
               {t('date')}
@@ -52,7 +51,7 @@ export const EventInformation = () => {
         </Box>
 
         <Box display="flex" alignItems="center" gap={1}>
-          <LocationOnIcon color="primary" />
+          <LocationOn color="primary" />
           <Stack>
             <Typography variant="body2" color="text.secondary">
               {t('location')}

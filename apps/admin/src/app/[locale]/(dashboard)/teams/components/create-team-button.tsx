@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { IconButton, Tooltip } from '@mui/material';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { AddRounded } from '@mui/icons-material';
 import { useDialog } from '../../components/dialog-provider';
 import { CreateTeamDialog } from './create-team-dialog';
 
@@ -17,7 +17,7 @@ export const CreateTeamButton = () => {
   return (
     <Tooltip title={t('create-new-team')}>
       <IconButton onClick={showCreationDialog} size="medium">
-        <AddRoundedIcon />
+        <AddRounded />
       </IconButton>
     </Tooltip>
   );

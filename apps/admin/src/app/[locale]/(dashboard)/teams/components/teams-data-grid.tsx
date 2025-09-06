@@ -4,8 +4,7 @@ import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Edit, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { TeamsSearch } from './teams-search';
@@ -93,7 +92,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       getActions: params => [
         <GridActionsCellItem
           key="edit"
-          icon={<EditIcon />}
+          icon={<Edit />}
           label="Edit team"
           disabled
           onClick={() => {
@@ -103,7 +102,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         />,
         <GridActionsCellItem
           key="delete"
-          icon={<DeleteIcon />}
+          icon={<Delete />}
           label="Delete team"
           disabled
           onClick={() => {

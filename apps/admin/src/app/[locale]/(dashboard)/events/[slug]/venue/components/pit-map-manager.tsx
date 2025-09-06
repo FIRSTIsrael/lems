@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Box, Button, Stack, Alert } from '@mui/material';
-import UploadIcon from '@mui/icons-material/Upload';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Upload, Visibility } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { FileUpload } from '@lems/shared';
 import { UploadPitMapDialog } from './upload-pit-map-dialog';
@@ -82,7 +81,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
             {selectedFile && (
               <Button
                 variant="contained"
-                startIcon={<UploadIcon />}
+                startIcon={<Upload />}
                 onClick={() => setUploadDialogOpen(true)}
                 disabled={uploading}
               >
@@ -93,7 +92,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
             {division.pitMapUrl && (
               <Button
                 variant="outlined"
-                startIcon={<VisibilityIcon />}
+                startIcon={<Visibility />}
                 onClick={() => setViewMapOpen(true)}
               >
                 {t('view-button')}

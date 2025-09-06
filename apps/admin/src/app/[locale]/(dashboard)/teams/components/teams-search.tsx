@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Search } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
 interface TeamsSearchProps {
@@ -25,7 +25,7 @@ export const TeamsSearch: React.FC<TeamsSearchProps> = ({ value, onChange }) => 
         input: {
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon />
+              <Search />
             </InputAdornment>
           )
         }

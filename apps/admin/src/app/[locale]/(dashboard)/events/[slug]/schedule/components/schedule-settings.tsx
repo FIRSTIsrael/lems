@@ -15,13 +15,15 @@ import {
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import GroupIcon from '@mui/icons-material/Group';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
-import SportsIcon from '@mui/icons-material/Sports';
-import EventIcon from '@mui/icons-material/Event';
-import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import {
+  Group,
+  LocationOn,
+  TableRestaurant,
+  Sports,
+  SportsScore,
+  Event,
+  WatchLater
+} from '@mui/icons-material';
 import { useSchedule } from './schedule-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -85,19 +87,19 @@ export const ScheduleSettings: React.FC = () => {
           </Typography>
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
-              <GroupIcon color="primary" />
+              <Group color="primary" />
               <Typography variant="body2">
                 {t('information.teams')}: {teamsCount}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <LocationOnIcon color="primary" />
+              <LocationOn color="primary" />
               <Typography variant="body2">
                 {t('information.rooms')}: {roomsCount}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <TableRestaurantIcon color="primary" />
+              <TableRestaurant color="primary" />
               <Typography variant="body2">
                 {t('information.tables')}: {tablesCount}
               </Typography>
@@ -108,13 +110,13 @@ export const ScheduleSettings: React.FC = () => {
         <Box>
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
-              <SportsIcon color="primary" />
+              <Sports color="primary" />
               <Typography variant="body2">
                 {t('information.total-matches')}: {totalMatches}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <EventIcon color="primary" />
+              <Event color="primary" />
               <Typography variant="body2">
                 {t('information.total-sessions')}: {totalSessions}
               </Typography>
@@ -125,19 +127,19 @@ export const ScheduleSettings: React.FC = () => {
         <Box>
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
-              <SportsScoreIcon color="primary" />
+              <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.practice-rounds')}: {practiceRounds}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <SportsScoreIcon color="primary" />
+              <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.ranking-rounds')}: {rankingRounds}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <SportsScoreIcon color="primary" />
+              <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.matches-per-round')}: {matchesPerRound}
               </Typography>
@@ -148,13 +150,13 @@ export const ScheduleSettings: React.FC = () => {
         <Box>
           <Stack direction="row" spacing={4} alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
-              <WatchLaterIcon color="primary" />
+              <WatchLater color="primary" />
               <Typography variant="body2">
                 {t('information.judging-start')}: {judgingStart.format('HH:mm')}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <WatchLaterIcon color="primary" />
+              <WatchLater color="primary" />
               <Typography variant="body2">
                 {t('information.field-start')}: {fieldStart.format('HH:mm')}
               </Typography>

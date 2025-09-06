@@ -3,8 +3,7 @@
 import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Edit, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
@@ -118,7 +117,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       getActions: params => [
         <GridActionsCellItem
           key="edit"
-          icon={<EditIcon />}
+          icon={<Edit />}
           label="Edit team"
           disabled
           onClick={() => {
@@ -128,7 +127,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         />,
         <GridActionsCellItem
           key="delete"
-          icon={<DeleteIcon />}
+          icon={<Delete />}
           label="Delete team"
           disabled
           onClick={() => {
