@@ -1,138 +1,232 @@
 import os
 import logging
-from bson import ObjectId
 import pandas as pd
+from typing import Optional
 
+import psycopg
+from psycopg.rows import dict_row
 from pymongo import MongoClient
-from pymongo.collection import Collection
+from dotenv import load_dotenv
 
 from models.lems import Team as TeamModel, Location as LocationModel
 
-from repository.schemas.judging_session import JudgingSession
-from repository.schemas.robot_game_match import RobotGameMatch
-from repository.schemas.team import Team
-from repository.schemas.judging_room import JudgingRoom
-from repository.schemas.robot_game_table import RobotGameTable
+is_production = os.getenv("PYTHON_ENV") == "production"
+env_file = ".env" if is_production else ".env.local"
+load_dotenv(env_file)
 
 logger = logging.getLogger("lems.scheduler")
 
 
 class LemsRepository:
-    def __init__(self, divisionId: ObjectId):
-        connection_string = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
-        self.divisionId = ObjectId(divisionId)
-        self.client = MongoClient(
-            connection_string, tls=os.getenv("PYTHON_ENV") == 'production', tlsAllowInvalidCertificates=True
+    def __init__(self, divisionId: str):
+        # PostgreSQL connection
+        pg_host = os.getenv("PG_HOST", "127.0.0.1")
+        pg_port = os.getenv("PG_PORT", "5432")
+        pg_user = os.getenv("PG_USER", "postgres")
+        pg_password = os.getenv("PG_PASSWORD", "postgres")
+        pg_database = os.getenv("DB_NAME", "lems-local")
+
+        postgres_uri = (
+            f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
         )
-        self.db = self.client["lems"]
-        logger.info(f"🔗 Connecting to MongoDB server at {connection_string}")
+
+        self.divisionId = divisionId
+
         try:
-            self.client.admin.command("ping")
+            self.pg_conn = psycopg.connect(postgres_uri, row_factory=dict_row)
+            logger.info(
+                f"🔗 Connecting to PostgreSQL server at {pg_host}:{pg_port}/{pg_database}"
+            )
+            logger.info("🚀 PostgreSQL Client connected.")
+        except Exception as err:
+            logger.error("❌ Unable to connect to PostgreSQL: ", err)
+            raise
+
+        # MongoDB connection
+        mongodb_uri = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
+        self.mongo_client = MongoClient(
+            mongodb_uri,
+            tls=os.getenv("PYTHON_ENV") == "production",
+            tlsAllowInvalidCertificates=True,
+        )
+        self.mongo_db = self.mongo_client["lems"]
+        logger.info(f"🔗 Connecting to MongoDB server at {mongodb_uri}")
+        try:
+            self.mongo_client.admin.command("ping")
             logger.info("🚀 MongoDB Client connected.")
         except Exception as err:
-            logger.error("❌ Unable to connect to mongodb: ", err)
+            logger.error("❌ Unable to connect to MongoDB: ", err)
 
     def get_teams(self) -> list[TeamModel]:
-        collection: Collection[Team] = self.db.teams
-        teams = collection.find({"divisionId": self.divisionId}).to_list()
-        return [TeamModel(team.get("_id"), team.get("number")) for team in teams]
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, number FROM teams WHERE division_id = %s",
+                (str(self.divisionId),),
+            )
+            teams = cursor.fetchall()
+            return [TeamModel(team["id"], team["number"]) for team in teams]
 
     def get_rooms(self) -> list[LocationModel]:
-        collection: Collection[JudgingRoom] = self.db.rooms
-        rooms = collection.find({"divisionId": self.divisionId}).to_list()
-        return [LocationModel(room.get("_id"), room.get("name")) for room in rooms]
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, name FROM judging_rooms WHERE division_id = %s",
+                (str(self.divisionId),),
+            )
+            rooms = cursor.fetchall()
+            return [LocationModel(room["id"], room["name"]) for room in rooms]
 
     def get_tables(self) -> list[LocationModel]:
-        collection: Collection[RobotGameTable] = self.db.tables
-        tables = collection.find({"divisionId": self.divisionId}).to_list()
-        return [LocationModel(table.get("_id"), table.get("name")) for table in tables]
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, name FROM robot_game_tables WHERE division_id = %s",
+                (str(self.divisionId),),
+            )
+            tables = cursor.fetchall()
+            return [LocationModel(table["id"], table["name"]) for table in tables]
 
-    def get_team(self, team_number: int) -> Team:
-        collection: Collection[Team] = self.db.teams
-        team = collection.find_one(
-            {"divisionId": self.divisionId, "number": team_number}
-        )
-        return team
+    def get_team(self, team_number: int) -> Optional[dict]:
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, number, name FROM teams WHERE division_id = %s AND number = %s",
+                (str(self.divisionId), team_number),
+            )
+            team = cursor.fetchone()
+            return team
 
-    def get_lems_team_id(self, team_number: int) -> ObjectId:
+    def get_lems_team_id(self, team_number: int) -> Optional[str]:
         lems_team_id = None
         if team_number is not None:
-            object_id = self.get_team(team_number)
-            if object_id is not None:
-                lems_team_id = ObjectId(object_id["_id"])
+            team_data = self.get_team(team_number)
+            if team_data is not None:
+                lems_team_id = team_data["id"]
         return lems_team_id
 
     def insert_sessions(self, session_schedule: pd.DataFrame):
-        logger.info("Inserting judging sessions into LEMS database")
-        collection: Collection[JudgingSession] = self.db.sessions
-        sessions: list[JudgingSession] = []
+        logger.info("Inserting judging sessions into PostgreSQL database")
 
+        sessions_to_insert = []
         ignore_columns = ["start_time", "end_time"]
+
         for index, row in session_schedule.iterrows():
-            start_time = row["start_time"]
+            scheduled_time = row["start_time"]
             for room_id, _team_number in row[len(ignore_columns) :].items():
                 team_number = int(_team_number) if pd.notna(_team_number) else None
 
-                lems_team_id = self.get_lems_team_id(team_number)
-                if lems_team_id is not None:
-                    document: JudgingSession = {
-                        "divisionId": self.divisionId,
-                        "number": index,
-                        "roomId": ObjectId(room_id),
-                        "teamId": lems_team_id,
-                        "called": False,
-                        "queued": False,
-                        "status": "not-started",
-                        "scheduledTime": start_time,
-                    }
-                    sessions.append(document)
-
-        collection.insert_many(sessions)
-        logger.info("Judging sessions inserted successfully")
-
-    def insert_matches(self, match_schedule: pd.DataFrame):
-        logger.info("Inserting matches into LEMS database")
-        collection: Collection[RobotGameMatch] = self.db.matches
-        matches: list[RobotGameMatch] = []
-        tables = self.get_tables()
-
-        ignore_columns = ["start_time", "end_time", "stage", "round"]
-        for index, row in match_schedule.iterrows():
-            start_time = row["start_time"]
-            stage = row["stage"]
-            round_number = row["round"]
-
-            participants = []
-            for table_id, _team_number in row[len(ignore_columns) :].items():
-                team_number = int(_team_number) if pd.notna(_team_number) else None
-                table_name = next(
-                    (table.name for table in tables if table.id == table_id), None
-                )
-
-                lems_team_id = self.get_lems_team_id(team_number)
-                if lems_team_id is not None:
-                    participants.append(
+                team_id = self.get_lems_team_id(team_number)
+                if team_id is not None:
+                    sessions_to_insert.append(
                         {
-                            "teamId": lems_team_id,
-                            "tableId": ObjectId(table_id),
-                            "tableName": table_name,
-                            "queued": False,
-                            "ready": False,
-                            "present": "no-show",
+                            "division_id": str(self.divisionId),
+                            "number": index,
+                            "room_id": room_id,
+                            "team_id": team_id,
+                            "scheduled_time": scheduled_time,
                         }
                     )
 
-            document: RobotGameMatch = {
-                "divisionId": self.divisionId,
+        if sessions_to_insert:
+            with self.pg_conn.cursor() as cursor:
+                cursor.executemany(
+                    """
+                    INSERT INTO judging_sessions (division_id, number, room_id, team_id, scheduled_time)
+                    VALUES (%(division_id)s, %(number)s, %(room_id)s, %(team_id)s, %(scheduled_time)s)
+                    """,
+                    sessions_to_insert,
+                )
+                self.pg_conn.commit()
+
+        logger.info(f"Inserted {len(sessions_to_insert)} judging sessions successfully")
+
+    def insert_matches(self, match_schedule: pd.DataFrame):
+        logger.info("Inserting matches into PostgreSQL database")
+
+        matches_to_insert = []
+        match_participants_to_insert = []
+
+        ignore_columns = ["start_time", "end_time", "stage", "round"]
+        for index, row in match_schedule.iterrows():
+            scheduled_time = row["start_time"]
+            stage = row["stage"]
+            round_number = row["round"]
+
+            # Insert the match first
+            match_data = {
+                "division_id": str(self.divisionId),
                 "stage": stage,
                 "round": round_number,
                 "number": index,
-                "status": "not-started",
-                "scheduledTime": start_time,
-                "called": False,
-                "participants": participants,
+                "scheduled_time": scheduled_time,
             }
-            matches.append(document)
+            matches_to_insert.append(match_data)
 
-        collection.insert_many(matches)
-        logger.info("Matches inserted successfully")
+            # Collect participants for this match
+            for table_id, _team_number in row[len(ignore_columns) :].items():
+                team_number = int(_team_number) if pd.notna(_team_number) else None
+
+                team_id = self.get_lems_team_id(team_number)
+                if team_id is not None:
+                    participant_data = {
+                        "match_index": index,  # We'll use this to link back to the match
+                        "team_id": team_id,
+                        "table_id": table_id,
+                        "division_id": str(self.divisionId),
+                    }
+                    match_participants_to_insert.append(participant_data)
+
+        # Insert matches
+        if matches_to_insert:
+            with self.pg_conn.cursor() as cursor:
+                cursor.executemany(
+                    """
+                    INSERT INTO robot_game_matches (division_id, stage, round, number, scheduled_time)
+                    VALUES (%(division_id)s, %(stage)s, %(round)s, %(number)s, %(scheduled_time)s)
+                    """,
+                    matches_to_insert,
+                )
+
+                # Insert match participants (assuming there's a separate table for this)
+                if match_participants_to_insert:
+                    # First get the match IDs that were just inserted
+                    cursor.execute(
+                        """
+                        SELECT id, number FROM robot_game_matches 
+                        WHERE division_id = %s AND number = ANY(%s)
+                        """,
+                        (
+                            str(self.divisionId),
+                            [m["number"] for m in matches_to_insert],
+                        ),
+                    )
+                    match_id_map = {
+                        row["number"]: row["id"] for row in cursor.fetchall()
+                    }
+
+                    # Update participant data with actual match IDs
+                    for participant in match_participants_to_insert:
+                        participant["match_id"] = match_id_map[
+                            participant["match_index"]
+                        ]
+                        del participant["match_index"]  # Remove temporary field
+
+                    cursor.executemany(
+                        """
+                        INSERT INTO robot_game_match_participants (match_id, team_id, table_id)
+                        VALUES (%(match_id)s, %(team_id)s, %(table_id)s)
+                        """,
+                        match_participants_to_insert,
+                    )
+
+                self.pg_conn.commit()
+
+        logger.info(
+            f"Inserted {len(matches_to_insert)} matches with {len(match_participants_to_insert)} participants successfully"
+        )
+
+    def close_connections(self):
+        """Close both PostgreSQL and MongoDB connections"""
+        if hasattr(self, "pg_conn"):
+            self.pg_conn.close()
+            logger.info("PostgreSQL connection closed")
+        if hasattr(self, "mongo_client"):
+            self.mongo_client.close()
+            logger.info("MongoDB connection closed")
