@@ -490,6 +490,9 @@
             "add-practice-round": "הוספת סבב אימונים",
             "add-ranking-round": "הוספת סבב דירוג"
           }
+        },
+        "teamSwap": {
+          "placeholder": "מסך החלפת קבוצות - בקרוב"
         }
       }
     },

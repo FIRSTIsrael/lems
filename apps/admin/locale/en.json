@@ -490,6 +490,9 @@
             "add-practice-round": "Add Practice Round",
             "add-ranking-round": "Add Ranking Round"
           }
+        },
+        "teamSwap": {
+          "placeholder": "Team Swap view coming soon"
         }
       }
     },

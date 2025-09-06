@@ -35,10 +35,6 @@ export default function EventSchedulePage() {
       <Box sx={{ flex: 1, minHeight: 0 }}>
         {selectedDivision && <ScheduleManager division={selectedDivision} />}
       </Box>
-
-      {/* <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
-        {t('alerts.schedule-set-up')}
-      </Alert> */}
     </Box>
   );
 }
