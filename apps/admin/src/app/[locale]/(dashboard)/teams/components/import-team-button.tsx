@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { UploadFile } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { useDialog } from '../../components/dialog-provider';
 import { ImportTeamDialog } from './import-team-dialog';
@@ -18,7 +18,7 @@ export const ImportTeamButton: React.FC = () => {
   return (
     <Tooltip title={t('import-teams')}>
       <IconButton onClick={showImportDialog}>
-        <UploadFileIcon />
+        <UploadFile />
       </IconButton>
     </Tooltip>
   );

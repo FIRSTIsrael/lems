@@ -18,7 +18,7 @@ import { ColorPicker, FormikTextField } from '@lems/shared';
 import { HsvaColor, hsvaToHex, hexToHsva } from '@uiw/react-color';
 import { apiFetch } from '../../../../../../../lib/fetch';
 import { defaultColor } from '../../../../../../../theme';
-import { useEvent } from '../../layout';
+import { useEvent } from '../../components/event-context';
 
 interface CreateDivisionModalProps {
   open: boolean;

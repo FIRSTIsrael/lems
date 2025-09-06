@@ -24,8 +24,6 @@ export const EventGrid: React.FC<EventGridProps> = ({
     shouldFetch ? `/admin/events/season/${season.id}/summary` : null
   );
 
-  console.log(events);
-
   if (isLoading) {
     return (
       <Box

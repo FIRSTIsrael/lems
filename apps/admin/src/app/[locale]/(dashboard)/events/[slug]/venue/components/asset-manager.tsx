@@ -13,7 +13,7 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { AddRounded } from '@mui/icons-material';
 import { Division, JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../../lib/fetch';
 import { AssetCell } from './asset-cell';
@@ -25,7 +25,7 @@ interface AssetManagerProps {
   assetType: 'rooms' | 'tables';
 }
 
-const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
+export const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
   const t = useTranslations(`pages.events.venue`);
   const [editingAssets, setEditingAssets] = useState<{ [key: string]: string }>({});
   const [newAssetName, setNewAssetName] = useState('');
@@ -201,7 +201,7 @@ const AssetManager = <T extends AssetType>({ division, assetType }: AssetManager
           />
           <Button
             variant="contained"
-            startIcon={saving.new ? <CircularProgress size={16} /> : <AddIcon />}
+            startIcon={saving.new ? <CircularProgress size={16} /> : <AddRounded />}
             onClick={handleAddAsset}
             disabled={saving.new}
           >
@@ -248,5 +248,3 @@ const AssetManager = <T extends AssetType>({ division, assetType }: AssetManager
     </Paper>
   );
 };
-
-export default AssetManager;

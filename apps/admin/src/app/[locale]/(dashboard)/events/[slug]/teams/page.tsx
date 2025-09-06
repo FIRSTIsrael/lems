@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import { Stack, Switch, Typography, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision } from '@lems/types/api/admin';
-import { useEvent } from '../layout';
+import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';

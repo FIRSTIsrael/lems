@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import GroupsIcon from '@mui/icons-material/Groups';
+import { Groups } from '@mui/icons-material';
 import NumberWidget from './number-widget';
 
 export default async function RegisteredTeamsWidget() {
@@ -13,7 +13,7 @@ export default async function RegisteredTeamsWidget() {
     <NumberWidget
       value={teamCount}
       description={t('description')}
-      icon={<GroupsIcon sx={{ width: 48, height: 48 }} />}
+      icon={<Groups sx={{ width: 48, height: 48 }} />}
     />
   );
 }

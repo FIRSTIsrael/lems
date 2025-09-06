@@ -2,7 +2,7 @@
 
 import dayjs from 'dayjs';
 import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { CalendarToday } from '@mui/icons-material';
 
 interface Event {
   id: string;
@@ -58,7 +58,7 @@ export default function EventListItem({ event }: EventListItemProps) {
           </Stack>
 
           <Box display="flex" alignItems="center" gap={1}>
-            <CalendarTodayIcon
+            <CalendarToday
               sx={{
                 fontSize: 16,
                 color: 'text.secondary'

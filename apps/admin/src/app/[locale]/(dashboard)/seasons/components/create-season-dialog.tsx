@@ -16,7 +16,7 @@ import {
   Alert
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { CloudUpload } from '@mui/icons-material';
 import { FileUpload, FormikTextField } from '@lems/shared';
 import { AdminSeasonResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../lib/fetch';
@@ -198,7 +198,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 <Button
                   type="submit"
                   variant="contained"
-                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <CloudUpload />}
                   loading={isSubmitting}
                   sx={{ minWidth: 200 }}
                 >

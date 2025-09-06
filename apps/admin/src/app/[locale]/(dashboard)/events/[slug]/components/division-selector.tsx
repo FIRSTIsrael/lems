@@ -3,23 +3,27 @@
 import { Box, Typography, Avatar, Chip, Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface DivisionSelectorProps {
   divisions: Division[];
-  selectedDivisionId: string;
-  onDivisionChange: (divisionId: string) => void;
 }
 
-const DivisionSelector: React.FC<DivisionSelectorProps> = ({
-  divisions,
-  selectedDivisionId,
-  onDivisionChange
-}) => {
+export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions }) => {
   const t = useTranslations('pages.events.layout.division-selector');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
 
   if (divisions.length <= 1) {
     return null; // This component should only be shown on events with multiple divisions
   }
+
+  const handleDivisionChange = (divisionId: string) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set('division', divisionId);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <Box>
@@ -49,7 +53,7 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
               }
               label={division.name}
               variant={isSelected ? 'filled' : 'outlined'}
-              onClick={() => onDivisionChange(division.id)}
+              onClick={() => handleDivisionChange(division.id)}
               sx={{
                 height: 40,
                 fontSize: '0.875rem',
@@ -79,5 +83,3 @@ const DivisionSelector: React.FC<DivisionSelectorProps> = ({
     </Box>
   );
 };
-
-export default DivisionSelector;

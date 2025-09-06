@@ -3,8 +3,7 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import { Check, Close } from '@mui/icons-material';
 
 interface PasswordValidation {
   minLength: boolean;
@@ -48,9 +47,9 @@ export const PasswordRequirements: React.FC<{
           <ListItem key={condition.key} sx={{ py: 0, px: 0 }}>
             <ListItemIcon sx={{ minWidth: 28 }}>
               {condition.met ? (
-                <CheckIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                <Check sx={{ fontSize: 16, color: 'success.main' }} />
               ) : (
-                <CloseIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                <Close sx={{ fontSize: 16, color: 'error.main' }} />
               )}
             </ListItemIcon>
             <ListItemText

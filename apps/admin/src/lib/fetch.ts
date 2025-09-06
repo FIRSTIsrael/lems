@@ -141,7 +141,9 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
     }
 
     try {
-      const json = await response.json();
+      const text = await response.text();
+      const isEmpty = !text || text.trim().length === 0;
+      const json = isEmpty ? null : JSON.parse(text);
 
       if (schema) {
         const parsedData = schema.parse(json);

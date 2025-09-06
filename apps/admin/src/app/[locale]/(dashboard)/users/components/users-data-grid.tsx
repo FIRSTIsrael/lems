@@ -4,9 +4,7 @@ import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SecurityIcon from '@mui/icons-material/Security';
+import { Edit, Security, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { AdminUser } from '@lems/types/api/admin';
 import { UsersSearch } from './users-search';
@@ -116,7 +114,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
       getActions: params => [
         <GridActionsCellItem
           key="permissions"
-          icon={<SecurityIcon />}
+          icon={<Security />}
           label="Edit permissions"
           onClick={() => {
             openPermissionsDialog(params.row.id, params.row.firstName, params.row.lastName);
@@ -124,7 +122,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         />,
         <GridActionsCellItem
           key="edit"
-          icon={<EditIcon />}
+          icon={<Edit />}
           label="Edit user"
           disabled
           onClick={() => {
@@ -134,7 +132,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         />,
         <GridActionsCellItem
           key="delete"
-          icon={<DeleteIcon />}
+          icon={<Delete />}
           label="Delete user"
           disabled
           onClick={() => {

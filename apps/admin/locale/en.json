@@ -432,6 +432,68 @@
             "name-required": "Name is required"
           }
         }
+      },
+      "schedule": {
+        "title": "{eventName}: Schedule",
+        "alerts": {
+          "schedule-set-up": "This event already has a schedule set. You can modify team schedules, or delete the schedule entirely.",
+          "missing-details": "Some details are missing. Teams, rooms, and tables are required to generate a schedule."
+        },
+        "links": {
+          "teams": {
+            "title": "Manage Teams",
+            "description": "Register and manage teams for this division"
+          },
+          "venue": {
+            "title": "Manage Venue",
+            "description": "Set up rooms and tables for this division"
+          }
+        },
+        "settings": {
+          "title": "Schedule Settings",
+          "information": {
+            "title": "Information",
+            "teams": "Teams",
+            "rooms": "Rooms",
+            "tables": "Tables",
+            "total-matches": "Total Matches",
+            "total-sessions": "Total Judging Sessions",
+            "practice-rounds": "Practice Rounds",
+            "ranking-rounds": "Ranking Rounds",
+            "judging-start": "Judging start time",
+            "field-start": "Field start time",
+            "matches-per-round": "Matches per round"
+          },
+          "settings": {
+            "title": "Settings",
+            "stagger-matches": "Stagger matches"
+          },
+          "timing": {
+            "practice-cycle-time": "Practice Match cycle time",
+            "ranking-cycle-time": "Ranking Match cycle time",
+            "judging-session-cycle-time": "Judging Session cycle time",
+            "match-length": "Match length",
+            "judging-session-length": "Judging Session length"
+          }
+        },
+        "calendar": {
+          "blocks": {
+            "judging-session": "Judging Session #{number}",
+            "practice-round": "Practice Round #{number}",
+            "ranking-round": "Ranking Round #{number}"
+          },
+          "judging": {
+            "title": "Judging"
+          },
+          "field": {
+            "title": "Field",
+            "add-practice-round": "Add Practice Round",
+            "add-ranking-round": "Add Ranking Round"
+          }
+        },
+        "teamSwap": {
+          "placeholder": "Team Swap view coming soon"
+        }
       }
     },
     "users": {

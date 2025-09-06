@@ -1,71 +1,33 @@
-'use client';
-
-import React, { createContext, useContext } from 'react';
-import { redirect, useParams } from 'next/navigation';
-import useSWR from 'swr';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import { Event } from '@lems/types/api/admin';
+import { redirect } from 'next/navigation';
+import { AdminEventResponseSchema, AdminEventsResponseSchema } from '@lems/types/api/admin';
+import { apiFetch } from '../../../../../lib/fetch';
+import { EventProvider } from './components/event-context';
 
 interface EventLayoutProps {
   children: React.ReactNode;
+  params: Promise<{ slug: string }>;
 }
 
-const EventContext = createContext<Event | null>(null);
+export default async function EventLayout({ children, params }: EventLayoutProps) {
+  const { slug } = await params;
 
-export const useEvent = (): Event => {
-  const event = useContext(EventContext);
-  if (!event) {
-    throw new Error('useEvent must be used within an EventLayout');
-  }
-  return event;
-};
+  const [userEventsResult, eventResult] = await Promise.all([
+    apiFetch('/admin/events/me', undefined, AdminEventsResponseSchema),
+    apiFetch(`/admin/events/slug/${slug}`, undefined, AdminEventResponseSchema)
+  ]);
 
-export default function EventLayout({ children }: EventLayoutProps) {
-  const params = useParams();
-  const slug = params.slug as string;
-
-  const {
-    data: userEvents,
-    error: userEventsError,
-    isLoading: userEventsLoading
-  } = useSWR<Event[]>(`/admin/events/me`, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: false
-  });
-
-  const {
-    data: event,
-    error,
-    isLoading
-  } = useSWR<Event>(`/admin/events/slug/${slug}`, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: false
-  });
-
-  if (isLoading || userEventsLoading) {
-    return (
-      <Box
-        sx={{
-          height: 'calc(100vh - 40px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: 2
-        }}
-      >
-        <CircularProgress />
-        <Typography>Loading event...</Typography>
-      </Box>
+  if (!userEventsResult.ok) {
+    throw new Error(
+      `Failed to fetch user events: ${userEventsResult.status} ${userEventsResult.statusText}`
     );
   }
 
-  if (error || userEventsError) {
-    console.error('Failed to load event:', error || userEventsError);
-    redirect('/events');
+  if (!eventResult.ok) {
+    throw new Error(`Failed to fetch event data: ${eventResult.status} ${eventResult.statusText}`);
   }
+
+  const { data: userEvents } = userEventsResult;
+  const { data: event } = eventResult;
 
   if (!event) {
     redirect('/events');
@@ -75,5 +37,5 @@ export default function EventLayout({ children }: EventLayoutProps) {
     redirect('/events');
   }
 
-  return <EventContext.Provider value={event}>{children}</EventContext.Provider>;
+  return <EventProvider value={event}>{children}</EventProvider>;
 }

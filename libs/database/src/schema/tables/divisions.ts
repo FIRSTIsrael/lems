@@ -7,11 +7,9 @@ export interface DivisionsTable {
   event_id: string; // UUID foreign key to events.id
   color: string;
   pit_map_url: string | null;
-  initialized: Generated<boolean>; // Default false
+  has_schedule: Generated<boolean>; // Default false
+  has_awards: Generated<boolean>; // Default false
   stagger_matches: Generated<boolean>; // Default false
-  allow_advancement: Generated<boolean>; // Default false
-  completed: Generated<boolean>; // Default false
-  published: Generated<boolean>; // Default false
 }
 
 export type Division = Selectable<DivisionsTable>;

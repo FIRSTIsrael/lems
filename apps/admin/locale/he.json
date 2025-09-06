@@ -432,6 +432,68 @@
             "name-required": "שם נדרש"
           }
         }
+      },
+      "schedule": {
+        "title": "{eventName}: לוח זמנים",
+        "alerts": {
+          "schedule-set-up": "לאירוע זה כבר יש לוח זמנים. תוכלו לערוך את לוחות הזמנים של כל קבוצה, או למחוק את לוח הזמנים.",
+          "missing-details": "חלק מהפרטים חסרים. נדרש למלא קבוצות, חדרים, ושולחנות על מנת לייצר לוח זמנים."
+        },
+        "links": {
+          "teams": {
+            "title": "ניהול קבוצות",
+            "description": "רישום וניהול קבוצות עבור בית זה"
+          },
+          "venue": {
+            "title": "ניהול היכל",
+            "description": "הגדרת חדרים ושולחנות עבור בית זה"
+          }
+        },
+        "settings": {
+          "title": "הגדרות לוח הזמנים",
+          "information": {
+            "title": "מידע",
+            "teams": "קבוצות",
+            "rooms": "חדרים",
+            "tables": "שולחנות",
+            "total-matches": "סה\"כ מקצים",
+            "total-sessions": "סה\"כ סבבי שיפוט",
+            "practice-rounds": "סבבי אימונים",
+            "ranking-rounds": "סבבי דירוג",
+            "judging-start": "תחילת שיפוט",
+            "field-start": "תחילת זירה",
+            "matches-per-round": "מקצים בכל סבב"
+          },
+          "settings": {
+            "title": "הגדרות",
+            "stagger-matches": "הרצה מדורגת"
+          },
+          "timing": {
+            "practice-cycle-time": "מחזור משחקי אימון",
+            "ranking-cycle-time": "מחזור משחקי דירוג",
+            "judging-session-cycle-time": "מחזור מפגש שיפוט",
+            "match-length": "אורך מקצה",
+            "judging-session-length": "אורך מפגש שיפוט"
+          }
+        },
+        "calendar": {
+          "blocks": {
+            "judging-session": "סבב שיפוט #{number}",
+            "practice-round": "סבב אימונים #{number}",
+            "ranking-round": "סבב דירוג #{number}"
+          },
+          "judging": {
+            "title": "שיפוט"
+          },
+          "field": {
+            "title": "זירה",
+            "add-practice-round": "הוספת סבב אימונים",
+            "add-ranking-round": "הוספת סבב דירוג"
+          }
+        },
+        "teamSwap": {
+          "placeholder": "מסך החלפת קבוצות - בקרוב"
+        }
       }
     },
     "users": {

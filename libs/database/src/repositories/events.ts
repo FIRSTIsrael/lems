@@ -127,22 +127,13 @@ class EventSelector {
 
     const registeredTeamIds = new Set(registeredTeams.map(row => row.team_id));
 
-    const availableTeams = await this.db
-      .selectFrom('teams')
-      .select([
-        'teams.id',
-        'teams.pk',
-        'teams.number',
-        'teams.name',
-        'teams.logo_url',
-        'teams.affiliation',
-        'teams.city',
-        'teams.coordinates'
-      ])
-      .where('teams.id', 'not in', Array.from(registeredTeamIds))
-      .orderBy('teams.number', 'asc')
-      .execute();
+    let query = this.db.selectFrom('teams').selectAll().orderBy('teams.number', 'asc');
 
+    if (registeredTeamIds.size > 0) {
+      query = query.where('teams.id', 'not in', Array.from(registeredTeamIds));
+    }
+
+    const availableTeams = await query.execute();
     return availableTeams;
   }
 

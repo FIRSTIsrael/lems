@@ -3,6 +3,7 @@ import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableDivision, Division, UpdateableDivision } from '../schema/tables/divisions';
 import {
+  Team,
   InsertableJudgingRoom,
   InsertableRobotGameTable,
   JudgingRoom,
@@ -102,6 +103,30 @@ class DivisionSelector {
       .selectFrom('judging_rooms')
       .selectAll()
       .where('division_id', '=', division.id)
+      .execute();
+  }
+
+  async getTeams(): Promise<Team[]> {
+    const division = await this.get();
+    if (!division) {
+      throw new Error('Division not found');
+    }
+
+    return await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('teams', 'teams.id', 'team_divisions.team_id')
+      .select([
+        'teams.pk',
+        'teams.id',
+        'teams.name',
+        'teams.number',
+        'teams.affiliation',
+        'teams.city',
+        'teams.coordinates',
+        'teams.logo_url'
+      ])
+      .where('team_divisions.division_id', '=', division.id)
+      .orderBy('teams.number', 'asc')
       .execute();
   }
 

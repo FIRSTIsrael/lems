@@ -1,3 +1,5 @@
+// THIS IS AN OLD VERSION OF THE CALENDAR FOR REFERENCE ONLY
+
 import { WithId } from 'mongodb';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';

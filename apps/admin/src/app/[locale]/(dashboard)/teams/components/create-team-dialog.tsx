@@ -14,7 +14,7 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { CloudUpload } from '@mui/icons-material';
 import { FileUpload, FormikTextField } from '@lems/shared';
 import { AdminTeamResponseSchema } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../lib/fetch';
@@ -190,7 +190,7 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 <Button
                   type="submit"
                   variant="contained"
-                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                  startIcon={isSubmitting ? <CircularProgress size={20} /> : <CloudUpload />}
                   loading={isSubmitting}
                   sx={{ minWidth: 200 }}
                 >

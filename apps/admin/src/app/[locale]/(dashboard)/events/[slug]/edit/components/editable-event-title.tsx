@@ -3,10 +3,8 @@
 import { mutate } from 'swr';
 import { useState, useRef, useEffect } from 'react';
 import { Typography, TextField, IconButton, Stack, Box } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import { useEvent } from '../../layout';
+import { Edit, Check, Close } from '@mui/icons-material';
+import { useEvent } from '../../components/event-context';
 import { apiFetch } from '../../../../../../../lib/fetch';
 
 export const EditableEventTitle: React.FC = () => {
@@ -129,7 +127,7 @@ export const EditableEventTitle: React.FC = () => {
                 }
               }}
             >
-              <CheckIcon fontSize="small" />
+              <Check fontSize="small" />
             </IconButton>
             <IconButton
               onClick={handleEditCancel}
@@ -146,7 +144,7 @@ export const EditableEventTitle: React.FC = () => {
                 }
               }}
             >
-              <CloseIcon fontSize="small" />
+              <Close fontSize="small" />
             </IconButton>
           </Stack>
         </Stack>
@@ -201,7 +199,7 @@ export const EditableEventTitle: React.FC = () => {
           }
         }}
       >
-        <EditIcon fontSize="small" />
+        <Edit fontSize="small" />
       </IconButton>
     </Stack>
   );

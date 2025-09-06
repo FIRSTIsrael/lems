@@ -42,11 +42,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('event_id', 'uuid', col => col.notNull())
     .addColumn('color', 'text', col => col.notNull())
     .addColumn('pit_map_url', 'text')
-    .addColumn('initialized', 'boolean', col => col.notNull().defaultTo(false))
+    .addColumn('has_schedule', 'boolean', col => col.notNull().defaultTo(false))
+    .addColumn('has_awards', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('stagger_matches', 'boolean', col => col.notNull().defaultTo(false))
-    .addColumn('allow_advancement', 'boolean', col => col.notNull().defaultTo(false))
-    .addColumn('completed', 'boolean', col => col.notNull().defaultTo(false))
-    .addColumn('published', 'boolean', col => col.notNull().defaultTo(false))
     .execute();
 
   // Create foreign key constraint for event_id

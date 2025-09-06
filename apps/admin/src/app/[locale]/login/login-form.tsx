@@ -15,8 +15,7 @@ import {
   Container,
   Box
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { ChevronEndIcon } from '@lems/localization';
 import {
   useRecaptcha,
@@ -153,7 +152,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                             edge="end"
                             size="small"
                           >
-                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
                       )
