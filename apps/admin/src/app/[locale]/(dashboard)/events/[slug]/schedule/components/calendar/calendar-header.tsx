@@ -11,7 +11,6 @@ import { useSchedule, ScheduleContextType } from '../schedule-context';
 import { useCalendar, CalendarContextType } from './calendar-context';
 import { getDuration } from './calendar-utils';
 
-// Define response schema for validation
 const ValidatorDataSchema = z.object({
   type: z.string(),
   message: z.string(),
@@ -52,6 +51,64 @@ interface SchedulerRequest {
   }>;
 }
 
+function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: ScheduleContextType): Array<{
+  event_type: 'judging' | 'match';
+  after: number;
+  duration_seconds: number;
+}> {
+  const breaks: Array<{
+    event_type: 'judging' | 'match';
+    after: number;
+    duration_seconds: number;
+  }> = [];
+
+  const fieldBlocks = calendarContext.blocks.field.sort((a, b) => 
+    a.startTime.valueOf() - b.startTime.valueOf()
+  );
+
+  let matchCount = 0;
+  for (let i = 0; i < fieldBlocks.length - 1; i++) {
+    const currentBlock = fieldBlocks[i];
+    const nextBlock = fieldBlocks[i + 1];
+    
+    matchCount += scheduleContext.matchesPerRound;
+    
+    const currentEndTime = currentBlock.startTime.add(currentBlock.durationSeconds, 'seconds');
+    const gapDuration = nextBlock.startTime.diff(currentEndTime, 'seconds');
+    
+    breaks.push({
+      event_type: 'match',
+      after: matchCount,
+      duration_seconds: gapDuration
+    });
+  }
+
+  const judgingBlocks = calendarContext.blocks.judging.sort((a, b) => 
+    a.startTime.valueOf() - b.startTime.valueOf()
+  );
+
+  let sessionCount = 0;
+  for (let i = 0; i < judgingBlocks.length - 1; i++) {
+    const currentBlock = judgingBlocks[i];
+    const nextBlock = judgingBlocks[i + 1];
+    
+    sessionCount += 1;
+    
+    const currentEndTime = currentBlock.startTime.add(currentBlock.durationSeconds, 'seconds');
+    const gapDuration = nextBlock.startTime.diff(currentEndTime, 'seconds');
+    
+    if (gapDuration > 300) {
+      breaks.push({
+        event_type: 'judging',
+        after: sessionCount,
+        duration_seconds: gapDuration
+      });
+    }
+  }
+
+  return breaks;
+}
+
 export function prepareSchedulerRequest(
   calendarContext: CalendarContextType,
   scheduleContext: ScheduleContextType,
@@ -69,7 +126,7 @@ export function prepareSchedulerRequest(
     judging_start: scheduleContext.judgingStart.toISOString(),
     judging_session_length_seconds: getDuration(scheduleContext.judgingSessionLength),
     judging_cycle_time_seconds: getDuration(scheduleContext.judgingSessionCycleTime),
-    breaks: [] // TODO: Add breaks support when implemented
+    breaks: calculateBreaks(calendarContext, scheduleContext)
   };
 }
 
@@ -90,7 +147,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       const requestData = prepareSchedulerRequest(calendarContext, scheduleContext, division.id);
 
       const result = await apiFetch(
-        `/admin/scheduler/validate`,
+        `/admin/events/${division.eventId}/divisions/${division.id}/schedule/validate`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -102,12 +159,12 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       if (!result.ok) {
         setVerificationResult({
           isValid: false,
-          message: `Verification failed: ${result.error || 'Unknown error'}`,
+          message: `Verification failed: ${result.error.error || 'Unknown error'}`,
           severity: 'error'
         });
         return;
       }
-
+      
       const data = result.data;
 
       if (data.error) {

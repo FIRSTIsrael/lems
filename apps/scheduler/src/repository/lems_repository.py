@@ -60,11 +60,11 @@ class LemsRepository:
     def get_teams(self) -> list[TeamModel]:
         with self.pg_conn.cursor() as cursor:
             cursor.execute(
-                "SELECT id, number FROM teams WHERE division_id = %s",
+                "SELECT division_id, team_id FROM team_divisions WHERE division_id = %s",
                 (str(self.divisionId),),
             )
             teams = cursor.fetchall()
-            return [TeamModel(team["id"], team["number"]) for team in teams]
+            return [TeamModel(team["division_id"], team["team_id"]) for team in teams]
 
     def get_rooms(self) -> list[LocationModel]:
         with self.pg_conn.cursor() as cursor:

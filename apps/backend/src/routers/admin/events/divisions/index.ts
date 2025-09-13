@@ -8,6 +8,7 @@ import divisionRoomsRouter from './rooms/index';
 import divisionTablesRouter from './tables/index';
 import divisionPitMapRouter from './pit-map/index';
 import divisionTeamsRouter from './teams/index';
+import divisionScheduleRouter from './schedule/index';
 
 const router = express.Router({ mergeParams: true });
 
@@ -35,6 +36,7 @@ router.use('/:divisionId/rooms', divisionRoomsRouter);
 router.use('/:divisionId/tables', divisionTablesRouter);
 router.use('/:divisionId/pit-map', divisionPitMapRouter);
 router.use('/:divisionId/teams', divisionTeamsRouter);
+router.use('/:divisionId/schedule', divisionScheduleRouter);
 
 router.put(
   '/:divisionId',
