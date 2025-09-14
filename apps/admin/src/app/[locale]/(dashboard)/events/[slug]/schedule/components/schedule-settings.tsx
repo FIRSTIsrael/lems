@@ -52,12 +52,9 @@ export const ScheduleSettings: React.FC = () => {
     matchesPerRound
   } = useSchedule();
 
-  // Calculate derived values that will be shown in calendar
   const totalMatches = React.useMemo(() => {
-    // This would be calculated based on practice + ranking rounds from calendar state
-    // For now, showing a basic calculation
-    return teamsCount * 4; // Assuming 1 practice + 3 ranking rounds
-  }, [teamsCount]);
+    return matchesPerRound * (practiceRounds + rankingRounds);
+  }, [matchesPerRound, practiceRounds, rankingRounds]);
 
   const totalSessions = React.useMemo(() => {
     return Math.ceil(teamsCount / roomsCount);

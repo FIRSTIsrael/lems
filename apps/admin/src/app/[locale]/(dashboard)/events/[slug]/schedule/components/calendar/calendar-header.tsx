@@ -48,6 +48,12 @@ interface VerificationResult {
   severity: 'success' | 'error';
 }
 
+interface ScheduleBreak {
+    event_type: 'judging' | 'match';
+    after: number;
+    duration_seconds: number;
+  }
+
 interface SchedulerRequest {
   division_id: string;
   matches_start: string;
@@ -60,11 +66,7 @@ interface SchedulerRequest {
   judging_start: string;
   judging_session_length_seconds: number;
   judging_cycle_time_seconds: number;
-  breaks: Array<{
-    event_type: 'judging' | 'match';
-    after: number;
-    duration_seconds: number;
-  }>;
+  breaks: Array<ScheduleBreak>;
 }
 
 function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: ScheduleContextType): Array<{
@@ -72,17 +74,10 @@ function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: 
   after: number;
   duration_seconds: number;
 }> {
-  const breaks: Array<{
-    event_type: 'judging' | 'match';
-    after: number;
-    duration_seconds: number;
-  }> = [];
-
-  const fieldBlocks = calendarContext.blocks.field.sort((a, b) =>
-    a.startTime.valueOf() - b.startTime.valueOf()
-  );
+  const breaks: Array<ScheduleBreak> = [];
 
   let matchCount = 0;
+  const fieldBlocks = calendarContext.blocks.field;
   for (let i = 0; i < fieldBlocks.length - 1; i++) {
     const currentBlock = fieldBlocks[i];
     const nextBlock = fieldBlocks[i + 1];
@@ -98,12 +93,9 @@ function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: 
       duration_seconds: gapDuration
     });
   }
-
-  const judgingBlocks = calendarContext.blocks.judging.sort((a, b) =>
-    a.startTime.valueOf() - b.startTime.valueOf()
-  );
-
+  
   let sessionCount = 0;
+  const judgingBlocks = calendarContext.blocks.judging;
   for (let i = 0; i < judgingBlocks.length - 1; i++) {
     const currentBlock = judgingBlocks[i];
     const nextBlock = judgingBlocks[i + 1];
@@ -113,13 +105,11 @@ function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: 
     const currentEndTime = currentBlock.startTime.add(currentBlock.durationSeconds, 'seconds');
     const gapDuration = nextBlock.startTime.diff(currentEndTime, 'seconds');
 
-    if (gapDuration > 300) {
-      breaks.push({
-        event_type: 'judging',
-        after: sessionCount,
-        duration_seconds: gapDuration
-      });
-    }
+    breaks.push({
+      event_type: 'judging',
+      after: sessionCount,
+      duration_seconds: gapDuration
+    });
   }
 
   return breaks;
@@ -176,7 +166,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       if (!result.ok) {
         setVerificationResult({
           isValid: false,
-          message: t('verify.error', { error: result.error.error }),
+          message: t('verify.error', { error: (result.error as {error: string}).error }),
           severity: 'error'
         });
       } else if (result.data.is_valid) {
@@ -185,7 +175,6 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           message: t('verify.success'),
           severity: 'success'
         });
-      } else {
       }
     } catch (error: unknown) {
       setVerificationResult({
