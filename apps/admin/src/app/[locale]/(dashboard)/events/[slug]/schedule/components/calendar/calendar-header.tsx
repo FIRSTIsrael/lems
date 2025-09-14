@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 import { Box, Stack, Button, Alert, CircularProgress, Collapse } from '@mui/material';
-import { Add, CheckCircle, Error as ErrorIcon } from '@mui/icons-material';
+import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../../../lib/fetch';
 import { useSchedule, ScheduleContextType } from '../schedule-context';
@@ -187,6 +187,24 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      const requestData = prepareSchedulerRequest(calendarContext, scheduleContext, division.id);
+
+      const result = await apiFetch(
+        `/admin/events/${division.eventId}/divisions/${division.id}/schedule/generate`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestData)
+        }
+      )
+
+    } catch  {
+      // Handle errors if necessary  }
+  };
+  }
+
   const getIcon = () => {
     if (isVerifying) return <CircularProgress size={20} />;
     if (!verificationResult) return <CheckCircle />;
@@ -207,11 +225,10 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
         <Button size="small" variant="outlined" startIcon={<Add />} onClick={addPracticeRound}>
           {t('field.add-practice-round')}
         </Button>
+
         <Button size="small" variant="outlined" startIcon={<Add />} onClick={addRankingRound}>
           {t('field.add-ranking-round')}
         </Button>
-
-        <Box sx={{ ml: 'auto' }} />
 
         <Button
           size="small"
@@ -222,6 +239,17 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           color={verificationResult?.severity === 'success' ? 'success' : 'primary'}
         >
           {isVerifying ? t('verify.verifying') : t('verify.title')}
+        </Button>
+
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          startIcon={<Send />}
+          onClick={handleSubmit}
+          disabled={!verificationResult?.isValid}
+        >
+          {t('verify.generate-button')}
         </Button>
       </Stack>
 

@@ -1,7 +1,6 @@
 import os
 import logging
 import pandas as pd
-from typing import Optional
 
 import psycopg
 from psycopg.rows import dict_row
@@ -60,11 +59,11 @@ class LemsRepository:
     def get_teams(self) -> list[TeamModel]:
         with self.pg_conn.cursor() as cursor:
             cursor.execute(
-                "SELECT division_id, team_id FROM team_divisions WHERE division_id = %s",
+                "SELECT t.id, t.number FROM teams t JOIN team_divisions dt ON t.id = dt.team_id WHERE dt.division_id = %s",
                 (str(self.divisionId),),
             )
             teams = cursor.fetchall()
-            return [TeamModel(team["division_id"], team["team_id"]) for team in teams]
+            return [TeamModel(team["id"], team["number"]) for team in teams]
 
     def get_rooms(self) -> list[LocationModel]:
         with self.pg_conn.cursor() as cursor:
@@ -84,21 +83,21 @@ class LemsRepository:
             tables = cursor.fetchall()
             return [LocationModel(table["id"], table["name"]) for table in tables]
 
-    def get_team(self, team_number: int) -> Optional[dict]:
+    def get_team(self, team_number: int) -> TeamModel | None:
         with self.pg_conn.cursor() as cursor:
             cursor.execute(
-                "SELECT id, number, name FROM teams WHERE division_id = %s AND number = %s",
-                (str(self.divisionId), team_number),
+                "SELECT id, number FROM teams WHERE number = %s",
+                (team_number,),
             )
             team = cursor.fetchone()
-            return team
+            return TeamModel(team["id"], team["number"]) if team else None
 
-    def get_lems_team_id(self, team_number: int) -> Optional[str]:
+    def get_lems_team_id(self, team_number: int) -> str | None:
         lems_team_id = None
         if team_number is not None:
             team_data = self.get_team(team_number)
             if team_data is not None:
-                lems_team_id = team_data["id"]
+                lems_team_id = team_data.id
         return lems_team_id
 
     def insert_sessions(self, session_schedule: pd.DataFrame):
@@ -113,31 +112,31 @@ class LemsRepository:
                 team_number = int(_team_number) if pd.notna(_team_number) else None
 
                 team_id = self.get_lems_team_id(team_number)
-                if team_id is not None:
-                    sessions_to_insert.append(
-                        {
-                            "division_id": str(self.divisionId),
-                            "number": index,
-                            "room_id": room_id,
-                            "team_id": team_id,
-                            "scheduled_time": scheduled_time,
-                        }
-                    )
-
-        if sessions_to_insert:
-            with self.pg_conn.cursor() as cursor:
-                cursor.executemany(
-                    """
-                    INSERT INTO judging_sessions (division_id, number, room_id, team_id, scheduled_time)
-                    VALUES (%(division_id)s, %(number)s, %(room_id)s, %(team_id)s, %(scheduled_time)s)
-                    """,
-                    sessions_to_insert,
+                sessions_to_insert.append(
+                    {
+                        "division_id": str(self.divisionId),
+                        "number": index,
+                        "room_id": room_id,
+                        "team_id": team_id,
+                        "scheduled_time": scheduled_time,
+                    }
                 )
-                self.pg_conn.commit()
+
+        with self.pg_conn.cursor() as cursor:
+            cursor.executemany(
+                """
+                INSERT INTO judging_sessions (division_id, number, room_id, team_id, scheduled_time)
+                VALUES (%(division_id)s, %(number)s, %(room_id)s, %(team_id)s, %(scheduled_time)s)
+                """,
+                sessions_to_insert,
+            )
+            self.pg_conn.commit()
 
         logger.info(f"Inserted {len(sessions_to_insert)} judging sessions successfully")
 
     def insert_matches(self, match_schedule: pd.DataFrame):
+        raise NotImplementedError("This method is not implemented yet.")
+
         logger.info("Inserting matches into PostgreSQL database")
 
         matches_to_insert = []
@@ -173,7 +172,6 @@ class LemsRepository:
                     }
                     match_participants_to_insert.append(participant_data)
 
-        # Insert matches
         if matches_to_insert:
             with self.pg_conn.cursor() as cursor:
                 cursor.executemany(
@@ -184,9 +182,7 @@ class LemsRepository:
                     matches_to_insert,
                 )
 
-                # Insert match participants (assuming there's a separate table for this)
                 if match_participants_to_insert:
-                    # First get the match IDs that were just inserted
                     cursor.execute(
                         """
                         SELECT id, number FROM robot_game_matches 
