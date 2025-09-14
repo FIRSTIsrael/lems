@@ -489,6 +489,12 @@
             "title": "Field",
             "add-practice-round": "Add Practice Round",
             "add-ranking-round": "Add Ranking Round"
+          },
+          "verify": {
+            "title": "Verify schedule",
+            "verifying": "Verifying schedule...",
+            "success": "Schedule verified!",
+            "error": "Verificiation failed: {error}"
           }
         },
         "teamSwap": {

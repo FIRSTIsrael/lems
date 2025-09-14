@@ -489,6 +489,12 @@
             "title": "זירה",
             "add-practice-round": "הוספת סבב אימונים",
             "add-ranking-round": "הוספת סבב דירוג"
+          },
+          "verify": {
+            "title": "אימות לוח הזמנים",
+            "verifying": "מאמת את לוח הזמנים...",
+            "success": "לוח הזמנים אומת בהצלחה!",
+            "error": "אימות נכשל: {error}"
           }
         },
         "teamSwap": {

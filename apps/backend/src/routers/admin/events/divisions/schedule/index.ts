@@ -49,7 +49,7 @@ router.post(
 
       const data = await response.json();
       if (data.is_valid) {
-        res.status(200).json({ ok: true });
+        res.status(200).json(data);
         return;
       }
 
