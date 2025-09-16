@@ -4,8 +4,6 @@ import { ObjectStorage } from '../object-storage';
 import { InsertableDivision, Division, UpdateableDivision } from '../schema/tables/divisions';
 import {
   Team,
-  InsertableJudgingRoom,
-  InsertableRobotGameTable,
   JudgingRoom,
   RobotGameTable
 } from '../schema';
@@ -83,14 +81,7 @@ class DivisionSelector {
       .execute();
   }
 
-  async createTable(newTable: InsertableRobotGameTable): Promise<boolean> {
-    const result = await this.db
-      .insertInto('robot_game_tables')
-      .values(newTable)
-      .returningAll()
-      .execute();
-    return result.length > 0;
-  }
+
 
   async getRooms(): Promise<JudgingRoom[]> {
     const division = await this.get();
@@ -128,15 +119,6 @@ class DivisionSelector {
       .where('team_divisions.division_id', '=', division.id)
       .orderBy('teams.number', 'asc')
       .execute();
-  }
-
-  async createRoom(newRoom: InsertableJudgingRoom): Promise<boolean> {
-    const result = await this.db
-      .insertInto('judging_rooms')
-      .values(newRoom)
-      .returningAll()
-      .execute();
-    return result.length > 0;
   }
 }
 

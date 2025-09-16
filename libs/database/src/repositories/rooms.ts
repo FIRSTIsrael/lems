@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { JudgingRoom, UpdateableJudgingRoom } from '../schema/tables/judging-rooms';
+import { InsertableJudgingRoom, JudgingRoom, UpdateableJudgingRoom } from '../schema/tables/judging-rooms';
 
 class RoomSelector {
   constructor(
@@ -38,5 +38,14 @@ export class RoomsRepository {
 
   byId(id: string): RoomSelector {
     return new RoomSelector(this.db, id);
+  }
+
+  async create(newRoom: InsertableJudgingRoom): Promise<boolean> {
+    const result = await this.db
+      .insertInto('judging_rooms')
+      .values(newRoom)
+      .returningAll()
+      .execute();
+    return result.length > 0;
   }
 }
