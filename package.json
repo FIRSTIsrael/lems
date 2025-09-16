@@ -62,7 +62,7 @@
     "react-error-boundary": "^6.0.0",
     "react-markdown": "^10.1.0",
     "react-signature-canvas": "^1.0.7",
-    "recharts": "^2.15.4",
+    "recharts": "^3.2.1",
     "serve-favicon": "^2.5.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
