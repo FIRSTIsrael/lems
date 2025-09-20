@@ -10,8 +10,8 @@ logger = logging.getLogger("lems.scheduler")
 
 
 class LemsRepository:
-    def __init__(self, divisionId: str):
-        self.divisionId = divisionId
+    def __init__(self, division_id: str):
+        self.division_id = division_id
 
         self.base_url = os.getenv("LOCAL_BASE_URL", "http://localhost:3333")
         self.scheduler_jwt_secret = os.getenv("SCHEDULER_JWT_SECRET")
@@ -29,7 +29,7 @@ class LemsRepository:
             }
         )
 
-        self.api_base = f"{self.base_url}/scheduler/divisions/{divisionId}"
+        self.api_base = f"{self.base_url}/scheduler/divisions/{division_id}"
 
         logger.info(f"🔗 Connecting to LEMS API at {self.base_url}")
         logger.info("🚀 HTTP Client configured for scheduler API.")
@@ -59,7 +59,7 @@ class LemsRepository:
             raise
 
     def get_teams(self) -> list[TeamModel]:
-        logger.debug(f"Fetching teams for division {self.divisionId}")
+        logger.debug(f"Fetching teams for division {self.division_id}")
 
         response = self._make_request("GET", "/teams")
         teams_data = response.json()
@@ -69,7 +69,7 @@ class LemsRepository:
         return teams
 
     def get_rooms(self) -> list[LocationModel]:
-        logger.debug(f"Fetching judging rooms for division {self.divisionId}")
+        logger.debug(f"Fetching judging rooms for division {self.division_id}")
 
         response = self._make_request("GET", "/rooms")
         rooms_data = response.json()
@@ -79,7 +79,7 @@ class LemsRepository:
         return rooms
 
     def get_tables(self) -> list[LocationModel]:
-        logger.debug(f"Fetching robot game tables for division {self.divisionId}")
+        logger.debug(f"Fetching robot game tables for division {self.division_id}")
 
         response = self._make_request("GET", "/tables")
         tables_data = response.json()
@@ -119,22 +119,20 @@ class LemsRepository:
 
         for index, row in session_schedule.iterrows():
             scheduled_time = row["start_time"]
-            session_data = {
-                "number": index,
-                "scheduled_time": scheduled_time.isoformat(),
-                "rooms": {},
-            }
 
             for room_id, _team_number in row[len(ignore_columns) :].items():
                 team_number = int(_team_number) if pd.notna(_team_number) else None
                 team_id = self.get_lems_team_id(team_number) if team_number else None
 
-                session_data["rooms"][room_id] = {
+                session_data = {
+                    "division_id": self.division_id,
+                    "number": index,
+                    "scheduled_time": scheduled_time.isoformat(),
+                    "room_id": room_id,
                     "team_id": team_id,
-                    "team_number": team_number,
                 }
 
-            sessions_to_insert.append(session_data)
+                sessions_to_insert.append(session_data)
 
         try:
             response = self._make_request(

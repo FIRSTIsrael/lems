@@ -1,4 +1,5 @@
 import express from 'express';
+import { InsertableJudgingSession } from '@lems/database';
 import db from '../../../lib/database';
 import { attachDivision } from '../../../middlewares/scheduler/attach-division';
 import { SchedulerRequest } from '../../../types/express';
@@ -51,7 +52,15 @@ router.get('/rooms', async (req: SchedulerRequest, res) => {
 });
 
 router.post('/sessions', async (req: SchedulerRequest, res) => {
-  console.log(req.body);
+  const { sessions }: { sessions: InsertableJudgingSession[] } = req.body;
+
+  if (!sessions || !Array.isArray(sessions)) {
+    res.status(400).json({ error: 'Sessions are required' });
+    return;
+  }
+
+  await db.judgingSessions.createMany(sessions);
+
   res.status(200).json({ ok: true });
 });
 

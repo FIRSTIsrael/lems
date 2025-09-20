@@ -1,7 +1,11 @@
 import { Kysely } from 'kysely';
 import { Db as MongoDb } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { JudgingSession, UpdateableJudgingSession } from '../schema/tables/judging-sessions';
+import {
+  InsertableJudgingSession,
+  JudgingSession,
+  UpdateableJudgingSession
+} from '../schema/tables/judging-sessions';
 import { JudgingSessionState } from '../schema/documents/judging-session-state';
 
 export class JudgingSessionStateSelector {
@@ -49,11 +53,22 @@ export class JudgingSessionsRepository {
     private mongo: MongoDb
   ) {}
 
+  private getEmptyState(id: string): JudgingSessionState {
+    return {
+      sessionId: id,
+      status: 'not-started',
+      called: false,
+      queued: false,
+      startTime: null,
+      startDelta: null
+    };
+  }
+
   async getAll() {
     return await this.db.selectFrom('judging_sessions').selectAll().execute();
   }
 
-  async create(session: Omit<JudgingSession, 'id'>) {
+  async create(session: InsertableJudgingSession): Promise<JudgingSession> {
     const dbSession = await this.db
       .insertInto('judging_sessions')
       .values(session)
@@ -63,15 +78,26 @@ export class JudgingSessionsRepository {
       throw new Error('Failed to create judging session');
     }
 
-    await this.mongo.collection<JudgingSessionState>('judging_session_states').insertOne({
-      sessionId: dbSession.id,
-      status: 'not-started',
-      called: false,
-      queued: false,
-      startTime: null,
-      startDelta: null
-    });
+    await this.mongo
+      .collection<JudgingSessionState>('judging_session_states')
+      .insertOne(this.getEmptyState(dbSession.id));
 
     return dbSession;
+  }
+
+  async createMany(sessions: InsertableJudgingSession[]): Promise<JudgingSession[]> {
+    const dbSessions = await this.db
+      .insertInto('judging_sessions')
+      .values(sessions)
+      .returningAll()
+      .execute();
+
+    const states = dbSessions.map(session => this.getEmptyState(session.id));
+
+    if (states.length > 0) {
+      await this.mongo.collection<JudgingSessionState>('judging_session_states').insertMany(states);
+    }
+
+    return dbSessions;
   }
 }
