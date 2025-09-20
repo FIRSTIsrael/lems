@@ -494,8 +494,13 @@
             "title": "Verify schedule",
             "verifying": "Verifying schedule...",
             "success": "Schedule verified!",
-            "error": "Verificiation failed: {error}",
-            "generate-button": "Generate Schedule"
+            "error": "Verificiation failed: {error}"
+          },
+          "generate": {
+            "generate-button": "Generate Schedule",
+            "success": "Schedule generated successfully!",
+            "error": "Failed to generate schedule: {error}",
+            "generating": "Generating..."
           }
         },
         "teamSwap": {

@@ -3,30 +3,35 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { z } from 'zod';
-import { Box, Stack, Button, Alert, CircularProgress, Collapse } from '@mui/material';
+import { Box, Stack, Button, CircularProgress } from '@mui/material';
 import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '../../../../../../../../lib/fetch';
 import { useSchedule, ScheduleContextType } from '../schedule-context';
 import { useCalendar, CalendarContextType } from './calendar-context';
 import { getDuration } from './calendar-utils';
+import { NotificationBanner } from './notification-banner';
 
 const ValidatorDataSchema = z.object({
-  overlapping_rounds: z.array(z.object({
-    start_time: z.string(),
-    end_time: z.string(),
-    number: z.number(),
-    stage: z.enum(['practice', 'ranking']),
-    available_matches: z.array(z.object({
-      event_type: z.enum(['judging', 'match']),
-      stage: z.enum(['practice', 'ranking']),
+  overlapping_rounds: z.array(
+    z.object({
       start_time: z.string(),
       end_time: z.string(),
       number: z.number(),
-      round: z.number(),
-      slots: z.number()
-    }))
-  })),
+      stage: z.enum(['practice', 'ranking']),
+      available_matches: z.array(
+        z.object({
+          event_type: z.enum(['judging', 'match']),
+          stage: z.enum(['practice', 'ranking']),
+          start_time: z.string(),
+          end_time: z.string(),
+          number: z.number(),
+          round: z.number(),
+          slots: z.number()
+        })
+      )
+    })
+  ),
   session: z.object({
     event_type: z.enum(['judging', 'match']),
     start_time: z.string(),
@@ -42,17 +47,17 @@ const ValidateScheduleResponseSchema = z.object({
   error: z.nullable(z.string())
 });
 
-interface VerificationResult {
-  isValid: boolean;
+interface NotificationState {
+  variant: 'success' | 'error' | null;
   message: string;
-  severity: 'success' | 'error';
+  show: boolean;
 }
 
 interface ScheduleBreak {
-    event_type: 'judging' | 'match';
-    after: number;
-    duration_seconds: number;
-  }
+  event_type: 'judging' | 'match';
+  after: number;
+  duration_seconds: number;
+}
 
 interface SchedulerRequest {
   division_id: string;
@@ -69,7 +74,10 @@ interface SchedulerRequest {
   breaks: Array<ScheduleBreak>;
 }
 
-function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: ScheduleContextType): Array<{
+function calculateBreaks(
+  calendarContext: CalendarContextType,
+  scheduleContext: ScheduleContextType
+): Array<{
   event_type: 'judging' | 'match';
   after: number;
   duration_seconds: number;
@@ -93,7 +101,7 @@ function calculateBreaks(calendarContext: CalendarContextType, scheduleContext: 
       duration_seconds: gapDuration
     });
   }
-  
+
   let sessionCount = 0;
   const judgingBlocks = calendarContext.blocks.judging;
   for (let i = 0; i < judgingBlocks.length - 1; i++) {
@@ -139,7 +147,13 @@ export function prepareSchedulerRequest(
 export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) => {
   const t = useTranslations('pages.events.schedule.calendar');
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [notification, setNotification] = useState<NotificationState>({
+    variant: null,
+    message: '',
+    show: false
+  });
+  const [verificationPassed, setVerificationPassed] = useState(false);
 
   const { addPracticeRound, addRankingRound } = useCalendar();
   const calendarContext = useCalendar();
@@ -147,7 +161,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
 
   const handleVerify = async () => {
     setIsVerifying(true);
-    setVerificationResult(null);
+    setNotification({ variant: null, message: '', show: false });
 
     try {
       const requestData = prepareSchedulerRequest(calendarContext, scheduleContext, division.id);
@@ -162,54 +176,74 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
         ValidateScheduleResponseSchema
       );
 
-
       if (!result.ok) {
-        setVerificationResult({
-          isValid: false,
-          message: t('verify.error', { error: (result.error as {error: string}).error }),
-          severity: 'error'
+        setNotification({
+          variant: 'error',
+          message: t('verify.error', { error: (result.error as { error: string }).error }),
+          show: true
         });
+        setVerificationPassed(false);
       } else if (result.data.is_valid) {
-        setVerificationResult({
-          isValid: true,
+        setNotification({
+          variant: 'success',
           message: t('verify.success'),
-          severity: 'success'
+          show: true
         });
+        setVerificationPassed(true);
       }
     } catch (error: unknown) {
-      setVerificationResult({
-        isValid: false,
-        message: t('verify.error', { error: error instanceof Error ? error.message : 'Unknown error' }),
-        severity: 'error'
+      setNotification({
+        variant: 'error',
+        message: t('verify.error', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }),
+        show: true
       });
+      setVerificationPassed(false);
     } finally {
       setIsVerifying(false);
     }
   };
 
   const handleSubmit = async () => {
+    setIsGenerating(true);
+    setNotification({ variant: null, message: '', show: false });
+
     try {
       const requestData = prepareSchedulerRequest(calendarContext, scheduleContext, division.id);
 
-      const result = await apiFetch(
+      const response = await apiFetch(
         `/admin/events/${division.eventId}/divisions/${division.id}/schedule/generate`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestData)
         }
-      )
+      );
 
-    } catch  {
-      // Handle errors if necessary  }
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      setNotification({ variant: 'success', message: t('generate.success'), show: true });
+    } catch (error: unknown) {
+      setNotification({
+        variant: 'error',
+        message: t('generate.error', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }),
+        show: true
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
-  }
 
   const getIcon = () => {
     if (isVerifying) return <CircularProgress size={20} />;
-    if (!verificationResult) return <CheckCircle />;
+    if (!notification.show) return <CheckCircle />;
 
-    switch (verificationResult.severity) {
+    switch (notification.variant) {
       case 'success':
         return <CheckCircle />;
       case 'error':
@@ -217,6 +251,11 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       default:
         return <CheckCircle />;
     }
+  };
+
+  const getGenerateIcon = () => {
+    if (isGenerating) return <CircularProgress size={20} />;
+    return <Send />;
   };
 
   return (
@@ -236,7 +275,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           startIcon={getIcon()}
           onClick={handleVerify}
           disabled={isVerifying}
-          color={verificationResult?.severity === 'success' ? 'success' : 'primary'}
+          color={notification.variant === 'success' ? 'success' : 'primary'}
         >
           {isVerifying ? t('verify.verifying') : t('verify.title')}
         </Button>
@@ -245,23 +284,19 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           size="small"
           variant="contained"
           color="primary"
-          startIcon={<Send />}
+          startIcon={getGenerateIcon()}
           onClick={handleSubmit}
-          disabled={!verificationResult?.isValid}
+          disabled={!verificationPassed || isGenerating}
         >
-          {t('verify.generate-button')}
+          {isGenerating ? t('generate.generating') : t('generate.generate-button')}
         </Button>
       </Stack>
 
-      <Collapse in={!!verificationResult} sx={{ mt: 2 }}>
-        {verificationResult && (
-          <Box>
-            <Alert severity={verificationResult.severity} sx={{ mb: 1 }}>
-              {verificationResult.message}
-            </Alert>
-          </Box>
-        )}
-      </Collapse>
+      <NotificationBanner
+        variant={notification.variant}
+        message={notification.message}
+        show={notification.show}
+      />
     </Box>
   );
 };

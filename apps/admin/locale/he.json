@@ -494,8 +494,13 @@
             "title": "אימות לוח הזמנים",
             "verifying": "מאמת את לוח הזמנים...",
             "success": "לוח הזמנים אומת בהצלחה!",
-            "error": "אימות נכשל: {error}",
-            "generate-button": "צור לוח זמנים"
+            "error": "אימות נכשל: {error}"
+          },
+          "generate": {
+            "generate-button": "צור לוח זמנים",
+            "success": "לוח הזמנים נוצר בהצלחה!",
+            "error": "שגיאה ביצירת לוח הזמנים: {error}",
+            "generating": "יוצר לוח זמנים..."
           }
         },
         "teamSwap": {
