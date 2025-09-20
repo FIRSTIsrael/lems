@@ -1,8 +1,8 @@
 import express from 'express';
 import db from '../../../lib/database';
 import { attachDivision } from '../../../middlewares/scheduler/attach-division';
-import {SchedulerRequest} from '../../../types/express';
-import { makeSchedulerTeamResponse } from './utils';
+import { SchedulerRequest } from '../../../types/express';
+import { makeSchedulerLocationResponse, makeSchedulerTeamResponse } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
@@ -40,12 +40,24 @@ router.get('/team/:teamNumber', async (req: SchedulerRequest, res) => {
   res.status(200).json(makeSchedulerTeamResponse(team));
 });
 
-router.get('/tables', async (req: SchedulerRequest, res) => {});
+router.get('/tables', async (req: SchedulerRequest, res) => {
+  const tables = await db.divisions.byId(req.divisionId).getTables();
+  res.status(200).json(tables.map(table => makeSchedulerLocationResponse(table)));
+});
 
-router.get('/rooms', async (req: SchedulerRequest, res) => {});
+router.get('/rooms', async (req: SchedulerRequest, res) => {
+  const rooms = await db.divisions.byId(req.divisionId).getRooms();
+  res.status(200).json(rooms.map(room => makeSchedulerLocationResponse(room)));
+});
 
-router.post('/sessions', async (req: SchedulerRequest, res) => {});
+router.post('/sessions', async (req: SchedulerRequest, res) => {
+  console.log(req.body);
+  res.status(200).json({ ok: true });
+});
 
-router.post('/matches', async (req: SchedulerRequest, res) => {});
+router.post('/matches', async (req: SchedulerRequest, res) => {
+  console.log(req.body);
+  res.status(200).json({ ok: true });
+});
 
 export default router;

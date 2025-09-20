@@ -4,7 +4,7 @@ import divisionsRouter from './divisions';
 
 const router = express.Router({ mergeParams: true });
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router.use('/divisions/:divisionId', divisionsRouter);
 
