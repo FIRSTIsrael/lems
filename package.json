@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "npx nx run-many --target=serve --projects=backend,frontend,portal,admin",
     "build": "npx nx run-many --target=build --projects=backend,frontend,portal,admin",
-    "scheduler": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
+    "scheduler": "run-script-os",
+    "scheduler:win32": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
+    "scheduler:linux:darwin": "cd apps/scheduler/src && python3 -m fastapi dev main.py && cd --",
     "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal,admin",
     "migrate": "npx nx build database && node dist/libs/database/src/scripts/run-migrations.js"
   },
@@ -119,6 +121,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "nx": "21.4.1",
     "prettier": "^3.6.2",
+    "run-script-os": "^1.1.6",
     "ts-node": "10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
