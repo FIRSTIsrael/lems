@@ -21,7 +21,7 @@ router.post(
       return;
     }
 
-    await db.divisions.byId(req.divisionId).createTable({ division_id: req.divisionId, name });
+    await db.tables.create({ division_id: req.divisionId, name });
 
     res.status(201).end();
   }

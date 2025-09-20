@@ -152,7 +152,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     judgingSessionCycleTime,
     matchLength,
     judgingSessionLength,
-    matchesPerRound: Math.ceil(teams.length / tables.length) * (staggerMatches ? 2 : 1),
+    matchesPerRound: Math.ceil((teams.length / tables.length) * (staggerMatches ? 2 : 1)),
 
     judgingStart,
     fieldStart,

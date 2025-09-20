@@ -28,3 +28,7 @@ export interface AdminEventRequest extends AdminRequest {
 export interface AdminDivisionRequest extends AdminEventRequest {
   divisionId: string;
 }
+
+export interface SchedulerRequest extends Request {
+  divisionId: string;
+}

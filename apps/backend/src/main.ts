@@ -1,9 +1,9 @@
+import * as http from 'http';
+import * as path from 'path';
 import express from 'express';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
 import cors from 'cors';
-import * as http from 'http';
-import * as path from 'path';
 import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
@@ -13,6 +13,7 @@ import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import adminRouter from './routers/admin/index';
 import publicRouter from './routers/public/index';
+import schedulerRouter from './routers/scheduler/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
@@ -50,6 +51,9 @@ app.use('/api', apiRouter);
 
 // Admin app
 app.use('/admin', adminRouter);
+
+// Scheduler app
+app.use('/scheduler', schedulerRouter);
 
 app.get('/status', (req, res) => {
   res.status(200).json({ ok: true });

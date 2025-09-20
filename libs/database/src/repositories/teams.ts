@@ -79,6 +79,25 @@ class TeamSelector {
       .executeTakeFirst();
     return updatedTeam || null;
   }
+
+  async isInDivision(divisionId: string): Promise<boolean> {
+    let id: string;
+    if (this.selector.type === 'id') {
+      id = this.selector.value;
+    } else {
+      const team = await this.getTeamQuery().executeTakeFirst();
+      if (!team) return false;
+      id = team.id;
+    }
+
+    const record = await this.db
+      .selectFrom('team_divisions')
+      .selectAll()
+      .where('team_id', '=', id)
+      .where('division_id', '=', divisionId)
+      .executeTakeFirst();
+    return !!record;
+  }
 }
 export class TeamsRepository {
   constructor(

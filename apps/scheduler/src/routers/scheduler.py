@@ -54,7 +54,9 @@ async def create_schedule(
         match_schedule, session_schedule = scheduler.create_schedule()
         lems.insert_sessions(session_schedule)
         lems.insert_matches(match_schedule)
+        lems.mark_schedule_complete()
     except SchedulerError as error:
+        lems.delete_schedule()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(error),

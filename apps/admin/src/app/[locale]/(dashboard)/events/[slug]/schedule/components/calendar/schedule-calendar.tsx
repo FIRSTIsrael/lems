@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { Paper, Box } from '@mui/material';
+import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
@@ -35,7 +36,7 @@ function positionToTime(position: number, startTime: Dayjs): Dayjs {
   return currentTime;
 }
 
-const ScheduleCalendarContent: React.FC = () => {
+const ScheduleCalendarContent: React.FC<{ division: Division }> = ({ division }) => {
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6);
   const endTime = dayjs(event.endDate).hour(20);
@@ -174,7 +175,7 @@ const ScheduleCalendarContent: React.FC = () => {
       }}
     >
       <Box sx={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'background.paper' }}>
-        <CalendarHeader />
+        <CalendarHeader division={division} />
       </Box>
 
       <CalendarGrid>
@@ -185,10 +186,10 @@ const ScheduleCalendarContent: React.FC = () => {
   );
 };
 
-export const ScheduleCalendar: React.FC = () => {
+export const ScheduleCalendar: React.FC<{ division: Division }> = ({ division }) => {
   return (
     <CalendarProvider>
-      <ScheduleCalendarContent />
+      <ScheduleCalendarContent division={division} />
     </CalendarProvider>
   );
 };

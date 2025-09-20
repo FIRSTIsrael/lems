@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { RobotGameTable, UpdateableRobotGameTable } from '../schema/tables/robot-game-tables';
+import { InsertableRobotGameTable, RobotGameTable, UpdateableRobotGameTable } from '../schema/tables/robot-game-tables';
 
 class TableSelector {
   constructor(
@@ -38,5 +38,14 @@ export class TablesRepository {
 
   byId(id: string): TableSelector {
     return new TableSelector(this.db, id);
+  }
+
+  async create(newTable: InsertableRobotGameTable): Promise<boolean> {
+    const result = await this.db
+      .insertInto('robot_game_tables')
+      .values(newTable)
+      .returningAll()
+      .execute();
+    return result.length > 0;
   }
 }
