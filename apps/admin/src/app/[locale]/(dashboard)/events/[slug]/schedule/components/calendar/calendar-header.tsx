@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { z } from 'zod';
+import { mutate } from 'swr';
 import { Box, Stack, Button, CircularProgress } from '@mui/material';
 import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
@@ -226,6 +227,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       }
 
       setNotification({ variant: 'success', message: t('generate.success'), show: true });
+      mutate(`/admin/events/${division.eventId}/divisions`);
     } catch (error: unknown) {
       setNotification({
         variant: 'error',
