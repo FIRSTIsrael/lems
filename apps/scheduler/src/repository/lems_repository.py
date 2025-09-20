@@ -4,6 +4,7 @@ import requests
 import jwt
 import pandas as pd
 from fastapi.exceptions import HTTPException
+from models.errors import SchedulerError
 from models.lems import Team as TeamModel, Location as LocationModel
 
 logger = logging.getLogger("lems.scheduler")
@@ -31,6 +32,9 @@ class LemsRepository:
 
         self.api_base = f"{self.base_url}/scheduler/divisions/{division_id}"
 
+        self._teams_by_number = {}
+        self._load_teams_cache()
+
         logger.info(f"🔗 Connecting to LEMS API at {self.base_url}")
         logger.info("🚀 HTTP Client configured for scheduler API.")
 
@@ -57,6 +61,17 @@ class LemsRepository:
         except requests.RequestException as e:
             logger.error(f"❌ API request failed: {method} {url} - {e}")
             raise
+
+    def _load_teams_cache(self):
+        """Load all teams into a cache for efficient lookups by team number."""
+        logger.debug("Loading teams cache for efficient lookups")
+        try:
+            teams = self.get_teams()
+            self._teams_by_number = {team.number: team.id for team in teams}
+            logger.debug(f"Cached {len(self._teams_by_number)} teams")
+        except Exception as e:
+            logger.error(f"Failed to load teams cache: {e}")
+            self._teams_by_number = {}
 
     def get_teams(self) -> list[TeamModel]:
         logger.debug(f"Fetching teams for division {self.division_id}")
@@ -88,28 +103,11 @@ class LemsRepository:
         logger.debug(f"Retrieved {len(tables)} robot game tables")
         return tables
 
-    def get_team(self, team_number: int) -> TeamModel | None:
-        logger.debug(f"Fetching team {team_number}")
-
-        try:
-            response = self._make_request("GET", f"/team/{team_number}")
-            team_data = response.json()
-            return TeamModel(team_data["id"], team_data["number"])
-        except requests.HTTPError as e:
-            if e.response and e.response.status_code == 404:
-                logger.warning(f"Team {team_number} not found")
-                return None
-            raise
-        except requests.RequestException as e:
-            logger.error(f"Failed to fetch team {team_number}: {e}")
-            raise
-
     def get_lems_team_id(self, team_number: int) -> str | None:
+        """Get team ID by team number using cached data."""
         if team_number is None:
             return None
-
-        team_data = self.get_team(team_number)
-        return team_data.id if team_data else None
+        return self._teams_by_number.get(team_number)
 
     def insert_sessions(self, session_schedule: pd.DataFrame):
         logger.debug("Submitting judging sessions to API")
@@ -139,18 +137,13 @@ class LemsRepository:
                 "POST", "/sessions", json={"sessions": sessions_to_insert}
             )
             if not response.ok:
-                raise HTTPException(
-                    status_code=500,
-                    detail="Error in judging sessions request",
-                )
+                raise SchedulerError("Error in judging sessions request")
             logger.info(
                 f"Successfully submitted {len(sessions_to_insert)} judging sessions"
             )
         except requests.RequestException as e:
             logger.error(f"Failed to submit judging sessions: {e}")
-            raise HTTPException(
-                status_code=500, detail="Failed to submit judging sessions."
-            )
+            raise SchedulerError("Failed to submit judging sessions.")
 
     def insert_matches(self, match_schedule: pd.DataFrame):
         logger.debug("Submitting robot game matches to API")
@@ -187,18 +180,13 @@ class LemsRepository:
                 "POST", "/matches", json={"matches": matches_to_insert}
             )
             if not response.ok:
-                raise HTTPException(
-                    status_code=500,
-                    detail="Error in robot game matches request",
-                )
+                raise SchedulerError("Error in robot game matches request")
             logger.info(
                 f"Successfully submitted {len(matches_to_insert)} robot game matches"
             )
         except requests.RequestException as e:
             logger.error(f"Failed to submit robot game matches: {e}")
-            raise HTTPException(
-                status_code=500, detail="Failed to submit robot game matches"
-            )
+            raise SchedulerError("Failed to submit robot game matches")
 
     def delete_schedule(self):
         """Delete all sessions, matches, and their states for this division."""
@@ -207,16 +195,11 @@ class LemsRepository:
         try:
             response = self._make_request("DELETE", "/schedule")
             if not response.ok:
-                raise HTTPException(
-                    status_code=500,
-                    detail="Error in delete schedule request",
-                )
+                raise SchedulerError("Error in delete schedule request")
             logger.info("Successfully deleted division schedule")
         except requests.RequestException as e:
             logger.error(f"Failed to delete division schedule: {e}")
-            raise HTTPException(
-                status_code=500, detail="Failed to delete division schedule"
-            )
+            raise SchedulerError("Failed to delete division schedule")
 
     def close_connections(self):
         if hasattr(self, "session"):

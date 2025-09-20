@@ -173,16 +173,20 @@ export class RobotGameMatchesRepository {
       throw new Error('Failed to create robot game match');
     }
 
-    const participantsWithMatchId = participants.map(participant => ({
-      ...participant,
-      match_id: dbMatch.id
-    }));
+    let dbParticipants: RobotGameMatchParticipant[] = [];
 
-    const dbParticipants = await this.db
-      .insertInto('robot_game_match_participants')
-      .values(participantsWithMatchId)
-      .returningAll()
-      .execute();
+    if (participants.length > 0) {
+      const participantsWithMatchId = participants.map(participant => ({
+        ...participant,
+        match_id: dbMatch.id
+      }));
+
+      dbParticipants = await this.db
+        .insertInto('robot_game_match_participants')
+        .values(participantsWithMatchId)
+        .returningAll()
+        .execute();
+    }
 
     // Create the state with participant information
     await this.mongo
