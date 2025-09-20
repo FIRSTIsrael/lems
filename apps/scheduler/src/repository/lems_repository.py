@@ -201,6 +201,19 @@ class LemsRepository:
             logger.error(f"Failed to delete division schedule: {e}")
             raise SchedulerError("Failed to delete division schedule")
 
+    def mark_schedule_complete(self):
+        """Mark the division as having a complete schedule."""
+        logger.info("Marking schedule as complete")
+
+        try:
+            response = self._make_request("PUT", "/has-schedule")
+            if not response.ok:
+                raise SchedulerError("Error in mark schedule complete request")
+            logger.info("Successfully marked schedule as complete")
+        except requests.RequestException as e:
+            logger.error(f"Failed to mark schedule as complete: {e}")
+            raise SchedulerError("Failed to mark schedule as complete")
+
     def close_connections(self):
         if hasattr(self, "session"):
             self.session.close()

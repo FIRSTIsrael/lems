@@ -63,6 +63,14 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
     return;
   }
 
+  const division = await db.divisions.byId(req.divisionId).get();
+  if (division.has_schedule) {
+    res
+      .status(400)
+      .json({ error: 'Division already has a schedule. Delete the existing schedule first.' });
+    return;
+  }
+
   await db.judgingSessions.createMany(sessions);
 
   res.status(200).json({ ok: true });
@@ -81,6 +89,14 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
 
   if (!matches || !Array.isArray(matches)) {
     res.status(400).json({ error: 'Matches are required' });
+    return;
+  }
+
+  const division = await db.divisions.byId(req.divisionId).get();
+  if (division.has_schedule) {
+    res
+      .status(400)
+      .json({ error: 'Division already has a schedule. Delete the existing schedule first.' });
     return;
   }
 
@@ -121,11 +137,28 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
   }
 });
 
+router.put('/has-schedule', async (req: SchedulerRequest, res) => {
+  try {
+    const updated = await db.divisions.byId(req.divisionId).update({ has_schedule: true });
+
+    if (!updated) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+
+    res.status(200).json({ ok: true });
+  } catch (error) {
+    console.error('Error updating division has_schedule:', error);
+    res.status(500).json({ error: 'Failed to update division has_schedule' });
+  }
+});
+
 router.delete('/schedule', async (req: SchedulerRequest, res) => {
   try {
     await Promise.all([
       db.judgingSessions.deleteByDivision(req.divisionId),
-      db.robotGameMatches.deleteByDivision(req.divisionId)
+      db.robotGameMatches.deleteByDivision(req.divisionId),
+      db.divisions.byId(req.divisionId).update({ has_schedule: false })
     ]);
 
     res.status(200).json({ ok: true });
