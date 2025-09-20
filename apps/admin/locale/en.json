@@ -435,6 +435,14 @@
       },
       "schedule": {
         "title": "{eventName}: Schedule",
+        "delete-schedule": "Delete Schedule",
+        "delete-schedule-dialog": {
+          "title": "Delete Schedule",
+          "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+          "cancel": "Cancel",
+          "confirm": "Delete Schedule",
+          "deleting": "Deleting..."
+        },
         "alerts": {
           "schedule-set-up": "This event already has a schedule set. You can modify team schedules, or delete the schedule entirely.",
           "missing-details": "Some details are missing. Teams, rooms, and tables are required to generate a schedule."

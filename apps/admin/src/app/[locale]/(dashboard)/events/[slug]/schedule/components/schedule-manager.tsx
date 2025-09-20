@@ -3,14 +3,14 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Alert, Box, Grid, Stack } from '@mui/material';
-import { Groups, Domain, Warning, CheckCircle } from '@mui/icons-material';
+import { Groups, Domain, Warning } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../../components/event-context';
 import { ScheduleProvider, useSchedule } from './schedule-context';
 import { ScheduleSettings } from './schedule-settings';
 import { ScheduleCalendar } from './calendar/schedule-calendar';
-import { TeamSwapper } from './team-swapper';
 import { LinkCard } from './link-card';
+import { ScheduleExists } from './schedule-exists';
 
 interface ScheduleManagerProps {
   division: Division;
@@ -22,14 +22,7 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
   const { teamsCount, roomsCount, tablesCount } = useSchedule();
 
   if (division.hasSchedule) {
-    return (
-      <Stack height="100%" spacing={2}>
-        <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
-          {t('alerts.schedule-set-up')}
-        </Alert>
-        <TeamSwapper />
-      </Stack>
-    );
+    return <ScheduleExists division={division} />;
   }
 
   if (teamsCount === 0 || roomsCount === 0 || tablesCount === 0) {

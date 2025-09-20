@@ -1,5 +1,6 @@
 import express from 'express';
 import { SchedulerRequest } from '@lems/types';
+import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../../../middlewares/admin/require-permission';
 
@@ -70,6 +71,25 @@ router.post(
       console.log('❌ Error validating schedule');
       console.debug(error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+    }
+  }
+);
+
+router.delete(
+  '/',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      await Promise.all([
+        db.judgingSessions.deleteByDivision(req.divisionId),
+        db.robotGameMatches.deleteByDivision(req.divisionId),
+        db.divisions.byId(req.divisionId).update({ has_schedule: false })
+      ]);
+
+      res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error('Error deleting division schedule:', error);
+      res.status(500).json({ error: 'Failed to delete division schedule' });
     }
   }
 );
