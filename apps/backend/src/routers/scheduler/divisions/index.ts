@@ -99,7 +99,20 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
       })) as InsertableRobotGameMatchParticipant[]
     }));
 
-    await db.robotGameMatches.createManyWithParticipants(matchesWithParticipants);
+    const testMatch = {
+      match: {
+        number: 0,
+        round: 0,
+        stage: 'TEST' as 'PRACTICE' | 'RANKING' | 'TEST',
+        scheduled_time: new Date(),
+        division_id: req.divisionId
+      } as InsertableRobotGameMatch,
+      participants: [] as InsertableRobotGameMatchParticipant[]
+    };
+
+    const allMatches = [testMatch, ...matchesWithParticipants];
+
+    await db.robotGameMatches.createManyWithParticipants(allMatches);
 
     res.status(200).json({ ok: true });
   } catch (error) {
