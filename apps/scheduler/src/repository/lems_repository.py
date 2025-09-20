@@ -200,6 +200,24 @@ class LemsRepository:
                 status_code=500, detail="Failed to submit robot game matches"
             )
 
+    def delete_schedule(self):
+        """Delete all sessions, matches, and their states for this division."""
+        logger.warning("Deleting division schedule")
+
+        try:
+            response = self._make_request("DELETE", "/schedule")
+            if not response.ok:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Error in delete schedule request",
+                )
+            logger.info("Successfully deleted division schedule")
+        except requests.RequestException as e:
+            logger.error(f"Failed to delete division schedule: {e}")
+            raise HTTPException(
+                status_code=500, detail="Failed to delete division schedule"
+            )
+
     def close_connections(self):
         if hasattr(self, "session"):
             self.session.close()

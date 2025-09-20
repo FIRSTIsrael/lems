@@ -11,6 +11,7 @@ import { DivisionsRepository } from './repositories/divisions';
 import { RoomsRepository } from './repositories/rooms';
 import { TablesRepository } from './repositories/tables';
 import { JudgingSessionsRepository } from './repositories/judging-sessions';
+import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
@@ -38,6 +39,7 @@ export class Database {
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
   public tables: TablesRepository;
+  public robotGameMatches: RobotGameMatchesRepository;
 
   constructor() {
     this.kysely = new Kysely<KyselyDatabaseSchema>({
@@ -72,6 +74,7 @@ export class Database {
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
     this.tables = new TablesRepository(this.kysely);
+    this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
   }
 
   async connect(): Promise<void> {

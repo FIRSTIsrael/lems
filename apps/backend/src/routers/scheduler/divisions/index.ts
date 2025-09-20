@@ -1,5 +1,9 @@
 import express from 'express';
-import { InsertableJudgingSession } from '@lems/database';
+import {
+  InsertableJudgingSession,
+  InsertableRobotGameMatch,
+  InsertableRobotGameMatchParticipant
+} from '@lems/database';
 import db from '../../../lib/database';
 import { attachDivision } from '../../../middlewares/scheduler/attach-division';
 import { SchedulerRequest } from '../../../types/express';
@@ -64,9 +68,58 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   res.status(200).json({ ok: true });
 });
 
+interface MatchRequest {
+  number: number;
+  stage: string;
+  round: number;
+  scheduled_time: string;
+  tables: Record<string, { team_id: string | null; team_number?: number }>;
+}
+
 router.post('/matches', async (req: SchedulerRequest, res) => {
-  console.log(req.body);
-  res.status(200).json({ ok: true });
+  const { matches }: { matches: MatchRequest[] } = req.body;
+
+  if (!matches || !Array.isArray(matches)) {
+    res.status(400).json({ error: 'Matches are required' });
+    return;
+  }
+
+  try {
+    const matchesWithParticipants = matches.map(match => ({
+      match: {
+        number: match.number,
+        round: match.round,
+        stage: match.stage.toUpperCase() as 'PRACTICE' | 'RANKING' | 'TEST',
+        scheduled_time: new Date(match.scheduled_time),
+        division_id: req.divisionId
+      } as InsertableRobotGameMatch,
+      participants: Object.entries(match.tables).map(([tableId, tableData]) => ({
+        team_id: tableData.team_id || null,
+        table_id: tableId
+      })) as InsertableRobotGameMatchParticipant[]
+    }));
+
+    await db.robotGameMatches.createManyWithParticipants(matchesWithParticipants);
+
+    res.status(200).json({ ok: true });
+  } catch (error) {
+    console.error('Error creating matches:', error);
+    res.status(500).json({ error: 'Failed to create matches' });
+  }
+});
+
+router.delete('/schedule', async (req: SchedulerRequest, res) => {
+  try {
+    await Promise.all([
+      db.judgingSessions.deleteByDivision(req.divisionId),
+      db.robotGameMatches.deleteByDivision(req.divisionId)
+    ]);
+
+    res.status(200).json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting division schedule:', error);
+    res.status(500).json({ error: 'Failed to delete division schedule' });
+  }
 });
 
 export default router;

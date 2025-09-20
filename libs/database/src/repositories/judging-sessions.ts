@@ -37,6 +37,10 @@ export class JudgingSessionSelector {
     return session || null;
   }
 
+  async state() {
+    return new JudgingSessionStateSelector(this.mongo, this.id);
+  }
+
   update(updates: UpdateableJudgingSession) {
     return this.db
       .updateTable('judging_sessions')
@@ -99,5 +103,23 @@ export class JudgingSessionsRepository {
     }
 
     return dbSessions;
+  }
+
+  async deleteByDivision(divisionId: string): Promise<void> {
+    const sessions = await this.db
+      .selectFrom('judging_sessions')
+      .select('id')
+      .where('division_id', '=', divisionId)
+      .execute();
+
+    const sessionIds = sessions.map(session => session.id);
+
+    if (sessionIds.length > 0) {
+      await this.mongo
+        .collection<JudgingSessionState>('judging_session_states')
+        .deleteMany({ sessionId: { $in: sessionIds } });
+
+      await this.db.deleteFrom('judging_sessions').where('division_id', '=', divisionId).execute();
+    }
   }
 }
