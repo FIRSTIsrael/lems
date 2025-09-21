@@ -33,7 +33,6 @@ export function AwardsEditor() {
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-
     reorderAwards(result.source.index, result.destination.index);
   };
 
@@ -44,6 +43,8 @@ export function AwardsEditor() {
       console.error('Failed to save:', error);
     }
   };
+
+  console.log([...awards]);
 
   return (
     <Box>
@@ -134,24 +135,9 @@ export function AwardsEditor() {
                   transition: 'background-color 0.2s ease-in-out'
                 }}
               >
-                {awards.length === 0 ? (
-                  <Box
-                    sx={{
-                      textAlign: 'center',
-                      py: 6,
-                      color: 'text.secondary'
-                    }}
-                  >
-                    <Typography variant="body1">{t('no-awards')}</Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      {t('no-awards-help')}
-                    </Typography>
-                  </Box>
-                ) : (
-                  awards.map((award, index) => (
-                    <AwardItem key={award} award={award} index={index} />
-                  ))
-                )}
+                {awards.map((award, index) => (
+                  <AwardItem key={award} award={award} index={index} />
+                ))}
                 {provided.placeholder}
               </Box>
             )}

@@ -63,7 +63,7 @@ export function AwardItem({ award, index }: AwardItemProps) {
             backgroundColor: snapshot.isDragging
               ? alpha(theme.palette.primary.main, 0.05)
               : 'background.paper',
-            transition: 'all 0.2s ease-in-out',
+            transition: 'background-color 0.2s ease-in-out',
             '&:hover': {
               elevation: 2,
               backgroundColor: alpha(theme.palette.action.hover, 0.04)
@@ -71,7 +71,6 @@ export function AwardItem({ award, index }: AwardItemProps) {
           }}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
-            {/* Drag Handle */}
             <Box
               {...provided.dragHandleProps}
               sx={{
@@ -87,21 +86,11 @@ export function AwardItem({ award, index }: AwardItemProps) {
               <DragIcon />
             </Box>
 
-            {/* Award Name */}
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
                 {getAwardName(award)}
               </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}
-              >
+              <Typography variant="body2" color="text.secondary" sx={{ overflow: 'hidden' }}>
                 {getAwardDescription(award)}
               </Typography>
             </Box>
