@@ -3,11 +3,12 @@
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { DivisionSelector } from '../components/division-selector';
+import { AwardsEditor } from './components/awards-editor';
 
 export default function EventAwardsPage() {
   const t = useTranslations('pages.events.awards');
@@ -23,23 +24,12 @@ export default function EventAwardsPage() {
   const selectedDivision = divisions.find(division => division.id === selectedDivisionId);
 
   return (
-    <Box
-      sx={{
-        height: 'calc(100vh - 40px)',
-        display: 'flex',
-        flexDirection: 'column',
-        p: 3
-      }}
-    >
+    <Stack spacing={3} sx={{ mb: 3 }}>
       <EventPageTitle title={t('title', { eventName: event.name })} />
 
-      {divisions.length > 1 && (
-        <Box sx={{ mb: 3 }}>
-          <DivisionSelector divisions={divisions} />
-        </Box>
-      )}
+      {divisions.length > 1 && <DivisionSelector divisions={divisions} />}
 
-      {/* Award page content goes here */}
-    </Box>
+      {selectedDivision && <AwardsEditor />}
+    </Stack>
   );
 }
