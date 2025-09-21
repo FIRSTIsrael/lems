@@ -565,11 +565,15 @@
           },
           "rules": {
             "title": "Validation Rules",
+            "teams-count": "Team count must be greater than 0",
             "minimum-requirement": "Minimum awards must be at least 30% of team count",
             "maximum-requirement": "Maximum awards must not exceed 50% of team count"
           },
           "errors": {
-            "title": "Validation Issues"
+            "title": "Validation Issues",
+            "no-teams": "No teams registered for this event",
+            "not-enough-awards": "Not enough awards configured ({count}%)",
+            "too-many-awards": "Too many awards configured ({count}%)"
           },
           "success": {
             "title": "Awards Configuration Valid",

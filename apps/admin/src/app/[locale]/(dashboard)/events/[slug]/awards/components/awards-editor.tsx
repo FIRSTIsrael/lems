@@ -11,10 +11,10 @@ export function AwardsEditor() {
       <AwardsHeader />
 
       <Grid container spacing={3}>
-        <Grid size={7}>
+        <Grid size={8}>
           <AwardsList />
         </Grid>
-        <Grid size={5}>
+        <Grid size={4}>
           <AwardsValidation />
         </Grid>
       </Grid>

@@ -7,7 +7,7 @@ export interface ValidationResult {
   minimumPercentage: number;
   maximumPercentage: number;
   isValid: boolean;
-  reasons: string[];
+  reasons: { key: string; count?: number }[];
 }
 
 /**
@@ -23,7 +23,7 @@ export interface ValidationResult {
  * @returns Validation result with percentages and validity status
  */
 export function validateAwardsSchema(schema: AwardSchema, teamCount: number): ValidationResult {
-  const reasons: string[] = [];
+  const reasons: { key: string; count?: number }[] = [];
 
   // Calculate minimum awards (exclude personal awards, advancement, and robot-performance)
   const minimumAwards = Object.entries(schema).reduce((total, [award, item]) => {
@@ -49,11 +49,14 @@ export function validateAwardsSchema(schema: AwardSchema, teamCount: number): Va
   const maximumValid = maximumPercentage <= 50;
   const isValid = minimumValid && maximumValid;
 
+  if (teamCount === 0) {
+    reasons.push({ key: 'errors.no-teams' });
+  }
   if (!minimumValid) {
-    reasons.push(`Minimum awards (${minimumPercentage}%) must be at least 30% of teams`);
+    reasons.push({ key: 'errors.not-enough-awards', count: minimumPercentage });
   }
   if (!maximumValid) {
-    reasons.push(`Maximum awards (${maximumPercentage}%) must not exceed 50% of teams`);
+    reasons.push({ key: 'errors.too-many-awards', count: maximumPercentage });
   }
 
   return {

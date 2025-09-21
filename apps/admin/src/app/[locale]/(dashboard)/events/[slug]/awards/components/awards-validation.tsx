@@ -140,6 +140,9 @@ export const AwardsValidation = () => {
           </Typography>
           <Stack spacing={0.5}>
             <Typography variant="body2" color="text.secondary">
+              • {t('rules.teams-count')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
               • {t('rules.minimum-requirement')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -153,11 +156,15 @@ export const AwardsValidation = () => {
           <Alert severity="error">
             <AlertTitle>{t('errors.title')}</AlertTitle>
             <Stack spacing={1}>
-              {reasons.map((reason, index) => (
-                <Typography key={index} variant="body2">
-                  • {reason}
-                </Typography>
-              ))}
+              {reasons.map((reason, index) => {
+                const { key, count = '' } = reason;
+
+                return (
+                  <Typography key={index} variant="body2">
+                    • {t(key, { count })}
+                  </Typography>
+                );
+              })}
             </Stack>
           </Alert>
         )}

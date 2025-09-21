@@ -3,7 +3,7 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import { Division } from '@lems/types/api/admin';
+import { Division, Team } from '@lems/types/api/admin';
 import { useEvent } from '../components/event-context';
 import { AwardsProvider } from './components/awards-context';
 
@@ -22,12 +22,15 @@ export default function AwardsLayout({ children }: AwardsLayoutProps) {
 
   const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
 
-  // TODO: Fetch team count from API based on selected division
-  const teamCount = 32; // Hardcoded for now as per requirements
+  const { data: teams = [] } = useSWR<Team[]>(
+    selectedDivisionId ? `/admin/events/${event.id}/divisions/${selectedDivisionId}/teams` : null,
+    { suspense: true, fallbackData: [] }
+  );
 
-  // Only render children if we have a valid division ID
+  const teamCount = teams.length;
+
   if (!selectedDivisionId) {
-    return <>{children}</>;
+    return <></>;
   }
 
   return (
