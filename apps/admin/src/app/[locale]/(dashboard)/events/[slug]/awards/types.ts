@@ -1,4 +1,5 @@
 import { Award } from '@lems/types/fll';
+import { ValidationResult } from './utils/validation';
 
 export interface AwardSchemaItem {
   count: number;
@@ -12,6 +13,8 @@ export interface AwardSchema {
 export interface AwardContextState {
   awards: Award[];
   schema: AwardSchema;
+  validation: ValidationResult;
+  teamCount: number;
   isLoading: boolean;
   isDirty: boolean;
 }

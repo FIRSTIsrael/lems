@@ -3,7 +3,8 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '@lems/types/fll';
 import { reorder } from '@lems/utils/arrays';
-import { AwardContextValue, AwardSchema } from './types';
+import { AwardContextValue, AwardSchema } from '../types';
+import { validateAwardsSchema } from '../utils/validation';
 
 const AwardContext = createContext<AwardContextValue | null>(null);
 
@@ -18,9 +19,10 @@ export function useAwards() {
 interface AwardsProviderProps {
   children: React.ReactNode;
   divisionId: string;
+  teamCount?: number; // TODO: Get from API, defaulting to 32 for now
 }
 
-export function AwardsProvider({ children, divisionId }: AwardsProviderProps) {
+export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsProviderProps) {
   // Initialize with mandatory awards and empty schema for now
   // TODO: Load from database based on divisionId
   const [originalSchema] = useState<AwardSchema>({});
@@ -47,6 +49,11 @@ export function AwardsProvider({ children, divisionId }: AwardsProviderProps) {
   const isDirty = useMemo(() => {
     return JSON.stringify(currentSchema) !== JSON.stringify(originalSchema);
   }, [currentSchema, originalSchema]);
+
+  // Calculate validation result
+  const validation = useMemo(() => {
+    return validateAwardsSchema(currentSchema, teamCount);
+  }, [currentSchema, teamCount]);
 
   const updateAwardCount = useCallback((award: Award, count: number) => {
     setCurrentSchema(prev => ({
@@ -132,6 +139,8 @@ export function AwardsProvider({ children, divisionId }: AwardsProviderProps) {
   const contextValue: AwardContextValue = {
     awards,
     schema: currentSchema,
+    validation,
+    teamCount,
     isLoading,
     isDirty,
     updateAwardCount,

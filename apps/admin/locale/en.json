@@ -543,6 +543,38 @@
             "unlimited": "Unlimited",
             "maximum": "Maximum {count}"
           }
+        },
+        "validation": {
+          "title": "Awards Validation",
+          "awards": "awards",
+          "status": {
+            "valid": "Valid",
+            "invalid": "Invalid"
+          },
+          "team-info": {
+            "title": "Team Information",
+            "description": "Event has {count} teams registered"
+          },
+          "minimum": {
+            "title": "Minimum Awards",
+            "description": "Non-personal awards excluding robot performance and advancement"
+          },
+          "maximum": {
+            "title": "Maximum Awards",
+            "description": "Minimum awards plus robot performance awards"
+          },
+          "rules": {
+            "title": "Validation Rules",
+            "minimum-requirement": "Minimum awards must be at least 30% of team count",
+            "maximum-requirement": "Maximum awards must not exceed 50% of team count"
+          },
+          "errors": {
+            "title": "Validation Issues"
+          },
+          "success": {
+            "title": "Awards Configuration Valid",
+            "description": "The current awards configuration meets all validation requirements."
+          }
         }
       }
     },
