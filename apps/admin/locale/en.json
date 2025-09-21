@@ -514,6 +514,9 @@
         "teamSwap": {
           "placeholder": "Team Swap view coming soon"
         }
+      },
+      "awards": {
+        "title": "{eventName}: Awards"
       }
     },
     "users": {

@@ -514,6 +514,9 @@
         "teamSwap": {
           "placeholder": "מסך החלפת קבוצות - בקרוב"
         }
+      },
+      "awards": {
+        "title": "{eventName}: פרסים"
       }
     },
     "users": {
