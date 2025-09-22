@@ -6,7 +6,7 @@ import { makeAdminTeamResponse } from '../../../teams/util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminDivisionRequest, res) => {
-  const teams = await db.divisions.byId(req.divisionId).getTeams();
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
   res.json(teams.map(team => makeAdminTeamResponse(team)));
 });
 

@@ -1,10 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '@lems/types/fll';
 import { reorder } from '@lems/utils/arrays';
 import { AwardContextValue, AwardSchema } from '../types';
 import { validateAwardsSchema } from '../utils/validation';
+import { useEvent } from '../../components/event-context';
+import { parseSchemaToApiRequest } from '../utils/schema';
+import { apiFetch } from '../../../../../../../lib/fetch';
 
 const AwardContext = createContext<AwardContextValue | null>(null);
 
@@ -20,16 +23,25 @@ interface AwardsProviderProps {
   children: React.ReactNode;
   divisionId: string;
   teamCount?: number;
+  initialSchema?: AwardSchema;
+  onSchemaChange?: () => void;
 }
 
-export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsProviderProps) {
-  const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(false);
-
-  // Initialize with mandatory awards and empty schema for now
-  // TODO: Load from database based on divisionId
-  // When implementing database loading, call setIsLoadedFromDatabase(true) after successful load
-  const [originalSchema] = useState<AwardSchema>({});
+export function AwardsProvider({
+  children,
+  divisionId,
+  teamCount = 32,
+  initialSchema,
+  onSchemaChange
+}: AwardsProviderProps) {
+  const event = useEvent();
+  const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(!!initialSchema);
+  const [originalSchema, setOriginalSchema] = useState<AwardSchema>(initialSchema || {});
   const [currentSchema, setCurrentSchema] = useState<AwardSchema>(() => {
+    if (initialSchema && Object.keys(initialSchema).length > 0) {
+      return initialSchema;
+    }
+
     const schema: AwardSchema = {};
     MANDATORY_AWARDS.forEach((award, index) => {
       schema[award] = { count: 1, index };
@@ -38,6 +50,14 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialSchema) {
+      setOriginalSchema(initialSchema);
+      setCurrentSchema(initialSchema);
+      setIsLoadedFromDatabase(true);
+    }
+  }, [initialSchema]);
 
   const awards = useMemo(() => {
     const awardEntries = Object.entries(currentSchema)
@@ -117,13 +137,24 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
   const saveSchema = useCallback(async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement API call to save schema
-      console.log('Saving schema for division:', divisionId, currentSchema);
+      const awards = parseSchemaToApiRequest(currentSchema);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await apiFetch(
+        `/admin/events/${event.id}/divisions/${divisionId}/awards/schema`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ awards })
+        }
+      );
 
-      // TODO: Update originalSchema with the saved data
+      if (!result.ok) {
+        throw new Error(`Failed to save awards schema: ${result.error}`);
+      }
+
+      setOriginalSchema(currentSchema);
+      onSchemaChange?.();
+
       console.log('Schema saved successfully');
     } catch (error) {
       console.error('Failed to save schema:', error);
@@ -131,7 +162,7 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
     } finally {
       setIsLoading(false);
     }
-  }, [divisionId, currentSchema]);
+  }, [event.id, divisionId, currentSchema, onSchemaChange]);
 
   const resetChanges = useCallback(() => {
     setCurrentSchema(originalSchema);

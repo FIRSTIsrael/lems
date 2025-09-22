@@ -1,6 +1,10 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableRobotGameTable, RobotGameTable, UpdateableRobotGameTable } from '../schema/tables/robot-game-tables';
+import {
+  InsertableRobotGameTable,
+  RobotGameTable,
+  UpdateableRobotGameTable
+} from '../schema/tables/robot-game-tables';
 
 class TableSelector {
   constructor(
@@ -33,11 +37,40 @@ class TableSelector {
   }
 }
 
+class TablesSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private divisionId: string
+  ) {}
+
+  async getAll(): Promise<RobotGameTable[]> {
+    return await this.db
+      .selectFrom('robot_game_tables')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .orderBy('name', 'asc')
+      .execute();
+  }
+
+  async deleteAll(): Promise<number> {
+    const result = await this.db
+      .deleteFrom('robot_game_tables')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+
+    return result.length;
+  }
+}
+
 export class TablesRepository {
   constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byId(id: string): TableSelector {
     return new TableSelector(this.db, id);
+  }
+
+  byDivisionId(divisionId: string): TablesSelector {
+    return new TablesSelector(this.db, divisionId);
   }
 
   async create(newTable: InsertableRobotGameTable): Promise<boolean> {

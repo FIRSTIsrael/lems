@@ -7,6 +7,7 @@ export interface AwardsTable {
   id: ColumnType<string, never, never>; // UUID, generated
   division_id: string; // UUID foreign key to divisions.id
   name: string;
+  index: number;
   place: number;
   type: AwardType;
   is_optional: boolean;

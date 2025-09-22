@@ -8,8 +8,7 @@ import {
 } from '../schema/tables/robot-game-matches';
 import {
   InsertableRobotGameMatchParticipant,
-  RobotGameMatchParticipant,
-  UpdateableRobotGameMatchParticipant
+  RobotGameMatchParticipant
 } from '../schema/tables/robot-game-match-participants';
 import {
   RobotGameMatchParticipantState,
@@ -40,17 +39,12 @@ export class RobotGameMatchSelector {
     return this.db.selectFrom('robot_game_matches').selectAll().where('id', '=', this.id);
   }
 
-  async get() {
-    const match = await this.getMatchQuery().executeTakeFirst();
-    return match || null;
-  }
-
   async state() {
     return new RobotGameMatchStateSelector(this.mongo, this.id);
   }
 
-  async getWithParticipants() {
-    const match = await this.get();
+  async get() {
+    const match = await this.getMatchQuery().executeTakeFirst();
     if (!match) return null;
 
     const participants = await this.db
@@ -69,6 +63,71 @@ export class RobotGameMatchSelector {
       .where('id', '=', this.id)
       .returningAll()
       .executeTakeFirst();
+  }
+}
+
+class RobotGameMatchesSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private mongo: MongoDb,
+    private divisionId: string
+  ) {}
+
+  private async getMatches(): Promise<RobotGameMatch[]> {
+    return await this.db
+      .selectFrom('robot_game_matches')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .orderBy('number', 'asc')
+      .execute();
+  }
+
+  async getAll() {
+    const matches = await this.getMatches();
+    const matchesWithParticipants = [];
+
+    for (const match of matches) {
+      const participants = await this.db
+        .selectFrom('robot_game_match_participants')
+        .selectAll()
+        .where('match_id', '=', match.id)
+        .execute();
+
+      matchesWithParticipants.push({
+        ...match,
+        participants
+      });
+    }
+
+    return matchesWithParticipants;
+  }
+
+  async deleteAll(): Promise<number> {
+    const matches = await this.db
+      .selectFrom('robot_game_matches')
+      .select('id')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+
+    const matchIds = matches.map(match => match.id);
+
+    if (matchIds.length > 0) {
+      await this.mongo
+        .collection<RobotGameMatchState>('robot_game_match_states')
+        .deleteMany({ matchId: { $in: matchIds } });
+
+      await this.db
+        .deleteFrom('robot_game_match_participants')
+        .where('match_id', 'in', matchIds)
+        .execute();
+
+      await this.db
+        .deleteFrom('robot_game_matches')
+        .where('division_id', '=', this.divisionId)
+        .execute();
+    }
+
+    return matchIds.length;
   }
 }
 
@@ -100,12 +159,16 @@ export class RobotGameMatchesRepository {
     };
   }
 
-  async getAll() {
-    return await this.db.selectFrom('robot_game_matches').selectAll().execute();
+  byId(id: string): RobotGameMatchSelector {
+    return new RobotGameMatchSelector(this.db, this.mongo, id);
   }
 
-  async getAllWithParticipants() {
-    const matches = await this.getAll();
+  byDivisionId(divisionId: string): RobotGameMatchesSelector {
+    return new RobotGameMatchesSelector(this.db, this.mongo, divisionId);
+  }
+
+  async getAll() {
+    const matches = await this.db.selectFrom('robot_game_matches').selectAll().execute();
     const matchesWithParticipants = [];
 
     for (const match of matches) {
@@ -124,46 +187,10 @@ export class RobotGameMatchesRepository {
     return matchesWithParticipants;
   }
 
-  async create(match: InsertableRobotGameMatch): Promise<RobotGameMatch> {
-    const dbMatch = await this.db
-      .insertInto('robot_game_matches')
-      .values(match)
-      .returningAll()
-      .executeTakeFirst();
-    if (!dbMatch) {
-      throw new Error('Failed to create robot game match');
-    }
-
-    await this.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .insertOne(this.getEmptyState(dbMatch.id));
-
-    return dbMatch;
-  }
-
-  async createMany(matches: InsertableRobotGameMatch[]): Promise<RobotGameMatch[]> {
-    const dbMatches = await this.db
-      .insertInto('robot_game_matches')
-      .values(matches)
-      .returningAll()
-      .execute();
-
-    const states = dbMatches.map(match => this.getEmptyState(match.id));
-
-    if (states.length > 0) {
-      await this.mongo
-        .collection<RobotGameMatchState>('robot_game_match_states')
-        .insertMany(states);
-    }
-
-    return dbMatches;
-  }
-
-  async createWithParticipants(
+  async create(
     match: InsertableRobotGameMatch,
     participants: InsertableRobotGameMatchParticipant[]
   ): Promise<{ match: RobotGameMatch; participants: RobotGameMatchParticipant[] }> {
-    // Create the match first (without state)
     const dbMatch = await this.db
       .insertInto('robot_game_matches')
       .values(match)
@@ -188,7 +215,6 @@ export class RobotGameMatchesRepository {
         .execute();
     }
 
-    // Create the state with participant information
     await this.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .insertOne(this.getEmptyState(dbMatch.id, dbParticipants));
@@ -196,7 +222,7 @@ export class RobotGameMatchesRepository {
     return { match: dbMatch, participants: dbParticipants };
   }
 
-  async createManyWithParticipants(
+  async createMany(
     matchesWithParticipants: Array<{
       match: InsertableRobotGameMatch;
       participants: InsertableRobotGameMatchParticipant[];
@@ -205,108 +231,10 @@ export class RobotGameMatchesRepository {
     const result = [];
 
     for (const { match, participants } of matchesWithParticipants) {
-      const created = await this.createWithParticipants(match, participants);
+      const created = await this.create(match, participants);
       result.push(created);
     }
 
     return result;
-  }
-
-  async getMatchParticipants(matchId: string): Promise<RobotGameMatchParticipant[]> {
-    return await this.db
-      .selectFrom('robot_game_match_participants')
-      .selectAll()
-      .where('match_id', '=', matchId)
-      .execute();
-  }
-
-  async addParticipant(
-    participant: InsertableRobotGameMatchParticipant
-  ): Promise<RobotGameMatchParticipant> {
-    const dbParticipant = await this.db
-      .insertInto('robot_game_match_participants')
-      .values(participant)
-      .returningAll()
-      .executeTakeFirst();
-    if (!dbParticipant) {
-      throw new Error('Failed to create robot game match participant');
-    }
-    return dbParticipant;
-  }
-
-  async addParticipants(
-    participants: InsertableRobotGameMatchParticipant[]
-  ): Promise<RobotGameMatchParticipant[]> {
-    return await this.db
-      .insertInto('robot_game_match_participants')
-      .values(participants)
-      .returningAll()
-      .execute();
-  }
-
-  async updateParticipant(
-    participantPk: number,
-    updates: UpdateableRobotGameMatchParticipant
-  ): Promise<RobotGameMatchParticipant | undefined> {
-    return await this.db
-      .updateTable('robot_game_match_participants')
-      .set(updates)
-      .where('pk', '=', participantPk)
-      .returningAll()
-      .executeTakeFirst();
-  }
-
-  async deleteParticipant(participantPk: number): Promise<void> {
-    await this.db
-      .deleteFrom('robot_game_match_participants')
-      .where('pk', '=', participantPk)
-      .execute();
-  }
-
-  async deleteMatchParticipants(matchId: string): Promise<void> {
-    await this.db
-      .deleteFrom('robot_game_match_participants')
-      .where('match_id', '=', matchId)
-      .execute();
-  }
-
-  async updateTeamAssignment(
-    matchId: string,
-    tableId: string,
-    teamId: string | null
-  ): Promise<RobotGameMatchParticipant | undefined> {
-    return await this.db
-      .updateTable('robot_game_match_participants')
-      .set({ team_id: teamId })
-      .where('match_id', '=', matchId)
-      .where('table_id', '=', tableId)
-      .returningAll()
-      .executeTakeFirst();
-  }
-
-  async deleteByDivision(divisionId: string): Promise<void> {
-    const matches = await this.db
-      .selectFrom('robot_game_matches')
-      .select('id')
-      .where('division_id', '=', divisionId)
-      .execute();
-
-    const matchIds = matches.map(match => match.id);
-
-    if (matchIds.length > 0) {
-      await this.mongo
-        .collection<RobotGameMatchState>('robot_game_match_states')
-        .deleteMany({ matchId: { $in: matchIds } });
-
-      await this.db
-        .deleteFrom('robot_game_match_participants')
-        .where('match_id', 'in', matchIds)
-        .execute();
-
-      await this.db
-        .deleteFrom('robot_game_matches')
-        .where('division_id', '=', divisionId)
-        .execute();
-    }
   }
 }

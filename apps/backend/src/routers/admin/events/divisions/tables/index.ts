@@ -6,7 +6,7 @@ import { AdminDivisionRequest } from '../../../../../types/express';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminDivisionRequest, res) => {
-  const tables = await db.divisions.byId(req.divisionId).getTables();
+  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
   res.status(200).json(tables);
 });
 

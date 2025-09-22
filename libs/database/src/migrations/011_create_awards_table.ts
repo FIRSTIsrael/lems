@@ -20,6 +20,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('type', sql`award_type`, col => col.notNull())
     .addColumn('is_optional', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('allow_nominations', 'boolean', col => col.notNull().defaultTo(false))
+    .addColumn('index', 'integer', col => col.notNull())
     .addColumn('place', 'integer', col => col.notNull())
     .addColumn('winner_id', 'uuid') // Nullable - only for TEAM awards
     .addColumn('winner_name', 'varchar(64)') // Nullable - only for PERSONAL awards
