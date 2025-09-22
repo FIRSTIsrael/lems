@@ -6,7 +6,8 @@ export const defaultColor = '#003d6a';
 export const baseTheme = createTheme({
   palette: {
     primary: {
-      main: defaultColor
+      main: defaultColor,
+      dark: '#002a4d' 
     },
     secondary: {
       main: '#fafafa'

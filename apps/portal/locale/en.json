@@ -5,11 +5,46 @@
       "subtitle": "Error 404"
     },
     "index": {
-      "title": "Welcome to the Events Portal",
-      "description": "Explore upcoming events for the FIRST LEGO League Challenge",
-      "active-events": "Active events",
-      "no-active-events": "No active events",
-      "all-events": "All events"
+      "hero": {
+        "title": "Welcome to the Events Portal",
+        "subtitle": "Explore upcoming events for the FIRST LEGO League Challenge",
+        "current-season": "Current Season: {season}"
+      },
+      "events": {
+        "active-events": "Active Events",
+        "no-active-events": "No active events at the moment",
+        "upcoming-events": "Upcoming Events",
+        "past-events": "Past Events",
+        "view-all-events": "View All Events",
+        "event-date": "Event Date",
+        "location": "Location",
+        "teams-registered": "{count} teams registered",
+        "registration-open": "Registration Open",
+        "registration-closed": "Registration Closed"
+      },
+      "search": {
+        "title": "Search Teams & Events",
+        "placeholder": "Search for teams, events, or locations...",
+        "search-button": "Search",
+        "teams-tab": "Teams",
+        "events-tab": "Events"
+      },
+      "quick-actions": {
+        "title": "Quick Actions",
+        "robot-scorer": "Robot Game Scorer",
+        "robot-scorer-description": "Score robot game matches",
+        "browse-events": "Browse Events",
+        "browse-events-description": "Find and explore events"
+      },
+      "resources": {
+        "title": "Resources & Links",
+        "fll-website": "Resource Map",
+        "fll-website-description": "Find helpful resources and guides",
+        "github": "GitHub Repository",
+        "github-description": "View source code and contribute",
+        "resource-map": "Resource Map",
+        "resource-map-description": "Find helpful resources and guides"
+      }
     },
     "scorer": {
       "title": "Robot Game Scorer",

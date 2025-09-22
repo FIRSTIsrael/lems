@@ -5,11 +5,46 @@
       "subtitle": "שגיאה 404"
     },
     "index": {
-      "title": "ברוכים הבאים לפורטל האירועים",
-      "description": "גלו אירועים קרובים של FIRST LEGO League Challenge",
-      "active-events": "אירועים פעילים",
-      "no-active-events": "אין אירועים פעילים",
-      "all-events": "לכל האירועים"
+      "hero": {
+        "title": "ברוכים הבאים לפורטל האירועים",
+        "subtitle": "גלו אירועים קרובים של FIRST LEGO League Challenge",
+        "current-season": "עונה נוכחית: {season}"
+      },
+      "events": {
+        "active-events": "אירועים פעילים",
+        "no-active-events": "אין אירועים פעילים כרגע",
+        "upcoming-events": "אירועים קרובים",
+        "past-events": "אירועים קודמים",
+        "view-all-events": "צפייה בכל האירועים",
+        "event-date": "תאריך האירוע",
+        "location": "מיקום",
+        "teams-registered": "{count} קבוצות רשומות",
+        "registration-open": "הרשמה פתוחה",
+        "registration-closed": "הרשמה סגורה"
+      },
+      "search": {
+        "title": "חיפוש קבוצות ואירועים",
+        "placeholder": "חפשו קבוצות, אירועים או מיקומים...",
+        "search-button": "חיפוש",
+        "teams-tab": "קבוצות",
+        "events-tab": "אירועים"
+      },
+      "quick-actions": {
+        "title": "פעולות מהירות",
+        "robot-scorer": "מחשבון ניקוד רובוט",
+        "robot-scorer-description": "ניקוד מקצי רובוט",
+        "browse-events": "עיון באירועים",
+        "browse-events-description": "מצאו וחקרו אירועים"
+      },
+      "resources": {
+        "title": "משאבים וקישורים",
+        "fll-website": "מפת משאבים",
+        "fll-website-description": "מצאו משאבים ומדריכים שימושיים",
+        "github": "GitHub",
+        "github-description": "צפו בקוד המקור ותרמו לפרויקט",
+        "resource-map": "מפת משאבים",
+        "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
+      }
     },
     "scorer": {
       "title": "מחשבון ניקוד",
