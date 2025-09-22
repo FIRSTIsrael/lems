@@ -308,7 +308,7 @@
           "alert": "לאירוע זה כבר יש לוח זמנים. לא ניתן לשנות את רישום הקבוצות כעת."
         },
         "registration-dialog": {
-          "title": "רישום קבוצות {divisions, plural, =1 {} other {לבתים}",
+          "title": "רישום קבוצות {divisions, plural, =1 {} other {לבתים}}",
           "division": "בית",
           "available-teams": "קבוצות שנותרו",
           "no-available-teams": "לא נותרו קבוצות",
