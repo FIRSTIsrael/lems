@@ -383,6 +383,10 @@
       },
       "venue": {
         "title": "{eventName}: Venue",
+        "schedule-exists": {
+          "message": "A schedule has been set for {divisionName}. To edit venue details, you must first delete the schedule.",
+          "view-schedule": "View Schedule"
+        },
         "rooms": {
           "title": "Judging Rooms",
           "add-button": "Add Room",

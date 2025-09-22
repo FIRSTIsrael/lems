@@ -383,6 +383,10 @@
       },
       "venue": {
         "title": "{eventName}: היכל",
+        "schedule-exists": {
+          "message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך פרטי היכל, יש למחוק קודם את לוח הזמנים.",
+          "view-schedule": "צפייה בלוח זמנים"
+        },
         "rooms": {
           "title": "חדרי שיפוט",
           "add-button": "הוסף חדר",

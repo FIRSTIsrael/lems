@@ -10,6 +10,7 @@ import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
 import { PitMapManager } from './components/pit-map-manager';
 import { AssetManager } from './components/asset-manager';
+import { ScheduleExists } from './components/schedule-exists';
 
 const VenuePage: React.FC = () => {
   const t = useTranslations('pages.events.venue');
@@ -34,7 +35,9 @@ const VenuePage: React.FC = () => {
         </Box>
       )}
 
-      {selectedDivision && (
+      {selectedDivision && <ScheduleExists division={selectedDivision} />}
+
+      {selectedDivision && !selectedDivision.hasSchedule && (
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
             <AssetManager division={selectedDivision} assetType="rooms" />
