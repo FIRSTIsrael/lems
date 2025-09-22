@@ -99,6 +99,53 @@ class TeamSelector {
     return !!record;
   }
 }
+
+class TeamsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private space: ObjectStorage,
+    private divisionId: string
+  ) {}
+
+  async getAll(): Promise<Team[]> {
+    return await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('teams', 'teams.id', 'team_divisions.team_id')
+      .select([
+        'teams.pk',
+        'teams.id',
+        'teams.name',
+        'teams.number',
+        'teams.affiliation',
+        'teams.city',
+        'teams.coordinates',
+        'teams.logo_url'
+      ])
+      .where('team_divisions.division_id', '=', this.divisionId)
+      .orderBy('teams.number', 'asc')
+      .execute();
+  }
+
+  async deleteAll(): Promise<number> {
+    const teamIds = await this.db
+      .selectFrom('team_divisions')
+      .select('team_id')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+
+    if (teamIds.length === 0) {
+      return 0;
+    }
+
+    const teamIdValues = teamIds.map(t => t.team_id);
+
+    await this.db.deleteFrom('team_divisions').where('division_id', '=', this.divisionId).execute();
+    const result = await this.db.deleteFrom('teams').where('id', 'in', teamIdValues).execute();
+
+    return result.length;
+  }
+}
+
 export class TeamsRepository {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -114,6 +161,10 @@ export class TeamsRepository {
       type: 'number',
       value: number
     });
+  }
+
+  byDivisionId(divisionId: string): TeamsSelector {
+    return new TeamsSelector(this.db, this.space, divisionId);
   }
 
   async getAll(): Promise<Team[]> {

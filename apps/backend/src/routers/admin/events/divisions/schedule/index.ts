@@ -81,8 +81,8 @@ router.delete(
   async (req: AdminDivisionRequest, res) => {
     try {
       await Promise.all([
-        db.judgingSessions.deleteByDivision(req.divisionId),
-        db.robotGameMatches.deleteByDivision(req.divisionId),
+        db.judgingSessions.byDivisionId(req.divisionId).deleteAll(),
+        db.robotGameMatches.byDivisionId(req.divisionId).deleteAll(),
         db.divisions.byId(req.divisionId).update({ has_schedule: false })
       ]);
 

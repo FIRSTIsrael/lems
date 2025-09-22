@@ -38,8 +38,10 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
   const t = useTranslations('pages.events.teams.registration-dialog');
 
   const hasMultipleDivisions = divisions.length > 1;
-  const [selectedDivision, setSelectedDivision] = useState<Division | null>(divisions[0] || null);
 
+  const [selectedDivision, setSelectedDivision] = useState<Division | null>(
+    divisions.filter(division => !division.hasSchedule)[0] || null
+  );
   const [availableTeams, setAvailableTeams] = useState<Team[]>(teams);
   const [registeredTeams, setRegisteredTeams] = useState<TeamWithDivision[]>([]);
 
@@ -83,7 +85,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                 }
               >
                 {divisions.map(division => (
-                  <MenuItem key={division.id} value={division.id}>
+                  <MenuItem key={division.id} value={division.id} disabled={division.hasSchedule}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Box
                         sx={{
@@ -172,7 +174,8 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                             backgroundColor: registeredTeam.division.color
                           }}
                         />
-                        #{registeredTeam.number} - {registeredTeam.division.name}
+                        {`#${registeredTeam.number}`}
+                        {divisions.length > 1 && ` - ${registeredTeam.division.name}`}
                       </Box>
                     }
                     onDelete={() => handleRemoveTeam(registeredTeam.id)}

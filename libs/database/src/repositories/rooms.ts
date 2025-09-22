@@ -1,6 +1,10 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableJudgingRoom, JudgingRoom, UpdateableJudgingRoom } from '../schema/tables/judging-rooms';
+import {
+  InsertableJudgingRoom,
+  JudgingRoom,
+  UpdateableJudgingRoom
+} from '../schema/tables/judging-rooms';
 
 class RoomSelector {
   constructor(
@@ -33,11 +37,40 @@ class RoomSelector {
   }
 }
 
+class RoomsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private divisionId: string
+  ) {}
+
+  async getAll(): Promise<JudgingRoom[]> {
+    return await this.db
+      .selectFrom('judging_rooms')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .orderBy('name', 'asc')
+      .execute();
+  }
+
+  async deleteAll(): Promise<number> {
+    const result = await this.db
+      .deleteFrom('judging_rooms')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+
+    return result.length;
+  }
+}
+
 export class RoomsRepository {
   constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byId(id: string): RoomSelector {
     return new RoomSelector(this.db, id);
+  }
+
+  byDivisionId(divisionId: string): RoomsSelector {
+    return new RoomsSelector(this.db, divisionId);
   }
 
   async create(newRoom: InsertableJudgingRoom): Promise<boolean> {

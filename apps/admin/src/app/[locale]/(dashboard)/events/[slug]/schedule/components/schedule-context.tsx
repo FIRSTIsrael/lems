@@ -1,12 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
 
-const DEFAULT_STAGGER_MATCHES = true;
 const DEFAULT_MATCH_LENGTH = dayjs().hour(0).minute(2).second(30);
 const getFieldStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
@@ -39,6 +38,7 @@ export interface ScheduleContextType {
   rankingRounds: number;
   judgingSessions: number;
 
+  allowStagger: boolean;
   staggerMatches: boolean;
   matchesPerRound: number;
   practiceCycleTime: Dayjs;
@@ -94,7 +94,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     { suspense: true }
   );
 
-  const [staggerMatches, setStaggerMatchesState] = useState(DEFAULT_STAGGER_MATCHES);
+  const allowStagger = tables.length > 0 && tables.length % 4 === 0;
+
+  const [staggerMatches, setStaggerMatchesState] = useState(allowStagger);
   const [practiceRounds, setPracticeRounds] = useState(DEFAULT_PRACTICE_ROUNDS);
   const [rankingRounds, setRankingRounds] = useState(DEFAULT_RANKING_ROUNDS);
   const [practiceCycleTime, setPracticeCycleTime] = useState<Dayjs>(DEFAULT_PRACTICE_CYCLE_TIME);
@@ -109,6 +111,13 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
 
   const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
   const [judgingStart, setJudgingStart] = useState<Dayjs>(getJudgingStart(event.startDate));
+
+  useEffect(() => {
+    if (!allowStagger && staggerMatches) {
+      setStaggerMatches(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowStagger]);
 
   const setStaggerMatches = (value: boolean) => {
     if (value === staggerMatches) return;
@@ -125,7 +134,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   };
 
   const resetSettings = () => {
-    setStaggerMatchesState(DEFAULT_STAGGER_MATCHES);
+    setStaggerMatchesState(allowStagger);
     setPracticeRounds(DEFAULT_PRACTICE_ROUNDS);
     setRankingRounds(DEFAULT_RANKING_ROUNDS);
     setPracticeCycleTime(DEFAULT_PRACTICE_CYCLE_TIME);
@@ -146,6 +155,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     rankingRounds,
     judgingSessions: Math.ceil(teams.length / rooms.length),
 
+    allowStagger,
     staggerMatches,
     practiceCycleTime,
     rankingCycleTime,

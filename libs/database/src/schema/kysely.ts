@@ -14,6 +14,7 @@ import { JudgingSessionsTable } from './tables/judging-sessions';
 import { RobotGameTablesTable } from './tables/robot-game-tables';
 import { RobotGameMatchesTable } from './tables/robot-game-matches';
 import { RobotGameMatchParticipantsTable } from './tables/robot-game-match-participants';
+import { AwardsTable } from './tables/awards';
 
 export interface KyselyDatabaseSchema {
   admins: AdminsTable;
@@ -32,4 +33,5 @@ export interface KyselyDatabaseSchema {
   robot_game_tables: RobotGameTablesTable;
   robot_game_matches: RobotGameMatchesTable;
   robot_game_match_participants: RobotGameMatchParticipantsTable;
+  awards: AwardsTable;
 }

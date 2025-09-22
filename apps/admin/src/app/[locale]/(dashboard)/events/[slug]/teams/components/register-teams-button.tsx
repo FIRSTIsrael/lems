@@ -10,7 +10,7 @@ interface RegisterTeamsButtonProps {
   event: Event;
 }
 
-export default function RegisterTeamsButton({ event }: RegisterTeamsButtonProps) {
+export const RegisterTeamsButton: React.FC<RegisterTeamsButtonProps> = ({ event }) => {
   const t = useTranslations('pages.events.teams.registration-button');
   const [modalOpen, setModalOpen] = useState(false);
   const allowRegistration = true;
@@ -32,4 +32,4 @@ export default function RegisterTeamsButton({ event }: RegisterTeamsButtonProps)
       <RegisterTeamsDialog open={modalOpen} onClose={() => setModalOpen(false)} event={event} />
     </Box>
   );
-}
+};

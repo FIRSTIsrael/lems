@@ -4,12 +4,13 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { Stack, Switch, Typography, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { TeamWithDivision } from '@lems/types/api/admin';
+import { Division, TeamWithDivision } from '@lems/types/api/admin';
 import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';
-import RegisterTeamsButton from './components/register-teams-button';
+import { RegisterTeamsButton } from './components/register-teams-button';
+import { ScheduleExists } from './components/schedule-exists';
 
 export default function EventTeamsPage() {
   const event = useEvent();
@@ -17,9 +18,7 @@ export default function EventTeamsPage() {
   const t = useTranslations('pages.events.teams');
   const [isUnified, setIsUnified] = useState(true);
 
-  const { data: divisions = [] } = useSWR<TeamWithDivision[]>(
-    `/admin/events/${event.id}/divisions`
-  );
+  const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
   const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`);
 
   return (
@@ -47,9 +46,9 @@ export default function EventTeamsPage() {
           </Stack>
         </EventPageTitle>
 
-        <Box sx={{ mb: 2 }}>
-          <RegisterTeamsButton event={event} />
-        </Box>
+        <RegisterTeamsButton event={event} />
+
+        <ScheduleExists divisions={divisions} />
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
           {isUnified ? (

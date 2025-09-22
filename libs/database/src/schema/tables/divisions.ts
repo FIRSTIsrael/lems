@@ -1,5 +1,13 @@
 import { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
 
+export interface DivisionScheduleSettings {
+  match_length: number;
+  practice_cycle_time: number;
+  ranking_cycle_time: number;
+  judging_session_length: number;
+  judging_session_cycle_time: number;
+}
+
 export interface DivisionsTable {
   pk: ColumnType<number, never, never>; // Serial primary key
   id: ColumnType<string, never, never>; // UUID, generated
@@ -9,7 +17,7 @@ export interface DivisionsTable {
   pit_map_url: string | null;
   has_schedule: Generated<boolean>; // Default false
   has_awards: Generated<boolean>; // Default false
-  stagger_matches: Generated<boolean>; // Default false
+  schedule_settings: DivisionScheduleSettings | null;
 }
 
 export type Division = Selectable<DivisionsTable>;

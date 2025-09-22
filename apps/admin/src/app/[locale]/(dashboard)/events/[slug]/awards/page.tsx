@@ -3,15 +3,15 @@
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
-import { EventPageTitle } from '../components/event-page-title';
 import { useEvent } from '../components/event-context';
+import { EventPageTitle } from '../components/event-page-title';
 import { DivisionSelector } from '../components/division-selector';
-import { ScheduleManager } from './components/schedule-manager';
+import { AwardsEditor } from './components/awards-editor';
 
-export default function EventSchedulePage() {
-  const t = useTranslations('pages.events.schedule');
+export default function EventAwardsPage() {
+  const t = useTranslations('pages.events.awards');
   const event = useEvent();
   const searchParams = useSearchParams();
 
@@ -24,20 +24,12 @@ export default function EventSchedulePage() {
   const selectedDivision = divisions.find(division => division.id === selectedDivisionId);
 
   return (
-    <Box sx={{ p: 3, height: 'calc(100vh - 40px)', display: 'flex', flexDirection: 'column' }}>
+    <Stack spacing={3} sx={{ mb: 3 }}>
       <EventPageTitle title={t('title', { eventName: event.name })} />
 
-      {divisions.length > 1 && (
-        <Box sx={{ mb: 3, flexShrink: 0 }}>
-          <DivisionSelector divisions={divisions} />
-        </Box>
-      )}
+      {divisions.length > 1 && <DivisionSelector divisions={divisions} />}
 
-      <Box sx={{ flex: 1, minHeight: 0 }}>
-        {selectedDivision && (
-          <ScheduleManager key={selectedDivisionId} division={selectedDivision} />
-        )}
-      </Box>
-    </Box>
+      {selectedDivision && <AwardsEditor key={selectedDivisionId} />}
+    </Stack>
   );
 }

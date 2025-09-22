@@ -7,7 +7,16 @@ export const AdminDivisionResponseSchema = z.object({
   color: z.string(),
   pitMapUrl: z.url().nullable(),
   hasSchedule: z.boolean(),
-  hasAwards: z.boolean()
+  hasAwards: z.boolean(),
+  scheduleSettings: z
+    .object({
+      matchLength: z.number(),
+      practiceCycleTime: z.number(),
+      rankingCycleTime: z.number(),
+      judgingSessionLength: z.number(),
+      judgingSessionCycleTime: z.number()
+    })
+    .nullable()
 });
 
 export type Division = z.infer<typeof AdminDivisionResponseSchema>;

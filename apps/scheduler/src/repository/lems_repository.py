@@ -201,12 +201,16 @@ class LemsRepository:
             logger.error(f"Failed to delete division schedule: {e}")
             raise SchedulerError("Failed to delete division schedule")
 
-    def mark_schedule_complete(self):
+    def mark_schedule_complete(self, schedule_settings: dict = None):
         """Mark the division as having a complete schedule."""
         logger.info("Marking schedule as complete")
 
+        payload = {}
+        if schedule_settings:
+            payload["schedule_settings"] = schedule_settings
+
         try:
-            response = self._make_request("PUT", "/has-schedule")
+            response = self._make_request("PUT", "/settings", json=payload)
             if not response.ok:
                 raise SchedulerError("Error in mark schedule complete request")
             logger.info("Successfully marked schedule as complete")

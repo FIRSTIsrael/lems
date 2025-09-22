@@ -20,6 +20,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('type', sql`award_type`, col => col.notNull())
     .addColumn('is_optional', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('allow_nominations', 'boolean', col => col.notNull().defaultTo(false))
+    .addColumn('index', 'integer', col => col.notNull())
     .addColumn('place', 'integer', col => col.notNull())
     .addColumn('winner_id', 'uuid') // Nullable - only for TEAM awards
     .addColumn('winner_name', 'varchar(64)') // Nullable - only for PERSONAL awards
@@ -57,12 +58,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
-  // Add check constraint: Awards must have exactly one winner type
+  // Add check constraint: Awards cannot have both winner types set
   await db.schema
     .alterTable('awards')
     .addCheckConstraint(
-      'ck_awards_exactly_one_winner',
-      sql`(winner_id IS NULL) <> (winner_name IS NULL)`
+      'ck_awards_mutually_exclusive_winners',
+      sql`NOT (winner_id IS NOT NULL AND winner_name IS NOT NULL)`
     )
     .execute();
 

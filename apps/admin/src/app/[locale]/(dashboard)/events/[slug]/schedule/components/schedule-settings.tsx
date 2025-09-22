@@ -49,7 +49,8 @@ export const ScheduleSettings: React.FC = () => {
     rankingRounds,
     judgingStart,
     fieldStart,
-    matchesPerRound
+    matchesPerRound,
+    allowStagger
   } = useSchedule();
 
   const totalMatches = React.useMemo(() => {
@@ -171,6 +172,7 @@ export const ScheduleSettings: React.FC = () => {
           <FormControlLabel
             control={
               <Switch
+                disabled={!allowStagger}
                 checked={staggerMatches}
                 onChange={e => setStaggerMatches(e.target.checked)}
                 color="primary"

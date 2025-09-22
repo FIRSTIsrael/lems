@@ -51,6 +51,46 @@ export class JudgingSessionSelector {
   }
 }
 
+class JudgingSessionsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private mongo: MongoDb,
+    private divisionId: string
+  ) {}
+
+  async getAll(): Promise<JudgingSession[]> {
+    return await this.db
+      .selectFrom('judging_sessions')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .orderBy('number', 'asc')
+      .execute();
+  }
+
+  async deleteAll(): Promise<number> {
+    const sessions = await this.db
+      .selectFrom('judging_sessions')
+      .select('id')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+
+    const sessionIds = sessions.map(session => session.id);
+
+    if (sessionIds.length > 0) {
+      await this.mongo
+        .collection<JudgingSessionState>('judging_session_states')
+        .deleteMany({ sessionId: { $in: sessionIds } });
+
+      await this.db
+        .deleteFrom('judging_sessions')
+        .where('division_id', '=', this.divisionId)
+        .execute();
+    }
+
+    return sessionIds.length;
+  }
+}
+
 export class JudgingSessionsRepository {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -66,6 +106,14 @@ export class JudgingSessionsRepository {
       startTime: null,
       startDelta: null
     };
+  }
+
+  byId(id: string): JudgingSessionSelector {
+    return new JudgingSessionSelector(this.db, this.mongo, id);
+  }
+
+  byDivisionId(divisionId: string): JudgingSessionsSelector {
+    return new JudgingSessionsSelector(this.db, this.mongo, divisionId);
   }
 
   async getAll() {
@@ -103,23 +151,5 @@ export class JudgingSessionsRepository {
     }
 
     return dbSessions;
-  }
-
-  async deleteByDivision(divisionId: string): Promise<void> {
-    const sessions = await this.db
-      .selectFrom('judging_sessions')
-      .select('id')
-      .where('division_id', '=', divisionId)
-      .execute();
-
-    const sessionIds = sessions.map(session => session.id);
-
-    if (sessionIds.length > 0) {
-      await this.mongo
-        .collection<JudgingSessionState>('judging_session_states')
-        .deleteMany({ sessionId: { $in: sessionIds } });
-
-      await this.db.deleteFrom('judging_sessions').where('division_id', '=', divisionId).execute();
-    }
   }
 }
