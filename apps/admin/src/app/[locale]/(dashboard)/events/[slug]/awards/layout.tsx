@@ -23,22 +23,22 @@ export default function AwardsLayout({ children }: AwardsLayoutProps) {
 
   const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
 
-  const { data: teams = [] } = useSWR<Team[]>(
+  const { data: teams = null } = useSWR<Team[]>(
     selectedDivisionId ? `/admin/events/${event.id}/divisions/${selectedDivisionId}/teams` : null,
-    { suspense: true, fallbackData: [] }
+    { suspense: true }
   );
 
-  const { data: awardsData = [], mutate: mutateAwards } = useSWR(
+  const { data: awardsData = null, mutate: mutateAwards } = useSWR(
     selectedDivisionId ? `/admin/events/${event.id}/divisions/${selectedDivisionId}/awards` : null,
-    { suspense: true, fallbackData: [] }
+    { suspense: true }
   );
+
+  if (!selectedDivisionId || !awardsData || !teams) {
+    return <></>;
+  }
 
   const teamCount = teams.length;
   const initialSchema = parseApiResponseToSchema(awardsData);
-
-  if (!selectedDivisionId) {
-    return <></>;
-  }
 
   return (
     <AwardsProvider
