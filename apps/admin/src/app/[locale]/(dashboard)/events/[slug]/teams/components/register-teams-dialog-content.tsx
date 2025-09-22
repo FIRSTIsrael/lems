@@ -172,7 +172,8 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                             backgroundColor: registeredTeam.division.color
                           }}
                         />
-                        #{registeredTeam.number} - {registeredTeam.division.name}
+                        {`#${registeredTeam.number}`}
+                        {divisions.length > 1 && ` - ${registeredTeam.division.name}`}
                       </Box>
                     }
                     onDelete={() => handleRemoveTeam(registeredTeam.id)}
