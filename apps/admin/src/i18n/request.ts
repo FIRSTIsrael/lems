@@ -7,7 +7,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
 
   const messages = (await import(`../../locale/${locale}.json`)).default;
-  const sharedMessages = (await import(`@lems/shared/locale/${locale}.json`)).default;
+  const sharedMessages = (await import(`@lems/localization/${locale}.json`)).default;
 
   return {
     locale,

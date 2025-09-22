@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { RichText } from '@lems/shared/locale';
+import { RichText } from '@lems/localization';
 import { MissionSchema } from '@lems/shared/scoresheet';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
 import MissionClause from './mission-clause';

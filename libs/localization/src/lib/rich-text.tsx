@@ -1,20 +1,18 @@
 import { ReactNode } from 'react';
 
-// TODO: implement this in the apps for rich text support
-
 type Tag = 'b' | 'i';
 
 type Props = {
   children(tags: Record<Tag, (chunks: ReactNode) => ReactNode>): ReactNode;
 };
 
-export default function RichText({ children }: Props) {
+export function RichText({ children }: Props) {
   return (
-    <div className="prose">
+    <>
       {children({
         b: (chunks: ReactNode) => <b>{chunks}</b>,
         i: (chunks: ReactNode) => <i>{chunks}</i>
       })}
-    </div>
+    </>
   );
 }

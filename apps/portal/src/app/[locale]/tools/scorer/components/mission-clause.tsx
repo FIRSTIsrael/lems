@@ -3,8 +3,8 @@
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { MissionClauseSchema } from '@lems/shared/scoresheet';
+import { RichText } from '@lems/localization';
 import { NumberInput } from '@lems/shared';
-import { RichText } from '@lems/shared/locale';
 import { ensureArray } from '@lems/shared/utils';
 import { useTranslations } from 'next-intl';
 

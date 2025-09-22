@@ -1,10 +1,14 @@
+// Locale files
+export { default as heLocale } from './lib/he.json';
+export { default as enLocale } from './lib/en.json';
+
 export * from './lib/locales';
 export * from './lib/emotion-cache';
 export * from './lib/dayjs-config';
+export * from './lib/rich-text';
 
 // Hooks
-export * from './lib/hooks/use-html-direction';
-export * from './lib/hooks/use-locale-preference';
+export * from './lib/hooks/use-locale-award';
 
 // Icons
 export * from './lib/icons/chevron-end';

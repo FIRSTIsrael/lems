@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { RichText } from './rich-text';
+import { RichText } from '../rich-text';
 
 export const useLocaleAwardName = () => {
   const t = useTranslations('shared.awards');
