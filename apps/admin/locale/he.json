@@ -314,7 +314,7 @@
           "no-available-teams": "לא נותרו קבוצות",
           "registered-teams": "קבוצות לרישום ({count})",
           "actions": {
-            "register": "רישום {count, plural, =1 {קבוצה אחת} other {{count} קבוצות}}",
+            "register": "רישום {count, plural, =1 {קבוצה אחת} other {# קבוצות}}",
             "cancel": "ביטול"
           },
           "no-teams-selected": "לא נבחרו קבוצות"
