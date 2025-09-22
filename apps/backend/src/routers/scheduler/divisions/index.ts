@@ -137,9 +137,32 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
   }
 });
 
-router.put('/has-schedule', async (req: SchedulerRequest, res) => {
+router.put('/settings', async (req: SchedulerRequest, res) => {
   try {
-    const updated = await db.divisions.byId(req.divisionId).update({ has_schedule: true });
+    const { schedule_settings } = req.body;
+
+    if (schedule_settings !== undefined && schedule_settings !== null) {
+      const requiredFields = [
+        'match_length',
+        'practice_cycle_time',
+        'ranking_cycle_time',
+        'judging_session_length',
+        'judging_session_cycle_time'
+      ];
+
+      for (const field of requiredFields) {
+        if (!(field in schedule_settings) || typeof schedule_settings[field] !== 'number') {
+          res.status(400).json({
+            error: `Invalid schedule_settings: ${field} must be a number`
+          });
+          return;
+        }
+      }
+    }
+
+    const updated = await db.divisions
+      .byId(req.divisionId)
+      .update({ has_schedule: true, schedule_settings });
 
     if (!updated) {
       res.status(404).json({ error: 'Division not found' });
@@ -158,7 +181,7 @@ router.delete('/schedule', async (req: SchedulerRequest, res) => {
     await Promise.all([
       db.judgingSessions.byDivisionId(req.divisionId).deleteAll(),
       db.robotGameMatches.byDivisionId(req.divisionId).deleteAll(),
-      db.divisions.byId(req.divisionId).update({ has_schedule: false })
+      db.divisions.byId(req.divisionId).update({ has_schedule: false, schedule_settings: null })
     ]);
 
     res.status(200).json({ ok: true });

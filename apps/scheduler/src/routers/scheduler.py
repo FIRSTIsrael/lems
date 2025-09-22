@@ -54,7 +54,16 @@ async def create_schedule(
         match_schedule, session_schedule = scheduler.create_schedule()
         lems.insert_sessions(session_schedule)
         lems.insert_matches(match_schedule)
-        lems.mark_schedule_complete()
+
+        schedule_settings = {
+            "match_length": request.match_length_seconds,
+            "practice_cycle_time": request.practice_match_cycle_time_seconds,
+            "ranking_cycle_time": request.ranking_match_cycle_time_seconds,
+            "judging_session_length": request.judging_session_length_seconds,
+            "judging_session_cycle_time": request.judging_cycle_time_seconds,
+        }
+
+        lems.mark_schedule_complete(schedule_settings)
     except SchedulerError as error:
         lems.delete_schedule()
         raise HTTPException(
