@@ -25,7 +25,7 @@ export interface ValidationResult {
 export function validateAwardsSchema(schema: AwardSchema, teamCount: number): ValidationResult {
   const reasons: { key: string; count?: number }[] = [];
 
-  // Calculate minimum awards (exclude personal awards, advancement, and robot-performance)
+  /** Minimum awards given out. This excludes personal awards, advancement, and robot-performance */
   const minimumAwards = Object.entries(schema).reduce((total, [award, item]) => {
     const isPersonalAward = (PERSONAL_AWARDS as readonly string[]).includes(award);
     const isAdvancement = award === 'advancement';
@@ -37,11 +37,11 @@ export function validateAwardsSchema(schema: AwardSchema, teamCount: number): Va
     return total;
   }, 0);
 
-  // Calculate maximum awards (minimum + robot-performance)
+  /** Maximum awards to be given out. This assumes all robot-performance awards
+   * are given out to teams that did not win any other awards. */
   const robotPerformanceCount = schema['robot-performance']?.count || 0;
   const maximumAwards = minimumAwards + robotPerformanceCount;
 
-  // Calculate percentages with 2 decimal precision
   const minimumPercentage = Math.round((minimumAwards / teamCount) * 10000) / 100;
   const maximumPercentage = Math.round((maximumAwards / teamCount) * 10000) / 100;
 

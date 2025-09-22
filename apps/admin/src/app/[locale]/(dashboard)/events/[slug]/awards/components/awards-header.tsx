@@ -12,21 +12,9 @@ export const AwardsHeader = () => {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.editor');
   const { awards, addAward, saveSchema, resetChanges, isLoading, isDirty } = useAwards();
-
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
-  // Get awards that can be added (not already in the list)
   const availableAwards = OPTIONAL_AWARDS.filter(award => !awards.includes(award));
-
-  const handleSave = async () => {
-    try {
-      await saveSchema();
-    } catch (error) {
-      console.error('Failed to save:', error);
-    }
-  };
-
-  console.log([...awards]);
 
   return (
     <>
@@ -65,7 +53,7 @@ export const AwardsHeader = () => {
             <Button
               variant="contained"
               startIcon={<SaveIcon />}
-              onClick={handleSave}
+              onClick={saveSchema}
               disabled={!isDirty || isLoading}
             >
               {isLoading ? t('saving') : t('save-changes')}

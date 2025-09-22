@@ -17,6 +17,7 @@ export interface AwardContextState {
   teamCount: number;
   isLoading: boolean;
   isDirty: boolean;
+  isLoadedFromDatabase: boolean;
 }
 
 export interface AwardContextActions {

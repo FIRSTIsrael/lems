@@ -19,12 +19,15 @@ export function useAwards() {
 interface AwardsProviderProps {
   children: React.ReactNode;
   divisionId: string;
-  teamCount?: number; // TODO: Get from API, defaulting to 32 for now
+  teamCount?: number;
 }
 
 export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsProviderProps) {
+  const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(false);
+
   // Initialize with mandatory awards and empty schema for now
   // TODO: Load from database based on divisionId
+  // When implementing database loading, call setIsLoadedFromDatabase(true) after successful load
   const [originalSchema] = useState<AwardSchema>({});
   const [currentSchema, setCurrentSchema] = useState<AwardSchema>(() => {
     const schema: AwardSchema = {};
@@ -36,7 +39,6 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get ordered list of awards based on schema
   const awards = useMemo(() => {
     const awardEntries = Object.entries(currentSchema)
       .filter(([, item]) => item.count > 0)
@@ -45,12 +47,12 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
     return awardEntries;
   }, [currentSchema]);
 
-  // Check if current state differs from original
+  /** Check if current state differs from original (Schema was loaded from database and has changes) */
   const isDirty = useMemo(() => {
+    if (!isLoadedFromDatabase) return false;
     return JSON.stringify(currentSchema) !== JSON.stringify(originalSchema);
-  }, [currentSchema, originalSchema]);
+  }, [currentSchema, originalSchema, isLoadedFromDatabase]);
 
-  // Calculate validation result
   const validation = useMemo(() => {
     return validateAwardsSchema(currentSchema, teamCount);
   }, [currentSchema, teamCount]);
@@ -81,7 +83,6 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
   }, []);
 
   const removeAward = useCallback((award: Award) => {
-    // Can't remove mandatory awards
     if ((MANDATORY_AWARDS as readonly string[]).includes(award)) return;
 
     setCurrentSchema(prev => ({
@@ -143,6 +144,7 @@ export function AwardsProvider({ children, divisionId, teamCount = 32 }: AwardsP
     teamCount,
     isLoading,
     isDirty,
+    isLoadedFromDatabase,
     updateAwardCount,
     addAward,
     removeAward,
