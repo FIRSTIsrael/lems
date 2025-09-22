@@ -1,7 +1,9 @@
+'use client';
+
 import { createContext, useContext, ReactNode, useEffect } from 'react';
 import { Mission } from '@lems/types';
 import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS, localizedScoresheet } from '@lems/season';
-import { useScore, ErrorWithMessage } from '../../hooks/use-score';
+import { useScore, ErrorWithMessage } from '../../../../hooks/use-score';
 
 interface MissionContextType {
   points: number;
