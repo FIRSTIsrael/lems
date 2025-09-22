@@ -1,7 +1,3 @@
-// Locale files
-export { default as heLocale } from './lib/he.json';
-export { default as enLocale } from './lib/en.json';
-
 export * from './lib/locales';
 export * from './lib/emotion-cache';
 export * from './lib/dayjs-config';
