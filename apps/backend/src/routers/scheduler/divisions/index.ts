@@ -14,7 +14,7 @@ const router = express.Router({ mergeParams: true });
 router.use(attachDivision());
 
 router.get('/teams', async (req: SchedulerRequest, res) => {
-  const teams = await db.divisions.byId(req.divisionId).getTeams();
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
   res.status(200).json(teams.map(team => makeSchedulerTeamResponse(team)));
 });
 
@@ -46,12 +46,12 @@ router.get('/team/:teamNumber', async (req: SchedulerRequest, res) => {
 });
 
 router.get('/tables', async (req: SchedulerRequest, res) => {
-  const tables = await db.divisions.byId(req.divisionId).getTables();
+  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
   res.status(200).json(tables.map(table => makeSchedulerLocationResponse(table)));
 });
 
 router.get('/rooms', async (req: SchedulerRequest, res) => {
-  const rooms = await db.divisions.byId(req.divisionId).getRooms();
+  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
   res.status(200).json(rooms.map(room => makeSchedulerLocationResponse(room)));
 });
 
@@ -128,7 +128,7 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
 
     const allMatches = [testMatch, ...matchesWithParticipants];
 
-    await db.robotGameMatches.createManyWithParticipants(allMatches);
+    await db.robotGameMatches.createMany(allMatches);
 
     res.status(200).json({ ok: true });
   } catch (error) {
@@ -156,8 +156,8 @@ router.put('/has-schedule', async (req: SchedulerRequest, res) => {
 router.delete('/schedule', async (req: SchedulerRequest, res) => {
   try {
     await Promise.all([
-      db.judgingSessions.deleteByDivision(req.divisionId),
-      db.robotGameMatches.deleteByDivision(req.divisionId),
+      db.judgingSessions.byDivisionId(req.divisionId).deleteAll(),
+      db.robotGameMatches.byDivisionId(req.divisionId).deleteAll(),
       db.divisions.byId(req.divisionId).update({ has_schedule: false })
     ]);
 

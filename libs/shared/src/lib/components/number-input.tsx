@@ -1,9 +1,12 @@
+'use client';
+
 import * as React from 'react';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddRoundedIcon from '@mui/icons-material/Add';
+import { Typography } from '@mui/material';
 
 export interface NumberInputProps
   extends Omit<TextFieldProps, 'onChange' | 'value' | 'type' | 'disabled'> {
@@ -26,6 +29,7 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
     max = Infinity,
     step = 1,
     disabled,
+    helperText,
     ...otherTextFieldProps
   } = props;
 
@@ -47,56 +51,61 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
   };
 
   return (
-    <Stack direction="row" spacing={0.5} alignItems="center" ref={ref}>
-      <IconButton
-        onClick={e => handleStep(e, 'decrement')}
-        disabled={disabled || value === null || value <= min}
-        size="small"
-        sx={{ color: 'primary.main' }}
-      >
-        <RemoveIcon fontSize="small" />
-      </IconButton>
+    <Stack alignItems="center">
+      <Stack direction="row" spacing={0.5} alignItems="center" ref={ref}>
+        <IconButton
+          onClick={e => handleStep(e, 'decrement')}
+          disabled={disabled || value === null || value <= min}
+          size="small"
+          sx={{ color: 'primary.main' }}
+        >
+          <RemoveIcon fontSize="small" />
+        </IconButton>
 
-      <TextField
-        type="number"
-        value={value ?? ''}
-        onChange={handleInputChange}
-        disabled={disabled}
-        slotProps={{
-          input: {
-            onKeyDown: e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                const target = e.target as HTMLInputElement;
-                target.blur();
-              }
+        <TextField
+          type="number"
+          value={value ?? ''}
+          onChange={handleInputChange}
+          disabled={disabled}
+          slotProps={{
+            input: {
+              onKeyDown: e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const target = e.target as HTMLInputElement;
+                  target.blur();
+                }
+              },
+              style: { height: '2.5rem', width: '4rem' }
+            }
+          }}
+          sx={{
+            input: {
+              textAlign: 'center'
             },
-            style: { height: '2.5rem', width: '4rem' }
-          }
-        }}
-        sx={{
-          input: {
-            textAlign: 'center'
-          },
-          'input::-webkit-inner-spin-button': {
-            display: 'none'
-          },
-          'input[type=number]': {
-            MozAppearance: 'textfield' // Firefox support
-          }
-        }}
-        {...otherTextFieldProps}
-        ref={ref}
-      />
+            'input::-webkit-inner-spin-button': {
+              display: 'none'
+            },
+            'input[type=number]': {
+              MozAppearance: 'textfield' // Firefox support
+            }
+          }}
+          {...otherTextFieldProps}
+          ref={ref}
+        />
 
-      <IconButton
-        onClick={e => handleStep(e, 'increment')}
-        disabled={disabled || value === null || value >= max}
-        size="small"
-        sx={{ color: 'primary.main' }}
-      >
-        <AddRoundedIcon fontSize="small" />
-      </IconButton>
+        <IconButton
+          onClick={e => handleStep(e, 'increment')}
+          disabled={disabled || value === null || value >= max}
+          size="small"
+          sx={{ color: 'primary.main' }}
+        >
+          <AddRoundedIcon fontSize="small" />
+        </IconButton>
+      </Stack>
+      <Typography variant="body2" color="text.secondary" fontSize="0.75rem" marginTop={0.5}>
+        {helperText}
+      </Typography>
     </Stack>
   );
 });

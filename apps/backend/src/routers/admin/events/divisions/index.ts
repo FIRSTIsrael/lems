@@ -4,11 +4,12 @@ import { AdminDivisionRequest, AdminEventRequest } from '../../../../types/expre
 import { attachDivision } from '../../../../middlewares/admin/attach-division';
 import { requirePermission } from '../../../../middlewares/admin/require-permission';
 import { makeAdminDivisionResponse } from './util';
-import divisionRoomsRouter from './rooms/index';
-import divisionTablesRouter from './tables/index';
-import divisionPitMapRouter from './pit-map/index';
-import divisionTeamsRouter from './teams/index';
-import divisionScheduleRouter from './schedule/index';
+import divisionRoomsRouter from './rooms';
+import divisionTablesRouter from './tables';
+import divisionPitMapRouter from './pit-map';
+import divisionTeamsRouter from './teams';
+import divisionScheduleRouter from './schedule';
+import divisionAwardsRouter from './awards';
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,6 +37,7 @@ router.use('/:divisionId/rooms', divisionRoomsRouter);
 router.use('/:divisionId/tables', divisionTablesRouter);
 router.use('/:divisionId/pit-map', divisionPitMapRouter);
 router.use('/:divisionId/teams', divisionTeamsRouter);
+router.use('/:divisionId/awards', divisionAwardsRouter);
 router.use('/:divisionId/schedule', divisionScheduleRouter);
 
 router.put(

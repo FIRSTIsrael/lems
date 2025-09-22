@@ -2,31 +2,21 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableDivision, Division, UpdateableDivision } from '../schema/tables/divisions';
-import {
-  Team,
-  JudgingRoom,
-  RobotGameTable
-} from '../schema';
 
 class DivisionSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
     private space: ObjectStorage,
-    private selector: { type: 'id' | 'event_id'; value: string }
+    private selector: { type: 'id'; value: string }
   ) {}
 
-  private getDivisionQuery() {
-    const query = this.db.selectFrom('divisions').selectAll();
-    return query.where(this.selector.type, '=', this.selector.value);
-  }
-
   async get(): Promise<Division | null> {
-    const division = await this.getDivisionQuery().executeTakeFirst();
+    const division = await this.db
+      .selectFrom('divisions')
+      .selectAll()
+      .where(this.selector.type, '=', this.selector.value)
+      .executeTakeFirst();
     return division || null;
-  }
-
-  async getAll(): Promise<Division[]> {
-    return await this.getDivisionQuery().orderBy('name', 'asc').execute();
   }
 
   async update(newDivision: UpdateableDivision): Promise<boolean> {
@@ -66,59 +56,31 @@ class DivisionSelector {
 
     return updatedDivision || null;
   }
+}
 
-  async getTables(): Promise<RobotGameTable[]> {
-    const division = await this.get();
+class DivisionsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private space: ObjectStorage,
+    private eventId: string
+  ) {}
 
-    if (!division) {
-      throw new Error('Division not found');
-    }
-
+  async getAll(): Promise<Division[]> {
     return await this.db
-      .selectFrom('robot_game_tables')
+      .selectFrom('divisions')
       .selectAll()
-      .where('division_id', '=', division.id)
+      .where('event_id', '=', this.eventId)
+      .orderBy('name', 'asc')
       .execute();
   }
 
-
-
-  async getRooms(): Promise<JudgingRoom[]> {
-    const division = await this.get();
-
-    if (!division) {
-      throw new Error('Division not found');
-    }
-
-    return await this.db
-      .selectFrom('judging_rooms')
-      .selectAll()
-      .where('division_id', '=', division.id)
+  async deleteAll(): Promise<number> {
+    const result = await this.db
+      .deleteFrom('divisions')
+      .where('event_id', '=', this.eventId)
       .execute();
-  }
 
-  async getTeams(): Promise<Team[]> {
-    const division = await this.get();
-    if (!division) {
-      throw new Error('Division not found');
-    }
-
-    return await this.db
-      .selectFrom('team_divisions')
-      .innerJoin('teams', 'teams.id', 'team_divisions.team_id')
-      .select([
-        'teams.pk',
-        'teams.id',
-        'teams.name',
-        'teams.number',
-        'teams.affiliation',
-        'teams.city',
-        'teams.coordinates',
-        'teams.logo_url'
-      ])
-      .where('team_divisions.division_id', '=', division.id)
-      .orderBy('teams.number', 'asc')
-      .execute();
+    return result.length;
   }
 }
 
@@ -132,8 +94,8 @@ export class DivisionsRepository {
     return new DivisionSelector(this.db, this.space, { type: 'id', value: id });
   }
 
-  byEventId(eventId: string): DivisionSelector {
-    return new DivisionSelector(this.db, this.space, { type: 'event_id', value: eventId });
+  byEventId(eventId: string): DivisionsSelector {
+    return new DivisionsSelector(this.db, this.space, eventId);
   }
 
   async create(division: InsertableDivision): Promise<Division> {
