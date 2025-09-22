@@ -10,11 +10,8 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { NumberInput } from '@lems/shared';
+import { useLocaleAwardDescription, useLocaleAwardName } from '@lems/shared/locale';
 import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
-import {
-  useLocaleAwardDescription,
-  useLocaleAwardName
-} from '../../../../../../hooks/localization';
 import { useAwards } from './awards-context';
 
 interface AwardItemProps {

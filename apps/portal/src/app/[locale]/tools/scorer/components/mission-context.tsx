@@ -3,7 +3,7 @@
 import { createContext, useContext, ReactNode, useEffect } from 'react';
 import { Mission } from '@lems/types';
 import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS, localizedScoresheet } from '@lems/season';
-import { useScore, ErrorWithMessage } from '../../../../hooks/use-score';
+import { useScore, ErrorWithMessage } from '../hooks/use-score';
 
 interface MissionContextType {
   points: number;
@@ -34,9 +34,9 @@ export function MissionProvider({ children }: { children: ReactNode }) {
     const missions: Mission[] = SEASON_SCORESHEET.missions.map(mission => {
       return {
         id: mission.id,
-        clauses: mission.clauses.map((c, index) => {
-          const value = ALLOW_SCORESHEET_DEFAULTS ? c.default : null;
-          return { type: c.type, value };
+        clauses: mission.clauses.map(clause => {
+          const value = ALLOW_SCORESHEET_DEFAULTS ? clause.default : null;
+          return { type: clause.type, value };
         })
       };
     });

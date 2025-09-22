@@ -1,10 +1,9 @@
 import React from 'react';
-import { LocalizedMission, MissionClauseSchema } from '@lems/season';
-import { ensureArray } from '@lems/utils/arrays';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import Markdown from 'react-markdown';
-import CustomNumberInput from './number-input';
+import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { LocalizedMission, MissionClauseSchema } from '@lems/season';
+import { NumberInput } from '@lems/shared';
+import { ensureArray } from '@lems/shared/utils';
 
 interface ClausePickerProps<T> {
   value: T | null;
@@ -72,7 +71,7 @@ interface NumericClauseProps extends ClausePickerProps<number> {
 
 const NumericClause: React.FC<NumericClauseProps> = ({ min, max, value, onChange }) => {
   return (
-    <CustomNumberInput
+    <NumberInput
       value={value}
       onChange={(e, value) => {
         if (value !== null) {
@@ -125,8 +124,8 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           />
         ) : (
           <NumericClause
-            min={clause.min ?? 0}
-            max={clause.max ?? 0}
+            min={clause.min || 0}
+            max={clause.max || 0}
             value={value as number | null}
             onChange={setValue}
           />

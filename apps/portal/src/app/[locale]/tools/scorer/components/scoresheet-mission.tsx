@@ -1,13 +1,13 @@
 'use client';
 
 import { useLayoutEffect, useRef, useState } from 'react';
-import { MissionSchema, localizedScoresheet } from '@lems/season';
+import Image from 'next/image';
 import { Paper, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import Image from 'next/image';
-import MissionClause from './mission-clause';
+import { MissionSchema, localizedScoresheet } from '@lems/season';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
+import MissionClause from './mission-clause';
 import { useMission } from './mission-context';
 
 interface ScoresheetMissionProps {

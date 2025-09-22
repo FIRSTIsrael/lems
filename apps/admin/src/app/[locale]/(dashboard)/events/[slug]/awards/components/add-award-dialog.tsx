@@ -14,8 +14,8 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
+import { useLocaleAwardName } from '@lems/shared/locale';
 import { Award } from '../types';
-import { useLocaleAwardName } from '../../../../../../hooks/localization';
 
 interface AddAwardDialogProps {
   open: boolean;
