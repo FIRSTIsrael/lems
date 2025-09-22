@@ -34,7 +34,9 @@ export default function EventSchedulePage() {
       )}
 
       <Box sx={{ flex: 1, minHeight: 0 }}>
-        {selectedDivision && <ScheduleManager division={selectedDivision} />}
+        {selectedDivision && (
+          <ScheduleManager key={selectedDivisionId} division={selectedDivision} />
+        )}
       </Box>
     </Box>
   );
