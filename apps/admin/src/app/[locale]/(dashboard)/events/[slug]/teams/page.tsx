@@ -9,7 +9,8 @@ import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';
-import RegisterTeamsButton from './components/register-teams-button';
+import { RegisterTeamsButton } from './components/register-teams-button';
+import { ScheduleExists } from './components/schedule-exists';
 
 export default function EventTeamsPage() {
   const event = useEvent();
@@ -45,9 +46,9 @@ export default function EventTeamsPage() {
           </Stack>
         </EventPageTitle>
 
-        <Box sx={{ mb: 2 }}>
-          <RegisterTeamsButton event={event} />
-        </Box>
+        <RegisterTeamsButton event={event} />
+
+        <ScheduleExists divisions={divisions} />
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
           {isUnified ? (

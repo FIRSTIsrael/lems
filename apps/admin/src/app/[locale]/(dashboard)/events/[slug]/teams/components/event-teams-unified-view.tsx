@@ -119,7 +119,8 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           key="edit"
           icon={<Edit />}
           label="Edit team"
-          disabled
+          // eslint-disable-next-line no-constant-binary-expression
+          disabled={true || params.row.division.hasSchedule}
           onClick={() => {
             // TODO: Implement edit functionality
             console.log('Edit team:', params.row.id);
@@ -129,7 +130,8 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           key="delete"
           icon={<Delete />}
           label="Delete team"
-          disabled
+          // eslint-disable-next-line no-constant-binary-expression
+          disabled={true || params.row.division.hasSchedule}
           onClick={() => {
             // TODO: Implement delete functionality
             console.log('Delete team:', params.row.id);

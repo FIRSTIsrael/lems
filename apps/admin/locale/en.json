@@ -303,6 +303,10 @@
           "unified": "Unified",
           "split": "Split"
         },
+        "schedule-exists": {
+          "message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
+          "view-schedule": "View Schedule"
+        },
         "registration-button": {
           "title": "Register Teams",
           "alert": "This event already has a schedule set. Team registration can no longer be modified."
