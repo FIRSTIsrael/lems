@@ -17,6 +17,7 @@
     "paths": {
       "@lems/database": ["libs/database/src/index.ts"],
       "@lems/localization": ["libs/localization/src/index.ts"],
+      "@lems/localization/*": ["libs/localization/src/lib/*"],
       "@lems/presentations": ["libs/presentations/src/index.ts"],
       "@lems/season": ["libs/season/src/index.ts"],
       "@lems/shared": ["libs/shared/src/index.ts"],
