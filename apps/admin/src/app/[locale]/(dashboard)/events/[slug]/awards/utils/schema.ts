@@ -6,8 +6,12 @@ import { AwardSchema } from '../types';
  * Converts an array of API award responses to an AwardSchema object
  * used by the admin awards editor.
  */
-export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema {
+export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema | null {
   const schema: AwardSchema = {};
+
+  if (awards.length === 0) {
+    return null;
+  }
 
   awards.forEach(award => {
     // Use the award name as the key since it should match Award enum values
@@ -47,7 +51,7 @@ export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema {
  * Converts an AwardSchema to an array of award data that can be sent to the API
  * for creating/updating the awards configuration.
  */
-export function parseSchemaToApiRequest(schema: AwardSchema): Array<{
+export function parseSchemaToApiRequest(schema: AwardSchema | null): Array<{
   name: string;
   index: number;
   place: number;
@@ -55,6 +59,8 @@ export function parseSchemaToApiRequest(schema: AwardSchema): Array<{
   isOptional: boolean;
   allowNominations: boolean;
 }> {
+  if (!schema) return [];
+
   const awards: Array<{
     name: string;
     index: number;

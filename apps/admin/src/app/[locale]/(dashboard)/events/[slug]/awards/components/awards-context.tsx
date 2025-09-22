@@ -23,7 +23,7 @@ interface AwardsProviderProps {
   children: React.ReactNode;
   divisionId: string;
   teamCount?: number;
-  initialSchema?: AwardSchema;
+  initialSchema?: AwardSchema | null;
   onSchemaChange?: () => void;
 }
 
@@ -35,10 +35,11 @@ export function AwardsProvider({
   onSchemaChange
 }: AwardsProviderProps) {
   const event = useEvent();
+
   const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(!!initialSchema);
   const [originalSchema, setOriginalSchema] = useState<AwardSchema>(initialSchema || {});
   const [currentSchema, setCurrentSchema] = useState<AwardSchema>(() => {
-    if (initialSchema && Object.keys(initialSchema).length > 0) {
+    if (initialSchema) {
       return initialSchema;
     }
 
