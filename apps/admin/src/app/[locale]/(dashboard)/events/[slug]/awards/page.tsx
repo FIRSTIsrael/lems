@@ -29,7 +29,7 @@ export default function EventAwardsPage() {
 
       {divisions.length > 1 && <DivisionSelector divisions={divisions} />}
 
-      {selectedDivision && <AwardsEditor />}
+      {selectedDivision && <AwardsEditor key={selectedDivisionId} />}
     </Stack>
   );
 }

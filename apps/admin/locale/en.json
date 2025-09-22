@@ -542,6 +542,12 @@
           "limits": {
             "unlimited": "Unlimited",
             "maximum": "Maximum {count}"
+          },
+          "status": {
+            "existing-awards": "Has Awards",
+            "existing-awards-tooltip": "This event has awards already configured",
+            "new-awards": "New Setup",
+            "new-awards-tooltip": "This is a new awards configuration"
           }
         },
         "validation": {

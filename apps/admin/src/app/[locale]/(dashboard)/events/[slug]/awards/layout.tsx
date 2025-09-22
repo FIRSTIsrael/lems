@@ -42,6 +42,7 @@ export default function AwardsLayout({ children }: AwardsLayoutProps) {
 
   return (
     <AwardsProvider
+      key={selectedDivisionId}
       divisionId={selectedDivisionId}
       teamCount={teamCount}
       initialSchema={initialSchema}

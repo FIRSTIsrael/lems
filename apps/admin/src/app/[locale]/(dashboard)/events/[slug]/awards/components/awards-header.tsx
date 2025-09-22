@@ -2,8 +2,24 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Paper, Typography, Button, Stack, Chip, alpha, useTheme } from '@mui/material';
-import { Add as AddIcon, Save as SaveIcon, Undo as UndoIcon } from '@mui/icons-material';
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  Stack,
+  Chip,
+  Tooltip,
+  alpha,
+  useTheme
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Save as SaveIcon,
+  Undo as UndoIcon,
+  CheckCircle,
+  FiberNew
+} from '@mui/icons-material';
 import { OPTIONAL_AWARDS } from '../types';
 import { useAwards } from './awards-context';
 import { AddAwardDialog } from './add-award-dialog';
@@ -30,7 +46,20 @@ export const AwardsHeader = () => {
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Tooltip
+              title={isNew ? t('status.new-awards-tooltip') : t('status.existing-awards-tooltip')}
+              arrow
+            >
+              <Chip
+                icon={isNew ? <FiberNew /> : <CheckCircle />}
+                label={isNew ? t('status.new-awards') : t('status.existing-awards')}
+                color={isNew ? 'info' : 'success'}
+                variant="outlined"
+                size="small"
+              />
+            </Tooltip>
+
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
