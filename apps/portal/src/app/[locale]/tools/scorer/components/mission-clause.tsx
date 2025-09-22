@@ -16,6 +16,7 @@ interface ClausePickerProps<T> {
 }
 
 const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }) => {
+  const t = useTranslations('shared.scoresheet.general');
   return (
     <ToggleButtonGroup
       exclusive
@@ -23,10 +24,10 @@ const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }
       onChange={(_e, value) => value !== null && onChange(value)}
     >
       <ToggleButton value={false} sx={{ minWidth: '80px' }}>
-        לא
+        {t('no')}
       </ToggleButton>
       <ToggleButton value={true} sx={{ minWidth: '80px' }}>
-        כן
+        {t('yes')}
       </ToggleButton>
     </ToggleButtonGroup>
   );
