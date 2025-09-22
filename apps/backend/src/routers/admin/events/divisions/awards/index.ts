@@ -45,6 +45,8 @@ router.post(
       });
     }
 
+    await db.divisions.byId(req.divisionId).update({ has_awards: true });
+
     res.status(201).end();
   }
 );
@@ -54,6 +56,7 @@ router.delete(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     await db.awards.byDivisionId(req.divisionId).deleteAll();
+    await db.divisions.byId(req.divisionId).update({ has_awards: false });
     res.status(200).end();
   }
 );
