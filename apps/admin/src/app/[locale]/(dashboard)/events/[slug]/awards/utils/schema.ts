@@ -1,6 +1,5 @@
 import { Award as ApiAward } from '@lems/types/api/admin';
-import { Award } from '@lems/types/fll';
-import { AwardSchema } from '../types';
+import { AwardSchema, Award, CORE_VALUES_AWARDS, OPTIONAL_AWARDS, PERSONAL_AWARDS } from '../types';
 
 /**
  * Converts an array of API award responses to an AwardSchema object
@@ -14,7 +13,6 @@ export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema | null
   }
 
   awards.forEach(award => {
-    // Use the award name as the key since it should match Award enum values
     const awardKey = award.name as Award;
 
     schema[awardKey] = {
@@ -51,24 +49,12 @@ export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema | null
  * Converts an AwardSchema to an array of award data that can be sent to the API
  * for creating/updating the awards configuration.
  */
-export function parseSchemaToApiRequest(schema: AwardSchema | null): Array<{
-  name: string;
-  index: number;
-  place: number;
-  type: 'PERSONAL' | 'TEAM';
-  isOptional: boolean;
-  allowNominations: boolean;
-}> {
+export function parseSchemaToApiRequest(
+  schema: AwardSchema | null
+): Array<Omit<ApiAward, 'id' | 'divisionId'>> {
   if (!schema) return [];
 
-  const awards: Array<{
-    name: string;
-    index: number;
-    place: number;
-    type: 'PERSONAL' | 'TEAM';
-    isOptional: boolean;
-    allowNominations: boolean;
-  }> = [];
+  const awards: Array<Omit<ApiAward, 'id' | 'divisionId'>> = [];
 
   // Get awards that have count > 0, sorted by index
   const activeAwards = Object.entries(schema)
@@ -80,24 +66,10 @@ export function parseSchemaToApiRequest(schema: AwardSchema | null): Array<{
   activeAwards.forEach(([awardName, schemaItem]) => {
     const award = awardName as Award;
 
-    // Determine award properties
-    const isPersonal = ['lead-mentor', 'volunteer-of-the-year'].includes(award);
-    const isOptional = ![
-      'core-values',
-      'innovation-project',
-      'robot-design',
-      'robot-performance',
-      'champions'
-    ].includes(award);
-    const allowNominations = [
-      'breakthrough',
-      'rising-all-star',
-      'motivate',
-      'judges-award',
-      'impact'
-    ].includes(award);
+    const isPersonal = (PERSONAL_AWARDS as readonly string[]).includes(award);
+    const isOptional = !(OPTIONAL_AWARDS as readonly string[]).includes(award);
+    const allowNominations = (CORE_VALUES_AWARDS as readonly string[]).includes(award);
 
-    // Create multiple entries for awards with count > 1
     for (let place = 1; place <= schemaItem.count; place++) {
       awards.push({
         name: award,

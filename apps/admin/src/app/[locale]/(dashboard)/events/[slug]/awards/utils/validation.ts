@@ -1,5 +1,4 @@
-import { PERSONAL_AWARDS } from '@lems/types/fll';
-import { AwardSchema } from '../types';
+import { AwardSchema, PERSONAL_AWARDS } from '../types';
 
 export interface ValidationResult {
   minimumAwards: number;

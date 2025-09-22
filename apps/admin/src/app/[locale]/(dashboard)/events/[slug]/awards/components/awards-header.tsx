@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Button, Stack, Chip, alpha, useTheme } from '@mui/material';
 import { Add as AddIcon, Save as SaveIcon, Undo as UndoIcon } from '@mui/icons-material';
-import { OPTIONAL_AWARDS } from '@lems/types/fll';
+import { OPTIONAL_AWARDS } from '../types';
 import { useAwards } from './awards-context';
 import { AddAwardDialog } from './add-award-dialog';
 
 export const AwardsHeader = () => {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.editor');
-  const { awards, addAward, saveSchema, resetChanges, isLoading, isDirty } = useAwards();
+  const { awards, addAward, saveSchema, resetChanges, isLoading, isDirty, isNew, validation } =
+    useAwards();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const availableAwards = OPTIONAL_AWARDS.filter(award => !awards.includes(award));
@@ -39,7 +40,7 @@ export const AwardsHeader = () => {
               {t('add-award')}
             </Button>
 
-            {isDirty && (
+            {isDirty && !isNew && (
               <Button
                 variant="outlined"
                 startIcon={<UndoIcon />}
@@ -54,14 +55,14 @@ export const AwardsHeader = () => {
               variant="contained"
               startIcon={<SaveIcon />}
               onClick={saveSchema}
-              disabled={!isDirty || isLoading}
+              disabled={!validation.isValid || (!isDirty && !isNew) || isLoading}
             >
               {isLoading ? t('saving') : t('save-changes')}
             </Button>
           </Stack>
         </Stack>
 
-        {isDirty && (
+        {isDirty && !isNew && (
           <Box
             sx={{
               mt: 2,

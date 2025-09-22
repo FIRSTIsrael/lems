@@ -12,7 +12,7 @@ router.get('/', async (req: AdminDivisionRequest, res) => {
 });
 
 router.post(
-  '/schema',
+  '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     const awards = req.body.awards;

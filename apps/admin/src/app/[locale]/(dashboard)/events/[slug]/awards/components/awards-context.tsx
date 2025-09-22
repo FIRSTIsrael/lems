@@ -1,9 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
-import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '@lems/types/fll';
 import { reorder } from '@lems/utils/arrays';
-import { AwardContextValue, AwardSchema } from '../types';
+import { AwardContextValue, AwardSchema, Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
 import { validateAwardsSchema } from '../utils/validation';
 import { useEvent } from '../../components/event-context';
 import { parseSchemaToApiRequest } from '../utils/schema';
@@ -68,11 +67,10 @@ export function AwardsProvider({
     return awardEntries;
   }, [currentSchema]);
 
-  /** Check if current state differs from original (Schema was loaded from database and has changes) */
+  /** Check if current state differs from original  */
   const isDirty = useMemo(() => {
-    if (!isLoadedFromDatabase) return false;
     return JSON.stringify(currentSchema) !== JSON.stringify(originalSchema);
-  }, [currentSchema, originalSchema, isLoadedFromDatabase]);
+  }, [currentSchema, originalSchema]);
 
   const validation = useMemo(() => {
     return validateAwardsSchema(currentSchema, teamCount);
@@ -140,14 +138,11 @@ export function AwardsProvider({
     try {
       const awards = parseSchemaToApiRequest(currentSchema);
 
-      const result = await apiFetch(
-        `/admin/events/${event.id}/divisions/${divisionId}/awards/schema`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ awards })
-        }
-      );
+      const result = await apiFetch(`/admin/events/${event.id}/divisions/${divisionId}/awards`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ awards })
+      });
 
       if (!result.ok) {
         throw new Error(`Failed to save awards schema: ${result.error}`);
@@ -176,7 +171,7 @@ export function AwardsProvider({
     teamCount,
     isLoading,
     isDirty,
-    isLoadedFromDatabase,
+    isNew: !isLoadedFromDatabase,
     updateAwardCount,
     addAward,
     removeAward,

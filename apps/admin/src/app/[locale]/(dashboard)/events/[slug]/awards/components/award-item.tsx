@@ -9,13 +9,13 @@ import {
   Delete as DeleteIcon,
   Lock as LockIcon
 } from '@mui/icons-material';
-import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '@lems/types/fll';
 import { NumberInput } from '@lems/shared';
-import { useAwards } from './awards-context';
+import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
 import {
   useLocaleAwardDescription,
   useLocaleAwardName
 } from '../../../../../../hooks/localization';
+import { useAwards } from './awards-context';
 
 interface AwardItemProps {
   award: Award;
