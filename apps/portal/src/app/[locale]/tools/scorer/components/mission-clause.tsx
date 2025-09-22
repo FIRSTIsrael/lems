@@ -1,11 +1,16 @@
+'use-client';
+
 import React from 'react';
-import Markdown from 'react-markdown';
-import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { LocalizedMission, MissionClauseSchema } from '@lems/season';
+import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { MissionClauseSchema } from '@lems/shared/scoresheet';
 import { NumberInput } from '@lems/shared';
+import { RichText } from '@lems/shared/locale';
 import { ensureArray } from '@lems/shared/utils';
+import { useTranslations } from 'next-intl';
 
 interface ClausePickerProps<T> {
+  missionId: string;
+  clauseIndex: number;
   value: T | null;
   onChange: (value: T) => void;
 }
@@ -29,20 +34,23 @@ const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }
 
 interface EnumClauseProps extends ClausePickerProps<string> {
   maxWidth: number;
-  labels: string[];
   values: string[];
   multiSelect: boolean;
 }
 
 const EnumClause: React.FC<EnumClauseProps> = ({
+  missionId,
+  clauseIndex,
   value,
   onChange,
-  labels,
   values,
   maxWidth,
   multiSelect
 }) => {
-  const buttonMinWidth = `${Math.min(80, maxWidth / labels.length)}px`;
+  const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
+  const t = useTranslations(
+    `shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}.labels`
+  );
 
   return (
     <ToggleButtonGroup
@@ -55,9 +63,11 @@ const EnumClause: React.FC<EnumClauseProps> = ({
         onChange(value);
       }}
     >
-      {labels.map((label, index) => (
-        <ToggleButton key={label} value={values[index] ?? ''} sx={{ minWidth: buttonMinWidth }}>
-          {label}
+      {values.map(value => (
+        <ToggleButton key={value} value={value} sx={{ minWidth: buttonMinWidth }}>
+          <Typography>
+            <RichText>{tags => t.rich(value, tags)}</RichText>
+          </Typography>
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
@@ -87,43 +97,55 @@ const NumericClause: React.FC<NumericClauseProps> = ({ min, max, value, onChange
 };
 
 interface MissionClauseProps {
+  missionId: string;
   missionIndex: number;
   clauseIndex: number;
   clause: MissionClauseSchema;
   value: string | number | boolean | null;
   setValue: (value: string | number | boolean | null) => void;
-  localizedMission: LocalizedMission;
   maxWidth?: number;
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
+  missionId,
   missionIndex,
   clauseIndex,
   clause,
   value,
   setValue,
-  localizedMission,
   maxWidth = 550
 }) => {
+  const t = useTranslations(`shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}`);
+
   return (
     <React.Fragment key={missionIndex}>
       <Grid size={10} ml={3}>
-        <Markdown>{localizedMission.clauses[clauseIndex].description}</Markdown>
+        <Typography>
+          <RichText>{tags => t.rich('description', tags)}</RichText>
+        </Typography>
       </Grid>
       <Grid size={12} ml={3}>
         {clause.type === 'boolean' ? (
-          <BooleanClause value={value as boolean | null} onChange={setValue} />
+          <BooleanClause
+            missionId={missionId}
+            clauseIndex={clauseIndex}
+            value={value as boolean | null}
+            onChange={setValue}
+          />
         ) : clause.type === 'enum' ? (
           <EnumClause
+            missionId={missionId}
+            clauseIndex={clauseIndex}
             value={value as string | null}
             onChange={setValue}
-            labels={localizedMission.clauses[clauseIndex].labels || []}
             values={clause.options || []}
             multiSelect={!!clause.multiSelect}
             maxWidth={maxWidth}
           />
         ) : (
           <NumericClause
+            missionId={missionId}
+            clauseIndex={clauseIndex}
             min={clause.min || 0}
             max={clause.max || 0}
             value={value as number | null}

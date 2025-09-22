@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
 import { Mission, MissionClause } from '@lems/types';
-import { ScoresheetError, SEASON_SCORESHEET, localizedScoresheet } from '@lems/season';
+import { scoresheet, ScoresheetError } from '@lems/shared/scoresheet';
 
 export interface Score {
   id: 'score'; // Can support multiple scores in the future
@@ -28,17 +28,14 @@ const calculateScore = (values: Mission[]) => {
   let points = 0;
   const errors: ErrorWithMessage[] = [];
 
-  SEASON_SCORESHEET.missions.forEach((mission, missionIndex) => {
+  scoresheet.missions.forEach((mission, missionIndex) => {
     const clauses = values[missionIndex].clauses;
     try {
       points += mission.calculation(...clauses.map(clause => clause.value));
     } catch (error) {
       if (error instanceof ScoresheetError) {
-        const localizedErrors = localizedScoresheet.missions[missionIndex].errors;
-        if (localizedErrors && localizedErrors.length > 0) {
-          const localizedError = localizedErrors.find(e => e.id === error.id);
-          if (localizedError) errors.push(localizedError);
-        }
+        const description = `errors.${error.id}.description`; // Translation key in shared locale
+        errors.push({ id: error.id, description });
       }
     }
   });
@@ -51,13 +48,12 @@ const validate = (values: Mission[]) => {
     values.map((m: Mission) => [m.id, m.clauses.map((c: MissionClause) => c.value)])
   );
 
-  SEASON_SCORESHEET.validators.forEach(validator => {
+  scoresheet.validators.forEach(validator => {
     try {
       validator(validatorArgs);
     } catch (error) {
       if (error instanceof ScoresheetError) {
-        const description =
-          localizedScoresheet.errors.find(e => e.id == error.id)?.description || '';
+        const description = `errors.${error.id}.description`; // Translation key in shared locale
         validatorErrors.push({ id: error.id, description });
       }
     }
@@ -79,7 +75,7 @@ export const useScore = () => {
       });
 
       const currentScore = await db.get('scores', 'score');
-      if (currentScore && currentScore.season === SEASON_SCORESHEET.season) setScore(currentScore);
+      if (currentScore && currentScore.season === scoresheet.season) setScore(currentScore);
       setLoading(false);
     };
 
@@ -92,7 +88,7 @@ export const useScore = () => {
 
     const newScore: Score = {
       id: 'score',
-      season: SEASON_SCORESHEET.season,
+      season: scoresheet.season,
       missions,
       points,
       missionErrors,

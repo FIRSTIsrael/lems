@@ -1,16 +1,18 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Typography, Stack } from '@mui/material';
-import { SEASON_SCORESHEET } from '@lems/season';
+import { scoresheet } from '@lems/shared/scoresheet';
 import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
+  const t = useTranslations('shared.scoresheet');
   const { errors } = useScoresheetValidator();
 
   return (
     <Stack spacing={4} mt={4} mb={16}>
-      {SEASON_SCORESHEET.missions.map((mission, index) => (
+      {scoresheet.missions.map((mission, index) => (
         <ScoresheetMission
           key={mission.id}
           missionIndex={index}
@@ -20,7 +22,7 @@ export const ScoresheetForm: React.FC = () => {
       ))}
       {errors.map((error, index) => (
         <Typography key={index} color="error" fontWeight={600}>
-          {error.description}
+          {t(error.description)}
         </Typography>
       ))}
     </Stack>
