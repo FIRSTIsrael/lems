@@ -9,7 +9,6 @@ export interface DivisionsTable {
   pit_map_url: string | null;
   has_schedule: Generated<boolean>; // Default false
   has_awards: Generated<boolean>; // Default false
-  stagger_matches: Generated<boolean>; // Default false
 }
 
 export type Division = Selectable<DivisionsTable>;
