@@ -139,6 +139,23 @@ class AdminSelector {
   }
 }
 
+class AdminsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private eventId: string
+  ) {}
+
+  async getAll(): Promise<Admin[]> {
+    return await this.db
+      .selectFrom('admin_events')
+      .innerJoin('admins', 'admin_events.admin_id', 'admins.id')
+      .selectAll('admins')
+      .where('admin_events.event_id', '=', this.eventId)
+      .orderBy('admins.username', 'asc')
+      .execute();
+  }
+}
+
 export class AdminsRepository {
   constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
@@ -151,6 +168,10 @@ export class AdminsRepository {
       type: 'username',
       value: username
     });
+  }
+
+  byEventId(eventId: string): AdminsSelector {
+    return new AdminsSelector(this.db, eventId);
   }
 
   async getAll(): Promise<Admin[]> {

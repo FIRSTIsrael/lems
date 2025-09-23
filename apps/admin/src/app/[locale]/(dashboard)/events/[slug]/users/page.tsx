@@ -16,7 +16,6 @@ export default function EventUsersPage() {
       <EventPageTitle title={t('title', { eventName: event.name })} />
 
       <Stack spacing={4} sx={{ mt: 3 }}>
-        {/* Event Admins Section */}
         <Box>
           <Typography variant="h5" gutterBottom>
             {t('sections.eventAdmins.title')}
@@ -30,7 +29,7 @@ export default function EventUsersPage() {
         <Divider />
 
         {/* Volunteer Users Section */}
-        <Box>
+        {/* <Box>
           <Typography variant="h5" gutterBottom>
             {t('sections.volunteerUsers.title')}
           </Typography>
@@ -38,7 +37,7 @@ export default function EventUsersPage() {
             {t('sections.volunteerUsers.description')}
           </Typography>
           <VolunteerUsersSection />
-        </Box>
+        </Box> */}
       </Stack>
     </Box>
   );

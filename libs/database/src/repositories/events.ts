@@ -63,6 +63,20 @@ class EventSelector {
       .execute();
   }
 
+  async removeAdmin(adminId: string): Promise<void> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db
+      .deleteFrom('admin_events')
+      .where('event_id', '=', event.id)
+      .where('admin_id', '=', adminId)
+      .execute();
+  }
+
   async getDivisions(): Promise<Division[]> {
     const event = await this.get();
 

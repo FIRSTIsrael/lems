@@ -20,19 +20,15 @@ import {
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { AdminUser } from '@lems/types/api/admin';
+import { apiFetch } from '../../../../../../../lib/fetch';
 import { useEvent } from '../../components/event-context';
 
 interface AssignAdminsDialogProps {
   open: boolean;
-  onClose: () => void;
-  onAdminsAssigned: () => void;
+  onClose?: () => void;
 }
 
-export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({
-  open,
-  onClose,
-  onAdminsAssigned
-}) => {
+export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({ open, onClose }) => {
   const event = useEvent();
   const t = useTranslations('pages.events.users.dialogs.assignAdmins');
 
@@ -41,19 +37,24 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({
   const [saving, setSaving] = useState(false);
 
   const { data: allAdmins = [], isLoading } = useSWR<AdminUser[]>('/admin/users');
-  const { data: currentEventAdmins = [] } = useSWR<AdminUser[]>(`/admin/events/${event.id}/admins`);
+  const { data: currentEventAdmins = [], mutate } = useSWR<AdminUser[]>(
+    `/admin/events/${event.id}/users/admins`
+  );
 
-  // Filter out admins that are already assigned to this event
   const availableAdmins = allAdmins.filter(
     admin => !currentEventAdmins.some(eventAdmin => eventAdmin.id === admin.id)
   );
 
-  // Filter admins based on search term
   const filteredAdmins = availableAdmins.filter(admin =>
     `${admin.firstName} ${admin.lastName} ${admin.username}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
+
+  const handleClose = () => {
+    setSelectedAdmins([]);
+    onClose?.();
+  };
 
   const handleToggleAdmin = (adminId: string) => {
     setSelectedAdmins(prev =>
@@ -68,19 +69,15 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/admin/events/${event.id}/admins`, {
+      const response = await apiFetch(`/admin/events/${event.id}/users/admins`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          adminIds: selectedAdmins
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminIds: selectedAdmins })
       });
 
       if (response.ok) {
-        onAdminsAssigned();
-        onClose();
+        mutate();
+        handleClose();
       } else {
         console.error('Failed to assign admins');
       }
@@ -92,7 +89,7 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth onClose={onClose}>
+    <Dialog open={open} maxWidth="sm" fullWidth onClose={handleClose}>
       <DialogTitle>{t('title')}</DialogTitle>
       <DialogContent>
         <Box sx={{ mb: 2 }}>
@@ -106,27 +103,31 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({
           />
         </Box>
 
-        {isLoading ? (
+        {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
             <CircularProgress />
           </Box>
-        ) : filteredAdmins.length === 0 ? (
+        )}
+
+        {!isLoading && filteredAdmins.length === 0 && (
           <Alert severity="info">
             {searchTerm ? t('noSearchResults') : t('noAvailableAdmins')}
           </Alert>
-        ) : (
+        )}
+
+        {!isLoading && (
           <List sx={{ maxHeight: 400, overflow: 'auto' }}>
             {filteredAdmins.map(admin => (
               <ListItem
                 key={admin.id}
-                onClick={() => handleToggleAdmin(admin.id)}
+                onClick={() => {
+                  if (saving) return;
+                  handleToggleAdmin(admin.id);
+                }}
                 dense
                 sx={{ cursor: 'pointer' }}
               >
-                <Checkbox
-                  checked={selectedAdmins.includes(admin.id)}
-                  onChange={() => handleToggleAdmin(admin.id)}
-                />
+                <Checkbox checked={selectedAdmins.includes(admin.id)} />
                 <ListItemText
                   primary={`${admin.firstName} ${admin.lastName}`}
                   secondary={`@${admin.username}`}
