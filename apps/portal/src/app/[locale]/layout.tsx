@@ -3,6 +3,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Roboto, Heebo } from 'next/font/google';
 import { Locales, configureDayjs } from '@lems/localization';
+import { SWRProvider } from '@lems/shared';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
 import { PortalAppBar } from './components/app-bar';
@@ -50,9 +51,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <MuiProvider locale={locale}>
-            <PortalAppBar>{children}</PortalAppBar>
-          </MuiProvider>
+          <SWRProvider>
+            <MuiProvider locale={locale}>
+              <PortalAppBar>{children}</PortalAppBar>
+            </MuiProvider>
+          </SWRProvider>
         </NextIntlClientProvider>
       </body>
     </html>

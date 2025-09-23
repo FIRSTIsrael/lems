@@ -3,9 +3,9 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Roboto, Heebo } from 'next/font/google';
 import { Locales, configureDayjs } from '@lems/localization';
+import { SWRProvider } from '@lems/shared';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
-import { SWRProvider } from './swr-provider';
 
 export const metadata: Metadata = {
   title: 'Admin Portal: FIRST LEGO League Challenge IL',

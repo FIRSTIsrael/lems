@@ -1,12 +1,19 @@
 'use client';
 
+import useSWR from 'swr';
 import { Box } from '@mui/material';
+import { Season } from '@lems/types/api/portal';
 import { Hero } from './components/homepage/hero';
 
 export default function HomePage() {
+  const { data: latestSeason } = useSWR<Season | null>('/portal/seasons/latest', {
+    suspense: true,
+    fallbackData: null
+  });
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Hero />
+      <Hero season={latestSeason} />
 
       {/* <SearchSection /> */}
 

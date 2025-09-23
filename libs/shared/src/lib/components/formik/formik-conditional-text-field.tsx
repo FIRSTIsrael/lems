@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Field, FieldProps } from 'formik';
 import { TextField, Checkbox, Stack } from '@mui/material';

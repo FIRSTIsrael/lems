@@ -1,3 +1,5 @@
+'use client';
+
 import { FastField, FieldProps } from 'formik';
 import { FormControlLabel, Switch, SwitchProps } from '@mui/material';
 
