@@ -311,5 +311,55 @@
       "yes": "כן",
       "no": "לא"
     }
+  },
+  "roles": {
+    "pit-admin": {
+      "name": "פיט אדמין"
+    },
+    "judge": {
+      "name": "שופט חדרים"
+    },
+    "lead-judge": {
+      "name": "שופט מוביל"
+    },
+    "judge-advisor": {
+      "name": "שופט ראשי"
+    },
+    "referee": {
+      "name": "שופט זירה"
+    },
+    "head-referee": {
+      "name": "שופט זירה ראשי"
+    },
+    "scorekeeper": {
+      "name": "סקורקיפר"
+    },
+    "field-head-queuer": {
+      "name": "קיואר זירה ראשי"
+    },
+    "field-queuer": {
+      "name": "קיואר זירה"
+    },
+    "judging-head-queuer": {
+      "name": "קיואר שיפוט ראשי"
+    },
+    "judging-queuer": {
+      "name": "קיואר שיפוט"
+    },
+    "mc": {
+      "name": "MC"
+    },
+    "field-manager": {
+      "name": "מנהל זירה"
+    },
+    "audience-display": {
+      "name": "תצוגת קהל"
+    },
+    "reports": {
+      "name": "דוחות"
+    },
+    "tournament-managet": {
+      "name": "מנהל תחרות"
+    }
   }
 }

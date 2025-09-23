@@ -622,44 +622,28 @@
           },
           "volunteerUsers": {
             "title": "משתמשי מתנדבים",
-            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל חטיבה.",
+            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל בית.",
             "mandatoryRoles": {
               "title": "תפקידי חובה",
-              "description": "תפקידים אלה נדרשים לכל חטיבה באירוע."
+              "description": "תפקידים אלה נדרשים לכל בית באירוע."
             },
             "optionalRoles": {
               "title": "תפקידים אופציונליים",
               "description": "תפקידים אלה אופציונליים אך ניתן להקצותם לפי הצורך."
             },
-            "addVolunteer": "הוסף מתנדב",
-            "removeVolunteer": "הסר מתנדב",
-            "noVolunteersAssigned": "לא הוקצו מתנדבים לתפקיד זה.",
-            "divisions": "חטיבות",
+            "addSlot": "הוסף מתנדב",
+            "removeSlot": "הסר מתנדב",
+            "noSlotsAssigned": "לא הוקצו מתנדבים לתפקיד זה.",
+            "divisions": "בתים",
             "selectAll": "בחר הכל",
             "identifier": "מזהה",
             "identifierHelp": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
-            "saveAssignments": "שמור הקצאות",
+            "saveSlots": "שמור הקצאות",
             "saving": "שומר...",
             "validation": {
               "title": "אנא תקן את הבעיות הבאות:",
               "missingMandatoryRole": "{role} נדרש עבור {division}",
               "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
-            },
-            "roles": {
-              "pit-admin": "מנהל פיט",
-              "judge": "שופט",
-              "lead-judge": "שופט ראשי",
-              "judge-advisor": "יועץ שופטים",
-              "referee": "שופט משחק",
-              "head-referee": "שופט משחק ראשי",
-              "scorekeeper": "רשם תוצאות",
-              "head-queuer": "מנהל תור ראשי",
-              "queuer": "מנהל תור",
-              "mc": "כריינות",
-              "field-manager": "מנהל זירה",
-              "audience-display": "מסך קהל",
-              "reports": "דוחות",
-              "tournament-manager": "מנהל טורניר"
             }
           }
         },
@@ -680,28 +664,12 @@
             "searchPlaceholder": "חפש משתמשי מתנדבים...",
             "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
             "noAvailableVolunteers": "אין משתמשי מתנדבים זמינים לתפקיד זה.",
-            "selectDivisions": "בחר חטיבות",
+            "selectDivisions": "בחר בתים",
             "selectAll": "בחר הכל",
             "identifier": "מזהה (אופציונלי)",
             "identifierHelp": "הוסף מזהה כדי להבדיל את המתנדב הזה (עד 12 תווים)",
             "cancel": "ביטול",
-            "add": "הוסף מתנדב",
-            "roles": {
-              "pit-admin": "מנהל פיט",
-              "judge": "שופט",
-              "lead-judge": "שופט ראשי",
-              "judge-advisor": "יועץ שופטים",
-              "referee": "שופט משחק",
-              "head-referee": "שופט משחק ראשי",
-              "scorekeeper": "רשם תוצאות",
-              "head-queuer": "מנהל תור ראשי",
-              "queuer": "מנהל תור",
-              "mc": "כריינות",
-              "field-manager": "מנהל זירה",
-              "audience-display": "מסך קהל",
-              "reports": "דוחות",
-              "tournament-manager": "מנהל טורניר"
-            }
+            "add": "הוסף מתנדב"
           }
         }
       }

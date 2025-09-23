@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { useTranslations } from 'next-intl';
+import useSWR from 'swr';
 import {
   Box,
   Typography,
@@ -12,63 +14,79 @@ import {
   Button
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Save as SaveIcon } from '@mui/icons-material';
-import { useTranslations } from 'next-intl';
-import useSWR from 'swr';
 import { Division } from '@lems/types/api/admin';
-import { Role } from '@lems/types';
+import { MANDATORY_ROLES, OPTIONAL_ROLES, Role } from '../types';
 import { useEvent } from '../../components/event-context';
 import { RoleAssignmentSection } from './role-assignment-section';
 
-// Define mandatory and optional roles based on requirements
-const MANDATORY_ROLES: Role[] = [
-  'pit-admin',
-  'judge',
-  'lead-judge',
-  'judge-advisor',
-  'referee',
-  'head-referee',
-  'scorekeeper'
-];
-
-const OPTIONAL_ROLES: Role[] = [
-  'head-queuer',
-  'queuer',
-  'mc',
-  'field-manager',
-  'audience-display',
-  'reports',
-  'tournament-manager'
-];
-
-export interface VolunteerAssignment {
+export interface VolunteerSlot {
   id: string;
-  userId: string;
-  username: string;
-  firstName: string;
-  lastName: string;
   role: Role;
   divisions: string[];
   identifier?: string;
 }
 
+// Generate initial slots based on divisions
+const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
+  const slots: VolunteerSlot[] = [];
+
+  if (divisions.length === 0) return slots;
+
+  // For single division events, create 1x of each mandatory role
+  if (divisions.length === 1) {
+    MANDATORY_ROLES.forEach(role => {
+      slots.push({
+        id: `initial_${role}_${divisions[0].id}`,
+        role,
+        divisions: [divisions[0].id]
+      });
+    });
+  } else {
+    // For multi-division events, create 1x of each mandatory role for each division
+    divisions.forEach(division => {
+      MANDATORY_ROLES.forEach(role => {
+        slots.push({
+          id: `initial_${role}_${division.id}`,
+          role,
+          divisions: [division.id]
+        });
+      });
+    });
+  }
+
+  return slots;
+};
+
 export function VolunteerUsersSection() {
   const event = useEvent();
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
 
-  const [assignments, setAssignments] = useState<VolunteerAssignment[]>([]);
+  const [slots, setSlots] = useState<VolunteerSlot[]>([]);
   const [saving, setSaving] = useState(false);
+  const initialized = useRef(false);
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
-  const { data: currentAssignments = [] } = useSWR<VolunteerAssignment[]>(
-    `/admin/events/${event.id}/volunteers`
+  const { data: currentSlots = [] } = useSWR<VolunteerSlot[]>(
+    `/admin/events/${event.id}/volunteers/slots`,
+    { suspense: true, fallbackData: [] }
   );
 
-  // Initialize assignments from existing data
+  // Initialize slots from existing data
   useEffect(() => {
-    if (currentAssignments.length > 0) {
-      setAssignments(currentAssignments);
+    if (currentSlots.length > 0 && !initialized.current) {
+      setSlots(currentSlots);
+      initialized.current = true;
     }
-  }, [currentAssignments]);
+  }, [currentSlots]);
+
+  // Generate initial slots when divisions are loaded but no current slots exist
+  useEffect(() => {
+    if (divisions.length > 0 && currentSlots.length === 0 && !initialized.current) {
+      const initialSlots = generateInitialSlots(divisions);
+      setSlots(initialSlots);
+      initialized.current = true;
+    }
+  }, [divisions, currentSlots.length]);
 
   // Validation logic using useMemo to prevent infinite re-renders
   const validationErrors = useMemo(() => {
@@ -78,8 +96,8 @@ export function VolunteerUsersSection() {
       // Check each division has all mandatory roles
       divisions.forEach(division => {
         MANDATORY_ROLES.forEach(role => {
-          const hasRoleInDivision = assignments.some(
-            assignment => assignment.role === role && assignment.divisions.includes(division.id)
+          const hasRoleInDivision = slots.some(
+            slot => slot.role === role && slot.divisions.includes(division.id)
           );
 
           if (!hasRoleInDivision) {
@@ -95,7 +113,7 @@ export function VolunteerUsersSection() {
     } else if (divisions.length === 1) {
       // For single division, just check that all mandatory roles are assigned
       MANDATORY_ROLES.forEach(role => {
-        const hasRole = assignments.some(assignment => assignment.role === role);
+        const hasRole = slots.some(slot => slot.role === role);
         if (!hasRole) {
           errors.push(
             t('validation.missingMandatoryRoleSingle', {
@@ -107,10 +125,10 @@ export function VolunteerUsersSection() {
     }
 
     return errors;
-  }, [assignments, divisions, t]);
+  }, [slots, divisions, t]);
 
-  const handleAssignmentChange = (newAssignments: VolunteerAssignment[]) => {
-    setAssignments(newAssignments);
+  const handleSlotChange = (newSlots: VolunteerSlot[]) => {
+    setSlots(newSlots);
   };
 
   const handleSave = async () => {
@@ -120,24 +138,24 @@ export function VolunteerUsersSection() {
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/admin/events/${event.id}/volunteers`, {
+      const response = await fetch(`/api/admin/events/${event.id}/volunteers/slots`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          assignments
+          slots
         })
       });
 
       if (response.ok) {
         // Show success message or redirect
-        console.log('Volunteers saved successfully');
+        console.log('Volunteer slots saved successfully');
       } else {
-        console.error('Failed to save volunteers');
+        console.error('Failed to save volunteer slots');
       }
     } catch (error) {
-      console.error('Error saving volunteers:', error);
+      console.error('Error saving volunteer slots:', error);
     } finally {
       setSaving(false);
     }
@@ -161,7 +179,6 @@ export function VolunteerUsersSection() {
         </Alert>
       )}
 
-      {/* Mandatory Roles */}
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">{t('mandatoryRoles.title')}</Typography>
@@ -176,9 +193,9 @@ export function VolunteerUsersSection() {
                 key={role}
                 role={role}
                 divisions={divisions}
-                assignments={assignments.filter(a => a.role === role)}
-                onChange={handleAssignmentChange}
-                allAssignments={assignments}
+                slots={slots.filter(s => s.role === role)}
+                onChange={handleSlotChange}
+                allSlots={slots}
                 singleDivision={singleDivision}
               />
             ))}
@@ -186,7 +203,6 @@ export function VolunteerUsersSection() {
         </AccordionDetails>
       </Accordion>
 
-      {/* Optional Roles */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">{t('optionalRoles.title')}</Typography>
@@ -201,9 +217,9 @@ export function VolunteerUsersSection() {
                 key={role}
                 role={role}
                 divisions={divisions}
-                assignments={assignments.filter(a => a.role === role)}
-                onChange={handleAssignmentChange}
-                allAssignments={assignments}
+                slots={slots.filter(s => s.role === role)}
+                onChange={handleSlotChange}
+                allSlots={slots}
                 singleDivision={singleDivision}
               />
             ))}
@@ -211,7 +227,6 @@ export function VolunteerUsersSection() {
         </AccordionDetails>
       </Accordion>
 
-      {/* Save Button */}
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
@@ -220,7 +235,7 @@ export function VolunteerUsersSection() {
           disabled={validationErrors.length > 0 || saving}
           size="large"
         >
-          {saving ? t('saving') : t('saveAssignments')}
+          {saving ? t('saving') : t('saveSlots')}
         </Button>
       </Box>
     </Box>

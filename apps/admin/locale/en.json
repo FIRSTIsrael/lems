@@ -615,7 +615,7 @@
           },
           "volunteerUsers": {
             "title": "Volunteer Users",
-            "description": "Manage volunteer role assignments for this event. Ensure all mandatory roles are filled for each division.",
+            "description": "Manage volunteer role slots for this event. Ensure all mandatory roles are filled for each division.",
             "mandatoryRoles": {
               "title": "Mandatory Roles",
               "description": "These roles are required for each division in the event."
@@ -624,35 +624,19 @@
               "title": "Optional Roles",
               "description": "These roles are optional but can be assigned as needed."
             },
-            "addVolunteer": "Add Volunteer",
-            "removeVolunteer": "Remove Volunteer",
-            "noVolunteersAssigned": "No volunteers assigned to this role.",
+            "addSlot": "Add Slot",
+            "removeSlot": "Remove Slot",
+            "noSlotsAssigned": "No slots assigned for this role.",
             "divisions": "Divisions",
             "selectAll": "Select All",
             "identifier": "Identifier",
-            "identifierHelp": "Add an identifier to distinguish between multiple volunteers with the same role (max 12 characters).",
-            "saveAssignments": "Save Assignments",
+            "identifierHelp": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
+            "saveSlots": "Save Slots",
             "saving": "Saving...",
             "validation": {
               "title": "Please fix the following issues:",
               "missingMandatoryRole": "{role} is required for {division}",
               "missingMandatoryRoleSingle": "{role} is required for this event"
-            },
-            "roles": {
-              "pit-admin": "Pit Admin",
-              "judge": "Judge",
-              "lead-judge": "Lead Judge",
-              "judge-advisor": "Judge Advisor",
-              "referee": "Referee",
-              "head-referee": "Head Referee",
-              "scorekeeper": "Scorekeeper",
-              "head-queuer": "Head Queuer",
-              "queuer": "Queuer",
-              "mc": "MC",
-              "field-manager": "Field Manager",
-              "audience-display": "Audience Display",
-              "reports": "Reports",
-              "tournament-manager": "Tournament Manager"
             }
           }
         },
@@ -678,23 +662,7 @@
             "identifier": "Identifier (Optional)",
             "identifierHelp": "Add an identifier to distinguish this volunteer (max 12 characters)",
             "cancel": "Cancel",
-            "add": "Add Volunteer",
-            "roles": {
-              "pit-admin": "Pit Admin",
-              "judge": "Judge",
-              "lead-judge": "Lead Judge",
-              "judge-advisor": "Judge Advisor",
-              "referee": "Referee",
-              "head-referee": "Head Referee",
-              "scorekeeper": "Scorekeeper",
-              "head-queuer": "Head Queuer",
-              "queuer": "Queuer",
-              "mc": "MC",
-              "field-manager": "Field Manager",
-              "audience-display": "Audience Display",
-              "reports": "Reports",
-              "tournament-manager": "Tournament Manager"
-            }
+            "add": "Add Volunteer"
           }
         }
       }

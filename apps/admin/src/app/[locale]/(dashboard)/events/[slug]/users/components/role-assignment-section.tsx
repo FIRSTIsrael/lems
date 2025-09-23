@@ -21,75 +21,70 @@ import {
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
-import { Role } from '@lems/types';
-import { useDialog } from '../../../../components/dialog-provider';
-import { VolunteerAssignment } from './volunteer-users-section';
-import { AddVolunteerDialog } from './add-volunteer-dialog';
+import { useRoleTranslations } from '@lems/localization';
+import { Role } from '../types';
+import { VolunteerSlot } from './volunteer-users-section';
 
 interface RoleAssignmentSectionProps {
   role: Role;
   divisions: Division[];
-  assignments: VolunteerAssignment[];
-  onChange: (newAssignments: VolunteerAssignment[]) => void;
-  allAssignments: VolunteerAssignment[];
+  slots: VolunteerSlot[];
+  onChange: (newSlots: VolunteerSlot[]) => void;
+  allSlots: VolunteerSlot[];
   singleDivision: boolean;
 }
 
 export function RoleAssignmentSection({
   role,
   divisions,
-  assignments,
+  slots,
   onChange,
-  allAssignments,
+  allSlots,
   singleDivision
 }: RoleAssignmentSectionProps) {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
-  const { showDialog } = useDialog();
+  const { getRole } = useRoleTranslations();
 
-  const handleAddVolunteer = () => {
-    showDialog(props => (
-      <AddVolunteerDialog
-        {...props}
-        role={role}
-        divisions={divisions}
-        existingAssignments={allAssignments}
-        onAdd={(newAssignment: VolunteerAssignment) => {
-          const updatedAssignments = [...allAssignments, newAssignment];
-          onChange(updatedAssignments);
-        }}
-        singleDivision={singleDivision}
-      />
-    ));
+  const handleAddSlot = () => {
+    // Generate a simple ID for the new slot
+    const newId = `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const newSlot: VolunteerSlot = {
+      id: newId,
+      role,
+      divisions: singleDivision && divisions.length > 0 ? [divisions[0].id] : []
+    };
+
+    const updatedSlots = [...allSlots, newSlot];
+    onChange(updatedSlots);
   };
 
-  const handleRemoveVolunteer = (assignmentId: string) => {
-    const updatedAssignments = allAssignments.filter(a => a.id !== assignmentId);
-    onChange(updatedAssignments);
+  const handleRemoveSlot = (slotId: string) => {
+    const updatedSlots = allSlots.filter(s => s.id !== slotId);
+    onChange(updatedSlots);
   };
 
-  const handleDivisionChange = (assignmentId: string, newDivisions: string[]) => {
-    const updatedAssignments = allAssignments.map(assignment =>
-      assignment.id === assignmentId ? { ...assignment, divisions: newDivisions } : assignment
+  const handleDivisionChange = (slotId: string, newDivisions: string[]) => {
+    const updatedSlots = allSlots.map(slot =>
+      slot.id === slotId ? { ...slot, divisions: newDivisions } : slot
     );
-    onChange(updatedAssignments);
+    onChange(updatedSlots);
   };
 
-  const handleIdentifierChange = (assignmentId: string, identifier: string) => {
-    const updatedAssignments = allAssignments.map(assignment =>
-      assignment.id === assignmentId
-        ? { ...assignment, identifier: identifier.slice(0, 12) }
-        : assignment
+  const handleIdentifierChange = (slotId: string, identifier: string) => {
+    const updatedSlots = allSlots.map(slot =>
+      slot.id === slotId ? { ...slot, identifier: identifier.slice(0, 12) || undefined } : slot
     );
-    onChange(updatedAssignments);
+    onChange(updatedSlots);
   };
 
   // Check if duplicates exist for this role per division
   const getDuplicatesForDivision = (divisionId: string) => {
-    return assignments.filter(assignment => assignment.divisions.includes(divisionId));
+    return slots.filter(slot => slot.divisions.includes(divisionId));
   };
 
-  const needsIdentifiers = (assignment: VolunteerAssignment) => {
-    return assignment.divisions.some(divisionId => {
+  const needsIdentifiers = (slot: VolunteerSlot) => {
+    return slot.divisions.some(divisionId => {
       const duplicatesInDivision = getDuplicatesForDivision(divisionId);
       return duplicatesInDivision.length > 1;
     });
@@ -98,45 +93,30 @@ export function RoleAssignmentSection({
   return (
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">{t(`roles.${role}`)}</Typography>
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={handleAddVolunteer}
-          size="small"
-        >
-          {t('addVolunteer')}
+        <Typography variant="h6">{getRole(role)}</Typography>
+        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
+          {t('addSlot')}
         </Button>
       </Stack>
 
-      {assignments.length === 0 ? (
+      {slots.length === 0 ? (
         <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-          {t('noVolunteersAssigned')}
+          {t('noSlotsAssigned')}
         </Typography>
       ) : (
         <Stack spacing={2}>
-          {assignments.map(assignment => (
-            <Card key={assignment.id} variant="outlined">
+          {slots.map(slot => (
+            <Card key={slot.id} variant="outlined">
               <CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1">
-                      {assignment.firstName} {assignment.lastName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      @{assignment.username}
-                    </Typography>
-
-                    {/* Division Selection (only show if multiple divisions) */}
+                  <Stack direction="row" spacing={2}>
                     {!singleDivision && (
                       <FormControl size="small" sx={{ mt: 1, minWidth: 200 }}>
                         <InputLabel>{t('divisions')}</InputLabel>
                         <Select
                           multiple
-                          value={assignment.divisions}
-                          onChange={e =>
-                            handleDivisionChange(assignment.id, e.target.value as string[])
-                          }
+                          value={slot.divisions}
+                          onChange={e => handleDivisionChange(slot.id, e.target.value as string[])}
                           input={<OutlinedInput label={t('divisions')} />}
                           renderValue={selected => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -153,13 +133,9 @@ export function RoleAssignmentSection({
                             </Box>
                           )}
                         >
-                          <MenuItem value="">
-                            <Checkbox checked={assignment.divisions.length === divisions.length} />
-                            <ListItemText primary={t('selectAll')} />
-                          </MenuItem>
                           {divisions.map(division => (
                             <MenuItem key={division.id} value={division.id}>
-                              <Checkbox checked={assignment.divisions.includes(division.id)} />
+                              <Checkbox checked={slot.divisions.includes(division.id)} />
                               <ListItemText primary={division.name} />
                             </MenuItem>
                           ))}
@@ -167,41 +143,27 @@ export function RoleAssignmentSection({
                       </FormControl>
                     )}
 
-                    {/* Identifier Field (show if duplicates exist) */}
-                    {needsIdentifiers(assignment) && (
-                      <TextField
-                        size="small"
-                        label={t('identifier')}
-                        value={assignment.identifier || ''}
-                        onChange={e => handleIdentifierChange(assignment.id, e.target.value)}
-                        helperText={t('identifierHelp')}
-                        sx={{ mt: 1, maxWidth: 200 }}
-                        inputProps={{ maxLength: 12 }}
-                      />
-                    )}
-
-                    {/* Show assigned divisions as chips */}
-                    {!singleDivision && assignment.divisions.length > 0 && (
-                      <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                        {assignment.divisions.map(divisionId => {
-                          const division = divisions.find(d => d.id === divisionId);
-                          return (
-                            <Chip
-                              key={divisionId}
-                              label={division?.name || divisionId}
-                              size="small"
-                              variant="outlined"
-                            />
-                          );
-                        })}
+                    {needsIdentifiers(slot) && (
+                      <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 1 }}>
+                        <TextField
+                          size="small"
+                          label={t('identifier')}
+                          value={slot.identifier || ''}
+                          onChange={e => handleIdentifierChange(slot.id, e.target.value)}
+                          sx={{ maxWidth: 200 }}
+                          slotProps={{ input: { inputProps: { maxLength: 12 } } }}
+                        />
+                        <Typography variant="caption" color="text.secondary" maxWidth={300}>
+                          {t('identifierHelp')}
+                        </Typography>
                       </Stack>
                     )}
-                  </Box>
+                  </Stack>
 
                   <IconButton
                     color="error"
-                    onClick={() => handleRemoveVolunteer(assignment.id)}
-                    aria-label={t('removeVolunteer')}
+                    onClick={() => handleRemoveSlot(slot.id)}
+                    aria-label={t('removeSlot')}
                   >
                     <DeleteIcon />
                   </IconButton>
