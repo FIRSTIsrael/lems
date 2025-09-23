@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Button } from '@mui/material';
 import { Event as EventIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
-import EventsSection from '../EventsSection';
+import EventsSection from './EventsSection';
 import { Event } from './EventCard';
 
 interface ActiveEventsSectionProps {
