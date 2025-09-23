@@ -1,20 +1,13 @@
 'use client';
 
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Chip,
-  Stack,
-  IconButton,
-  Collapse
-} from '@mui/material';
+import { Box, Typography, Chip, Stack, IconButton, Collapse } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
-import EventCard, { Event } from './EventCard';
+import { Event, EventCard } from './event-card';
 
 interface EventsSectionProps {
   title: string;
@@ -27,7 +20,7 @@ interface EventsSectionProps {
   showIcon?: React.ReactNode;
 }
 
-export default function EventsSection({
+export const EventsSection: React.FC<EventsSectionProps> = ({
   title,
   events,
   variant,
@@ -36,7 +29,7 @@ export default function EventsSection({
   maxDisplayed,
   defaultExpanded = true,
   showIcon
-}: EventsSectionProps) {
+}) => {
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
   const displayedEvents = maxDisplayed ? events.slice(0, maxDisplayed) : events;
@@ -59,24 +52,15 @@ export default function EventsSection({
         <Typography
           variant={variant === 'active' ? 'h5' : 'h6'}
           fontWeight="bold"
-          sx={{ 
-            fontSize: variant === 'active' 
-              ? { xs: '1.25rem', sm: '1.5rem' } 
-              : undefined,
-            flex: 1 
+          sx={{
+            fontSize: variant === 'active' ? { xs: '1.25rem', sm: '1.5rem' } : undefined,
+            flex: 1
           }}
         >
           {title}
         </Typography>
-        <Chip
-          label={events.length}
-          color={chipColor}
-          size="small"
-          sx={{ fontWeight: 600 }}
-        />
-        <IconButton size="small">
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        <Chip label={events.length} color={chipColor} size="small" sx={{ fontWeight: 600 }} />
+        <IconButton size="small">{expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
       </Stack>
 
       <Collapse in={expanded}>
@@ -96,25 +80,17 @@ export default function EventsSection({
         ) : (
           <Stack spacing={2}>
             {displayedEvents.map(event => (
-              <EventCard
-                key={event.id}
-                event={event}
-                variant={variant}
-              />
+              <EventCard key={event.id} event={event} variant={variant} />
             ))}
           </Stack>
         )}
-        
+
         {hasMoreEvents && (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mt: 2, textAlign: 'center' }}
-          >
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: 'center' }}>
             And {events.length - maxDisplayed!} more {variant} events...
           </Typography>
         )}
       </Collapse>
     </>
   );
-}
+};

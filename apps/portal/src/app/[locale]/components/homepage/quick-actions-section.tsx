@@ -13,43 +13,30 @@ import {
   useTheme,
   IconButton
 } from '@mui/material';
-import {
-  Language as WebsiteIcon,
-  ArrowForward as ArrowIcon
-} from '@mui/icons-material';
+import { EmojiEvents as TrophyIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { quickActions } from './dummy-data';
 
-interface ResourceLink {
-  title: string;
-  description: string;
-  icon: React.ComponentType;
-  href: string;
-  color: 'primary' | 'secondary';
-  external?: boolean;
-}
-
-interface ResourceLinksSectionProps {
-  resources: ResourceLink[];
-}
-
-export default function ResourceLinksSection({ resources }: ResourceLinksSectionProps) {
+export const QuickActionsSection = () => {
   const theme = useTheme();
-  const tResources = useTranslations('pages.index.resources');
+  const t = useTranslations('pages.index.quick-actions');
+
+  const actions = quickActions;
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, position: { lg: 'sticky' }, top: 24 }}>
+    <Paper sx={{ p: { xs: 2, sm: 3 } }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-        <WebsiteIcon color="primary" />
+        <TrophyIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">
-          {tResources('title')}
+          {t('title')}
         </Typography>
       </Stack>
 
       <Stack spacing={2}>
-        {resources.map(resource => {
-          const IconComponent = resource.icon;
+        {actions.map(action => {
+          const IconComponent = action.icon;
           return (
             <Card
-              key={resource.title}
+              key={action.title}
               sx={{
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -58,13 +45,7 @@ export default function ResourceLinksSection({ resources }: ResourceLinksSection
                   boxShadow: theme.shadows[4]
                 }
               }}
-              onClick={() => {
-                if (resource.external) {
-                  window.open(resource.href, '_blank', 'noopener,noreferrer');
-                } else {
-                  window.location.href = resource.href;
-                }
-              }}
+              onClick={() => (window.location.href = action.href)}
             >
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={2}>
@@ -72,18 +53,18 @@ export default function ResourceLinksSection({ resources }: ResourceLinksSection
                     sx={{
                       p: 1.5,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette[resource.color].main, 0.1),
-                      color: `${resource.color}.main`
+                      bgcolor: alpha(theme.palette[action.color].main, 0.1),
+                      color: `${action.color}.main`
                     }}
                   >
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {tResources(resource.title)}
+                      {t(action.title)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {tResources(resource.description)}
+                      {t(action.description)}
                     </Typography>
                   </Box>
                   <IconButton size="small">
@@ -97,4 +78,4 @@ export default function ResourceLinksSection({ resources }: ResourceLinksSection
       </Stack>
     </Paper>
   );
-}
+};

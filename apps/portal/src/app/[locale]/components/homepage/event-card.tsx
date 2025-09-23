@@ -38,7 +38,7 @@ interface EventCardProps {
   variant?: 'active' | 'upcoming' | 'past';
 }
 
-export default function EventCard({ event, variant = 'upcoming' }: EventCardProps) {
+export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming' }) => {
   const theme = useTheme();
   const tEvents = useTranslations('pages.index.events');
 
@@ -81,12 +81,7 @@ export default function EventCard({ event, variant = 'upcoming' }: EventCardProp
     switch (variant) {
       case 'active':
         return (
-          <Button
-            variant="contained"
-            color="success"
-            endIcon={<ArrowIcon />}
-            sx={{ ml: 'auto' }}
-          >
+          <Button variant="contained" color="success" endIcon={<ArrowIcon />} sx={{ ml: 'auto' }}>
             View Event
           </Button>
         );
@@ -157,9 +152,7 @@ export default function EventCard({ event, variant = 'upcoming' }: EventCardProp
           )}
         </Stack>
       </CardContent>
-      <CardActions>
-        {getActionButton()}
-      </CardActions>
+      <CardActions>{getActionButton()}</CardActions>
     </Card>
   );
-}
+};

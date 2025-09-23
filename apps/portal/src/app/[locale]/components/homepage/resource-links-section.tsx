@@ -13,42 +13,30 @@ import {
   useTheme,
   IconButton
 } from '@mui/material';
-import {
-  EmojiEvents as TrophyIcon,
-  ArrowForward as ArrowIcon
-} from '@mui/icons-material';
+import { Language as WebsiteIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { resourceLinks } from './dummy-data';
 
-interface QuickAction {
-  title: string;
-  description: string;
-  icon: React.ComponentType;
-  href: string;
-  color: 'primary' | 'secondary';
-}
-
-interface QuickActionsSectionProps {
-  actions: QuickAction[];
-}
-
-export default function QuickActionsSection({ actions }: QuickActionsSectionProps) {
+export const ResourceLinksSection = () => {
   const theme = useTheme();
-  const tActions = useTranslations('pages.index.quick-actions');
+  const t = useTranslations('pages.index.resources');
+
+  const resources = resourceLinks;
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+    <Paper sx={{ p: { xs: 2, sm: 3 }, position: { lg: 'sticky' }, top: 24 }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-        <TrophyIcon color="primary" />
+        <WebsiteIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">
-          {tActions('title')}
+          {t('title')}
         </Typography>
       </Stack>
 
       <Stack spacing={2}>
-        {actions.map(action => {
-          const IconComponent = action.icon;
+        {resources.map(resource => {
+          const IconComponent = resource.icon;
           return (
             <Card
-              key={action.title}
+              key={resource.title}
               sx={{
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -57,7 +45,13 @@ export default function QuickActionsSection({ actions }: QuickActionsSectionProp
                   boxShadow: theme.shadows[4]
                 }
               }}
-              onClick={() => (window.location.href = action.href)}
+              onClick={() => {
+                if (resource.external) {
+                  window.open(resource.href, '_blank', 'noopener,noreferrer');
+                } else {
+                  window.location.href = resource.href;
+                }
+              }}
             >
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={2}>
@@ -65,18 +59,18 @@ export default function QuickActionsSection({ actions }: QuickActionsSectionProp
                     sx={{
                       p: 1.5,
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette[action.color].main, 0.1),
-                      color: `${action.color}.main`
+                      bgcolor: alpha(theme.palette[resource.color].main, 0.1),
+                      color: `${resource.color}.main`
                     }}
                   >
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {tActions(action.title)}
+                      {t(resource.title)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {tActions(action.description)}
+                      {t(resource.description)}
                     </Typography>
                   </Box>
                   <IconButton size="small">
@@ -90,4 +84,4 @@ export default function QuickActionsSection({ actions }: QuickActionsSectionProp
       </Stack>
     </Paper>
   );
-}
+};

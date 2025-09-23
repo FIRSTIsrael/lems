@@ -10,7 +10,7 @@ export const SearchSection = () => {
   const [searchValue, setSearchValue] = React.useState('');
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 3 } }}>
+    <Paper sx={{ p: { xs: 2, sm: 3 } }}>
       <Stack spacing={3}>
         <Typography
           variant="h5"
