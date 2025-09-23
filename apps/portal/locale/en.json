@@ -1,10 +1,60 @@
 {
   "pages": {
+    "index": {
+      "hero": {
+        "title": "Welcome to the Events Portal",
+        "subtitle": "Explore upcoming events for the FIRST LEGO League Challenge",
+        "current-season": "Current Season: {season}"
+      },
+      "events": {
+        "active-events": "Active Events",
+        "no-active-events": "No active events at the moment",
+        "upcoming-events": "Upcoming Events",
+        "past-events": "Past Events",
+        "view-all-events": "View All Events",
+        "event-date": "Event Date",
+        "location": "Location",
+        "teams-registered": "{count} teams registered",
+        "registration-open": "Registration Open",
+        "registration-closed": "Registration Closed"
+      },
+      "search": {
+        "title": "Search Teams & Events",
+        "placeholder": "Search for teams, events, or locations...",
+        "search-button": "Search",
+        "teams-tab": "Teams",
+        "events-tab": "Events"
+      },
+      "quick-actions": {
+        "title": "Quick Actions",
+        "robot-scorer": "Robot Game Scorer",
+        "robot-scorer-description": "Score robot game matches",
+        "browse-events": "Browse Events",
+        "browse-events-description": "Find and explore events"
+      },
+      "resources": {
+        "title": "Resources & Links",
+        "fll-website": "Resource Map",
+        "fll-website-description": "Find helpful resources and guides",
+        "github": "GitHub Repository",
+        "github-description": "View source code and contribute",
+        "resource-map": "Resource Map",
+        "resource-map-description": "Find helpful resources and guides"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",
         "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+      }
+    }
+  },
+  "layouts": {
+    "main": {
+      "app-bar": {
+        "events": "Events",
+        "scorer": "Scorer"
       }
     }
   }

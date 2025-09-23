@@ -1,25 +1,18 @@
 'use client';
 
 import React from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Stack
-} from '@mui/material';
+import { Box, Container, Grid, Stack } from '@mui/material';
 import {
   Calculate as CalculatorIcon,
   Event as EventIcon,
   Storage as GitHubIcon,
   Map as MapIcon
 } from '@mui/icons-material';
-
-// Import our new components
-import TopHeader from './components/TopHeader';
-import SearchSection from './components/SearchSection';
-import ActiveEventsSection from './components/ActiveEventsSection';
-import QuickActionsSection from './components/QuickActionsSection';
-import ResourceLinksSection from './components/ResourceLinksSection';
+import TopHeader from './components/homepage/TopHeader';
+import SearchSection from './components/homepage/SearchSection';
+import ActiveEventsSection from './components/homepage/ActiveEventsSection';
+import QuickActionsSection from './components/homepage/QuickActionsSection';
+import ResourceLinksSection from './components/homepage/ResourceLinksSection';
 
 // Mock data - in real app this would come from API
 const mockEvents = [
@@ -147,27 +140,20 @@ const resourceLinks = [
 export default function HomePage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Top Header */}
       <TopHeader />
-
-      {/* Search Section */}
       <SearchSection />
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ py: { xs: 1, sm: 2, md: 4 }, px: { xs: 2, sm: 3 } }}>
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-          {/* Active Events Section */}
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <ActiveEventsSection events={mockEvents} />
           </Grid>
 
           {/* Sidebar */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={3}>
-              {/* Quick Actions Section */}
               <QuickActionsSection actions={quickActions} />
-
-              {/* Resources Section */}
               <ResourceLinksSection resources={resourceLinks} />
             </Stack>
           </Grid>

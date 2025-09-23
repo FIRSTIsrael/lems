@@ -15,12 +15,12 @@ import {
   Container,
   Button
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/MenuRounded';
+import { MenuRounded } from '@mui/icons-material';
 import { LanguageSwitcher } from './language-switcher';
 
 const pages = [
   { name: 'events', href: '/events' },
-  { name: 'scorer', href: '/scorer' }
+  { name: 'scorer', href: '/tools/scorer' }
 ];
 
 interface PortalAppBarProps {
@@ -29,7 +29,7 @@ interface PortalAppBarProps {
 
 export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const t = useTranslations('components.app-bar');
+  const t = useTranslations('layouts.main.app-bar');
 
   return (
     <React.Fragment>
@@ -46,7 +46,7 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
                 onClick={event => setAnchorElNav(event.currentTarget)}
                 color="inherit"
               >
-                <MenuIcon />
+                <MenuRounded />
               </IconButton>
               <Menu
                 id="menu-appbar"
