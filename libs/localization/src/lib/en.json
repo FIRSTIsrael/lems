@@ -56,5 +56,260 @@
       "name": "Advancement",
       "description": "Teams advancing to the next stage of competition"
     }
+  },
+  "scoresheet": {
+    "missions": {
+      "eib": {
+        "title": "EQUIPMENT INSPECTION",
+        "clauses": {
+          "0": {
+            "description": "(Prematch) The robot and all equipment fi t completely in one launch area and under the height limit:"
+          }
+        }
+      },
+      "m01": {
+        "title": "SURFACE BRUSHING",
+        "clauses": {
+          "0": {
+            "description": "Soil deposits completely cleared, touching the mat:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2"
+            }
+          },
+          "1": {
+            "description": "Archaeologist’s brush is not touching the dig site:"
+          }
+        }
+      },
+      "m02": {
+        "title": "MAP REVEAL",
+        "clauses": {
+          "0": {
+            "description": "Topsoil sections completely cleared:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m03": {
+        "title": "MINESHAFT EXPLORER",
+        "clauses": {
+          "0": {
+            "description": "Your team’s minecart is on the opposing team’s field:"
+          },
+          "1": {
+            "description": "<b>Bonus</b>: And the opposing team’s minecart is on your team’s field:"
+          }
+        },
+        "errors": {
+          "m03-e1": {
+            "description": "You can only receive the bonus if your team's minecart is on the opposing team’s field."
+          }
+        },
+        "remarks": {
+          "0": "Your team’s minecart must pass completely through the mineshaft entry to score points for this mission.",
+          "1": "It is not possible to earn the bonus if there is no opposing team or in remote competitions."
+        }
+      },
+      "m04": {
+        "title": "CAREFUL RECOVERY",
+        "clauses": {
+          "0": {
+            "description": "Precious artifact is not touching the mine: "
+          },
+          "1": {
+            "description": "Both support structures are standing:"
+          }
+        }
+      },
+      "m05": {
+        "title": "WHO LIVED HERE?",
+        "clauses": {
+          "0": {
+            "description": "Structure floor is completely upright:"
+          }
+        }
+      },
+      "m06": {
+        "title": "FORGE",
+        "clauses": {
+          "0": {
+            "description": "Ore blocks not touching the forge:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m07": {
+        "title": "HEAVY LIFTING",
+        "clauses": {
+          "0": {
+            "description": "Millstone is no longer touching its base:"
+          }
+        }
+      },
+      "m08": {
+        "title": "SILO",
+        "clauses": {
+          "0": {
+            "description": "Preserved pieces outside the silo:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m09": {
+        "title": "WHAT'S ON SALE?",
+        "clauses": {
+          "0": {
+            "description": "Roof is completely raised:"
+          },
+          "1": {
+            "description": "Market wares are raised:"
+          }
+        }
+      },
+      "m10": {
+        "title": "TIP THE SCALES",
+        "clauses": {
+          "0": {
+            "description": "Scale is tipped and touching the mat:"
+          },
+          "1": {
+            "description": "Scale pan is completely removed:"
+          }
+        }
+      },
+      "m11": {
+        "title": "ANGLER ARTIFACTS",
+        "clauses": {
+          "0": {
+            "description": "Artifacts are raised above the ground layer:"
+          },
+          "1": {
+            "description": "<b>Bonus</b>: And the crane flag is at least partly lowered:"
+          }
+        },
+        "errors": {
+          "m11-e1": {
+            "description": "You can only receive the bonus if the artifacts are raised above the ground layer."
+          }
+        }
+      },
+      "m12": {
+        "title": "SALVAGE OPERATION",
+        "clauses": {
+          "0": {
+            "description": "Sand is completely cleared:"
+          },
+          "1": {
+            "description": "Ship is completely raised:"
+          }
+        },
+        "remarks": {
+          "0": "Sand is considered completely cleared when the pull activator is past the line on the mat."
+        }
+      },
+      "m13": {
+        "title": "STATUE REBUILD",
+        "clauses": {
+          "0": {
+            "description": "Statue is completely raised:"
+          }
+        }
+      },
+      "m14": {
+        "title": "FORUM",
+        "clauses": {
+          "0": {
+            "description": "Mark all artifacts touching the mat and at least partly in the forum:",
+            "labels": {
+              "none": "None",
+              "brush": "Brush",
+              "minecart": "Opposing team's minecart",
+              "scale-pan": "Scale pan",
+              "topsoil": "Topsoil",
+              "ore-with-fossilized-artifact": "Ore with fossilized artifact",
+              "precious-artifact": "Precious artifact",
+              "millstone": "Millstone"
+            }
+          }
+        },
+        "errors": {
+          "m14-e1": {
+            "description": "You cannot select \"None\" when more than one option is selected."
+          }
+        }
+      },
+      "m15": {
+        "title": "SITE MARKING",
+        "clauses": {
+          "0": {
+            "description": "Sites with a flag at least partly inside and touching the mat:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "PRECISION TOKENS",
+        "clauses": {
+          "0": {
+            "description": "Number of precision tokens remaining:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6"
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "e1": {
+        "description": "You cannot have the brush in the forum (M14) and touching the excavation site (M01)."
+      },
+      "e2": {
+        "description": "You cannot have the opposing team's minecart in the forum (M14) if it has not been moved to your field (M03)."
+      },
+      "e3": {
+        "description": "You cannot have the scale pan in the forum (M14) if it has not been completely removed (M10)."
+      },
+      "e4": {
+        "description": "You cannot have the ore with fossilized artifact in the forum (M14) if no ore has been removed from the excavation (M06)."
+      },
+      "e5": {
+        "description": "You cannot have the millstone in the forum (M14) and touching its base (M07)."
+      },
+      "e6": {
+        "description": "You cannot have the precious artifact in the forum (M14) and touching the mine (M04)."
+      }
+    },
+    "general": {
+      "yes": "Yes",
+      "no": "No"
+    }
   }
 }
