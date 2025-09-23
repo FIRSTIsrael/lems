@@ -1,9 +1,10 @@
 'use client';
 
 import useSWR from 'swr';
-import { Box } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import { Season } from '@lems/types/api/portal';
 import { Hero } from './components/homepage/hero';
+import { SearchSection } from './components/homepage/search-section';
 
 export default function HomePage() {
   const { data: latestSeason } = useSWR<Season | null>('/portal/seasons/latest', {
@@ -15,7 +16,13 @@ export default function HomePage() {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Hero season={latestSeason} />
 
-      {/* <SearchSection /> */}
+      <Container maxWidth="lg">
+        <Grid container my={3}>
+          <Grid size={12}>
+            <SearchSection />
+          </Grid>
+        </Grid>
+      </Container>
 
       {/* Main Content */}
       {/* <Container maxWidth="lg" sx={{ py: { xs: 1, sm: 2, md: 4 }, px: { xs: 2, sm: 3 } }}>

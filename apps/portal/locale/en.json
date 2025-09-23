@@ -19,10 +19,7 @@
       },
       "search": {
         "title": "Search Teams & Events",
-        "placeholder": "Search for teams, events, or locations...",
-        "search-button": "Search",
-        "teams-tab": "Teams",
-        "events-tab": "Events"
+        "placeholder": "Search for teams or events..."
       },
       "quick-actions": {
         "title": "Quick Actions",
