@@ -5,9 +5,8 @@ import { useTranslations } from 'next-intl';
 import { Typography, Box, Stack, IconButton } from '@mui/material';
 import { Palette, Check, Close } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
-import { ColorPicker } from '@lems/shared';
+import { ColorPicker, apiFetch } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
-import { apiFetch } from '../../../../../../../lib/fetch';
 import { defaultColor } from '../../../../../../../theme';
 
 interface DivisionColorEditorProps {

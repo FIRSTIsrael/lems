@@ -26,9 +26,8 @@ import {
   Info as InfoIcon,
   Description as DescriptionIcon
 } from '@mui/icons-material';
-import { FileUpload } from '@lems/shared';
+import { FileUpload, apiFetch } from '@lems/shared';
 import { AdminTeamsImportResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../lib/fetch';
 import { DialogComponentProps } from '../../components/dialog-provider';
 
 interface ImportResult {

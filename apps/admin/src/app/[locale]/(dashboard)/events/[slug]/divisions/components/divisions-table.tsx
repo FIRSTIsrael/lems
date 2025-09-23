@@ -22,10 +22,9 @@ import {
   Check as CheckIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { ColorPicker } from '@lems/shared';
+import { ColorPicker, apiFetch } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
 import { Division } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
 import { defaultColor } from '../../../../../../../theme';
 
 interface DivisionsTableProps {

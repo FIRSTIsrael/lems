@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Typography, Stack, Box } from '@mui/material';
 import { AdminTeamsResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { CreateTeamButton } from './components/create-team-button';
 import { ImportTeamButton } from './components/import-team-button';
 import { TeamsDataGrid } from './components/teams-data-grid';

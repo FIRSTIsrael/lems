@@ -1,7 +1,7 @@
 'use client';
 
 import { SWRConfig } from 'swr';
-import { apiFetch } from '../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 
 interface SWRError extends Error {
   info: unknown;

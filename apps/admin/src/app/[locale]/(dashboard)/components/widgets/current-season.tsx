@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { getTranslations } from 'next-intl/server';
 import { Avatar, Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { AdminSeasonResponseSchema } from '@lems/types/api/admin/seasons';
-import { apiFetch } from '../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 
 export default async function CurrentSeasonWidget() {
   const t = await getTranslations('pages.index.widgets.current-season');

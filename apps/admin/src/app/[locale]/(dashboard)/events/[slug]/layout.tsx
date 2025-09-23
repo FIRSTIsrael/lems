@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { AdminEventResponseSchema, AdminEventsResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { EventProvider } from './components/event-context';
 
 interface EventLayoutProps {

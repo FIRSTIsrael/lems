@@ -4,8 +4,8 @@ import { mutate } from 'swr';
 import { useState, useRef, useEffect } from 'react';
 import { Typography, TextField, IconButton, Stack, Box } from '@mui/material';
 import { Edit, Check, Close } from '@mui/icons-material';
+import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-import { apiFetch } from '../../../../../../../lib/fetch';
 
 export const EditableEventTitle: React.FC = () => {
   const event = useEvent();
