@@ -1,7 +1,11 @@
+'use client';
+
 import { createContext, useContext, ReactNode, useEffect } from 'react';
 import { Mission } from '@lems/types';
-import { SEASON_SCORESHEET, ALLOW_SCORESHEET_DEFAULTS, localizedScoresheet } from '@lems/season';
-import { useScore, ErrorWithMessage } from '../../hooks/use-score';
+import { scoresheet } from '@lems/shared/scoresheet';
+import { useScore, ErrorWithMessage } from '../hooks/use-score';
+
+const ALLOW_DEFAULT_VALUES = false;
 
 interface MissionContextType {
   points: number;
@@ -29,12 +33,12 @@ export function MissionProvider({ children }: { children: ReactNode }) {
   const { score, updateScore, resetScore, loading } = useScore();
 
   const getDefaultScoresheet = () => {
-    const missions: Mission[] = SEASON_SCORESHEET.missions.map(mission => {
+    const missions: Mission[] = scoresheet.missions.map(mission => {
       return {
         id: mission.id,
-        clauses: mission.clauses.map((c, index) => {
-          const value = ALLOW_SCORESHEET_DEFAULTS ? c.default : null;
-          return { type: c.type, value };
+        clauses: mission.clauses.map(clause => {
+          const value = ALLOW_DEFAULT_VALUES ? clause.default : null;
+          return { type: clause.type, value };
         })
       };
     });
@@ -84,10 +88,7 @@ export const useMission = (index: number) => {
   }
 
   const mission = context.missions[index];
-  const localizedMission = localizedScoresheet.missions.find(m => m.id === mission?.id);
-  const errors =
-    localizedMission?.errors?.filter(error => context.missionErrors.some(e => e.id === error.id)) ||
-    [];
+  const errors = context.missionErrors.filter(error => error.mission === mission.id);
   const updateClause = (clauseIndex: number, value: string | number | boolean | null) => {
     context.onUpdateClause(index, clauseIndex, value);
   };

@@ -1,6 +1,7 @@
-import { ScoresheetSchema, ScoresheetError } from '../../data/scoresheet-types';
+import { ScoresheetSchema, ScoresheetError } from '../types';
 
-const scoresheet: ScoresheetSchema = {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _example: ScoresheetSchema = {
   season: 'MASTERPIECE℠',
   missions: [
     {

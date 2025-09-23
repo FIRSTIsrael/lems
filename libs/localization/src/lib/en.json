@@ -1,0 +1,315 @@
+{
+  "awards": {
+    "core-values": {
+      "name": "Core Values",
+      "description": "This team displays extraordinary enthusiasm and spirit, knows they can accomplish more together than they could as individuals, and shows each other and other teams respect at all times."
+    },
+    "innovation-project": {
+      "name": "Innovation Project",
+      "description": "This team utilizes diverse resources for their Innovation Project to help them gain a comprehensive understanding of their problem; has a creative, well-researched solution; and effectively communicates their findings to judges and the community."
+    },
+    "robot-design": {
+      "name": "Robot Design",
+      "description": "This team uses outstanding programming principles and solid engineering practices to develop a robot that is mechanically sound, durable, efficient, and highly capable of performing challenge missions."
+    },
+    "robot-performance": {
+      "name": "Robot Performance",
+      "description": "This award celebrates a team that scores the most points during the Robot Game. Teams have a chance to compete in at least three 2.5-minute matches, and their highest score counts."
+    },
+    "champions": {
+      "name": "Champion's",
+      "description": "This award celebrates a team that embodies the <i>FIRST</i> LEGO® League Challenge experience by fully embracing the Core Values while achieving excellence and innovation in Robot Performance, Robot Design, and the Innovation Project."
+    },
+    "impact": {
+      "name": "Impact",
+      "description": "This award celebrates a team that has made a significant ongoing impact on their community. They demonstrate that they understand the importance of sharing their knowledge and inspiring others."
+    },
+    "lead-mentor": {
+      "name": "Coach/Mentor",
+      "description": "Coaches and mentors inspire their teams to do their best, both as individuals and together. Without them, there would be no FIRST LEGO League Challenge. This award goes to the coach or mentor whose leadership and guidance is clearly evident and best exemplifies the FIRST Core Values."
+    },
+    "volunteer-of-the-year": {
+      "name": "Volunteer of the Year",
+      "description": "This award celebrates a volunteer who has made a significant impact on <i>FIRST</i> LEGO League this year."
+    },
+    "breakthrough": {
+      "name": "Breakthrough",
+      "description": "This award celebrates a team that made significant progress in their confidence and capability in both the Robot Game and Innovation Project and are a shining example of excellent Core Values. They demonstrate that they understand that what they discover is more important than what they win. "
+    },
+    "rising-all-star": {
+      "name": "Rising All-Star",
+      "description": "This award celebrates a team that the judges notice and expect great things from in the future."
+    },
+    "motivate": {
+      "name": "Motivate",
+      "description": "This award celebrates a team that embraces the culture of <i>FIRST</i> LEGO League through team building, team spirit, and displayed enthusiasm."
+    },
+    "judges-award": {
+      "name": "Judges' Award",
+      "description": "This award celebrates a team that is recognized by the judges for their outstanding work and dedication."
+    },
+    "excellence-in-engineering": {
+      "name": "Excellence in Engineering",
+      "description": "This award celebrates a team with an efficiently designed robot, an innovative project solution that effectively addresses the season challenge, and Core Values evident in all they do."
+    },
+    "advancement": {
+      "name": "Advancement",
+      "description": "Teams advancing to the next stage of competition"
+    }
+  },
+  "scoresheet": {
+    "missions": {
+      "eib": {
+        "title": "EQUIPMENT INSPECTION",
+        "clauses": {
+          "0": {
+            "description": "(Prematch) The robot and all equipment fi t completely in one launch area and under the height limit:"
+          }
+        }
+      },
+      "m01": {
+        "title": "SURFACE BRUSHING",
+        "clauses": {
+          "0": {
+            "description": "Soil deposits completely cleared, touching the mat:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2"
+            }
+          },
+          "1": {
+            "description": "Archaeologist’s brush is not touching the dig site:"
+          }
+        }
+      },
+      "m02": {
+        "title": "MAP REVEAL",
+        "clauses": {
+          "0": {
+            "description": "Topsoil sections completely cleared:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m03": {
+        "title": "MINESHAFT EXPLORER",
+        "clauses": {
+          "0": {
+            "description": "Your team’s minecart is on the opposing team’s field:"
+          },
+          "1": {
+            "description": "<b>Bonus</b>: And the opposing team’s minecart is on your team’s field:"
+          }
+        },
+        "errors": {
+          "m03-e1": {
+            "description": "You can only receive the bonus if your team's minecart is on the opposing team’s field."
+          }
+        },
+        "remarks": {
+          "0": "Your team’s minecart must pass completely through the mineshaft entry to score points for this mission.",
+          "1": "It is not possible to earn the bonus if there is no opposing team or in remote competitions."
+        }
+      },
+      "m04": {
+        "title": "CAREFUL RECOVERY",
+        "clauses": {
+          "0": {
+            "description": "Precious artifact is not touching the mine: "
+          },
+          "1": {
+            "description": "Both support structures are standing:"
+          }
+        }
+      },
+      "m05": {
+        "title": "WHO LIVED HERE?",
+        "clauses": {
+          "0": {
+            "description": "Structure floor is completely upright:"
+          }
+        }
+      },
+      "m06": {
+        "title": "FORGE",
+        "clauses": {
+          "0": {
+            "description": "Ore blocks not touching the forge:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m07": {
+        "title": "HEAVY LIFTING",
+        "clauses": {
+          "0": {
+            "description": "Millstone is no longer touching its base:"
+          }
+        }
+      },
+      "m08": {
+        "title": "SILO",
+        "clauses": {
+          "0": {
+            "description": "Preserved pieces outside the silo:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m09": {
+        "title": "WHAT'S ON SALE?",
+        "clauses": {
+          "0": {
+            "description": "Roof is completely raised:"
+          },
+          "1": {
+            "description": "Market wares are raised:"
+          }
+        }
+      },
+      "m10": {
+        "title": "TIP THE SCALES",
+        "clauses": {
+          "0": {
+            "description": "Scale is tipped and touching the mat:"
+          },
+          "1": {
+            "description": "Scale pan is completely removed:"
+          }
+        }
+      },
+      "m11": {
+        "title": "ANGLER ARTIFACTS",
+        "clauses": {
+          "0": {
+            "description": "Artifacts are raised above the ground layer:"
+          },
+          "1": {
+            "description": "<b>Bonus</b>: And the crane flag is at least partly lowered:"
+          }
+        },
+        "errors": {
+          "m11-e1": {
+            "description": "You can only receive the bonus if the artifacts are raised above the ground layer."
+          }
+        }
+      },
+      "m12": {
+        "title": "SALVAGE OPERATION",
+        "clauses": {
+          "0": {
+            "description": "Sand is completely cleared:"
+          },
+          "1": {
+            "description": "Ship is completely raised:"
+          }
+        },
+        "remarks": {
+          "0": "Sand is considered completely cleared when the pull activator is past the line on the mat."
+        }
+      },
+      "m13": {
+        "title": "STATUE REBUILD",
+        "clauses": {
+          "0": {
+            "description": "Statue is completely raised:"
+          }
+        }
+      },
+      "m14": {
+        "title": "FORUM",
+        "clauses": {
+          "0": {
+            "description": "Mark all artifacts touching the mat and at least partly in the forum:",
+            "labels": {
+              "none": "None",
+              "brush": "Brush",
+              "minecart": "Opposing team's minecart",
+              "scale-pan": "Scale pan",
+              "topsoil": "Topsoil",
+              "ore-with-fossilized-artifact": "Ore with fossilized artifact",
+              "precious-artifact": "Precious artifact",
+              "millstone": "Millstone"
+            }
+          }
+        },
+        "errors": {
+          "m14-e1": {
+            "description": "You cannot select \"None\" when more than one option is selected."
+          }
+        }
+      },
+      "m15": {
+        "title": "SITE MARKING",
+        "clauses": {
+          "0": {
+            "description": "Sites with a flag at least partly inside and touching the mat:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "PRECISION TOKENS",
+        "clauses": {
+          "0": {
+            "description": "Number of precision tokens remaining:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6"
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "e1": {
+        "description": "You cannot have the brush in the forum (M14) and touching the excavation site (M01)."
+      },
+      "e2": {
+        "description": "You cannot have the opposing team's minecart in the forum (M14) if it has not been moved to your field (M03)."
+      },
+      "e3": {
+        "description": "You cannot have the scale pan in the forum (M14) if it has not been completely removed (M10)."
+      },
+      "e4": {
+        "description": "You cannot have the ore with fossilized artifact in the forum (M14) if no ore has been removed from the excavation (M06)."
+      },
+      "e5": {
+        "description": "You cannot have the millstone in the forum (M14) and touching its base (M07)."
+      },
+      "e6": {
+        "description": "You cannot have the precious artifact in the forum (M14) and touching the mine (M04)."
+      }
+    },
+    "general": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  }
+}

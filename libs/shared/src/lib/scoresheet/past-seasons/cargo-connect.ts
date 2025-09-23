@@ -1,6 +1,7 @@
-import { ScoresheetSchema, ScoresheetError } from '../../data/scoresheet-types';
+import { ScoresheetSchema, ScoresheetError } from '../types';
 
-const scoresheet: ScoresheetSchema = {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _example: ScoresheetSchema = {
   season: 'CARGO CONNECT℠',
   missions: [
     {
@@ -122,8 +123,20 @@ const scoresheet: ScoresheetSchema = {
       ],
       calculation: (clause1, clause2) => {
         let points = 0;
-        if (clause1 !== 'none') clause1 === 'mat' ? (points += 20) : (points += 30);
-        if (clause2 !== 'none') clause2 === 'partly' ? (points += 5) : (points += 10);
+        if (clause1 !== 'none') {
+          if (clause1 === 'mat') {
+            points += 20;
+          } else {
+            points += 30;
+          }
+        }
+        if (clause2 !== 'none') {
+          if (clause2 === 'partly') {
+            points += 5;
+          } else {
+            points += 10;
+          }
+        }
         return points;
       }
     },

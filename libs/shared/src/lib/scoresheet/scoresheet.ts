@@ -1,5 +1,5 @@
-import { ScoresheetSchema, ScoresheetError } from './scoresheet-types';
-import { ensureArray } from '@lems/utils/arrays';
+import { ensureArray } from '../utils/arrays';
+import { ScoresheetSchema, ScoresheetError } from './types';
 
 export const scoresheet: ScoresheetSchema = {
   season: 'UNEARTHED℠',

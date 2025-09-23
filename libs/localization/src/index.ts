@@ -1,10 +1,10 @@
 export * from './lib/locales';
 export * from './lib/emotion-cache';
 export * from './lib/dayjs-config';
+export * from './lib/rich-text';
 
 // Hooks
-export * from './lib/hooks/use-html-direction';
-export * from './lib/hooks/use-locale-preference';
+export * from './lib/hooks';
 
 // Icons
 export * from './lib/icons/chevron-end';

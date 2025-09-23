@@ -10,11 +10,8 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { NumberInput } from '@lems/shared';
+import { useAwardTranslations } from '@lems/localization';
 import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
-import {
-  useLocaleAwardDescription,
-  useLocaleAwardName
-} from '../../../../../../hooks/localization';
 import { useAwards } from './awards-context';
 
 interface AwardItemProps {
@@ -25,8 +22,7 @@ interface AwardItemProps {
 export function AwardItem({ award, index }: AwardItemProps) {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.editor');
-  const getAwardName = useLocaleAwardName();
-  const getAwardDescription = useLocaleAwardDescription();
+  const { getName, getDescription } = useAwardTranslations();
   const { schema, updateAwardCount, removeAward } = useAwards();
 
   const isMandatory = (MANDATORY_AWARDS as readonly string[]).includes(award);
@@ -88,10 +84,10 @@ export function AwardItem({ award, index }: AwardItemProps) {
 
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                {getAwardName(award)}
+                {getName(award)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ overflow: 'hidden' }}>
-                {getAwardDescription(award)}
+                {getDescription(award)}
               </Typography>
             </Box>
 
