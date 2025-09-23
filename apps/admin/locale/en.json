@@ -601,6 +601,102 @@
           "title": "Integrations Coming Soon",
           "description": "We're working on bringing you powerful integrations to streamline your event management."
         }
+      },
+      "users": {
+        "title": "{eventName}: Users",
+        "sections": {
+          "eventAdmins": {
+            "title": "Event Administrators",
+            "description": "Manage users who can administer this event. These users will have access to event management features.",
+            "currentAdmins": "Current Administrators",
+            "assignAdmins": "Assign Admins",
+            "removeAdmin": "Remove Admin",
+            "noAdmins": "No administrators assigned to this event."
+          },
+          "volunteerUsers": {
+            "title": "Volunteer Users",
+            "description": "Manage volunteer role assignments for this event. Ensure all mandatory roles are filled for each division.",
+            "mandatoryRoles": {
+              "title": "Mandatory Roles",
+              "description": "These roles are required for each division in the event."
+            },
+            "optionalRoles": {
+              "title": "Optional Roles",
+              "description": "These roles are optional but can be assigned as needed."
+            },
+            "addVolunteer": "Add Volunteer",
+            "removeVolunteer": "Remove Volunteer",
+            "noVolunteersAssigned": "No volunteers assigned to this role.",
+            "divisions": "Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier",
+            "identifierHelp": "Add an identifier to distinguish between multiple volunteers with the same role (max 12 characters).",
+            "saveAssignments": "Save Assignments",
+            "saving": "Saving...",
+            "validation": {
+              "title": "Please fix the following issues:",
+              "missingMandatoryRole": "{role} is required for {division}",
+              "missingMandatoryRoleSingle": "{role} is required for this event"
+            },
+            "roles": {
+              "pit-admin": "Pit Admin",
+              "judge": "Judge",
+              "lead-judge": "Lead Judge",
+              "judge-advisor": "Judge Advisor",
+              "referee": "Referee",
+              "head-referee": "Head Referee",
+              "scorekeeper": "Scorekeeper",
+              "head-queuer": "Head Queuer",
+              "queuer": "Queuer",
+              "mc": "MC",
+              "field-manager": "Field Manager",
+              "audience-display": "Audience Display",
+              "reports": "Reports",
+              "tournament-manager": "Tournament Manager"
+            }
+          }
+        },
+        "dialogs": {
+          "assignAdmins": {
+            "title": "Assign Event Administrators",
+            "searchPlaceholder": "Search for admin users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableAdmins": "No additional admin users available to assign.",
+            "selectedCount": "{count} {count, plural, =1 {user} other {users}} selected",
+            "cancel": "Cancel",
+            "save": "Assign Selected"
+          },
+          "addVolunteer": {
+            "title": "Add {role} Volunteer",
+            "selectUser": "Select User",
+            "changeUser": "Change User",
+            "searchPlaceholder": "Search for volunteer users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableVolunteers": "No volunteer users available for this role.",
+            "selectDivisions": "Select Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier (Optional)",
+            "identifierHelp": "Add an identifier to distinguish this volunteer (max 12 characters)",
+            "cancel": "Cancel",
+            "add": "Add Volunteer",
+            "roles": {
+              "pit-admin": "Pit Admin",
+              "judge": "Judge",
+              "lead-judge": "Lead Judge",
+              "judge-advisor": "Judge Advisor",
+              "referee": "Referee",
+              "head-referee": "Head Referee",
+              "scorekeeper": "Scorekeeper",
+              "head-queuer": "Head Queuer",
+              "queuer": "Queuer",
+              "mc": "MC",
+              "field-manager": "Field Manager",
+              "audience-display": "Audience Display",
+              "reports": "Reports",
+              "tournament-manager": "Tournament Manager"
+            }
+          }
+        }
       }
     },
     "users": {
