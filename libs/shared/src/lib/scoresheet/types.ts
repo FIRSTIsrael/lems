@@ -1,4 +1,4 @@
-import { MissionClauseType } from '@lems/types';
+export type MissionClauseType = 'boolean' | 'enum' | 'number';
 
 export interface MissionClauseSchema {
   type: MissionClauseType;

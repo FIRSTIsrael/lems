@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';

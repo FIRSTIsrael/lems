@@ -1,2 +1,2 @@
-export * from './lib/components/index';
-export * from './lib/hooks/use-recaptcha';
+export * from './lib/components';
+export * from './lib/hooks';

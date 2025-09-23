@@ -1,7 +1,8 @@
-import { ScoresheetSchema, ScoresheetError } from '../../data/scoresheet-types';
-import { ensureArray } from '@lems/utils/arrays';
+import { ScoresheetSchema, ScoresheetError } from '../types';
+import { ensureArray } from '../../utils/arrays';
 
-const scoresheet: ScoresheetSchema = {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _example: ScoresheetSchema = {
   season: 'SUBMERGED℠',
   missions: [
     {
