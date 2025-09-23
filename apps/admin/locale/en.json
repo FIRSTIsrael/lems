@@ -594,6 +594,13 @@
             "description": "The current awards configuration meets all validation requirements."
           }
         }
+      },
+      "integrations": {
+        "title": "{eventName}: Integrations",
+        "coming-soon": {
+          "title": "Integrations Coming Soon",
+          "description": "We're working on bringing you powerful integrations to streamline your event management."
+        }
       }
     },
     "users": {
