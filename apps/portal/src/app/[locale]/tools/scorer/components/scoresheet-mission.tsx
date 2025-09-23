@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useScoresheetMission } from '@lems/localization';
+import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema } from '@lems/shared/scoresheet';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
 import MissionClause from './mission-clause';
@@ -20,7 +20,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
-  const { title, description, remarks, getError } = useScoresheetMission(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
   const [missionWidth, setMissionWidth] = useState(0);
 
   useLayoutEffect(() => {

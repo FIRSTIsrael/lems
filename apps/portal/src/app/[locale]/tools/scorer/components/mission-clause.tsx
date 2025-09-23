@@ -3,7 +3,10 @@
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { MissionClauseSchema } from '@lems/shared/scoresheet';
-import { useScoresheetGeneral, useScoresheetClause } from '@lems/localization';
+import {
+  useScoresheetGeneralTranslations,
+  useScoresheetClauseTranslations
+} from '@lems/localization';
 import { NumberInput } from '@lems/shared';
 import { ensureArray } from '@lems/shared/utils';
 
@@ -15,7 +18,7 @@ interface ClausePickerProps<T> {
 }
 
 const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }) => {
-  const { yes, no } = useScoresheetGeneral();
+  const { yes, no } = useScoresheetGeneralTranslations();
 
   return (
     <ToggleButtonGroup
@@ -49,7 +52,7 @@ const EnumClause: React.FC<EnumClauseProps> = ({
   multiSelect
 }) => {
   const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
-  const { getLabel } = useScoresheetClause(missionId, clauseIndex);
+  const { getLabel } = useScoresheetClauseTranslations(missionId, clauseIndex);
 
   return (
     <ToggleButtonGroup
@@ -112,7 +115,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   setValue,
   maxWidth = 550
 }) => {
-  const { description } = useScoresheetClause(missionId, clauseIndex);
+  const { description } = useScoresheetClauseTranslations(missionId, clauseIndex);
 
   return (
     <React.Fragment key={missionIndex}>

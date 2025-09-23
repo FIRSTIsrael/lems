@@ -1,30 +1,16 @@
 import { useTranslations } from 'next-intl';
 import { RichText } from '../rich-text';
 
-/**
- * Hook for general scoresheet translations (errors, common terms, etc.)
- */
 export const useScoresheetTranslations = () => {
   const t = useTranslations('shared.scoresheet');
 
   return {
-    getError: (errorId: string) => t(`errors.${errorId}`),
+    getError: (errorId: string) => t(`errors.${errorId}.description`),
     getGeneralTerm: (term: string) => t(`general.${term}`)
   };
 };
 
-/**
- * Hook for scoresheet error translations - compatible with existing usage
- */
-export const useLocaleScoresheetError = () => {
-  const { getError } = useScoresheetTranslations();
-  return getError;
-};
-
-/**
- * Hook for mission-specific translations
- */
-export const useScoresheetMission = (missionId: string) => {
+export const useScoresheetMissionTranslations = (missionId: string) => {
   const t = useTranslations(`shared.scoresheet.missions.${missionId}`);
 
   const getRemarks = () => {
@@ -49,14 +35,11 @@ export const useScoresheetMission = (missionId: string) => {
     getClauseLabel: (clauseIndex: number, labelKey: string) => (
       <RichText>{tags => t.rich(`clauses.${clauseIndex}.labels.${labelKey}`, tags)}</RichText>
     ),
-    getError: (errorId: string) => t(`errors.${errorId}`)
+    getError: (errorId: string) => t(`errors.${errorId}.description`)
   };
 };
 
-/**
- * Hook for mission clause-specific translations
- */
-export const useScoresheetClause = (missionId: string, clauseIndex: number) => {
+export const useScoresheetClauseTranslations = (missionId: string, clauseIndex: number) => {
   const t = useTranslations(`shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}`);
 
   return {
@@ -67,10 +50,7 @@ export const useScoresheetClause = (missionId: string, clauseIndex: number) => {
   };
 };
 
-/**
- * Hook for general scoresheet UI terms
- */
-export const useScoresheetGeneral = () => {
+export const useScoresheetGeneralTranslations = () => {
   const t = useTranslations('shared.scoresheet.general');
 
   return {

@@ -14,7 +14,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import { useLocaleAwardName } from '@lems/localization';
+import { useAwardTranslations } from '@lems/localization';
 import { Award } from '../types';
 
 interface AddAwardDialogProps {
@@ -31,7 +31,7 @@ export const AddAwardDialog: React.FC<AddAwardDialogProps> = ({
   onClose
 }) => {
   const t = useTranslations('pages.events.awards.editor.add-dialog');
-  const getAwardName = useLocaleAwardName();
+  const { getName } = useAwardTranslations();
   const [selectedAward, setSelectedAward] = useState<Award | ''>('');
 
   const handleAddAward = () => {
@@ -54,7 +54,7 @@ export const AddAwardDialog: React.FC<AddAwardDialogProps> = ({
           >
             {options.map(award => (
               <MenuItem key={award} value={award}>
-                <Typography variant="body1">{getAwardName(award)}</Typography>
+                <Typography variant="body1">{getName(award)}</Typography>
               </MenuItem>
             ))}
           </Select>

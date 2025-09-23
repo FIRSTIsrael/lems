@@ -2,12 +2,12 @@
 
 import { Typography, Stack } from '@mui/material';
 import { scoresheet } from '@lems/shared/scoresheet';
-import { useLocaleScoresheetError } from '@lems/localization';
+import { useScoresheetTranslations } from '@lems/localization';
 import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
-  const getErrorDescription = useLocaleScoresheetError();
+  const { getError } = useScoresheetTranslations();
   const { errors } = useScoresheetValidator();
 
   return (
@@ -22,7 +22,7 @@ export const ScoresheetForm: React.FC = () => {
       ))}
       {errors.map((error, index) => (
         <Typography key={index} color="error" fontWeight={600}>
-          {getErrorDescription(error.id)}
+          {getError(error.id)}
         </Typography>
       ))}
     </Stack>
