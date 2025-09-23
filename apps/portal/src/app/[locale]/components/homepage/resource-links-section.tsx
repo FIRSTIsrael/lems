@@ -23,7 +23,7 @@ export const ResourceLinksSection = () => {
   const resources = resourceLinks;
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, position: { lg: 'sticky' }, top: 24 }}>
+    <Paper sx={{ p: { xs: 2, sm: 3 } }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
         <WebsiteIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">
