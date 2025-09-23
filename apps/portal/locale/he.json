@@ -41,6 +41,32 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "events": {
+      "title": "אירועים",
+      "subtitle": "גלו והשתתפו באירועי FIRST LEGO League Challenge",
+      "stats": {
+        "active": "פעילים",
+        "upcoming": "מתקרבים"
+      },
+      "search": {
+        "title": "חיפוש וסינון אירועים",
+        "placeholder": "חפשו אירועים לפי שם או מיקום...",
+        "results-count": "נמצאו {count} אירועים"
+      },
+      "filters": {
+        "all": "כל האירועים ({count})",
+        "active": "פעילים ({count})",
+        "upcoming": "מתקרבים ({count})",
+        "past": "עברו ({count})"
+      },
+      "no-events": {
+        "title": "לא נמצאו אירועים",
+        "search-message": "אין אירועים התואמים לקריטריוני החיפוש. נסו לשנות את מילות החיפוש.",
+        "filter-message": "אין אירועים התואמים למסנן שנבחר.",
+        "clear-search": "נקה חיפוש"
+      },
+      "load-more": "טען עוד אירועים"
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",

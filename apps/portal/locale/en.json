@@ -41,6 +41,32 @@
         "resource-map-description": "Find helpful resources and guides"
       }
     },
+    "events": {
+      "title": "Events",
+      "subtitle": "Discover and participate in FIRST LEGO League Challenge events across Israel",
+      "stats": {
+        "active": "Active",
+        "upcoming": "Upcoming"
+      },
+      "search": {
+        "title": "Search & Filter Events",
+        "placeholder": "Search events by name or location...",
+        "results-count": "{count} events found"
+      },
+      "filters": {
+        "all": "All Events ({count})",
+        "active": "Active ({count})",
+        "upcoming": "Upcoming ({count})",
+        "past": "Past ({count})"
+      },
+      "no-events": {
+        "title": "No Events Found",
+        "search-message": "No events match your search criteria. Try adjusting your search terms.",
+        "filter-message": "No events match the selected filter.",
+        "clear-search": "Clear Search"
+      },
+      "load-more": "Load More Events"
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",
