@@ -14,7 +14,7 @@ export interface Score {
 
 export interface ErrorWithMessage {
   id: string;
-  description: string;
+  mission?: string;
 }
 
 interface ScoresDb extends DBSchema {
@@ -34,8 +34,7 @@ const calculateScore = (values: Mission[]) => {
       points += mission.calculation(...clauses.map(clause => clause.value));
     } catch (error) {
       if (error instanceof ScoresheetError) {
-        const description = `errors.${error.id}.description`; // Translation key in shared locale
-        errors.push({ id: error.id, description });
+        errors.push({ mission: mission.id, id: error.id });
       }
     }
   });
@@ -53,8 +52,7 @@ const validate = (values: Mission[]) => {
       validator(validatorArgs);
     } catch (error) {
       if (error instanceof ScoresheetError) {
-        const description = `errors.${error.id}.description`; // Translation key in shared locale
-        validatorErrors.push({ id: error.id, description });
+        validatorErrors.push({ id: error.id });
       }
     }
   });

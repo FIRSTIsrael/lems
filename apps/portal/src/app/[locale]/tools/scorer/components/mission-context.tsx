@@ -88,9 +88,7 @@ export const useMission = (index: number) => {
   }
 
   const mission = context.missions[index];
-  const errors: { id: string; description: string }[] = context.missionErrors.filter(error =>
-    error.id.startsWith(mission.id)
-  );
+  const errors = context.missionErrors.filter(error => error.mission === mission.id);
   const updateClause = (clauseIndex: number, value: string | number | boolean | null) => {
     context.onUpdateClause(index, clauseIndex, value);
   };

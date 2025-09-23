@@ -1,13 +1,13 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Typography, Stack } from '@mui/material';
 import { scoresheet } from '@lems/shared/scoresheet';
+import { useLocaleScoresheetError } from '@lems/localization';
 import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
-  const t = useTranslations('shared.scoresheet');
+  const getErrorDescription = useLocaleScoresheetError();
   const { errors } = useScoresheetValidator();
 
   return (
@@ -22,7 +22,7 @@ export const ScoresheetForm: React.FC = () => {
       ))}
       {errors.map((error, index) => (
         <Typography key={index} color="error" fontWeight={600}>
-          {t(error.description)}
+          {getErrorDescription(error.id)}
         </Typography>
       ))}
     </Stack>

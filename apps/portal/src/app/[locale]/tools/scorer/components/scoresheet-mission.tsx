@@ -2,10 +2,9 @@
 
 import { useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { RichText } from '@lems/localization';
+import { useScoresheetMission } from '@lems/localization';
 import { MissionSchema } from '@lems/shared/scoresheet';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
 import MissionClause from './mission-clause';
@@ -18,25 +17,15 @@ interface ScoresheetMissionProps {
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
-  const t = useTranslations(`shared.scoresheet.missions.${mission.id}`);
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
+  const { title, description, remarks, getError } = useScoresheetMission(mission.id);
   const [missionWidth, setMissionWidth] = useState(0);
 
   useLayoutEffect(() => {
     setMissionWidth(ref.current?.offsetWidth || 0);
   }, []);
-
-  const getRemarks = () => {
-    const remarks = [];
-    let index = 0;
-    while (t.has(`remarks.${index}`)) {
-      remarks.push(t(`remarks.${index}`));
-      index++;
-    }
-    return remarks;
-  };
 
   return (
     <Grid component={Paper} container pb={2} id={mission.id}>
@@ -56,17 +45,17 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
         <Grid size={10} pt={1}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
-              {t('title')}
+              {title}
             </Typography>
             {mission.noEquipment && (
               <Image src={NoEquipmentImage} width={35} height={35} alt="No equipment constraint" />
             )}
           </Stack>
         </Grid>
-        {t.has('description') && (
+        {description && (
           <Grid size={12}>
             <Typography fontSize="1rem" fontWeight={600} mt={1} ml={2}>
-              <RichText>{tags => t.rich('description', tags)}</RichText>
+              {description}
             </Typography>
           </Grid>
         )}
@@ -90,7 +79,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           );
         })}
         <Grid size={12} mt={2}>
-          {getRemarks().map((remark, index) => (
+          {remarks.map((remark, index) => (
             <Typography
               key={`${mission.id}-remark-${index}`}
               pl={3}
@@ -106,7 +95,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           errors.map(error => (
             <Grid key={error.id} size={12} mt={2}>
               <Typography pl={3} fontSize="1rem" color="error" fontWeight={700}>
-                {t(error.description)}
+                {getError(error.id)}
               </Typography>
             </Grid>
           ))}

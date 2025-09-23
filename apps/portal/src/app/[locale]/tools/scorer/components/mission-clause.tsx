@@ -3,10 +3,9 @@
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { MissionClauseSchema } from '@lems/shared/scoresheet';
-import { RichText } from '@lems/localization';
+import { useScoresheetGeneral, useScoresheetClause } from '@lems/localization';
 import { NumberInput } from '@lems/shared';
 import { ensureArray } from '@lems/shared/utils';
-import { useTranslations } from 'next-intl';
 
 interface ClausePickerProps<T> {
   missionId: string;
@@ -16,7 +15,8 @@ interface ClausePickerProps<T> {
 }
 
 const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }) => {
-  const t = useTranslations('shared.scoresheet.general');
+  const { yes, no } = useScoresheetGeneral();
+
   return (
     <ToggleButtonGroup
       exclusive
@@ -24,10 +24,10 @@ const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }
       onChange={(_e, value) => value !== null && onChange(value)}
     >
       <ToggleButton value={false} sx={{ minWidth: '80px' }}>
-        {t('no')}
+        {no}
       </ToggleButton>
       <ToggleButton value={true} sx={{ minWidth: '80px' }}>
-        {t('yes')}
+        {yes}
       </ToggleButton>
     </ToggleButtonGroup>
   );
@@ -49,9 +49,7 @@ const EnumClause: React.FC<EnumClauseProps> = ({
   multiSelect
 }) => {
   const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
-  const t = useTranslations(
-    `shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}.labels`
-  );
+  const { getLabel } = useScoresheetClause(missionId, clauseIndex);
 
   return (
     <ToggleButtonGroup
@@ -66,9 +64,7 @@ const EnumClause: React.FC<EnumClauseProps> = ({
     >
       {values.map(value => (
         <ToggleButton key={value} value={value} sx={{ minWidth: buttonMinWidth }}>
-          <Typography>
-            <RichText>{tags => t.rich(value, tags)}</RichText>
-          </Typography>
+          <Typography>{getLabel(value)}</Typography>
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
@@ -116,14 +112,12 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   setValue,
   maxWidth = 550
 }) => {
-  const t = useTranslations(`shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}`);
+  const { description } = useScoresheetClause(missionId, clauseIndex);
 
   return (
     <React.Fragment key={missionIndex}>
       <Grid size={10} ml={3}>
-        <Typography>
-          <RichText>{tags => t.rich('description', tags)}</RichText>
-        </Typography>
+        <Typography>{description}</Typography>
       </Grid>
       <Grid size={12} ml={3}>
         {clause.type === 'boolean' ? (

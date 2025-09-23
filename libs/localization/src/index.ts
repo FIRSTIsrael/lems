@@ -5,6 +5,7 @@ export * from './lib/rich-text';
 
 // Hooks
 export * from './lib/hooks/use-locale-award';
+export * from './lib/hooks/use-locale-scoresheet';
 
 // Icons
 export * from './lib/icons/chevron-end';
