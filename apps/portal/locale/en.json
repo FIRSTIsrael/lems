@@ -28,21 +28,39 @@
         "browse-events": "Browse Events",
         "browse-events-description": "Find and explore events"
       },
-      "resources": {
-        "title": "Resources & Links",
-        "fll-website": "Resource Map",
-        "fll-website-description": "Find helpful resources and guides",
+      "resource-links": {
+        "title": "Resources",
+        "fll-website": "FLL Challenge Website",
+        "fll-website-description": "Official challenge information",
         "github": "GitHub Repository",
-        "github-description": "View source code and contribute",
+        "github-description": "Source code and documentation",
         "resource-map": "Resource Map",
-        "resource-map-description": "Find helpful resources and guides"
+        "resource-map-description": "Find helpful resources"
       }
     },
-    "tools": {
-      "scorer": {
-        "title": "Robot Game Scorer",
-        "no-equipment-constraint-title": "No Equipment Constraint:",
-        "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+    "team": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in our database.",
+        "back-to-teams": "Back to Teams"
+      },
+      "info": {
+        "from": "From {city}",
+        "rookie-year": "Rookie Year: {year}",
+        "last-competed": "Last competed in {year}",
+        "details-on": "Details on",
+        "season": "{year} Season"
+      },
+      "navigation": {
+        "team-info": "Team Info",
+        "event-results": "Event Results",
+        "photos-videos": "Photos & Videos",
+        "robot-profile": "Robot Profile"
+      },
+      "results": {
+        "title": "Event Results",
+        "awards-title": "Awards & Achievements",
+        "winner": "WINNER"
       }
     }
   },

@@ -38,6 +38,31 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "קבוצה #{number} לא נמצאה",
+        "description": "הקבוצה שאתה מחפש לא קיימת במאגר הנתונים שלנו.",
+        "back-to-teams": "חזרה לקבוצות"
+      },
+      "info": {
+        "from": "מ{city}",
+        "rookie-year": "שנת רוקי: {year}",
+        "last-competed": "התחרה לאחרונה ב{year}",
+        "details-on": "פרטים ב",
+        "season": "עונת {year}"
+      },
+      "navigation": {
+        "team-info": "מידע על הקבוצה",
+        "event-results": "תוצאות אירועים",
+        "photos-videos": "תמונות וסרטונים",
+        "robot-profile": "פרופיל רובוט"
+      },
+      "results": {
+        "title": "תוצאות אירועים",
+        "awards-title": "פרסים והישגים",
+        "winner": "זוכה"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
