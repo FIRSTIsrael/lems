@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Stack } from '@mui/material';
-import { WinnerBanner } from './WinnerBanner';
+import { WinnerBanner } from './winner-banner';
 
 interface WinnerBannersProps {
   isChampion: boolean;

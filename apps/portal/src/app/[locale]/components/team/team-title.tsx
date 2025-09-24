@@ -3,7 +3,7 @@
 import React from 'react';
 import { Typography, Stack } from '@mui/material';
 import { Team } from './mockTeamData';
-import { TeamLogo } from './TeamLogo';
+import { TeamLogo } from './team-logo';
 
 interface TeamTitleProps {
   team: Team;

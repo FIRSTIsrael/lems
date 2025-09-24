@@ -3,8 +3,8 @@
 import React from 'react';
 import { Box, Paper } from '@mui/material';
 import { Team } from './mockTeamData';
-import { TeamTitle } from './TeamTitle';
-import { TeamInfo } from './TeamInfo';
+import { TeamTitle } from './team-title';
+import { TeamInfo } from './team-info';
 
 interface TeamHeaderProps {
   team: Team;

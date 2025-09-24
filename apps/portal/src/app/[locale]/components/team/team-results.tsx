@@ -4,8 +4,8 @@ import React from 'react';
 import { Typography, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from './mockTeamData';
-import { WinnerBanners } from './WinnerBanners';
-import { TeamAwards } from './TeamAwards';
+import { WinnerBanners } from './winner-banners';
+import { TeamAwards } from './team-awards';
 
 interface TeamResultsProps {
   team: Team;
