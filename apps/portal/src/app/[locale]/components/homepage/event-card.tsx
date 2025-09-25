@@ -70,19 +70,25 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     switch (variant) {
       case 'active':
         return (
-          <Button variant="contained" color="error" endIcon={<ArrowIcon />} sx={{ ml: 'auto' }}>
+          <Button
+            component="span"
+            variant="contained"
+            color="error"
+            endIcon={<ArrowIcon />}
+            sx={{ ml: 'auto' }}
+          >
             View Event
           </Button>
         );
       case 'past':
         return (
-          <Button variant="text" size="small" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="text" size="small" endIcon={<ArrowIcon />}>
             View Results
           </Button>
         );
       default: // upcoming
         return (
-          <Button variant="outlined" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="outlined" endIcon={<ArrowIcon />}>
             View Details
           </Button>
         );
@@ -91,20 +97,30 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
 
   return (
     <Card
+      component="a"
+      href={`/events/${event.slug}`}
       sx={{
         cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',
+        textDecoration: 'none',
+        color: 'inherit',
+        display: 'block',
         ...getCardStyles()
       }}
     >
-      <CardContent>
+      <CardContent sx={{ position: 'relative' }}>
+        {variant === 'active' && (
+          <Box position="absolute" top={16} right={16} zIndex={1}>
+            <LiveIcon />
+          </Box>
+        )}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
           alignItems={{ xs: 'stretch', sm: 'flex-start' }}
           spacing={{ xs: 2, sm: 0 }}
         >
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, pr: variant === 'active' ? { xs: 6, sm: 0 } : 0 }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               {event.name}
             </Typography>
@@ -129,11 +145,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               </Stack>
             </Stack>
           </Box>
-          {variant === 'active' && (
-            <Box sx={{ alignSelf: 'flex-start' }}>
-              <LiveIcon />
-            </Box>
-          )}
         </Stack>
       </CardContent>
       <CardActions>{getActionButton()}</CardActions>

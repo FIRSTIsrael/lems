@@ -43,6 +43,7 @@ export const ActiveEventsSection = () => {
         events={upcomingEvents}
         variant="upcoming"
         chipColor="primary"
+        maxDisplayed={5}
         defaultExpanded={true}
       />
 

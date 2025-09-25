@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { PortalAward, PortalTeam } from '@lems/types';
 
-import divisionCompleted from '../../../../middlewares/portal/division-completed';
+import divisionCompleted from '../../../../middlewares/old-portal/division-completed';
 
 const router = express.Router({ mergeParams: true });
 

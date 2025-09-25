@@ -13,7 +13,6 @@ import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
-import publicRouter from './routers/public/index';
 import schedulerRouter from './routers/scheduler/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
@@ -43,7 +42,6 @@ app.use('/', expressLogger);
 app.use('/dashboard', dashboardRouter);
 
 // Old LEMS app, needs migration
-app.use('/public', publicRouter);
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
