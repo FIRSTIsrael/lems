@@ -211,7 +211,6 @@ export function VolunteerUsersSection() {
         </Button>
       </Box>
 
-      {/* Validation Errors */}
       {validationErrors.length > 0 && (
         <Alert severity="error" sx={{ mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom>
@@ -226,19 +225,17 @@ export function VolunteerUsersSection() {
       )}
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
-        {/* Column 1: System-Managed Roles */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Card sx={{ height: 'fit-content' }}>
             <CardHeader
               title={t('systemManagedRoles.title')}
-              titleTypographyProps={{ variant: 'h6' }}
+              slotProps={{ title: { variant: 'h6' } }}
             />
             <CardContent>
               <Alert severity="info" sx={{ mb: 2, fontSize: '0.875rem' }}>
                 {t('systemManagedRoles.description')}
               </Alert>
               <Stack spacing={1.5}>
-                {/* Always required system roles */}
                 {SYSTEM_MANAGED_ROLES.map(role => (
                   <Box
                     key={role}
@@ -263,7 +260,6 @@ export function VolunteerUsersSection() {
                   </Box>
                 ))}
 
-                {/* Toggleable system roles */}
                 {TOGGLEABLE_SYSTEM_ROLES.map(role => (
                   <Box
                     key={role}
@@ -316,12 +312,11 @@ export function VolunteerUsersSection() {
           </Card>
         </Box>
 
-        {/* Column 2: Mandatory Roles */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Card sx={{ height: 'fit-content' }}>
             <CardHeader
               title={t('mandatoryRoles.title')}
-              titleTypographyProps={{ variant: 'h6' }}
+              slotProps={{ title: { variant: 'h6' } }}
             />
             <CardContent>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
@@ -345,10 +340,9 @@ export function VolunteerUsersSection() {
           </Card>
         </Box>
 
-        {/* Column 3: Optional Roles */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Card sx={{ height: 'fit-content' }}>
-            <CardHeader title={t('optionalRoles.title')} titleTypographyProps={{ variant: 'h6' }} />
+            <CardHeader title={t('optionalRoles.title')} slotProps={{ title: { variant: 'h6' } }} />
             <CardContent>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
                 {t('optionalRoles.description')}

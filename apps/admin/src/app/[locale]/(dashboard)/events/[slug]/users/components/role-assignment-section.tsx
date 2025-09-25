@@ -76,6 +76,12 @@ export function RoleAssignmentSection({
   };
 
   const handleDivisionChange = (slotId: string, newDivisions: string[]) => {
+    // Check if "Select All" (empty string) was clicked
+    if (newDivisions.includes('')) {
+      handleSelectAllDivisions(slotId);
+      return;
+    }
+
     const updatedSlots = allSlots.map(slot =>
       slot.id === slotId ? { ...slot, divisions: newDivisions } : slot
     );
@@ -85,6 +91,21 @@ export function RoleAssignmentSection({
   const handleIdentifierChange = (slotId: string, identifier: string) => {
     const updatedSlots = allSlots.map(slot =>
       slot.id === slotId ? { ...slot, identifier: identifier.slice(0, 12) || undefined } : slot
+    );
+    onChange(updatedSlots);
+  };
+
+  const handleSelectAllDivisions = (slotId: string) => {
+    const slot = allSlots.find(s => s.id === slotId);
+    if (!slot) return;
+
+    const allDivisionIds = divisions.map(d => d.id);
+
+    // If ANY divisions are selected, deselect all. If NONE are selected, select all.
+    const newDivisions = slot.divisions.length > 0 ? [] : allDivisionIds;
+
+    const updatedSlots = allSlots.map(s =>
+      s.id === slotId ? { ...s, divisions: newDivisions } : s
     );
     onChange(updatedSlots);
   };
@@ -143,25 +164,52 @@ export function RoleAssignmentSection({
                           value={slot.divisions}
                           onChange={e => handleDivisionChange(slot.id, e.target.value as string[])}
                           input={<OutlinedInput label={t('divisions')} />}
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 300,
+                                overflow: 'auto'
+                              }
+                            }
+                          }}
                           renderValue={selected => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                              {(selected as string[]).map(divisionId => {
-                                const division = divisions.find(d => d.id === divisionId);
-                                return (
-                                  <Chip
-                                    key={divisionId}
-                                    label={division?.name || divisionId}
-                                    size="small"
-                                    sx={{
-                                      backgroundColor: division?.color || '#666',
-                                      color: 'white'
-                                    }}
-                                  />
-                                );
-                              })}
+                              {(selected as string[])
+                                .filter(divisionId => divisionId !== '') // Filter out empty strings
+                                .map(divisionId => {
+                                  const division = divisions.find(d => d.id === divisionId);
+                                  return (
+                                    <Chip
+                                      key={divisionId}
+                                      label={division?.name || divisionId}
+                                      size="small"
+                                      sx={{
+                                        backgroundColor: division?.color || '#666',
+                                        color: 'white'
+                                      }}
+                                    />
+                                  );
+                                })}
                             </Box>
                           )}
                         >
+                          {/* Select All Option */}
+                          <MenuItem
+                            value=""
+                            sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+                          >
+                            <Checkbox
+                              checked={
+                                slot.divisions.length === divisions.length &&
+                                slot.divisions.length > 0
+                              }
+                              indeterminate={
+                                slot.divisions.length > 0 &&
+                                slot.divisions.length < divisions.length
+                              }
+                            />
+                            <ListItemText primary={t('selectAll')} />
+                          </MenuItem>
                           {divisions.map(division => (
                             <MenuItem key={division.id} value={division.id}>
                               <Checkbox checked={slot.divisions.includes(division.id)} />
