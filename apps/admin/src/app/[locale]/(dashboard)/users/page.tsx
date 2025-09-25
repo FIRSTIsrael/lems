@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Typography, Stack, Box } from '@mui/material';
 import { AdminUsersResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { CreateUserButton } from './components/create-user-button';
 import { UsersDataGrid } from './components/users-data-grid';
 

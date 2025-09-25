@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { PortalEventStatus } from '@lems/types';
-import LiveIcon from '../live-icon';
+import { LiveIcon } from '../../../src/app/[locale]/components/homepage/live-icon';
 import { useTranslations } from 'next-intl';
 
 interface EventStatusProps {

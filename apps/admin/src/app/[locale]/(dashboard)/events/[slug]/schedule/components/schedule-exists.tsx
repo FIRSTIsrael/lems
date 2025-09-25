@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { CheckCircle, Delete } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { TeamSwapper } from './team-swapper';
 
 interface ScheduleExistsProps {

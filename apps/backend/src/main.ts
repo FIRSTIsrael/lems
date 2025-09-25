@@ -12,7 +12,7 @@ import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import adminRouter from './routers/admin/index';
-import publicRouter from './routers/public/index';
+import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
@@ -38,24 +38,19 @@ app.use('/timesync', timesyncServer.requestHandler);
 app.use(express.json());
 app.use('/', expressLogger);
 
-// Public paths, currently used for static files and the portal app.
-// TODO: Split portal into its own router
-app.use('/public', publicRouter);
-
 // Integrations
 app.use('/dashboard', dashboardRouter);
 
-// LEMS app
+// Old LEMS app, needs migration
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
-// Admin app
+// Application routers
 app.use('/admin', adminRouter);
-
-// Scheduler app
 app.use('/scheduler', schedulerRouter);
+app.use('/portal', portalRouter);
 
-app.get('/status', (req, res) => {
+app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
 });
 

@@ -21,9 +21,9 @@ import {
   useRecaptcha,
   createRecaptchaToken,
   removeRecaptchaBadge,
-  FormikTextField
+  FormikTextField,
+  apiFetch
 } from '@lems/shared';
-import { apiFetch } from '../../../lib/fetch';
 
 interface LoginFormValues {
   username: string;
