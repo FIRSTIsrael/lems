@@ -21,7 +21,7 @@ export const ActiveEventsSection = () => {
         title={t('active-events')}
         events={activeEvents}
         variant="active"
-        chipColor="success"
+        chipColor="error"
         emptyMessage={t('no-active-events')}
         defaultExpanded={true}
         showIcon={<EventIcon color="primary" />}

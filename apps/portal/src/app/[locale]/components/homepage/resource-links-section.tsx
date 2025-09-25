@@ -60,7 +60,9 @@ export const ResourceLinksSection = () => {
                       p: 1.5,
                       borderRadius: 2,
                       bgcolor: alpha(theme.palette[resource.color].main, 0.1),
-                      color: `${resource.color}.main`
+                      color: `${resource.color}.main`,
+                      display: 'flex',
+                      alignItems: 'center'
                     }}
                   >
                     <IconComponent />

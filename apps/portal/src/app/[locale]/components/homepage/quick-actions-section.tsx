@@ -54,7 +54,9 @@ export const QuickActionsSection = () => {
                       p: 1.5,
                       borderRadius: 2,
                       bgcolor: alpha(theme.palette[action.color].main, 0.1),
-                      color: `${action.color}.main`
+                      color: `${action.color}.main`,
+                      display: 'flex',
+                      alignItems: 'center'
                     }}
                   >
                     <IconComponent />

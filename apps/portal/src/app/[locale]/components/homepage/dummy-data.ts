@@ -104,7 +104,7 @@ export const quickActions = [
     description: 'browse-events-description',
     icon: EventIcon,
     href: '/events',
-    color: 'secondary' as const
+    color: 'primary' as const
   }
 ];
 
@@ -122,7 +122,7 @@ export const resourceLinks = [
     description: 'github-description',
     icon: GitHubIcon,
     href: 'https://github.com/FIRSTIsrael/lems',
-    color: 'secondary' as const,
+    color: 'primary' as const,
     external: true
   }
 ];

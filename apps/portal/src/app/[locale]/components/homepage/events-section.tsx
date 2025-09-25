@@ -13,7 +13,7 @@ interface EventsSectionProps {
   title: string;
   events: Event[];
   variant: 'active' | 'upcoming' | 'past';
-  chipColor?: 'success' | 'primary' | 'secondary';
+  chipColor?: 'success' | 'primary' | 'secondary' | 'error';
   emptyMessage?: string;
   maxDisplayed?: number;
   defaultExpanded?: boolean;

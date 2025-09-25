@@ -7,7 +7,6 @@ import {
   CardContent,
   CardActions,
   Button,
-  Chip,
   Stack,
   Box,
   Typography,
@@ -20,6 +19,7 @@ import {
   ArrowForward as ArrowIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
+import LiveIcon from './live-icon';
 
 export interface Event {
   id: string;
@@ -46,12 +46,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     switch (variant) {
       case 'active':
         return {
-          border: `2px solid ${theme.palette.success.main}`,
-          bgcolor: alpha(theme.palette.success.main, 0.05),
+          border: `2px solid ${theme.palette.error.main}`,
+          bgcolor: alpha(theme.palette.error.main, 0.05),
           '&:hover': {
             transform: 'translateY(-4px)',
             boxShadow: theme.shadows[8],
-            borderColor: theme.palette.success.dark
+            borderColor: theme.palette.error.dark
           }
         };
       case 'past':
@@ -81,7 +81,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     switch (variant) {
       case 'active':
         return (
-          <Button variant="contained" color="success" endIcon={<ArrowIcon />} sx={{ ml: 'auto' }}>
+          <Button variant="contained" color="error" endIcon={<ArrowIcon />} sx={{ ml: 'auto' }}>
             View Event
           </Button>
         );
@@ -141,13 +141,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
             </Stack>
           </Box>
           {variant === 'active' && (
-            <Box sx={{ alignSelf: { xs: 'flex-start', sm: 'flex-start' } }}>
-              <Chip
-                label="LIVE"
-                color="success"
-                variant="filled"
-                sx={{ fontWeight: 'bold', animation: 'pulse 2s infinite' }}
-              />
+            <Box sx={{ alignSelf: 'flex-start' }}>
+              <LiveIcon />
             </Box>
           )}
         </Stack>
