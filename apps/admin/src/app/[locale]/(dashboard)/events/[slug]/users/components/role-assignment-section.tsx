@@ -30,8 +30,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
-import { Role } from '../types';
-import { VolunteerSlot } from './volunteer-users-section';
+import { Role, VolunteerSlot } from '../types';
 
 interface RoleAssignmentSectionProps {
   role: Role;
@@ -39,7 +38,6 @@ interface RoleAssignmentSectionProps {
   slots: VolunteerSlot[];
   onChange: (newSlots: VolunteerSlot[]) => void;
   allSlots: VolunteerSlot[];
-  singleDivision: boolean;
   initiallyExpanded?: boolean;
 }
 
@@ -49,12 +47,13 @@ export function RoleAssignmentSection({
   slots,
   onChange,
   allSlots,
-  singleDivision,
   initiallyExpanded = false
 }: RoleAssignmentSectionProps) {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
   const [expanded, setExpanded] = useState(initiallyExpanded);
+
+  const singleDivision = divisions.length === 1;
 
   const handleAddSlot = () => {
     // Generate a simple ID for the new slot
@@ -63,7 +62,7 @@ export function RoleAssignmentSection({
     const newSlot: VolunteerSlot = {
       id: newId,
       role,
-      divisions: singleDivision && divisions.length > 0 ? [divisions[0].id] : []
+      divisions: singleDivision ? [divisions[0].id] : []
     };
 
     const updatedSlots = [...allSlots, newSlot];

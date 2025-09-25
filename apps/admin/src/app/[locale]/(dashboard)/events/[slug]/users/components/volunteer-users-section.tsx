@@ -3,37 +3,15 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
-import {
-  Box,
-  Typography,
-  Stack,
-  Alert,
-  Button,
-  FormControlLabel,
-  Switch,
-  Card,
-  CardHeader,
-  CardContent
-} from '@mui/material';
+import { Box, Typography, Stack, Alert, Button } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
-import {
-  EDITABLE_MANDATORY_ROLES,
-  SYSTEM_MANAGED_ROLES,
-  TOGGLEABLE_SYSTEM_ROLES,
-  OPTIONAL_ROLES,
-  Role
-} from '../types';
+import { EDITABLE_MANDATORY_ROLES, VolunteerSlot } from '../types';
 import { useEvent } from '../../components/event-context';
-import { RoleAssignmentSection } from './role-assignment-section';
-
-export interface VolunteerSlot {
-  id: string;
-  role: Role;
-  divisions: string[];
-  identifier?: string;
-}
+import { ManagedRolesSection } from './volunteer-roles/managed-roles';
+import { OptionalRolesSection } from './volunteer-roles/optional-roles';
+import { MandatoryRolesSection } from './volunteer-roles/mandatory-roles';
 
 // Generate initial slots based on divisions (only for editable roles)
 const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
@@ -138,10 +116,6 @@ export function VolunteerUsersSection() {
     return errors;
   }, [divisions, slots, t, getRole]);
 
-  const handleSlotChange = (newSlots: VolunteerSlot[]) => {
-    setSlots(newSlots);
-  };
-
   const handleToggleSystemRole = (role: string, enabled: boolean) => {
     setToggledSystemRoles(prev => {
       const newSet = new Set(prev);
@@ -185,8 +159,6 @@ export function VolunteerUsersSection() {
     }
   };
 
-  const singleDivision = divisions.length === 1;
-
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
@@ -225,145 +197,20 @@ export function VolunteerUsersSection() {
       )}
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Card sx={{ height: 'fit-content' }}>
-            <CardHeader
-              title={t('systemManagedRoles.title')}
-              slotProps={{ title: { variant: 'h6' } }}
-            />
-            <CardContent>
-              <Alert severity="info" sx={{ mb: 2, fontSize: '0.875rem' }}>
-                {t('systemManagedRoles.description')}
-              </Alert>
-              <Stack spacing={1.5}>
-                {SYSTEM_MANAGED_ROLES.map(role => (
-                  <Box
-                    key={role}
-                    sx={{
-                      p: 1.5,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      borderRadius: 1,
-                      bgcolor: 'grey.50'
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {getRole(role)}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ fontStyle: 'italic' }}
-                    >
-                      {t('systemManagedRoles.roleDescription')}
-                    </Typography>
-                  </Box>
-                ))}
-
-                {TOGGLEABLE_SYSTEM_ROLES.map(role => (
-                  <Box
-                    key={role}
-                    sx={{
-                      p: 1.5,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      borderRadius: 1,
-                      bgcolor: 'grey.50'
-                    }}
-                  >
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Box sx={{ flex: 1, mr: 1 }}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          {getRole(role)}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ fontStyle: 'italic' }}
-                        >
-                          {t('systemManagedRoles.toggleableRoleDescription')}
-                        </Typography>
-                      </Box>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={toggledSystemRoles.has(role)}
-                            onChange={e => handleToggleSystemRole(role, e.target.checked)}
-                            size="small"
-                          />
-                        }
-                        label=""
-                        sx={{ m: 0 }}
-                      />
-                    </Stack>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mt: 0.5 }}
-                    >
-                      {toggledSystemRoles.has(role)
-                        ? t('systemManagedRoles.enabled')
-                        : t('systemManagedRoles.disabled')}
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Card sx={{ height: 'fit-content' }}>
-            <CardHeader
-              title={t('mandatoryRoles.title')}
-              slotProps={{ title: { variant: 'h6' } }}
-            />
-            <CardContent>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                {t('mandatoryRoles.description')}
-              </Typography>
-              <Stack spacing={2}>
-                {EDITABLE_MANDATORY_ROLES.map(role => (
-                  <RoleAssignmentSection
-                    key={role}
-                    role={role}
-                    divisions={divisions}
-                    slots={slots.filter(s => s.role === role)}
-                    onChange={handleSlotChange}
-                    allSlots={slots}
-                    singleDivision={singleDivision}
-                    initiallyExpanded={false}
-                  />
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Card sx={{ height: 'fit-content' }}>
-            <CardHeader title={t('optionalRoles.title')} slotProps={{ title: { variant: 'h6' } }} />
-            <CardContent>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                {t('optionalRoles.description')}
-              </Typography>
-              <Stack spacing={2}>
-                {OPTIONAL_ROLES.map(role => (
-                  <RoleAssignmentSection
-                    key={role}
-                    role={role}
-                    divisions={divisions}
-                    slots={slots.filter(s => s.role === role)}
-                    onChange={handleSlotChange}
-                    allSlots={slots}
-                    singleDivision={singleDivision}
-                    initiallyExpanded={false}
-                  />
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Box>
+        <ManagedRolesSection
+          toggledSystemRoles={toggledSystemRoles}
+          onToggleSystemRole={handleToggleSystemRole}
+        />
+        <MandatoryRolesSection
+          divisions={divisions}
+          slots={slots}
+          onSlotChange={(newSlots: VolunteerSlot[]) => setSlots(newSlots)}
+        />
+        <OptionalRolesSection
+          divisions={divisions}
+          slots={slots}
+          onSlotChange={(newSlots: VolunteerSlot[]) => setSlots(newSlots)}
+        />
       </Stack>
     </Box>
   );
