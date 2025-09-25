@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Card, CardHeader, CardContent } from '@mui/material';
 import { EDITABLE_MANDATORY_ROLES } from '../../types';
-import { RoleAssignmentSection } from '../role-assignment-section';
+import { RoleAssignmentSection } from './role-assignment-section';
 
 export const MandatoryRolesSection: React.FC = () => {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');

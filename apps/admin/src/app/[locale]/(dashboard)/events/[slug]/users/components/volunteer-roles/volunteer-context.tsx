@@ -13,8 +13,8 @@ import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
-import { EDITABLE_MANDATORY_ROLES, VolunteerSlot, Role } from '../types';
-import { useEvent } from '../../components/event-context';
+import { EDITABLE_MANDATORY_ROLES, VolunteerSlot, Role } from '../../types';
+import { useEvent } from '../../../components/event-context';
 
 // Generate initial slots based on divisions (only for editable roles)
 const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {

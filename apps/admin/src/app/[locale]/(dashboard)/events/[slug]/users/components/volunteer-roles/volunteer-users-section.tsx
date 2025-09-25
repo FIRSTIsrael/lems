@@ -3,10 +3,10 @@
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Alert, Button } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
-import { useVolunteer } from './volunteer-roles/volunteer-context';
-import { ManagedRolesSection } from './volunteer-roles/managed-roles';
-import { OptionalRolesSection } from './volunteer-roles/optional-roles';
-import { MandatoryRolesSection } from './volunteer-roles/mandatory-roles';
+import { useVolunteer } from './volunteer-context';
+import { ManagedRolesSection } from './managed-roles';
+import { OptionalRolesSection } from './optional-roles';
+import { MandatoryRolesSection } from './mandatory-roles';
 
 export function VolunteerUsersSection() {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');

@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useRoleTranslations } from '@lems/localization';
 import { SYSTEM_MANAGED_ROLES, TOGGLEABLE_SYSTEM_ROLES } from '../../types';
-import { useVolunteer } from '../volunteer-context';
+import { useVolunteer } from './volunteer-context';
 
 export const ManagedRolesSection: React.FC = () => {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');

@@ -29,7 +29,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { useRoleTranslations } from '@lems/localization';
-import { Role } from '../types';
+import { Role } from '../../types';
 import { useVolunteer } from './volunteer-context';
 
 interface RoleAssignmentSectionProps {
