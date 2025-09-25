@@ -25,7 +25,7 @@ import {
   AdminUser,
   AdminUserResponseSchema
 } from '@lems/types/api/admin';
-import { apiFetch } from '../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { DialogProvider } from './components/dialog-provider';
 import { SessionProvider } from './components/session-context';
 import { PermissionGuard } from './components/permission-guard';

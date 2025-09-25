@@ -15,9 +15,8 @@ import {
   Alert
 } from '@mui/material';
 import { PersonAdd } from '@mui/icons-material';
-import { FormikTextField } from '@lems/shared';
+import { FormikTextField, apiFetch } from '@lems/shared';
 import { AdminUserResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../lib/fetch';
 import { DialogComponentProps } from '../../components/dialog-provider';
 import { validatePassword, PasswordRequirements } from './password-validation-indicator';
 

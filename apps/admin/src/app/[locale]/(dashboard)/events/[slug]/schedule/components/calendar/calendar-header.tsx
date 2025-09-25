@@ -7,7 +7,7 @@ import { mutate } from 'swr';
 import { Box, Stack, Button, CircularProgress } from '@mui/material';
 import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { useSchedule, ScheduleContextType } from '../schedule-context';
 import { useCalendar, CalendarContextType } from './calendar-context';
 import { getDuration } from './calendar-utils';

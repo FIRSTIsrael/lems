@@ -1,3 +1,5 @@
+'use client';
+
 import { FastField, FieldProps } from 'formik';
 import { NumberInput, NumberInputProps } from '../number-input';
 

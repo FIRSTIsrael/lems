@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useEffect, CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import { Paper, Popper, ClickAwayListener, Stack, Box, useTheme, alpha } from '@mui/material';

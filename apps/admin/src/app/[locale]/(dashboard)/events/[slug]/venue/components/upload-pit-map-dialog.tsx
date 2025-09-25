@@ -12,7 +12,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 
 interface UploadPitMapDialogProps {
   division: Division;

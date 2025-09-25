@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 
 const waitForRecaptcha = () => new Promise<void>(grecaptcha.ready);

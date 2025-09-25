@@ -184,6 +184,9 @@
           "title": "Upcoming Events",
           "no-events": "No upcoming events"
         }
+      },
+      "events": {
+        "no-events": "No events"
       }
     },
     "events": {

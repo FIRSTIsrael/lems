@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { AddRounded } from '@mui/icons-material';
 import { Division, JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { AssetCell } from './asset-cell';
 
 type AssetType = JudgingRoom | RobotGameTable;
