@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import db from '../../../lib/database';
-import { makePortalSeasonResponse } from './utils';
+import { makePortalSeasonResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
