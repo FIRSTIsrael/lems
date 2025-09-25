@@ -20,7 +20,8 @@ import { LanguageSwitcher } from './language-switcher';
 
 const pages = [
   { name: 'events', href: '/events' },
-  { name: 'scorer', href: '/tools/scorer' }
+  { name: 'scorer', href: '/tools/scorer' },
+  { name: 'judging-timer', href: '/tools/judging-timer' }
 ];
 
 interface PortalAppBarProps {

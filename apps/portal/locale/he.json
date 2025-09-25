@@ -38,11 +38,59 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "קבוצה #{number} לא נמצאה",
+        "description": "הקבוצה שאתה מחפש לא קיימת במאגר הנתונים שלנו.",
+        "back-to-teams": "חזרה לקבוצות"
+      },
+      "info": {
+        "from": "מ{city}",
+        "rookie-year": "שנת רוקי: {year}",
+        "last-competed": "השתתף לאחרונה ב{year}",
+        "details-on": "פרטים על",
+        "season": "עונת {year}"
+      },
+      "navigation": {
+        "team-info": "מידע על הקבוצה",
+        "event-results": "תוצאות אירועים",
+        "photos-videos": "תמונות וסרטונים",
+        "robot-profile": "פרופיל הרובוט"
+      },
+      "results": {
+        "title": "תוצאות אירועים",
+        "awards-title": "פרסים והישגים",
+        "winner": "מנצח"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
-        "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
+        "no-equipment-constraint-title": "מגבלת \"ללא מגע ציוד של הקבוצה\":",
         "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה."
+      },
+      "judging-timer": {
+        "title": "טיימר שיפוט",
+        "subtitle": "טיימר מקצועי למפגש שיפוט FIRST LEGO League",
+        "team-name": "שם הקבוצה",
+        "team-number": "מספר קבוצה",
+        "start-session": "התחל מפגש",
+        "settings": "הגדרות",
+        "cancel": "ביטול",
+        "save": "שמור",
+        "pause": "השהה",
+        "resume": "המשך",
+        "stop": "עצור",
+        "session-ends-at": "המפגש יסתיים בשעה",
+        "stages": {
+          "welcome": "זמן התכוננות",
+          "innovation-project": "פרויקט החדשנות",
+          "robot-design": "תכנון הרובוט",
+          "core-values": "ערכי הליבה",
+          "presentation": "הצגת הפרויקט",
+          "robot-explanation": "הסבר על הרובוט",
+          "questions-answers": "שאלות ותשובות"
+        }
       }
     }
   },
@@ -50,7 +98,8 @@
     "main": {
       "app-bar": {
         "events": "אירועים",
-        "scorer": "מחשבון ניקוד"
+        "scorer": "מחשבון ניקוד",
+        "judging-timer": "טיימר שיפוט"
       }
     }
   }

@@ -38,11 +38,59 @@
         "resource-map-description": "Find helpful resources and guides"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in our database.",
+        "back-to-teams": "Back to Teams"
+      },
+      "info": {
+        "from": "From {city}",
+        "rookie-year": "Rookie Year: {year}",
+        "last-competed": "Last competed in {year}",
+        "details-on": "Details on",
+        "season": "{year} Season"
+      },
+      "navigation": {
+        "team-info": "Team Info",
+        "event-results": "Event Results",
+        "photos-videos": "Photos & Videos",
+        "robot-profile": "Robot Profile"
+      },
+      "results": {
+        "title": "Event Results",
+        "awards-title": "Awards & Achievements",
+        "winner": "WINNER"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",
         "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+      },
+      "judging-timer": {
+        "title": "Judging Timer",
+        "subtitle": "Professional judging session timer for FIRST LEGO League",
+        "team-name": "Team Name",
+        "team-number": "Team Number",
+        "start-session": "Start Session",
+        "settings": "Settings",
+        "cancel": "Cancel",
+        "save": "Save",
+        "pause": "Pause",
+        "resume": "Resume",
+        "stop": "Stop",
+        "session-ends-at": "Session ends at",
+        "stages": {
+          "welcome": "Preparation Time",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "presentation": "Presentation",
+          "robot-explanation": "Robot Explanation",
+          "questions-answers": "Questions & Answers"
+        }
       }
     }
   },
@@ -50,7 +98,8 @@
     "main": {
       "app-bar": {
         "events": "Events",
-        "scorer": "Scorer"
+        "scorer": "Scorer",
+        "judging-timer": "Judging Timer"
       }
     }
   }
