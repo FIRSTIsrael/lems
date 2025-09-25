@@ -28,97 +28,50 @@ import {
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
-import { Role, VolunteerSlot } from '../types';
+import { Role } from '../types';
+import { useVolunteer } from './volunteer-context';
 
 interface RoleAssignmentSectionProps {
   role: Role;
-  divisions: Division[];
-  slots: VolunteerSlot[];
-  onChange: (newSlots: VolunteerSlot[]) => void;
-  allSlots: VolunteerSlot[];
   initiallyExpanded?: boolean;
 }
 
 export function RoleAssignmentSection({
   role,
-  divisions,
-  slots,
-  onChange,
-  allSlots,
   initiallyExpanded = false
 }: RoleAssignmentSectionProps) {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
+  const {
+    divisions,
+    getSlotsForRole,
+    addSlot,
+    removeSlot,
+    updateSlotDivisions,
+    updateSlotIdentifier,
+    needsIdentifiers
+  } = useVolunteer();
+
+  const slots = getSlotsForRole(role);
   const [expanded, setExpanded] = useState(initiallyExpanded);
 
   const singleDivision = divisions.length === 1;
 
   const handleAddSlot = () => {
-    // Generate a simple ID for the new slot
-    const newId = `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    const newSlot: VolunteerSlot = {
-      id: newId,
-      role,
-      divisions: singleDivision ? [divisions[0].id] : []
-    };
-
-    const updatedSlots = [...allSlots, newSlot];
-    onChange(updatedSlots);
+    addSlot(role);
   };
 
   const handleRemoveSlot = (slotId: string) => {
-    const updatedSlots = allSlots.filter(s => s.id !== slotId);
-    onChange(updatedSlots);
+    removeSlot(slotId);
   };
 
   const handleDivisionChange = (slotId: string, newDivisions: string[]) => {
-    // Check if "Select All" (empty string) was clicked
-    if (newDivisions.includes('')) {
-      handleSelectAllDivisions(slotId);
-      return;
-    }
-
-    const updatedSlots = allSlots.map(slot =>
-      slot.id === slotId ? { ...slot, divisions: newDivisions } : slot
-    );
-    onChange(updatedSlots);
+    updateSlotDivisions(slotId, newDivisions);
   };
 
   const handleIdentifierChange = (slotId: string, identifier: string) => {
-    const updatedSlots = allSlots.map(slot =>
-      slot.id === slotId ? { ...slot, identifier: identifier.slice(0, 12) || undefined } : slot
-    );
-    onChange(updatedSlots);
-  };
-
-  const handleSelectAllDivisions = (slotId: string) => {
-    const slot = allSlots.find(s => s.id === slotId);
-    if (!slot) return;
-
-    const allDivisionIds = divisions.map(d => d.id);
-
-    // If ANY divisions are selected, deselect all. If NONE are selected, select all.
-    const newDivisions = slot.divisions.length > 0 ? [] : allDivisionIds;
-
-    const updatedSlots = allSlots.map(s =>
-      s.id === slotId ? { ...s, divisions: newDivisions } : s
-    );
-    onChange(updatedSlots);
-  };
-
-  // Check if duplicates exist for this role per division
-  const getDuplicatesForDivision = (divisionId: string) => {
-    return slots.filter(slot => slot.divisions.includes(divisionId));
-  };
-
-  const needsIdentifiers = (slot: VolunteerSlot) => {
-    return slot.divisions.some(divisionId => {
-      const duplicatesInDivision = getDuplicatesForDivision(divisionId);
-      return duplicatesInDivision.length > 1;
-    });
+    updateSlotIdentifier(slotId, identifier);
   };
 
   return (

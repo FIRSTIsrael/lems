@@ -2,21 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Card, CardHeader, CardContent } from '@mui/material';
-import { Division } from '@lems/types/api/admin';
-import { EDITABLE_MANDATORY_ROLES, VolunteerSlot } from '../../types';
+import { EDITABLE_MANDATORY_ROLES } from '../../types';
 import { RoleAssignmentSection } from '../role-assignment-section';
 
-interface MandatoryRolesSectionProps {
-  divisions: Division[];
-  slots: VolunteerSlot[];
-  onSlotChange: (newSlots: VolunteerSlot[]) => void;
-}
-
-export const MandatoryRolesSection: React.FC<MandatoryRolesSectionProps> = ({
-  divisions,
-  slots,
-  onSlotChange
-}) => {
+export const MandatoryRolesSection: React.FC = () => {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
 
   return (
@@ -29,15 +18,7 @@ export const MandatoryRolesSection: React.FC<MandatoryRolesSectionProps> = ({
           </Typography>
           <Stack spacing={2}>
             {EDITABLE_MANDATORY_ROLES.map(role => (
-              <RoleAssignmentSection
-                key={role}
-                role={role}
-                divisions={divisions}
-                slots={slots.filter(s => s.role === role)}
-                onChange={onSlotChange}
-                allSlots={slots}
-                initiallyExpanded={false}
-              />
+              <RoleAssignmentSection key={role} role={role} initiallyExpanded={false} />
             ))}
           </Stack>
         </CardContent>

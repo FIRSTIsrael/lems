@@ -3,21 +3,10 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Card, CardHeader, CardContent } from '@mui/material';
-import { Division } from '@lems/types/api/admin';
-import { OPTIONAL_ROLES, VolunteerSlot } from '../../types';
+import { OPTIONAL_ROLES } from '../../types';
 import { RoleAssignmentSection } from '../role-assignment-section';
 
-interface OptionalRolesSectionProps {
-  divisions: Division[];
-  slots: VolunteerSlot[];
-  onSlotChange: (newSlots: VolunteerSlot[]) => void;
-}
-
-export const OptionalRolesSection: React.FC<OptionalRolesSectionProps> = ({
-  divisions,
-  slots,
-  onSlotChange
-}) => {
+export const OptionalRolesSection: React.FC = () => {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
 
   return (
@@ -30,15 +19,7 @@ export const OptionalRolesSection: React.FC<OptionalRolesSectionProps> = ({
           </Typography>
           <Stack spacing={2}>
             {OPTIONAL_ROLES.map(role => (
-              <RoleAssignmentSection
-                key={role}
-                role={role}
-                divisions={divisions}
-                slots={slots.filter(s => s.role === role)}
-                onChange={onSlotChange}
-                allSlots={slots}
-                initiallyExpanded={false}
-              />
+              <RoleAssignmentSection key={role} role={role} initiallyExpanded={false} />
             ))}
           </Stack>
         </CardContent>

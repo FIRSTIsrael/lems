@@ -14,18 +14,12 @@ import {
 } from '@mui/material';
 import { useRoleTranslations } from '@lems/localization';
 import { SYSTEM_MANAGED_ROLES, TOGGLEABLE_SYSTEM_ROLES } from '../../types';
+import { useVolunteer } from '../volunteer-context';
 
-export interface ManagedRolesSectionProps {
-  toggledSystemRoles: Set<string>;
-  onToggleSystemRole: (role: string, enabled: boolean) => void;
-}
-
-export const ManagedRolesSection: React.FC<ManagedRolesSectionProps> = ({
-  toggledSystemRoles,
-  onToggleSystemRole
-}) => {
+export const ManagedRolesSection: React.FC = () => {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
+  const { toggledSystemRoles, handleToggleSystemRole } = useVolunteer();
 
   return (
     <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -87,7 +81,7 @@ export const ManagedRolesSection: React.FC<ManagedRolesSectionProps> = ({
                     control={
                       <Switch
                         checked={toggledSystemRoles.has(role)}
-                        onChange={e => onToggleSystemRole(role, e.target.checked)}
+                        onChange={e => handleToggleSystemRole(role, e.target.checked)}
                         size="small"
                       />
                     }

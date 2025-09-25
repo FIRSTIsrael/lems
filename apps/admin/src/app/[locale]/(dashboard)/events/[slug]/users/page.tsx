@@ -6,6 +6,7 @@ import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { EventAdminsSection } from './components/event-admins-section';
 import { VolunteerUsersSection } from './components/volunteer-users-section';
+import { VolunteerProvider } from './components/volunteer-context';
 
 export default function EventUsersPage() {
   const event = useEvent();
@@ -20,7 +21,9 @@ export default function EventUsersPage() {
 
         <Divider />
 
-        <VolunteerUsersSection />
+        <VolunteerProvider>
+          <VolunteerUsersSection />
+        </VolunteerProvider>
       </Stack>
     </Box>
   );
