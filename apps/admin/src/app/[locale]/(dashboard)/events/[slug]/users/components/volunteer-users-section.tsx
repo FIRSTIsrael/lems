@@ -8,14 +8,14 @@ import {
   Typography,
   Stack,
   Alert,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Button,
   FormControlLabel,
-  Switch
+  Switch,
+  Card,
+  CardHeader,
+  CardContent
 } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon, Save as SaveIcon } from '@mui/icons-material';
+import { Save as SaveIcon } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
 import {
@@ -189,9 +189,31 @@ export function VolunteerUsersSection() {
 
   return (
     <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
+        <Box>
+          <Typography variant="h5" gutterBottom>
+            {t('title')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t('description')}
+          </Typography>
+        </Box>
+
+        <Button
+          variant="contained"
+          startIcon={<SaveIcon />}
+          onClick={handleSave}
+          disabled={validationErrors.length > 0 || saving}
+          size="large"
+          sx={{ flexShrink: 0 }}
+        >
+          {saving ? t('saving') : t('saveSlots')}
+        </Button>
+      </Box>
+
       {/* Validation Errors */}
       {validationErrors.length > 0 && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom>
             {t('validation.title')}
           </Typography>
@@ -203,137 +225,152 @@ export function VolunteerUsersSection() {
         </Alert>
       )}
 
-      {/* System-Managed Roles Section */}
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{t('systemManagedRoles.title')}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            {t('systemManagedRoles.description')}
-          </Alert>
-          <Stack spacing={2}>
-            {/* Always required system roles */}
-            {SYSTEM_MANAGED_ROLES.map(role => (
-              <Box
-                key={role}
-                sx={{
-                  p: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: 'grey.50'
-                }}
-              >
-                <Typography variant="h6" color="text.secondary">
-                  {getRole(role)}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                  {t('systemManagedRoles.roleDescription')}
-                </Typography>
-              </Box>
-            ))}
-
-            {/* Toggleable system roles */}
-            {TOGGLEABLE_SYSTEM_ROLES.map(role => (
-              <Box
-                key={role}
-                sx={{
-                  p: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: 'grey.50'
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Typography variant="h6" color="text.secondary">
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
+        {/* Column 1: System-Managed Roles */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Card sx={{ height: 'fit-content' }}>
+            <CardHeader
+              title={t('systemManagedRoles.title')}
+              titleTypographyProps={{ variant: 'h6' }}
+            />
+            <CardContent>
+              <Alert severity="info" sx={{ mb: 2, fontSize: '0.875rem' }}>
+                {t('systemManagedRoles.description')}
+              </Alert>
+              <Stack spacing={1.5}>
+                {/* Always required system roles */}
+                {SYSTEM_MANAGED_ROLES.map(role => (
+                  <Box
+                    key={role}
+                    sx={{
+                      p: 1.5,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      bgcolor: 'grey.50'
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="text.secondary">
                       {getRole(role)}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                      {t('systemManagedRoles.toggleableRoleDescription')}
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ fontStyle: 'italic' }}
+                    >
+                      {t('systemManagedRoles.roleDescription')}
                     </Typography>
                   </Box>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={toggledSystemRoles.has(role)}
-                        onChange={e => handleToggleSystemRole(role, e.target.checked)}
+                ))}
+
+                {/* Toggleable system roles */}
+                {TOGGLEABLE_SYSTEM_ROLES.map(role => (
+                  <Box
+                    key={role}
+                    sx={{
+                      p: 1.5,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      bgcolor: 'grey.50'
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Box sx={{ flex: 1, mr: 1 }}>
+                        <Typography variant="subtitle2" color="text.secondary">
+                          {getRole(role)}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontStyle: 'italic' }}
+                        >
+                          {t('systemManagedRoles.toggleableRoleDescription')}
+                        </Typography>
+                      </Box>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={toggledSystemRoles.has(role)}
+                            onChange={e => handleToggleSystemRole(role, e.target.checked)}
+                            size="small"
+                          />
+                        }
+                        label=""
+                        sx={{ m: 0 }}
                       />
-                    }
-                    label={
-                      toggledSystemRoles.has(role)
+                    </Stack>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: 'block', mt: 0.5 }}
+                    >
+                      {toggledSystemRoles.has(role)
                         ? t('systemManagedRoles.enabled')
-                        : t('systemManagedRoles.disabled')
-                    }
+                        : t('systemManagedRoles.disabled')}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* Column 2: Mandatory Roles */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Card sx={{ height: 'fit-content' }}>
+            <CardHeader
+              title={t('mandatoryRoles.title')}
+              titleTypographyProps={{ variant: 'h6' }}
+            />
+            <CardContent>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
+                {t('mandatoryRoles.description')}
+              </Typography>
+              <Stack spacing={2}>
+                {EDITABLE_MANDATORY_ROLES.map(role => (
+                  <RoleAssignmentSection
+                    key={role}
+                    role={role}
+                    divisions={divisions}
+                    slots={slots.filter(s => s.role === role)}
+                    onChange={handleSlotChange}
+                    allSlots={slots}
+                    singleDivision={singleDivision}
+                    initiallyExpanded={false}
                   />
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
 
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{t('mandatoryRoles.title')}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {t('mandatoryRoles.description')}
-          </Typography>
-          <Stack spacing={3}>
-            {EDITABLE_MANDATORY_ROLES.map(role => (
-              <RoleAssignmentSection
-                key={role}
-                role={role}
-                divisions={divisions}
-                slots={slots.filter(s => s.role === role)}
-                onChange={handleSlotChange}
-                allSlots={slots}
-                singleDivision={singleDivision}
-              />
-            ))}
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{t('optionalRoles.title')}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {t('optionalRoles.description')}
-          </Typography>
-          <Stack spacing={3}>
-            {OPTIONAL_ROLES.map(role => (
-              <RoleAssignmentSection
-                key={role}
-                role={role}
-                divisions={divisions}
-                slots={slots.filter(s => s.role === role)}
-                onChange={handleSlotChange}
-                allSlots={slots}
-                singleDivision={singleDivision}
-              />
-            ))}
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          variant="contained"
-          startIcon={<SaveIcon />}
-          onClick={handleSave}
-          disabled={validationErrors.length > 0 || saving}
-          size="large"
-        >
-          {saving ? t('saving') : t('saveSlots')}
-        </Button>
-      </Box>
+        {/* Column 3: Optional Roles */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Card sx={{ height: 'fit-content' }}>
+            <CardHeader title={t('optionalRoles.title')} titleTypographyProps={{ variant: 'h6' }} />
+            <CardContent>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
+                {t('optionalRoles.description')}
+              </Typography>
+              <Stack spacing={2}>
+                {OPTIONAL_ROLES.map(role => (
+                  <RoleAssignmentSection
+                    key={role}
+                    role={role}
+                    divisions={divisions}
+                    slots={slots.filter(s => s.role === role)}
+                    onChange={handleSlotChange}
+                    allSlots={slots}
+                    singleDivision={singleDivision}
+                    initiallyExpanded={false}
+                  />
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+      </Stack>
     </Box>
   );
 }

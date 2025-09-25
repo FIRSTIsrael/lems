@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -16,9 +17,16 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
-  TextField
+  TextField,
+  Collapse,
+  CardHeader
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
 import { useRoleTranslations } from '@lems/localization';
@@ -32,6 +40,7 @@ interface RoleAssignmentSectionProps {
   onChange: (newSlots: VolunteerSlot[]) => void;
   allSlots: VolunteerSlot[];
   singleDivision: boolean;
+  initiallyExpanded?: boolean;
 }
 
 export function RoleAssignmentSection({
@@ -40,10 +49,12 @@ export function RoleAssignmentSection({
   slots,
   onChange,
   allSlots,
-  singleDivision
+  singleDivision,
+  initiallyExpanded = false
 }: RoleAssignmentSectionProps) {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
+  const [expanded, setExpanded] = useState(initiallyExpanded);
 
   const handleAddSlot = () => {
     // Generate a simple ID for the new slot
@@ -91,23 +102,37 @@ export function RoleAssignmentSection({
   };
 
   return (
-    <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">{getRole(role)}</Typography>
-        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
-          {t('addSlot')}
-        </Button>
-      </Stack>
-
-      {slots.length === 0 ? (
-        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-          {t('noSlotsAssigned')}
-        </Typography>
-      ) : (
-        <Stack spacing={2}>
-          {slots.map(slot => (
-            <Card key={slot.id} variant="outlined">
-              <CardContent>
+    <Card variant="outlined">
+      <CardHeader
+        title={getRole(role)}
+        titleTypographyProps={{ variant: 'h6' }}
+        action={
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="body2" color="text.secondary">
+              {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
+            </Typography>
+            <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
+              {t('addSlot')}
+            </Button>
+            <IconButton
+              onClick={() => setExpanded(!expanded)}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </Stack>
+        }
+      />
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent sx={{ pt: 0 }}>
+          {slots.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+              {t('noSlotsAssigned')}
+            </Typography>
+          ) : (
+            <Stack spacing={3}>
+              {slots.map(slot => (
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                   <Stack direction="row" spacing={2}>
                     {!singleDivision && (
@@ -127,6 +152,10 @@ export function RoleAssignmentSection({
                                     key={divisionId}
                                     label={division?.name || divisionId}
                                     size="small"
+                                    sx={{
+                                      backgroundColor: division?.color || '#666',
+                                      color: 'white'
+                                    }}
                                   />
                                 );
                               })}
@@ -150,10 +179,10 @@ export function RoleAssignmentSection({
                           label={t('identifier')}
                           value={slot.identifier || ''}
                           onChange={e => handleIdentifierChange(slot.id, e.target.value)}
-                          sx={{ maxWidth: 200 }}
+                          sx={{ maxWidth: 200, height: '100%' }}
                           slotProps={{ input: { inputProps: { maxLength: 12 } } }}
                         />
-                        <Typography variant="caption" color="text.secondary" maxWidth={300}>
+                        <Typography variant="caption" color="text.secondary" maxWidth={200}>
                           {t('identifierHelp')}
                         </Typography>
                       </Stack>
@@ -168,11 +197,11 @@ export function RoleAssignmentSection({
                     <DeleteIcon />
                   </IconButton>
                 </Stack>
-              </CardContent>
-            </Card>
-          ))}
-        </Stack>
-      )}
-    </Box>
+              ))}
+            </Stack>
+          )}
+        </CardContent>
+      </Collapse>
+    </Card>
   );
 }

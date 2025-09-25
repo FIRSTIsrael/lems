@@ -52,6 +52,13 @@ export function EventAdminsSection() {
 
   return (
     <Box>
+      <Typography variant="h5" gutterBottom>
+        {t('title')}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {t('description')}
+      </Typography>
+
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h6">{t('currentAdmins')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>

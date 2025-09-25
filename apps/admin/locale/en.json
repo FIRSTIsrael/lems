@@ -633,6 +633,8 @@
               "description": "These roles are optional but can be assigned as needed."
             },
             "addSlot": "Add Slot",
+            "slot": "slot",
+            "slots": "slots",
             "removeSlot": "Remove Slot",
             "noSlotsAssigned": "No slots assigned for this role.",
             "divisions": "Divisions",

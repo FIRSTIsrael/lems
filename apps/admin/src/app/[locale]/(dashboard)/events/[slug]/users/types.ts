@@ -12,10 +12,12 @@ export type AllSystemRole = (typeof ALL_SYSTEM_ROLES)[number];
 
 // Mandatory roles that can be edited manually
 export const EDITABLE_MANDATORY_ROLES = [
-  'pit-admin',
   'judge-advisor',
   'head-referee',
-  'scorekeeper'
+  'scorekeeper',
+  'audience-display',
+  'tournament-manager',
+  'pit-admin'
 ] as const;
 export type EditableMandatoryRole = (typeof EDITABLE_MANDATORY_ROLES)[number];
 
@@ -28,11 +30,9 @@ export const OPTIONAL_ROLES = [
   'judging-head-queuer',
   'field-queuer',
   'judging-queuer',
-  'mc',
   'field-manager',
-  'audience-display',
   'reports',
-  'tournament-manager'
+  'mc'
 ] as const;
 export type OptionalRole = (typeof OPTIONAL_ROLES)[number];
 
