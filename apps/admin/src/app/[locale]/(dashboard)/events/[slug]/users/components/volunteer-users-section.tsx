@@ -11,11 +11,20 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Button
+  Button,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Save as SaveIcon } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
-import { MANDATORY_ROLES, OPTIONAL_ROLES, Role } from '../types';
+import { useRoleTranslations } from '@lems/localization';
+import {
+  EDITABLE_MANDATORY_ROLES,
+  SYSTEM_MANAGED_ROLES,
+  TOGGLEABLE_SYSTEM_ROLES,
+  OPTIONAL_ROLES,
+  Role
+} from '../types';
 import { useEvent } from '../../components/event-context';
 import { RoleAssignmentSection } from './role-assignment-section';
 
@@ -26,15 +35,15 @@ export interface VolunteerSlot {
   identifier?: string;
 }
 
-// Generate initial slots based on divisions
+// Generate initial slots based on divisions (only for editable roles)
 const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
   const slots: VolunteerSlot[] = [];
 
   if (divisions.length === 0) return slots;
 
-  // For single division events, create 1x of each mandatory role
+  // For single division events, create 1x of each editable mandatory role
   if (divisions.length === 1) {
-    MANDATORY_ROLES.forEach(role => {
+    EDITABLE_MANDATORY_ROLES.forEach(role => {
       slots.push({
         id: `initial_${role}_${divisions[0].id}`,
         role,
@@ -42,9 +51,9 @@ const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
       });
     });
   } else {
-    // For multi-division events, create 1x of each mandatory role for each division
+    // For multi-division events, create 1x of each editable mandatory role for each division
     divisions.forEach(division => {
-      MANDATORY_ROLES.forEach(role => {
+      EDITABLE_MANDATORY_ROLES.forEach(role => {
         slots.push({
           id: `initial_${role}_${division.id}`,
           role,
@@ -60,9 +69,11 @@ const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
 export function VolunteerUsersSection() {
   const event = useEvent();
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const { getRole } = useRoleTranslations();
 
   const [slots, setSlots] = useState<VolunteerSlot[]>([]);
   const [saving, setSaving] = useState(false);
+  const [toggledSystemRoles, setToggledSystemRoles] = useState<Set<string>>(new Set());
   const initialized = useRef(false);
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
@@ -93,9 +104,9 @@ export function VolunteerUsersSection() {
     const errors: string[] = [];
 
     if (divisions.length > 1) {
-      // Check each division has all mandatory roles
+      // Check each division has all editable mandatory roles
       divisions.forEach(division => {
-        MANDATORY_ROLES.forEach(role => {
+        EDITABLE_MANDATORY_ROLES.forEach(role => {
           const hasRoleInDivision = slots.some(
             slot => slot.role === role && slot.divisions.includes(division.id)
           );
@@ -103,7 +114,7 @@ export function VolunteerUsersSection() {
           if (!hasRoleInDivision) {
             errors.push(
               t('validation.missingMandatoryRole', {
-                role: t(`roles.${role}`),
+                role: getRole(role),
                 division: division.name
               })
             );
@@ -111,8 +122,8 @@ export function VolunteerUsersSection() {
         });
       });
     } else if (divisions.length === 1) {
-      // For single division, just check that all mandatory roles are assigned
-      MANDATORY_ROLES.forEach(role => {
+      // For single division, just check that all editable mandatory roles are assigned
+      EDITABLE_MANDATORY_ROLES.forEach(role => {
         const hasRole = slots.some(slot => slot.role === role);
         if (!hasRole) {
           errors.push(
@@ -125,10 +136,22 @@ export function VolunteerUsersSection() {
     }
 
     return errors;
-  }, [slots, divisions, t]);
+  }, [divisions, slots, t, getRole]);
 
   const handleSlotChange = (newSlots: VolunteerSlot[]) => {
     setSlots(newSlots);
+  };
+
+  const handleToggleSystemRole = (role: string, enabled: boolean) => {
+    setToggledSystemRoles(prev => {
+      const newSet = new Set(prev);
+      if (enabled) {
+        newSet.add(role);
+      } else {
+        newSet.delete(role);
+      }
+      return newSet;
+    });
   };
 
   const handleSave = async () => {
@@ -144,7 +167,8 @@ export function VolunteerUsersSection() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          slots
+          slots,
+          enabledSystemRoles: Array.from(toggledSystemRoles)
         })
       });
 
@@ -179,6 +203,78 @@ export function VolunteerUsersSection() {
         </Alert>
       )}
 
+      {/* System-Managed Roles Section */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">{t('systemManagedRoles.title')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {t('systemManagedRoles.description')}
+          </Alert>
+          <Stack spacing={2}>
+            {/* Always required system roles */}
+            {SYSTEM_MANAGED_ROLES.map(role => (
+              <Box
+                key={role}
+                sx={{
+                  p: 2,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: 'grey.50'
+                }}
+              >
+                <Typography variant="h6" color="text.secondary">
+                  {getRole(role)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                  {t('systemManagedRoles.roleDescription')}
+                </Typography>
+              </Box>
+            ))}
+
+            {/* Toggleable system roles */}
+            {TOGGLEABLE_SYSTEM_ROLES.map(role => (
+              <Box
+                key={role}
+                sx={{
+                  p: 2,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: 'grey.50'
+                }}
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography variant="h6" color="text.secondary">
+                      {getRole(role)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                      {t('systemManagedRoles.toggleableRoleDescription')}
+                    </Typography>
+                  </Box>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={toggledSystemRoles.has(role)}
+                        onChange={e => handleToggleSystemRole(role, e.target.checked)}
+                      />
+                    }
+                    label={
+                      toggledSystemRoles.has(role)
+                        ? t('systemManagedRoles.enabled')
+                        : t('systemManagedRoles.disabled')
+                    }
+                  />
+                </Stack>
+              </Box>
+            ))}
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">{t('mandatoryRoles.title')}</Typography>
@@ -188,7 +284,7 @@ export function VolunteerUsersSection() {
             {t('mandatoryRoles.description')}
           </Typography>
           <Stack spacing={3}>
-            {MANDATORY_ROLES.map(role => (
+            {EDITABLE_MANDATORY_ROLES.map(role => (
               <RoleAssignmentSection
                 key={role}
                 role={role}

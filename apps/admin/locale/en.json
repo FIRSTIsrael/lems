@@ -616,6 +616,14 @@
           "volunteerUsers": {
             "title": "Volunteer Users",
             "description": "Manage volunteer role slots for this event. Ensure all mandatory roles are filled for each division.",
+            "systemManagedRoles": {
+              "title": "System-Managed Roles",
+              "description": "These roles are automatically managed by the system and cannot be edited manually.",
+              "roleDescription": "Managed automatically by the system",
+              "toggleableRoleDescription": "This role can be enabled or disabled for your event",
+              "enabled": "Enabled",
+              "disabled": "Disabled"
+            },
             "mandatoryRoles": {
               "title": "Mandatory Roles",
               "description": "These roles are required for each division in the event."
