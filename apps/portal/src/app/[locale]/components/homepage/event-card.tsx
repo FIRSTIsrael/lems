@@ -19,7 +19,7 @@ import {
   ArrowForward as ArrowIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
-import LiveIcon from './live-icon';
+import { LiveIcon } from './live-icon';
 
 export interface Event {
   id: string;

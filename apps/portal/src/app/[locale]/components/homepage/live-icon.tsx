@@ -1,6 +1,6 @@
 import { Box, keyframes } from '@mui/material';
 
-const LiveIcon: React.FC = () => {
+export const LiveIcon: React.FC = () => {
   const liveAnimation = keyframes`0% {
     transform: scale(1, 1);
   }
@@ -36,5 +36,3 @@ const LiveIcon: React.FC = () => {
     />
   );
 };
-
-export default LiveIcon;

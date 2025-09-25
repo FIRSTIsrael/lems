@@ -36,6 +36,7 @@ export const QuickActionsSection = () => {
           const IconComponent = action.icon;
           return (
             <Card
+              variant="outlined"
               key={action.title}
               sx={{
                 cursor: 'pointer',

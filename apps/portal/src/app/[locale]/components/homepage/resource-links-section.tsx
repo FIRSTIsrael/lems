@@ -36,6 +36,7 @@ export const ResourceLinksSection = () => {
           const IconComponent = resource.icon;
           return (
             <Card
+              variant="outlined"
               key={resource.title}
               sx={{
                 cursor: 'pointer',
