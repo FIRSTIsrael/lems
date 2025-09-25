@@ -1,19 +1,21 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Box, Typography, Chip, Stack, IconButton, Collapse } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
-import { Event, EventCard } from './event-card';
+import { EventSummary } from '@lems/types/api/portal';
+import { EventCard } from './event-card';
 
 interface EventsSectionProps {
   title: string;
-  events: Event[];
+  events: EventSummary[];
   variant: 'active' | 'upcoming' | 'past';
-  chipColor?: 'success' | 'primary' | 'secondary';
+  chipColor?: 'success' | 'primary' | 'secondary' | 'error';
   emptyMessage?: string;
   maxDisplayed?: number;
   defaultExpanded?: boolean;
@@ -30,14 +32,12 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
   defaultExpanded = true,
   showIcon
 }) => {
+  const t = useTranslations('pages.index.events');
+
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
   const displayedEvents = maxDisplayed ? events.slice(0, maxDisplayed) : events;
   const hasMoreEvents = maxDisplayed && events.length > maxDisplayed;
-
-  if (events.length === 0) {
-    return null;
-  }
 
   return (
     <>
@@ -64,17 +64,11 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
       </Stack>
 
       <Collapse in={expanded}>
-        {events.length === 0 && emptyMessage ? (
-          <Box
-            sx={{
-              textAlign: 'center',
-              py: 6,
-              color: 'text.secondary'
-            }}
-          >
+        {events.length === 0 ? (
+          <Box textAlign="center" py={6} color="text.secondary">
             <CalendarIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
             <Typography variant="h6" gutterBottom>
-              {emptyMessage}
+              {emptyMessage || t('no-events')}
             </Typography>
           </Box>
         ) : (

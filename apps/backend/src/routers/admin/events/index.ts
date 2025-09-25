@@ -32,12 +32,12 @@ router.get('/slug/:slug', async (req, res) => {
 });
 
 router.get('/season/:seasonId', async (req, res) => {
-  const events = await db.seasons.byId(req.params.seasonId).getEvents();
+  const events = await db.events.bySeason(req.params.seasonId).getAll();
   res.json(events);
 });
 
 router.get('/season/:seasonId/summary', async (req, res) => {
-  const events = await db.seasons.byId(req.params.seasonId).getSummarizedEvents();
+  const events = await db.events.bySeason(req.params.seasonId).getAllSummaries();
   res.json(events.map(event => makeAdminEventSummaryResponse(event)));
 });
 

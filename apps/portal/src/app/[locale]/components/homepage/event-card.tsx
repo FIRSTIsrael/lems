@@ -7,7 +7,6 @@ import {
   CardContent,
   CardActions,
   Button,
-  Chip,
   Stack,
   Box,
   Typography,
@@ -20,38 +19,28 @@ import {
   ArrowForward as ArrowIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
-
-export interface Event {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  teamsRegistered: number;
-  status: string;
-  isActive?: boolean;
-  isUpcoming?: boolean;
-  isPast?: boolean;
-}
+import { EventSummary } from '@lems/types/api/portal';
+import { LiveIcon } from './live-icon';
 
 interface EventCardProps {
-  event: Event;
+  event: EventSummary;
   variant?: 'active' | 'upcoming' | 'past';
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming' }) => {
   const theme = useTheme();
-  const tEvents = useTranslations('pages.index.events');
+  const t = useTranslations('pages.index.events');
 
   const getCardStyles = () => {
     switch (variant) {
       case 'active':
         return {
-          border: `2px solid ${theme.palette.success.main}`,
-          bgcolor: alpha(theme.palette.success.main, 0.05),
+          border: `2px solid ${theme.palette.error.main}`,
+          bgcolor: alpha(theme.palette.error.main, 0.05),
           '&:hover': {
             transform: 'translateY(-4px)',
             boxShadow: theme.shadows[8],
-            borderColor: theme.palette.success.dark
+            borderColor: theme.palette.error.dark
           }
         };
       case 'past':
@@ -81,19 +70,25 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     switch (variant) {
       case 'active':
         return (
-          <Button variant="contained" color="success" endIcon={<ArrowIcon />} sx={{ ml: 'auto' }}>
+          <Button
+            component="span"
+            variant="contained"
+            color="error"
+            endIcon={<ArrowIcon />}
+            sx={{ ml: 'auto' }}
+          >
             View Event
           </Button>
         );
       case 'past':
         return (
-          <Button variant="text" size="small" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="text" size="small" endIcon={<ArrowIcon />}>
             View Results
           </Button>
         );
       default: // upcoming
         return (
-          <Button variant="outlined" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="outlined" endIcon={<ArrowIcon />}>
             View Details
           </Button>
         );
@@ -102,20 +97,30 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
 
   return (
     <Card
+      component="a"
+      href={`/events/${event.slug}`}
       sx={{
         cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',
+        textDecoration: 'none',
+        color: 'inherit',
+        display: 'block',
         ...getCardStyles()
       }}
     >
-      <CardContent>
+      <CardContent sx={{ position: 'relative' }}>
+        {variant === 'active' && (
+          <Box position="absolute" top={16} right={16} zIndex={1}>
+            <LiveIcon />
+          </Box>
+        )}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
           alignItems={{ xs: 'stretch', sm: 'flex-start' }}
           spacing={{ xs: 2, sm: 0 }}
         >
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, pr: variant === 'active' ? { xs: 6, sm: 0 } : 0 }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               {event.name}
             </Typography>
@@ -123,7 +128,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  {new Date(event.date).toLocaleDateString()}
+                  {event.startDate.toLocaleDateString()}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -135,21 +140,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               <Stack direction="row" alignItems="center" spacing={1}>
                 <PeopleIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  {tEvents('teams-registered', { count: event.teamsRegistered })}
+                  {t('teams-registered', { count: event.teamsRegistered })}
                 </Typography>
               </Stack>
             </Stack>
           </Box>
-          {variant === 'active' && (
-            <Box sx={{ alignSelf: { xs: 'flex-start', sm: 'flex-start' } }}>
-              <Chip
-                label="LIVE"
-                color="success"
-                variant="filled"
-                sx={{ fontWeight: 'bold', animation: 'pulse 2s infinite' }}
-              />
-            </Box>
-          )}
         </Stack>
       </CardContent>
       <CardActions>{getActionButton()}</CardActions>

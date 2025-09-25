@@ -28,14 +28,14 @@
         "browse-events": "Browse Events",
         "browse-events-description": "Find and explore events"
       },
-      "resource-links": {
-        "title": "Resources",
-        "fll-website": "FLL Challenge Website",
-        "fll-website-description": "Official challenge information",
+      "resources": {
+        "title": "Resources & Links",
+        "fll-website": "Resource Map",
+        "fll-website-description": "Find helpful resources and guides",
         "github": "GitHub Repository",
-        "github-description": "Source code and documentation",
+        "github-description": "View source code and contribute",
         "resource-map": "Resource Map",
-        "resource-map-description": "Find helpful resources"
+        "resource-map-description": "Find helpful resources and guides"
       }
     },
     "team": {
@@ -61,6 +61,13 @@
         "title": "Event Results",
         "awards-title": "Awards & Achievements",
         "winner": "WINNER"
+      }
+    },
+    "tools": {
+      "scorer": {
+        "title": "Robot Game Scorer",
+        "no-equipment-constraint-title": "No Equipment Constraint:",
+        "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
       }
     }
   },
