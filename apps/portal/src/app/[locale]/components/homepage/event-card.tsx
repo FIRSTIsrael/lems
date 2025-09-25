@@ -19,28 +19,17 @@ import {
   ArrowForward as ArrowIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
+import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from './live-icon';
 
-export interface Event {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  teamsRegistered: number;
-  status: string;
-  isActive?: boolean;
-  isUpcoming?: boolean;
-  isPast?: boolean;
-}
-
 interface EventCardProps {
-  event: Event;
+  event: EventSummary;
   variant?: 'active' | 'upcoming' | 'past';
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming' }) => {
   const theme = useTheme();
-  const tEvents = useTranslations('pages.index.events');
+  const t = useTranslations('pages.index.events');
 
   const getCardStyles = () => {
     switch (variant) {
@@ -123,7 +112,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  {new Date(event.date).toLocaleDateString()}
+                  {event.startDate.toLocaleDateString()}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -135,7 +124,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               <Stack direction="row" alignItems="center" spacing={1}>
                 <PeopleIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  {tEvents('teams-registered', { count: event.teamsRegistered })}
+                  {t('teams-registered', { count: event.teamsRegistered })}
                 </Typography>
               </Stack>
             </Stack>

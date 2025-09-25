@@ -13,14 +13,35 @@ import {
   useTheme,
   IconButton
 } from '@mui/material';
-import { Language as WebsiteIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
-import { resourceLinks } from './dummy-data';
+import {
+  Language as WebsiteIcon,
+  ArrowForward as ArrowIcon,
+  Storage as GitHubIcon,
+  Map as MapIcon
+} from '@mui/icons-material';
+
+const RESOURCES = [
+  {
+    title: 'fll-website',
+    description: 'fll-website-description',
+    icon: MapIcon,
+    href: 'https://firstisrael.org.il/fll/challenge',
+    color: 'primary' as const,
+    external: true
+  },
+  {
+    title: 'github',
+    description: 'github-description',
+    icon: GitHubIcon,
+    href: 'https://github.com/FIRSTIsrael/lems',
+    color: 'primary' as const,
+    external: true
+  }
+];
 
 export const ResourceLinksSection = () => {
   const theme = useTheme();
   const t = useTranslations('pages.index.resources');
-
-  const resources = resourceLinks;
 
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 } }}>
@@ -32,7 +53,7 @@ export const ResourceLinksSection = () => {
       </Stack>
 
       <Stack spacing={2}>
-        {resources.map(resource => {
+        {RESOURCES.map(resource => {
           const IconComponent = resource.icon;
           return (
             <Card

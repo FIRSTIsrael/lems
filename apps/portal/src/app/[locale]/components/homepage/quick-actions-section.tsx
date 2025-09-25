@@ -13,14 +13,33 @@ import {
   useTheme,
   IconButton
 } from '@mui/material';
-import { EmojiEvents as TrophyIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
-import { quickActions } from './dummy-data';
+import {
+  Calculate as CalculatorIcon,
+  Event as EventIcon,
+  EmojiEvents as TrophyIcon,
+  ArrowForward as ArrowIcon
+} from '@mui/icons-material';
+
+const ACTIONS = [
+  {
+    title: 'robot-scorer',
+    description: 'robot-scorer-description',
+    icon: CalculatorIcon,
+    href: '/tools/scorer',
+    color: 'primary' as const
+  },
+  {
+    title: 'browse-events',
+    description: 'browse-events-description',
+    icon: EventIcon,
+    href: '/events',
+    color: 'primary' as const
+  }
+];
 
 export const QuickActionsSection = () => {
   const theme = useTheme();
   const t = useTranslations('pages.index.quick-actions');
-
-  const actions = quickActions;
 
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 } }}>
@@ -32,7 +51,7 @@ export const QuickActionsSection = () => {
       </Stack>
 
       <Stack spacing={2}>
-        {actions.map(action => {
+        {ACTIONS.map(action => {
           const IconComponent = action.icon;
           return (
             <Card

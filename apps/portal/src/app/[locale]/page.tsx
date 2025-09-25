@@ -15,6 +15,10 @@ export default function HomePage() {
     fallbackData: null
   });
 
+  if (!latestSeason) {
+    return null;
+  }
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Hero season={latestSeason} />

@@ -1,6 +1,7 @@
 'use client';
 
 import { SWRConfig } from 'swr';
+import { z } from 'zod';
 import { apiFetch } from './fetch';
 
 interface SWRError extends Error {
@@ -8,8 +9,19 @@ interface SWRError extends Error {
   status: number;
 }
 
-const swrFetcher = async (url: string) => {
-  const result = await apiFetch(url);
+type FetcherArgs = string | [string, z.ZodSchema];
+
+const swrFetcher = async (args: FetcherArgs) => {
+  let url: string;
+  let schema: z.ZodSchema | undefined;
+
+  if (typeof args === 'string') {
+    url = args;
+  } else {
+    [url, schema] = args;
+  }
+
+  const result = schema ? await apiFetch(url, {}, schema) : await apiFetch(url, {});
   if (!result.ok) {
     const error = new Error('An error occurred while fetching the data.') as SWRError;
     error.info = result.error;

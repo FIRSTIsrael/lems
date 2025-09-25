@@ -7,8 +7,7 @@ export const PortalEventResponseSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   location: z.string(),
-  coordinates: z.string().nullable(),
-  seasonId: z.string()
+  coordinates: z.string().optional()
 });
 
 export const PortalEventSummaryResponseSchema = z.object({
@@ -23,4 +22,4 @@ export type EventSummary = z.infer<typeof PortalEventSummaryResponseSchema>;
 
 export const PortalEventsResponseSchema = z.array(PortalEventResponseSchema);
 
-export const PortalSummarizedEventsResponseSchema = z.array(PortalEventSummaryResponseSchema);
+export const PortalEventSummariesResponseSchema = z.array(PortalEventSummaryResponseSchema);
