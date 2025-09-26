@@ -8,6 +8,7 @@
       "events": {
         "active-events": "Active Events",
         "no-active-events": "No active events at the moment",
+        "no-events": "No events found",
         "upcoming-events": "Upcoming Events",
         "past-events": "Past Events",
         "view-all-events": "View All Events",
@@ -79,7 +80,10 @@
     "main": {
       "app-bar": {
         "events": "Events",
-        "scorer": "Scorer"
+        "scorer": "Scorer",
+        "field-timer": "Field Timer",
+        "rubrics": "Rubrics",
+        "judging-timer": "Judging Timer"
       }
     }
   }

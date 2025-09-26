@@ -8,6 +8,7 @@
       "events": {
         "active-events": "אירועים פעילים",
         "no-active-events": "אין אירועים פעילים כרגע",
+        "no-events": "לא נמצאו אירועים",
         "upcoming-events": "אירועים קרובים",
         "past-events": "אירועים קודמים",
         "view-all-events": "צפייה בכל האירועים",
@@ -19,10 +20,7 @@
       },
       "search": {
         "title": "חיפוש קבוצות ואירועים",
-        "placeholder": "חפשו קבוצות, אירועים או מיקומים...",
-        "search-button": "חיפוש",
-        "teams-tab": "קבוצות",
-        "events-tab": "אירועים"
+        "placeholder": "חפשו קבוצות או אירועים..."
       },
       "quick-actions": {
         "title": "פעולות מהירות",
@@ -79,7 +77,10 @@
     "main": {
       "app-bar": {
         "events": "אירועים",
-        "scorer": "מחשבון ניקוד"
+        "scorer": "מחשבון ניקוד",
+        "field-timer": "טיימר מקצה זירה",
+        "rubrics": "מחווני שיפוט",
+        "judging-timer": "טיימר מפגש שיפוט"
       }
     }
   }

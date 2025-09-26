@@ -7,8 +7,7 @@ import { Paper, Typography, Box, Stack, IconButton, Button, Alert } from '@mui/m
 import Grid from '@mui/material/Grid';
 import { Add as AddIcon } from '@mui/icons-material';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
-import { FormikDatePicker, FormikTextField, ColorPicker } from '@lems/shared';
-import { apiFetch } from '../../../../../../lib/fetch';
+import { FormikDatePicker, FormikTextField, ColorPicker, apiFetch } from '@lems/shared';
 import { defaultColor } from '../../../../../../theme';
 import { isValidSlug } from '../../utils';
 import { DivisionItem } from './division-item';

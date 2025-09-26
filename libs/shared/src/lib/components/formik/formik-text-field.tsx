@@ -1,3 +1,5 @@
+'use client';
+
 import { KeyboardEventHandler, useRef } from 'react';
 import { Field, FieldProps } from 'formik';
 import { TextField, TextFieldProps } from '@mui/material';

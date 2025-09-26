@@ -4,7 +4,7 @@ import useSWR, { mutate } from 'swr';
 import { useTranslations } from 'next-intl';
 import { Dialog, DialogTitle, Box, CircularProgress } from '@mui/material';
 import { Team, Division, TeamWithDivision, Event } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { RegisterTeamsDialogContent } from './register-teams-dialog-content';
 
 interface RegisterTeamsDialogProps {

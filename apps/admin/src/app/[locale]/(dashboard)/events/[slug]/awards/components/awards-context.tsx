@@ -2,11 +2,11 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { reorder } from '@lems/utils/arrays';
+import { apiFetch } from '@lems/shared';
 import { AwardContextValue, AwardSchema, Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
 import { validateAwardsSchema } from '../utils/validation';
 import { useEvent } from '../../components/event-context';
 import { parseSchemaToApiRequest } from '../utils/schema';
-import { apiFetch } from '../../../../../../../lib/fetch';
 
 const AwardContext = createContext<AwardContextValue | null>(null);
 

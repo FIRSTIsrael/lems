@@ -1,8 +1,14 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
+import { Chip, Box, Container, Typography, Stack, useTheme, alpha } from '@mui/material';
 import { RichText } from '@lems/localization';
+import { Season } from '@lems/types/api/portal';
+
+interface HeroProps {
+  season?: Season | null;
+}
 
 const HeroContainer = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
@@ -32,8 +38,17 @@ const HeroContainer = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const Hero = () => {
+export const Hero: React.FC<HeroProps> = ({ season }) => {
   const t = useTranslations('pages.index.hero');
+  const theme = useTheme();
+
+  const seasonText = useMemo(() => {
+    if (!season) return '';
+    const startYear = new Date(season.startDate).getFullYear();
+    const endYear = new Date(season.endDate).getFullYear();
+    const seasonYears = startYear === endYear ? `${startYear}` : `${startYear}-${endYear}`;
+    return `${season.name} ${seasonYears}`;
+  }, [season]);
 
   return (
     <HeroContainer>
@@ -57,6 +72,18 @@ export const Hero = () => {
         >
           <RichText>{tags => t.rich('subtitle', tags)}</RichText>
         </Typography>
+
+        <Chip
+          label={seasonText}
+          sx={{
+            bgcolor: alpha(theme.palette.common.white, 0.2),
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '1rem',
+            px: 2,
+            py: 1
+          }}
+        />
       </Stack>
     </HeroContainer>
   );

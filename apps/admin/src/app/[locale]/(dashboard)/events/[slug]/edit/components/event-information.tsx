@@ -6,8 +6,8 @@ import useSWR from 'swr';
 import { Typography, Paper, Box, Stack } from '@mui/material';
 import { CalendarToday, LocationOn } from '@mui/icons-material';
 import { Division, AdminDivisionsResponseSchema } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-import { apiFetch } from '../../../../../../../lib/fetch';
 import { DivisionColorEditor } from './division-color-editor';
 
 export const EventInformation = () => {

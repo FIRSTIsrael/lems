@@ -1,3 +1,5 @@
+'use client';
+
 import dayjs from 'dayjs';
 import { FastField, FieldProps } from 'formik';
 import { LocalizationProvider, DatePicker, DatePickerProps } from '@mui/x-date-pickers';

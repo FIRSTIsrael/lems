@@ -15,9 +15,8 @@ import {
   Alert
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
-import { FileUpload, FormikTextField } from '@lems/shared';
+import { FileUpload, FormikTextField, apiFetch } from '@lems/shared';
 import { AdminTeamResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../lib/fetch';
 import { DialogComponentProps } from '../../components/dialog-provider';
 
 interface TeamFormValues {
