@@ -69,8 +69,6 @@ router.get('/', async (req: Request, res: Response) => {
         ...event,
         divisions,
         date: event.start_date.toISOString(),
-        location: event.location,
-        season_id: event.season_id,
         team_count: registeredTeams.length,
         is_fully_set_up: false,
         assigned_admin_ids: []

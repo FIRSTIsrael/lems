@@ -7,7 +7,8 @@ export const PortalEventResponseSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   location: z.string(),
-  coordinates: z.string().optional()
+  coordinates: z.string().optional(),
+  seasonId: z.string()
 });
 
 export const PortalEventSummaryResponseSchema = z.object({
