@@ -14,13 +14,13 @@ interface EventsSearchSectionProps {
   events: EventSummary[];
 }
 
-export default function EventsSearchSection({
+export const EventsSearchSection: React.FC<EventsSearchSectionProps> = ({
   searchValue,
   onSearchChange,
   filterTab,
   onFilterChange,
   events
-}: EventsSearchSectionProps) {
+}) => {
   const t = useTranslations('pages.events');
 
   const eventCounts = useMemo(() => {
@@ -91,4 +91,4 @@ export default function EventsSearchSection({
       </Stack>
     </Paper>
   );
-}
+};

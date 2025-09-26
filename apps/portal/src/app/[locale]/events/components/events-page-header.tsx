@@ -12,7 +12,10 @@ interface EventsPageHeaderProps {
   seasons: Season[];
 }
 
-export default function EventsPageHeader({ currentSeason, seasons }: EventsPageHeaderProps) {
+export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
+  currentSeason,
+  seasons
+}: EventsPageHeaderProps) => {
   const t = useTranslations('pages.events');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,4 +57,4 @@ export default function EventsPageHeader({ currentSeason, seasons }: EventsPageH
       </FormControl>
     </>
   );
-}
+};

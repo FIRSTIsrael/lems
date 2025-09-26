@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Paper, Typography, Stack, Button } from '@mui/material';
-import { CalendarToday as CalendarIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { Paper, Typography, Stack } from '@mui/material';
+import { CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/portal';
-import EventListItem from './event-list-item';
+import { EventSection } from './event-section';
 
 interface EventsListSectionProps {
   events: EventSummary[];
@@ -13,16 +12,12 @@ interface EventsListSectionProps {
   filterTab: number;
 }
 
-export default function EventsListSection({
+export const EventsListSection: React.FC<EventsListSectionProps> = ({
   events,
   searchValue,
   filterTab
-}: EventsListSectionProps) {
+}) => {
   const t = useTranslations('pages.events');
-
-  const activeEvents = events.filter(event => event.status === 'active');
-  const upcomingEvents = events.filter(event => event.status === 'upcoming');
-  const pastEvents = events.filter(event => event.status === 'past');
 
   const filterEventsBySearch = (eventList: EventSummary[]) => {
     return eventList.filter(
@@ -33,14 +28,8 @@ export default function EventsListSection({
     );
   };
 
-  const filteredActiveEvents = filterEventsBySearch(activeEvents);
-  const filteredUpcomingEvents = filterEventsBySearch(upcomingEvents);
-  const filteredPastEvents = filterEventsBySearch(pastEvents);
-
-  const hasAnyEvents =
-    filteredActiveEvents.length > 0 ||
-    filteredUpcomingEvents.length > 0 ||
-    filteredPastEvents.length > 0;
+  const filteredEvents = filterEventsBySearch(events);
+  const hasAnyEvents = filteredEvents.length > 0;
 
   if (!hasAnyEvents) {
     return (
@@ -52,83 +41,23 @@ export default function EventsListSection({
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           {searchValue ? t('no-events.search-message') : t('no-events.filter-message')}
         </Typography>
-        {searchValue && (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              /* This would need to be passed as prop */
-            }}
-            startIcon={<CalendarIcon />}
-          >
-            {t('no-events.clear-search')}
-          </Button>
-        )}
       </Paper>
     );
   }
 
   return (
     <Stack spacing={4}>
-      {/* Active Events Section */}
-      {(filterTab === 0 || filterTab === 1) && filteredActiveEvents.length > 0 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            {t('filters.active', { count: filteredActiveEvents.length })}
-          </Typography>
-          <Stack spacing={1}>
-            {filteredActiveEvents.map(event => (
-              <EventListItem key={event.id} event={event} variant="active" />
-            ))}
-          </Stack>
-        </Paper>
+      {(filterTab === 0 || filterTab === 1) && (
+        <EventSection events={filteredEvents} variant="active" />
       )}
 
-      {/* Upcoming Events Section */}
-      {(filterTab === 0 || filterTab === 2) && filteredUpcomingEvents.length > 0 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            {t('filters.upcoming', { count: filteredUpcomingEvents.length })}
-          </Typography>
-          <Stack spacing={1}>
-            {filteredUpcomingEvents.map(event => (
-              <EventListItem key={event.id} event={event} variant="upcoming" />
-            ))}
-          </Stack>
-        </Paper>
+      {(filterTab === 0 || filterTab === 2) && (
+        <EventSection events={filteredEvents} variant="upcoming" />
       )}
 
-      {/* Past Events Section */}
-      {(filterTab === 0 || filterTab === 3) && filteredPastEvents.length > 0 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            {t('filters.past', { count: filteredPastEvents.length })}
-          </Typography>
-          <Stack spacing={1}>
-            {filteredPastEvents.slice(0, 6).map(event => (
-              <EventListItem key={event.id} event={event} variant="past" />
-            ))}
-          </Stack>
-          {filteredPastEvents.length > 6 && (
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
-              <Button variant="outlined" endIcon={<ArrowIcon />}>
-                {t('load-more')}
-              </Button>
-            </Box>
-          )}
-        </Paper>
+      {(filterTab === 0 || filterTab === 3) && (
+        <EventSection events={filteredEvents} variant="past" />
       )}
     </Stack>
   );
-}
+};

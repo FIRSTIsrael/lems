@@ -62,8 +62,7 @@
         "search-message": "No events match your search criteria. Try adjusting your search terms.",
         "filter-message": "No events match the selected filter.",
         "clear-search": "Clear Search"
-      },
-      "load-more": "Load More Events"
+      }
     },
     "tools": {
       "scorer": {

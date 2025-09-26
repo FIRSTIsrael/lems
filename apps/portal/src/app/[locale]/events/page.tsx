@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { Box, Container } from '@mui/material';
 import useSWR from 'swr';
 import { EventSummary, PortalEventSummariesResponseSchema, Season } from '@lems/types/api/portal';
-import EventsPageHeader from './components/events-page-header';
-import EventsSearchSection from './components/events-search-section';
-import EventsListSection from './components/event-list-section';
+import { EventsPageHeader } from './components/events-page-header';
+import { EventsSearchSection } from './components/events-search-section';
+import { EventsListSection } from './components/event-list-section';
 
 export default function EventsPage() {
   const [searchValue, setSearchValue] = React.useState('');
