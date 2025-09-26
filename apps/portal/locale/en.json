@@ -40,8 +40,7 @@
       }
     },
     "events": {
-      "title": "Events",
-      "subtitle": "Discover and participate in FIRST LEGO League Challenge events across Israel",
+      "title": "<i>FIRST</i> LEGO Leage Challenge Events",
       "select-season": "Select Season",
       "stats": {
         "active": "Active",
