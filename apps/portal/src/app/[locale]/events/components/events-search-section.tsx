@@ -1,53 +1,55 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Paper,
-  Stack,
-  TextField,
-  InputAdornment,
-  Chip
-} from '@mui/material';
+import { Paper, Stack, TextField, InputAdornment, Chip } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
+import { EventSummary } from '@lems/types/api/portal';
 
 interface EventsSearchSectionProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
   filterTab: number;
   onFilterChange: (tab: number) => void;
-  eventCounts: {
-    all: number;
-    active: number;
-    upcoming: number;
-    past: number;
-  };
+  events: EventSummary[];
 }
 
-export default function EventsSearchSection({
+export const EventsSearchSection: React.FC<EventsSearchSectionProps> = ({
   searchValue,
   onSearchChange,
   filterTab,
   onFilterChange,
-  eventCounts
-}: EventsSearchSectionProps) {
+  events
+}) => {
   const t = useTranslations('pages.events');
+
+  const eventCounts = useMemo(() => {
+    return events.reduce(
+      (counts, event) => {
+        counts.all++;
+        if (event.status in counts) counts[event.status as keyof typeof counts]++;
+        return counts;
+      },
+      { all: 0, active: 0, upcoming: 0, past: 0 }
+    );
+  }, [events]);
 
   return (
     <Paper sx={{ p: 3, mb: 4 }}>
       <Stack spacing={3}>
-        {/* Search Bar */}
         <TextField
           fullWidth
           placeholder={t('search.placeholder')}
           value={searchValue}
           onChange={e => onSearchChange(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            )
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              )
+            }
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
@@ -56,7 +58,6 @@ export default function EventsSearchSection({
           }}
         />
 
-        {/* Quick Filter Chips - TBA Style */}
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
           <Chip
             label={t('filters.all', { count: eventCounts.all })}
@@ -68,7 +69,7 @@ export default function EventsSearchSection({
           <Chip
             label={t('filters.active', { count: eventCounts.active })}
             onClick={() => onFilterChange(1)}
-            color={filterTab === 1 ? 'success' : 'default'}
+            color={filterTab === 1 ? 'error' : 'default'}
             variant={filterTab === 1 ? 'filled' : 'outlined'}
             clickable
           />
@@ -90,4 +91,4 @@ export default function EventsSearchSection({
       </Stack>
     </Paper>
   );
-}
+};

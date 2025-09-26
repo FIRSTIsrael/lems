@@ -17,7 +17,7 @@ interface EventListItemProps {
   variant?: 'active' | 'upcoming' | 'past';
 }
 
-export default function EventListItem({ event, variant = 'upcoming' }: EventListItemProps) {
+export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = 'upcoming' }) => {
   const theme = useTheme();
   const tEvents = useTranslations('pages.index.events');
 
@@ -75,7 +75,7 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
         borderRadius: 1,
         border: `1px solid ${theme.palette.divider}`,
         cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
+        transition: 'all 0.1s ease-in-out',
         '&:hover': getHoverStyles()
       }}
     >
@@ -85,7 +85,6 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
         alignItems={{ xs: 'flex-start', sm: 'center' }}
         spacing={2}
       >
-        {/* Event Info */}
         <Box sx={{ flex: 1 }}>
           <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
             <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
@@ -120,7 +119,6 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
           </Stack>
         </Box>
 
-        {/* Action Button */}
         <Button
           variant={variant === 'active' ? 'contained' : 'outlined'}
           color={variant === 'active' ? 'error' : 'primary'}
@@ -140,4 +138,4 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
       </Stack>
     </Box>
   );
-}
+};

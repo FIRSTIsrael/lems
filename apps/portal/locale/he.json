@@ -40,8 +40,7 @@
       }
     },
     "events": {
-      "title": "אירועים",
-      "subtitle": "גלו והשתתפו באירועי FIRST LEGO League Challenge",
+      "title": "אירועי <i>FIRST</i> LEGO League Challenge",
       "select-season": "בחרו עונה",
       "stats": {
         "active": "פעילים",
@@ -63,8 +62,7 @@
         "search-message": "אין אירועים התואמים לקריטריוני החיפוש. נסו לשנות את מילות החיפוש.",
         "filter-message": "אין אירועים התואמים למסנן שנבחר.",
         "clear-search": "נקה חיפוש"
-      },
-      "load-more": "טען עוד אירועים"
+      }
     },
     "team": {
       "not-found": {
