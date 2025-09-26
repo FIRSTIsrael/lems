@@ -13,27 +13,24 @@ export default function EventsSeasonPage() {
   const [searchValue, setSearchValue] = React.useState('');
   const [filterTab, setFilterTab] = React.useState(0);
 
-  const { seasonSlug } = useParams();
+  const { season } = useParams();
 
-  const { data: season } = useSWR<Season | null>(`/portal/seasons/${seasonSlug}`, {
+  const { data: seasonData } = useSWR<Season | null>(`/portal/seasons/${season}`, {
     suspense: true,
     fallbackData: null
   });
 
-  const { data: seasonEvents } = useSWR<EventSummary[]>(
-    () => `/portal/events?season=${seasonSlug}`,
-    {
-      suspense: true,
-      fallbackData: []
-    }
-  );
+  const { data: seasonEvents } = useSWR<EventSummary[]>(() => `/portal/events?season=${season}`, {
+    suspense: true,
+    fallbackData: []
+  });
 
   const { data: seasons } = useSWR<Season[]>('/portal/seasons', {
     suspense: true,
     fallbackData: []
   });
 
-  if (!season || !seasonEvents || !seasons) {
+  if (!seasonData || !seasonEvents || !seasons) {
     return null;
   }
 
@@ -47,7 +44,7 @@ export default function EventsSeasonPage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
-        <EventsPageHeader currentSeason={season} seasons={seasons} />
+        <EventsPageHeader currentSeason={seasonData} seasons={seasons} />
 
         <EventsSearchSection
           searchValue={searchValue}
