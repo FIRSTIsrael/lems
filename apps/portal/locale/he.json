@@ -8,6 +8,7 @@
       "events": {
         "active-events": "אירועים פעילים",
         "no-active-events": "אין אירועים פעילים כרגע",
+        "no-events": "לא נמצאו אירועים",
         "upcoming-events": "אירועים קרובים",
         "past-events": "אירועים קודמים",
         "view-all-events": "צפייה בכל האירועים",
@@ -75,7 +76,10 @@
     "main": {
       "app-bar": {
         "events": "אירועים",
-        "scorer": "מחשבון ניקוד"
+        "scorer": "מחשבון ניקוד",
+        "field-timer": "טיימר מקצה זירה",
+        "rubrics": "מחווני שיפוט",
+        "judging-timer": "טיימר מפגש שיפוט"
       }
     }
   }
