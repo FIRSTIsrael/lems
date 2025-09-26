@@ -31,6 +31,7 @@ router.get('/', async (req: Request, res: Response) => {
     };
 
     res.json([makePortalEventSummaryResponse(eventSummary)]);
+    return;
   }
 
   if (seasonSlug && typeof seasonSlug === 'string') {
@@ -43,6 +44,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const events = await db.events.bySeason(season.id).getAllSummaries();
     res.json(events.map(makePortalEventSummaryResponse));
+    return;
   }
 
   if (after && typeof after === 'string') {
@@ -77,6 +79,7 @@ router.get('/', async (req: Request, res: Response) => {
   );
 
   res.json(events.map(makePortalEventSummaryResponse));
+  return;
 });
 
 export default router;

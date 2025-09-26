@@ -42,6 +42,7 @@
     "events": {
       "title": "אירועים",
       "subtitle": "גלו והשתתפו באירועי FIRST LEGO League Challenge",
+      "select-season": "בחרו עונה",
       "stats": {
         "active": "פעילים",
         "upcoming": "מתקרבים"

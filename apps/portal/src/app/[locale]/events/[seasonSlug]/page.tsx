@@ -4,21 +4,24 @@ import React from 'react';
 import { Box, Container } from '@mui/material';
 import useSWR from 'swr';
 import { EventSummary, Season } from '@lems/types/api/portal';
-import EventsPageHeader from './components/events-page-header';
-import EventsSearchSection from './components/events-search-section';
-import EventsListSection from './components/event-list-section';
+import { useParams } from 'next/navigation';
+import EventsPageHeader from '../components/events-page-header';
+import EventsSearchSection from '../components/events-search-section';
+import EventsListSection from '../components/event-list-section';
 
-export default function EventsPage() {
+export default function EventsSeasonPage() {
   const [searchValue, setSearchValue] = React.useState('');
   const [filterTab, setFilterTab] = React.useState(0);
 
-  const { data: latestSeason } = useSWR<Season | null>('/portal/seasons/latest', {
+  const { seasonSlug } = useParams();
+
+  const { data: season } = useSWR<Season | null>(`/portal/seasons/${seasonSlug}`, {
     suspense: true,
     fallbackData: null
   });
 
   const { data: seasonEvents } = useSWR<EventSummary[]>(
-    () => `/portal/events?season=${latestSeason?.slug}`,
+    () => `/portal/events?season=${seasonSlug}`,
     {
       suspense: true,
       fallbackData: []
@@ -30,7 +33,7 @@ export default function EventsPage() {
     fallbackData: []
   });
 
-  if (!latestSeason || !seasonEvents || !seasons) {
+  if (!season || !seasonEvents || !seasons) {
     return null;
   }
 
@@ -44,7 +47,7 @@ export default function EventsPage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
-        <EventsPageHeader currentSeason={latestSeason} seasons={seasons} />
+        <EventsPageHeader currentSeason={season} seasons={seasons} />
 
         <EventsSearchSection
           searchValue={searchValue}

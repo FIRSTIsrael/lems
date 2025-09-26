@@ -15,4 +15,20 @@ router.get('/latest', async (req: Request, res: Response) => {
   res.status(200).json(makePortalSeasonResponse(latestSeason));
 });
 
+router.get('/:seasonSlug', async (req: Request, res: Response) => {
+  const { seasonSlug } = req.params;
+  const season = await db.seasons.bySlug(seasonSlug).get();
+  if (season) {
+    res.status(200).json(makePortalSeasonResponse(season));
+    return;
+  }
+
+  res.status(404).json({ message: 'Season not found' });
+});
+
+router.get('/', async (req: Request, res: Response) => {
+  const seasons = await db.seasons.getAll();
+  res.status(200).json(seasons.map(makePortalSeasonResponse));
+});
+
 export default router;
