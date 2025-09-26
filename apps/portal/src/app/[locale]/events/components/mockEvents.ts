@@ -1,4 +1,4 @@
-import { Event } from '../homepage/EventCard';
+import { Event } from '../../components/homepage/EventCard';
 
 // Mock data - in real app this would come from API
 export const mockEvents: Event[] = [
@@ -71,14 +71,13 @@ export const mockEvents: Event[] = [
 ];
 
 // Helper functions for filtering events
-export const getActiveEvents = (events: Event[] = mockEvents) => 
+export const getActiveEvents = (events: Event[] = mockEvents) =>
   events.filter(event => event.isActive);
 
-export const getUpcomingEvents = (events: Event[] = mockEvents) => 
+export const getUpcomingEvents = (events: Event[] = mockEvents) =>
   events.filter(event => event.isUpcoming);
 
-export const getPastEvents = (events: Event[] = mockEvents) => 
-  events.filter(event => event.isPast);
+export const getPastEvents = (events: Event[] = mockEvents) => events.filter(event => event.isPast);
 
 export const getEventCounts = (events: Event[] = mockEvents) => ({
   all: events.length,

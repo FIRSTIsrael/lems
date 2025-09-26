@@ -2,25 +2,18 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Box,
-  Typography,
-  Stack,
-  Chip,
-  Button,
-  alpha,
-  useTheme
-} from '@mui/material';
+import { Box, Typography, Stack, Chip, Button, alpha, useTheme } from '@mui/material';
 import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
   CalendarToday as CalendarIcon,
   ArrowForward as ArrowIcon
 } from '@mui/icons-material';
-import { Event } from './homepage/EventCard';
+import { EventSummary } from '@lems/types/api/portal';
+import { LiveIcon } from '../../components/homepage/live-icon';
 
 interface EventListItemProps {
-  event: Event;
+  event: EventSummary;
   variant?: 'active' | 'upcoming' | 'past';
 }
 
@@ -31,34 +24,23 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
   const getStatusChip = () => {
     switch (variant) {
       case 'active':
-        return (
-          <Chip 
-            label="LIVE" 
-            color="success" 
-            size="small" 
-            sx={{ 
-              fontWeight: 'bold',
-              animation: 'pulse 2s infinite',
-              minWidth: 60
-            }} 
-          />
-        );
+        return <LiveIcon />;
       case 'past':
         return (
-          <Chip 
-            label="Completed" 
-            color="secondary" 
-            size="small" 
+          <Chip
+            label="Completed"
+            color="primary"
+            size="small"
             variant="outlined"
             sx={{ minWidth: 80 }}
           />
         );
       default:
         return (
-          <Chip 
-            label="Upcoming" 
-            color="primary" 
-            size="small" 
+          <Chip
+            label="Upcoming"
+            color="primary"
+            size="small"
             variant="outlined"
             sx={{ minWidth: 80 }}
           />
@@ -70,13 +52,13 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
     switch (variant) {
       case 'active':
         return {
-          bgcolor: alpha(theme.palette.success.main, 0.02),
-          borderLeft: `3px solid ${theme.palette.success.main}`
+          bgcolor: alpha(theme.palette.error.main, 0.02),
+          borderLeft: `3px solid ${theme.palette.error.main}`
         };
       case 'past':
         return {
-          bgcolor: alpha(theme.palette.secondary.main, 0.02),
-          borderLeft: `3px solid ${theme.palette.secondary.main}`
+          bgcolor: alpha(theme.palette.primary.main, 0.02),
+          borderLeft: `3px solid ${theme.palette.primary.main}`
         };
       default:
         return {
@@ -111,26 +93,24 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
             </Typography>
             {getStatusChip()}
           </Stack>
-          
-          <Stack 
-            direction={{ xs: 'column', sm: 'row' }} 
+
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
             spacing={{ xs: 1, sm: 3 }}
             sx={{ color: 'text.secondary' }}
           >
             <Stack direction="row" alignItems="center" spacing={1}>
               <CalendarIcon fontSize="small" />
               <Typography variant="body2">
-                {new Date(event.date).toLocaleDateString()}
+                {new Date(event.startDate).toLocaleDateString()}
               </Typography>
             </Stack>
-            
+
             <Stack direction="row" alignItems="center" spacing={1}>
               <LocationIcon fontSize="small" />
-              <Typography variant="body2">
-                {event.location}
-              </Typography>
+              <Typography variant="body2">{event.location}</Typography>
             </Stack>
-            
+
             <Stack direction="row" alignItems="center" spacing={1}>
               <PeopleIcon fontSize="small" />
               <Typography variant="body2">
@@ -143,16 +123,19 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
         {/* Action Button */}
         <Button
           variant={variant === 'active' ? 'contained' : 'outlined'}
-          color={variant === 'active' ? 'success' : 'primary'}
+          color={variant === 'active' ? 'error' : 'primary'}
           size="small"
           endIcon={<ArrowIcon />}
-          sx={{ 
+          sx={{
             minWidth: { xs: '100%', sm: 'auto' },
             whiteSpace: 'nowrap'
           }}
         >
-          {variant === 'active' ? 'View Event' : 
-           variant === 'past' ? 'View Results' : 'View Details'}
+          {variant === 'active'
+            ? 'View Event'
+            : variant === 'past'
+              ? 'View Results'
+              : 'View Details'}
         </Button>
       </Stack>
     </Box>

@@ -2,35 +2,29 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Box,
-  Paper,
-  Typography,
-  Stack,
-  Chip,
-  Button
-} from '@mui/material';
-import {
-  CalendarToday as CalendarIcon,
-  ArrowForward as ArrowIcon
-} from '@mui/icons-material';
-import { Event } from '../homepage/EventCard';
-import EventListItem from './EventListItem';
+import { Box, Paper, Typography, Stack, Button } from '@mui/material';
+import { CalendarToday as CalendarIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { EventSummary } from '@lems/types/api/portal';
+import EventListItem from './event-list-item';
 
 interface EventsListSectionProps {
-  events: Event[];
+  events: EventSummary[];
   searchValue: string;
   filterTab: number;
 }
 
-export default function EventsListSection({ events, searchValue, filterTab }: EventsListSectionProps) {
+export default function EventsListSection({
+  events,
+  searchValue,
+  filterTab
+}: EventsListSectionProps) {
   const t = useTranslations('pages.events');
 
-  const activeEvents = events.filter(event => event.isActive);
-  const upcomingEvents = events.filter(event => event.isUpcoming);
-  const pastEvents = events.filter(event => event.isPast);
+  const activeEvents = events.filter(event => event.status === 'active');
+  const upcomingEvents = events.filter(event => event.status === 'upcoming');
+  const pastEvents = events.filter(event => event.status === 'past');
 
-  const filterEventsBySearch = (eventList: Event[]) => {
+  const filterEventsBySearch = (eventList: EventSummary[]) => {
     return eventList.filter(
       event =>
         !searchValue ||
@@ -43,7 +37,10 @@ export default function EventsListSection({ events, searchValue, filterTab }: Ev
   const filteredUpcomingEvents = filterEventsBySearch(upcomingEvents);
   const filteredPastEvents = filterEventsBySearch(pastEvents);
 
-  const hasAnyEvents = filteredActiveEvents.length > 0 || filteredUpcomingEvents.length > 0 || filteredPastEvents.length > 0;
+  const hasAnyEvents =
+    filteredActiveEvents.length > 0 ||
+    filteredUpcomingEvents.length > 0 ||
+    filteredPastEvents.length > 0;
 
   if (!hasAnyEvents) {
     return (
@@ -58,7 +55,9 @@ export default function EventsListSection({ events, searchValue, filterTab }: Ev
         {searchValue && (
           <Button
             variant="outlined"
-            onClick={() => {/* This would need to be passed as prop */}}
+            onClick={() => {
+              /* This would need to be passed as prop */
+            }}
             startIcon={<CalendarIcon />}
           >
             {t('no-events.clear-search')}
@@ -78,12 +77,6 @@ export default function EventsListSection({ events, searchValue, filterTab }: Ev
             fontWeight="bold"
             sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
           >
-            <Chip
-              label="LIVE"
-              color="success"
-              size="small"
-              sx={{ animation: 'pulse 2s infinite' }}
-            />
             {t('filters.active', { count: filteredActiveEvents.length })}
           </Typography>
           <Stack spacing={1}>
@@ -102,7 +95,6 @@ export default function EventsListSection({ events, searchValue, filterTab }: Ev
             fontWeight="bold"
             sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
           >
-            <CalendarIcon color="primary" />
             {t('filters.upcoming', { count: filteredUpcomingEvents.length })}
           </Typography>
           <Stack spacing={1}>
@@ -121,7 +113,6 @@ export default function EventsListSection({ events, searchValue, filterTab }: Ev
             fontWeight="bold"
             sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
           >
-            <CalendarIcon color="secondary" />
             {t('filters.past', { count: filteredPastEvents.length })}
           </Typography>
           <Stack spacing={1}>
