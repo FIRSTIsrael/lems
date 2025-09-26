@@ -75,7 +75,7 @@ export default function EventListItem({ event, variant = 'upcoming' }: EventList
         borderRadius: 1,
         border: `1px solid ${theme.palette.divider}`,
         cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
+        transition: 'all 0.1s ease-in-out',
         '&:hover': getHoverStyles()
       }}
     >
