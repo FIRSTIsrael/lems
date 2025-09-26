@@ -50,7 +50,10 @@
     "main": {
       "app-bar": {
         "events": "Events",
-        "scorer": "Scorer"
+        "scorer": "Scorer",
+        "field-timer": "Field Timer",
+        "rubrics": "Rubrics",
+        "judging-timer": "Judging Timer"
       }
     }
   }

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useLocale } from 'next-intl';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { ExpandMore as ExpandMoreIcon, Language } from '@mui/icons-material';
 import { Locale, Locales } from '@lems/localization';
 import { useRouter, usePathname } from '../../../i18n/navigation';
 
@@ -43,6 +43,7 @@ export const LanguageSwitcher: React.FC = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        startIcon={<Language />}
         endIcon={<ExpandMoreIcon />}
         color="inherit"
         sx={{
