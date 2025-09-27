@@ -70,10 +70,23 @@ router.post(
       }
     }
 
+    const allDivisions = await db.divisions.byEventId(req.eventId).getAll();
     const volunteersWithDivisions = await db.eventUsers.byEventId(req.eventId).getAll();
+
+    const divisionsWithUsers = new Set<string>();
+    volunteersWithDivisions.forEach(volunteer => {
+      volunteer.divisions.forEach(divisionId => divisionsWithUsers.add(divisionId));
+    });
+
+    for (const division of allDivisions) {
+      const hasUsers = divisionsWithUsers.has(division.id);
+      await db.divisions.byId(division.id).update({ has_users: hasUsers });
+    }
+
+    const finalVolunteersWithDivisions = await db.eventUsers.byEventId(req.eventId).getAll();
     res
       .status(201)
-      .json(volunteersWithDivisions.map(volunteer => makeAdminVolunteerResponse(volunteer)));
+      .json(finalVolunteersWithDivisions.map(volunteer => makeAdminVolunteerResponse(volunteer)));
   }
 );
 

@@ -44,6 +44,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('pit_map_url', 'text')
     .addColumn('has_schedule', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('has_awards', 'boolean', col => col.notNull().defaultTo(false))
+    .addColumn('has_users', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('schedule_settings', 'jsonb')
     .execute();
 
