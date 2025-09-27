@@ -461,11 +461,11 @@
         "links": {
           "teams": {
             "title": "Manage Teams",
-            "description": "Register and manage teams for this division"
+            "description": "Register and manage teams"
           },
           "venue": {
             "title": "Manage Venue",
-            "description": "Set up rooms and tables for this division"
+            "description": "Set up rooms and tables"
           }
         },
         "settings": {
