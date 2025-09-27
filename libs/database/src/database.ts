@@ -13,6 +13,7 @@ import { TablesRepository } from './repositories/tables';
 import { JudgingSessionsRepository } from './repositories/judging-sessions';
 import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 import { AwardsRepository } from './repositories/awards';
+import { EventUsersRepository } from './repositories/event-users';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
@@ -37,6 +38,7 @@ export class Database {
   public teams: TeamsRepository;
   public events: EventsRepository;
   public divisions: DivisionsRepository;
+  public eventUsers: EventUsersRepository;
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
   public tables: TablesRepository;
@@ -73,6 +75,7 @@ export class Database {
     this.teams = new TeamsRepository(this.kysely, this.space);
     this.events = new EventsRepository(this.kysely);
     this.divisions = new DivisionsRepository(this.kysely, this.space);
+    this.eventUsers = new EventUsersRepository(this.kysely);
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
     this.tables = new TablesRepository(this.kysely);

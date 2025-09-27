@@ -3,7 +3,7 @@ export interface VolunteerSlot {
   id: string;
   role: Role;
   divisions: string[];
-  identifier?: string;
+  identifier?: string | null;
 }
 
 /** Roles that are managed by the system and cannot be edited manually (always required) */

@@ -11,10 +11,12 @@ import React, {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
-import { Division } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
 import { useRoleTranslations } from '@lems/localization';
-import { EDITABLE_MANDATORY_ROLES, VolunteerSlot, Role } from '../../types';
+import { Division, VolunteerUser, VolunteerUsersResponseSchema } from '@lems/types/api/admin';
 import { useEvent } from '../../../components/event-context';
+import { EDITABLE_MANDATORY_ROLES, VolunteerSlot, Role } from '../../types';
+import { transformVolunteerUsersToSlots, transformVolunteerSlotsToUsers } from './utils';
 
 const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
   const slots: VolunteerSlot[] = [];
@@ -75,25 +77,26 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
 
-  const { data: currentSlots = [] } = useSWR<VolunteerSlot[]>(
-    `/admin/events/${event.id}/volunteers/slots`,
+  const { data: currentVolunteers = [] } = useSWR<VolunteerUser[]>(
+    `/admin/events/${event.id}/users/volunteers`,
     { suspense: true, fallbackData: [] }
   );
 
   useEffect(() => {
-    if (currentSlots.length > 0 && !initialized.current) {
-      setSlots(currentSlots);
+    if (currentVolunteers.length > 0 && !initialized.current) {
+      const transformedSlots = transformVolunteerUsersToSlots(currentVolunteers);
+      setSlots(transformedSlots);
       initialized.current = true;
     }
-  }, [currentSlots]);
+  }, [currentVolunteers]);
 
   useEffect(() => {
-    if (divisions.length > 0 && currentSlots.length === 0 && !initialized.current) {
+    if (divisions.length > 0 && currentVolunteers.length === 0 && !initialized.current) {
       const initialSlots = generateInitialSlots(divisions);
       setSlots(initialSlots);
       initialized.current = true;
     }
-  }, [divisions, currentSlots.length]);
+  }, [divisions, currentVolunteers.length]);
 
   const validationErrors = useMemo(() => {
     const errors: string[] = [];
@@ -143,22 +146,26 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/admin/events/${event.id}/volunteers/slots`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          slots,
-          enabledSystemRoles: Array.from(toggledSystemRoles)
-        })
-      });
+      const transformedVolunteers = transformVolunteerSlotsToUsers(slots, event.id);
 
-      if (response.ok) {
+      const result = await apiFetch(
+        `/admin/events/${event.id}/users/volunteers`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            volunteers: transformedVolunteers
+          })
+        },
+        VolunteerUsersResponseSchema
+      );
+
+      if (result.ok) {
         // Show success message or redirect
         console.log('Volunteer slots saved successfully');
+        // You could update local state with result.data if needed
       } else {
-        console.error('Failed to save volunteer slots');
+        console.error('Failed to save volunteer slots:', result.status, result.error);
       }
     } catch (error) {
       console.error('Error saving volunteer slots:', error);
