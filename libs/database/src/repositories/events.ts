@@ -229,7 +229,10 @@ class EventsSelector {
         'events.season_id',
         'divisions.id as division_id',
         'divisions.name as division_name',
-        'divisions.color as division_color'
+        'divisions.color as division_color',
+        'divisions.has_awards',
+        'divisions.has_users',
+        'divisions.has_schedule'
       ])
       .select(eb => [eb.fn.count('team_divisions.team_id').as('team_count')]);
 
@@ -248,7 +251,10 @@ class EventsSelector {
       'events.season_id',
       'divisions.id',
       'divisions.name',
-      'divisions.color'
+      'divisions.color',
+      'divisions.has_awards',
+      'divisions.has_users',
+      'divisions.has_schedule'
     ]);
 
     const result = await query.execute();
@@ -292,7 +298,6 @@ class EventsSelector {
           location: row.location,
           team_count: 0,
           divisions: [],
-          is_fully_set_up: false,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });
@@ -308,12 +313,30 @@ class EventsSelector {
         event.divisions.push({
           id: row.division_id,
           name: row.division_name,
-          color: row.division_color
+          color: row.division_color,
+          has_awards: row.has_awards,
+          has_users: row.has_users,
+          has_schedule: row.has_schedule
         });
       }
     }
 
-    return Array.from(eventsMap.values());
+    return Array.from(eventsMap.values()).map(event => {
+      const isFullySetUp = event.divisions.every(
+        (division: { has_awards: boolean; has_users: boolean; has_schedule: boolean }) =>
+          division.has_awards && division.has_users && division.has_schedule
+      );
+
+      return {
+        ...event,
+        divisions: event.divisions.map((division: { id: string; name: string; color: string }) => ({
+          id: division.id,
+          name: division.name,
+          color: division.color
+        })),
+        is_fully_set_up: isFullySetUp
+      };
+    });
   }
 }
 
