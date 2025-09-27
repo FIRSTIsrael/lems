@@ -84,8 +84,10 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
   useEffect(() => {
     if (currentVolunteers.length > 0 && !initialized.current) {
-      const transformedSlots = transformVolunteerUsersToSlots(currentVolunteers);
+      const { slots: transformedSlots, toggledSystemRoles: systemRoles } =
+        transformVolunteerUsersToSlots(currentVolunteers);
       setSlots(transformedSlots);
+      setToggledSystemRoles(systemRoles);
       initialized.current = true;
     }
   }, [currentVolunteers]);
@@ -146,7 +148,12 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
     setSaving(true);
     try {
-      const transformedVolunteers = transformVolunteerSlotsToUsers(slots, event.id);
+      const transformedVolunteers = transformVolunteerSlotsToUsers(
+        slots,
+        event.id,
+        toggledSystemRoles,
+        divisions
+      );
 
       const result = await apiFetch(
         `/admin/events/${event.id}/users/volunteers`,
