@@ -8,6 +8,7 @@
       "events": {
         "active-events": "אירועים פעילים",
         "no-active-events": "אין אירועים פעילים כרגע",
+        "no-events": "לא נמצאו אירועים",
         "upcoming-events": "אירועים קרובים",
         "past-events": "אירועים קודמים",
         "view-all-events": "צפייה בכל האירועים",
@@ -38,6 +39,31 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "events": {
+      "title": "אירועי <i>FIRST</i> LEGO League Challenge",
+      "select-season": "בחרו עונה",
+      "stats": {
+        "active": "פעילים",
+        "upcoming": "מתקרבים"
+      },
+      "search": {
+        "title": "חיפוש וסינון אירועים",
+        "placeholder": "חפשו אירועים לפי שם או מיקום...",
+        "results-count": "נמצאו {count} אירועים"
+      },
+      "filters": {
+        "all": "כל האירועים ({count})",
+        "active": "פעילים ({count})",
+        "upcoming": "מתקרבים ({count})",
+        "past": "עברו ({count})"
+      },
+      "no-events": {
+        "title": "לא נמצאו אירועים",
+        "search-message": "אין אירועים התואמים לקריטריוני החיפוש. נסו לשנות את מילות החיפוש.",
+        "filter-message": "אין אירועים התואמים למסנן שנבחר.",
+        "clear-search": "נקה חיפוש"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
@@ -50,7 +76,10 @@
     "main": {
       "app-bar": {
         "events": "אירועים",
-        "scorer": "מחשבון ניקוד"
+        "scorer": "מחשבון ניקוד",
+        "field-timer": "טיימר מקצה זירה",
+        "rubrics": "מחווני שיפוט",
+        "judging-timer": "טיימר מפגש שיפוט"
       }
     }
   }

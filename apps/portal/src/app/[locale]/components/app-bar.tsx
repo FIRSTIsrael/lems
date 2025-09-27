@@ -13,14 +13,24 @@ import {
   Menu,
   MenuItem,
   Container,
-  Button
+  Button,
+  ListItemIcon
 } from '@mui/material';
-import { MenuRounded } from '@mui/icons-material';
+import {
+  AssignmentOutlined,
+  CalculateOutlined,
+  Event,
+  MenuRounded,
+  TimerOutlined
+} from '@mui/icons-material';
 import { LanguageSwitcher } from './language-switcher';
 
 const pages = [
-  { name: 'events', href: '/events' },
-  { name: 'scorer', href: '/tools/scorer' }
+  { name: 'events', href: '/events', icon: <Event /> },
+  { name: 'scorer', href: '/tools/scorer', icon: <CalculateOutlined /> },
+  { name: 'field-timer', href: '/tools/field-timer', icon: <TimerOutlined /> },
+  { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> },
+  { name: 'judging-timer', href: '/tools/judging-timer', icon: <TimerOutlined /> }
 ];
 
 interface PortalAppBarProps {
@@ -66,6 +76,7 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
               >
                 {pages.map(page => (
                   <MenuItem key={page.name} component={Link} href={page.href}>
+                    <ListItemIcon>{page.icon}</ListItemIcon>
                     <Typography sx={{ textAlign: 'center' }}>{t(page.name)}</Typography>
                   </MenuItem>
                 ))}
@@ -124,7 +135,8 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
                   key={page.name}
                   LinkComponent={Link}
                   href={page.href}
-                  sx={{ my: 2, mx: 1, color: 'white', display: 'block' }}
+                  sx={{ my: 2, mx: 1, color: 'white' }}
+                  startIcon={page.icon}
                 >
                   {t(page.name)}
                 </Button>

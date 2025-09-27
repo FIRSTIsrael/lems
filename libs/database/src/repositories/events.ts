@@ -293,7 +293,8 @@ class EventsSelector {
           team_count: 0,
           divisions: [],
           is_fully_set_up: false,
-          assigned_admin_ids: adminsByEvent.get(eventId) || []
+          assigned_admin_ids: adminsByEvent.get(eventId) || [],
+          season_id: row.season_id
         });
       }
 
