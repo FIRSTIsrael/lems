@@ -2,6 +2,7 @@ import express from 'express';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../../../middlewares/admin/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
+import { generateVolunteerPassword } from '../../users/util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,7 +22,17 @@ router.post(
       return;
     }
 
-    await db.tables.create({ division_id: req.divisionId, name });
+    const table = await db.tables.create({ division_id: req.divisionId, name });
+    const division = await db.divisions.byId(req.divisionId).get();
+
+    const eventUser = await db.eventUsers.create({
+      event_id: division.event_id,
+      role: 'referee',
+      role_info: { tableId: table.id },
+      password: generateVolunteerPassword()
+    });
+
+    await db.eventUsers.assignUserToDivisions(eventUser.id, [req.divisionId]);
 
     res.status(201).end();
   }

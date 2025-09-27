@@ -1,8 +1,9 @@
 import express from 'express';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
-import { makeAdminUserResponse, makeAdminVolunteerResponse } from '../../users/util';
+import { makeAdminUserResponse } from '../../users/util';
 import { requirePermission } from '../../../../middlewares/admin/require-permission';
+import { makeAdminVolunteerResponse, generateVolunteerPassword } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -56,7 +57,7 @@ router.post(
       role: volunteer.role,
       identifier: volunteer.identifier || null,
       role_info: volunteer.roleInfo || null,
-      password: Math.random().toString(36).slice(-4).toUpperCase() // Generate 4-char password
+      password: generateVolunteerPassword()
     }));
 
     const createdVolunteers = await db.eventUsers.createMany(volunteersToCreate);
