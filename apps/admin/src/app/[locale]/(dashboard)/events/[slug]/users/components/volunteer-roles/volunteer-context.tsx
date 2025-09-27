@@ -16,33 +16,19 @@ import { useRoleTranslations } from '@lems/localization';
 import { EDITABLE_MANDATORY_ROLES, VolunteerSlot, Role } from '../../types';
 import { useEvent } from '../../../components/event-context';
 
-// Generate initial slots based on divisions (only for editable roles)
 const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
   const slots: VolunteerSlot[] = [];
 
   if (divisions.length === 0) return slots;
-
-  // For single division events, create 1x of each editable mandatory role
-  if (divisions.length === 1) {
+  divisions.forEach(division => {
     EDITABLE_MANDATORY_ROLES.forEach(role => {
       slots.push({
-        id: `initial_${role}_${divisions[0].id}`,
+        id: `initial_${role}_${division.id}`,
         role,
-        divisions: [divisions[0].id]
+        divisions: [division.id]
       });
     });
-  } else {
-    // For multi-division events, create 1x of each editable mandatory role for each division
-    divisions.forEach(division => {
-      EDITABLE_MANDATORY_ROLES.forEach(role => {
-        slots.push({
-          id: `initial_${role}_${division.id}`,
-          role,
-          divisions: [division.id]
-        });
-      });
-    });
-  }
+  });
 
   return slots;
 };
@@ -50,7 +36,6 @@ const generateInitialSlots = (divisions: Division[]): VolunteerSlot[] => {
 export interface VolunteerContextType {
   // Data
   divisions: Division[];
-  slots: VolunteerSlot[];
   toggledSystemRoles: Set<string>;
 
   // State management
@@ -58,8 +43,6 @@ export interface VolunteerContextType {
   validationErrors: string[];
 
   // Actions - General
-  setSlots: React.Dispatch<React.SetStateAction<VolunteerSlot[]>>;
-  updateSlots: (newSlots: VolunteerSlot[]) => void;
   handleToggleSystemRole: (role: string, enabled: boolean) => void;
   handleSave: () => Promise<void>;
 
@@ -68,16 +51,10 @@ export interface VolunteerContextType {
   removeSlot: (slotId: string) => void;
   updateSlotDivisions: (slotId: string, newDivisions: string[]) => void;
   updateSlotIdentifier: (slotId: string, identifier: string) => void;
-  selectAllDivisions: (slotId: string) => void;
 
   // Utility functions
   getSlotsForRole: (role: Role) => VolunteerSlot[];
-  getDuplicatesForDivision: (role: Role, divisionId: string) => VolunteerSlot[];
   needsIdentifiers: (slot: VolunteerSlot) => boolean;
-
-  // Data loading states
-  divisionsLoading: boolean;
-  slotsLoading: boolean;
 }
 
 const VolunteerContext = createContext<VolunteerContextType | undefined>(undefined);
@@ -96,16 +73,13 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
   const [toggledSystemRoles, setToggledSystemRoles] = useState<Set<string>>(new Set());
   const initialized = useRef(false);
 
-  const { data: divisions = [], isLoading: divisionsLoading } = useSWR<Division[]>(
-    `/admin/events/${event.id}/divisions`
-  );
+  const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
 
-  const { data: currentSlots = [], isLoading: slotsLoading } = useSWR<VolunteerSlot[]>(
+  const { data: currentSlots = [] } = useSWR<VolunteerSlot[]>(
     `/admin/events/${event.id}/volunteers/slots`,
     { suspense: true, fallbackData: [] }
   );
 
-  // Initialize slots from existing data
   useEffect(() => {
     if (currentSlots.length > 0 && !initialized.current) {
       setSlots(currentSlots);
@@ -113,7 +87,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     }
   }, [currentSlots]);
 
-  // Generate initial slots when divisions are loaded but no current slots exist
   useEffect(() => {
     if (divisions.length > 0 && currentSlots.length === 0 && !initialized.current) {
       const initialSlots = generateInitialSlots(divisions);
@@ -122,41 +95,31 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     }
   }, [divisions, currentSlots.length]);
 
-  // Validation logic using useMemo to prevent infinite re-renders
   const validationErrors = useMemo(() => {
     const errors: string[] = [];
 
-    if (divisions.length > 1) {
-      // Check each division has all editable mandatory roles
-      divisions.forEach(division => {
-        EDITABLE_MANDATORY_ROLES.forEach(role => {
-          const hasRoleInDivision = slots.some(
-            slot => slot.role === role && slot.divisions.includes(division.id)
-          );
-
-          if (!hasRoleInDivision) {
-            errors.push(
-              t('validation.missingMandatoryRole', {
-                role: getRole(role),
-                division: division.name
-              })
-            );
-          }
-        });
-      });
-    } else if (divisions.length === 1) {
-      // For single division, just check that all editable mandatory roles are assigned
+    // Check each division has all editable mandatory roles
+    divisions.forEach(division => {
       EDITABLE_MANDATORY_ROLES.forEach(role => {
-        const hasRole = slots.some(slot => slot.role === role);
-        if (!hasRole) {
-          errors.push(
-            t('validation.missingMandatoryRoleSingle', {
-              role: t(`roles.${role}`)
-            })
-          );
+        const hasRoleInDivision = slots.some(
+          slot => slot.role === role && slot.divisions.includes(division.id)
+        );
+
+        if (!hasRoleInDivision) {
+          const errorMessage =
+            divisions.length === 1
+              ? t('validation.missingMandatoryRoleSingle', {
+                  role: getRole(role)
+                })
+              : t('validation.missingMandatoryRole', {
+                  role: getRole(role),
+                  division: division.name
+                });
+
+          errors.push(errorMessage);
         }
       });
-    }
+    });
 
     return errors;
   }, [divisions, slots, t, getRole]);
@@ -204,14 +167,8 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     }
   };
 
-  const updateSlots = (newSlots: VolunteerSlot[]) => {
-    setSlots(newSlots);
-  };
-
-  // Slot Management Functions
   const addSlot = (role: Role) => {
-    // Generate a simple ID for the new slot
-    const newId = `slot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const newId = `slot_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
     const singleDivision = divisions.length === 1;
 
     const newSlot: VolunteerSlot = {
@@ -230,12 +187,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
   };
 
   const updateSlotDivisions = (slotId: string, newDivisions: string[]) => {
-    // Check if "Select All" (empty string) was clicked
-    if (newDivisions.includes('')) {
-      selectAllDivisions(slotId);
-      return;
-    }
-
     const updatedSlots = slots.map(slot =>
       slot.id === slotId ? { ...slot, divisions: newDivisions } : slot
     );
@@ -249,32 +200,15 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     setSlots(updatedSlots);
   };
 
-  const selectAllDivisions = (slotId: string) => {
-    const slot = slots.find(s => s.id === slotId);
-    if (!slot) return;
-
-    const allDivisionIds = divisions.map(d => d.id);
-
-    // If ANY divisions are selected, deselect all. If NONE are selected, select all.
-    const newDivisions = slot.divisions.length > 0 ? [] : allDivisionIds;
-
-    const updatedSlots = slots.map(s => (s.id === slotId ? { ...s, divisions: newDivisions } : s));
-    setSlots(updatedSlots);
-  };
-
   // Utility Functions
   const getSlotsForRole = (role: Role): VolunteerSlot[] => {
     return slots.filter(s => s.role === role);
   };
 
-  const getDuplicatesForDivision = (role: Role, divisionId: string): VolunteerSlot[] => {
-    const roleSlots = getSlotsForRole(role);
-    return roleSlots.filter(slot => slot.divisions.includes(divisionId));
-  };
-
   const needsIdentifiers = (slot: VolunteerSlot): boolean => {
     return slot.divisions.some(divisionId => {
-      const duplicatesInDivision = getDuplicatesForDivision(slot.role, divisionId);
+      const roleSlots = getSlotsForRole(slot.role);
+      const duplicatesInDivision = roleSlots.filter(s => s.divisions.includes(divisionId));
       return duplicatesInDivision.length > 1;
     });
   };
@@ -282,7 +216,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
   const contextValue: VolunteerContextType = {
     // Data
     divisions,
-    slots,
     toggledSystemRoles,
 
     // State management
@@ -290,8 +223,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     validationErrors,
 
     // Actions - General
-    setSlots,
-    updateSlots,
     handleToggleSystemRole,
     handleSave,
 
@@ -300,16 +231,10 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     removeSlot,
     updateSlotDivisions,
     updateSlotIdentifier,
-    selectAllDivisions,
 
     // Utility functions
     getSlotsForRole,
-    getDuplicatesForDivision,
-    needsIdentifiers,
-
-    // Data loading states
-    divisionsLoading,
-    slotsLoading
+    needsIdentifiers
   };
 
   return <VolunteerContext.Provider value={contextValue}>{children}</VolunteerContext.Provider>;

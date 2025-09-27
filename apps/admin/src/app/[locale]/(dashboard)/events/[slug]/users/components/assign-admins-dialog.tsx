@@ -20,7 +20,7 @@ import {
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { AdminUser } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
 interface AssignAdminsDialogProps {

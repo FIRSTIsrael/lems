@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { AdminUser } from '@lems/types/api/admin';
-import { apiFetch } from '../../../../../../../lib/fetch';
+import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { AssignAdminsDialog } from './assign-admins-dialog';
 

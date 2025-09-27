@@ -106,7 +106,12 @@ export function RoleAssignmentSection({
           ) : (
             <Stack spacing={3}>
               {slots.map(slot => (
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                <Stack
+                  key={slot.id}
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                >
                   <Stack direction="row" spacing={2}>
                     {!singleDivision && (
                       <FormControl size="small" sx={{ mt: 1, minWidth: 200 }}>
