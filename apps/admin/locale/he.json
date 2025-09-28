@@ -451,6 +451,58 @@
           }
         }
       },
+      "settings": {
+        "title": "{eventName}: הגדרות",
+        "event-settings": {
+          "title": "הגדרות אירוע",
+          "advancement-percent": "אחוז העלייה",
+          "advancement-percent-description": "אחוז הקבוצות שעולות מסבבי הדירוג",
+          "save-button": "שמירת הגדרות",
+          "saving": "שומר..."
+        },
+        "event-actions": {
+          "title": "פעולות אירוע",
+          "complete-event": "סיום אירוע",
+          "complete-event-description": "סמן אירוע זה כמושלם. לא ניתן יהיה לשנות את תוצאות האירוע לאחר מכן.",
+          "publish-event": "פרסום אירוע",
+          "publish-event-description": "הפוך את תוצאות האירוע לציבוריות ואפשר לציבור לצפות בהן.",
+          "already-completed": "האירוע כבר הושלם",
+          "already-published": "האירוע כבר פורסם"
+        },
+        "danger-zone": {
+          "title": "אזור סכנה",
+          "delete-event": "מחיקת אירוע",
+          "delete-event-description": "מחק לצמיתות את האירוע וכל הנתונים הקשורים אליו. פעולה זו אינה ניתנת לביטול.",
+          "delete-disabled": "מחיקת אירוע אינה זמינה עדיין"
+        },
+        "dialogs": {
+          "complete-event": {
+            "title": "סיום אירוע",
+            "message": "האם אתם בטוחים שברצונכם לסיים את האירוע? לאחר הסיום, לא ניתן יהיה לשנות את תוצאות האירוע.",
+            "eventName": "אירוע: {eventName}",
+            "confirm": "סיום אירוע",
+            "cancel": "ביטול",
+            "completing": "מסיים..."
+          },
+          "publish-event": {
+            "title": "פרסום אירוע",
+            "message": "האם אתם בטוחים שברצונכם לפרסם את האירוע? פעולה זו תהפוך את התוצאות לציבוריות ונראות לכולם.",
+            "eventName": "אירוע: {eventName}",
+            "confirm": "פרסום אירוע",
+            "cancel": "ביטול",
+            "publishing": "מפרסם..."
+          }
+        },
+        "messages": {
+          "save-success": "הגדרות נשמרו בהצלחה",
+          "save-error": "שמירת ההגדרות נכשלה",
+          "complete-success": "האירוע הושלם בהצלחה",
+          "complete-error": "סיום האירוע נכשל",
+          "publish-success": "האירוע פורסם בהצלחה",
+          "publish-error": "פרסום האירוע נכשל",
+          "load-error": "טעינת הגדרות האירוע נכשלה"
+        }
+      },
       "schedule": {
         "title": "{eventName}: לוח זמנים",
         "delete-schedule": "מחיקת לוח זמנים",

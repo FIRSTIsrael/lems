@@ -444,6 +444,58 @@
           }
         }
       },
+      "settings": {
+        "title": "{eventName}: Settings",
+        "event-settings": {
+          "title": "Event Settings",
+          "advancement-percent": "Advancement Percentage",
+          "advancement-percent-description": "Percentage of teams that advance from ranking rounds",
+          "save-button": "Save Settings",
+          "saving": "Saving..."
+        },
+        "event-actions": {
+          "title": "Event Actions",
+          "complete-event": "Complete Event",
+          "complete-event-description": "Mark this event as completed. Event results can no longer be modified.",
+          "publish-event": "Publish Event",
+          "publish-event-description": "Make event results public and allow the public to view them.",
+          "already-completed": "Event is already completed",
+          "already-published": "Event is already published"
+        },
+        "danger-zone": {
+          "title": "Danger Zone",
+          "delete-event": "Delete Event",
+          "delete-event-description": "Permanently delete this event and all associated data. This action cannot be undone.",
+          "delete-disabled": "Event deletion is not yet available"
+        },
+        "dialogs": {
+          "complete-event": {
+            "title": "Complete Event",
+            "message": "Are you sure you want to complete this event? Once completed, event results can no longer be modified.",
+            "eventName": "Event: {eventName}",
+            "confirm": "Complete Event",
+            "cancel": "Cancel",
+            "completing": "Completing..."
+          },
+          "publish-event": {
+            "title": "Publish Event",
+            "message": "Are you sure you want to publish this event? This will make the results public and visible to everyone.",
+            "eventName": "Event: {eventName}",
+            "confirm": "Publish Event",
+            "cancel": "Cancel",
+            "publishing": "Publishing..."
+          }
+        },
+        "messages": {
+          "save-success": "Settings saved successfully",
+          "save-error": "Failed to save settings",
+          "complete-success": "Event completed successfully",
+          "complete-error": "Failed to complete event",
+          "publish-success": "Event published successfully",
+          "publish-error": "Failed to publish event",
+          "load-error": "Failed to load event settings"
+        }
+      },
       "schedule": {
         "title": "{eventName}: Schedule",
         "delete-schedule": "Delete Schedule",

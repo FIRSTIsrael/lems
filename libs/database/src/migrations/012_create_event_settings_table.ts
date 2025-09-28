@@ -9,7 +9,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('event_id', 'uuid', col => col.notNull().unique())
     .addColumn('completed', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('published', 'boolean', col => col.notNull().defaultTo(false))
-    .addColumn('advancement_percent', 'real', col => col.notNull().defaultTo(0))
+    .addColumn('advancement_percent', 'integer', col => col.notNull().defaultTo(0))
     .execute();
 
   // Create foreign key constraint for event_id
@@ -19,10 +19,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     .onDelete('cascade')
     .execute();
 
-  // Add check constraint for advancement_percent to be between 0 and 1
+  // Add check constraint for advancement_percent to be between 0 and 100
   await db.schema
     .alterTable('event_settings')
-    .addCheckConstraint('chk_advancement_percent_range', sql`advancement_percent >= 0 AND advancement_percent <= 1`)
+    .addCheckConstraint('chk_advancement_percent_range', sql`advancement_percent >= 0 AND advancement_percent <= 100`)
     .execute();
 
   // Create indexes
