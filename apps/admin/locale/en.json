@@ -461,11 +461,11 @@
         "links": {
           "teams": {
             "title": "Manage Teams",
-            "description": "Register and manage teams for this division"
+            "description": "Register and manage teams"
           },
           "venue": {
             "title": "Manage Venue",
-            "description": "Set up rooms and tables for this division"
+            "description": "Set up rooms and tables"
           }
         },
         "settings": {
@@ -603,6 +603,83 @@
         "coming-soon": {
           "title": "Integrations Coming Soon",
           "description": "We're working on bringing you powerful integrations to streamline your event management."
+        }
+      },
+      "users": {
+        "title": "{eventName}: Users",
+        "sections": {
+          "eventAdmins": {
+            "title": "Event Administrators",
+            "description": "Manage users who can administer this event. These users will have access to event management features.",
+            "currentAdmins": "Current Administrators",
+            "assignAdmins": "Assign Admins",
+            "removeAdmin": "Remove Admin",
+            "noAdmins": "No administrators assigned to this event."
+          },
+          "volunteerUsers": {
+            "title": "Volunteer Users",
+            "description": "Manage volunteer role slots for this event. Ensure all mandatory roles are filled for each division.",
+            "systemManagedRoles": {
+              "title": "System-Managed Roles",
+              "description": "These roles are automatically managed by the system and cannot be edited manually.",
+              "roleDescription": "Managed automatically by the system",
+              "toggleableRoleDescription": "This role can be enabled or disabled for your event",
+              "enabled": "Enabled",
+              "disabled": "Disabled"
+            },
+            "mandatoryRoles": {
+              "title": "Mandatory Roles",
+              "description": "These roles are required for each division in the event."
+            },
+            "optionalRoles": {
+              "title": "Optional Roles",
+              "description": "These roles are optional but can be assigned as needed."
+            },
+            "addSlot": "Add Slot",
+            "slot": "slot",
+            "slots": "slots",
+            "removeSlot": "Remove Slot",
+            "noSlotsAssigned": "No slots assigned for this role.",
+            "divisions": "Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier",
+            "identifierHelp": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
+            "saveSlots": "Save Slots",
+            "saving": "Saving...",
+            "saveSuccess": "Slots saved successfully!",
+            "saveError": "Failed to save slots. Please try again.",
+            "validation": {
+              "title": "Please fix the following issues:",
+              "missingMandatoryRole": "{role} is required for {division}",
+              "missingMandatoryRoleSingle": "{role} is required for this event"
+            },
+            "loading": "Loading..."
+          }
+        },
+        "dialogs": {
+          "assignAdmins": {
+            "title": "Assign Event Administrators",
+            "searchPlaceholder": "Search for admin users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableAdmins": "No additional admin users available to assign.",
+            "selectedCount": "{count} {count, plural, =1 {user} other {users}} selected",
+            "cancel": "Cancel",
+            "save": "Assign Selected"
+          },
+          "addVolunteer": {
+            "title": "Add {role} Volunteer",
+            "selectUser": "Select User",
+            "changeUser": "Change User",
+            "searchPlaceholder": "Search for volunteer users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableVolunteers": "No volunteer users available for this role.",
+            "selectDivisions": "Select Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier (Optional)",
+            "identifierHelp": "Add an identifier to distinguish this volunteer (max 12 characters)",
+            "cancel": "Cancel",
+            "add": "Add Volunteer"
+          }
         }
       }
     },

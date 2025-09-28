@@ -468,11 +468,11 @@
         "links": {
           "teams": {
             "title": "ניהול קבוצות",
-            "description": "רישום וניהול קבוצות עבור בית זה"
+            "description": "רישום וניהול קבוצות"
           },
           "venue": {
             "title": "ניהול היכל",
-            "description": "הגדרת חדרים ושולחנות עבור בית זה"
+            "description": "הגדרת חדרים ושולחנות"
           }
         },
         "settings": {
@@ -610,6 +610,83 @@
         "coming-soon": {
           "title": "אינטגרציות בקרוב",
           "description": "אנחנו עובדים על הבאת אינטגרציות חזקות כדי לייעל את ניהול האירועים שלכם."
+        }
+      },
+      "users": {
+        "title": "{eventName}: משתמשים",
+        "sections": {
+          "eventAdmins": {
+            "title": "מנהלי אירוע",
+            "description": "נהל משתמשים שיכולים לנהל את האירוע הזה. משתמשים אלה יקבלו גישה לתכונות ניהול האירוע.",
+            "currentAdmins": "מנהלים נוכחיים",
+            "assignAdmins": "הקצה מנהלים",
+            "removeAdmin": "הסר מנהל",
+            "noAdmins": "לא הוקצו מנהלים לאירוע זה."
+          },
+          "volunteerUsers": {
+            "title": "משתמשי מתנדבים",
+            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל בית.",
+            "systemManagedRoles": {
+              "title": "תפקידים המנוהלים על ידי המערכת",
+              "description": "תפקידים אלה מנוהלים אוטומטית על ידי המערכת ולא ניתן לערוך אותם באופן ידני.",
+              "roleDescription": "מנוהל אוטומטית על ידי המערכת",
+              "toggleableRoleDescription": "ניתן לאפשר או לבטל תפקיד זה עבור האירוע שלך",
+              "enabled": "פעיל",
+              "disabled": "כבוי"
+            },
+            "mandatoryRoles": {
+              "title": "תפקידי חובה",
+              "description": "תפקידים אלה נדרשים לכל בית באירוע."
+            },
+            "optionalRoles": {
+              "title": "תפקידים אופציונליים",
+              "description": "תפקידים אלה אופציונליים אך ניתן להקצותם לפי הצורך."
+            },
+            "addSlot": "הוסף מתנדב",
+            "slot": "מתנדב",
+            "slots": "מתנדבים",
+            "removeSlot": "הסר מתנדב",
+            "noSlotsAssigned": "לא הוקצו מתנדבים לתפקיד זה.",
+            "divisions": "בתים",
+            "selectAll": "בחר הכל",
+            "identifier": "מזהה",
+            "identifierHelp": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
+            "saveSlots": "שמור הקצאות",
+            "saving": "שומר...",
+            "saveSuccess": "ההקצאות נשמרו בהצלחה!",
+            "saveError": "שגיאה בשמירת ההקצאות. אנא נסה שוב.",
+            "validation": {
+              "title": "אנא תקן את הבעיות הבאות:",
+              "missingMandatoryRole": "{role} נדרש עבור {division}",
+              "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
+            },
+            "loading": "טוען..."
+          }
+        },
+        "dialogs": {
+          "assignAdmins": {
+            "title": "הקצה מנהלי אירוע",
+            "searchPlaceholder": "חפש משתמשי מנהל...",
+            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "noAvailableAdmins": "אין משתמשי מנהל נוספים זמינים להקצאה.",
+            "selectedCount": "{count} {count, plural, =1 {משתמש} other {משתמשים}} נבחרו",
+            "cancel": "ביטול",
+            "save": "הקצה נבחרים"
+          },
+          "addVolunteer": {
+            "title": "הוסף מתנדב {role}",
+            "selectUser": "בחר משתמש",
+            "changeUser": "שנה משתמש",
+            "searchPlaceholder": "חפש משתמשי מתנדבים...",
+            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "noAvailableVolunteers": "אין משתמשי מתנדבים זמינים לתפקיד זה.",
+            "selectDivisions": "בחר בתים",
+            "selectAll": "בחר הכל",
+            "identifier": "מזהה (אופציונלי)",
+            "identifierHelp": "הוסף מזהה כדי להבדיל את המתנדב הזה (עד 12 תווים)",
+            "cancel": "ביטול",
+            "add": "הוסף מתנדב"
+          }
         }
       }
     },

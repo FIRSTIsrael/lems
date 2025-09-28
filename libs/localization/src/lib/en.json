@@ -311,5 +311,55 @@
       "yes": "Yes",
       "no": "No"
     }
+  },
+  "roles": {
+    "pit-admin": {
+      "name": "Pit Admin"
+    },
+    "judge": {
+      "name": "Judge"
+    },
+    "lead-judge": {
+      "name": "Lead Judge"
+    },
+    "judge-advisor": {
+      "name": "Judge Advisor"
+    },
+    "referee": {
+      "name": "Referee"
+    },
+    "head-referee": {
+      "name": "Head Referee"
+    },
+    "scorekeeper": {
+      "name": "Scorekeeper"
+    },
+    "field-head-queuer": {
+      "name": "Field Head Queuer"
+    },
+    "field-queuer": {
+      "name": "Field Queuer"
+    },
+    "judging-head-queuer": {
+      "name": "Judging Head Queuer"
+    },
+    "judging-queuer": {
+      "name": "Judging Queuer"
+    },
+    "mc": {
+      "name": "MC"
+    },
+    "field-manager": {
+      "name": "Field Manager"
+    },
+    "audience-display": {
+      "name": "Audience Display"
+    },
+    "reports": {
+      "name": "Reports"
+    },
+    "tournament-manager": {
+      "name": "Tournament Manager"
+    }
   }
 }

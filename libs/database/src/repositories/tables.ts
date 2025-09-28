@@ -73,12 +73,17 @@ export class TablesRepository {
     return new TablesSelector(this.db, divisionId);
   }
 
-  async create(newTable: InsertableRobotGameTable): Promise<boolean> {
-    const result = await this.db
+  async create(newTable: InsertableRobotGameTable): Promise<RobotGameTable> {
+    const [createdTable] = await this.db
       .insertInto('robot_game_tables')
       .values(newTable)
       .returningAll()
       .execute();
-    return result.length > 0;
+    
+    if (!createdTable) {
+      throw new Error('Failed to create table');
+    }
+    
+    return createdTable;
   }
 }

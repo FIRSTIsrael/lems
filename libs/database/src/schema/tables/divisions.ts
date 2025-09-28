@@ -17,6 +17,7 @@ export interface DivisionsTable {
   pit_map_url: string | null;
   has_schedule: Generated<boolean>; // Default false
   has_awards: Generated<boolean>; // Default false
+  has_users: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
 }
 
