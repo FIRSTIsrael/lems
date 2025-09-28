@@ -458,7 +458,8 @@
           "advancement-percent": "אחוז העלייה",
           "advancement-percent-description": "אחוז הקבוצות שעולות מסבבי הדירוג",
           "save-button": "שמירת הגדרות",
-          "saving": "שומר..."
+          "saving": "שומר...",
+          "advancing-teams": "({advancingTeams}/{totalTeams} קבוצות)"
         },
         "event-actions": {
           "title": "פעולות אירוע",

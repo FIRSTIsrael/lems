@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { KeyedMutator } from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import { useTranslations } from "next-intl";
 import {
   Box,
@@ -33,11 +33,19 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   const t = useTranslations("pages.events.settings");
   const event = useEvent();
 
+  const { data: teams = [] } = useSWR(
+    `/admin/events/${event.id}/teams`,
+    { suspense: false, fallbackData: [] }
+  );
+
   const [isSaving, setIsSaving] = useState(false);
 
   const [advancementPercent, setAdvancementPercent] = useState<number>(
     settings.advancementPercent || 50
   );
+
+  const totalTeams = teams.length;
+  const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
 
   useEffect(() => {
     if (settings) {
@@ -85,6 +93,11 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           <Grid size={3}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {t("event-settings.advancement-percent")}
+              {totalTeams > 0 && (
+                <Typography component="span" variant="body2" color="primary" sx={{ ml: 1 }}>
+                  {t("event-settings.advancing-teams", {advancingTeams, totalTeams})}
+                </Typography>
+              )}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {t("event-settings.advancement-percent-description")}

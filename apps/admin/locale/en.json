@@ -451,7 +451,8 @@
           "advancement-percent": "Advancement Percentage",
           "advancement-percent-description": "Percentage of teams that advance from ranking rounds",
           "save-button": "Save Settings",
-          "saving": "Saving..."
+          "saving": "Saving...",
+          "advancing-teams": "({advancingTeams}/{totalTeams} teams)"
         },
         "event-actions": {
           "title": "Event Actions",
