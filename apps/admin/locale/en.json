@@ -646,6 +646,8 @@
             "identifierHelp": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
             "saveSlots": "Save Slots",
             "saving": "Saving...",
+            "saveSuccess": "Slots saved successfully!",
+            "saveError": "Failed to save slots. Please try again.",
             "validation": {
               "title": "Please fix the following issues:",
               "missingMandatoryRole": "{role} is required for {division}",

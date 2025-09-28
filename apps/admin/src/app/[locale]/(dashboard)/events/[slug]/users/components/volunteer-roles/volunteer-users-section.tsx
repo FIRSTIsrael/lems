@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Alert, Button } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
+import { useState } from 'react';
 import { useVolunteer } from './volunteer-context';
 import { ManagedRolesSection } from './managed-roles';
 import { OptionalRolesSection } from './optional-roles';
@@ -11,6 +12,18 @@ import { MandatoryRolesSection } from './mandatory-roles';
 export function VolunteerUsersSection() {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { saving, validationErrors, handleSave } = useVolunteer();
+  const [saveResult, setSaveResult] = useState<'success' | 'error' | null>(null);
+
+  const onSave = async () => {
+    try {
+      await handleSave();
+      setSaveResult('success');
+    } catch {
+      setSaveResult('error');
+    }
+    // Clear the message after 5 seconds
+    setTimeout(() => setSaveResult(null), 5000);
+  };
 
   return (
     <Box>
@@ -27,7 +40,7 @@ export function VolunteerUsersSection() {
         <Button
           variant="contained"
           startIcon={<SaveIcon />}
-          onClick={handleSave}
+          onClick={onSave}
           disabled={validationErrors.length > 0 || saving}
           size="large"
           sx={{ flexShrink: 0 }}
@@ -35,6 +48,18 @@ export function VolunteerUsersSection() {
           {saving ? t('saving') : t('saveSlots')}
         </Button>
       </Box>
+
+      {saveResult === 'success' && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          {t('saveSuccess')}
+        </Alert>
+      )}
+
+      {saveResult === 'error' && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {t('saveError')}
+        </Alert>
+      )}
 
       {validationErrors.length > 0 && (
         <Alert severity="error" sx={{ mb: 3 }}>

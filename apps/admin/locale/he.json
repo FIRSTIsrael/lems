@@ -653,6 +653,8 @@
             "identifierHelp": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
             "saveSlots": "שמור הקצאות",
             "saving": "שומר...",
+            "saveSuccess": "ההקצאות נשמרו בהצלחה!",
+            "saveError": "שגיאה בשמירת ההקצאות. אנא נסה שוב.",
             "validation": {
               "title": "אנא תקן את הבעיות הבאות:",
               "missingMandatoryRole": "{role} נדרש עבור {division}",
