@@ -659,7 +659,8 @@
               "title": "אנא תקן את הבעיות הבאות:",
               "missingMandatoryRole": "{role} נדרש עבור {division}",
               "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
-            }
+            },
+            "loading": "טוען..."
           }
         },
         "dialogs": {

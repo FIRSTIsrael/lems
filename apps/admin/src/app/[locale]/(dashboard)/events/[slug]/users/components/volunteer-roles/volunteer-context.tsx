@@ -43,6 +43,7 @@ export interface VolunteerContextType {
   // State management
   saving: boolean;
   validationErrors: string[];
+  loading: boolean;
 
   // Actions - General
   handleToggleSystemRole: (role: string, enabled: boolean) => void;
@@ -77,28 +78,30 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
 
-  const { data: currentVolunteers = [] } = useSWR<VolunteerUser[]>(
+  const { data: currentVolunteers = [], isLoading: volunteersLoading } = useSWR<VolunteerUser[]>(
     `/admin/events/${event.id}/users/volunteers`,
-    { suspense: true, fallbackData: [] }
+    { suspense: false, fallbackData: [] }
   );
 
+  const loading = volunteersLoading && !initialized.current;
+
   useEffect(() => {
-    if (currentVolunteers.length > 0 && !initialized.current) {
+    if (volunteersLoading || initialized.current) {
+      return;
+    }
+
+    if (currentVolunteers.length > 0) {
       const { slots: transformedSlots, toggledSystemRoles: systemRoles } =
         transformVolunteerUsersToSlots(currentVolunteers);
       setSlots(transformedSlots);
       setToggledSystemRoles(systemRoles);
       initialized.current = true;
-    }
-  }, [currentVolunteers]);
-
-  useEffect(() => {
-    if (divisions.length > 0 && currentVolunteers.length === 0 && !initialized.current) {
+    } else if (divisions.length > 0) {
       const initialSlots = generateInitialSlots(divisions);
       setSlots(initialSlots);
       initialized.current = true;
     }
-  }, [divisions, currentVolunteers.length]);
+  }, [currentVolunteers, divisions, volunteersLoading]);
 
   const validationErrors = useMemo(() => {
     const errors: string[] = [];
@@ -168,9 +171,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       );
 
       if (result.ok) {
-        // Show success message or redirect
         console.log('Volunteer slots saved successfully');
-        // You could update local state with result.data if needed
       } else {
         console.error('Failed to save volunteer slots:', result.status, result.error);
       }
@@ -214,7 +215,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     setSlots(updatedSlots);
   };
 
-  // Utility Functions
   const getSlotsForRole = (role: Role): VolunteerSlot[] => {
     return slots.filter(s => s.role === role);
   };
@@ -235,6 +235,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     // State management
     saving,
     validationErrors,
+    loading,
 
     // Actions - General
     handleToggleSystemRole,

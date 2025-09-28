@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Alert, Button } from '@mui/material';
+import { Box, Typography, Stack, Alert, Button, CircularProgress } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useVolunteer } from './volunteer-context';
@@ -11,7 +11,7 @@ import { MandatoryRolesSection } from './mandatory-roles';
 
 export function VolunteerUsersSection() {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
-  const { saving, validationErrors, handleSave } = useVolunteer();
+  const { saving, validationErrors, handleSave, loading } = useVolunteer();
   const [saveResult, setSaveResult] = useState<'success' | 'error' | null>(null);
 
   const onSave = async () => {
@@ -21,9 +21,21 @@ export function VolunteerUsersSection() {
     } catch {
       setSaveResult('error');
     }
-    // Clear the message after 5 seconds
     setTimeout(() => setSaveResult(null), 5000);
   };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
+        <Stack alignItems="center" spacing={2}>
+          <CircularProgress size={48} />
+          <Typography variant="body1" color="text.secondary">
+            {t('loading')}
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
 
   return (
     <Box>

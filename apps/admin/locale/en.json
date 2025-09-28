@@ -652,7 +652,8 @@
               "title": "Please fix the following issues:",
               "missingMandatoryRole": "{role} is required for {division}",
               "missingMandatoryRoleSingle": "{role} is required for this event"
-            }
+            },
+            "loading": "Loading..."
           }
         },
         "dialogs": {
