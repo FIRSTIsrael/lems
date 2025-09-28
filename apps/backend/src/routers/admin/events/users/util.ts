@@ -11,10 +11,15 @@ export const generateVolunteerPassword = () => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const passwordLength = 4;
   let password = '';
-  const bytes = crypto.randomBytes(passwordLength);
-  for (let i = 0; i < passwordLength; i++) {
-    // Map each byte to a character in the charset. Avoid bias by using mod.
-    password += charset[bytes[i] % charset.length];
+  let count = 0;
+  while (count < passwordLength) {
+    const byte = crypto.randomBytes(1)[0];
+    // Only use bytes less than 252 to ensure uniform distribution for charset length 36
+    if (byte >= charset.length * Math.floor(256 / charset.length)) {
+      continue;
+    }
+    password += charset[byte % charset.length];
+    count++;
   }
   return password;
 };
