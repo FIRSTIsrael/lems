@@ -8,6 +8,7 @@ import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
 import eventUsersRouter from './users';
 import eventTeamsRouter from './teams';
 import eventDivisionsRouter from './divisions';
+import eventSettingsRouter from './settings';
 
 const router = express.Router({ mergeParams: true });
 
@@ -134,6 +135,7 @@ router.use('/:eventId', attachEvent());
 router.use('/:eventId/divisions', eventDivisionsRouter);
 router.use('/:eventId/teams', eventTeamsRouter);
 router.use('/:eventId/users', eventUsersRouter);
+router.use('/:eventId/settings', eventSettingsRouter);
 
 router.get('/:eventId', async (req: AdminEventRequest, res) => {
   const event = await db.events.byId(req.eventId).get();

@@ -26,3 +26,11 @@ export type EventSummary = z.infer<typeof AdminEventSummaryResponseSchema>;
 export const AdminEventsResponseSchema = z.array(AdminEventResponseSchema);
 
 export const AdminSummarizedEventsResponseSchema = z.array(AdminEventSummaryResponseSchema);
+
+export const AdminEventSettingsResponseSchema = z.object({
+  completed: z.boolean(),
+  published: z.boolean(),
+  advancementPercent: z.number().min(0).max(100)
+});
+
+export type EventSettings = z.infer<typeof AdminEventSettingsResponseSchema>;
