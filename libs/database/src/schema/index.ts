@@ -11,6 +11,7 @@ export * from './tables/events';
 export * from './tables/divisions';
 export * from './tables/event-users';
 export * from './tables/event-user-divisions';
+export * from './tables/event-settings';
 
 // Event Details
 export * from './tables/judging-rooms';
