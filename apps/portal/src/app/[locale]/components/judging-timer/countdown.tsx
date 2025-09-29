@@ -1,5 +1,5 @@
 import { Typography, TypographyProps } from '@mui/material';
-import useCountdown from '../hooks/use-countdown';
+import useCountdown from '../../../../hooks/use-countdown';
 
 interface CountdownProps extends TypographyProps {
   targetDate: Date;

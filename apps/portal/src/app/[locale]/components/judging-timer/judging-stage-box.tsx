@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import useCountdown from '../hooks/use-countdown';
+import useCountdown from '../../../../hooks/use-countdown';
 import Countdown from './countdown';
 
 interface JudgingStageProgressProps {
