@@ -101,15 +101,23 @@ const JudgingTimerPage: React.FC = () => {
   }, [minutes, seconds]);
 
   const currentStage = useMemo(() => {
-    if (!isRunning || timedStages.length === 0) return null;
+    if (!isRunning || timedStages.length === 0 || !startTime) return null;
     
-    const currentTime = dayjs();
-    const _currentStage = timedStages.find(stage =>
-      currentTime.isBetween(stage.startTime, stage.endTime, 'seconds', '[]')
-    );
-
-    return _currentStage ? _currentStage : timedStages[STAGES.length - 1];
-  }, [timedStages, isRunning, STAGES.length]);
+    // Calculate elapsed time since start
+    const elapsedSeconds = secondsJudging;
+    let cumulativeTime = 0;
+    
+    // Find which stage we're currently in based on elapsed time
+    for (const stage of timedStages) {
+      if (elapsedSeconds >= cumulativeTime && elapsedSeconds < cumulativeTime + stage.duration) {
+        return stage;
+      }
+      cumulativeTime += stage.duration;
+    }
+    
+    // If we've passed all stages, return the last one
+    return timedStages[timedStages.length - 1];
+  }, [timedStages, isRunning, secondsJudging, startTime]);
 
   const stagesToDisplay = useMemo(() => {
     if (!currentStage) return timedStages.slice(0, 4);

@@ -68,12 +68,12 @@ const JudgingStageBox: React.FC<JudgingStageBoxProps> = ({
       <Box borderRadius="50%" minWidth={52} minHeight={52} bgcolor={iconColor} />
       <Grid container width="100%" justifyContent="flex-start">
         <Grid size={8} display="flex" alignItems="center">
-          <Typography>
+          <Stack spacing={0.5}>
             <Typography fontSize="1.25rem" fontWeight={600}>
               {primaryText}
             </Typography>
             <Typography fontSize="0.875rem">{secondaryText}</Typography>
-          </Typography>
+          </Stack>
         </Grid>
         <Grid size={4}>
           {targetDate && (
