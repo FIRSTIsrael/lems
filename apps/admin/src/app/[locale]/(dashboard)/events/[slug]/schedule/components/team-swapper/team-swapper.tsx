@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import { Box, Paper, Stack, Alert, CircularProgress, Avatar, Divider } from '@mui/material';
-import { SwapHoriz, Schedule } from '@mui/icons-material';
+import { Box, Paper, Stack, CircularProgress, Avatar, Divider } from '@mui/material';
+import { SwapHoriz } from '@mui/icons-material';
 import { apiFetch } from '@lems/shared';
 import { Division, Team } from '@lems/types/api/admin';
 import {
@@ -27,7 +26,6 @@ interface TeamSwapperProps {
 }
 
 export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
-  const t = useTranslations('pages.events.schedule.teamSwap');
   const event = useEvent();
   const searchParams = useSearchParams();
   const selectedDivisionId = searchParams.get('division') || division.id;
@@ -37,14 +35,12 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
 
-  // Fetch teams in division
   const {
     data: teams = [],
     isLoading: teamsLoading,
     mutate: mutateTeams
   } = useSWR<Team[]>(`/admin/events/${event.id}/divisions/${selectedDivisionId}/teams`);
 
-  // Fetch selected team's schedule
   const {
     data: teamSchedule,
     isLoading: scheduleLoading,
@@ -58,7 +54,6 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
       : null
   );
 
-  // Fetch judging sessions and rooms
   const {
     data: judgingData,
     isLoading: sessionsLoading,
@@ -72,7 +67,6 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
       : null
   );
 
-  // Transform the judging data using our utility function
   const judgingSessionTimes = useMemo(() => {
     if (!judgingData) return [];
     return groupSessionsByTime(judgingData.sessions, judgingData.rooms);
@@ -139,33 +133,42 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
 
   return (
     <>
-      <Stack height="100%" spacing={2}>
-        <Alert severity="info" icon={<Schedule />} sx={{ py: 0.5 }}>
-          {t('description')}
-        </Alert>
+      <Stack height="100vh" spacing={2} sx={{ overflow: 'hidden' }}>
+        <Box sx={{ display: 'flex', gap: 2, flex: 1, minHeight: 0 }}>
+          <Paper
+            sx={{ m: 1, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+          >
+            <Box p={3} flex={1} display="flex" flexDirection="column" overflow="hidden">
+              <Box
+                sx={{
+                  flex: selectedTeamId ? '0 0 40%' : '1',
+                  overflow: 'hidden',
+                  mb: selectedTeamId ? 2 : 0
+                }}
+              >
+                <TeamSelector
+                  teams={teams}
+                  selectedTeamId={selectedTeamId}
+                  onTeamSelect={handleTeamSelect}
+                />
+              </Box>
 
-        <Box sx={{ display: 'flex', gap: 2, height: 'calc(100% - 64px)' }}>
-          {/* Left side - Team selection and schedule */}
-          <Paper sx={{ flex: 1, p: 3, overflow: 'auto' }}>
-            <TeamSelector
-              teams={teams}
-              selectedTeamId={selectedTeamId}
-              onTeamSelect={handleTeamSelect}
-            />
-
-            {selectedTeamId && (
-              <TeamScheduleView teamSchedule={teamSchedule} isLoading={scheduleLoading} />
-            )}
+              {selectedTeamId && (
+                <Box sx={{ flex: '1', overflow: 'auto' }}>
+                  <TeamScheduleView teamSchedule={teamSchedule} isLoading={scheduleLoading} />
+                </Box>
+              )}
+            </Box>
           </Paper>
 
-          {/* Center divider with swap icon */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               position: 'relative',
-              width: 40
+              width: 40,
+              flexShrink: 0
             }}
           >
             <Divider orientation="vertical" sx={{ height: '100%' }} />
@@ -183,8 +186,7 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
             </Avatar>
           </Box>
 
-          {/* Right side - Judging session selection */}
-          <Paper sx={{ flex: 1, p: 3, overflow: 'auto' }}>
+          <Paper sx={{ m: 1, flex: 1, p: 3, overflow: 'auto' }}>
             <JudgingSessionSelector
               selectedTeamId={selectedTeamId}
               judgingSessionTimes={judgingSessionTimes}

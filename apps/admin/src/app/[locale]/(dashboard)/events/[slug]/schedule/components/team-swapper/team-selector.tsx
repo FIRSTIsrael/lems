@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Typography, List, ListItemButton, ListItemText } from '@mui/material';
+import { Typography, List, ListItemButton, ListItemText, TextField, Box } from '@mui/material';
+import { Search } from '@mui/icons-material';
 import { Team } from '@lems/types/api/admin';
 
 interface TeamSelectorProps {
@@ -15,20 +16,45 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
   onTeamSelect
 }) => {
   const t = useTranslations('pages.events.schedule.teamSwap');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredTeams = useMemo(() => {
+    if (!searchQuery.trim()) return teams;
+
+    const query = searchQuery.toLowerCase();
+    return teams.filter(
+      team =>
+        team.number.toString().includes(query) ||
+        team.name?.toLowerCase().includes(query) ||
+        team.affiliation?.toLowerCase().includes(query)
+    );
+  }, [teams, searchQuery]);
 
   return (
-    <>
-      <Typography variant="h6" gutterBottom>
-        {t('selectTeam')}
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Typography variant="h6">{t('selectTeam')}</Typography>
+      <Typography variant="body2" fontSize="small" color="text.secondary" gutterBottom>
+        {t('description')}
       </Typography>
 
-      {teams.length === 0 ? (
+      <TextField
+        placeholder="Search teams..."
+        size="small"
+        value={searchQuery}
+        onChange={e => setSearchQuery(e.target.value)}
+        slotProps={{
+          input: { startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} /> }
+        }}
+        sx={{ mb: 2 }}
+      />
+
+      {filteredTeams.length === 0 ? (
         <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-          {t('noTeams')}
+          {searchQuery ? 'No teams found' : t('noTeams')}
         </Typography>
       ) : (
-        <List>
-          {teams.map(team => (
+        <List sx={{ overflow: 'auto', flexGrow: 1 }}>
+          {filteredTeams.map(team => (
             <ListItemButton
               key={team.id}
               selected={selectedTeamId === team.id}
@@ -48,6 +74,6 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
           ))}
         </List>
       )}
-    </>
+    </Box>
   );
 };
