@@ -816,6 +816,38 @@
         "cancel": "Cancel",
         "confirm": "Delete User",
         "deleting": "Deleting..."
+      },
+      "edit": {
+        "title": "Edit User: {userName}",
+        "cancel": "Cancel",
+        "profile": {
+          "title": "Profile Information",
+          "fields": {
+            "firstName": {
+              "label": "First Name"
+            },
+            "lastName": {
+              "label": "Last Name"
+            }
+          },
+          "errors": {
+            "firstName-required": "First name is required.",
+            "lastName-required": "Last name is required."
+          },
+          "submit": "Update Profile",
+          "submitting": "Updating..."
+        },
+        "password": {
+          "title": "Reset Password",
+          "fields": {
+            "password": {
+              "label": "New Password",
+              "placeholder": "Enter a new secure password"
+            }
+          },
+          "submit": "Reset Password",
+          "submitting": "Resetting..."
+        }
       }
     }
   },

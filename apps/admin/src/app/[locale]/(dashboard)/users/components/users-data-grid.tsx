@@ -12,32 +12,30 @@ import { useSession } from '../../components/session-context';
 import { UsersSearch } from './users-search';
 import { PermissionsEditorDialog } from './permissions-editor-dialog';
 import { DeleteUserDialog } from './delete-user-dialog';
+import { EditUserDialog } from './edit-user-dialog';
 
 interface UsersDataGridProps {
   users: AdminUser[];
+}
+
+type DialogType = 'permissions' | 'delete' | 'edit' | null;
+
+interface DialogState {
+  type: DialogType;
+  userId: string;
+  userName: string;
+  user?: AdminUser;
 }
 
 export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
   const session = useSession();
   const [searchValue, setSearchValue] = useState('');
-  const [permissionsDialog, setPermissionsDialog] = useState<{
-    open: boolean;
-    userId: string;
-    userName: string;
-  }>({
-    open: false,
+  const [dialog, setDialog] = useState<DialogState>({
+    type: null,
     userId: '',
-    userName: ''
-  });
-  const [deleteDialog, setDeleteDialog] = useState<{
-    open: boolean;
-    userId: string;
-    userName: string;
-  }>({
-    open: false,
-    userId: '',
-    userName: ''
+    userName: '',
+    user: undefined
   });
 
   const { data: users } = useSWR<AdminUser[]>('/admin/users', {
@@ -65,34 +63,38 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
   };
 
   const openPermissionsDialog = (userId: string, firstName: string, lastName: string) => {
-    setPermissionsDialog({
-      open: true,
+    setDialog({
+      type: 'permissions',
       userId,
-      userName: `${firstName} ${lastName}`
-    });
-  };
-
-  const closePermissionsDialog = () => {
-    setPermissionsDialog({
-      open: false,
-      userId: '',
-      userName: ''
+      userName: `${firstName} ${lastName}`,
+      user: undefined
     });
   };
 
   const openDeleteDialog = (userId: string, firstName: string, lastName: string) => {
-    setDeleteDialog({
-      open: true,
+    setDialog({
+      type: 'delete',
       userId,
-      userName: `${firstName} ${lastName}`
+      userName: `${firstName} ${lastName}`,
+      user: undefined
     });
   };
 
-  const closeDeleteDialog = () => {
-    setDeleteDialog({
-      open: false,
+  const openEditDialog = (user: AdminUser) => {
+    setDialog({
+      type: 'edit',
+      userId: user.id,
+      userName: `${user.firstName} ${user.lastName}`,
+      user
+    });
+  };
+
+  const closeDialog = () => {
+    setDialog({
+      type: null,
       userId: '',
-      userName: ''
+      userName: '',
+      user: undefined
     });
   };
 
@@ -168,10 +170,8 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           key="edit"
           icon={<Edit />}
           label="Edit user"
-          disabled
           onClick={() => {
-            // TODO: Implement edit functionality
-            console.log('Edit user:', params.row.id);
+            openEditDialog(params.row);
           }}
         />,
         <GridActionsCellItem
@@ -224,19 +224,23 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
       </Box>
 
       <PermissionsEditorDialog
-        open={permissionsDialog.open}
-        onClose={closePermissionsDialog}
-        userId={permissionsDialog.userId}
-        userName={permissionsDialog.userName}
+        open={dialog.type === 'permissions'}
+        onClose={closeDialog}
+        userId={dialog.userId}
+        userName={dialog.userName}
       />
 
       <DeleteUserDialog
-        open={deleteDialog.open}
-        onClose={closeDeleteDialog}
-        userId={deleteDialog.userId}
-        userName={deleteDialog.userName}
+        open={dialog.type === 'delete'}
+        onClose={closeDialog}
+        userId={dialog.userId}
+        userName={dialog.userName}
         onDelete={handleDeleteUser}
       />
+
+      {dialog.user && (
+        <EditUserDialog open={dialog.type === 'edit'} onClose={closeDialog} user={dialog.user} />
+      )}
     </Box>
   );
 };

@@ -141,6 +141,31 @@ class AdminSelector {
   async delete(): Promise<void> {
     await this.db.deleteFrom('admins').where('id', '=', this.getAdminIdQuery()).execute();
   }
+
+  async updateProfile(updates: { firstName?: string; lastName?: string }): Promise<void> {
+    await this.db
+      .updateTable('admins')
+      .set({
+        ...(updates.firstName && { first_name: updates.firstName }),
+        ...(updates.lastName && { last_name: updates.lastName }),
+        last_updated: new Date()
+      })
+      .where('id', '=', this.getAdminIdQuery())
+      .execute();
+  }
+
+  async updatePassword(passwordHash: string, passwordSalt: string): Promise<void> {
+    await this.db
+      .updateTable('admins')
+      .set({
+        password_hash: passwordHash,
+        password_salt: passwordSalt,
+        last_password_set_date: new Date(),
+        last_updated: new Date()
+      })
+      .where('id', '=', this.getAdminIdQuery())
+      .execute();
+  }
 }
 
 class AdminsSelector {

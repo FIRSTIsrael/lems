@@ -18,7 +18,7 @@ import { PersonAdd } from '@mui/icons-material';
 import { FormikTextField, apiFetch } from '@lems/shared';
 import { AdminUserResponseSchema } from '@lems/types/api/admin';
 import { DialogComponentProps } from '../../components/dialog-provider';
-import { validatePassword, PasswordRequirements } from './password-validation-indicator';
+import { PasswordField, validatePassword } from './password-field';
 
 interface UserFormValues {
   username: string;
@@ -165,26 +165,15 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
                 disabled={isSubmitting}
               />
 
-              <Box>
-                <FormikTextField
-                  name="password"
-                  type="password"
-                  label={t('fields.password.label')}
-                  error={touched.password && !!errors.password}
-                  helperText={
-                    touched.password && errors.password && errors.password !== 'password-invalid'
-                      ? t(`errors.${errors.password}`)
-                      : undefined
-                  }
-                  placeholder={t('fields.password.placeholder')}
-                  fullWidth
-                  disabled={isSubmitting}
-                />
-                <PasswordRequirements
-                  validation={validatePassword(values.password)}
-                  password={values.password}
-                />
-              </Box>
+              <PasswordField
+                name="password"
+                label={t('fields.password.label')}
+                placeholder={t('fields.password.placeholder')}
+                disabled={isSubmitting}
+                touched={touched.password}
+                error={errors.password}
+                value={values.password}
+              />
 
               {status && <Alert severity="error">{t(`errors.${status}`)}</Alert>}
 

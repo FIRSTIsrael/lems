@@ -1,6 +1,7 @@
 import express from 'express';
 import db from '../../../lib/database';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { hashPassword } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminUserResponse } from './util';
 import registrationRouter from './register';
@@ -42,6 +43,76 @@ router.get('/:userId', async (req: AdminRequest, res) => {
 
   res.json(makeAdminUserResponse(user));
 });
+
+router.patch('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
+  const userId = req.params.userId;
+  const { firstName, lastName } = req.body;
+
+  if (!userId) {
+    res.status(400).json({ error: 'User ID is required' });
+    return;
+  }
+
+  if (!firstName && !lastName) {
+    res.status(400).json({ error: 'At least one field to update is required' });
+    return;
+  }
+
+  const user = await db.admins.byId(userId).get();
+  if (!user) {
+    res.status(404).json({ error: 'User not found' });
+    return;
+  }
+
+  try {
+    await db.admins.byId(userId).updateProfile({ firstName, lastName });
+
+    const updatedUser = await db.admins.byId(userId).get();
+    if (!updatedUser) {
+      throw new Error('Failed to retrieve updated user');
+    }
+
+    res.json(makeAdminUserResponse(updatedUser));
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Failed to update user' });
+  }
+});
+
+router.patch(
+  '/:userId/password',
+  requirePermission('MANAGE_USERS'),
+  async (req: AdminRequest, res) => {
+    const userId = req.params.userId;
+    const { password } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ error: 'User ID is required' });
+      return;
+    }
+
+    if (!password) {
+      res.status(400).json({ error: 'Password is required' });
+      return;
+    }
+
+    const user = await db.admins.byId(userId).get();
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    try {
+      const { hash, salt } = await hashPassword(password);
+      await db.admins.byId(userId).updatePassword(hash, salt);
+
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error updating password:', error);
+      res.status(500).json({ error: 'Failed to update password' });
+    }
+  }
+);
 
 router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
   const userId = req.params.userId;
