@@ -137,6 +137,10 @@ class AdminSelector {
       .executeTakeFirst();
     return !!result;
   }
+
+  async delete(): Promise<void> {
+    await this.db.deleteFrom('admins').where('id', '=', this.getAdminIdQuery()).execute();
+  }
 }
 
 class AdminsSelector {

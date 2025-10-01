@@ -808,6 +808,14 @@
         "errors": {
           "fetch-error": "Failed to load user permissions."
         }
+      },
+      "delete": {
+        "title": "Delete User",
+        "message": "Are you sure you want to delete {userName}?",
+        "warning": "This action will permanently delete the user, including all their event associations and granted permissions. This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete User",
+        "deleting": "Deleting..."
       }
     }
   },

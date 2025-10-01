@@ -1,14 +1,17 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
 import { Edit, Security, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { AdminUser } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
+import { useSession } from '../../components/session-context';
 import { UsersSearch } from './users-search';
 import { PermissionsEditorDialog } from './permissions-editor-dialog';
+import { DeleteUserDialog } from './delete-user-dialog';
 
 interface UsersDataGridProps {
   users: AdminUser[];
@@ -16,8 +19,18 @@ interface UsersDataGridProps {
 
 export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
+  const session = useSession();
   const [searchValue, setSearchValue] = useState('');
   const [permissionsDialog, setPermissionsDialog] = useState<{
+    open: boolean;
+    userId: string;
+    userName: string;
+  }>({
+    open: false,
+    userId: '',
+    userName: ''
+  });
+  const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     userId: string;
     userName: string;
@@ -65,6 +78,37 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
       userId: '',
       userName: ''
     });
+  };
+
+  const openDeleteDialog = (userId: string, firstName: string, lastName: string) => {
+    setDeleteDialog({
+      open: true,
+      userId,
+      userName: `${firstName} ${lastName}`
+    });
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialog({
+      open: false,
+      userId: '',
+      userName: ''
+    });
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    const result = await apiFetch(`/admin/users/${userId}`, {
+      method: 'DELETE'
+    });
+
+    if (!result.ok) {
+      if (result.status === 403) {
+        throw new Error('You cannot delete your own account');
+      }
+      throw new Error('Failed to delete user');
+    }
+
+    mutate('/admin/users');
   };
 
   const columns: GridColDef[] = [
@@ -134,10 +178,9 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           key="delete"
           icon={<Delete />}
           label="Delete user"
-          disabled
+          disabled={params.row.id === session.user.id}
           onClick={() => {
-            // TODO: Implement delete functionality
-            console.log('Delete user:', params.row.id);
+            openDeleteDialog(params.row.id, params.row.firstName, params.row.lastName);
           }}
         />
       ]
@@ -185,6 +228,14 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         onClose={closePermissionsDialog}
         userId={permissionsDialog.userId}
         userName={permissionsDialog.userName}
+      />
+
+      <DeleteUserDialog
+        open={deleteDialog.open}
+        onClose={closeDeleteDialog}
+        userId={deleteDialog.userId}
+        userName={deleteDialog.userName}
+        onDelete={handleDeleteUser}
       />
     </Box>
   );
