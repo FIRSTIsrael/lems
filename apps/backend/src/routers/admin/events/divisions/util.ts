@@ -13,5 +13,6 @@ export const makeAdminDivisionResponse = (division: DbDivision): Division => ({
   pitMapUrl: division.pit_map_url,
   hasSchedule: division.has_schedule,
   hasAwards: division.has_awards,
-  hasUsers: division.has_users
+  hasUsers: division.has_users,
+  scheduleSettings: null
 });

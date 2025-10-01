@@ -360,6 +360,14 @@
           "validation": {
             "name-required": "Division name is required."
           },
+          "delete": {
+            "title": "Delete Division",
+            "message": "Are you sure you want to delete the division {name}?",
+            "warning": "This action will permanently delete the division, including all teams, schedules, and related data. This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete Division",
+            "deleting": "Deleting..."
+          },
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }

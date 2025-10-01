@@ -18,6 +18,7 @@ export const AdminDivisionResponseSchema = z.object({
       judgingSessionCycleTime: z.number()
     })
     .nullable()
+    .default(null)
 });
 
 export type Division = z.infer<typeof AdminDivisionResponseSchema>;
