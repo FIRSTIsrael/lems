@@ -145,16 +145,16 @@ export class RobotGameMatchesRepository {
 
     participants.forEach(participant => {
       participantStates[participant.table_id] = {
-        queued: false,
-        present: false,
-        ready: false
+        queued: null,
+        present: null,
+        ready: null
       };
     });
 
     return {
       matchId: id,
       status: 'not-started',
-      called: false,
+      called: null,
       participants: participantStates
     };
   }
