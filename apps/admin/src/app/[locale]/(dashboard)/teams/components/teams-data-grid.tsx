@@ -70,6 +70,8 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       headerName: t('columns.status'),
       width: 120,
       sortable: true,
+      filterable: true,
+      type: 'boolean',
       renderCell: params => (
         <Chip
           label={params.row.active ? t('status.active') : t('status.inactive')}
@@ -77,7 +79,28 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
           size="small"
           variant="filled"
         />
-      )
+      ),
+      valueGetter: (value: boolean) => value,
+      filterOperators: [
+        {
+          label: t('status.active'),
+          value: 'isTrue',
+          getApplyFilterFn: () => {
+            return (value: boolean): boolean => {
+              return value === true;
+            };
+          }
+        },
+        {
+          label: t('status.inactive'),
+          value: 'isFalse',
+          getApplyFilterFn: () => {
+            return (value: boolean): boolean => {
+              return value === false;
+            };
+          }
+        }
+      ]
     },
     {
       field: 'name',
@@ -146,8 +169,6 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
           }}
           pageSizeOptions={[25, 50, 100]}
           disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
           disableColumnSelector
           sx={{
             height: '100%',
