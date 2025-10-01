@@ -18,6 +18,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const tokenData = jwt.verify(token, jwtSecret) as JwtTokenData;
 
     if (tokenData.userType !== 'admin') {
+      res.clearCookie('admin-auth-token');
       res.status(403).json({ error: 'FORBIDDEN' });
       return;
     }
@@ -30,6 +31,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
   } catch {
     //Invalid token
+    res.clearCookie('admin-auth-token');
   }
 
   res.status(401).json({ error: 'UNAUTHORIZED' });

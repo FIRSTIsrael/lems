@@ -63,7 +63,7 @@ export default async function middleware(request: NextRequest) {
 
     return response;
   } catch {
-    // Authentication failed
+    // Authentication failed - logout and clear cookies
     await fetch(`${backendUrl}/admin/auth/logout`, {
       method: 'POST',
       headers: { Cookie: request.headers.get('cookie') || '' }
@@ -76,7 +76,17 @@ export default async function middleware(request: NextRequest) {
       ? new URL(loginUrl, request.url)
       : new URL(`${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`, request.url);
 
-    return NextResponse.redirect(redirectUrl);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+
+    // Clear the cookie on the client side to prevent redirect loops
+    redirectResponse.cookies.set('admin-auth-token', '', {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    return redirectResponse;
   }
 }
 
