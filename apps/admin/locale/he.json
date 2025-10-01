@@ -85,7 +85,12 @@
           "name": "שם הקבוצה",
           "affiliation": "שיוך",
           "actions": "פעולות",
-          "city": "עיר"
+          "city": "עיר",
+          "status": "סטטוס"
+        },
+        "status": {
+          "active": "פעיל",
+          "inactive": "לא פעיל"
         }
       },
       "creation-dialog": {

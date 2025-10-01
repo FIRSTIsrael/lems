@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, Chip } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
@@ -64,6 +64,20 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       type: 'number',
       sortable: true,
       valueFormatter: (value: number) => value.toString()
+    },
+    {
+      field: 'active',
+      headerName: t('columns.status'),
+      width: 120,
+      sortable: true,
+      renderCell: params => (
+        <Chip
+          label={params.row.active ? t('status.active') : t('status.inactive')}
+          color={params.row.active ? 'success' : 'default'}
+          size="small"
+          variant="filled"
+        />
+      )
     },
     {
       field: 'name',

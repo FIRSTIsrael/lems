@@ -176,6 +176,36 @@ export class TeamsRepository {
     return teams;
   }
 
+  async getAllWithActiveStatus(): Promise<Array<Team & { active: boolean }>> {
+    const currentSeason = await this.db
+      .selectFrom('seasons')
+      .select('id')
+      .where('start_date', '<=', new Date())
+      .where('end_date', '>=', new Date())
+      .executeTakeFirst();
+
+    if (!currentSeason) {
+      const teams = await this.getAll();
+      return teams.map(team => ({ ...team, active: false }));
+    }
+
+    const activeTeamIds = await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('divisions', 'team_divisions.division_id', 'divisions.id')
+      .innerJoin('events', 'divisions.event_id', 'events.id')
+      .select('team_divisions.team_id')
+      .where('events.season_id', '=', currentSeason.id)
+      .execute();
+
+    const activeTeamIdSet = new Set(activeTeamIds.map(t => t.team_id));
+
+    const teams = await this.getAll();
+    return teams.map(team => ({
+      ...team,
+      active: activeTeamIdSet.has(team.id)
+    }));
+  }
+
   async create(team: InsertableTeam): Promise<Team> {
     const [createdTeam] = await this.db.insertInto('teams').values(team).returningAll().execute();
     return createdTeam;

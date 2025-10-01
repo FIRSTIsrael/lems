@@ -10,14 +10,15 @@ import { Team, TeamWithDivision } from '@lems/types/api/admin';
  * Transforms a Team object into a response format.
  * @param team - The team object to transform.
  */
-export const makeAdminTeamResponse = (team: DbTeam): Team => ({
+export const makeAdminTeamResponse = (team: DbTeam | (DbTeam & { active: boolean })): Team => ({
   id: team.id,
   name: team.name,
   number: team.number,
   logoUrl: team.logo_url,
   affiliation: team.affiliation,
   city: team.city,
-  coordinates: team.coordinates
+  coordinates: team.coordinates,
+  active: 'active' in team ? team.active : false
 });
 
 export const makeAdminTeamWithDivisionResponse = (
