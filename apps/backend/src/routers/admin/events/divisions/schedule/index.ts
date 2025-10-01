@@ -3,6 +3,7 @@ import { SchedulerRequest } from '@lems/types';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../../../middlewares/admin/require-permission';
+import { sanitizeMatches, mapJudgingSessionToApi, mapRoomToApi } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -90,6 +91,105 @@ router.delete(
     } catch (error) {
       console.error('Error deleting division schedule:', error);
       res.status(500).json({ error: 'Failed to delete division schedule' });
+    }
+  }
+);
+
+router.get(
+  '/teams/:teamId',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      const { teamId } = req.params;
+
+      const team = await db.teams.byId(teamId).get();
+      if (!team) {
+        res.status(404).json({ error: 'Team not found' });
+        return;
+      }
+
+      const isInDivision = await db.teams.byId(teamId).isInDivision(req.divisionId);
+      if (!isInDivision) {
+        res.status(403).json({ error: 'Team not in this division' });
+        return;
+      }
+
+      const judgingSession = await db.judgingSessions
+        .byDivisionId(req.divisionId)
+        .getByTeam(teamId);
+
+      const matches = await db.robotGameMatches.byDivisionId(req.divisionId).getByTeam(teamId);
+
+      res.status(200).json({
+        team,
+        judgingSession: judgingSession ? mapJudgingSessionToApi(judgingSession) : null,
+        matches: sanitizeMatches(matches)
+      });
+    } catch (error) {
+      console.error('Error fetching team schedule:', error);
+      res.status(500).json({ error: 'Failed to fetch team schedule' });
+    }
+  }
+);
+
+router.get(
+  '/judging-sessions',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      const sessions = await db.judgingSessions.byDivisionId(req.divisionId).getAll();
+      const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+
+      res.status(200).json({
+        sessions: sessions.map(mapJudgingSessionToApi),
+        rooms: rooms.map(mapRoomToApi)
+      });
+    } catch (error) {
+      console.error('Error fetching judging sessions:', error);
+      res.status(500).json({ error: 'Failed to fetch judging sessions' });
+    }
+  }
+);
+
+router.put(
+  '/swap',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      const { teamId1, teamId2 } = req.body;
+
+      if (!teamId1 || !teamId2) {
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
+      }
+
+      // Verify both teams exist and are in this division
+      const team1 = await db.teams.byId(teamId1).get();
+      const team2 = await db.teams.byId(teamId2).get();
+
+      if (!team1 || !team2) {
+        res.status(404).json({ error: 'One or both teams not found' });
+        return;
+      }
+
+      const team1InDivision = await db.teams.byId(teamId1).isInDivision(req.divisionId);
+      const team2InDivision = await db.teams.byId(teamId2).isInDivision(req.divisionId);
+
+      if (!team1InDivision || !team2InDivision) {
+        res.status(403).json({ error: 'One or both teams not in this division' });
+        return;
+      }
+
+      // Swap judging sessions and match participants
+      await Promise.all([
+        db.judgingSessions.swapTeams(teamId1, teamId2, req.divisionId),
+        db.robotGameMatches.swapTeams(teamId1, teamId2)
+      ]);
+
+      res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error('Error swapping team schedules:', error);
+      res.status(500).json({ error: 'Failed to swap team schedules' });
     }
   }
 );

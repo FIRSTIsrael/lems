@@ -6,3 +6,4 @@ export * from './divisions';
 export * from './tables';
 export * from './rooms';
 export * from './awards';
+export * from './schedule';
