@@ -28,6 +28,42 @@ router.get('/:number', async (req: AdminRequest, res) => {
   res.json(makeAdminTeamResponse(team));
 });
 
+router.delete('/:id', async (req: AdminRequest, res) => {
+  const id = req.params.id;
+
+  const team = await db.teams.byId(id).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+
+  const events = await db.events.getAll();
+  if (!events) {
+    res.status(500).json({ error: 'Failed to retrieve events' });
+    return;
+  }
+
+  const hasEvent = await Promise.any(
+    events.map(async event => {
+      const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
+      return registeredTeams.some(t => t.id === team.id);
+    })
+  ).catch(() => false);
+
+  if (hasEvent) {
+    res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
+    return;
+  }
+
+  const success = await db.teams.byId(id).delete();
+  if (!success) {
+    res.status(500).json({ error: 'Could not delete team' });
+    return;
+  }
+
+  res.status(200).end();
+});
+
 router.get('/id/:teamId', async (req: AdminRequest, res) => {
   const id = req.params.teamId;
   const team = await db.teams.byId(id).get();

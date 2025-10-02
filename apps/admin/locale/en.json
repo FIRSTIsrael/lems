@@ -166,6 +166,14 @@
           "and-more": "...and {count} more",
           "close": "Close"
         }
+      },
+      "delete-dialog": {
+        "title": "Delete Team",
+        "message": "Are you sure you want to delete team #{number}? This action cannot be undone.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "confirm": "Delete Team",
+        "error": "Failed to delete team, make sure this team is not registered to any events."
       }
     },
     "index": {
