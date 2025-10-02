@@ -37,20 +37,9 @@ router.delete('/:id', async (req: AdminRequest, res) => {
     return;
   }
 
-  const events = await db.events.getAll();
-  if (!events) {
-    res.status(500).json({ error: 'Failed to retrieve events' });
-    return;
-  }
+  const teamEvents = await db.events.byTeam(team.id).getAll();
 
-  const hasEvent = await Promise.any(
-    events.map(async event => {
-      const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-      return registeredTeams.some(t => t.id === team.id);
-    })
-  ).catch(() => false);
-
-  if (hasEvent) {
+  if (teamEvents.length > 0) {
     res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
     return;
   }

@@ -230,10 +230,36 @@ class EventSelector {
 class EventsSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private selector: { type: 'after' | 'bySeason'; value: number | string }
+    private selector: {
+      type: 'after' | 'bySeason' | 'byTeam';
+      value: number | string;
+    }
   ) {}
 
   private getEventsQuery() {
+    if (this.selector.type === 'byTeam') {
+      // For byTeam, we need to join and use distinct, so we explicitly select events columns
+      const query = this.db
+        .selectFrom('events')
+        .innerJoin('divisions', 'divisions.event_id', 'events.id')
+        .innerJoin('team_divisions', 'team_divisions.division_id', 'divisions.id')
+        .where('team_divisions.team_id', '=', this.selector.value as string)
+        .select([
+          'events.pk',
+          'events.id',
+          'events.name',
+          'events.slug',
+          'events.start_date',
+          'events.end_date',
+          'events.location',
+          'events.coordinates',
+          'events.season_id'
+        ])
+        .distinctOn('events.id')
+        .orderBy('events.start_date', 'asc');
+      return query;
+    }
+
     let query = this.db.selectFrom('events').selectAll();
 
     if (this.selector.type === 'after') {
@@ -274,6 +300,8 @@ class EventsSelector {
       query = query.where('events.start_date', '>=', new Date(this.selector.value as number));
     } else if (this.selector.type === 'bySeason') {
       query = query.where('events.season_id', '=', this.selector.value as string);
+    } else if (this.selector.type === 'byTeam') {
+      query = query.where('team_divisions.team_id', '=', this.selector.value as string);
     }
 
     query = query.groupBy([
@@ -306,6 +334,11 @@ class EventsSelector {
       );
     } else if (this.selector.type === 'bySeason') {
       adminQuery = adminQuery.where('events.season_id', '=', this.selector.value as string);
+    } else if (this.selector.type === 'byTeam') {
+      adminQuery = adminQuery
+        .innerJoin('divisions', 'divisions.event_id', 'events.id')
+        .innerJoin('team_divisions', 'team_divisions.division_id', 'divisions.id')
+        .where('team_divisions.team_id', '=', this.selector.value as string);
     }
 
     const adminAssignments = await adminQuery.execute();
@@ -391,6 +424,10 @@ export class EventsRepository {
 
   bySeason(seasonId: string): EventsSelector {
     return new EventsSelector(this.db, { type: 'bySeason', value: seasonId });
+  }
+
+  byTeam(teamId: string): EventsSelector {
+    return new EventsSelector(this.db, { type: 'byTeam', value: teamId });
   }
 
   async getAll() {
