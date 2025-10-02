@@ -11,7 +11,9 @@ import {
   FormControlLabel,
   Stack,
   Divider,
-  Grid
+  Grid,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,10 +24,40 @@ import {
   Sports,
   SportsScore,
   Event,
-  WatchLater
+  WatchLater,
+  Public
 } from '@mui/icons-material';
 import { useSchedule } from './schedule-context';
 import { getDuration } from './calendar/calendar-utils';
+
+// There is no available API in Dayjs to get all supported IANA timezones.
+// Most apps use a JSON list or a hardcoded list of common timezones.
+// For now this will have to do.
+const COMMON_TIMEZONES = [
+  'UTC',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'America/Toronto',
+  'America/Vancouver',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Berlin',
+  'Europe/Madrid',
+  'Europe/Rome',
+  'Europe/Athens',
+  'Asia/Jerusalem',
+  'Asia/Dubai',
+  'Asia/Kolkata',
+  'Asia/Bangkok',
+  'Asia/Singapore',
+  'Asia/Hong_Kong',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+  'Australia/Melbourne',
+  'Pacific/Auckland'
+];
 
 export const ScheduleSettings: React.FC = () => {
   const t = useTranslations('pages.events.schedule.settings');
@@ -50,7 +82,9 @@ export const ScheduleSettings: React.FC = () => {
     judgingStart,
     fieldStart,
     matchesPerRound,
-    allowStagger
+    allowStagger,
+    timezone,
+    setTimezone
   } = useSchedule();
 
   const totalMatches = React.useMemo(() => {
@@ -169,17 +203,47 @@ export const ScheduleSettings: React.FC = () => {
             {t('settings.title')}
           </Typography>
 
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!allowStagger}
-                checked={staggerMatches}
-                onChange={e => setStaggerMatches(e.target.checked)}
-                color="primary"
-              />
-            }
-            label={t('settings.stagger-matches')}
-          />
+          <Stack spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!allowStagger}
+                  checked={staggerMatches}
+                  onChange={e => setStaggerMatches(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={t('settings.stagger-matches')}
+            />
+
+            <Autocomplete
+              value={timezone}
+              onChange={(_event, newValue) => {
+                if (newValue) {
+                  setTimezone(newValue);
+                }
+              }}
+              options={COMMON_TIMEZONES}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label={t('settings.timezone')}
+                  size="small"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <>
+                        <Public sx={{ mr: 1, color: 'action.active' }} />
+                        {params.InputProps.startAdornment}
+                      </>
+                    )
+                  }}
+                />
+              )}
+              freeSolo
+              fullWidth
+            />
+          </Stack>
         </Box>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>

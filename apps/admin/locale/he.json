@@ -566,7 +566,8 @@
           },
           "settings": {
             "title": "הגדרות",
-            "stagger-matches": "הרצה מדורגת"
+            "stagger-matches": "הרצה מדורגת",
+            "timezone": "אזור זמן"
           },
           "timing": {
             "practice-cycle-time": "מחזור משחקי אימון",
