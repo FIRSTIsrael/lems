@@ -134,8 +134,28 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
 
   const handleDeleteAsset = async (asset: T) => {
     clearMessages();
-    console.log('Deleting asset:', asset.id);
-    // TODO: Implement DELETE functionality
+    try {
+      const result = await makeApiRequest(
+        `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}/${asset.id}`,
+        'DELETE'
+      );
+
+      if (result.ok) {
+        setEditingAssets(prev => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [asset.id]: removed, ...rest } = prev;
+          return rest;
+        });
+        showSuccess();
+        mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
+      } else {
+        setErrors({ [asset.id]: t('messages.delete-error') });
+      }
+    } catch {
+      setErrors({ [asset.id]: t('messages.delete-error') });
+    } finally {
+      setSaving(prev => ({ ...prev, [asset.id]: false }));
+    }
   };
 
   const startEditing = (asset: T) => {

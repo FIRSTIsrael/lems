@@ -56,4 +56,13 @@ router.put(
   }
 );
 
+router.delete(
+  '/:tableId',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    const { tableId } = req.params;
+    await db.tables.byId(tableId).delete();
+    res.status(204).end();
+  });
+
 export default router;

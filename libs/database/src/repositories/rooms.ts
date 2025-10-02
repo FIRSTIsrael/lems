@@ -35,6 +35,10 @@ class RoomSelector {
 
     return updatedRoom;
   }
+  
+  async delete(): Promise<void> {
+    await this.db.deleteFrom('judging_rooms').where('id', '=', this.id).execute();
+  }
 }
 
 class RoomsSelector {

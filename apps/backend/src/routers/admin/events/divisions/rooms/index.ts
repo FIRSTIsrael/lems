@@ -56,4 +56,13 @@ router.put(
   }
 );
 
+router.delete(
+  '/:roomId',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    const { roomId } = req.params;
+    await db.rooms.byId(roomId).delete();
+    res.status(204).end();
+  });
+
 export default router;
