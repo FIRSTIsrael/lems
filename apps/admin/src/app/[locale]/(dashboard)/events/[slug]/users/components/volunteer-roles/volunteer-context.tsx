@@ -83,7 +83,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     { suspense: false, fallbackData: [] }
   );
 
-  const loading = volunteersLoading && !initialized.current;
+  const loading = volunteersLoading || !initialized.current;
 
   useEffect(() => {
     if (volunteersLoading || initialized.current) {
