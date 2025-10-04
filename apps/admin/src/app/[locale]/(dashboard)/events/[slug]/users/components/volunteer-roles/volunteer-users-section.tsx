@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Save as SaveIcon, Download as DownloadIcon, FiberNew, CheckCircle } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -11,7 +12,6 @@ import {
   Chip,
   Tooltip
 } from '@mui/material';
-import { CheckCircle, FiberNew, Save as SaveIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useVolunteer } from './volunteer-context';
 import { ManagedRolesSection } from './managed-roles';
@@ -20,7 +20,7 @@ import { MandatoryRolesSection } from './mandatory-roles';
 
 export function VolunteerUsersSection() {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
-  const { saving, validationErrors, handleSave, loading, isNew } = useVolunteer();
+  const { saving, validationErrors, handleSave, loading, getEventPasswords, isNew } = useVolunteer();
   const [saveResult, setSaveResult] = useState<'success' | 'error' | null>(null);
 
   const onSave = async () => {
@@ -31,6 +31,10 @@ export function VolunteerUsersSection() {
       setSaveResult('error');
     }
     setTimeout(() => setSaveResult(null), 5000);
+  };
+
+  const handleDownloadPasswords = () => {
+    getEventPasswords();
   };
 
   if (loading) {
@@ -58,7 +62,7 @@ export function VolunteerUsersSection() {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2}>
           <Tooltip
             title={isNew ? t('status.new-users-tooltip') : t('status.existing-users-tooltip')}
             arrow
@@ -71,6 +75,17 @@ export function VolunteerUsersSection() {
               size="small"
             />
           </Tooltip>
+          
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownloadPasswords}
+            size="large"
+            sx={{ flexShrink: 0 }}
+          >
+            {t('downloadPasswords')}
+          </Button>
+
           <Button
             variant="contained"
             startIcon={<SaveIcon />}
