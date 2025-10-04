@@ -41,6 +41,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
 
       if (response.ok) {
         await mutate(`/admin/events/${division.eventId}/divisions`);
+        await mutate(`/admin/events/season/${event.seasonId}/summary`);
         setDeleteDialogOpen(false);
       } else {
         console.error('Failed to delete schedule');
