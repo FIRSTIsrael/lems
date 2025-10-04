@@ -3,10 +3,11 @@
 import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
+import { RemoveTeamButton } from './remove-team-button';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
@@ -126,17 +127,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             console.log('Edit team:', params.row.id);
           }}
         />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<Delete />}
-          label="Delete team"
-          // eslint-disable-next-line no-constant-binary-expression
-          disabled={true || params.row.division.hasSchedule}
-          onClick={() => {
-            // TODO: Implement delete functionality
-            console.log('Delete team:', params.row.id);
-          }}
-        />
+        <RemoveTeamButton team={params.row} />
       ]
     }
   ];

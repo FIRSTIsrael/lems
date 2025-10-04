@@ -193,6 +193,21 @@ class EventSelector {
     });
   }
 
+  /**
+   * Unregisters teams for a specific event.
+   * @param teams An array of team IDs to unregister.
+   * @returns
+   */
+  async unregisterTeams(teams: string[]): Promise<void> {
+    return this.db.transaction().execute(async trx => {
+      await Promise.all(
+        teams.map(team_id =>
+          trx.deleteFrom('team_divisions').where('team_id', '=', team_id).execute()
+        )
+      );
+    });
+  }
+
   async getSettings(): Promise<EventSettings | null> {
     const event = await this.get();
 

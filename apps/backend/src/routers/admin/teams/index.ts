@@ -28,7 +28,7 @@ router.get('/:number', async (req: AdminRequest, res) => {
   res.json(makeAdminTeamResponse(team));
 });
 
-router.delete('/:id', async (req: AdminRequest, res) => {
+router.delete('/:id', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
   const id = req.params.id;
 
   const team = await db.teams.byId(id).get();
