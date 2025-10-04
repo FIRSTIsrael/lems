@@ -760,7 +760,7 @@
               "missingMandatoryRoleSingle": "{role} is required for this event"
             },
             "loading": "Loading...",
-            "downloadPasswords": "Download Passwords"
+            "downloadPasswords": "Download Passwords",
             "status": {
               "new-users-tooltip": "This is a new users configuration",
               "existing-users-tooltip": "This event has users already configured",

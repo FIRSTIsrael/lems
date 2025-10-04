@@ -767,7 +767,7 @@
               "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
             },
             "loading": "טוען...",
-            "downloadPasswords": "הורד קובץ סיסמאות"
+            "downloadPasswords": "הורד קובץ סיסמאות",
             "status": {
               "existing-users": "יש משתמשים",
               "existing-users-tooltip": "לאירוע זה יש כבר משתמשים מוגדרים",

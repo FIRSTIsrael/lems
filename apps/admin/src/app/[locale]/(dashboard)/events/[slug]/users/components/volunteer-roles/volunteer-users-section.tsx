@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Save as SaveIcon, Download as DownloadIcon } from '@mui/icons-material';
+import { Save as SaveIcon, Download as DownloadIcon, FiberNew, CheckCircle } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -12,7 +12,6 @@ import {
   Chip,
   Tooltip
 } from '@mui/material';
-import { CheckCircle, FiberNew, Save as SaveIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useVolunteer } from './volunteer-context';
 import { ManagedRolesSection } from './managed-roles';
@@ -64,17 +63,6 @@ export function VolunteerUsersSection() {
         </Box>
 
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            onClick={handleDownloadPasswords}
-            size="large"
-            sx={{ flexShrink: 0 }}
-          >
-            {t('downloadPasswords')}
-          </Button>
-
-        <Stack direction="row" spacing={2} alignItems="center">
           <Tooltip
             title={isNew ? t('status.new-users-tooltip') : t('status.existing-users-tooltip')}
             arrow
@@ -87,6 +75,17 @@ export function VolunteerUsersSection() {
               size="small"
             />
           </Tooltip>
+          
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownloadPasswords}
+            size="large"
+            sx={{ flexShrink: 0 }}
+          >
+            {t('downloadPasswords')}
+          </Button>
+
           <Button
             variant="contained"
             startIcon={<SaveIcon />}
