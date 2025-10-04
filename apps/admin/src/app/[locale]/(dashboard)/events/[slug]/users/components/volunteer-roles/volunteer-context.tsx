@@ -10,7 +10,7 @@ import React, {
   useMemo
 } from 'react';
 import { useTranslations } from 'next-intl';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { apiFetch } from '@lems/shared';
 import { useRoleTranslations } from '@lems/localization';
 import { Division, VolunteerUser, VolunteerUsersResponseSchema } from '@lems/types/api/admin';
@@ -171,6 +171,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       );
 
       if (result.ok) {
+        await mutate(`/admin/events/season/${event.seasonId}/summary`);
         console.log('Volunteer slots saved successfully');
       } else {
         console.error('Failed to save volunteer slots:', result.status, result.error);
