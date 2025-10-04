@@ -130,8 +130,8 @@ export function prepareSchedulerRequest(
   scheduleContext: ScheduleContextType,
   divisionId: string
 ): SchedulerRequest {
-  const fieldStartInTz = scheduleContext.fieldStart.tz(scheduleContext.timezone);
-  const judgingStartInTz = scheduleContext.judgingStart.tz(scheduleContext.timezone);
+  const fieldStartInTz = scheduleContext.fieldStart.tz(scheduleContext.timezone, true);
+  const judgingStartInTz = scheduleContext.judgingStart.tz(scheduleContext.timezone, true);
 
   return {
     division_id: divisionId,
