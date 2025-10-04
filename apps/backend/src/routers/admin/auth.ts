@@ -117,8 +117,13 @@ router.post('/logout', (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.get('/verify', (req: AdminRequest, res) => {
-  const user = req.userId;
+router.get('/verify', async (req: AdminRequest, res) => {
+  const user = await db.admins.byId(req.userId!).get();
+  if (!user) {
+    res.status(401).json({ error: 'UNAUTHORIZED' });
+    return;
+  }
+
   res.json({ ok: true, user });
 });
 
