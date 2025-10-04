@@ -24,6 +24,7 @@ export interface EventSummary {
   slug: string;
   date: string;
   location: string;
+  coordinates: string | null;
   team_count: number;
   divisions: {
     id: string;

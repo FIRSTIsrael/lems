@@ -1,4 +1,4 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
@@ -309,7 +309,10 @@ class EventsSelector {
         'divisions.has_users',
         'divisions.has_schedule'
       ])
-      .select(eb => [eb.fn.count('team_divisions.team_id').as('team_count')]);
+      .select(eb => [
+        eb.fn.count('team_divisions.team_id').as('team_count'),
+        sql<string | null>`events.coordinates::text`.as('coordinates')
+      ]);
 
     if (this.selector.type === 'after') {
       query = query.where('events.start_date', '>=', new Date(this.selector.value as number));
@@ -319,20 +322,22 @@ class EventsSelector {
       query = query.where('team_divisions.team_id', '=', this.selector.value as string);
     }
 
-    query = query.groupBy([
-      'events.id',
-      'events.name',
-      'events.slug',
-      'events.start_date',
-      'events.location',
-      'events.season_id',
-      'divisions.id',
-      'divisions.name',
-      'divisions.color',
-      'divisions.has_awards',
-      'divisions.has_users',
-      'divisions.has_schedule'
-    ]);
+    query = query
+      .groupBy([
+        'events.id',
+        'events.name',
+        'events.slug',
+        'events.start_date',
+        'events.location',
+        'events.season_id',
+        'divisions.id',
+        'divisions.name',
+        'divisions.color',
+        'divisions.has_awards',
+        'divisions.has_users',
+        'divisions.has_schedule'
+      ])
+      .groupBy(sql`events.coordinates::text`);
 
     const result = await query.execute();
 

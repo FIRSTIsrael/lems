@@ -206,6 +206,15 @@
         "registered-teams": {
           "description": "קבוצות רשומות"
         },
+        "total-events": {
+          "description": "סה\"כ אירועים"
+        },
+        "total-admins": {
+          "description": "משתמשי מנהל"
+        },
+        "event-participation": {
+          "description": "רישומים לאירועים"
+        },
         "upcoming-events": {
           "title": "אירועים קרובים",
           "no-events": "אין אירועים קרובים"
