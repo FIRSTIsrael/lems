@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
-import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { TeamsSearch } from './teams-search';
 import { DeleteTeamButton } from './delete-team-button';
+import { UpdateTeamButton } from './update-team-button';
 
 interface TeamsDataGridProps {
   teams: Team[];
@@ -128,16 +128,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       width: 120,
       sortable: false,
       getActions: params => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<Edit />}
-          label="Edit team"
-          disabled
-          onClick={() => {
-            // TODO: Implement edit functionality
-            console.log('Edit team:', params.row.id);
-          }}
-        />,
+        <UpdateTeamButton team={params.row} />,
         <DeleteTeamButton team={params.row} />
       ]
     }
