@@ -46,13 +46,13 @@ export default function EventTeamsPage() {
           </Stack>
         </EventPageTitle>
 
-        <RegisterTeamsButton event={event} />
+        <RegisterTeamsButton event={event} divisions={divisions} />
 
         <ScheduleExists divisions={divisions} />
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
           {isUnified ? (
-            <EventTeamsUnifiedView teams={teams} hasMultipleDivisions={divisions.length > 1} />
+            <EventTeamsUnifiedView teams={teams} divisions={divisions} />
           ) : (
             <EventTeamsSplitView eventId={event.id} />
           )}

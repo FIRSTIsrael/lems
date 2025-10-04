@@ -24,8 +24,7 @@ interface ScheduleExistsProps {
 }
 
 export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
-  const t = useTranslations('pages.events.venue');
-  const scheduleT = useTranslations('pages.events.schedule');
+  const t = useTranslations('pages.events.venue.schedule-exists');
   const event = useEvent();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -72,7 +71,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
                 href={`/events/${event.slug}/schedule?division=${division.id}`}
                 sx={{ color: 'primary.main' }}
               >
-                {t('schedule-exists.view-schedule')}
+                {t('view-schedule')}
               </Button>
               <Button
                 color="error"
@@ -81,12 +80,12 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
                 onClick={() => setDeleteDialogOpen(true)}
                 sx={{ color: 'error.main' }}
               >
-                {scheduleT('delete-schedule')}
+                {t('delete-schedule')}
               </Button>
             </Box>
           }
         >
-          {t('schedule-exists.message', { divisionName: division.name })}
+          {t('message', { divisionName: division.name }) }
         </Alert>
       </Box>
 
@@ -96,13 +95,13 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>{scheduleT('delete-schedule-dialog.title')}</DialogTitle>
+        <DialogTitle>{t('delete-schedule-dialog.title')}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{scheduleT('delete-schedule-dialog.message')}</DialogContentText>
+          <DialogContentText>{t('delete-schedule-dialog.message')}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
-            {scheduleT('delete-schedule-dialog.cancel')}
+            {t('delete-schedule-dialog.cancel')}
           </Button>
           <Button
             onClick={handleDeleteSchedule}
@@ -112,8 +111,8 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
             startIcon={isDeleting ? <CircularProgress size={18} /> : <Delete />}
           >
             {isDeleting
-              ? scheduleT('delete-schedule-dialog.deleting')
-              : scheduleT('delete-schedule-dialog.confirm')}
+              ? t('delete-schedule-dialog.deleting')
+              : t('delete-schedule-dialog.confirm')}
           </Button>
         </DialogActions>
       </Dialog>
