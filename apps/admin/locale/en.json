@@ -348,6 +348,14 @@
           },
           "no-teams-selected": "No teams selected"
         },
+        "remove-dialog": {
+          "title": "Remove Team",
+          "message": "Are you sure you want to remove team #{number} from this event? This action cannot be undone.",
+          "cancel": "Cancel",
+          "removing": "Removing...",
+          "confirm": "Remove Team",
+          "error": "Failed to remove team."
+        },
         "unified": {
           "columns": {
             "division": "Division",
@@ -576,7 +584,8 @@
           },
           "settings": {
             "title": "Settings",
-            "stagger-matches": "Stagger matches"
+            "stagger-matches": "Stagger matches",
+            "timezone": "Timezone"
           },
           "timing": {
             "practice-cycle-time": "Practice Match cycle time",
