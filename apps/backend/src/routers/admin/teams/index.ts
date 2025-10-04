@@ -63,7 +63,7 @@ router.get('/id/:teamId', async (req: AdminRequest, res) => {
   res.json(makeAdminTeamResponse(team));
 });
 
-router.patch(
+router.put(
   '/:teamId',
   requirePermission('MANAGE_TEAMS'),
   fileUpload(),

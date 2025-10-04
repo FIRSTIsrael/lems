@@ -25,7 +25,7 @@ interface TeamFormErrors {
 
 interface TeamFormProps {
   route: string;
-  method: 'POST' | 'PATCH';
+  method: 'POST' | 'PUT';
   onSuccess?: () => void;
   team?: TeamFormValues;
   isEditing?: boolean;

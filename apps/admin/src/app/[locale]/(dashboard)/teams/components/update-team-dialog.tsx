@@ -25,7 +25,7 @@ export const UpdateTeamDialog: React.FC<UpdateTeamDialogProps> = ({ team, open, 
             onSuccess={onClose}
             team={{ ...team, number: String(team.number) }}
             isEditing={true}
-            method="PATCH"
+            method="PUT"
           />
         </DialogContent>
         <DialogActions>
