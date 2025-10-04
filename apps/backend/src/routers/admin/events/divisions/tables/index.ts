@@ -62,6 +62,15 @@ router.delete(
   async (req: AdminDivisionRequest, res) => {
     const { tableId } = req.params;
     await db.tables.byId(tableId).delete();
+
+    const tableEventUser = await db.eventUsers
+      .byRoleInfo('tableId', tableId)
+      .get();
+      
+    if (tableEventUser) {
+      await db.eventUsers.delete(tableEventUser.id);
+    }
+
     res.status(204).end();
   });
 

@@ -62,6 +62,15 @@ router.delete(
   async (req: AdminDivisionRequest, res) => {
     const { roomId } = req.params;
     await db.rooms.byId(roomId).delete();
+
+    const roomEventUser = await db.eventUsers
+      .byRoleInfo('roomId', roomId)
+      .get();
+    
+    if (roomEventUser) {
+      await db.eventUsers.delete(roomEventUser.id);
+    }
+    
     res.status(204).end();
   });
 
