@@ -44,6 +44,7 @@ export interface VolunteerContextType {
   saving: boolean;
   validationErrors: string[];
   loading: boolean;
+  isNew: boolean;
 
   // Actions - General
   handleToggleSystemRole: (role: string, enabled: boolean) => void;
@@ -72,6 +73,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
 
+  const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(false);
   const [slots, setSlots] = useState<VolunteerSlot[]>([]);
   const [saving, setSaving] = useState(false);
   const [toggledSystemRoles, setToggledSystemRoles] = useState<Set<string>>(new Set());
@@ -97,6 +99,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       setSlots(transformedSlots);
       setToggledSystemRoles(systemRoles);
       initialized.current = true;
+      setIsLoadedFromDatabase(true);
     } else if (divisions.length > 0) {
       const initialSlots = generateInitialSlots(divisions);
       setSlots(initialSlots);
@@ -266,6 +269,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     saving,
     validationErrors,
     loading,
+    isNew: !isLoadedFromDatabase,
 
     // Actions - General
     handleToggleSystemRole,

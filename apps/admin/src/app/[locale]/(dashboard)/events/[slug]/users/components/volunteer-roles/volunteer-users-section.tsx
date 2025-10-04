@@ -1,8 +1,18 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Alert, Button, CircularProgress } from '@mui/material';
 import { Save as SaveIcon, Download as DownloadIcon } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Stack,
+  Alert,
+  Button,
+  CircularProgress,
+  Chip,
+  Tooltip
+} from '@mui/material';
+import { CheckCircle, FiberNew, Save as SaveIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useVolunteer } from './volunteer-context';
 import { ManagedRolesSection } from './managed-roles';
@@ -11,7 +21,7 @@ import { MandatoryRolesSection } from './mandatory-roles';
 
 export function VolunteerUsersSection() {
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
-  const { saving, validationErrors, handleSave, loading, getEventPasswords } = useVolunteer();
+  const { saving, validationErrors, handleSave, loading, getEventPasswords, isNew } = useVolunteer();
   const [saveResult, setSaveResult] = useState<'success' | 'error' | null>(null);
 
   const onSave = async () => {
@@ -64,6 +74,19 @@ export function VolunteerUsersSection() {
             {t('downloadPasswords')}
           </Button>
 
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Tooltip
+            title={isNew ? t('status.new-users-tooltip') : t('status.existing-users-tooltip')}
+            arrow
+          >
+            <Chip
+              icon={isNew ? <FiberNew /> : <CheckCircle />}
+              label={isNew ? t('status.new-users') : t('status.existing-users')}
+              color={isNew ? 'info' : 'success'}
+              variant="outlined"
+              size="small"
+            />
+          </Tooltip>
           <Button
             variant="contained"
             startIcon={<SaveIcon />}

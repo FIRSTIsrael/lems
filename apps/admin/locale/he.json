@@ -97,43 +97,45 @@
         "title": "יצירת קבוצה",
         "actions": {
           "cancel": "ביטול"
-        },
-        "form": {
-          "fields": {
-            "name": {
-              "label": "שם הקבוצה",
-              "placeholder": "למשל, אבירי הברזל"
-            },
-            "number": {
-              "label": "מספר הקבוצה",
-              "placeholder": "למשל, 1234"
-            },
-            "affiliation": {
-              "label": "בית ספר/ארגון",
-              "placeholder": "למשל, בית ספר יצחק שדה"
-            },
-            "city": {
-              "label": "עיר",
-              "placeholder": "למשל, תל אביב"
-            },
-            "logo": {
-              "label": "לוגו הקבוצה",
-              "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
-              "placeholder": "מקבל קבצי תמונה"
-            }
-          },
-          "errors": {
-            "name-required": "שדה שם הקבוצה נדרש.",
-            "number-required": "שדה מספר הקבוצה נדרש.",
-            "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
-            "number-exists": "מספר קבוצה זה כבר קיים.",
-            "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
-            "city-required": "שדה עיר נדרש.",
-            "error": "שגיאה התרחשה בעת יצירת הקבוצה."
-          },
-          "submit": "יצירת קבוצה",
-          "submitting": "יוצר קבוצה..."
         }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "שם הקבוצה",
+            "placeholder": "למשל, אבירי הברזל"
+          },
+          "number": {
+            "label": "מספר הקבוצה",
+            "placeholder": "למשל, 1234"
+          },
+          "affiliation": {
+            "label": "בית ספר/ארגון",
+            "placeholder": "למשל, בית ספר יצחק שדה"
+          },
+          "city": {
+            "label": "עיר",
+            "placeholder": "למשל, תל אביב"
+          },
+          "logo": {
+            "label": "לוגו הקבוצה",
+            "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
+            "placeholder": "מקבל קבצי תמונה"
+          }
+        },
+        "errors": {
+          "name-required": "שדה שם הקבוצה נדרש.",
+          "number-required": "שדה מספר הקבוצה נדרש.",
+          "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
+          "number-exists": "מספר קבוצה זה כבר קיים.",
+          "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
+          "city-required": "שדה עיר נדרש.",
+          "error": "שגיאה התרחשה בעת יצירת הקבוצה."
+        },
+        "submit": "יצירת קבוצה",
+        "submitting": "יוצר קבוצה...",
+        "update": "עדכון קבוצה",
+        "updating": "מעדכן קבוצה..."
       },
       "import-dialog": {
         "title": "ייבוא קבוצות מקובץ CSV",
@@ -181,6 +183,10 @@
         "deleting": "מוחק...",
         "confirm": "מחיקת הקבוצת",
         "error": "מחיקת הקבוצה נכשלה, ודאו שהקבוצה לא רשומה לאף אירוע."
+      },
+      "update-dialog": {
+        "title": "עדכון קבוצה",
+        "cancel": "ביטול"
       }
     },
     "index": {
@@ -762,6 +768,12 @@
             },
             "loading": "טוען...",
             "downloadPasswords": "הורד קובץ סיסמאות"
+            "status": {
+              "existing-users": "יש משתמשים",
+              "existing-users-tooltip": "לאירוע זה יש כבר משתמשים מוגדרים",
+              "new-users": "הגדרה חדשה",
+              "new-users-tooltip": "זוהי הגדרת משתמשים חדשה"
+            }
           }
         },
         "dialogs": {

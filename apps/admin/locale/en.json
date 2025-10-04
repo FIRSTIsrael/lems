@@ -90,43 +90,45 @@
         "title": "Create Team",
         "actions": {
           "cancel": "Cancel"
-        },
-        "form": {
-          "fields": {
-            "name": {
-              "label": "Team Name",
-              "placeholder": "e.g., Iron Patriots"
-            },
-            "number": {
-              "label": "Team Number",
-              "placeholder": "e.g., 1234"
-            },
-            "affiliation": {
-              "label": "School/Organization",
-              "placeholder": "e.g., Lincoln Elementary"
-            },
-            "city": {
-              "label": "City",
-              "placeholder": "e.g., New York"
-            },
-            "logo": {
-              "label": "Team Logo",
-              "description": "Upload a team logo (JPG, PNG, or SVG)",
-              "placeholder": "Accepts image files"
-            }
-          },
-          "errors": {
-            "name-required": "Team name is required.",
-            "number-required": "Team number is required.",
-            "number-invalid": "Team number must be a valid number.",
-            "number-exists": "This team number already exists.",
-            "affiliation-required": "School/Organization name is required.",
-            "city-required": "City is required.",
-            "error": "An error occurred while creating the team."
-          },
-          "submit": "Create Team",
-          "submitting": "Creating team..."
         }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "Team Name",
+            "placeholder": "e.g., Iron Patriots"
+          },
+          "number": {
+            "label": "Team Number",
+            "placeholder": "e.g., 1234"
+          },
+          "affiliation": {
+            "label": "School/Organization",
+            "placeholder": "e.g., Lincoln Elementary"
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "e.g., New York"
+          },
+          "logo": {
+            "label": "Team Logo",
+            "description": "Upload a team logo (JPG, PNG, or SVG)",
+            "placeholder": "Accepts image files"
+          }
+        },
+        "errors": {
+          "name-required": "Team name is required.",
+          "number-required": "Team number is required.",
+          "number-invalid": "Team number must be a valid number.",
+          "number-exists": "This team number already exists.",
+          "affiliation-required": "School/Organization name is required.",
+          "city-required": "City is required.",
+          "error": "An error occurred while creating the team."
+        },
+        "submit": "Create Team",
+        "submitting": "Creating team...",
+        "update": "Update Team",
+        "updating": "Updating team..."
       },
       "import-dialog": {
         "title": "Import Teams from CSV",
@@ -174,6 +176,10 @@
         "deleting": "Deleting...",
         "confirm": "Delete Team",
         "error": "Failed to delete team, make sure this team is not registered to any events."
+      },
+      "update-dialog": {
+        "title": "Update Team",
+        "cancel": "Cancel"
       }
     },
     "index": {
@@ -755,6 +761,12 @@
             },
             "loading": "Loading...",
             "downloadPasswords": "Download Passwords"
+            "status": {
+              "new-users-tooltip": "This is a new users configuration",
+              "existing-users-tooltip": "This event has users already configured",
+              "new-users": "New Setup",
+              "existing-users": "Has Users"
+            }
           }
         },
         "dialogs": {
