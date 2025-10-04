@@ -5,19 +5,17 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { Event, TeamWithDivision } from '@lems/types/api/admin';
+import { TeamWithDivision } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
-import { UnregisterTeamButton } from './unregister-team-button';
+import { RemoveTeamButton } from './remove-team-button';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
-  event: Event;
   hasMultipleDivisions: boolean;
 }
 
 export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   teams,
-  event,
   hasMultipleDivisions
 }) => {
   const t = useTranslations('pages.events.teams.unified');
@@ -129,7 +127,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             console.log('Edit team:', params.row.id);
           }}
         />,
-        <UnregisterTeamButton team={params.row} event={event} />
+        <RemoveTeamButton team={params.row} />
       ]
     }
   ];

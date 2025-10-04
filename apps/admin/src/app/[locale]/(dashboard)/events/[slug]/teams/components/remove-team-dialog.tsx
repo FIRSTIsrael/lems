@@ -15,32 +15,28 @@ import {
   Collapse
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
-import { Event, TeamWithDivision } from '@lems/types/api/admin';
+import { TeamWithDivision } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
+import { useEvent } from '../../components/event-context';
 
-interface UnregisterTeamDialogProps {
+interface RemoveTeamDialogProps {
   team: TeamWithDivision;
-  event: Event;
   open: boolean;
   onClose: () => void;
 }
 
-export const UnregisterTeamDialog: React.FC<UnregisterTeamDialogProps> = ({
-  team,
-  event,
-  open,
-  onClose
-}) => {
-  const t = useTranslations('pages.events.teams.unregister-dialog');
+export const RemoveTeamDialog: React.FC<RemoveTeamDialogProps> = ({ team, open, onClose }) => {
+  const t = useTranslations('pages.events.teams.remove-dialog');
+  const event = useEvent();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleDeleteSchedule = async () => {
+  const handleRemoveTeam = async () => {
     setIsDeleting(true);
     setError(null);
     try {
-      const response = await apiFetch(`/admin/events/${event.id}/teams/unregister`, {
+      const response = await apiFetch(`/admin/events/${event.id}/teams/remove`, {
         method: 'DELETE',
         body: JSON.stringify([team.id]),
         headers: { 'Content-Type': 'application/json' }
@@ -80,7 +76,7 @@ export const UnregisterTeamDialog: React.FC<UnregisterTeamDialogProps> = ({
             {t('cancel')}
           </Button>
           <Button
-            onClick={handleDeleteSchedule}
+            onClick={handleRemoveTeam}
             color="error"
             variant="contained"
             disabled={isDeleting}

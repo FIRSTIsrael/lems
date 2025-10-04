@@ -339,13 +339,13 @@
           },
           "no-teams-selected": "No teams selected"
         },
-        "unregister-dialog": {
-          "title": "Unregister Team",
-          "message": "Are you sure you want to unregister team #{number}? This action cannot be undone.",
+        "remove-dialog": {
+          "title": "Remove Team",
+          "message": "Are you sure you want to remove team #{number} from this event? This action cannot be undone.",
           "cancel": "Cancel",
-          "deleting": "Unregistering...",
-          "confirm": "Unregister Team",
-          "error": "Failed to unregister team."
+          "deleting": "Removing...",
+          "confirm": "Remove Team",
+          "error": "Failed to remove team."
         },
         "unified": {
           "columns": {
