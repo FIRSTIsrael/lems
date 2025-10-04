@@ -82,7 +82,7 @@ export const RemoveTeamDialog: React.FC<RemoveTeamDialogProps> = ({ team, open, 
             disabled={isDeleting}
             startIcon={isDeleting ? <CircularProgress size={18} /> : <Delete />}
           >
-            {isDeleting ? t('deleting') : t('confirm')}
+            {isDeleting ? t('removing') : t('confirm')}
           </Button>
         </DialogActions>
       </Dialog>

@@ -326,8 +326,17 @@
           "split": "Split"
         },
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "division-message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
+          "event-message": "A schedule has been set for {eventName}. To edit teams, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "registration-button": {
           "title": "Register Teams",
@@ -349,7 +358,7 @@
           "title": "Remove Team",
           "message": "Are you sure you want to remove team #{number} from this event? This action cannot be undone.",
           "cancel": "Cancel",
-          "deleting": "Removing...",
+          "removing": "Removing...",
           "confirm": "Remove Team",
           "error": "Failed to remove team."
         },
@@ -422,8 +431,16 @@
       "venue": {
         "title": "{eventName}: Venue",
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit venue details, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "message": "A schedule has been set. To edit venue details, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "rooms": {
           "title": "Judging Rooms",
@@ -573,7 +590,8 @@
           },
           "settings": {
             "title": "Settings",
-            "stagger-matches": "Stagger matches"
+            "stagger-matches": "Stagger matches",
+            "timezone": "Timezone"
           },
           "timing": {
             "practice-cycle-time": "Practice Match cycle time",

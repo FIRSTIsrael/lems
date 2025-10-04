@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { reorder } from '@lems/utils/arrays';
 import { apiFetch } from '@lems/shared';
+import { mutate } from 'swr';
 import { AwardContextValue, AwardSchema, Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
 import { validateAwardsSchema } from '../utils/validation';
 import { useEvent } from '../../components/event-context';
@@ -149,6 +150,7 @@ export function AwardsProvider({
       }
 
       setOriginalSchema(currentSchema);
+      await mutate(`/admin/events/season/${event.seasonId}/summary`);
       onSchemaChange?.();
 
       console.log('Schema saved successfully');
@@ -158,7 +160,7 @@ export function AwardsProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [event.id, divisionId, currentSchema, onSchemaChange]);
+  }, [event.id, event.seasonId, divisionId, currentSchema, onSchemaChange]);
 
   const resetChanges = useCallback(() => {
     setCurrentSchema(originalSchema);
