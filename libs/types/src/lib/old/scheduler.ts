@@ -33,6 +33,7 @@ export interface SchedulerRequest {
   judging_cycle_time_seconds: number;
 
   breaks: SchedulerRequestBreaks[];
+  timezone?: string;
 }
 
 export interface SchedulerRequestBreaks {

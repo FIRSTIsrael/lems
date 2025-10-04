@@ -567,7 +567,8 @@
           },
           "settings": {
             "title": "Settings",
-            "stagger-matches": "Stagger matches"
+            "stagger-matches": "Stagger matches",
+            "timezone": "Timezone"
           },
           "timing": {
             "practice-cycle-time": "Practice Match cycle time",
