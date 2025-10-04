@@ -102,12 +102,11 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
       );
 
       if (response.ok) {
-        // Refresh all relevant data from the team swapper
         await Promise.all([mutateTeams(), mutateTeamSchedule(), mutateJudgingSessions()]);
         setConfirmDialogOpen(false);
         setSelectedRoom(null);
       } else {
-        console.error('Failed to swap teams');
+        throw new Error('Failed to swap teams');
       }
     } catch (error) {
       console.error('Error swapping teams:', error);

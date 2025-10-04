@@ -644,27 +644,30 @@
             "generating": "יוצר לוח זמנים..."
           }
         },
-        "teamSwap": {
+        "team-swap": {
           "description": "החלף קבוצות בין מושבי שיפוט ולוח זמנים של משחקים. בחר קבוצה כדי לראות את לוח הזמנים שלה, ולאחר מכן בחר משבצת זמן להחלפה.",
-          "selectTeam": "בחירת קבוצה",
-          "noTeams": "אין קבוצות בדיוויזיה זו",
+          "select-team": "בחירת קבוצה",
+          "no-teams": "אין קבוצות בבית זה",
           "schedule": "לוח זמנים נוכחי",
-          "judgingSession": "מפגש שיפוט",
+          "judging-session": "מפגש שיפוט",
           "matches": "מקצים",
-          "selectTeamToContinue": "בחר קבוצה כדי לראות משבצות זמן זמינות",
-          "selectJudgingTime": "בחירת משבצת זמן יעד",
+          "select-team-to-continue": "בחר קבוצה כדי לראות משבצות זמן זמינות",
+          "select-judging-time": "בחירת משבצת זמן יעד",
           "empty": "ריק",
-          "currentTeam": "קבוצה נוכחית",
-          "confirmDialog": {
+          "current-team": "קבוצה נוכחית",
+          "confirm-dialog": {
             "title": "אישור החלפת קבוצות",
             "message": "להחליף קבוצה {team1Number} מ-{room1Name} בשעה {time1} עם קבוצה {team2Number} ב-{room2Name} בשעה {time2}?",
             "cancel": "ביטול",
             "confirm": "אישור החלפה",
             "swapping": "מחליף..."
           },
-          "teamLabel": "קבוצה {number}",
+          "team-label": "קבוצה {number}",
           "round": "סבב",
-          "match": "מקצה"
+          "match": "סבב {stage} {round} - מקצה #{number}",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "placeholder": "חיפוש קבוצות...",
+          "unknown-team": "קבוצה {number}"
         }
       },
       "awards": {

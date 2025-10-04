@@ -1,10 +1,11 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, CircularProgress, Stack, Chip, Card, CardContent } from '@mui/material';
 import { Schedule } from '@mui/icons-material';
 import { Team } from '@lems/types/api/admin';
 import { RoomWithTeam } from './types';
-import { JudgingSessionTime, formatTime } from './utils';
+import { JudgingSessionTime } from './utils';
 
 interface JudgingSessionSelectorProps {
   selectedTeamId: string | null;
@@ -21,7 +22,7 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
   isLoading,
   onRoomSelect
 }) => {
-  const t = useTranslations('pages.events.schedule.teamSwap');
+  const t = useTranslations('pages.events.schedule.team-swap');
 
   if (!selectedTeamId) {
     return (
@@ -34,7 +35,7 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
         }}
       >
         <Typography variant="body1" color="text.secondary" textAlign="center">
-          {t('selectTeamToContinue')}
+          {t('select-team-to-continue')}
         </Typography>
       </Box>
     );
@@ -43,7 +44,7 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
   return (
     <>
       <Typography variant="h6" gutterBottom>
-        {t('selectJudgingTime')}
+        {t('select-judging-time')}
       </Typography>
 
       {isLoading ? (
@@ -56,7 +57,7 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
             <Box key={index}>
               <Chip
                 icon={<Schedule />}
-                label={formatTime(timeSlot.time)}
+                label={dayjs(timeSlot.time).format('HH:mm')}
                 color="primary"
                 variant="outlined"
                 sx={{ mb: 1.5 }}
@@ -101,8 +102,8 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
                             {isEmpty
                               ? t('empty')
                               : isCurrentTeam
-                                ? t('currentTeam')
-                                : `Team ${roomTeam?.number || '?'}`}
+                                ? t('current-team')
+                                : t('unknown-team', {number: roomTeam?.number || '?'})}
                           </Typography>
                         </Stack>
                       </CardContent>

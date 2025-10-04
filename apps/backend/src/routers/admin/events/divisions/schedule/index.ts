@@ -3,7 +3,7 @@ import { SchedulerRequest } from '@lems/types';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../../../middlewares/admin/require-permission';
-import { sanitizeMatches, mapJudgingSessionToApi, mapRoomToApi } from './util';
+import { makeAdminJudgingSessionResponse, makeAdminJudgingRoomResponse, makeAdminRobotGameMatchResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -122,8 +122,8 @@ router.get(
 
       res.status(200).json({
         team,
-        judgingSession: judgingSession ? mapJudgingSessionToApi(judgingSession) : null,
-        matches: sanitizeMatches(matches)
+        judgingSession: judgingSession ? makeAdminJudgingSessionResponse(judgingSession) : null,
+        matches: matches.map(makeAdminRobotGameMatchResponse)
       });
     } catch (error) {
       console.error('Error fetching team schedule:', error);
@@ -141,8 +141,8 @@ router.get(
       const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
 
       res.status(200).json({
-        sessions: sessions.map(mapJudgingSessionToApi),
-        rooms: rooms.map(mapRoomToApi)
+        sessions: sessions.map(makeAdminJudgingSessionResponse),
+        rooms: rooms.map(makeAdminJudgingRoomResponse)
       });
     } catch (error) {
       console.error('Error fetching judging sessions:', error);

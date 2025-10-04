@@ -637,27 +637,30 @@
             "generating": "Generating..."
           }
         },
-        "teamSwap": {
+        "team-swap": {
           "description": "Swap teams between judging sessions and match schedules. Select a team to see their schedule, then choose a time slot to swap with.",
-          "selectTeam": "Select Team",
-          "noTeams": "No teams in this division",
+          "select-team": "Select Team",
+          "no-teams": "No teams in this division",
           "schedule": "Current Schedule",
-          "judgingSession": "Judging Session",
+          "judging-session": "Judging Session",
           "matches": "Matches",
-          "selectTeamToContinue": "Select a team to view available time slots",
-          "selectJudgingTime": "Select Target Time Slot",
+          "select-team-to-continue": "Select a team to view available time slots",
+          "select-judging-time": "Select Target Time Slot",
           "empty": "Empty",
-          "currentTeam": "Current Team",
-          "confirmDialog": {
+          "current-team": "Current Team",
+          "confirm-dialog": {
             "title": "Confirm Team Swap",
             "message": "Swap Team {team1Number} from {room1Name} at {time1} with Team {team2Number} in {room2Name} at {time2}?",
             "cancel": "Cancel",
             "confirm": "Confirm Swap",
             "swapping": "Swapping..."
           },
-          "teamLabel": "Team {number}",
+          "team-label": "Team {number}",
           "round": "Round",
-          "match": "Match"
+          "match": "{stage} Round {round} - match #{number}",
+          "no-teams-found": "No Teams Found",
+          "placeholder": "Search Teams...",
+          "unknown-team": "Team {number}"
         }
       },
       "awards": {

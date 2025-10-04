@@ -1,4 +1,8 @@
 {
+  "robot-game-stages": {
+    "practice": "Practice",
+    "ranking": "Ranking"
+  },
   "awards": {
     "core-values": {
       "name": "Core Values",

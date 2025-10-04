@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import {
   Box,
@@ -9,8 +10,8 @@ import {
   Card,
   CardContent
 } from '@mui/material';
+import { useMatchStageTranslations } from '@lems/localization';
 import { TeamSchedule } from '@lems/types/api/admin';
-import { formatTime, formatMatchStage } from './utils';
 
 interface TeamScheduleViewProps {
   teamSchedule: TeamSchedule | null | undefined;
@@ -18,7 +19,8 @@ interface TeamScheduleViewProps {
 }
 
 export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule, isLoading }) => {
-  const t = useTranslations('pages.events.schedule.teamSwap');
+  const t = useTranslations('pages.events.schedule.team-swap');
+  const { getStage } = useMatchStageTranslations();
 
   if (!teamSchedule) {
     return null;
@@ -41,10 +43,10 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
             <Card variant="outlined">
               <CardContent>
                 <Typography variant="subtitle2" color="primary" gutterBottom>
-                  {t('judgingSession')}
+                  {t('judging-session')}
                 </Typography>
                 <Typography variant="body2">
-                  {formatTime(teamSchedule.judgingSession.scheduledTime)}
+                  {dayjs(teamSchedule.judgingSession.scheduledTime).format('HH:mm')}
                 </Typography>
               </CardContent>
             </Card>
@@ -60,11 +62,14 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
                   <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Typography variant="body2">
-                        {formatMatchStage(match.stage)} {t('round')} {match.round}, {t('match')} #
-                        {match.number}
+                        {t('match', {
+                          round: match.round,
+                          number: match.number,
+                          stage: getStage(match.stage)
+                        })}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {formatTime(match.scheduledTime)}
+                        {dayjs(match.scheduledTime).format('HH:mm')}
                       </Typography>
                     </Stack>
                   </CardContent>

@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -12,7 +13,7 @@ import {
 import { Casino } from '@mui/icons-material';
 import { TeamSchedule } from '@lems/types/api/admin';
 import { RoomWithTeam } from './types';
-import { JudgingSessionTime, formatTime } from './utils';
+import { JudgingSessionTime } from './utils';
 
 interface SwapConfirmDialogProps {
   open: boolean;
@@ -33,7 +34,7 @@ export const SwapConfirmDialog: React.FC<SwapConfirmDialogProps> = ({
   onClose,
   onConfirm
 }) => {
-  const t = useTranslations('pages.events.schedule.teamSwap');
+  const t = useTranslations('pages.events.schedule.team-swap');
 
   const getRoomName = () => {
     if (!teamSchedule?.judgingSession) return '?';
@@ -46,20 +47,20 @@ export const SwapConfirmDialog: React.FC<SwapConfirmDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={() => !isSwapping && onClose()} maxWidth="sm" fullWidth>
-      <DialogTitle>{t('confirmDialog.title')}</DialogTitle>
+      <DialogTitle>{t('confirm-dialog.title')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           {selectedRoom && teamSchedule && (
             <>
-              {t('confirmDialog.message', {
+              {t('confirm-dialog.message', {
                 team1Number: teamSchedule.team.number,
                 room1Name: getRoomName(),
                 time1: teamSchedule.judgingSession
-                  ? formatTime(teamSchedule.judgingSession.scheduledTime)
+                  ? dayjs(teamSchedule.judgingSession.scheduledTime).format('HH:mm')
                   : '?',
                 team2Number: selectedRoom.teamNumber || t('empty'),
                 room2Name: selectedRoom.roomName,
-                time2: formatTime(selectedRoom.time)
+                time2: dayjs(selectedRoom.time).format('HH:mm')
               })}
             </>
           )}
@@ -67,7 +68,7 @@ export const SwapConfirmDialog: React.FC<SwapConfirmDialogProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={isSwapping}>
-          {t('confirmDialog.cancel')}
+          {t('confirm-dialog.cancel')}
         </Button>
         <Button
           onClick={onConfirm}
@@ -76,7 +77,7 @@ export const SwapConfirmDialog: React.FC<SwapConfirmDialogProps> = ({
           disabled={isSwapping}
           startIcon={isSwapping ? <CircularProgress size={18} /> : <Casino />}
         >
-          {isSwapping ? t('confirmDialog.swapping') : t('confirmDialog.confirm')}
+          {isSwapping ? t('confirm-dialog.swapping') : t('confirm-dialog.confirm')}
         </Button>
       </DialogActions>
     </Dialog>

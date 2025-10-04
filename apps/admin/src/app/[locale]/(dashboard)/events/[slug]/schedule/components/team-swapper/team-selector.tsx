@@ -15,7 +15,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
   selectedTeamId,
   onTeamSelect
 }) => {
-  const t = useTranslations('pages.events.schedule.teamSwap');
+  const t = useTranslations('pages.events.schedule.team-swap');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTeams = useMemo(() => {
@@ -32,13 +32,13 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Typography variant="h6">{t('selectTeam')}</Typography>
+      <Typography variant="h6">{t('select-team')}</Typography>
       <Typography variant="body2" fontSize="small" color="text.secondary" gutterBottom>
         {t('description')}
       </Typography>
 
       <TextField
-        placeholder="Search teams..."
+        placeholder={t('placeholder')}
         size="small"
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
@@ -50,7 +50,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
 
       {filteredTeams.length === 0 ? (
         <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-          {searchQuery ? 'No teams found' : t('noTeams')}
+          {searchQuery ? t('no-teams-found') : t('no-teams')}
         </Typography>
       ) : (
         <List sx={{ overflow: 'auto', flexGrow: 1 }}>
@@ -67,7 +67,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
               }}
             >
               <ListItemText
-                primary={t('teamLabel', { number: team.number })}
+                primary={t('team-label', { number: team.number })}
                 secondary={team.name || team.affiliation}
               />
             </ListItemButton>
