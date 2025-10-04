@@ -58,6 +58,7 @@ export interface VolunteerContextType {
   // Utility functions
   getSlotsForRole: (role: Role) => VolunteerSlot[];
   needsIdentifiers: (slot: VolunteerSlot) => boolean;
+  getEventPasswords: () => Promise<void>;
 }
 
 const VolunteerContext = createContext<VolunteerContextType | undefined>(undefined);
@@ -228,6 +229,34 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     });
   };
 
+  const getEventPasswords = async (): Promise<void> => {
+    try {
+      const result = await apiFetch(`/admin/events/${event.id}/users/volunteers/passwords`, {
+        responseType: 'binary',
+        headers: {
+          Accept: 'text/csv; charset=utf-8'
+        }
+      });
+
+      if (result.ok) {
+        const text = await (result.data as Blob).text();
+        const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `volunteer-passwords-${event.id}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to download passwords:', result.status, result.error);
+      }
+    } catch (error) {
+      console.error('Error downloading passwords:', error);
+    }
+  };
+
   const contextValue: VolunteerContextType = {
     // Data
     divisions,
@@ -250,7 +279,8 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
     // Utility functions
     getSlotsForRole,
-    needsIdentifiers
+    needsIdentifiers,
+    getEventPasswords
   };
 
   return <VolunteerContext.Provider value={contextValue}>{children}</VolunteerContext.Provider>;

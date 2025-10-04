@@ -760,7 +760,8 @@
               "missingMandatoryRole": "{role} נדרש עבור {division}",
               "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
             },
-            "loading": "טוען..."
+            "loading": "טוען...",
+            "downloadPasswords": "הורד קובץ סיסמאות"
           }
         },
         "dialogs": {

@@ -753,7 +753,8 @@
               "missingMandatoryRole": "{role} is required for {division}",
               "missingMandatoryRoleSingle": "{role} is required for this event"
             },
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "downloadPasswords": "Download Passwords"
           }
         },
         "dialogs": {
