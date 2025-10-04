@@ -766,7 +766,13 @@
               "missingMandatoryRole": "{role} נדרש עבור {division}",
               "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
             },
-            "loading": "טוען..."
+            "loading": "טוען...",
+            "status": {
+              "existing-users": "יש משתמשים",
+              "existing-users-tooltip": "לאירוע זה יש כבר משתמשים מוגדרים",
+              "new-users": "הגדרה חדשה",
+              "new-users-tooltip": "זוהי הגדרת משתמשים חדשה"
+            }
           }
         },
         "dialogs": {

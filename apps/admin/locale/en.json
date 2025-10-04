@@ -759,7 +759,13 @@
               "missingMandatoryRole": "{role} is required for {division}",
               "missingMandatoryRoleSingle": "{role} is required for this event"
             },
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "status": {
+              "new-users-tooltip": "This is a new users configuration",
+              "existing-users-tooltip": "This event has users already configured",
+              "new-users": "New Setup",
+              "existing-users": "Has Users"
+            }
           }
         },
         "dialogs": {
