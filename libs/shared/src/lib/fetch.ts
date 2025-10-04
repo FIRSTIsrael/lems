@@ -77,17 +77,21 @@ type ApiResult<TSchema extends z.ZodTypeAny = z.ZodUnknown, Typed extends boolea
  * @throws {ApiFetchError} Only when network errors occur or JSON parsing fails for successful responses
  * @throws {Error} When Zod schema validation fails (if schema provided)
  */
+export type ApiFetchOptions = RequestInit & {
+  responseType?: 'json' | 'binary';
+};
+
 export async function apiFetch<TSchema extends z.ZodTypeAny>(
   path: string,
-  init: RequestInit | undefined,
+  init: ApiFetchOptions,
   schema: TSchema
 ): Promise<ApiResult<TSchema, true>>;
 
-export async function apiFetch(path: string, init?: RequestInit): Promise<ApiResult>;
+export async function apiFetch(path: string, init?: ApiFetchOptions): Promise<ApiResult>;
 
 export async function apiFetch<TSchema extends z.ZodTypeAny>(
   path: string,
-  init?: RequestInit,
+  init?: ApiFetchOptions,
   schema?: TSchema
 ): Promise<ApiResult<TSchema, true> | ApiResult> {
   const isServer = typeof window === 'undefined';
@@ -138,6 +142,12 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
         statusText: response.statusText,
         error: errorData
       };
+    }
+
+    // Handle binary response if specified
+    if (init?.responseType === 'binary') {
+      const blob = await response.blob();
+      return { ok: true, response, data: blob };
     }
 
     try {

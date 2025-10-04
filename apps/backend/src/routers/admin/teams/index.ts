@@ -9,7 +9,7 @@ import { makeAdminTeamResponse, parseTeamList } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminRequest, res) => {
-  const teams = await db.teams.getAll();
+  const teams = await db.teams.getAllWithActiveStatus();
   res.json(teams.map(team => makeAdminTeamResponse(team)));
 });
 
@@ -28,6 +28,31 @@ router.get('/:number', async (req: AdminRequest, res) => {
   res.json(makeAdminTeamResponse(team));
 });
 
+router.delete('/:id', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
+  const id = req.params.id;
+
+  const team = await db.teams.byId(id).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+
+  const teamEvents = await db.events.byTeam(team.id).getAll();
+
+  if (teamEvents.length > 0) {
+    res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
+    return;
+  }
+
+  const success = await db.teams.byId(id).delete();
+  if (!success) {
+    res.status(500).json({ error: 'Could not delete team' });
+    return;
+  }
+
+  res.status(200).end();
+});
+
 router.get('/id/:teamId', async (req: AdminRequest, res) => {
   const id = req.params.teamId;
   const team = await db.teams.byId(id).get();
@@ -37,6 +62,67 @@ router.get('/id/:teamId', async (req: AdminRequest, res) => {
   }
   res.json(makeAdminTeamResponse(team));
 });
+
+router.put(
+  '/:teamId',
+  requirePermission('MANAGE_TEAMS'),
+  fileUpload(),
+  async (req: AdminRequest, res) => {
+    const { name, affiliation, city } = req.body;
+
+    if (!name || !affiliation || !city) {
+      res.status(400).json({ error: 'All fields are required' });
+      return;
+    }
+
+    const teamId = req.params.teamId;
+    if (!teamId) {
+      res.status(400).json({ error: 'Team ID must be provided' });
+      return;
+    }
+
+    try {
+      let team = await db.teams.byId(teamId).update({
+        name,
+        affiliation,
+        city
+      });
+
+      if (req.files && req.files.logo) {
+        const logoFile = req.files.logo as fileUpload.UploadedFile;
+
+        if (
+          !logoFile.mimetype?.startsWith('image/') ||
+          (!logoFile.name.endsWith('.jpg') &&
+            !logoFile.name.endsWith('.jpeg') &&
+            !logoFile.name.endsWith('.png') &&
+            !logoFile.name.endsWith('.svg'))
+        ) {
+          res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
+          return;
+        }
+
+        try {
+          team = await db.teams.byId(team.id).updateLogo(logoFile.data);
+        } catch (error) {
+          console.error('Error uploading team logo:', error);
+          res.status(500).json({ error: 'Failed to upload team logo' });
+          return;
+        }
+      }
+
+      if (!team) {
+        res.status(500).json({ error: 'Failed to retrieve updated team' });
+        return;
+      }
+
+      res.status(200).json(makeAdminTeamResponse(team));
+    } catch (error) {
+      console.error('Error updating team:', error);
+      res.status(500).json({ error: 'Failed to update team' });
+    }
+  }
+);
 
 router.post(
   '/',

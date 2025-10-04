@@ -78,50 +78,57 @@
           "name": "Team Name",
           "affiliation": "Affiliation",
           "actions": "Actions",
-          "city": "City"
+          "city": "City",
+          "status": "Status"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
         }
       },
       "creation-dialog": {
         "title": "Create Team",
         "actions": {
           "cancel": "Cancel"
-        },
-        "form": {
-          "fields": {
-            "name": {
-              "label": "Team Name",
-              "placeholder": "e.g., Iron Patriots"
-            },
-            "number": {
-              "label": "Team Number",
-              "placeholder": "e.g., 1234"
-            },
-            "affiliation": {
-              "label": "School/Organization",
-              "placeholder": "e.g., Lincoln Elementary"
-            },
-            "city": {
-              "label": "City",
-              "placeholder": "e.g., New York"
-            },
-            "logo": {
-              "label": "Team Logo",
-              "description": "Upload a team logo (JPG, PNG, or SVG)",
-              "placeholder": "Accepts image files"
-            }
-          },
-          "errors": {
-            "name-required": "Team name is required.",
-            "number-required": "Team number is required.",
-            "number-invalid": "Team number must be a valid number.",
-            "number-exists": "This team number already exists.",
-            "affiliation-required": "School/Organization name is required.",
-            "city-required": "City is required.",
-            "error": "An error occurred while creating the team."
-          },
-          "submit": "Create Team",
-          "submitting": "Creating team..."
         }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "Team Name",
+            "placeholder": "e.g., Iron Patriots"
+          },
+          "number": {
+            "label": "Team Number",
+            "placeholder": "e.g., 1234"
+          },
+          "affiliation": {
+            "label": "School/Organization",
+            "placeholder": "e.g., Lincoln Elementary"
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "e.g., New York"
+          },
+          "logo": {
+            "label": "Team Logo",
+            "description": "Upload a team logo (JPG, PNG, or SVG)",
+            "placeholder": "Accepts image files"
+          }
+        },
+        "errors": {
+          "name-required": "Team name is required.",
+          "number-required": "Team number is required.",
+          "number-invalid": "Team number must be a valid number.",
+          "number-exists": "This team number already exists.",
+          "affiliation-required": "School/Organization name is required.",
+          "city-required": "City is required.",
+          "error": "An error occurred while creating the team."
+        },
+        "submit": "Create Team",
+        "submitting": "Creating team...",
+        "update": "Update Team",
+        "updating": "Updating team..."
       },
       "import-dialog": {
         "title": "Import Teams from CSV",
@@ -161,6 +168,18 @@
           "and-more": "...and {count} more",
           "close": "Close"
         }
+      },
+      "delete-dialog": {
+        "title": "Delete Team",
+        "message": "Are you sure you want to delete team #{number}? This action cannot be undone.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "confirm": "Delete Team",
+        "error": "Failed to delete team, make sure this team is not registered to any events."
+      },
+      "update-dialog": {
+        "title": "Update Team",
+        "cancel": "Cancel"
       }
     },
     "index": {
@@ -179,6 +198,15 @@
         },
         "registered-teams": {
           "description": "Registered Teams"
+        },
+        "total-events": {
+          "description": "Total Events"
+        },
+        "total-admins": {
+          "description": "Admin Users"
+        },
+        "event-participation": {
+          "description": "Event Registrations"
         },
         "upcoming-events": {
           "title": "Upcoming Events",
@@ -307,8 +335,17 @@
           "split": "Split"
         },
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "division-message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
+          "event-message": "A schedule has been set for {eventName}. To edit teams, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "registration-button": {
           "title": "Register Teams",
@@ -325,6 +362,14 @@
             "cancel": "Cancel"
           },
           "no-teams-selected": "No teams selected"
+        },
+        "remove-dialog": {
+          "title": "Remove Team",
+          "message": "Are you sure you want to remove team #{number} from this event? This action cannot be undone.",
+          "cancel": "Cancel",
+          "removing": "Removing...",
+          "confirm": "Remove Team",
+          "error": "Failed to remove team."
         },
         "unified": {
           "columns": {
@@ -354,6 +399,14 @@
           },
           "validation": {
             "name-required": "Division name is required."
+          },
+          "delete": {
+            "title": "Delete Division",
+            "message": "Are you sure you want to delete the division {name}?",
+            "warning": "This action will permanently delete the division, including all teams, schedules, and related data. This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete Division",
+            "deleting": "Deleting..."
           },
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
@@ -387,8 +440,16 @@
       "venue": {
         "title": "{eventName}: Venue",
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit venue details, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "message": "A schedule has been set. To edit venue details, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "rooms": {
           "title": "Judging Rooms",
@@ -538,7 +599,8 @@
           },
           "settings": {
             "title": "Settings",
-            "stagger-matches": "Stagger matches"
+            "stagger-matches": "Stagger matches",
+            "timezone": "Timezone"
           },
           "timing": {
             "practice-cycle-time": "Practice Match cycle time",
@@ -725,7 +787,14 @@
               "missingMandatoryRole": "{role} is required for {division}",
               "missingMandatoryRoleSingle": "{role} is required for this event"
             },
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "downloadPasswords": "Download Passwords",
+            "status": {
+              "new-users-tooltip": "This is a new users configuration",
+              "existing-users-tooltip": "This event has users already configured",
+              "new-users": "New Setup",
+              "existing-users": "Has Users"
+            }
           }
         },
         "dialogs": {

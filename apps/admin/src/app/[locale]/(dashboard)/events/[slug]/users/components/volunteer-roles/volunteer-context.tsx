@@ -10,7 +10,7 @@ import React, {
   useMemo
 } from 'react';
 import { useTranslations } from 'next-intl';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { apiFetch } from '@lems/shared';
 import { useRoleTranslations } from '@lems/localization';
 import { Division, VolunteerUser, VolunteerUsersResponseSchema } from '@lems/types/api/admin';
@@ -44,6 +44,7 @@ export interface VolunteerContextType {
   saving: boolean;
   validationErrors: string[];
   loading: boolean;
+  isNew: boolean;
 
   // Actions - General
   handleToggleSystemRole: (role: string, enabled: boolean) => void;
@@ -58,6 +59,7 @@ export interface VolunteerContextType {
   // Utility functions
   getSlotsForRole: (role: Role) => VolunteerSlot[];
   needsIdentifiers: (slot: VolunteerSlot) => boolean;
+  getEventPasswords: () => Promise<void>;
 }
 
 const VolunteerContext = createContext<VolunteerContextType | undefined>(undefined);
@@ -71,6 +73,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
   const t = useTranslations('pages.events.users.sections.volunteerUsers');
   const { getRole } = useRoleTranslations();
 
+  const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(false);
   const [slots, setSlots] = useState<VolunteerSlot[]>([]);
   const [saving, setSaving] = useState(false);
   const [toggledSystemRoles, setToggledSystemRoles] = useState<Set<string>>(new Set());
@@ -83,7 +86,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     { suspense: false, fallbackData: [] }
   );
 
-  const loading = volunteersLoading && !initialized.current;
+  const loading = volunteersLoading || !initialized.current;
 
   useEffect(() => {
     if (volunteersLoading || initialized.current) {
@@ -96,6 +99,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       setSlots(transformedSlots);
       setToggledSystemRoles(systemRoles);
       initialized.current = true;
+      setIsLoadedFromDatabase(true);
     } else if (divisions.length > 0) {
       const initialSlots = generateInitialSlots(divisions);
       setSlots(initialSlots);
@@ -171,6 +175,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       );
 
       if (result.ok) {
+        await mutate(`/admin/events/season/${event.seasonId}/summary`);
         console.log('Volunteer slots saved successfully');
       } else {
         console.error('Failed to save volunteer slots:', result.status, result.error);
@@ -227,6 +232,34 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     });
   };
 
+  const getEventPasswords = async (): Promise<void> => {
+    try {
+      const result = await apiFetch(`/admin/events/${event.id}/users/volunteers/passwords`, {
+        responseType: 'binary',
+        headers: {
+          Accept: 'text/csv; charset=utf-8'
+        }
+      });
+
+      if (result.ok) {
+        const text = await (result.data as Blob).text();
+        const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `volunteer-passwords-${event.id}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to download passwords:', result.status, result.error);
+      }
+    } catch (error) {
+      console.error('Error downloading passwords:', error);
+    }
+  };
+
   const contextValue: VolunteerContextType = {
     // Data
     divisions,
@@ -236,6 +269,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     saving,
     validationErrors,
     loading,
+    isNew: !isLoadedFromDatabase,
 
     // Actions - General
     handleToggleSystemRole,
@@ -249,7 +283,8 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
     // Utility functions
     getSlotsForRole,
-    needsIdentifiers
+    needsIdentifiers,
+    getEventPasswords
   };
 
   return <VolunteerContext.Provider value={contextValue}>{children}</VolunteerContext.Provider>;

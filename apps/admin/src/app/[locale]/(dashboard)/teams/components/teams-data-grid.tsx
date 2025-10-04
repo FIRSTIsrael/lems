@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Avatar, Box, Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { TeamsSearch } from './teams-search';
+import { DeleteTeamButton } from './delete-team-button';
+import { UpdateTeamButton } from './update-team-button';
 
 interface TeamsDataGridProps {
   teams: Team[];
@@ -66,6 +67,43 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       valueFormatter: (value: number) => value.toString()
     },
     {
+      field: 'active',
+      headerName: t('columns.status'),
+      width: 120,
+      sortable: true,
+      filterable: true,
+      type: 'boolean',
+      renderCell: params => (
+        <Chip
+          label={params.row.active ? t('status.active') : t('status.inactive')}
+          color={params.row.active ? 'success' : 'default'}
+          size="small"
+          variant="filled"
+        />
+      ),
+      valueGetter: (value: boolean) => value,
+      filterOperators: [
+        {
+          label: t('status.active'),
+          value: 'isTrue',
+          getApplyFilterFn: () => {
+            return (value: boolean): boolean => {
+              return value === true;
+            };
+          }
+        },
+        {
+          label: t('status.inactive'),
+          value: 'isFalse',
+          getApplyFilterFn: () => {
+            return (value: boolean): boolean => {
+              return value === false;
+            };
+          }
+        }
+      ]
+    },
+    {
       field: 'name',
       headerName: t('columns.name'),
       width: 250,
@@ -90,26 +128,8 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       width: 120,
       sortable: false,
       getActions: params => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<Edit />}
-          label="Edit team"
-          disabled
-          onClick={() => {
-            // TODO: Implement edit functionality
-            console.log('Edit team:', params.row.id);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<Delete />}
-          label="Delete team"
-          disabled
-          onClick={() => {
-            // TODO: Implement delete functionality
-            console.log('Delete team:', params.row.id);
-          }}
-        />
+        <UpdateTeamButton team={params.row} />,
+        <DeleteTeamButton team={params.row} />
       ]
     }
   ];
@@ -132,8 +152,6 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
           }}
           pageSizeOptions={[25, 50, 100]}
           disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
           disableColumnSelector
           sx={{
             height: '100%',

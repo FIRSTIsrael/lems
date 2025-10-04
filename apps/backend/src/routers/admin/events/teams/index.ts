@@ -34,4 +34,21 @@ router.post(
   }
 );
 
+router.delete(
+  '/unregister',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    const unregisterationData = req.body;
+
+    if (!unregisterationData || !Array.isArray(unregisterationData)) {
+      res.status(400).json({ error: 'Invalid teams unregistration data' });
+      return;
+    }
+
+    await db.events.byId(req.eventId).unregisterTeams(unregisterationData);
+
+    res.status(200).end();
+  }
+);
+
 export default router;

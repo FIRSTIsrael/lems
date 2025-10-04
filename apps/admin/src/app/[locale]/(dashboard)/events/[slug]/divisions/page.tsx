@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { Division, AdminDivisionsResponseSchema } from '@lems/types/api/admin';
-import { apiFetch } from '@lems/shared';
 import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { DivisionsTable } from './components/divisions-table';
@@ -14,14 +13,8 @@ export default function EventDivisionsPage() {
   const t = useTranslations('pages.events.divisions');
 
   const { data: divisions = [], mutate } = useSWR<Division[]>(
-    `/admin/events/${event.id}/divisions`,
-    async (url: string) => {
-      const result = await apiFetch(url, undefined, AdminDivisionsResponseSchema);
-      if (result.ok) {
-        return result.data;
-      }
-      throw new Error('Failed to fetch divisions');
-    }
+    [`/admin/events/${event.id}/divisions`, AdminDivisionsResponseSchema],
+    { suspense: true, fallbackData: [] }
   );
 
   const handleDivisionChange = async () => {

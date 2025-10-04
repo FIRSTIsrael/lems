@@ -112,8 +112,8 @@ export class JudgingSessionsRepository {
     return {
       sessionId: id,
       status: 'not-started',
-      called: false,
-      queued: false,
+      called: null,
+      queued: null,
       startTime: null,
       startDelta: null
     };

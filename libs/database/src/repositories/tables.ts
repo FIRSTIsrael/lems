@@ -35,6 +35,10 @@ class TableSelector {
 
     return updatedTable;
   }
+
+  async delete(): Promise<void> {
+    await this.db.deleteFrom('robot_game_tables').where('id', '=', this.id).execute();
+  }
 }
 
 class TablesSelector {
@@ -83,7 +87,7 @@ export class TablesRepository {
     if (!createdTable) {
       throw new Error('Failed to create table');
     }
-    
+        
     return createdTable;
   }
 }

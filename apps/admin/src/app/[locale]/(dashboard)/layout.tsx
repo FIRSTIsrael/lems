@@ -131,8 +131,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const drawerWidth = 240;
 
   const [permissionsResult, userResult] = await Promise.all([
-    apiFetch('/admin/users/permissions/me', undefined, AdminUserPermissionsResponseSchema),
-    apiFetch('/admin/users/me', undefined, AdminUserResponseSchema)
+    apiFetch('/admin/users/permissions/me', {}, AdminUserPermissionsResponseSchema),
+    apiFetch('/admin/users/me', {}, AdminUserResponseSchema)
   ]);
 
   if (!permissionsResult.ok) {

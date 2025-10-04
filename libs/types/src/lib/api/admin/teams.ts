@@ -7,7 +7,8 @@ export const AdminTeamResponseSchema = z.object({
   logoUrl: z.url().nullable(),
   affiliation: z.string(),
   city: z.string(),
-  coordinates: z.string().nullable()
+  coordinates: z.string().nullable(),
+  active: z.boolean().optional()
 });
 
 export type Team = z.infer<typeof AdminTeamResponseSchema>;

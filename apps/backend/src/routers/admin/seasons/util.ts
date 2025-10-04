@@ -11,5 +11,5 @@ export const makeAdminSeasonResponse = (season: DbSeason): Season => ({
   name: season.name,
   startDate: season.start_date,
   endDate: season.end_date,
-  logoUrl: season.logo_url
+  logoUrl: season.logo_url ?? null
 });

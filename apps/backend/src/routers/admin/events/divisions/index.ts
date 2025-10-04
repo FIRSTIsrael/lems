@@ -58,4 +58,19 @@ router.put(
   }
 );
 
+router.delete(
+  '/:divisionId',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    const deleted = await db.divisions.byId(req.divisionId).delete();
+
+    if (!deleted) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+
+    res.status(204).end();
+  }
+);
+
 export default router;

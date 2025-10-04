@@ -24,6 +24,7 @@ import {
   Event,
   WatchLater
 } from '@mui/icons-material';
+import { TimeZonePicker } from '@lems/shared';
 import { useSchedule } from './schedule-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -50,7 +51,9 @@ export const ScheduleSettings: React.FC = () => {
     judgingStart,
     fieldStart,
     matchesPerRound,
-    allowStagger
+    allowStagger,
+    timezone,
+    setTimezone
   } = useSchedule();
 
   const totalMatches = React.useMemo(() => {
@@ -169,17 +172,26 @@ export const ScheduleSettings: React.FC = () => {
             {t('settings.title')}
           </Typography>
 
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!allowStagger}
-                checked={staggerMatches}
-                onChange={e => setStaggerMatches(e.target.checked)}
-                color="primary"
-              />
-            }
-            label={t('settings.stagger-matches')}
-          />
+          <Stack spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  disabled={!allowStagger}
+                  checked={staggerMatches}
+                  onChange={e => setStaggerMatches(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={t('settings.stagger-matches')}
+            />
+
+            <TimeZonePicker
+              value={timezone}
+              onChange={setTimezone}
+              label={t('settings.timezone')}
+              disableClearable
+            />
+          </Stack>
         </Box>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>

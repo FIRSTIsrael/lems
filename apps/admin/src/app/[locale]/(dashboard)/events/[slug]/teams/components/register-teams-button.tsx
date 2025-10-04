@@ -2,30 +2,25 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Alert, Button, Box } from '@mui/material';
-import { Event } from '@lems/types/api/admin';
+import { Button, Box } from '@mui/material';
+import { Event, Division } from '@lems/types/api/admin';
 import { RegisterTeamsDialog } from './register-teams-dialog';
 
 interface RegisterTeamsButtonProps {
   event: Event;
+  divisions: Division[];
 }
 
-export const RegisterTeamsButton: React.FC<RegisterTeamsButtonProps> = ({ event }) => {
+export const RegisterTeamsButton: React.FC<RegisterTeamsButtonProps> = ({ event, divisions }) => {
   const t = useTranslations('pages.events.teams.registration-button');
   const [modalOpen, setModalOpen] = useState(false);
-  const allowRegistration = true;
 
-  if (!allowRegistration) {
-    return (
-      <Alert severity="info" sx={{ mb: 3 }}>
-        {t('alert')}
-      </Alert>
-    );
-  }
+  const divisionsWithSchedule = divisions.filter(division => division.hasSchedule);
+  const disabled = divisions.length > 0 && divisionsWithSchedule.length === divisions.length;
 
   return (
     <Box sx={{ mt: 2 }}>
-      <Button variant="contained" size="large" onClick={() => setModalOpen(true)} sx={{ mb: 3 }}>
+      <Button variant="contained" size="large" onClick={() => setModalOpen(true)} sx={{ mb: 3 }} disabled={disabled}>
         {t('title')}
       </Button>
 
