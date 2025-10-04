@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Card, CardContent, List, Typography } from '@mui/material';
+import { Box, Card, CardContent, List, Typography } from '@mui/material';
 import { AdminSeasonResponseSchema } from '@lems/types/api/admin/seasons';
 import { AdminSummarizedEventsResponseSchema, EventSummary } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -30,15 +30,34 @@ export default async function UpcomingEventsWidget() {
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom ml={2}>
+      <CardContent sx={{ pb: 1.5 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 2,
+            ml: 2,
+            fontWeight: 700,
+            color: 'text.primary'
+          }}
+        >
           {t('title')}
         </Typography>
 
         {upcomingEvents.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" sx={{ py: 2 }} ml={2}>
-            {t('no-events')}
-          </Typography>
+          <Box
+            sx={{
+              py: 4,
+              px: 2,
+              textAlign: 'center',
+              bgcolor: 'action.hover',
+              borderRadius: 2,
+              mx: 2
+            }}
+          >
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
+              {t('no-events')}
+            </Typography>
+          </Box>
         ) : (
           <List sx={{ width: '100%', p: 0 }}>
             {upcomingEvents.map(event => (
