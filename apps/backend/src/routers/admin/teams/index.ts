@@ -63,6 +63,67 @@ router.get('/id/:teamId', async (req: AdminRequest, res) => {
   res.json(makeAdminTeamResponse(team));
 });
 
+router.patch(
+  '/:teamId',
+  requirePermission('MANAGE_TEAMS'),
+  fileUpload(),
+  async (req: AdminRequest, res) => {
+    const { name, affiliation, city } = req.body;
+
+    if (!name || !affiliation || !city) {
+      res.status(400).json({ error: 'All fields are required' });
+      return;
+    }
+
+    const teamId = req.params.teamId;
+    if (!teamId) {
+      res.status(400).json({ error: 'Team ID must be provided' });
+      return;
+    }
+
+    try {
+      let team = await db.teams.byId(teamId).update({
+        name,
+        affiliation,
+        city
+      });
+
+      if (req.files && req.files.logo) {
+        const logoFile = req.files.logo as fileUpload.UploadedFile;
+
+        if (
+          !logoFile.mimetype?.startsWith('image/') ||
+          (!logoFile.name.endsWith('.jpg') &&
+            !logoFile.name.endsWith('.jpeg') &&
+            !logoFile.name.endsWith('.png') &&
+            !logoFile.name.endsWith('.svg'))
+        ) {
+          res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
+          return;
+        }
+
+        try {
+          team = await db.teams.byId(team.id).updateLogo(logoFile.data);
+        } catch (error) {
+          console.error('Error uploading team logo:', error);
+          res.status(500).json({ error: 'Failed to upload team logo' });
+          return;
+        }
+      }
+
+      if (!team) {
+        res.status(500).json({ error: 'Failed to retrieve updated team' });
+        return;
+      }
+
+      res.status(200).json(makeAdminTeamResponse(team));
+    } catch (error) {
+      console.error('Error updating team:', error);
+      res.status(500).json({ error: 'Failed to update team' });
+    }
+  }
+);
+
 router.post(
   '/',
   requirePermission('MANAGE_TEAMS'),
