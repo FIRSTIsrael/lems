@@ -1,4 +1,8 @@
 {
+  "robot-game-stages": {
+    "practice": "אימון",
+    "ranking": "דירוג"
+  },
   "awards": {
     "core-values": {
       "name": "ערכי הליבה",

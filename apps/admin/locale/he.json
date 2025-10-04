@@ -644,8 +644,30 @@
             "generating": "יוצר לוח זמנים..."
           }
         },
-        "teamSwap": {
-          "placeholder": "מסך החלפת קבוצות - בקרוב"
+        "team-swap": {
+          "description": "החלף קבוצות בין מושבי שיפוט ולוח זמנים של משחקים. בחר קבוצה כדי לראות את לוח הזמנים שלה, ולאחר מכן בחר משבצת זמן להחלפה.",
+          "select-team": "בחירת קבוצה",
+          "no-teams": "אין קבוצות בבית זה",
+          "schedule": "לוח זמנים נוכחי",
+          "judging-session": "מפגש שיפוט",
+          "matches": "מקצים",
+          "select-team-to-continue": "בחר קבוצה כדי לראות משבצות זמן זמינות",
+          "select-judging-time": "בחירת משבצת זמן יעד",
+          "empty": "ריק",
+          "current-team": "קבוצה נוכחית",
+          "confirm-dialog": {
+            "title": "אישור החלפת קבוצות",
+            "message": "להחליף קבוצה {team1Number} מ-{room1Name} בשעה {time1} עם קבוצה {team2Number} ב-{room2Name} בשעה {time2}?",
+            "cancel": "ביטול",
+            "confirm": "אישור החלפה",
+            "swapping": "מחליף..."
+          },
+          "team-label": "קבוצה {number}",
+          "round": "סבב",
+          "match": "סבב {stage} {round} - מקצה #{number}",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "placeholder": "חיפוש קבוצות...",
+          "unknown-team": "קבוצה {number}"
         }
       },
       "awards": {
