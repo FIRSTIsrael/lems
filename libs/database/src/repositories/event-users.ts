@@ -1,6 +1,41 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEventUser, EventUser } from '../schema/tables/event-users';
+
+class EventUserSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private selector: { type: 'id' | 'role_info'; key?: string; value: string }
+  ) {}
+
+  private getEventUserQuery() {
+    let query = this.db.selectFrom('event_users').selectAll();
+
+    if (this.selector.type === 'id') {
+      query = query.where('id', '=', this.selector.value);
+    } else {
+      query = query.where(sql`role_info->>${this.selector.key}`, '=', this.selector.value);
+    }
+
+    return query;
+  }
+
+  async get(): Promise<EventUser | null> {
+    const eventUser = await this.getEventUserQuery().executeTakeFirst();
+    return eventUser || null;
+  }
+
+  async delete(): Promise<void> {
+    if (this.selector.type === 'id') {
+      await this.db.deleteFrom('event_users').where('id', '=', this.selector.value).execute();
+    } else {
+      await this.db
+        .deleteFrom('event_users')
+        .where(sql`role_info->>${this.selector.key}`, '=', this.selector.value)
+        .execute();
+    }
+  }
+}
 
 class EventUsersSelector {
   constructor(
@@ -65,6 +100,14 @@ export class EventUsersRepository {
 
   byDivisionId(divisionId: string): EventUsersSelector {
     return new EventUsersSelector(this.db, { type: 'division_id', value: divisionId });
+  }
+
+  byId(id: string): EventUserSelector {
+    return new EventUserSelector(this.db, { type: 'id', value: id });
+  }
+
+  byRoleInfo(key: 'roomId' | 'tableId', value: string): EventUserSelector {
+    return new EventUserSelector(this.db, { type: 'role_info', key, value });
   }
 
   async create(eventUser: InsertableEventUser): Promise<EventUser> {

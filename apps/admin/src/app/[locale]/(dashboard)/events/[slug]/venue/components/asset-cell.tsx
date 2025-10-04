@@ -134,7 +134,7 @@ export const AssetCell: React.FC<AssetCellProps> = ({
                   onClick={() => onDelete()}
                   color="error"
                   title={t(`${assetType}.delete-button`)}
-                  disabled
+                  disabled={disabled}
                 >
                   {disabled ? <CircularProgress size={16} /> : <Delete />}
                 </IconButton>
