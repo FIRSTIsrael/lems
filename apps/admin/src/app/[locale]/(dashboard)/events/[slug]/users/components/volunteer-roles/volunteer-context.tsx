@@ -99,7 +99,12 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       setSlots(transformedSlots);
       setToggledSystemRoles(systemRoles);
       initialized.current = true;
-      setIsLoadedFromDatabase(true);
+
+      const hasAllMandatoryRoles = divisions.every(division =>
+        EDITABLE_MANDATORY_ROLES.every(role =>  transformedSlots.some(s => s.role === role && s.divisions.includes(division.id)))
+      );
+
+      setIsLoadedFromDatabase(hasAllMandatoryRoles);
     } else if (divisions.length > 0) {
       const initialSlots = generateInitialSlots(divisions);
       setSlots(initialSlots);
