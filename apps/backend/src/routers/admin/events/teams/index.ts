@@ -35,17 +35,17 @@ router.post(
 );
 
 router.delete(
-  '/unregister',
+  '/remove',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
-    const unregisterationData = req.body;
+    const teamsToRemove = req.body;
 
-    if (!unregisterationData || !Array.isArray(unregisterationData)) {
-      res.status(400).json({ error: 'Invalid teams unregistration data' });
+    if (!teamsToRemove || !Array.isArray(teamsToRemove)) {
+      res.status(400).json({ error: 'Invalid team removal data' });
       return;
     }
 
-    await db.events.byId(req.eventId).unregisterTeams(unregisterationData);
+    await db.events.byId(req.eventId).removeTeams(teamsToRemove);
 
     res.status(200).end();
   }
