@@ -61,6 +61,7 @@ jobs:
           # Use process substitution to avoid subshell
           while IFS=$'\t' read -r tag digest; do
             # Check if tag matches pattern and is not excluded
+            echo "Tag: $tag"
             if [[ "$tag" == ${{ inputs.tag_pattern }} ]] && [[ "$tag" != "${{ inputs.exclude_tag }}" ]]; then
               echo "🗑️  Deleting $tag (digest: $digest)"
               if [ -n "$digest" ] && [ "$digest" != "null" ]; then
