@@ -76,10 +76,7 @@ jobs:
             fi
           }
           
-          # Clean up all repositories
-          for repo in lems-frontend lems-backend lems-scheduler lems-portal; do
-            cleanup_repository "$repo"
-          done
+          cleanup_repository "${{ inputs.repository }}"
       
       - name: Run garbage collection
         if: ${{ inputs.run_garbage_collection }}
