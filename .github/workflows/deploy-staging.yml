@@ -90,9 +90,9 @@ jobs:
           # Database configuration
           DB_NAME: ${{ vars.DB_NAME }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          PG_HOST: ${{ vars.PG_HOST }}
-          PG_PORT: ${{ vars.PG_PORT }}
-          PG_USER: ${{ vars.PG_USER }}
+          PG_HOST: ${{ secrets.PG_HOST }}
+          PG_PORT: ${{ secrets.PG_PORT }}
+          PG_USER: ${{ secrets.PG_USER }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           
           # Authentication & Security
