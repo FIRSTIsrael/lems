@@ -69,7 +69,7 @@ jobs:
       - name: Build Docker image
         working-directory: apps/backend
         env:
-          # Variables (from GitHub environment variables)
+          # Non-sensitive variables only (safe to bake into image)
           DB_NAME: ${{ vars.DB_NAME }}
           LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
           SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
@@ -79,15 +79,6 @@ jobs:
           PG_HOST: ${{ vars.PG_HOST }}
           PG_PORT: ${{ vars.PG_PORT }}
           PG_USER: ${{ vars.PG_USER }}
-          # Secrets (from GitHub environment secrets)
-          DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
-          DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
-          SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
         run: |
           docker build \
             --build-arg DB_NAME="${DB_NAME}" \
@@ -99,17 +90,11 @@ jobs:
             --build-arg PG_HOST="${PG_HOST}" \
             --build-arg PG_PORT="${PG_PORT}" \
             --build-arg PG_USER="${PG_USER}" \
-            --build-arg DIGITALOCEAN_KEY="${DIGITALOCEAN_KEY}" \
-            --build-arg DIGITALOCEAN_SECRET="${DIGITALOCEAN_SECRET}" \
-            --build-arg JWT_SECRET="${JWT_SECRET}" \
-            --build-arg DASHBOARD_JWT_SECRET="${DASHBOARD_JWT_SECRET}" \
-            --build-arg SCHEDULER_JWT_SECRET="${SCHEDULER_JWT_SECRET}" \
-            --build-arg MONGODB_URI="${MONGODB_URI}" \
-            --build-arg PG_PASSWORD="${PG_PASSWORD}" \
-            --build-arg RECAPTCHA_SECRET_KEY="${RECAPTCHA_SECRET_KEY}" \
             -t ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }} \
             -f Dockerfile \
             ../..
+          
+          echo "ℹ️  Secrets will be provided at runtime via docker-compose environment variables"
       
       - name: Push Docker image
         run: docker push ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }}
