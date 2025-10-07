@@ -39,12 +39,14 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
   const rooms = ['room1', 'room2', 'room3', 'room4'];
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        {t('quick-links.judging-schedule')}
-      </Typography>
+    <Paper sx={{ p: 0 }}>
+      <Box sx={{ p: 3, pb: 0 }}>
+        <Typography variant="h5" gutterBottom>
+          {t('quick-links.judging-schedule')}
+        </Typography>
+      </Box>
       
-      <Paper sx={{ p: 2, mt: 2, bgcolor: 'white' }}>
+      <Paper sx={{ p: 0, mt: 2, bgcolor: 'white' }}>
         <TableContainer>
           <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
             <TableHead>
@@ -122,7 +124,7 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
       </Paper>
       
       {sessions.length === 0 && (
-        <Box display="flex" alignItems="center" justifyContent="center" py={4}>
+        <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
           <Typography variant="body1" color="text.secondary">
             {t('judging-schedule.no-data')}
           </Typography>

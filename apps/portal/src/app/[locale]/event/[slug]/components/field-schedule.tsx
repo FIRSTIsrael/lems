@@ -50,14 +50,16 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
   const tables = ['table1', 'table2', 'table3', 'table4', 'table5', 'table6', 'table7', 'table8'];
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        {t('quick-links.field-schedule')}
-      </Typography>
+    <Paper sx={{ p: 0 }}>
+      <Box sx={{ p: 3, pb: 0 }}>
+        <Typography variant="h5" gutterBottom>
+          {t('quick-links.field-schedule')}
+        </Typography>
+      </Box>
 
       <Stack spacing={3} mt={2}>
         {rounds.map((round, roundIndex) => (
-          <Paper key={roundIndex} sx={{ p: 2, bgcolor: 'white' }}>
+          <Paper key={roundIndex} sx={{ p: 0, bgcolor: 'white' }}>
             <TableContainer>
               <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
                 <TableHead>
@@ -224,7 +226,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
       </Stack>
 
       {rounds.length === 0 && (
-        <Box display="flex" alignItems="center" justifyContent="center" py={4}>
+        <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
           <Typography variant="body1" color="text.secondary">
             {t('field-schedule.no-data')}
           </Typography>
