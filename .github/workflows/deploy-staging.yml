@@ -40,21 +40,23 @@ jobs:
             local repo_name=$1
             echo "🔍 Cleaning up repository: $repo_name"
             
-            local tags_and_digests=$(doctl registry repository list-tags "$repo_name" --format Tag,ManifestDigest --no-header 2>/dev/null || true)
+            # Get tags in JSON format for reliable parsing
+            local tags_json=$(doctl registry repository list-tags "$repo_name" --format Tag,ManifestDigest --output json 2>/dev/null || echo "[]")
             
-            if [ -z "$tags_and_digests" ]; then
+            if [ "$tags_json" = "[]" ]; then
               echo "✓ No images found in $repo_name"
               return
             fi
             
-            echo "$tags_and_digests" | while IFS=$'\t' read -r tag digest; do
+            # Parse JSON and process each tag
+            echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"' | while IFS=$'\t' read -r tag digest; do
               # Only delete staging tags, skip the current deployment
               if [[ "$tag" == staging-* ]] && [[ "$tag" != "${{ env.IMAGE_TAG }}" ]]; then
                 echo "🗑️  Deleting $tag (digest: $digest)"
-                if [ -n "$digest" ]; then
+                if [ -n "$digest" ] && [ "$digest" != "null" ]; then
                   doctl registry repository delete-manifest "$repo_name" "$digest" --force || echo "⚠️  Failed to delete $tag"
                 else
-                  echo "⚠️  Empty digest for tag $tag"
+                  echo "⚠️  No valid digest for tag $tag - skipping"
                 fi
               else
                 echo "⏩ Skipping tag: $tag"
