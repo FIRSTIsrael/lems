@@ -84,6 +84,32 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
         "general-schedule": "General Schedule"
+      },
+      "scoreboard": {
+        "rank": "Rank",
+        "best-score": "Best Score",
+        "match": "Match",
+        "no-data": "No scoreboard data available"
+      },
+      "field-schedule": {
+        "round": "{stage} Round {number}",
+        "match": "Match",
+        "time": "Time",
+        "table": "Table",
+        "no-data": "No field schedule available"
+      },
+      "judging-schedule": {
+        "start-time": "Start",
+        "end-time": "End",
+        "room": "Room",
+        "no-data": "No judging schedule available"
+      },
+      "awards": {
+        "team-awards": "Team Awards",
+        "personal-awards": "Personal Awards", 
+        "advancement": "Eligible for Advancement",
+        "place": "{place} Place",
+        "no-data": "No awards announced yet"
       }
     },
     "tools": {

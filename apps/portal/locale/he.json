@@ -84,6 +84,32 @@
         "field-schedule": "לוח זמנים זירה",
         "judging-schedule": "לוח זמנים שיפוט",
         "general-schedule": "לוח זמנים כללי"
+      },
+      "scoreboard": {
+        "rank": "דירוג",
+        "best-score": "ניקוד הטוב ביותר",
+        "match": "מקצה",
+        "no-data": "אין נתוני לוח תוצאות זמינים"
+      },
+      "field-schedule": {
+        "round": "סיבוב {number} - {stage}",
+        "match": "מקצה",
+        "time": "שעה",
+        "table": "שולחן",
+        "no-data": "אין לוח זמנים זירה זמין"
+      },
+      "judging-schedule": {
+        "start-time": "התחלה",
+        "end-time": "סיום",
+        "room": "חדר",
+        "no-data": "אין לוח זמנים שיפוט זמין"
+      },
+      "awards": {
+        "team-awards": "פרסי קבוצות",
+        "personal-awards": "פרסים אישיים",
+        "advancement": "זכאים להעפלה",
+        "place": "מקום {place}",
+        "no-data": "טרם הוכרזו פרסים"
       }
     },
     "tools": {

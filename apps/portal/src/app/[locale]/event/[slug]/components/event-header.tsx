@@ -34,9 +34,6 @@ const EventHeader: React.FC<EventHeaderProps> = ({
                 {seasonName}
               </Typography>
             </Link>
-            <Typography variant="body2" color="text.secondary">
-              •
-            </Typography>
           </Stack>
           <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
             {eventName}

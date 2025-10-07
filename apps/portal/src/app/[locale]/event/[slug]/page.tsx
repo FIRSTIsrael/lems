@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl';
 import {
   Box,
   Container,
-  Typography,
   Paper,
   Tabs,
   Tab,
@@ -19,11 +18,19 @@ import {
   Team,
   getEventData,
   getDivisionData,
-  getAllTeamsForEvent
+  getAllTeamsForEvent,
+  mockScoreboardData,
+  mockFieldScheduleData,
+  mockJudgingScheduleData,
+  mockAwardsData
 } from './components/mock-event-data';
 import TeamsList from './components/teams-list';
 import DivisionPicker from './components/division-picker';
 import EventHeader from './components/event-header';
+import Scoreboard from './components/scoreboard';
+import FieldSchedule from './components/field-schedule';
+import JudgingSchedule from './components/judging-schedule';
+import Awards from './components/awards';
 
 const EventPage = () => {
   const params = useParams();
@@ -36,7 +43,7 @@ const EventPage = () => {
   const [allTeams, setAllTeams] = useState<Team[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState(4); // Default to teams tab
+  const [selectedTab, setSelectedTab] = useState(0); // Default to scoreboard tab
 
   const slug = params.slug as string;
   const divisionId = searchParams.get('divisionId');
@@ -137,6 +144,27 @@ const EventPage = () => {
       </Paper>
 
       {/* Tab Content */}
+      {/* Scoreboard Tab */}
+      {selectedTab === 0 && (
+        <Scoreboard data={mockScoreboardData} eventSlug={slug} />
+      )}
+
+      {/* Awards Tab */}
+      {selectedTab === 1 && (
+        <Awards awards={mockAwardsData} eventSlug={slug} />
+      )}
+
+      {/* Field Schedule Tab */}
+      {selectedTab === 2 && (
+        <FieldSchedule rounds={mockFieldScheduleData} eventSlug={slug} />
+      )}
+
+      {/* Judging Schedule Tab */}
+      {selectedTab === 3 && (
+        <JudgingSchedule sessions={mockJudgingScheduleData} eventSlug={slug} />
+      )}
+
+      {/* Teams Tab */}
       {selectedTab === 4 && divisionData && (
         <Paper sx={{ p: 3 }}>
           <TeamsList
@@ -155,14 +183,6 @@ const EventPage = () => {
       {selectedTab === 4 && !divisionData && !allTeams && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <CircularProgress />
-        </Paper>
-      )}
-
-      {selectedTab !== 4 && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            Content for this section will be available soon
-          </Typography>
         </Paper>
       )}
     </Container>

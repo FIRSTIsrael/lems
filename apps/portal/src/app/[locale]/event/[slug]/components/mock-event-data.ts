@@ -138,3 +138,145 @@ export const getAllTeamsForEvent = async (slug: string): Promise<Team[]> => {
   
   return allTeams;
 };
+
+// Mock data for scoreboard
+export const mockScoreboardData = [
+  { team: { id: '1', number: 1690, name: 'Orbit', affiliation: { name: 'High School', city: 'Tel Aviv' } }, scores: [245, 280, 315], maxScore: 315 },
+  { team: { id: '2', number: 3339, name: 'BumbleB', affiliation: { name: 'Middle School', city: 'Jerusalem' } }, scores: [220, 290, 305], maxScore: 305 },
+  { team: { id: '3', number: 4590, name: 'GreenBlitz', affiliation: { name: 'High School', city: 'Haifa' } }, scores: [195, 275, 295], maxScore: 295 },
+  { team: { id: '4', number: 1577, name: 'Steampunk', affiliation: { name: 'High School', city: 'Ramat Gan' } }, scores: [180, 260, 285], maxScore: 285 },
+  { team: { id: '5', number: 6230, name: 'Team Phoenix', affiliation: { name: 'Middle School', city: 'Netanya' } }, scores: [165, 245, 270], maxScore: 270 }
+];
+
+// Mock data for field schedule
+export const mockFieldScheduleData = [
+  {
+    stage: 'Practice',
+    number: 1,
+    matches: [
+      { 
+        number: 1, 
+        time: '2024-02-16T09:00:00Z', 
+        teams: { 
+          table1: { number: 1690, name: 'Orbit' }, 
+          table2: { number: 3339, name: 'BumbleB' }, 
+          table3: { number: 4590, name: 'GreenBlitz' },
+          table4: { number: 1577, name: 'Steampunk' },
+          table5: { number: 6230, name: 'Team Phoenix' },
+          table6: { number: 4744, name: 'Ninjas' },
+          table7: { number: 8223, name: 'Tech Tigers' },
+          table8: { number: 5987, name: 'Robo Warriors' }
+        } 
+      },
+      { 
+        number: 2, 
+        time: '2024-02-16T09:15:00Z', 
+        teams: { 
+          table1: { number: 7456, name: 'Code Breakers' }, 
+          table2: { number: 2341, name: 'Future Builders' }, 
+          table3: { number: 9876, name: 'Innovation Squad' },
+          table4: { number: 1234, name: 'Cyber Wolves' },
+          table5: { number: 5678, name: 'Digital Dragons' },
+          table6: { number: 3456, name: 'Robo Rangers' },
+          table7: { number: 7890, name: 'Tech Titans' },
+          table8: { number: 2468, name: 'Code Warriors' }
+        } 
+      },
+      { 
+        number: 3, 
+        time: '2024-02-16T09:30:00Z', 
+        teams: { 
+          table1: { number: 1357, name: 'Binary Bots' }, 
+          table2: { number: 9753, name: 'Pixel Pirates' }, 
+          table3: { number: 8642, name: 'Logic Lions' },
+          table4: { number: 1590, name: 'Quantum Quests' },
+          table5: { number: 7531, name: 'Cyber Sharks' },
+          table6: { number: 4826, name: 'Data Dolphins' },
+          table7: { number: 3691, name: 'Robo Eagles' },
+          table8: { number: 5284, name: 'Tech Panthers' }
+        } 
+      }
+    ]
+  },
+  {
+    stage: 'Qualification',
+    number: 1,
+    matches: [
+      { 
+        number: 1, 
+        time: '2024-02-16T10:00:00Z', 
+        teams: { 
+          table1: { number: 1690, name: 'Orbit' }, 
+          table2: { number: 4744, name: 'Ninjas' }, 
+          table3: { number: 7456, name: 'Code Breakers' },
+          table4: { number: 3339, name: 'BumbleB' },
+          table5: { number: 1577, name: 'Steampunk' },
+          table6: { number: 8223, name: 'Tech Tigers' },
+          table7: { number: 4590, name: 'GreenBlitz' },
+          table8: { number: 6230, name: 'Team Phoenix' }
+        } 
+      },
+      { 
+        number: 2, 
+        time: '2024-02-16T10:15:00Z', 
+        teams: { 
+          table1: { number: 5987, name: 'Robo Warriors' }, 
+          table2: { number: 2341, name: 'Future Builders' }, 
+          table3: { number: 9876, name: 'Innovation Squad' },
+          table4: { number: 1234, name: 'Cyber Wolves' },
+          table5: { number: 5678, name: 'Digital Dragons' },
+          table6: { number: 3456, name: 'Robo Rangers' },
+          table7: { number: 7890, name: 'Tech Titans' },
+          table8: { number: 2468, name: 'Code Warriors' }
+        } 
+      },
+      { 
+        number: 3, 
+        time: '2024-02-16T10:30:00Z', 
+        teams: { 
+          table1: { number: 1357, name: 'Binary Bots' }, 
+          table2: { number: 9753, name: 'Pixel Pirates' }, 
+          table3: { number: 8642, name: 'Logic Lions' },
+          table4: { number: 1590, name: 'Quantum Quests' },
+          table5: { number: 7531, name: 'Cyber Sharks' },
+          table6: { number: 4826, name: 'Data Dolphins' },
+          table7: { number: 3691, name: 'Robo Eagles' },
+          table8: { number: 5284, name: 'Tech Panthers' }
+        } 
+      }
+    ]
+  }
+];
+
+// Mock data for judging schedule
+export const mockJudgingScheduleData = [
+  { startTime: '2024-02-16T11:00:00Z', endTime: '2024-02-16T11:20:00Z', teams: { room1: { number: 1690, name: 'Orbit' }, room2: { number: 3339, name: 'BumbleB' }, room3: { number: 4590, name: 'GreenBlitz' }, room4: { number: 1577, name: 'Steampunk' } } },
+  { startTime: '2024-02-16T12:00:00Z', endTime: '2024-02-16T12:30:00Z', teams: { room1: { number: 6230, name: 'Team Phoenix' }, room2: { number: 4744, name: 'Ninjas' }, room3: { number: 8223, name: 'Tech Tigers' }, room4: { number: 5987, name: 'Robo Warriors' } } },
+  { startTime: '2024-02-16T13:00:00Z', endTime: '2024-02-16T13:25:00Z', teams: { room1: { number: 7456, name: 'Code Breakers' }, room2: { number: 2341, name: 'Future Builders' }, room3: { number: 9876, name: 'Innovation Squad' }, room4: null } }
+];
+
+// Mock data for awards
+export const mockAwardsData = [
+  // Championship Awards
+  { id: '1', name: 'פרס מתנדב/ת השנה', place: 1, winner: 'שחר יהלום', category: 'personal' as const },
+  
+  // Excellence Awards  
+  { id: '2', name: 'פרס המנטור המצטיין', place: 1, winner: { id: '6', number: 841, name: 'יגל כהן' }, category: 'team' as const },
+  
+  // Championship Awards
+  { id: '3', name: 'פרס האליפות', place: 1, winner: { id: '7', number: 2864, name: 'Black Spiders' }, category: 'team' as const },
+  { id: '4', name: 'פרס האליפות', place: 2, winner: { id: '8', number: 3388, name: 'גיימרות' }, category: 'team' as const },
+  { id: '5', name: 'פרס האליפות', place: 3, winner: { id: '9', number: 515, name: 'Pegasus' }, category: 'team' as const },
+  
+  // Innovation Awards
+  { id: '6', name: 'פרס ההשפעה', place: 1, winner: { id: '10', number: 1543, name: 'Robofeel' }, category: 'team' as const },
+  
+  // Judges Awards
+  { id: '7', name: 'פרס השופטים', place: 1, winner: { id: '11', number: 3345, name: 'רובוטריקות' }, category: 'team' as const },
+  { id: '8', name: 'פרס השופטים', place: 2, winner: { id: '12', number: 3396, name: 'Castle Knights' }, category: 'team' as const },
+  { id: '9', name: 'פרס השופטים', place: 3, winner: { id: '13', number: 1297, name: 'Future Programmers' }, category: 'team' as const },
+  
+  // Robot Performance Awards
+  { id: '10', name: 'פרס ביצועי הרובוט', place: 1, winner: { id: '8', number: 3388, name: 'גיימרות' }, category: 'team' as const },
+  { id: '11', name: 'פרס ביצועי הרובוט', place: 2, winner: { id: '14', number: 285, name: 'D++' }, category: 'team' as const }
+];
