@@ -42,50 +42,42 @@ jobs:
       
       - name: Remove old images matching pattern
         run: |
-          echo "🔍 Cleaning up repository: ${{ inputs.repository }}"
-          echo "🎯 Pattern: ${{ inputs.tag_pattern }}"
-          echo "🛡️  Exclude: ${{ inputs.exclude_tag || '(none)' }}"
-          
-          # Get tags in JSON format for reliable parsing
-          tags_json=$(doctl registry repository list-tags "${{ inputs.repository }}" --format Tag,ManifestDigest --output json 2>/dev/null || echo "[]")
-          
-          echo "List tags: $tags_json"
-
-          if [ "$tags_json" = "[]" ]; then
-            echo "✓ No images found in ${{ inputs.repository }}"
-            exit 0
-          fi
-          
-          # Parse JSON and process each tag
-          deleted_count=0
-          skipped_count=0
-          
-          # Use process substitution to avoid subshell
-          while IFS=$'\t' read -r tag digest; do
-            # Check if tag matches pattern and is not excluded
-            echo "Tag: $tag"
-            if [[ "$tag" == ${{ inputs.tag_pattern }} ]] && [[ "$tag" != "${{ inputs.exclude_tag }}" ]]; then
-              echo "🗑️  Deleting $tag (digest: $digest)"
-              if [ -n "$digest" ] && [ "$digest" != "null" ]; then
-                if doctl registry repository delete-manifest "${{ inputs.repository }}" "$digest" --force; then
-                  ((deleted_count++))
+          # Function to clean up old images for a repository
+          cleanup_repository() {
+            local repo_name=$1
+            echo "Cleaning up repository: $repo_name"
+            
+            local tags_and_digests=$(doctl registry repository list-tags "$repo_name" --format Tag,ManifestDigest --no-header 2>/dev/null || true)
+            
+            echo "Debug: Raw output of list-tags command for $repo_name:"
+            echo "$tags_and_digests"
+            
+            if [ -n "$tags_and_digests" ]; then
+              echo "Found tags and digests to delete:"
+              echo "$tags_and_digests" | while read -r line; do
+                tag=$(echo "$line" | awk '{print $1}') # Extract tag from the first column
+                digest=$(echo "$line" | awk '{print $2}') # Extract digest from the second column
+                if [[ "$tag" == staging-* ]]; then # Only process tags starting with 'staging-'
+                  echo "Tag: $tag, Digest: $digest"
+                  if [ -n "$digest" ]; then
+                    doctl registry repository delete-manifest "$repo_name" "$digest" --force
+                  else
+                    echo "Warning: Empty digest for tag $tag in repository $repo_name" >&2
+                  fi
                 else
-                  echo "⚠️  Failed to delete $tag"
+                  echo "Skipping tag $tag as it does not start with 'staging-'"
                 fi
-              else
-                echo "⚠️  No valid digest for tag $tag - skipping"
-              fi
+              done
+              echo "✓ Cleaned up $repo_name"
             else
-              echo "⏩ Skipping tag: $tag"
-              ((skipped_count++))
+              echo "✓ No old images found in $repo_name"
             fi
-          done < <(echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"')
+          }
           
-          echo ""
-          echo "📊 Cleanup Summary:"
-          echo "   Deleted: $deleted_count images"
-          echo "   Skipped: $skipped_count images"
-          echo "✓ Cleanup complete for ${{ inputs.repository }}"
+          # Clean up all repositories
+          for repo in lems-frontend lems-backend lems-scheduler lems-portal; do
+            cleanup_repository "$repo"
+          done
       
       - name: Run garbage collection
         if: ${{ inputs.run_garbage_collection }}
