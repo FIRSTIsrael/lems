@@ -49,6 +49,8 @@ jobs:
           # Get tags in JSON format for reliable parsing
           tags_json=$(doctl registry repository list-tags "${{ inputs.repository }}" --format Tag,ManifestDigest --output json 2>/dev/null || echo "[]")
           
+          echo "List tags: $tags_json"
+
           if [ "$tags_json" = "[]" ]; then
             echo "✓ No images found in ${{ inputs.repository }}"
             exit 0
