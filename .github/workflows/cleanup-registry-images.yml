@@ -16,11 +16,6 @@ on:
         required: false
         type: string
         default: ''
-      run_garbage_collection:
-        description: 'Whether to run garbage collection after cleanup'
-        required: false
-        type: boolean
-        default: true
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
@@ -77,10 +72,3 @@ jobs:
           }
           
           cleanup_repository "${{ inputs.repository }}"
-      
-      - name: Run garbage collection
-        if: ${{ inputs.run_garbage_collection }}
-        run: |
-          echo "🗑️  Starting garbage collection..."
-          doctl registry garbage-collection start --force
-          echo "✓ Garbage collection started"
