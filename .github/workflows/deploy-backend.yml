@@ -56,7 +56,7 @@ jobs:
         run: npm ci
       
       - name: Build backend
-        run: npm run build backend
+        run: npx nx build backend --configuration=production
       
       - name: Install doctl
         uses: digitalocean/action-doctl@v2.5.1
