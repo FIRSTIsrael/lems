@@ -33,6 +33,7 @@ jobs:
           PG_DATABASE: ${{ vars.DB_NAME }}
           PG_USER: ${{ secrets.PG_USER }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
         run: |
           echo "🔄 Running database migrations..."
           echo "Connecting to PostgreSQL at $PG_HOST:$PG_PORT"
