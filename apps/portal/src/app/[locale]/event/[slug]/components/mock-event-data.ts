@@ -261,7 +261,7 @@ export const mockAwardsData = [
   { id: '1', name: 'פרס מתנדב/ת השנה', place: 1, winner: 'שחר יהלום', category: 'personal' as const },
   
   // Excellence Awards  
-  { id: '2', name: 'פרס המנטור המצטיין', place: 1, winner: { id: '6', number: 841, name: 'יגל כהן' }, category: 'team' as const },
+  { id: '2', name: 'פרס המנטור המצטיין', place: 1, winner: { id: '6', number: 841, name: 'יובל כדורי' }, category: 'team' as const },
   
   // Championship Awards
   { id: '3', name: 'פרס האליפות', place: 1, winner: { id: '7', number: 2864, name: 'Black Spiders' }, category: 'team' as const },

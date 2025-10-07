@@ -13,7 +13,9 @@ import {
   Paper,
   Box,
   Link,
-  Tooltip
+  Tooltip,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
 
@@ -35,6 +37,8 @@ interface JudgingScheduleProps {
 
 const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
   const t = useTranslations('pages.event');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const rooms = ['room1', 'room2', 'room3', 'room4'];
 
@@ -47,8 +51,12 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
       </Box>
       
       <Paper sx={{ p: 0, mt: 2, bgcolor: 'white' }}>
-        <TableContainer>
-          <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ 
+            tableLayout: 'fixed', 
+            width: '100%',
+            minWidth: isMobile ? '500px' : '100%'
+          }}>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ bgcolor: 'grey.200', color: 'black', width: '120px', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>

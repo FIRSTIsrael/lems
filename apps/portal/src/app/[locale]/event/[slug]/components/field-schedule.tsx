@@ -14,7 +14,9 @@ import {
   Box,
   Stack,
   Link,
-  Tooltip
+  Tooltip,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
 
@@ -46,6 +48,8 @@ interface FieldScheduleProps {
 
 const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
   const t = useTranslations('pages.event');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const tables = ['table1', 'table2', 'table3', 'table4', 'table5', 'table6', 'table7', 'table8'];
 
@@ -60,8 +64,12 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
       <Stack spacing={3} mt={2}>
         {rounds.map((round, roundIndex) => (
           <Paper key={roundIndex} sx={{ p: 0, bgcolor: 'white' }}>
-            <TableContainer>
-              <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+            <TableContainer sx={{ overflowX: 'auto' }}>
+              <Table sx={{ 
+                tableLayout: 'fixed', 
+                width: '100%',
+                minWidth: isMobile ? '800px' : '100%'
+              }}>
                 <TableHead>
                   <TableRow>
                     <TableCell
@@ -87,7 +95,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                   <TableRow>
                     <TableCell
                       sx={{
-                        width: '80px',
+                        width: isMobile ? '60px' : '80px',
                         bgcolor: 'grey.200',
                         color: 'black',
                         fontWeight: 'bold',
@@ -98,11 +106,13 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                         borderRight: 'none'
                       }}
                     >
-                      <Typography fontWeight={600}>{t('field-schedule.match')}</Typography>
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {t('field-schedule.match')}
+                      </Typography>
                     </TableCell>
                     <TableCell
                       sx={{
-                        width: '100px',
+                        width: isMobile ? '70px' : '100px',
                         bgcolor: 'grey.200',
                         color: 'black',
                         fontWeight: 'bold',
@@ -113,13 +123,15 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                         borderRight: 'none'
                       }}
                     >
-                      <Typography fontWeight={600}>{t('field-schedule.time')}</Typography>
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {t('field-schedule.time')}
+                      </Typography>
                     </TableCell>
                     {tables.map((_, index) => (
                       <TableCell
                         key={index}
                         sx={{
-                          minWidth: '120px',
+                          width: isMobile ? '80px' : '120px',
                           bgcolor: 'grey.200',
                           color: 'black',
                           fontWeight: 'bold',
@@ -130,7 +142,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                           borderRight: 'none'
                         }}
                       >
-                        <Typography fontWeight={600}>
+                        <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
                           {t('field-schedule.table')} {index + 1}
                         </Typography>
                       </TableCell>
@@ -162,7 +174,9 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                           py: 1.5
                         }}
                       >
-                        <Typography fontWeight={500}>{match.number}</Typography>
+                        <Typography fontWeight={500} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                          {match.number}
+                        </Typography>
                       </TableCell>
                       <TableCell
                         sx={{
@@ -171,10 +185,14 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                           borderBottom: '1px solid #ddd',
                           borderLeft: 'none',
                           borderRight: 'none',
-                          py: 1.5
+                          py: isMobile ? 1 : 1.5
                         }}
                       >
-                        <Typography sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
+                        <Typography sx={{ 
+                          fontFamily: 'monospace', 
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                           {dayjs(match.time).format('HH:mm')}
                         </Typography>
                       </TableCell>
@@ -189,7 +207,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                               borderBottom: '1px solid #ddd',
                               borderLeft: 'none',
                               borderRight: 'none',
-                              py: 1.5
+                              py: isMobile ? 1 : 1.5
                             }}
                           >
                             {team ? (
@@ -201,6 +219,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                                     color: 'black',
                                     textDecoration: 'none',
                                     fontWeight: 500,
+                                    fontSize: isMobile ? '0.75rem' : '1rem',
                                     '&:hover': {
                                       textDecoration: 'underline',
                                       color: 'primary.main'
@@ -211,7 +230,9 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                                 </Link>
                               </Tooltip>
                             ) : (
-                              <Typography color="text.disabled">-</Typography>
+                              <Typography color="text.disabled" fontSize={isMobile ? '0.75rem' : '1rem'}>
+                                -
+                              </Typography>
                             )}
                           </TableCell>
                         );
