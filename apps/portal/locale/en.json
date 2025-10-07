@@ -64,6 +64,28 @@
         "clear-search": "Clear Search"
       }
     },
+    "event": {
+      "general-info": "General Information",
+      "event-date": "Event Date",
+      "location": "Location",
+      "teams-total": "teams total",
+      "divided-into": "Divided into",
+      "divisions": "divisions",
+      "select-division": "Select Division",
+      "select-division-description": "Choose a division to view detailed information, teams, and results.",
+      "view-division": "View Division",
+      "teams": "teams",
+      "team": "team",
+      "division": "Division",
+      "quick-links": {
+        "title": "Quick Links",
+        "scoreboard": "Scoreboard",
+        "awards": "Awards",
+        "field-schedule": "Field Schedule",
+        "judging-schedule": "Judging Schedule",
+        "general-schedule": "General Schedule"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",

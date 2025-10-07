@@ -98,7 +98,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
   return (
     <Card
       component="a"
-      href={`/events/${event.slug}`}
+      href={`/event/${event.slug}`}
       sx={{
         cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',

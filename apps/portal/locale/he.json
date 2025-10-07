@@ -64,6 +64,28 @@
         "clear-search": "נקה חיפוש"
       }
     },
+    "event": {
+      "general-info": "מידע כללי",
+      "event-date": "תאריך האירוע",
+      "location": "מיקום",
+      "teams-total": "קבוצות בסך הכל",
+      "divided-into": "מחולק ל",
+      "divisions": "בתים",
+      "select-division": "בחרו בית",
+      "select-division-description": "בחרו בית כדי לצפות במידע מפורט, קבוצות ותוצאות.",
+      "view-division": "צפייה בבית",
+      "teams": "קבוצות",
+      "team": "קבוצה",
+      "division": "בית",
+      "quick-links": {
+        "title": "קישורים מהירים",
+        "scoreboard": "לוח תוצאות",
+        "awards": "פרסים",
+        "field-schedule": "לוח זמנים זירה",
+        "judging-schedule": "לוח זמנים שיפוט",
+        "general-schedule": "לוח זמנים כללי"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
