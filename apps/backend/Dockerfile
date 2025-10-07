@@ -1,19 +1,7 @@
-# Builder stage - Install dependencies and Puppeteer Chrome
+# Builder stage
 FROM node:22-alpine AS builder
 
 WORKDIR /app/backend
-
-# Install dependencies needed for Puppeteer Chrome to run
-RUN apk add --no-cache \
-  nss \
-  freetype \
-  harfbuzz \
-  ca-certificates \
-  ttf-freefont \
-  udev \
-  ttf-opensans
-
-# Copy backend application
 COPY dist/apps/backend .
 
 # Install dependencies and Puppeteer Chrome
@@ -33,7 +21,7 @@ WORKDIR /app
 # Create user and group
 RUN addgroup -S lems && adduser -S backend -G lems
 
-# Install only runtime dependencies needed for Puppeteer Chrome (not chromium package)
+# Install runtime dependencies needed for Puppeteer Chrome
 RUN apk add --no-cache \
   nss \
   freetype \
