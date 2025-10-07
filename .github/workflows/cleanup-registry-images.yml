@@ -53,6 +53,13 @@ jobs:
               echo "$tags_json" | jq -c '.[]' | while read -r item; do
                 tag=$(echo "$item" | jq -r '.tag')
                 digest=$(echo "$item" | jq -r '.manifest_digest')
+                
+                # Skip if tag matches the exclude_tag
+                if [ -n "${{ inputs.exclude_tag }}" ] && [ "$tag" == "${{ inputs.exclude_tag }}" ]; then
+                  echo "Skipping excluded tag: $tag"
+                  continue
+                fi
+                
                 if [[ "$tag" == staging-* ]]; then # Only process tags starting with 'staging-'
                   echo "Processing Tag: $tag, Digest: $digest"
                   if [ -n "$digest" ] && [ "$digest" != "null" ]; then
