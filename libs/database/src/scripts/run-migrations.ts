@@ -68,6 +68,8 @@ async function migrateToLatest() {
     provider: new ESMFileMigrationProvider('../migrations')
   });
 
+  console.log('Migrating...');
+
   const { error, results } = await migrator.migrateToLatest();
 
   results?.forEach(it => {
@@ -81,6 +83,7 @@ async function migrateToLatest() {
   if (error) {
     console.error('failed to migrate');
     console.error(error);
+    console.debug(results);
     process.exit(1);
   }
 
