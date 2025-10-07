@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 
 import * as db from '@lems/database';
 import { MissionClause } from '@lems/types';
-import { SEASON_SCORESHEET, ScoresheetError } from '@lems/season';
+import { scoresheet, ScoresheetError } from '@lems/shared/scoresheet';
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,7 +33,7 @@ router.get('/success-rate', async (req: Request, res: Response) => {
     .map(missionData => {
       const totalAttempts = missionData.allClauses.length;
       let successfulAttempts = 0;
-      const calculation = SEASON_SCORESHEET.missions.find(m => m.id == missionData._id).calculation;
+      const calculation = scoresheet.missions.find(m => m.id == missionData._id).calculation;
       missionData.allClauses.map(clauses => {
         try {
           const score = calculation(...clauses.map((clause: MissionClause) => clause.value));

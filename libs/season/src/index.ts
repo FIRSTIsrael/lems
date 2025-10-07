@@ -1,13 +1,9 @@
-export { scoresheet as SEASON_SCORESHEET } from './lib/data/scoresheet';
-export * from './lib/data/scoresheet-types';
 export * from './lib/rubrics';
 export * from './lib/localization/cv-form/index';
 export * from './lib/localization/cv-form/typing';
 export * from './lib/localization/rubrics/index';
 export * from './lib/localization/rubrics/common';
 export * from './lib/localization/rubrics/typing';
-export * from './lib/localization/scoresheet/typing';
-export * from './lib/localization/scoresheet/scoresheet';
 export * from './lib/localization/scoresheet/general';
 export * from './lib/localization/judging';
 export * from './lib/localization/rubrics';

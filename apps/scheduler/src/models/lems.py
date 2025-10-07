@@ -1,14 +1,13 @@
 from dataclasses import dataclass
-from bson import ObjectId
 
 
 @dataclass
 class Team:
-    id: ObjectId
+    id: str
     number: int
 
 
 @dataclass
 class Location:
-    id: ObjectId
+    id: str
     name: str

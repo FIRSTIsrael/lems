@@ -1,0 +1,37 @@
+import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
+
+export interface EventsTable {
+  pk: ColumnType<number, never, never>; // Serial primary key
+  id: ColumnType<string, never, never>; // UUID, generated
+  name: string;
+  slug: string;
+  start_date: Date;
+  end_date: Date;
+  location: string;
+  coordinates: string | null; // PostGIS point stored as string
+  season_id: string; // UUID foreign key to seasons.id
+}
+
+export type Event = Selectable<EventsTable>;
+export type InsertableEvent = Insertable<EventsTable>;
+export type UpdateableEvent = Updateable<EventsTable>;
+
+// Utility types
+
+export interface EventSummary {
+  id: string;
+  name: string;
+  slug: string;
+  date: string;
+  location: string;
+  coordinates: string | null;
+  team_count: number;
+  divisions: {
+    id: string;
+    name: string;
+    color: string;
+  }[];
+  season_id: string;
+  is_fully_set_up: boolean;
+  assigned_admin_ids: string[];
+}

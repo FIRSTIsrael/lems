@@ -7,7 +7,7 @@ import scoreboardRouter from './scoreboard';
 import awardsRouter from './awards';
 import scheduleRouter from './schedule';
 import teamsRouter from './teams';
-import divisionValidator from '../../../../middlewares/portal/division-validator';
+import divisionValidator from '../../../../middlewares/old-portal/division-validator';
 import { RobotGameMatch, JudgingSession } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });

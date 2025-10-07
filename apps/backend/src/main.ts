@@ -1,16 +1,19 @@
+import * as http from 'http';
+import * as path from 'path';
 import express from 'express';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
 import cors from 'cors';
-import * as http from 'http';
-import * as path from 'path';
 import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
+import './lib/database';
 import { expressLogger } from './lib/logger';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
-import publicRouter from './routers/public/index';
+import adminRouter from './routers/admin/index';
+import portalRouter from './routers/portal';
+import schedulerRouter from './routers/scheduler/index';
 import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 import wsAuth from './middlewares/websocket/auth';
@@ -35,12 +38,19 @@ app.use('/timesync', timesyncServer.requestHandler);
 app.use(express.json());
 app.use('/', expressLogger);
 
-app.use('/auth', authRouter);
-app.use('/public', publicRouter);
+// Integrations
 app.use('/dashboard', dashboardRouter);
+
+// Old LEMS app, needs migration
+app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
-app.get('/status', (req, res) => {
+// Application routers
+app.use('/admin', adminRouter);
+app.use('/scheduler', schedulerRouter);
+app.use('/portal', portalRouter);
+
+app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
 });
 

@@ -3,8 +3,8 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import { PortalActivity, PortalAward, PortalScore, PortalTeam } from '@lems/types';
-import teamValidator from '../../../../middlewares/portal/team-validator';
-import divisionCompleted from '../../../../middlewares/portal/division-completed';
+import teamValidator from '../../../../middlewares/old-portal/team-validator';
+import divisionCompleted from '../../../../middlewares/old-portal/division-completed';
 
 const router = express.Router({ mergeParams: true });
 

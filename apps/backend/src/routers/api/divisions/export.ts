@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-
 import { Parser, FieldInfo } from '@json2csv/plainjs';
 import * as db from '@lems/database';
 import { rubricsSchemas, RubricSchemaSection, RubricsSchema } from '@lems/season';
@@ -36,7 +35,7 @@ router.get('/rubrics/:judgingCategory', async (req: Request, res: Response) => {
 
     if (!values) return { teamNumber: team?.number };
     Object.entries(values).forEach(([key, entry]) => {
-      newValues[key] = entry.value;
+      newValues[key] = (entry as any).value;
     });
 
     return {
