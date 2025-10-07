@@ -1,37 +1,59 @@
+# Builder stage - Install dependencies and Puppeteer Chrome
+FROM node:22-alpine AS builder
+
+WORKDIR /app/backend
+
+# Install dependencies needed for Puppeteer Chrome to run
+RUN apk add --no-cache \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont \
+  udev \
+  ttf-opensans
+
+# Copy backend application
+COPY dist/apps/backend .
+
+# Install dependencies and Puppeteer Chrome
+RUN npm ci --omit=dev && \
+  npx puppeteer browsers install chrome && \
+  npm cache clean --force
+
+# Runtime stage - Minimal image with only what's needed
 FROM node:22-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=3333
 ENV NODE_ENV=production
 
-# All application configuration (both sensitive and non-sensitive) is provided
-# at runtime via environment variables in docker-compose.yml
-# The backend reads these using process.env at runtime.
-# No build-time configuration needed since we copy pre-built code.
-
 WORKDIR /app
 
+# Create user and group
 RUN addgroup -S lems && adduser -S backend -G lems
 
-COPY dist/apps/backend backend
-RUN chown -R backend:lems .
-
-# Install Chromium for Puppeteer
+# Install only runtime dependencies needed for Puppeteer Chrome (not chromium package)
 RUN apk add --no-cache \
-  chromium \
   nss \
   freetype \
   harfbuzz \
   ca-certificates \
-  ttf-freefont
+  ttf-freefont \
+  udev \
+  ttf-opensans
 
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Copy installed dependencies and Puppeteer Chrome from builder
+COPY --from=builder /app/backend /app/backend
+COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
+
+# Setup Puppeteer to use downloaded Chrome
+ENV PUPPETEER_EXECUTABLE_PATH=/root/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome
 
 WORKDIR /app/backend
-RUN npm i --omit=dev && npx puppeteer browsers install chrome
 
-# Setup Puppeteer directories
-RUN mkdir -p /home/backend/Downloads /app && \
+# Setup Puppeteer directories and fix permissions
+RUN mkdir -p /home/backend/Downloads && \
   chown -R backend:lems /home/backend && \
   chown -R backend:lems /app
 
