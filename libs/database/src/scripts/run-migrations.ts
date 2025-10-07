@@ -12,6 +12,7 @@ const PG_PORT = parseInt(process.env.PG_PORT || '5432');
 const PG_USER = process.env.PG_USER || 'postgres';
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
 const PG_DATABASE = process.env.PG_DATABASE || 'lems-local';
+const PG_SSL_CA = process.env.PG_SSL_CA;
 
 class ESMFileMigrationProvider implements MigrationProvider {
   constructor(private relativePath: string) {}
@@ -51,7 +52,13 @@ async function migrateToLatest() {
         port: PG_PORT,
         user: PG_USER,
         password: PG_PASSWORD,
-        database: PG_DATABASE
+        database: PG_DATABASE,
+        ssl: PG_SSL_CA
+          ? {
+              ca: PG_SSL_CA,
+              rejectUnauthorized: true
+            }
+          : false
       })
     })
   });

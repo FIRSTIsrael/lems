@@ -23,6 +23,7 @@ services:
       - PG_PORT=${PG_PORT}
       - PG_USER=${PG_USER}
       - PG_PASSWORD=${PG_PASSWORD}
+      - PG_SSL_CA=${PG_SSL_CA}
 
       # Scheduler
       - SCHEDULER_URL=${SCHEDULER_URL}
