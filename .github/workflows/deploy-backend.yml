@@ -68,33 +68,14 @@ jobs:
       
       - name: Build Docker image
         working-directory: apps/backend
-        env:
-          # Non-sensitive variables only (safe to bake into image)
-          DB_NAME: ${{ vars.DB_NAME }}
-          LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
-          SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
-          DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
-          DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
-          RECAPTCHA: ${{ vars.RECAPTCHA }}
-          PG_HOST: ${{ vars.PG_HOST }}
-          PG_PORT: ${{ vars.PG_PORT }}
-          PG_USER: ${{ vars.PG_USER }}
         run: |
           docker build \
-            --build-arg DB_NAME="${DB_NAME}" \
-            --build-arg LEMS_DOMAIN="${LEMS_DOMAIN}" \
-            --build-arg SCHEDULER_URL="${SCHEDULER_URL}" \
-            --build-arg DIGITALOCEAN_ENDPOINT="${DIGITALOCEAN_ENDPOINT}" \
-            --build-arg DIGITALOCEAN_SPACE="${DIGITALOCEAN_SPACE}" \
-            --build-arg RECAPTCHA="${RECAPTCHA}" \
-            --build-arg PG_HOST="${PG_HOST}" \
-            --build-arg PG_PORT="${PG_PORT}" \
-            --build-arg PG_USER="${PG_USER}" \
             -t ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }} \
             -f Dockerfile \
             ../..
           
-          echo "ℹ️  Secrets will be provided at runtime via docker-compose environment variables"
+          echo "✅ Docker image built successfully"
+          echo "ℹ️  All configuration will be provided at runtime via docker-compose environment variables"
       
       - name: Push Docker image
         run: docker push ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }}

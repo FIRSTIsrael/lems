@@ -4,26 +4,10 @@ ENV HOST=0.0.0.0
 ENV PORT=3333
 ENV NODE_ENV=production
 
-# Non-sensitive configuration only
-# These are safe to bake into the image as they're not secrets
-ARG DB_NAME
-ENV DB_NAME=$DB_NAME
-ARG PG_HOST
-ENV PG_HOST=$PG_HOST
-ARG PG_PORT
-ENV PG_PORT=$PG_PORT
-ARG PG_USER
-ENV PG_USER=$PG_USER
-ARG RECAPTCHA
-ENV RECAPTCHA=$RECAPTCHA
-ARG LEMS_DOMAIN
-ENV LEMS_DOMAIN=$LEMS_DOMAIN
-ARG SCHEDULER_URL
-ENV SCHEDULER_URL=$SCHEDULER_URL
-ARG DIGITALOCEAN_ENDPOINT
-ENV DIGITALOCEAN_ENDPOINT=$DIGITALOCEAN_ENDPOINT
-ARG DIGITALOCEAN_SPACE
-ENV DIGITALOCEAN_SPACE=$DIGITALOCEAN_SPACE
+# All application configuration (both sensitive and non-sensitive) is provided
+# at runtime via environment variables in docker-compose.yml
+# The backend reads these using process.env at runtime.
+# No build-time configuration needed since we copy pre-built code.
 
 WORKDIR /app
 
