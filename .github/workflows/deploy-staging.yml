@@ -17,14 +17,6 @@ jobs:
       registry: registry.digitalocean.com/first-israel-registry
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
-      DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
-      SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-      RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
 
   cleanup-old-images:
     name: Cleanup Old Staging Images
@@ -88,10 +80,12 @@ jobs:
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@25ce8cbbcb08177468c7ff7ec5cbfa236f9341e1 # v1.2.0
         env:
+          # Metadata
           REGISTRY: ${{ env.REGISTRY }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
           DEPLOY_REF: ${{ github.ref }}
           DEPLOY_SHA: ${{ github.sha }}
+          
           # Database configuration
           DB_NAME: ${{ vars.DB_NAME }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -99,15 +93,18 @@ jobs:
           PG_PORT: ${{ vars.PG_PORT }}
           PG_USER: ${{ vars.PG_USER }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          
           # Authentication & Security
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
           SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
           RECAPTCHA: ${{ vars.RECAPTCHA }}
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          
           # External Services
           LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
           SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
+
           # Cloud Storage (DigitalOcean Spaces)
           DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
           DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}

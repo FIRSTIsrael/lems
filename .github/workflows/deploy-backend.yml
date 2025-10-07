@@ -18,22 +18,6 @@ on:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
-      DIGITALOCEAN_KEY:
-        required: true
-      DIGITALOCEAN_SECRET:
-        required: true
-      JWT_SECRET:
-        required: true
-      DASHBOARD_JWT_SECRET:
-        required: true
-      SCHEDULER_JWT_SECRET:
-        required: true
-      MONGODB_URI:
-        required: true
-      PG_PASSWORD:
-        required: true
-      RECAPTCHA_SECRET_KEY:
-        required: false
 
 jobs:
   build:
