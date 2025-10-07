@@ -1,1 +1,8 @@
 name: Deploy to Staging
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello-world:
+    run: echo "Hello world"
