@@ -14,5 +14,8 @@
   ],
   "i18n-ally.keystyle": "nested",
   "eslint.useFlatConfig": true,
-  "eslint.workingDirectories": ["."]
+  "eslint.workingDirectories": [
+    "."
+  ],
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

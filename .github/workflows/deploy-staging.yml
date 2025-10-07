@@ -131,7 +131,7 @@ jobs:
             
             echo "🧹 Cleaning up old containers and images..."
             docker compose rm -f
-            docker rmi $(docker images --filter "reference=*lems-*" -q) 2>/dev/null || echo "No old images to remove"
+            docker images --format "{{.Repository}}:{{.Tag}}" | grep "first-israel-registry/lems-" | xargs -r docker rmi -f || echo "No images to remove"
             
             echo "📥 Pulling code from the deployed branch/commit..."
             echo "   Branch/Ref: ${DEPLOY_REF}"
