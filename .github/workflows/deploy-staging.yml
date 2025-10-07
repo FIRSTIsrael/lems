@@ -90,6 +90,8 @@ jobs:
         env:
           REGISTRY: ${{ env.REGISTRY }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          DEPLOY_REF: ${{ github.ref }}
+          DEPLOY_SHA: ${{ github.sha }}
           # Database configuration
           DB_NAME: ${{ vars.DB_NAME }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -116,7 +118,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: REGISTRY,IMAGE_TAG,DB_NAME,MONGODB_URI,PG_HOST,PG_PORT,PG_USER,PG_PASSWORD,JWT_SECRET,DASHBOARD_JWT_SECRET,SCHEDULER_JWT_SECRET,RECAPTCHA,RECAPTCHA_SECRET_KEY,LEMS_DOMAIN,SCHEDULER_URL,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET
+          envs: REGISTRY,IMAGE_TAG,DEPLOY_REF,DEPLOY_SHA,DB_NAME,MONGODB_URI,PG_HOST,PG_PORT,PG_USER,PG_PASSWORD,JWT_SECRET,DASHBOARD_JWT_SECRET,SCHEDULER_JWT_SECRET,RECAPTCHA,RECAPTCHA_SECRET_KEY,LEMS_DOMAIN,SCHEDULER_URL,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET
           script: |
             echo "🔐 Logging into DigitalOcean registry..."
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
@@ -131,11 +133,23 @@ jobs:
             docker compose rm -f
             docker rmi $(docker images --filter "reference=*lems-*" -q) 2>/dev/null || echo "No old images to remove"
             
-            echo "📥 Pulling latest code..."
+            echo "📥 Pulling code from the deployed branch/commit..."
+            echo "   Branch/Ref: ${DEPLOY_REF}"
+            echo "   Commit SHA: ${DEPLOY_SHA}"
             git fetch origin
-            git reset --hard ${{ github.sha }}
+            git checkout ${DEPLOY_SHA}
             
-            echo "🚀 Starting services..."
+            echo "ℹ️  Verifying we're on the correct commit..."
+            CURRENT_SHA=$(git rev-parse HEAD)
+            if [ "$CURRENT_SHA" != "${DEPLOY_SHA}" ]; then
+              echo "❌ ERROR: Failed to checkout correct commit!"
+              echo "   Expected: ${DEPLOY_SHA}"
+              echo "   Got: $CURRENT_SHA"
+              exit 1
+            fi
+            echo "✅ Confirmed on commit ${DEPLOY_SHA}"
+            
+            echo "🚀 Starting services with compose file from deployed commit..."
             docker compose up -d
             
             echo "✅ Deployment complete!"
