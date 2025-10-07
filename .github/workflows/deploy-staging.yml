@@ -18,6 +18,16 @@ jobs:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+  build-admin:
+    name: Build & Push Admin
+    uses: ./.github/workflows/deploy-admin.yml
+    with:
+      environment: staging
+      image_tag: staging-${{ github.sha }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
   build-scheduler:
     name: Build & Push Scheduler
     uses: ./.github/workflows/deploy-scheduler.yml
@@ -30,11 +40,11 @@ jobs:
 
   cleanup-old-images:
     name: Cleanup Old Staging Images
-    needs: [build-backend, build-scheduler]
+    needs: [build-backend, build-admin, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
     strategy:
       matrix:
-        repository: [lems-backend, lems-scheduler]
+        repository: [lems-backend, lems-admin, lems-scheduler]
     with:
       repository: ${{ matrix.repository }}
       tag_pattern: 'staging-*'
@@ -78,6 +88,7 @@ jobs:
           # External Services
           LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
           SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
+          LOCAL_BASE_URL: ${{ vars.LOCAL_BASE_URL }}
 
           # Cloud Storage (DigitalOcean Spaces)
           DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
@@ -89,7 +100,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: REGISTRY,IMAGE_TAG,DEPLOY_REF,DEPLOY_SHA,DB_NAME,MONGODB_URI,PG_HOST,PG_PORT,PG_USER,PG_PASSWORD,JWT_SECRET,DASHBOARD_JWT_SECRET,SCHEDULER_JWT_SECRET,RECAPTCHA,RECAPTCHA_SECRET_KEY,LEMS_DOMAIN,SCHEDULER_URL,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET
+          envs: REGISTRY,IMAGE_TAG,DEPLOY_REF,DEPLOY_SHA,DB_NAME,MONGODB_URI,PG_HOST,PG_PORT,PG_USER,PG_PASSWORD,JWT_SECRET,DASHBOARD_JWT_SECRET,SCHEDULER_JWT_SECRET,RECAPTCHA,RECAPTCHA_SECRET_KEY,LEMS_DOMAIN,SCHEDULER_URL,LOCAL_BASE_URL,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET
           script: |
             echo "🔐 Logging into DigitalOcean registry..."
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com

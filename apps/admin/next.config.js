@@ -14,6 +14,8 @@ const nextConfig = {
     svgr: false
   },
 
+  output: 'standalone',
+
   reactStrictMode: true,
 
   compiler: {

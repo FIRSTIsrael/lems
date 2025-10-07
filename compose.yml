@@ -9,13 +9,13 @@ services:
     environment:
       # Frontend (Future use)
       # - LEMS_DOMAIN=${LEMS_DOMAIN}
-      
+
       # Authentication
       - RECAPTCHA=${RECAPTCHA}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
       - JWT_SECRET=${JWT_SECRET}
       - DASHBOARD_JWT_SECRET=${DASHBOARD_JWT_SECRET}
-      
+
       # Database connection
       - DB_NAME=${DB_NAME}
       - MONGODB_URI=${MONGODB_URI}
@@ -33,6 +33,20 @@ services:
       - DIGITALOCEAN_SPACE=${DIGITALOCEAN_SPACE}
       - DIGITALOCEAN_KEY=${DIGITALOCEAN_KEY}
       - DIGITALOCEAN_SECRET=${DIGITALOCEAN_SECRET}
+
+  admin:
+    image: ${REGISTRY}/lems-admin:${IMAGE_TAG}
+    ports:
+      - '4201:4201'
+    networks:
+      - lems-network
+    restart: always
+    environment:
+      # API domain (server-side only - NEXT_PUBLIC_* vars must be set at build time)
+      - LOCAL_BASE_URL=${LOCAL_BASE_URL}
+
+      # Authentication (server-side only - NEXT_PUBLIC_* vars must be set at build time)
+      - RECAPTCHA=${RECAPTCHA}
 
   scheduler:
     image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
