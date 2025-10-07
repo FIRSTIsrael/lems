@@ -7,27 +7,43 @@ services:
       - lems-network
     restart: always
     environment:
-      # Database configuration
+      # Frontend (Future use)
+      # - LEMS_DOMAIN=${LEMS_DOMAIN}
+      
+      # Authentication
+      - RECAPTCHA=${RECAPTCHA}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - DASHBOARD_JWT_SECRET=${DASHBOARD_JWT_SECRET}
+      
+      # Database connection
       - DB_NAME=${DB_NAME}
       - MONGODB_URI=${MONGODB_URI}
       - PG_HOST=${PG_HOST}
       - PG_PORT=${PG_PORT}
       - PG_USER=${PG_USER}
       - PG_PASSWORD=${PG_PASSWORD}
-      # Authentication & Security
-      - JWT_SECRET=${JWT_SECRET}
-      - DASHBOARD_JWT_SECRET=${DASHBOARD_JWT_SECRET}
-      - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
-      - RECAPTCHA=${RECAPTCHA}
-      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
-      # External Services
-      - LEMS_DOMAIN=${LEMS_DOMAIN}
+
+      # Scheduler
       - SCHEDULER_URL=${SCHEDULER_URL}
-      # Cloud Storage (DigitalOcean Spaces)
+      - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
+
+      # Cloud storage
       - DIGITALOCEAN_ENDPOINT=${DIGITALOCEAN_ENDPOINT}
       - DIGITALOCEAN_SPACE=${DIGITALOCEAN_SPACE}
       - DIGITALOCEAN_KEY=${DIGITALOCEAN_KEY}
       - DIGITALOCEAN_SECRET=${DIGITALOCEAN_SECRET}
+
+  scheduler:
+    image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
+    ports:
+      - '8000:8000'
+    networks:
+      - lems-network
+    restart: always
+    environment:
+      - LOCAL_BASE_URL="backend:3333"
+      - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
 
 networks:
   lems-network:

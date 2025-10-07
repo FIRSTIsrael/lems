@@ -18,12 +18,25 @@ jobs:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+  build-scheduler:
+    name: Build & Push Scheduler
+    uses: ./.github/workflows/deploy-scheduler.yml
+    with:
+      environment: staging
+      image_tag: staging-${{ github.sha }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
   cleanup-old-images:
     name: Cleanup Old Staging Images
-    needs: build-backend
+    needs: [build-backend, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
+    strategy:
+      matrix:
+        repository: [lems-backend, lems-scheduler]
     with:
-      repository: lems-backend
+      repository: ${{ matrix.repository }}
       tag_pattern: 'staging-*'
       exclude_tag: staging-${{ github.sha }}
       run_garbage_collection: true

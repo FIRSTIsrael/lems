@@ -58,7 +58,8 @@ jobs:
           deleted_count=0
           skipped_count=0
           
-          echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"' | while IFS=$'\t' read -r tag digest; do
+          # Use process substitution to avoid subshell
+          while IFS=$'\t' read -r tag digest; do
             # Check if tag matches pattern and is not excluded
             if [[ "$tag" == ${{ inputs.tag_pattern }} ]] && [[ "$tag" != "${{ inputs.exclude_tag }}" ]]; then
               echo "🗑️  Deleting $tag (digest: $digest)"
@@ -75,7 +76,7 @@ jobs:
               echo "⏩ Skipping tag: $tag"
               ((skipped_count++))
             fi
-          done
+          done < <(echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"')
           
           echo ""
           echo "📊 Cleanup Summary:"
