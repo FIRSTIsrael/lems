@@ -1,0 +1,91 @@
+name: Cleanup Registry Images
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'Repository name to clean up'
+        required: true
+        type: string
+      tag_pattern:
+        description: 'Tag pattern to match for deletion (e.g., "staging-*" or "v*-beta")'
+        required: true
+        type: string
+      exclude_tag:
+        description: 'Tag to exclude from deletion (e.g., current deployment)'
+        required: false
+        type: string
+        default: ''
+      run_garbage_collection:
+        description: 'Whether to run garbage collection after cleanup'
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  cleanup:
+    name: Cleanup ${{ inputs.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Remove old images matching pattern
+        run: |
+          echo "🔍 Cleaning up repository: ${{ inputs.repository }}"
+          echo "🎯 Pattern: ${{ inputs.tag_pattern }}"
+          echo "🛡️  Exclude: ${{ inputs.exclude_tag || '(none)' }}"
+          
+          # Get tags in JSON format for reliable parsing
+          tags_json=$(doctl registry repository list-tags "${{ inputs.repository }}" --format Tag,ManifestDigest --output json 2>/dev/null || echo "[]")
+          
+          if [ "$tags_json" = "[]" ]; then
+            echo "✓ No images found in ${{ inputs.repository }}"
+            exit 0
+          fi
+          
+          # Parse JSON and process each tag
+          deleted_count=0
+          skipped_count=0
+          
+          echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"' | while IFS=$'\t' read -r tag digest; do
+            # Check if tag matches pattern and is not excluded
+            if [[ "$tag" == ${{ inputs.tag_pattern }} ]] && [[ "$tag" != "${{ inputs.exclude_tag }}" ]]; then
+              echo "🗑️  Deleting $tag (digest: $digest)"
+              if [ -n "$digest" ] && [ "$digest" != "null" ]; then
+                if doctl registry repository delete-manifest "${{ inputs.repository }}" "$digest" --force; then
+                  ((deleted_count++))
+                else
+                  echo "⚠️  Failed to delete $tag"
+                fi
+              else
+                echo "⚠️  No valid digest for tag $tag - skipping"
+              fi
+            else
+              echo "⏩ Skipping tag: $tag"
+              ((skipped_count++))
+            fi
+          done
+          
+          echo ""
+          echo "📊 Cleanup Summary:"
+          echo "   Deleted: $deleted_count images"
+          echo "   Skipped: $skipped_count images"
+          echo "✓ Cleanup complete for ${{ inputs.repository }}"
+      
+      - name: Run garbage collection
+        if: ${{ inputs.run_garbage_collection }}
+        run: |
+          echo "🗑️  Starting garbage collection..."
+          doctl registry garbage-collection start --force
+          echo "✓ Garbage collection started"

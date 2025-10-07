@@ -20,56 +20,15 @@ jobs:
 
   cleanup-old-images:
     name: Cleanup Old Staging Images
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    environment: staging
     needs: build-backend
-    
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2.5.1
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      
-      - name: Log in to DigitalOcean Container Registry
-        run: doctl registry login --expiry-seconds 600
-      
-      - name: Remove old staging images
-        run: |
-          cleanup_repository() {
-            local repo_name=$1
-            echo "🔍 Cleaning up repository: $repo_name"
-            
-            # Get tags in JSON format for reliable parsing
-            local tags_json=$(doctl registry repository list-tags "$repo_name" --format Tag,ManifestDigest --output json 2>/dev/null || echo "[]")
-            
-            if [ "$tags_json" = "[]" ]; then
-              echo "✓ No images found in $repo_name"
-              return
-            fi
-            
-            # Parse JSON and process each tag
-            echo "$tags_json" | jq -r '.[] | "\(.tag)\t\(.manifest_digest)"' | while IFS=$'\t' read -r tag digest; do
-              # Only delete staging tags, skip the current deployment
-              if [[ "$tag" == staging-* ]] && [[ "$tag" != "${{ env.IMAGE_TAG }}" ]]; then
-                echo "🗑️  Deleting $tag (digest: $digest)"
-                if [ -n "$digest" ] && [ "$digest" != "null" ]; then
-                  doctl registry repository delete-manifest "$repo_name" "$digest" --force || echo "⚠️  Failed to delete $tag"
-                else
-                  echo "⚠️  No valid digest for tag $tag - skipping"
-                fi
-              else
-                echo "⏩ Skipping tag: $tag"
-              fi
-            done
-            
-            echo "✓ Cleaned up $repo_name"
-          }
-          
-          cleanup_repository "lems-backend"
-      
-      - name: Run garbage collection
-        run: doctl registry garbage-collection start --force
+    uses: ./.github/workflows/cleanup-registry-images.yml
+    with:
+      repository: lems-backend
+      tag_pattern: 'staging-*'
+      exclude_tag: staging-${{ github.sha }}
+      run_garbage_collection: true
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
   deploy:
     name: Deploy to Staging Server
