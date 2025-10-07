@@ -54,7 +54,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
       <Typography variant="h5" gutterBottom>
         {t('quick-links.field-schedule')}
       </Typography>
-      
+
       <Stack spacing={3} mt={2}>
         {rounds.map((round, roundIndex) => (
           <Paper key={roundIndex} sx={{ p: 2, bgcolor: 'white' }}>
@@ -65,7 +65,14 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                     <TableCell
                       colSpan={tables.length + 2}
                       align="center"
-                      sx={{ bgcolor: 'grey.200', color: 'black', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}
+                      sx={{
+                        bgcolor: 'primary.main',
+                        color: 'white',
+                        borderTop: '1px solid #ddd',
+                        borderBottom: '1px solid #ddd',
+                        borderLeft: 'none',
+                        borderRight: 'none'
+                      }}
                     >
                       <Typography fontWeight={600}>
                         {t('field-schedule.round', {
@@ -76,15 +83,54 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ width: '80px', bgcolor: 'grey.200', color: 'black', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
+                    <TableCell
+                      sx={{
+                        width: '80px',
+                        bgcolor: 'grey.200',
+                        color: 'black',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        borderTop: '1px solid #ddd',
+                        borderBottom: '1px solid #ddd',
+                        borderLeft: 'none',
+                        borderRight: 'none'
+                      }}
+                    >
                       <Typography fontWeight={600}>{t('field-schedule.match')}</Typography>
                     </TableCell>
-                    <TableCell sx={{ width: '100px', bgcolor: 'grey.200', color: 'black', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
+                    <TableCell
+                      sx={{
+                        width: '100px',
+                        bgcolor: 'grey.200',
+                        color: 'black',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        borderTop: '1px solid #ddd',
+                        borderBottom: '1px solid #ddd',
+                        borderLeft: 'none',
+                        borderRight: 'none'
+                      }}
+                    >
                       <Typography fontWeight={600}>{t('field-schedule.time')}</Typography>
                     </TableCell>
                     {tables.map((_, index) => (
-                      <TableCell key={index} sx={{ minWidth: '120px', bgcolor: 'grey.200', color: 'black', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
-                        <Typography fontWeight={600}>{t('field-schedule.table')} {index + 1}</Typography>
+                      <TableCell
+                        key={index}
+                        sx={{
+                          minWidth: '120px',
+                          bgcolor: 'grey.200',
+                          color: 'black',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                          borderTop: '1px solid #ddd',
+                          borderBottom: '1px solid #ddd',
+                          borderLeft: 'none',
+                          borderRight: 'none'
+                        }}
+                      >
+                        <Typography fontWeight={600}>
+                          {t('field-schedule.table')} {index + 1}
+                        </Typography>
                       </TableCell>
                     ))}
                   </TableRow>
@@ -93,18 +139,39 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                   {round.matches.map((match, matchIndex) => (
                     <TableRow
                       key={matchIndex}
-                      sx={{ 
+                      sx={{
                         bgcolor: 'white',
-                        '& td': matchIndex === 0 ? { 
-                          bgcolor: 'white !important',
-                          borderTop: '3px solid white'
-                        } : {}
+                        '& td':
+                          matchIndex === 0
+                            ? {
+                                bgcolor: 'white !important',
+                                borderTop: '3px solid white'
+                              }
+                            : {}
                       }}
                     >
-                      <TableCell sx={{ textAlign: 'center', borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                      <TableCell
+                        sx={{
+                          textAlign: 'center',
+                          borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none',
+                          borderBottom: '1px solid #ddd',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          py: 1.5
+                        }}
+                      >
                         <Typography fontWeight={500}>{match.number}</Typography>
                       </TableCell>
-                      <TableCell sx={{ textAlign: 'center', borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                      <TableCell
+                        sx={{
+                          textAlign: 'center',
+                          borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none',
+                          borderBottom: '1px solid #ddd',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          py: 1.5
+                        }}
+                      >
                         <Typography sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
                           {dayjs(match.time).format('HH:mm')}
                         </Typography>
@@ -112,7 +179,17 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                       {tables.map(tableKey => {
                         const team = match.teams[tableKey as keyof typeof match.teams];
                         return (
-                          <TableCell key={tableKey} sx={{ textAlign: 'center', borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                          <TableCell
+                            key={tableKey}
+                            sx={{
+                              textAlign: 'center',
+                              borderTop: matchIndex === 0 ? '2px solid #ddd' : 'none',
+                              borderBottom: '1px solid #ddd',
+                              borderLeft: 'none',
+                              borderRight: 'none',
+                              py: 1.5
+                            }}
+                          >
                             {team ? (
                               <Tooltip title={team.name} arrow>
                                 <Link
@@ -122,7 +199,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
                                     color: 'black',
                                     textDecoration: 'none',
                                     fontWeight: 500,
-                                    '&:hover': { 
+                                    '&:hover': {
                                       textDecoration: 'underline',
                                       color: 'primary.main'
                                     }
@@ -145,7 +222,7 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
           </Paper>
         ))}
       </Stack>
-      
+
       {rounds.length === 0 && (
         <Box display="flex" alignItems="center" justifyContent="center" py={4}>
           <Typography variant="body1" color="text.secondary">
