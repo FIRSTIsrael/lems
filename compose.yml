@@ -1,77 +1,33 @@
 services:
   backend:
-    build:
-      dockerfile: apps/backend/Dockerfile
-      context: .
-      args:
-        LEMS_DOMAIN: ${LEMS_DOMAIN}
-        SCHEDULER_URL: ${SCHEDULER_URL}
-        DIGITALOCEAN_KEY: ${DIGITALOCEAN_KEY}
-        DIGITALOCEAN_SECRET: ${DIGITALOCEAN_SECRET}
-        JWT_SECRET: ${JWT_SECRET}
-        DASHBOARD_JWT_SECRET: ${DASHBOARD_JWT_SECRET}
-        MONGODB_URI: ${MONGODB_URI}
-        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
-        RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
-        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
-        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
-        RECAPTCHA: ${RECAPTCHA}
     image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
     ports:
       - '3333:3333'
     networks:
       - lems-network
     restart: always
-
-  frontend:
-    build:
-      dockerfile: apps/frontend/Dockerfile
-      context: .
-      args:
-        RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
-        BASE_URL: ${BASE_URL}
-        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
-        WS_URL: ${WS_URL}
-        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
-        DIGITALOCEAN_ENDPOINT: ${DIGITALOCEAN_ENDPOINT}
-        DIGITALOCEAN_SPACE: ${DIGITALOCEAN_SPACE}
-        RECAPTCHA: ${RECAPTCHA}
-    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
-    ports:
-      - '4200:4200'
-    networks:
-      - lems-network
-    restart: always
-
-  scheduler:
-    build:
-      dockerfile: Dockerfile
-      context: ./apps/scheduler
-      args:
-        PYTHON_ENV: production
-        MONGODB_URI: ${MONGODB_URI}
-        MONGO_CA_CERTIFICATE: ${MONGO_CA_CERTIFICATE}
-    image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
-    ports:
-      - '8000:8000'
-    networks:
-      - lems-network
-    restart: always
-
-  portal:
-    build:
-      dockerfile: apps/portal/Dockerfile
-      context: .
-      args:
-        BASE_URL: ${BASE_URL}
-        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
-    image: ${REGISTRY}/lems-portal:${IMAGE_TAG}
-    ports:
-      - '3000:3000'
-    networks:
-      - lems-network
-    restart: always
-
+    environment:
+      # Database configuration
+      - DB_NAME=${DB_NAME}
+      - MONGODB_URI=${MONGODB_URI}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      # Authentication & Security
+      - JWT_SECRET=${JWT_SECRET}
+      - DASHBOARD_JWT_SECRET=${DASHBOARD_JWT_SECRET}
+      - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
+      - RECAPTCHA=${RECAPTCHA}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+      # External Services
+      - LEMS_DOMAIN=${LEMS_DOMAIN}
+      - SCHEDULER_URL=${SCHEDULER_URL}
+      # Cloud Storage (DigitalOcean Spaces)
+      - DIGITALOCEAN_ENDPOINT=${DIGITALOCEAN_ENDPOINT}
+      - DIGITALOCEAN_SPACE=${DIGITALOCEAN_SPACE}
+      - DIGITALOCEAN_KEY=${DIGITALOCEAN_KEY}
+      - DIGITALOCEAN_SECRET=${DIGITALOCEAN_SECRET}
 
 networks:
   lems-network:

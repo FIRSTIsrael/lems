@@ -1,0 +1,115 @@
+name: Deploy Backend (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment (staging or production)'
+        required: true
+        type: string
+      image_tag:
+        description: 'Docker image tag to use'
+        required: true
+        type: string
+      registry:
+        description: 'Docker registry URL'
+        required: true
+        type: string
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+      DIGITALOCEAN_KEY:
+        required: true
+      DIGITALOCEAN_SECRET:
+        required: true
+      JWT_SECRET:
+        required: true
+      DASHBOARD_JWT_SECRET:
+        required: true
+      SCHEDULER_JWT_SECRET:
+        required: true
+      MONGODB_URI:
+        required: true
+      PG_PASSWORD:
+        required: true
+      RECAPTCHA_SECRET_KEY:
+        required: false
+
+jobs:
+  build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 22
+          cache: npm
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build backend
+        run: npm run build backend
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 1200
+      
+      - name: Build Docker image
+        working-directory: apps/backend
+        env:
+          # Variables (from GitHub environment variables)
+          DB_NAME: ${{ vars.DB_NAME }}
+          LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
+          SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
+          DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+          DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
+          RECAPTCHA: ${{ vars.RECAPTCHA }}
+          PG_HOST: ${{ vars.PG_HOST }}
+          PG_PORT: ${{ vars.PG_PORT }}
+          PG_USER: ${{ vars.PG_USER }}
+          # Secrets (from GitHub environment secrets)
+          DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+          DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
+          SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+        run: |
+          docker build \
+            --build-arg DB_NAME="${DB_NAME}" \
+            --build-arg LEMS_DOMAIN="${LEMS_DOMAIN}" \
+            --build-arg SCHEDULER_URL="${SCHEDULER_URL}" \
+            --build-arg DIGITALOCEAN_ENDPOINT="${DIGITALOCEAN_ENDPOINT}" \
+            --build-arg DIGITALOCEAN_SPACE="${DIGITALOCEAN_SPACE}" \
+            --build-arg RECAPTCHA="${RECAPTCHA}" \
+            --build-arg PG_HOST="${PG_HOST}" \
+            --build-arg PG_PORT="${PG_PORT}" \
+            --build-arg PG_USER="${PG_USER}" \
+            --build-arg DIGITALOCEAN_KEY="${DIGITALOCEAN_KEY}" \
+            --build-arg DIGITALOCEAN_SECRET="${DIGITALOCEAN_SECRET}" \
+            --build-arg JWT_SECRET="${JWT_SECRET}" \
+            --build-arg DASHBOARD_JWT_SECRET="${DASHBOARD_JWT_SECRET}" \
+            --build-arg SCHEDULER_JWT_SECRET="${SCHEDULER_JWT_SECRET}" \
+            --build-arg MONGODB_URI="${MONGODB_URI}" \
+            --build-arg PG_PASSWORD="${PG_PASSWORD}" \
+            --build-arg RECAPTCHA_SECRET_KEY="${RECAPTCHA_SECRET_KEY}" \
+            -t ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }} \
+            -f Dockerfile \
+            ../..
+      
+      - name: Push Docker image
+        run: docker push ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }}
