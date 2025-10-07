@@ -1,9 +1,0 @@
-export { TeamSidebar } from './team-sidebar';
-export { TeamHeader } from './team-header';
-export { TeamResults } from './team-results';
-export { TeamLogo } from './team-logo';
-export { TeamTitle } from './team-title';
-export { TeamInfo } from './team-info';
-export { WinnerBanner } from './winner-banner';
-export { WinnerBanners } from './winner-banners';
-export { TeamAwards } from './team-awards';

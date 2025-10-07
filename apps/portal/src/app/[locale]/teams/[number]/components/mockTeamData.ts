@@ -39,17 +39,11 @@ export const mockTeams: Team[] = [
       'District Event Winner',
       'Autonomous Award',
       'Engineering Inspiration Award',
-      'Chairman\'s Award',
+      "Chairman's Award",
       'Regional Winner',
       'Innovation in Control Award'
     ],
-    events: [
-      'ISR #1',
-      'ISR #3', 
-      'Israel Championship',
-      'Johnson Division',
-      'Einstein Division'
-    ],
+    events: ['ISR #1', 'ISR #3', 'Israel Championship', 'Johnson Division', 'Einstein Division'],
     seasons: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018]
   },
 
@@ -75,12 +69,7 @@ export const mockTeams: Team[] = [
       'Teamwork Award',
       'Innovation Award'
     ],
-    events: [
-      'ISR #2',
-      'ISR #4',
-      'Israel Championship',
-      'World Championship'
-    ],
+    events: ['ISR #2', 'ISR #4', 'Israel Championship', 'World Championship'],
     seasons: [2025, 2024, 2023, 2022, 2021, 2020]
   },
 
@@ -100,12 +89,7 @@ export const mockTeams: Team[] = [
       instagram: 'neatteam1943'
     },
     isChampion: false,
-    awards: [
-      'Regional Finalist',
-      'Design Award',
-      'Programming Award',
-      'Sportsmanship Award'
-    ]
+    awards: ['Regional Finalist', 'Design Award', 'Programming Award', 'Sportsmanship Award']
   },
 
   // Team 5987 - Galaxia
@@ -128,7 +112,7 @@ export const mockTeams: Team[] = [
       'Creativity Award',
       'Team Spirit Award',
       'Community Impact Award'
-    ],
+    ]
   },
 
   // Team 4590 - GreenBlitz
@@ -144,16 +128,8 @@ export const mockTeams: Team[] = [
     lastCompeted: 2025,
     website: 'greenblitz4590.org',
     isChampion: false,
-    awards: [
-      'Environmental Impact Award',
-      'Sustainability Award',
-      'Innovation Award'
-    ],
-    events: [
-      'ISR #2',
-      'Regional Qualifier',
-      'Green Innovation Challenge'
-    ],
+    awards: ['Environmental Impact Award', 'Sustainability Award', 'Innovation Award'],
+    events: ['ISR #2', 'Regional Qualifier', 'Green Innovation Challenge'],
     seasons: [2025, 2024, 2023, 2022]
   },
 
@@ -170,10 +146,7 @@ export const mockTeams: Team[] = [
       instagram: 'mariners8223'
     },
     isChampion: false,
-    awards: [
-      'Rookie Inspiration Award',
-      'Teamwork Award'
-    ],
+    awards: ['Rookie Inspiration Award', 'Teamwork Award']
   },
 
   // Team 2230 - GeneralAngles
@@ -189,10 +162,7 @@ export const mockTeams: Team[] = [
       facebook: 'generalangles2230'
     },
     isChampion: false,
-    awards: [
-      'Gracious Professionalism Award',
-      'Team Spirit Award'
-    ],
+    awards: ['Gracious Professionalism Award', 'Team Spirit Award']
   },
 
   // Team 1574 - MisCar (Inactive)
@@ -210,7 +180,7 @@ export const mockTeams: Team[] = [
       'Regional Winner (2018)',
       'Engineering Excellence Award',
       'Innovation in Control Award'
-    ],
+    ]
   },
 
   // Team 6738 - Excalibur (Inactive)
@@ -224,10 +194,7 @@ export const mockTeams: Team[] = [
     lastCompeted: 2021,
     socialMedia: {},
     isChampion: false,
-    awards: [
-      'Rookie Team Award',
-      'Design Award'
-    ],
+    awards: ['Rookie Team Award', 'Design Award']
   }
 ];
 
@@ -235,18 +202,22 @@ export const getChampionTeams = (teams: Team[] = mockTeams): Team[] => {
   return teams.filter(team => team.isChampion);
 };
 
-export const getTeamByNumber = (teamNumber: number, teams: Team[] = mockTeams): Team | undefined => {
+export const getTeamByNumber = (
+  teamNumber: number,
+  teams: Team[] = mockTeams
+): Team | undefined => {
   return teams.find(team => team.number === teamNumber);
 };
 
 export const searchTeams = (teams: Team[], query: string): Team[] => {
   const searchTerm = query.toLowerCase();
-  return teams.filter(team => 
-    team.number.toString().includes(searchTerm) ||
-    team.name.toLowerCase().includes(searchTerm) ||
-    team.nickname.toLowerCase().includes(searchTerm) ||
-    team.city.toLowerCase().includes(searchTerm) ||
-    team.location.toLowerCase().includes(searchTerm)
+  return teams.filter(
+    team =>
+      team.number.toString().includes(searchTerm) ||
+      team.name.toLowerCase().includes(searchTerm) ||
+      team.nickname.toLowerCase().includes(searchTerm) ||
+      team.city.toLowerCase().includes(searchTerm) ||
+      team.location.toLowerCase().includes(searchTerm)
   );
 };
 

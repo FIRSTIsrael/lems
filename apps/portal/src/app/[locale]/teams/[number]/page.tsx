@@ -6,19 +6,18 @@ import { Box, Container, Typography, Paper, Button } from '@mui/material';
 import { LocationOn as LocationIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getTeamByNumber } from '../components/team/mockTeamData';
-import { TeamSidebar, TeamHeader, TeamResults } from '../components/team';
+import { getTeamByNumber } from './components/mockTeamData';
+import { TeamHeader } from './components/team-header';
+import { TeamResults } from './components/team-results';
+import { TeamSidebar } from './components/team-sidebar';
 
 export default function TeamPage() {
   const params = useParams();
   const t = useTranslations('pages.team');
 
   // Extract team number from URL
-  const teamSlug = params.teamSlug as string;
-  const teamNumber =
-    teamSlug && teamSlug.startsWith('team') ? parseInt(teamSlug.replace('team', '')) : null;
-
-  const team = teamNumber ? getTeamByNumber(teamNumber) : null;
+  const teamNumber = Number(params.number);
+  const team = getTeamByNumber(teamNumber) || null;
 
   // Season state management
   const [selectedSeason, setSelectedSeason] = useState<string>(
