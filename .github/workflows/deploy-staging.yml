@@ -5,4 +5,7 @@ on:
 
 jobs:
   hello-world:
-    run: echo "Hello world"
+    runs-on: ubuntu-latest
+    steps:
+        - name: greet
+          run: echo "Hello world"
