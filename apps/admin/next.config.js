@@ -18,8 +18,7 @@ const nextConfig = {
 
   output: 'standalone',
 
-  // basePath: isProduction ? '/admin' : undefined,
-  basePath: '/admin',
+  basePath: isProduction ? '/admin' : undefined,
 
   reactStrictMode: true,
 
