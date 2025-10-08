@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 //@ts-check
 const { composePlugins, withNx } = require('@nx/next');
 const createNextIntlPlugin = require('next-intl/plugin');
@@ -15,6 +17,8 @@ const nextConfig = {
   },
 
   output: 'standalone',
+
+  basePath: isProduction ? '/admin' : undefined,
 
   reactStrictMode: true,
 
