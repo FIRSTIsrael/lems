@@ -41,6 +41,7 @@ jobs:
       
       - name: Build admin
         env:
+          NODE_ENV: "production" # Important for Next.js base path
           # Build-time environment variables for Next.js
           # These NEXT_PUBLIC_* variables are embedded into the client bundle
           NEXT_PUBLIC_BASE_URL: ${{ vars.BASE_URL }}
