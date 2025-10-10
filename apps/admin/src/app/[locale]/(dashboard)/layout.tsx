@@ -94,7 +94,7 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
       <Toolbar>
         <Box width="100%" height="80%" position="relative">
           <Link href="/">
-            <Image src="/assets/FLLC-Logo.svg" alt="" fill />
+            <Image src="/admin/assets/FLLC-Logo.svg" alt="" fill />
           </Link>
         </Box>
       </Toolbar>
