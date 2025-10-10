@@ -13,6 +13,9 @@ RUN npm ci --omit=dev && \
 # Copy built admin app from dist
 COPY dist/apps/admin .
 
+# Copy Next.js config from source (needed for runtime)
+COPY apps/admin/next.config.js ./next.config.js
+
 # Runtime stage - Minimal image with only what's needed
 FROM node:22-alpine AS runner
 
@@ -30,6 +33,9 @@ COPY --from=builder --chown=admin:lems /app/node_modules ./node_modules
 COPY --from=builder --chown=admin:lems /app/.next/standalone ./
 COPY --from=builder --chown=admin:lems /app/.next/static ./.next/static
 COPY --from=builder --chown=admin:lems /app/public ./public
+
+# Copy Next.js config - CRITICAL for runtime configuration (basePath, etc.)
+COPY --from=builder --chown=admin:lems /app/next.config.js ./apps/admin/next.config.js
 
 USER admin
 
