@@ -6,11 +6,10 @@ WORKDIR /app
 # Copy the entire standalone build output from dist
 COPY dist/apps/admin/.next/standalone .
 
-# Copy static assets (JS chunks, CSS, etc.) - these are served by Next.js
-COPY dist/apps/admin/.next/static ./.next/static
-
-# Copy public assets
-COPY dist/apps/admin/public ./public
+# Copy the .next directory with all build artifacts to where the config expects it
+# The distDir in required-server-files.json points to: ../../dist/apps/admin/.next
+# From apps/admin/, that means we need dist/apps/admin/.next at the correct location
+COPY dist/apps/admin/.next ./dist/apps/admin/.next
 
 # Runtime stage
 FROM node:22-alpine AS runner
@@ -19,18 +18,18 @@ ENV NODE_ENV=production
 ENV PORT=4201
 ENV HOSTNAME="0.0.0.0"
 
-WORKDIR /app
+WORKDIR /app/apps/admin
 
 # Create non-root user
 RUN addgroup -S lems && adduser -S admin -G lems
 
 # Copy everything from builder (includes standalone structure, static files, and public)
 # This gives us the complete runtime structure that Next.js expects
-COPY --from=builder --chown=admin:lems /app ./
+COPY --from=builder --chown=admin:lems /app /app
 
 USER admin
 
 EXPOSE 4201
 
-# The standalone build already has the server at apps/admin/server.js
-CMD ["node", "apps/admin/server.js"]
+# Run the server from the apps/admin directory where it expects to find ../../dist/apps/admin/.next
+CMD ["node", "server.js"]
