@@ -1,22 +1,18 @@
-# Builder stage - Install dependencies and build
+# Builder stage
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy the entire standalone build output from dist
+COPY dist/apps/admin/.next/standalone .
 
-# Install dependencies
-RUN npm ci --omit=dev && \
-  npm cache clean --force
+# Copy static assets (JS chunks, CSS, etc.) - these are served by Next.js
+COPY dist/apps/admin/.next/static ./.next/static
 
-# Copy built admin app from dist
-COPY dist/apps/admin .
+# Copy public assets
+COPY dist/apps/admin/public ./public
 
-# Copy Next.js config from source (needed for runtime)
-COPY apps/admin/next.config.js ./next.config.js
-
-# Runtime stage - Minimal image with only what's needed
+# Runtime stage
 FROM node:22-alpine AS runner
 
 ENV NODE_ENV=production
@@ -28,17 +24,13 @@ WORKDIR /app
 # Create non-root user
 RUN addgroup -S lems && adduser -S admin -G lems
 
-# Copy standalone build and dependencies from builder
-COPY --from=builder --chown=admin:lems /app/node_modules ./node_modules
-COPY --from=builder --chown=admin:lems /app/.next/standalone ./
-COPY --from=builder --chown=admin:lems /app/.next/static ./apps/admin/.next/static
-COPY --from=builder --chown=admin:lems /app/public ./apps/admin/public
-
-# Copy Next.js config - CRITICAL for runtime configuration (basePath, etc.)
-COPY --from=builder --chown=admin:lems /app/next.config.js ./apps/admin/next.config.js
+# Copy everything from builder (includes standalone structure, static files, and public)
+# This gives us the complete runtime structure that Next.js expects
+COPY --from=builder --chown=admin:lems /app ./
 
 USER admin
 
 EXPOSE 4201
 
+# The standalone build already has the server at apps/admin/server.js
 CMD ["node", "apps/admin/server.js"]
