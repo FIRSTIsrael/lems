@@ -11,6 +11,10 @@ COPY dist/apps/admin/.next/standalone .
 # From apps/admin/, that means we need dist/apps/admin/.next at the correct location
 COPY dist/apps/admin/.next ./dist/apps/admin/.next
 
+# Copy static files - Next.js standalone doesn't include public directory by default
+# These need to be copied to the apps/admin directory where the server runs
+COPY apps/admin/public ./apps/admin/public
+
 # Runtime stage
 FROM node:22-alpine AS runner
 
