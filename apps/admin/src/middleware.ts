@@ -77,7 +77,7 @@ export default async function middleware(request: NextRequest) {
       headers: { Cookie: request.headers.get('cookie') || '' }
     });
 
-    const loginUrl = locale ? `/${locale}/login` : '/login';
+    const loginUrl = locale ? `${basePath}/${locale}/login` : `${basePath}/login`;
 
     const isAlreadyOnLogin = pathname.endsWith('/login');
     const redirectUrl = isAlreadyOnLogin
