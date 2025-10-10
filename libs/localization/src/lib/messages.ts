@@ -5,5 +5,3 @@ export const messages = {
   en: enMessages,
   he: heMessages
 } as const;
-
-export type LocaleMessages = typeof enMessages;
