@@ -13,7 +13,13 @@ export default async function middleware(request: NextRequest) {
   const { nextUrl } = request;
   const { basePath } = nextUrl;
 
-  const [, locale, ...segments] = request.nextUrl.pathname.split('/');
+  // Remove basePath from the start of the pathname if present
+  let trimmedPathname = request.nextUrl.pathname;
+  if (basePath && trimmedPathname.startsWith(basePath)) {
+    trimmedPathname = trimmedPathname.slice(basePath.length);
+  }
+
+  const [, locale, ...segments] = trimmedPathname.split('/');
   const isPublicPage = publicPages.some(
     page =>
       segments.join('/') === page.slice(1) || // Remove leading slash for comparison
