@@ -106,7 +106,7 @@ jobs:
           # External Services
           LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
           SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
-          LOCAL_BASE_URL: ${{ vars.BASE_URL }}
+          LOCAL_BASE_URL: ${{ vars.LOCAL_BASE_URL }}
 
           # Cloud Storage (DigitalOcean Spaces)
           DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}

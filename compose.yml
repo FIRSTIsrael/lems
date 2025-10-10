@@ -43,10 +43,11 @@ services:
       - lems-network
     restart: always
     environment:
-      # API domain (server-side only - NEXT_PUBLIC_* vars must be set at build time)
+      # Note: NEXT_PUBLIC_* variables must be set at build time and are embedded in the bundle
+      # The admin app uses NEXT_PUBLIC_BASE_URL which was set during docker build
+      
+      # Runtime environment variables for server-side only features:
       - LOCAL_BASE_URL=${LOCAL_BASE_URL}
-
-      # Authentication (server-side only - NEXT_PUBLIC_* vars must be set at build time)
       - RECAPTCHA=${RECAPTCHA}
 
   scheduler:
@@ -57,7 +58,7 @@ services:
       - lems-network
     restart: always
     environment:
-      - LOCAL_BASE_URL="backend:3333"
+      - LOCAL_BASE_URL="${LOCAL_BASE_URL}"
       - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
 
 networks:
