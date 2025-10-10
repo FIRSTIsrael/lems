@@ -31,8 +31,8 @@ RUN addgroup -S lems && adduser -S admin -G lems
 # Copy standalone build and dependencies from builder
 COPY --from=builder --chown=admin:lems /app/node_modules ./node_modules
 COPY --from=builder --chown=admin:lems /app/.next/standalone ./
-COPY --from=builder --chown=admin:lems /app/.next/static ./.next/static
-COPY --from=builder --chown=admin:lems /app/public ./public
+COPY --from=builder --chown=admin:lems /app/.next/static ./apps/admin/.next/static
+COPY --from=builder --chown=admin:lems /app/public ./apps/admin/public
 
 # Copy Next.js config - CRITICAL for runtime configuration (basePath, etc.)
 COPY --from=builder --chown=admin:lems /app/next.config.js ./apps/admin/next.config.js
