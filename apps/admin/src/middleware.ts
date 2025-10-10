@@ -10,6 +10,8 @@ const handleI18nRouting = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
+  const { nextUrl } = request;
+  const { basePath } = nextUrl;
 
   const [, locale, ...segments] = request.nextUrl.pathname.split('/');
   const isPublicPage = publicPages.some(
@@ -48,7 +50,7 @@ export default async function middleware(request: NextRequest) {
           const permissions: PermissionType[] = await permissionsResponse.json();
 
           if (Array.isArray(permissions) && !permissions.includes(requiredPermission)) {
-            const homeUrl = locale ? `/${locale}` : '/';
+            const homeUrl = locale ? `${basePath}/${locale}` : basePath;
             return NextResponse.redirect(new URL(homeUrl, request.url));
           }
         }
