@@ -10,8 +10,21 @@ const handleI18nRouting = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
+  const { nextUrl } = request;
+  const { basePath } = nextUrl;
 
-  const [, locale, ...segments] = request.nextUrl.pathname.split('/');
+  // Trim basePath for routing logic
+  let pathname = request.nextUrl.pathname;
+  if (basePath && pathname.startsWith(basePath)) {
+    pathname = pathname.slice(basePath.length);
+  }
+
+  // Ensure we always have a leading slash
+  if (!pathname.startsWith('/')) {
+    pathname = '/' + pathname;
+  }
+
+  const [, locale, ...segments] = pathname.split('/');
   const isPublicPage = publicPages.some(
     page =>
       segments.join('/') === page.slice(1) || // Remove leading slash for comparison
@@ -22,7 +35,6 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
-  const { pathname } = request.nextUrl;
   const backendUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3333';
 
   try {
@@ -48,7 +60,7 @@ export default async function middleware(request: NextRequest) {
           const permissions: PermissionType[] = await permissionsResponse.json();
 
           if (Array.isArray(permissions) && !permissions.includes(requiredPermission)) {
-            const homeUrl = locale ? `/${locale}` : '/';
+            const homeUrl = basePath + (locale ? `/${locale}` : '');
             return NextResponse.redirect(new URL(homeUrl, request.url));
           }
         }
@@ -69,12 +81,17 @@ export default async function middleware(request: NextRequest) {
       headers: { Cookie: request.headers.get('cookie') || '' }
     });
 
-    const loginUrl = locale ? `/${locale}/login` : '/login';
+    // Build login URL with proper basePath
+    const loginPath = locale ? `/${locale}/login` : '/login';
+    const loginUrl = basePath + loginPath;
 
     const isAlreadyOnLogin = pathname.endsWith('/login');
     const redirectUrl = isAlreadyOnLogin
       ? new URL(loginUrl, request.url)
-      : new URL(`${loginUrl}?returnUrl=${encodeURIComponent(pathname)}`, request.url);
+      : new URL(
+          `${loginUrl}?returnUrl=${encodeURIComponent(request.nextUrl.pathname)}`,
+          request.url
+        );
 
     const redirectResponse = NextResponse.redirect(redirectUrl);
 
@@ -94,5 +111,5 @@ export const config = {
   // Match all pathnames except for
   // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+  matcher: ['/', '/((?!api|trpc|_next|_vercel|.*\\..*).*)']
 };

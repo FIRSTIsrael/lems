@@ -1,30 +1,40 @@
+# Builder stage - Install dependencies
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Install dependencies in a virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy and install requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Runtime stage - Minimal image
 FROM python:3.12-slim
 
-ARG MONGODB_URI
-ENV MONGODB_URI=$MONGODB_URI
-ARG PG_HOST
-ARG PG_PORT
-ARG PG_USER
-ARG PG_PASSWORD
-ARG DB_NAME
-ENV PG_HOST=$PG_HOST
-ENV PG_PORT=$PG_PORT
-ENV PG_USER=$PG_USER
-ENV PG_PASSWORD=$PG_PASSWORD
-ENV DB_NAME=$DB_NAME
+# Create non-root user
+RUN groupadd -r scheduler && useradd -r -g scheduler scheduler
 
-RUN apt-get update
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
 
-WORKDIR /src
+# Set environment variables
+ENV PATH="/opt/venv/bin:$PATH" \
+  PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1
 
-ARG MONGO_CA_CERTIFICATE
-ENV PYTHON_ENV=production
-ENV MONGO_CA_CERTIFICATE=$MONGO_CA_CERTIFICATE
-RUN echo $MONGO_CA_CERTIFICATE > /root/mongo-ca-certificate.crt
+WORKDIR /app
 
-COPY requirements.txt /src/requirements.txt
-RUN pip install -r requirements.txt
+# Copy application code
+COPY src/ .
 
-COPY ./src /src
+# Set ownership
+RUN chown -R scheduler:scheduler /app
 
-CMD ["fastapi", "run", "main.py"]
+USER scheduler
+
+EXPOSE 8000
+
+CMD ["fastapi", "run", "main.py", "--host", "0.0.0.0", "--port", "8000"]

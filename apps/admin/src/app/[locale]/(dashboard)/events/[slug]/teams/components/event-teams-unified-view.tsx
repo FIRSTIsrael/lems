@@ -22,7 +22,9 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   const [searchValue, setSearchValue] = useState('');
 
   const hasMultipleDivisions = divisions.length > 1;
-  const divisionsWithSchedule = new Set(divisions.filter(division => division.hasSchedule).map(division => division.id));
+  const divisionsWithSchedule = new Set(
+    divisions.filter(division => division.hasSchedule).map(division => division.id)
+  );
 
   const filteredTeams = useMemo(() => {
     if (!searchValue.trim()) return teams;
@@ -53,7 +55,10 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <Box
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
         >
-          <Avatar src={params.row.logoUrl || '/assets/default-avatar.svg'} alt={params.row.name}>
+          <Avatar
+            src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
+            alt={params.row.name}
+          >
             #{params.row.number}
           </Avatar>
         </Box>
@@ -130,7 +135,10 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             console.log('Edit team:', params.row.id);
           }}
         />,
-        <RemoveTeamButton team={params.row} disabled={divisionsWithSchedule.has(params.row.division.id)} />
+        <RemoveTeamButton
+          team={params.row}
+          disabled={divisionsWithSchedule.has(params.row.division.id)}
+        />
       ]
     }
   ];
