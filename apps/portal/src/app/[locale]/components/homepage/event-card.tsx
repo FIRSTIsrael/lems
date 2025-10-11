@@ -39,18 +39,16 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
           bgcolor: alpha(theme.palette.error.main, 0.05),
           '&:hover': {
             transform: 'translateY(-4px)',
-            boxShadow: theme.shadows[8],
+            boxShadow: theme.shadows[6],
             borderColor: theme.palette.error.dark
           }
         };
       case 'past':
         return {
           bgcolor: 'background.paper',
-          opacity: 0.8,
           '&:hover': {
-            opacity: 1,
-            transform: 'translateY(-2px)',
-            boxShadow: theme.shadows[4],
+            transform: 'translateY(-4px)',
+            boxShadow: theme.shadows[6],
             bgcolor: alpha(theme.palette.secondary.main, 0.02)
           }
         };
@@ -60,7 +58,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
           '&:hover': {
             transform: 'translateY(-4px)',
             boxShadow: theme.shadows[6],
-            bgcolor: alpha(theme.palette.primary.main, 0.02)
+            bgcolor: alpha(theme.palette.secondary.main, 0.02)
           }
         };
     }
@@ -82,13 +80,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
         );
       case 'past':
         return (
-          <Button component="span" variant="text" size="small" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<ArrowIcon />}>
             View Results
           </Button>
         );
       default: // upcoming
         return (
-          <Button component="span" variant="outlined" endIcon={<ArrowIcon />}>
+          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<ArrowIcon />}>
             View Details
           </Button>
         );
@@ -99,12 +97,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     <Card
       component="a"
       href={`/events/${event.slug}`}
+      variant="outlined"
       sx={{
-        cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',
         textDecoration: 'none',
-        color: 'inherit',
-        display: 'block',
         ...getCardStyles()
       }}
     >
