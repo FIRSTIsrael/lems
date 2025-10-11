@@ -24,6 +24,7 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "frontend:build",
+        "port": 4200,
         "dev": true,
         "turbo": true
       },
@@ -38,15 +39,7 @@
         }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
-      "options": {
-        "buildTarget": "frontend:build:production"
-      }
-    },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
+      "executor": "@nx/eslint:lint"    }
   }
 }

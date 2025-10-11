@@ -1,6 +1,6 @@
 import { Paper, Box, keyframes } from '@mui/material';
 import Image from 'next/image';
-import Images from '../../../public/assets/audience-display/sponsors/index';
+import Images from '../../../../public/assets/audience-display/sponsors/index';
 
 const ScoreboardSponsorsRow: React.FC = () => {
   const forwards = keyframes`

@@ -8,7 +8,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Role, FllEvent } from '@lems/types';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { createRecaptchaToken } from '../../../../libs/shared/src/lib/hooks/use-recaptcha';
+import { createRecaptchaToken } from '../../../../../libs/shared/src/lib/hooks/use-recaptcha';
 import { localizedRoles } from '../../localization/roles';
 
 interface Props {
