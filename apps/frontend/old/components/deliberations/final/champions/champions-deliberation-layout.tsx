@@ -4,7 +4,7 @@ import { AwardLimits } from '@lems/types';
 import ChampionsDeliberationsGrid from './champions-deliberation-grid';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ChampionsPodium from './champions-podium';
-import ScoresPerRoomChart from '../../../../components/insights/charts/scores-per-room-chart';
+import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
 import AnomalyTeams from '../anomaly-teams';
 import { DeliberationContext } from '../../deliberation';
 

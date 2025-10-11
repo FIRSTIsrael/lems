@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-import Images from '../../public/assets/audience-display/sponsors';
+import Images from '../../../public/assets/audience-display/sponsors';
 
 const Sponsors: React.FC = () => {
   const [index, setIndex] = useState<number>(0);

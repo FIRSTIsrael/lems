@@ -30,6 +30,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: '**.nyc3.digitaloceanspaces.com'
+      },
+      {
+        protocol: 'https',
         hostname: 'emojicdn.elk.sh'
       }
     ]
