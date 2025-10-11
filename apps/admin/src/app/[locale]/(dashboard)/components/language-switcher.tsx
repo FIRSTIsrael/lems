@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { MenuItem, Menu, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { Language } from '@mui/icons-material';
 import { ChevronEndIcon, Locale, Locales } from '@lems/localization';
-import { useRouter, usePathname } from '../../../../i18n/navigation';
+import { useRouter } from '../../../../i18n/navigation';
 
 interface LanguageSubmenuProps {
   anchorEl: HTMLButtonElement | null;
@@ -90,7 +90,6 @@ interface LanguageSwitcherProps {
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
 
@@ -107,7 +106,9 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
   };
 
   const handleLanguageChange = (locale: Locale) => {
-    router.replace(pathname, { locale });
+    document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+    router.refresh();
+
     setSubmenuOpen(false);
     onClose?.();
   };

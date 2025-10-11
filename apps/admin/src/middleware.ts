@@ -24,11 +24,9 @@ export default async function middleware(request: NextRequest) {
     pathname = '/' + pathname;
   }
 
-  const [, locale, ...segments] = pathname.split('/');
+  const segments = pathname.split('/').filter(Boolean);
   const isPublicPage = publicPages.some(
-    page =>
-      segments.join('/') === page.slice(1) || // Remove leading slash for comparison
-      (segments.length === 0 && page === '/') // Handle root path
+    page => pathname === page || pathname.startsWith(page + '/')
   );
 
   if (isPublicPage) {
@@ -60,7 +58,8 @@ export default async function middleware(request: NextRequest) {
           const permissions: PermissionType[] = await permissionsResponse.json();
 
           if (Array.isArray(permissions) && !permissions.includes(requiredPermission)) {
-            const homeUrl = basePath + (locale ? `/${locale}` : '');
+            // Redirect to home page
+            const homeUrl = basePath || '/';
             return NextResponse.redirect(new URL(homeUrl, request.url));
           }
         }
@@ -81,9 +80,7 @@ export default async function middleware(request: NextRequest) {
       headers: { Cookie: request.headers.get('cookie') || '' }
     });
 
-    // Build login URL with proper basePath
-    const loginPath = locale ? `/${locale}/login` : '/login';
-    const loginUrl = basePath + loginPath;
+    const loginUrl = basePath + '/login';
 
     const isAlreadyOnLogin = pathname.endsWith('/login');
     const redirectUrl = isAlreadyOnLogin

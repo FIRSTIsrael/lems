@@ -1,5 +1,4 @@
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import Image from 'next/image';
 import {
   Box,
@@ -26,6 +25,7 @@ import {
   AdminUserResponseSchema
 } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
+import { Link } from '../../../i18n/navigation';
 import { DialogProvider } from './components/dialog-provider';
 import { SessionProvider } from './components/session-context';
 import { PermissionGuard } from './components/permission-guard';
