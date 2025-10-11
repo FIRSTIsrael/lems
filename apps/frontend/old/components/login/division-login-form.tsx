@@ -1,30 +1,90 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { WithId } from 'mongodb';
 import { Button, Box, Typography, Stack, MenuItem, TextField } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Role, FllEvent } from '@lems/types';
+import {
+  JudgingRoom,
+  RobotGameTable,
+  JudgingCategoryTypes,
+  RoleTypes,
+  Role,
+  RoleAssociationType,
+  getAssociationType,
+  DivisionSectionTypes,
+  Division,
+  FllEvent,
+  EventUserAllowedRoles
+} from '@lems/types';
+import { localizedJudgingCategory } from '@lems/season';
 import FormDropdown from './form-dropdown';
 import { apiFetch } from '../../lib/utils/fetch';
-import { createRecaptchaToken } from '../../../../libs/shared/src/lib/hooks/use-recaptcha';
-import { localizedRoles } from '../../localization/roles';
+import { createRecaptchaToken } from '../../../../../libs/shared/src/lib/hooks/use-recaptcha';
+import {
+  localizedRoles,
+  localizedRoleAssociations,
+  localizedDivisionSection
+} from '../../localization/roles';
+import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {
   recaptchaRequired: boolean;
   event: WithId<FllEvent>;
+  division: WithId<Division>;
+  rooms: Array<WithId<JudgingRoom>>;
+  tables: Array<WithId<RobotGameTable>>;
   onCancel: () => void;
 }
 
-const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel }) => {
+const DivisionLoginForm: React.FC<Props> = ({
+  recaptchaRequired,
+  event,
+  division,
+  rooms,
+  tables,
+  onCancel
+}) => {
   const [role, setRole] = useState<Role>('' as Role);
   const [password, setPassword] = useState<string>('');
 
-  const loginRoles = event.eventUsers;
+  const [association, setAssociation] = useState<string>('');
+  const associationType = useMemo<RoleAssociationType>(() => {
+    let aType;
+    if (role) {
+      aType = getAssociationType(role);
+    }
+    return aType ? aType : ('' as RoleAssociationType);
+  }, [role]);
+
+  const loginRoles = RoleTypes.filter(
+    role => !event.eventUsers.includes(role as EventUserAllowedRoles)
+  );
 
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+
+  const getDivisionAssociations = (type: RoleAssociationType) => {
+    switch (type) {
+      case 'table':
+        return tables.map(table => {
+          return { id: table._id, name: table.name };
+        });
+      case 'room':
+        return rooms.map(room => {
+          return { id: room._id, name: room.name };
+        });
+      case 'category':
+        return JudgingCategoryTypes.map(category => {
+          return { id: category, name: localizedJudgingCategory[category].name };
+        });
+      case 'section':
+        return DivisionSectionTypes.map(section => {
+          return { id: section, name: localizedDivisionSection[section].name };
+        });
+    }
+  };
 
   const login = (captchaToken?: string) => {
     apiFetch('/auth/login', {
@@ -32,8 +92,16 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         isAdmin: false,
-        eventId: event._id,
+        divisionId: division?._id,
         role,
+        ...(association
+          ? {
+              roleAssociation: {
+                type: associationType,
+                value: association
+              }
+            }
+          : undefined),
         password,
         ...(captchaToken ? { captchaToken } : {})
       })
@@ -78,7 +146,7 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
         התחברות לאירוע:
       </Typography>
       <Typography variant="h2" textAlign="center">
-        {event.name}
+        {localizeDivisionTitle({ ...division, event })}
       </Typography>
 
       <FormDropdown
@@ -87,6 +155,7 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
         label="תפקיד"
         onChange={e => {
           setRole(e.target.value as Role);
+          setAssociation('');
         }}
       >
         {loginRoles.map((r: Role) => {
@@ -98,6 +167,22 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
         })}
       </FormDropdown>
 
+      {role && associationType && (
+        <FormDropdown
+          id="select-role-association"
+          value={association}
+          label={localizedRoleAssociations[associationType].name}
+          onChange={e => setAssociation(e.target.value)}
+        >
+          {getDivisionAssociations(associationType).map(a => {
+            return (
+              <MenuItem value={a.id.toString()} key={a.id.toString()}>
+                {a.name}
+              </MenuItem>
+            );
+          })}
+        </FormDropdown>
+      )}
       <TextField
         fullWidth
         variant="outlined"
@@ -111,7 +196,7 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
       <Box justifyContent="flex-end" display="flex" pt={4}>
         <Button
           endIcon={<ChevronLeftIcon />}
-          disabled={!role || !password}
+          disabled={!role || !password || (!!associationType && !association)}
           type="submit"
           variant="contained"
         >
@@ -122,4 +207,4 @@ const EventLoginForm: React.FC<Props> = ({ recaptchaRequired, event, onCancel })
   );
 };
 
-export default EventLoginForm;
+export default DivisionLoginForm;

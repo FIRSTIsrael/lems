@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import { Team, JudgingSession } from '@lems/types';
-import Countdown from '../../components/general/countdown';
+import Countdown from '../general/countdown';
 import { useTime } from '../../hooks/time/use-time';
 
 interface JudgingStatusTimerProps {

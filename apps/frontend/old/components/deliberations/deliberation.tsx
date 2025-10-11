@@ -27,7 +27,7 @@ import {
   useDeliberationState
 } from '../../hooks/use-deliberation-state';
 import { DeliberationTeam, useDeliberationTeams } from '../../hooks/use-deliberation-teams';
-import LockOverlay from '../../components/general/lock-overlay';
+import LockOverlay from '../general/lock-overlay';
 import { getDefaultPicklistLimit } from '../../lib/utils/math';
 
 export interface DeliberationContextType {
