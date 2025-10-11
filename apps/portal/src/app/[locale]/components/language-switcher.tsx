@@ -25,7 +25,12 @@ export const LanguageSwitcher: React.FC = () => {
   };
 
   const handleLanguageChange = (locale: Locale) => {
-    router.replace(pathname, { locale });
+    // Set the locale cookie
+    document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+
+    // Refresh the page to apply the new locale
+    router.refresh();
+
     handleClose();
   };
 
