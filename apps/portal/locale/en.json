@@ -64,6 +64,37 @@
         "clear-search": "Clear Search"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in our database.",
+        "back-to-teams": "Back to Teams"
+      },
+      "info": {
+        "from": "From {city}",
+        "last-competed": "Last competed in {year}",
+        "season": "{year} Season"
+      },
+      "navigation": {
+        "team-info": "Team Info",
+        "event-results": "Event Results"
+      },
+      "results": {
+        "title": "Event Results",
+        "awards-title": "Awards & Achievements",
+        "winner": "WINNER"
+      },
+      "events": {
+        "season": "{year} Season",
+        "awards": "Awards",
+        "best-performance": "Best Match Performance",
+        "highest-score": "Highest Score",
+        "match-results": "Match Results",
+        "match-number": "Match {number}",
+        "robot-game-rank": "Robot Game: #{rank}",
+        "event-performance": "Event results"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",

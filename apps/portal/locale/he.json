@@ -64,6 +64,37 @@
         "clear-search": "נקה חיפוש"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "קבוצה #{number} לא נמצאה",
+        "description": "הקבוצה שאתה מחפש לא קיימת במאגר הנתונים שלנו.",
+        "back-to-teams": "חזרה לקבוצות"
+      },
+      "info": {
+        "from": "מ{city}",
+        "last-competed": "התחרה לאחרונה ב{year}",
+        "season": "עונת {year}"
+      },
+      "navigation": {
+        "team-info": "מידע על הקבוצה",
+        "event-results": "תוצאות אירועים"
+      },
+      "results": {
+        "title": "תוצאות אירועים",
+        "awards-title": "פרסים והישגים",
+        "winner": "זוכה"
+      },
+      "events": {
+        "season": "עונת {year}",
+        "awards": "פרסים",
+        "best-performance": "הביצוע הטוב ביותר במקצה",
+        "highest-score": "הניקוד הגבוה ביותר",
+        "match-results": "תוצאות מקצים",
+        "match-number": "מקצה {number}",
+        "robot-game-rank": "משחק הרובוט: מקום #{rank}",
+        "event-performance": "תוצאות אירוע"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
