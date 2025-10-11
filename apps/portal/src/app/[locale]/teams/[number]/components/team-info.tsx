@@ -38,14 +38,6 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({ team }) => {
           </Box>
         </Stack>
 
-        {/* Rookie Year */}
-        {team.rookieYear && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <CalendarIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
-            <Typography variant="body2">{t('info.rookie-year', { year: team.rookieYear })}</Typography>
-          </Stack>
-        )}
-
         {/* Last Competed */}
         {team.lastCompeted && (
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -59,7 +51,6 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({ team }) => {
           <Stack direction="row" alignItems="center" spacing={1}>
             <WebsiteIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
             <Typography variant="body2">
-              {t('info.details-on')}{' '}
               <MuiLink href={`https://${team.website}`} color="primary">
                 {team.website}
               </MuiLink>

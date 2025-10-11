@@ -72,21 +72,27 @@
       },
       "info": {
         "from": "מ{city}",
-        "rookie-year": "שנת רוקי: {year}",
         "last-competed": "התחרה לאחרונה ב{year}",
-        "details-on": "פרטים ב",
         "season": "עונת {year}"
       },
       "navigation": {
         "team-info": "מידע על הקבוצה",
-        "event-results": "תוצאות אירועים",
-        "photos-videos": "תמונות וסרטונים",
-        "robot-profile": "פרופיל רובוט"
+        "event-results": "תוצאות אירועים"
       },
       "results": {
         "title": "תוצאות אירועים",
         "awards-title": "פרסים והישגים",
         "winner": "זוכה"
+      },
+      "events": {
+        "season": "עונת {year}",
+        "awards": "פרסים",
+        "best-performance": "הביצוע הטוב ביותר במקצה",
+        "highest-score": "הניקוד הגבוה ביותר",
+        "match-results": "תוצאות מקצים",
+        "match-number": "מקצה {number}",
+        "robot-game-rank": "משחק הרובוט: מקום #{rank}",
+        "event-performance": "תוצאות אירוע"
       }
     },
     "tools": {

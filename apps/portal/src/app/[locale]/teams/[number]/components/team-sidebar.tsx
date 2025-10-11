@@ -65,12 +65,6 @@ export const TeamSidebar: React.FC<TeamSidebarProps> = ({
               <ListItemText primary={event} sx={{ fontSize: '0.875rem' }} />
             </ListItemButton>
           ))}
-          <ListItemButton>
-            <ListItemText primary={t('navigation.photos-videos')} />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemText primary={t('navigation.robot-profile')} />
-          </ListItemButton>
         </List>
       </Paper>
     </Box>

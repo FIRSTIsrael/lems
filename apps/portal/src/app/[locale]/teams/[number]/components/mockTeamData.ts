@@ -1,22 +1,43 @@
 // Mock team data
 export interface Team {
-  id: string;
+  id?: string;
   number: number;
   name: string;
-  logoUrl: string | null;
-  affiliation: string;
+  nickname?: string;
+  logoUrl?: string | null;
+  affiliation?: string;
   city: string;
-  coordinates: string | null;
+  location?: string;
+  coordinates?: string | null;
   // Additional
   rookieYear?: number;
   lastCompeted?: number;
   website?: string;
+  socialMedia?: {
+    facebook?: string;
+    youtube?: string;
+    instagram?: string;
+  };
   isChampion?: boolean;
   championYear?: number;
   championEvent?: string;
   awards?: string[];
   events?: string[];
   seasons?: number[];
+  eventResults?: EventResult[];
+}
+
+export interface EventResult {
+  eventName: string;
+  year: number;
+  rank?: number;
+  awards?: string[];
+  matches?: MatchResult[];
+}
+
+export interface MatchResult {
+  matchNumber: number;
+  score: number;
 }
 
 export const mockTeams: Team[] = [
@@ -44,7 +65,26 @@ export const mockTeams: Team[] = [
       'Innovation in Control Award'
     ],
     events: ['ISR #1', 'ISR #3', 'Israel Championship', 'Johnson Division', 'Einstein Division'],
-    seasons: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018]
+    seasons: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018],
+    eventResults: [
+      {
+        eventName: 'ISR #1',
+        year: 2025,
+        rank: 1,
+        awards: ['Event Winner', 'Robot Performance Award'],
+        matches: [
+          { matchNumber: 1, score: 185 },
+          { matchNumber: 2, score: 195 },
+          { matchNumber: 3, score: 190 }
+        ]
+      },
+      {
+        eventName: 'Israel Championship',
+        year: 2024,
+        rank: 1,
+        awards: ['Champion', 'Innovation Project Award', 'Core Values Award']
+      }
+    ]
   },
 
   // Team 3339 - BumbleB (Champion)
@@ -70,7 +110,26 @@ export const mockTeams: Team[] = [
       'Innovation Award'
     ],
     events: ['ISR #2', 'ISR #4', 'Israel Championship', 'World Championship'],
-    seasons: [2025, 2024, 2023, 2022, 2021, 2020]
+    seasons: [2025, 2024, 2023, 2022, 2021, 2020],
+    eventResults: [
+      {
+        eventName: 'ISR #2',
+        year: 2025,
+        rank: 2,
+        awards: ['Core Values Award', 'Robot Design Award'],
+        matches: [
+          { matchNumber: 1, score: 175 },
+          { matchNumber: 2, score: 188 },
+          { matchNumber: 3, score: 180 }
+        ]
+      },
+      {
+        eventName: 'World Championship',
+        year: 2023,
+        rank: 8,
+        awards: ['Excellence in Engineering Award']
+      }
+    ]
   },
 
   // Team 1943 - Neat Team
@@ -215,9 +274,9 @@ export const searchTeams = (teams: Team[], query: string): Team[] => {
     team =>
       team.number.toString().includes(searchTerm) ||
       team.name.toLowerCase().includes(searchTerm) ||
-      team.nickname.toLowerCase().includes(searchTerm) ||
+      team.nickname?.toLowerCase().includes(searchTerm) ||
       team.city.toLowerCase().includes(searchTerm) ||
-      team.location.toLowerCase().includes(searchTerm)
+      team.location?.toLowerCase().includes(searchTerm)
   );
 };
 

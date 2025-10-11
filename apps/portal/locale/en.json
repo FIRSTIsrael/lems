@@ -72,21 +72,27 @@
       },
       "info": {
         "from": "From {city}",
-        "rookie-year": "Rookie Year: {year}",
         "last-competed": "Last competed in {year}",
-        "details-on": "Details on",
         "season": "{year} Season"
       },
       "navigation": {
         "team-info": "Team Info",
-        "event-results": "Event Results",
-        "photos-videos": "Photos & Videos",
-        "robot-profile": "Robot Profile"
+        "event-results": "Event Results"
       },
       "results": {
         "title": "Event Results",
         "awards-title": "Awards & Achievements",
         "winner": "WINNER"
+      },
+      "events": {
+        "season": "{year} Season",
+        "awards": "Awards",
+        "best-performance": "Best Match Performance",
+        "highest-score": "Highest Score",
+        "match-results": "Match Results",
+        "match-number": "Match {number}",
+        "robot-game-rank": "Robot Game: #{rank}",
+        "event-performance": "Event results"
       }
     },
     "tools": {
