@@ -1,1 +1,46 @@
-{}
+{
+  "pages": {
+    "login": {
+      "title": "Login to Event",
+      "continue": "Continue",
+      "submitting": "Processing...",
+      "steps": {
+        "role": "Select Role",
+        "division": "Select Division",
+        "association": "Select Assignment",
+        "user": "Select User",
+        "password": "Enter Password"
+      },
+      "instructions": {
+        "role": "Please select your role for this event:",
+        "division": "Please select the division you are working in:",
+        "association": "Please select your assignment:",
+        "user": "Multiple users match your selection. Please choose your account:",
+        "password": "Please enter your 4-character password:"
+      },
+      "fields": {
+        "role": "Role",
+        "division": "Division",
+        "association": "Assignment",
+        "user": "User",
+        "password": "Password",
+        "password-helper": "4-character password"
+      },
+      "errors": {
+        "required": "This field is required",
+        "invalid-length": "Password must be exactly 4 characters",
+        "too-many-requests": "Too many login attempts. Please try again later.",
+        "invalid-password": "Invalid password. Please try again.",
+        "server-error": "An error occurred. Please try again.",
+        "not-found": "No matching users found. Please check your selections.",
+        "NO_USERS_WITH_ROLE": "No users found with this role.",
+        "NO_USERS_IN_DIVISION": "No users found in this division.",
+        "NO_USERS_WITH_ASSOCIATION": "No users found with this assignment.",
+        "USER_NOT_FOUND": "User not found.",
+        "MISSING_EVENT_SLUG": "Event information is missing.",
+        "EVENT_NOT_FOUND": "Event not found.",
+        "NO_USERS_FOR_EVENT": "No users configured for this event."
+      }
+    }
+  }
+}

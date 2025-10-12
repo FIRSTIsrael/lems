@@ -9,6 +9,7 @@ import timesyncServer from 'timesync/server';
 import './lib/dayjs';
 import './lib/database';
 import { expressLogger } from './lib/logger';
+import lemsRouter from './routers/lems';
 import apiRouter from './routers/api/index';
 import authRouter from './routers/auth';
 import adminRouter from './routers/admin/index';
@@ -46,6 +47,7 @@ app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
 // Application routers
+app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
 app.use('/portal', portalRouter);

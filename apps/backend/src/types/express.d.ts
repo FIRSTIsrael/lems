@@ -32,3 +32,8 @@ export interface AdminDivisionRequest extends AdminEventRequest {
 export interface SchedulerRequest extends Request {
   divisionId: string;
 }
+
+export interface LemsRequest extends Request {
+  userId: string;
+  userType: 'event-user';
+}
