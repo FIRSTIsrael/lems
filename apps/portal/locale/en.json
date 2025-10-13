@@ -86,12 +86,11 @@
       },
       "events": {
         "season": "{year} Season",
-        "awards": "Awards",
-        "best-performance": "Best Match Performance",
+        "event-summary": "Event Summary",
         "highest-score": "Highest Score",
         "match-results": "Match Results",
         "match-number": "Match {number}",
-        "robot-game-rank": "Robot Game: #{rank}",
+        "robot-game-rank": "Robot Game Rank",
         "event-performance": "Event results"
       }
     },

@@ -86,12 +86,11 @@
       },
       "events": {
         "season": "עונת {year}",
-        "awards": "פרסים",
-        "best-performance": "הביצוע הטוב ביותר במקצה",
+        "event-summary": "תוצאות האירוע",
         "highest-score": "הניקוד הגבוה ביותר",
         "match-results": "תוצאות מקצים",
         "match-number": "מקצה {number}",
-        "robot-game-rank": "משחק הרובוט: מקום #{rank}",
+        "robot-game-rank": "דירוג במשחק הרובוט",
         "event-performance": "תוצאות אירוע"
       }
     },

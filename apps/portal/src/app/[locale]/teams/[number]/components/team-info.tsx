@@ -1,17 +1,8 @@
 'use client';
 
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Stack,
-  Link as MuiLink
-} from '@mui/material';
-import {
-  LocationOn as LocationIcon,
-  Language as WebsiteIcon,
-  CalendarToday as CalendarIcon
-} from '@mui/icons-material';
+import { Box, Typography, Stack } from '@mui/material';
+import { LocationOn as LocationIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from './mockTeamData';
 
@@ -37,36 +28,15 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({ team }) => {
             </Typography>
           </Box>
         </Stack>
-
         {/* Last Competed */}
         {team.lastCompeted && (
           <Stack direction="row" alignItems="center" spacing={1}>
             <CalendarIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
-            <Typography variant="body2">{t('info.last-competed', { year: team.lastCompeted })}</Typography>
-          </Stack>
-        )}
-
-        {/* Website - Only show if team has a website */}
-        {team.website && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <WebsiteIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
             <Typography variant="body2">
-              <MuiLink href={`https://${team.website}`} color="primary">
-                {team.website}
-              </MuiLink>
+              {t('info.last-competed', { year: team.lastCompeted })}
             </Typography>
           </Stack>
         )}
-
-        {/* Social Media - Commented out for now */}
-        {/* <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          sx={{ mt: 2, flexWrap: 'wrap' }}
-        >
-          Social media buttons would go here
-        </Stack> */}
       </Stack>
     </Box>
   );

@@ -20,11 +20,6 @@ export const TeamHeader: React.FC<TeamHeaderProps> = ({ team, teamNumber }) => {
       <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
         {/* Team Information */}
         <TeamInfo team={team} />
-
-        {/* Robot Photo - Commented out for now */}
-        {/* <Box sx={{ flex: 1, maxWidth: { md: '300px' } }}>
-          Robot photo would go here
-        </Box> */}
       </Box>
     </Paper>
   );
