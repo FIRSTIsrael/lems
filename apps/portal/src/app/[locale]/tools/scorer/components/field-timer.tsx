@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext, useEffect, useRef } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, Chip } from '@mui/material';
+import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, Chip, LinearProgress } from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -77,6 +77,8 @@ const FieldTimer = () => {
     return 'primary.main';
   };
 
+  const progress = ((totalTime - timeRemaining) / totalTime) * 100;
+
   return (
     <>
       {/*Button */}
@@ -146,7 +148,7 @@ const FieldTimer = () => {
           </Box>
 
           {/* Progress Bar */}
-          {/* <LinearProgress
+          <LinearProgress
             variant="determinate"
             value={progress}
             sx={{
@@ -156,7 +158,7 @@ const FieldTimer = () => {
                 backgroundColor: getTimerColor()
               }
             }}
-          /> */}
+          />
 
           {/* Timer Display */}
           <Box sx={{ px: 3, py: 2, textAlign: 'center' }}>
