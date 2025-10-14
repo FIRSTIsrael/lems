@@ -3,6 +3,26 @@ import { Locales, Locale } from '@lems/localization';
 
 export const defaultColor = '#003d6a';
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    award: {
+      first: string;
+      second: string;
+      third: string;
+      other: string;
+    };
+  }
+
+  interface PaletteOptions {
+    award?: {
+      first?: string;
+      second?: string;
+      third?: string;
+      other?: string;
+    };
+  }
+}
+
 const softShadows: Shadows = [
   'none',
   '0px 1px 2px 0px rgb(0 0 0 / 3%), 0px 2px 10px 0px rgb(0 0 0 / 12%)',
@@ -31,7 +51,7 @@ const softShadows: Shadows = [
   '0 48px 92px 0 rgb(0 0 0 / 19%), 0 40px 80px 0 rgb(0 0 0 / 10%)'
 ];
 
-export const baseTheme = createTheme({
+const baseTheme = createTheme({
   shape: {
     borderRadius: 8
   },
@@ -66,6 +86,12 @@ export const baseTheme = createTheme({
     }
   },
   shadows: softShadows
+});
+
+export const mainTheme = createTheme(baseTheme, {
+  palette: {
+    award: { first: '#fecb4d', second: '#A7AB99', third: '#b08053', other: '#5ebad9' }
+  }
 });
 
 export const getLocalizedTheme = (locale: Locale = 'he') => {

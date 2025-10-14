@@ -24,6 +24,7 @@ export const TeamInfo: React.FC = () => {
           </Typography>
         </Box>
       </Stack>
+
       {/* Last Competed */}
       {team.lastCompetedSeason && (
         <Stack direction="row" alignItems="center" spacing={1}>

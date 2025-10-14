@@ -83,6 +83,8 @@
         "awards-title": "Awards & Achievements",
         "winner": "WINNER"
       },
+      "title": "{name} #{number}",
+      "team-logo-alt": "Team {number} Logo",
       "events": {
         "event-summary": "Event Summary",
         "highest-score": "Highest Score",

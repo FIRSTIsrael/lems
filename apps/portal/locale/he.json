@@ -83,6 +83,8 @@
         "awards-title": "פרסים והישגים",
         "winner": "זוכה"
       },
+      "title": "{name} #{number}",
+      "team-logo-alt": "לוגו של קבוצה {number}",
       "events": {
         "event-summary": "תוצאות האירוע",
         "highest-score": "הניקוד הגבוה ביותר",

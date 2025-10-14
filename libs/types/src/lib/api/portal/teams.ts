@@ -22,3 +22,14 @@ export type TeamSummary = z.infer<typeof PortalTeamSummaryResponseSchema>;
 export const PortalTeamsResponseSchema = z.array(PortalTeamResponseSchema);
 
 export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryResponseSchema);
+
+export const PortalTeamEventResultSchema = z.object({
+  eventName: z.string(),
+  awards: z.array(z.object({ name: z.string(), place: z.number().nullable() })),
+  matches: z.array(z.object({ number: z.number(), score: z.number() })),
+  robotGameRank: z.number()
+});
+
+export type TeamEventResult = z.infer<typeof PortalTeamEventResultSchema>;
+
+export const PortalTeamEventResultsSchema = z.array(PortalTeamEventResultSchema);

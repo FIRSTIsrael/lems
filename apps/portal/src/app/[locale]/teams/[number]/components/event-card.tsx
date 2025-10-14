@@ -4,35 +4,26 @@ import React from 'react';
 import { Card, CardContent, Typography, Box, Stack, Divider, Grid } from '@mui/material';
 import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { EventResult } from './mockTeamData';
+import { TeamEventResult } from '@lems/types/api/portal';
 
 interface EventCardProps {
-  eventResult: EventResult;
+  eventResult: TeamEventResult;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
 
-  // TODO: connect to data
-  const getAwardIcon = (award: string) => {
-    const winningKeywords = ['winner', 'champion', '1st', '2nd', '3rd', 'first', 'second', 'third'];
-    const isWinning = winningKeywords.some(keyword => award.toLowerCase().includes(keyword));
-
-    if (isWinning) {
-      if (
-        award.toLowerCase().includes('1st') ||
-        award.toLowerCase().includes('first') ||
-        award.toLowerCase().includes('winner') ||
-        award.toLowerCase().includes('champion')
-      ) {
-        return '#FFD700';
-      } else if (award.toLowerCase().includes('2nd') || award.toLowerCase().includes('second')) {
-        return '#C0C0C0';
-      } else if (award.toLowerCase().includes('3rd') || award.toLowerCase().includes('third')) {
-        return '#CD7F32';
-      }
+  const getAwardIcon = (award: { name: string; place: number | null }) => {
+    switch (award.place) {
+      case 1:
+        return 'award.first';
+      case 2:
+        return 'award.second';
+      case 3:
+        return 'award.third';
+      default:
+        return 'award.other';
     }
-    return '#FFA500'; // maybe should be none?
   };
 
   return (
@@ -61,7 +52,6 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
           </Typography>
           <Grid container spacing={2}>
             {eventResult.awards &&
-              eventResult.awards.length > 0 &&
               eventResult.awards.map((award, index) => {
                 const trophyColor = getAwardIcon(award);
                 return (
@@ -81,7 +71,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
                   >
                     <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                      {award}
+                      {award.name}
                     </Typography>
                   </Grid>
                 );
@@ -111,7 +101,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
                 </Typography>
               </Grid>
             )}
-            {eventResult.matches && eventResult.matches.length > 0 && eventResult.rank && (
+            {eventResult.robotGameRank && (
               <Grid
                 size={{ xs: 12, sm: 6, lg: 3 }}
                 sx={{
@@ -132,7 +122,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
                   </Typography>
                 </Stack>
                 <Typography variant="h6" fontWeight="600" color="primary">
-                  {eventResult.rank}
+                  {eventResult.robotGameRank}
                 </Typography>
               </Grid>
             )}
@@ -140,7 +130,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
         </Box>
 
         {/* Match Results */}
-        {eventResult.matches && eventResult.matches.length > 0 && (
+        {eventResult.matches && (
           <>
             <Divider sx={{ my: 2 }} />
             <Box>
@@ -164,7 +154,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
                     }}
                   >
                     <Typography variant="body1" fontWeight="600">
-                      {t('match-number', { number: match.matchNumber })}
+                      {t('match-number', { number: match.number })}
                     </Typography>
                     <Typography variant="h6" fontWeight="600" color="primary">
                       {match.score}
