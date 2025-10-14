@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
 import { Typography, Paper, Stack, Box } from '@mui/material';
 import { TeamEventResult } from '@lems/types/api/portal';
+import { Element } from 'react-scroll';
 import { TeamEventResultCard } from './team-event-result-card';
 import { useTeam } from './team-context';
 
@@ -26,16 +27,18 @@ export const TeamResults: React.FC = () => {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Box id="event-results">
-        <Typography variant="h2" sx={{ mb: 2, fontWeight: 600 }}>
-          {tEvents('event-performance')}
-        </Typography>
-        <Stack spacing={3}>
-          {eventResults.map((eventResult, index) => (
-            <TeamEventResultCard key={index} eventResult={eventResult} />
-          ))}
-        </Stack>
-      </Box>
+      <Element name="event-results">
+        <Box>
+          <Typography variant="h2" sx={{ mb: 2, fontWeight: 600 }}>
+            {tEvents('event-performance')}
+          </Typography>
+        </Box>
+      </Element>
+      <Stack spacing={3} sx={{ mt: 3 }}>
+        {eventResults.map(eventResult => (
+          <TeamEventResultCard key={`event-${eventResult.eventSlug}`} eventResult={eventResult} />
+        ))}
+      </Stack>
     </Paper>
   );
 };

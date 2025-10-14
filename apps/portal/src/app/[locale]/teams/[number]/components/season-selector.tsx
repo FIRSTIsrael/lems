@@ -30,8 +30,6 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ season }) => {
     router.push(`?${params.toString()}`);
   };
 
-  console.log({ seasons, season });
-
   return (
     <Box p={2}>
       <FormControl size="small" fullWidth>
