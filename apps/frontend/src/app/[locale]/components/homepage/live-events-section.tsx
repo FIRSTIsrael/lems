@@ -1,17 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import useSWR from 'swr';
+import dayjs from 'dayjs';
 import { Box, Typography, Stack, CircularProgress } from '@mui/material';
 import { FiberManualRecord as LiveIcon } from '@mui/icons-material';
-import { Event, LemsEventsResponseSchema } from '@lems/types/api/lems';
+import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
+import { fetchLiveEvents, HomepageEventsResponseData } from './events.graphql';
 
 export const LiveEventsSection: React.FC = () => {
-  const { data: liveEvents = [], isLoading } = useSWR<Event[]>([
-    `/lems/events/live`,
-    LemsEventsResponseSchema
-  ]);
+  const { now, oneDayAgo } = useMemo(() => {
+    const currentTime = dayjs();
+    return {
+      now: currentTime.toISOString(),
+      oneDayAgo: currentTime.subtract(1, 'day').toISOString()
+    };
+  }, []);
+
+  const { data, isLoading } = useSWR<HomepageEventsResponseData>(
+    ['live-events', now, oneDayAgo],
+    () => fetchLiveEvents(now, oneDayAgo)
+  );
+
+  const liveEvents: Event[] =
+    data?.events.map(event => ({
+      id: event.id,
+      name: event.name,
+      slug: event.slug,
+      startDate: new Date(event.startDate),
+      endDate: new Date(event.endDate),
+      location: '',
+      coordinates: null,
+      seasonId: ''
+    })) || [];
 
   if (isLoading) {
     return (

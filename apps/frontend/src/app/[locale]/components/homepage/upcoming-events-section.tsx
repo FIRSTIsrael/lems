@@ -1,26 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import { Box, Typography, Stack, CircularProgress } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
-import { Event, LemsEventsResponseSchema } from '@lems/types/api/lems';
+import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
+import { fetchUpcomingEvents, HomepageEventsResponseData } from './events.graphql';
 
 export const UpcomingEventsSection: React.FC = () => {
-  const now = dayjs();
+  const { endOfDay, endOfWeek } = useMemo(() => {
+    const currentTime = dayjs();
+    return {
+      endOfDay: currentTime.endOf('day').toISOString(),
+      endOfWeek: currentTime.endOf('week').toISOString()
+    };
+  }, []);
 
-  const { data: events = [], isLoading } = useSWR<Event[]>([
-    '/lems/events/upcoming',
-    LemsEventsResponseSchema
-  ]);
+  const { data, isLoading } = useSWR<HomepageEventsResponseData>(
+    ['upcoming-events', endOfDay, endOfWeek],
+    () => fetchUpcomingEvents(endOfDay, endOfWeek)
+  );
 
-  const endOfWeek = now.endOf('week');
-  const upcomingEvents = events.filter(event => {
-    const eventDate = dayjs(event.startDate);
-    return eventDate.isBefore(endOfWeek);
-  });
+  const upcomingEvents: Event[] =
+    data?.events.map(event => ({
+      id: event.id,
+      name: event.name,
+      slug: event.slug,
+      startDate: new Date(event.startDate),
+      endDate: new Date(event.endDate),
+      location: '',
+      coordinates: null,
+      seasonId: ''
+    })) || [];
 
   if (isLoading) {
     return (

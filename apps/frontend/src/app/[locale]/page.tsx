@@ -1,23 +1,26 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
-import { HomePage } from './components/homepage/homepage';
+import { Box, Container } from '@mui/material';
+import { Hero } from './components/homepage/hero';
+import { LiveEventsSection } from './components/homepage/live-events-section';
+import { UpcomingEventsSection } from './components/homepage/upcoming-events-section';
 
-interface PageProps {
-  params: Promise<{
-    locale: string;
-  }>;
-}
-
-export default async function Page({ params }: PageProps) {
-  const { locale } = await params;
-
-  // Check if user is already authenticated
+export default async function Page() {
   const authResult = await apiFetch('/lems/auth/verify');
   if (authResult.ok) {
     // TODO: Redirect to role-specific page based on user role
     // For now, redirect to a generic dashboard or home
-    redirect(`/${locale}/dashboard`);
+    redirect(`/dashboard`);
   }
 
-  return <HomePage />;
+  return (
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Hero />
+
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+        <LiveEventsSection />
+        <UpcomingEventsSection />
+      </Container>
+    </Box>
+  );
 }

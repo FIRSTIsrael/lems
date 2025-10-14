@@ -38,10 +38,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
     if (authResult.ok) {
       // Authenticated: redirect to role page (to be implemented)
       // For now, redirect to dashboard
-      router.push(`/${locale}/${event.slug}/dashboard`);
+      router.push(`/${event.slug}/dashboard`);
     } else {
       // Not authenticated: redirect to login page
-      router.push(`/${locale}/${event.slug}/login`);
+      router.push(`/${event.slug}/login`);
     }
   };
 
