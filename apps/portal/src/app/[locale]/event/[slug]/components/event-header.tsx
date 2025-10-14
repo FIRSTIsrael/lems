@@ -26,7 +26,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({
         {/* Event Name */}
         <Stack spacing={1}>
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-            <Link href={`/events/${seasonSlug}`} style={{ textDecoration: 'none' }}>
+            <Link href={`/events?seasonSlug=${seasonSlug}`} style={{ textDecoration: 'none' }}>
               <Typography
                 variant="body2"
                 sx={{ color: 'primary.main', '&:hover': { textDecoration: 'underline' } }}

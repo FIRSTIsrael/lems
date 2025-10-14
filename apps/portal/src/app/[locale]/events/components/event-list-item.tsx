@@ -128,6 +128,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
             minWidth: { xs: '100%', sm: 'auto' },
             whiteSpace: 'nowrap'
           }}
+          href={`/event/${event.slug}`}
         >
           {variant === 'active'
             ? 'View Event'
