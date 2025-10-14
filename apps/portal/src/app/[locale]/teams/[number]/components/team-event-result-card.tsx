@@ -1,17 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, Typography, Box, Stack, Divider, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Box, Stack, Divider, Grid, Button } from '@mui/material';
 import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamEventResult } from '@lems/types/api/portal';
+import { useTeam } from './team-context';
 
-interface EventCardProps {
+interface TeamEventResultCardProps {
   eventResult: TeamEventResult;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
+export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
+  const team = useTeam();
 
   const getAwardIcon = (award: { name: string; place: number | null }) => {
     switch (award.place) {
@@ -41,9 +43,14 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
       id={eventResult.eventName}
     >
       <CardContent>
-        <Typography variant="h4" fontWeight="600" color="primary" gutterBottom>
-          {eventResult.eventName}
-        </Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+          <Typography variant="h4" fontWeight="600" color="primary">
+            {eventResult.eventName}
+          </Typography>
+          <Button variant="text" href={`/events/${eventResult.eventSlug}/teams/${team.number}`}>
+            {t('view-details')}
+          </Button>
+        </Stack>
 
         {/* Awards Section */}
         <Box mb={2}>

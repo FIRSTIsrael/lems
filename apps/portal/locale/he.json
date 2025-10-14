@@ -91,7 +91,8 @@
         "match-results": "תוצאות מקצים",
         "match-number": "מקצה {number}",
         "robot-game-rank": "דירוג במשחק הרובוט",
-        "event-performance": "תוצאות אירוע"
+        "event-performance": "תוצאות אירוע",
+        "view-details": "פרטים נוספים"
       }
     },
     "tools": {

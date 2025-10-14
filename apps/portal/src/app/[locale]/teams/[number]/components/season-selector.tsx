@@ -1,6 +1,6 @@
 'use client';
 
-import { FormControl, Select, MenuItem } from '@mui/material';
+import { Box, FormControl, Select, MenuItem } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Season } from '@lems/types/api/portal';
@@ -30,19 +30,23 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ season }) => {
     router.push(`?${params.toString()}`);
   };
 
+  console.log({ seasons, season });
+
   return (
-    <FormControl size="small" fullWidth>
-      <Select
-        value={season === 'latest' ? seasons[0].slug : season}
-        onChange={e => handleSeasonChange(e.target.value)}
-        displayEmpty
-      >
-        {seasons.map(season => (
-          <MenuItem key={season.slug} value={season.slug}>
-            {season.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Box p={2}>
+      <FormControl size="small" fullWidth>
+        <Select
+          value={season === 'latest' ? seasons[0].slug : season}
+          onChange={e => handleSeasonChange(e.target.value)}
+          displayEmpty
+        >
+          {seasons.map(season => (
+            <MenuItem key={season.slug} value={season.slug}>
+              {season.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
