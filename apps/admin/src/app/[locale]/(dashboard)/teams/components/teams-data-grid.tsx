@@ -50,7 +50,10 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         <Box
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
         >
-          <Avatar src={params.row.logoUrl || '/assets/default-avatar.svg'} alt={params.row.name}>
+          <Avatar
+            src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
+            alt={params.row.name}
+          >
             #{params.row.number}
           </Avatar>
         </Box>

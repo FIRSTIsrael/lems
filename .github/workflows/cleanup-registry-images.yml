@@ -1,0 +1,81 @@
+name: Cleanup Registry Images
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'Repository name to clean up'
+        required: true
+        type: string
+      tag_pattern:
+        description: 'Tag pattern to match for deletion (e.g., "staging-*" or "v*-beta")'
+        required: true
+        type: string
+      exclude_tag:
+        description: 'Tag to exclude from deletion (e.g., current deployment)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  cleanup:
+    name: Cleanup ${{ inputs.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Remove old images matching pattern
+        run: |
+          # Function to clean up old images for a repository
+          cleanup_repository() {
+            local repo_name=$1
+            echo "Cleaning up repository: $repo_name"
+            
+            local tags_json=$(doctl registry repository list-tags "$repo_name" --output json 2>/dev/null || echo "[]")
+            
+            echo "Debug: JSON output for $repo_name:"
+            echo "$tags_json" | jq '.'
+            
+            local tags_count=$(echo "$tags_json" | jq 'length')
+            if [ "$tags_count" -gt 0 ]; then
+              echo "Found $tags_count tag(s) to process"
+              echo "$tags_json" | jq -c '.[]' | while read -r item; do
+                tag=$(echo "$item" | jq -r '.tag')
+                digest=$(echo "$item" | jq -r '.manifest_digest')
+                
+                # Skip if tag matches the exclude_tag
+                if [ -n "${{ inputs.exclude_tag }}" ] && [ "$tag" == "${{ inputs.exclude_tag }}" ]; then
+                  echo "Skipping excluded tag: $tag"
+                  continue
+                fi
+                
+                if [[ "$tag" == staging-* ]]; then # Only process tags starting with 'staging-'
+                  echo "Processing Tag: $tag, Digest: $digest"
+                  if [ -n "$digest" ] && [ "$digest" != "null" ]; then
+                    doctl registry repository delete-manifest "$repo_name" "$digest" --force
+                    echo "✓ Deleted $tag"
+                  else
+                    echo "Warning: Empty or null digest for tag $tag in repository $repo_name" >&2
+                  fi
+                else
+                  echo "Skipping tag $tag as it does not start with 'staging-'"
+                fi
+              done
+              echo "✓ Cleaned up $repo_name"
+            else
+              echo "✓ No old images found in $repo_name"
+            fi
+          }
+          
+          cleanup_repository "${{ inputs.repository }}"

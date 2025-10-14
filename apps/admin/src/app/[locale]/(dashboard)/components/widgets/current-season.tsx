@@ -50,7 +50,7 @@ export default async function CurrentSeasonWidget() {
         <Box display="flex" alignItems="center" gap={3} width="100%">
           <Avatar
             variant="rounded"
-            src={season.logoUrl || '/assets/FIRST-Logo.svg'}
+            src={season.logoUrl || '/admin/assets/FIRST-Logo.svg'}
             sx={{
               width: 120,
               height: 120,

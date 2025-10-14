@@ -64,6 +64,37 @@
         "clear-search": "Clear Search"
       }
     },
+    "team": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in our database.",
+        "back-to-teams": "Back to Teams"
+      },
+      "info": {
+        "from": "From {city}",
+        "last-competed": "Last competed in {season}"
+      },
+      "navigation": {
+        "team-info": "Team Info",
+        "event-results": "Event Results"
+      },
+      "results": {
+        "title": "Event Results",
+        "awards-title": "Awards & Achievements",
+        "winner": "WINNER"
+      },
+      "title": "{name} #{number}",
+      "team-logo-alt": "Team {number} Logo",
+      "events": {
+        "event-summary": "Event Summary",
+        "highest-score": "Highest Score",
+        "match-results": "Match Results",
+        "match-number": "Match {number}",
+        "robot-game-rank": "Robot Game Rank",
+        "event-performance": "Event results",
+        "view-details": "View Details"
+      }
+    },
     "event": {
       "general-info": "General Information",
       "event-date": "Event Date",
@@ -106,7 +137,7 @@
       },
       "awards": {
         "team-awards": "Team Awards",
-        "personal-awards": "Personal Awards", 
+        "personal-awards": "Personal Awards",
         "advancement": "Eligible for Advancement",
         "place": "{place} Place",
         "no-data": "No awards announced yet"

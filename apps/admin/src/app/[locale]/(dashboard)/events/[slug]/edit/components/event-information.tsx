@@ -17,7 +17,7 @@ export const EventInformation = () => {
   const { data: divisions = [], mutate } = useSWR<Division[]>(
     `/admin/events/${event.id}/divisions`,
     async (url: string) => {
-      const result = await apiFetch(url, undefined, AdminDivisionsResponseSchema);
+      const result = await apiFetch(url, {}, AdminDivisionsResponseSchema);
       if (result.ok) {
         return result.data;
       }
