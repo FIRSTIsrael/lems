@@ -82,7 +82,7 @@ class RobotGameMatchesSelector {
       .execute();
   }
 
-  async getAll() {
+  async getAll(): Promise<Array<RobotGameMatch & { participants: RobotGameMatchParticipant[] }>> {
     const matches = await this.getMatches();
     const matchesWithParticipants = [];
 

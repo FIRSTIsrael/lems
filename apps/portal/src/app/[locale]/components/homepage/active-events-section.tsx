@@ -15,7 +15,7 @@ export const ActiveEventsSection = () => {
 
   const { data: events = [] } = useSWR<EventSummary[]>(
     [`/portal/events?after=${threeDaysAgo.unix()}`, PortalEventSummariesResponseSchema],
-    { suspense: true }
+    { suspense: true, fallbackData: [] }
   );
 
   const { activeEvents, upcomingEvents, pastEvents } = events.reduce(
