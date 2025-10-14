@@ -15,22 +15,14 @@ import {
   Button,
   ListItemIcon
 } from '@mui/material';
-import {
-  AssignmentOutlined,
-  CalculateOutlined,
-  Event,
-  MenuRounded,
-  TimerOutlined
-} from '@mui/icons-material';
+import { AssignmentOutlined, CalculateOutlined, Event, MenuRounded } from '@mui/icons-material';
 import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 
 const pages = [
   { name: 'events', href: '/events', icon: <Event /> },
   { name: 'scorer', href: '/tools/scorer', icon: <CalculateOutlined /> },
-  { name: 'field-timer', href: '/tools/field-timer', icon: <TimerOutlined /> },
-  { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> },
-  { name: 'judging-timer', href: '/tools/judging-timer', icon: <TimerOutlined /> }
+  { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> }
 ];
 
 interface PortalAppBarProps {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useContext, useEffect, useRef } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, Chip, LinearProgress } from '@mui/material';
+import { useState, useContext } from 'react';
+import { Typography, Stack, Paper, IconButton, Slide, Fab } from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -10,107 +10,70 @@ import {
   Refresh as RefreshIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { useTranslations } from 'next-intl';
-import { useFieldTimer, formatTime } from '../../../../../hooks/use-field-timer';
-import { useTimerSounds } from '../../../../../hooks/use-timer-sounds';
+import { useFieldTimer } from '../hooks/use-field-timer';
 import { MissionContext } from './mission-context';
 
-const FieldTimer = () => {
-  const t = useTranslations('pages.tools.scorer.field-timer');
-  const { points } = useContext(MissionContext);
+const formatTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
+export const FieldTimer = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // 2:30m -> 150s
-  const [timerState, timerControls] = useFieldTimer(150);
-  const { timeRemaining, isRunning, isFinished, totalTime } = timerState;
-  const { playStartSound, playEndgameSound, playEndSound } = useTimerSounds();
-
+  const { points } = useContext(MissionContext);
   const scoreFloaterShown = Boolean(points);
+
+  const [timerState, timerControls] = useFieldTimer();
+  const { timeRemaining, isRunning, matchLength } = timerState;
+  const isReset = timeRemaining === matchLength;
+  const justStarted = isRunning && isReset;
+  const isFinished = timeRemaining === 0;
+
   const { start, pause, resume, stop, reset } = timerControls;
-
-  const prevTimeRef = useRef(timeRemaining);
-  const prevRunningRef = useRef(isRunning);
-
-  useEffect(() => {
-    const prevTime = prevTimeRef.current;
-    const prevRunning = prevRunningRef.current;
-
-    if (!prevRunning && isRunning && timeRemaining === totalTime) {
-      playStartSound();
-    }
-    if (isRunning && timeRemaining === 30 && prevTime === 31) {
-      playEndgameSound();
-    }
-    if (timeRemaining === 0 && prevTime === 1) {
-      playEndSound();
-    }
-
-    prevTimeRef.current = timeRemaining;
-    prevRunningRef.current = isRunning;
-  }, [timeRemaining, isRunning, totalTime, playStartSound, playEndgameSound, playEndSound]);
-
-  const handleToggleTimer = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handlePlayPause = () => {
     if (isRunning) {
       pause();
-    } else if (timeRemaining === totalTime) {
+    } else if (isReset) {
       start();
     } else {
       resume();
     }
   };
 
-  const handleStop = () => {
-    stop();
-  };
-
-  const handleReset = () => {
-    reset();
-  };
-
-  const getTimerColor = () => {
-    if (isFinished) return 'error.main';
-    if (timeRemaining <= 30) return 'warning.main';
-    return 'primary.main';
-  };
-
-  const progress = ((totalTime - timeRemaining) / totalTime) * 100;
-
   return (
     <>
-      {/*Button */}
-      <Fab
-        sx={{
-          position: 'fixed',
-          bottom: scoreFloaterShown ? { xs: 90, md: 94 } : { xs: 16, md: 24 },
-          right: { xs: 16, md: 24 },
-          zIndex: 1000,
-          bgcolor: 'primary.main',
-          color: 'white',
-          transition: 'bottom 0.3s ease-in-out',
-          '&:hover': {
-            bgcolor: 'primary.dark'
-          }
-        }}
-        onClick={handleToggleTimer}
-      >
-        <TimerIcon />
-      </Fab>
+      {!isOpen && (
+        <Fab
+          sx={{
+            position: 'fixed',
+            bottom: scoreFloaterShown ? { xs: 90, md: 24 } : { xs: 16, md: 24 },
+            right: { xs: 16, md: 24 },
+            zIndex: 1000,
+            bgcolor: 'primary.main',
+            color: 'white',
+            transition: 'bottom 0.3s ease-in-out',
+            '&:hover': {
+              bgcolor: 'primary.dark'
+            }
+          }}
+          onClick={() => setIsOpen(true)}
+        >
+          <TimerIcon />
+        </Fab>
+      )}
 
-      {/*Timer Panel */}
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
           elevation={8}
           sx={{
             position: 'fixed',
-            bottom: scoreFloaterShown ? { xs: 90, md: 94 } : { xs: 16, md: 24 },
+            bottom: scoreFloaterShown ? { xs: 90, md: 24 } : { xs: 16, md: 24 },
             right: { xs: 16, md: 24 },
-            zIndex: 999,
+            zIndex: 1001,
             width: { xs: 'calc(100vw - 32px)', sm: 320, md: 360 },
-            maxWidth: 'calc(100vw - 32px)',
             borderRadius: 3,
             overflow: 'hidden',
             background:
@@ -120,53 +83,29 @@ const FieldTimer = () => {
             transition: 'bottom 0.3s ease-in-out'
           }}
         >
-          {/* Header */}
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
+          <IconButton
+            onClick={() => setIsOpen(false)}
             sx={{
-              p: 2,
-              pb: 0,
-              background: `linear-gradient(45deg, ${getTimerColor()} 30%, ${getTimerColor()}80 90%)`,
-              color: 'white'
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              color: 'grey.600',
+              '&:hover': { bgcolor: 'grey.100' }
             }}
           >
-            <Typography variant="h6" fontWeight={600}>
-              {t('title')}
-            </Typography>
-            <IconButton size="small" sx={{ color: 'white' }} onClick={handleToggleTimer}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Stack>
+            <CloseIcon />
+          </IconButton>
 
-          {/* Field Timer Header */}
-          <Box sx={{ px: 3, pb: 1, mt: -5, textAlign: 'center' }}>
-            <Typography variant="h6" color="text.primary" fontWeight={700}>
-              {t('title')}
-            </Typography>
-          </Box>
-
-          {/* Progress Bar */}
-          <LinearProgress
-            variant="determinate"
-            value={progress}
-            sx={{
-              height: 4,
-              backgroundColor: 'rgba(0,0,0,0.1)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: getTimerColor()
-              }
-            }}
-          />
-
-          {/* Timer Display */}
-          <Box sx={{ px: 3, py: 2, textAlign: 'center' }}>
+          <Stack
+            sx={{ px: 3, py: 2, textAlign: 'center' }}
+            alignItems="center"
+            justifyContent="center"
+          >
             <Typography
               variant="h2"
               sx={{
                 fontWeight: 700,
-                color: getTimerColor(),
+                color: 'primary.main',
                 fontSize: { xs: '2.5rem', sm: '3rem' },
                 fontFamily: 'monospace',
                 letterSpacing: 2,
@@ -176,71 +115,49 @@ const FieldTimer = () => {
               {formatTime(timeRemaining)}
             </Typography>
 
-            {isFinished && (
-              <Chip
-                label={t('finished')}
-                color="error"
-                variant="filled"
-                sx={{ mt: 1, fontWeight: 600 }}
-              />
-            )}
-          </Box>
+            <Stack direction="row" spacing={1} justifyContent="center" sx={{ p: 1.5 }}>
+              <IconButton
+                onClick={handlePlayPause}
+                disabled={isFinished || justStarted}
+                sx={{
+                  bgcolor: isRunning ? 'warning.main' : 'success.main',
+                  color: 'white',
+                  '&:hover': { bgcolor: isRunning ? 'warning.dark' : 'success.dark' },
+                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                }}
+              >
+                {isRunning ? <PauseIcon /> : <PlayIcon />}
+              </IconButton>
 
-          {/* Controls */}
-          <Stack direction="row" spacing={1} justifyContent="center" sx={{ px: 2, pb: 2, pt: 1 }}>
-            <IconButton
-              onClick={handlePlayPause}
-              disabled={isFinished}
-              sx={{
-                bgcolor: isRunning ? 'warning.main' : 'success.main',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: isRunning ? 'warning.dark' : 'success.dark'
-                },
-                '&:disabled': {
-                  bgcolor: 'grey.300',
-                  color: 'grey.500'
-                }
-              }}
-            >
-              {isRunning ? <PauseIcon /> : <PlayIcon />}
-            </IconButton>
+              <IconButton
+                onClick={() => stop()}
+                disabled={isFinished || !isRunning}
+                sx={{
+                  bgcolor: 'error.main',
+                  color: 'white',
+                  '&:hover': { bgcolor: 'error.dark' },
+                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                }}
+              >
+                <StopIcon />
+              </IconButton>
 
-            <IconButton
-              onClick={handleStop}
-              disabled={timeRemaining === totalTime}
-              sx={{
-                bgcolor: 'error.main',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'error.dark'
-                },
-                '&:disabled': {
-                  bgcolor: 'grey.300',
-                  color: 'grey.500'
-                }
-              }}
-            >
-              <StopIcon />
-            </IconButton>
-
-            <IconButton
-              onClick={handleReset}
-              sx={{
-                bgcolor: 'grey.600',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'grey.700'
-                }
-              }}
-            >
-              <RefreshIcon />
-            </IconButton>
+              <IconButton
+                onClick={() => reset()}
+                disabled={isRunning || isReset}
+                sx={{
+                  bgcolor: 'grey.600',
+                  color: 'white',
+                  '&:hover': { bgcolor: 'grey.700' },
+                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                }}
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Stack>
           </Stack>
         </Paper>
       </Slide>
     </>
   );
 };
-
-export default FieldTimer;
