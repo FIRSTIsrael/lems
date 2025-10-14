@@ -72,8 +72,7 @@
       },
       "info": {
         "from": "From {city}",
-        "last-competed": "Last competed in {year}",
-        "season": "{year} Season"
+        "last-competed": "Last competed in {season}"
       },
       "navigation": {
         "team-info": "Team Info",
@@ -85,7 +84,6 @@
         "winner": "WINNER"
       },
       "events": {
-        "season": "{year} Season",
         "event-summary": "Event Summary",
         "highest-score": "Highest Score",
         "match-results": "Match Results",

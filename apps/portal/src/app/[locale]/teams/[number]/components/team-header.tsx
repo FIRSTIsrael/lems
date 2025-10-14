@@ -2,24 +2,18 @@
 
 import React from 'react';
 import { Box, Paper } from '@mui/material';
-import { Team } from './mockTeamData';
 import { TeamTitle } from './team-title';
 import { TeamInfo } from './team-info';
 
-interface TeamHeaderProps {
-  team: Team;
-  teamNumber: number;
-}
-
-export const TeamHeader: React.FC<TeamHeaderProps> = ({ team, teamNumber }) => {
+export const TeamHeader: React.FC = () => {
   return (
-    <Paper sx={{ p: 3, mb: 3 }}>
+    <Paper sx={{ p: 3, mb: 3 }} id="team-info">
       {/* Team Title Section */}
-      <TeamTitle team={team} teamNumber={teamNumber} />
+      <TeamTitle />
 
       <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
         {/* Team Information */}
-        <TeamInfo team={team} />
+        <TeamInfo />
       </Box>
     </Paper>
   );

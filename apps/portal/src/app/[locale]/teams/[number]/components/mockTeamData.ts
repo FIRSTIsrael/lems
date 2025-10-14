@@ -12,12 +12,6 @@ export interface Team {
   // Additional
   rookieYear?: number;
   lastCompeted?: number;
-  website?: string;
-  socialMedia?: {
-    facebook?: string;
-    youtube?: string;
-    instagram?: string;
-  };
   isChampion?: boolean;
   championYear?: number;
   championEvent?: string;

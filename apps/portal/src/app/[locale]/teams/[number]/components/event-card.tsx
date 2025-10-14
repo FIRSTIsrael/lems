@@ -13,6 +13,7 @@ interface EventCardProps {
 export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
 
+  // TODO: connect to data
   const getAwardIcon = (award: string) => {
     const winningKeywords = ['winner', 'champion', '1st', '2nd', '3rd', 'first', 'second', 'third'];
     const isWinning = winningKeywords.some(keyword => award.toLowerCase().includes(keyword));
@@ -46,6 +47,7 @@ export const EventCard: React.FC<EventCardProps> = ({ eventResult }) => {
         },
         transition: 'all 0.2s ease-in-out'
       }}
+      id={eventResult.eventName}
     >
       <CardContent>
         <Typography variant="h4" fontWeight="600" color="primary" gutterBottom>

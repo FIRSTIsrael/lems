@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Typography, Paper, Stack } from '@mui/material';
+import { Typography, Paper, Stack, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from './mockTeamData';
 import { EventCard } from './event-card';
@@ -18,7 +18,7 @@ export const TeamResults: React.FC<TeamResultsProps> = ({ team }) => {
     <Paper sx={{ p: 3 }}>
       {/* Event Results */}
       {team.eventResults && team.eventResults.length > 0 && (
-        <>
+        <Box id="event-results">
           <Typography variant="h2" sx={{ mb: 2, fontWeight: 600 }}>
             {tEvents('event-performance')}
           </Typography>
@@ -27,7 +27,7 @@ export const TeamResults: React.FC<TeamResultsProps> = ({ team }) => {
               <EventCard key={index} eventResult={eventResult} />
             ))}
           </Stack>
-        </>
+        </Box>
       )}
     </Paper>
   );

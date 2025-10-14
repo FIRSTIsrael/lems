@@ -72,8 +72,7 @@
       },
       "info": {
         "from": "מ{city}",
-        "last-competed": "התחרה לאחרונה ב{year}",
-        "season": "עונת {year}"
+        "last-competed": "התחרתה לאחרונה בעונת {season}"
       },
       "navigation": {
         "team-info": "מידע על הקבוצה",
@@ -85,7 +84,6 @@
         "winner": "זוכה"
       },
       "events": {
-        "season": "עונת {year}",
         "event-summary": "תוצאות האירוע",
         "highest-score": "הניקוד הגבוה ביותר",
         "match-results": "תוצאות מקצים",

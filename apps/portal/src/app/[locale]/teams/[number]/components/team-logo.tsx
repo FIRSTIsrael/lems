@@ -1,15 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { Team } from './mockTeamData';
+import { Box } from '@mui/material';
+import { useTeam } from './team-context';
 
-interface TeamLogoProps {
-  team: Team;
-  teamNumber: number;
-}
+export const TeamLogo: React.FC = () => {
+  const team = useTeam();
 
-export const TeamLogo: React.FC<TeamLogoProps> = ({ team, teamNumber }) => {
   return (
     <Box
       sx={{
@@ -20,15 +17,13 @@ export const TeamLogo: React.FC<TeamLogoProps> = ({ team, teamNumber }) => {
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        border: '2px solid #e0e0e0',
-        bgcolor: 'white',
         position: 'relative'
       }}
     >
       <Box
         component="img"
         src={team.logoUrl ?? '/assets/default-avatar.svg'}
-        alt={`Team ${teamNumber} Logo`}
+        alt={`Team ${team.number} Logo`}
         sx={{
           width: '100%',
           height: '100%',
