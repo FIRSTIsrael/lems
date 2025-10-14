@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import dayjs from 'dayjs';
 import db from '../../../lib/database';
 import { makePortalEventResponse } from '../events/util';
@@ -9,14 +9,10 @@ import { makePortalTeamSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/:teamNumber/summary', async (req: Request, res: Response) => {
-  const { teamNumber } = req.params;
+router.use('/:teamNumber', attachTeam());
 
-  const team = await db.teams.byNumber(parseInt(teamNumber, 10)).get();
-  if (!team) {
-    res.status(404).json({ message: 'Team not found' });
-    return;
-  }
+router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response) => {
+  const team = await db.teams.byId(req.teamId).get();
 
   const seasons = (await db.seasons.getAll()).sort((a, b) =>
     dayjs(b.start_date).diff(a.start_date)
@@ -26,7 +22,7 @@ router.get('/:teamNumber/summary', async (req: Request, res: Response) => {
     for (const event of events) {
       const divisions = await db.divisions.byEventId(event.id).getAll();
       for (const division of divisions) {
-        if (await db.teams.byId(team.id).isInDivision(division.id)) {
+        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           res.status(200).json(makePortalTeamSummaryResponse(team, season.name));
           return;
         }
@@ -36,9 +32,7 @@ router.get('/:teamNumber/summary', async (req: Request, res: Response) => {
   res.status(200).json(makePortalTeamSummaryResponse(team, null));
 });
 
-router.use('/:teamId', attachTeam());
-
-router.get('/:teamId/seasons', async (req: PortalTeamRequest, res: Response) => {
+router.get('/:teamNumber/seasons', async (req: PortalTeamRequest, res: Response) => {
   const seasons = await db.seasons.getAll();
   const teamSeasons = [];
   for (const season of seasons) {
@@ -57,7 +51,7 @@ router.get('/:teamId/seasons', async (req: PortalTeamRequest, res: Response) => 
 });
 
 router.get(
-  '/:teamId/seasons/:seasonSlug/results',
+  '/:teamNumber/seasons/:seasonSlug/results',
   async (req: PortalTeamRequest, res: Response) => {
     const { seasonSlug } = req.params;
 
@@ -102,31 +96,34 @@ router.get(
   }
 );
 
-router.get('/:teamId/seasons/:seasonSlug/events', async (req: PortalTeamRequest, res: Response) => {
-  const { seasonSlug } = req.params;
+router.get(
+  '/:teamNumber/seasons/:seasonSlug/events',
+  async (req: PortalTeamRequest, res: Response) => {
+    const { seasonSlug } = req.params;
 
-  const season =
-    seasonSlug === 'latest'
-      ? await db.seasons.getCurrent()
-      : await db.seasons.bySlug(seasonSlug).get();
-  if (!season) {
-    res.status(404).json({ message: 'Season not found' });
-    return;
-  }
+    const season =
+      seasonSlug === 'latest'
+        ? await db.seasons.getCurrent()
+        : await db.seasons.bySlug(seasonSlug).get();
+    if (!season) {
+      res.status(404).json({ message: 'Season not found' });
+      return;
+    }
 
-  const events = await db.events.bySeason(season.id).getAll();
-  const teamEvents = [];
-  for (const event of events) {
-    const divisions = await db.divisions.byEventId(event.id).getAll();
-    for (const division of divisions) {
-      if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-        teamEvents.push(event);
-        break;
+    const events = await db.events.bySeason(season.id).getAll();
+    const teamEvents = [];
+    for (const event of events) {
+      const divisions = await db.divisions.byEventId(event.id).getAll();
+      for (const division of divisions) {
+        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
+          teamEvents.push(event);
+          break;
+        }
       }
     }
-  }
 
-  res.status(200).json(teamEvents.map(makePortalEventResponse));
-});
+    res.status(200).json(teamEvents.map(makePortalEventResponse));
+  }
+);
 
 export default router;

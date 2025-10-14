@@ -9,14 +9,14 @@ import database from '../../lib/database';
 export const attachTeam = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const teamId = req.params.teamId;
+      const teamNumber = req.params.teamNumber;
 
-      if (!teamId) {
-        res.status(400).json({ error: 'TEAM_ID_REQUIRED' });
+      if (!teamNumber) {
+        res.status(400).json({ error: 'TEAM_NUMBER_REQUIRED' });
         return;
       }
 
-      const team = await database.teams.byId(teamId).get();
+      const team = await database.teams.byNumber(parseInt(teamNumber, 10)).get();
 
       if (!team) {
         res.status(404).json({ error: 'TEAM_NOT_FOUND' });

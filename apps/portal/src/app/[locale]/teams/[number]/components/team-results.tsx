@@ -17,7 +17,7 @@ export const TeamResults: React.FC = () => {
   const tEvents = useTranslations('pages.team.events');
 
   const { data: eventResults } = useSWR<TeamEventResult[]>(
-    () => `/portal/teams/${team.id}/seasons/${season}/results`,
+    () => `/portal/teams/${team.number}/seasons/${season}/results`,
     { suspense: true, fallbackData: [] }
   );
 

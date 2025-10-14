@@ -22,7 +22,7 @@ export const TeamContents: React.FC = () => {
   }, []);
 
   const { data: events = [] } = useSWR<Event[]>(
-    () => `/portal/teams/${team.id}/seasons/${season}/events`,
+    () => `/portal/teams/${team.number}/seasons/${season}/events`,
     { suspense: true, fallbackData: [] }
   );
 
