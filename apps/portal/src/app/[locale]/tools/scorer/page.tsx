@@ -4,6 +4,7 @@ import { Container, Typography, Stack, Box } from '@mui/material';
 import NoEquipmentImage from '../../../../../public/assets/scoresheet/no-equipment.svg';
 import { MissionProvider } from './components/mission-context';
 import ScoreFloater from './components/score-floater';
+import FieldTimerFloater from './components/field-timer';
 import { ScoresheetForm } from './components/scoresheet-form';
 
 export default async function ScorerPage() {
@@ -28,6 +29,7 @@ export default async function ScorerPage() {
         </Box>
       </Container>
       <ScoreFloater />
+      <FieldTimerFloater />
     </MissionProvider>
   );
 }
