@@ -2,21 +2,16 @@
 
 import React from 'react';
 import useSWR from 'swr';
-import dayjs from 'dayjs';
 import { Box, Typography, Stack, CircularProgress } from '@mui/material';
 import { FiberManualRecord as LiveIcon } from '@mui/icons-material';
-import { EventSummary, PortalEventSummariesResponseSchema } from '@lems/types/api/portal';
+import { Event, LemsEventsResponseSchema } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
 
 export const LiveEventsSection: React.FC = () => {
-  const now = dayjs();
-  const oneDayAgo = now.subtract(1, 'day');
-
-  const { data: events = [], isLoading } = useSWR<EventSummary[]>(
-    [`/portal/events?after=${oneDayAgo.unix()}`, PortalEventSummariesResponseSchema]
-  );
-
-  const liveEvents = events.filter(event => event.status === 'active');
+  const { data: liveEvents = [], isLoading } = useSWR<Event[]>([
+    `/lems/events/live`,
+    LemsEventsResponseSchema
+  ]);
 
   if (isLoading) {
     return (
@@ -55,11 +50,7 @@ export const LiveEventsSection: React.FC = () => {
         </Typography>
       </Stack>
 
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ mb: 3, fontSize: '1.125rem' }}
-      >
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, fontSize: '1.125rem' }}>
         Events happening right now
       </Typography>
 

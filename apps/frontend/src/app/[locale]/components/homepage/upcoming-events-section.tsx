@@ -5,22 +5,21 @@ import useSWR from 'swr';
 import dayjs from 'dayjs';
 import { Box, Typography, Stack, CircularProgress } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
-import { EventSummary, PortalEventSummariesResponseSchema } from '@lems/types/api/portal';
+import { Event, LemsEventsResponseSchema } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
 
 export const UpcomingEventsSection: React.FC = () => {
   const now = dayjs();
-  const oneDayAgo = now.subtract(1, 'day');
 
-  const { data: events = [], isLoading } = useSWR<EventSummary[]>(
-    [`/portal/events?after=${oneDayAgo.unix()}`, PortalEventSummariesResponseSchema]
-  );
+  const { data: events = [], isLoading } = useSWR<Event[]>([
+    '/lems/events/upcoming',
+    LemsEventsResponseSchema
+  ]);
 
-  // Filter for upcoming events happening within the next week
   const endOfWeek = now.endOf('week');
   const upcomingEvents = events.filter(event => {
     const eventDate = dayjs(event.startDate);
-    return event.status === 'upcoming' && eventDate.isBefore(endOfWeek);
+    return eventDate.isBefore(endOfWeek);
   });
 
   if (isLoading) {
@@ -62,11 +61,7 @@ export const UpcomingEventsSection: React.FC = () => {
         </Typography>
       </Stack>
 
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ mb: 3, fontSize: '1.125rem' }}
-      >
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, fontSize: '1.125rem' }}>
         Events happening through the end of this week
       </Typography>
 

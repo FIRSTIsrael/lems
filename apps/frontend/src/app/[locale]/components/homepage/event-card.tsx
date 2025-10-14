@@ -9,21 +9,19 @@ import {
   Stack,
   Box,
   Typography,
-  Chip,
   alpha,
   useTheme
 } from '@mui/material';
 import {
   LocationOn as LocationIcon,
-  People as PeopleIcon,
   CalendarToday as CalendarIcon,
   ArrowForward as ArrowIcon
 } from '@mui/icons-material';
-import { EventSummary } from '@lems/types/api/portal';
 import { apiFetch } from '@lems/shared';
+import { Event } from '@lems/types/api/lems';
 
 interface EventCardProps {
-  event: EventSummary;
+  event: Event;
   variant: 'live' | 'upcoming';
 }
 
@@ -150,13 +148,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 <LocationIcon fontSize="small" sx={{ color: 'text.secondary' }} />
                 <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
                   {event.location}
-                </Typography>
-              </Stack>
-
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <PeopleIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
-                  {event.teamsRegistered} teams registered
                 </Typography>
               </Stack>
             </Stack>

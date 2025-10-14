@@ -48,6 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 
   if (after && typeof after === 'string') {
+    console.log('After', after);
     const timestamp = parseInt(after, 10);
 
     if (isNaN(timestamp)) {
