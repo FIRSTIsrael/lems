@@ -3,10 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { Formik, Form } from 'formik';
 import { Typography, Stack, Paper, Container, Box, Alert, CircularProgress } from '@mui/material';
-import { LoginFormProps, LoginFormValues } from './types';
-import { getStepIndex, getActiveSteps, validateForm } from './utils';
-import { useLoginFlow } from './hooks/use-login-flow';
-import { LoginStepper, LoginStepContent, SubmitButton } from './components';
+import { LoginFormProps, LoginFormValues } from '../types';
+import { getStepIndex, getActiveSteps, validateForm } from '../utils';
+import { useLoginFlow } from '../hooks/use-login-flow';
+import { LoginStepper } from './login-stepper';
+import { LoginStepContent } from './login-step-content';
+import { SubmitButton } from './submit-button';
 
 const initialValues: LoginFormValues = {
   role: '',

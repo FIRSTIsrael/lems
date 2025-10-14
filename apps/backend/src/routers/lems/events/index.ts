@@ -25,4 +25,16 @@ router.get('/upcoming', async (req: Request, res: Response) => {
   res.json(events.map(makeLemsEventResponse));
 });
 
+router.get('/:eventSlug', async (req: Request, res: Response) => {
+  const { eventSlug } = req.params;
+  const event = await db.events.bySlug(eventSlug).get();
+
+  if (!event) {
+    res.status(404).json({ message: 'Event not found' });
+    return;
+  }
+
+  res.json(makeLemsEventResponse(event));
+});
+
 export default router;
