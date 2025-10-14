@@ -25,3 +25,18 @@ export const ALL_ADMIN_PERMISSIONS = [
 export const AdminUserPermissionsResponseSchema = z.array(z.enum(ALL_ADMIN_PERMISSIONS));
 
 export type AdminUserPermissions = z.infer<typeof AdminUserPermissionsResponseSchema>;
+
+export const VolunteerUserResponseSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  role: z.string(),
+  identifier: z.string().nullable(),
+  roleInfo: z.record(z.string(), z.unknown()).nullable(),
+  divisions: z.array(z.string())
+});
+
+export type VolunteerUser = z.infer<typeof VolunteerUserResponseSchema>;
+
+export const VolunteerUsersResponseSchema = z.array(VolunteerUserResponseSchema);
+
+export type VolunteerUsers = z.infer<typeof VolunteerUsersResponseSchema>;

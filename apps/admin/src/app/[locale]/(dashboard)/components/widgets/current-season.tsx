@@ -12,13 +12,17 @@ export default async function CurrentSeasonWidget() {
   if (!result.ok) {
     return (
       <Card sx={{ height: '100%' }}>
-        <CardContent>
-          <Typography variant="h6" color="error">
-            {t('error')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('error-description')}
-          </Typography>
+        <CardContent
+          sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Stack spacing={1} alignItems="center" textAlign="center">
+            <Typography variant="h6" color="error.main" fontWeight={600}>
+              {t('error')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('error-description')}
+            </Typography>
+          </Stack>
         </CardContent>
       </Card>
     );
@@ -42,23 +46,31 @@ export default async function CurrentSeasonWidget() {
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Box display="flex" alignItems="flex-start" gap={2}>
+      <CardContent sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+        <Box display="flex" alignItems="center" gap={3} width="100%">
           <Avatar
-            variant="square"
-            src={season.logoUrl || '/assets/FIRST-Logo.svg'}
+            variant="rounded"
+            src={season.logoUrl || '/admin/assets/FIRST-Logo.svg'}
             sx={{
-              width: 150,
-              height: 150,
-              flexShrink: 0
+              width: 120,
+              height: 120,
+              flexShrink: 0,
+              boxShadow: 2,
+              bgcolor: 'background.paper',
+              padding: 1.5
             }}
           />
 
-          <Stack spacing={1} sx={{ minWidth: 0, mt: 1.5 }}>
+          <Stack spacing={1.5} sx={{ minWidth: 0, flex: 1 }}>
             <Typography
               variant="overline"
               color="text.secondary"
-              sx={{ lineHeight: 1, fontSize: '1.25rem' }}
+              sx={{
+                lineHeight: 1,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                letterSpacing: 0.5
+              }}
             >
               {t('current-season')}
             </Typography>
@@ -66,18 +78,23 @@ export default async function CurrentSeasonWidget() {
             <Typography
               variant="h5"
               sx={{
-                fontWeight: 600,
+                fontWeight: 700,
                 lineHeight: 1.2,
-                wordBreak: 'break-word'
+                wordBreak: 'break-word',
+                color: 'text.primary'
               }}
             >
               {season.name}
             </Typography>
 
             <Typography
-              variant="body2"
+              variant="body1"
               color={daysLeft > 0 ? 'text.secondary' : 'error.main'}
-              sx={{ lineHeight: 1.2, fontSize: '1rem' }}
+              sx={{
+                lineHeight: 1.3,
+                fontWeight: 500,
+                fontSize: '0.95rem'
+              }}
             >
               {getDaysLeftText()}
             </Typography>

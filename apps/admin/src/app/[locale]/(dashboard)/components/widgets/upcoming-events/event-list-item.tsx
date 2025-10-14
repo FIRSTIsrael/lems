@@ -1,82 +1,88 @@
 'use client';
 
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material';
 import { CalendarToday } from '@mui/icons-material';
-
-interface Event {
-  id: string;
-  name: string;
-  location: string;
-  startDate: string;
-}
-
+import { EventSummary } from '@lems/types/api/admin';
 interface EventListItemProps {
-  event: Event;
+  event: EventSummary;
 }
 
 export default function EventListItem({ event }: EventListItemProps) {
-  const handleEventClick = (eventId: string) => {
-    // TODO: Redirect to events page
-    console.log('Navigate to event:', eventId);
-  };
-
   return (
     <ListItem sx={{ px: 0 }}>
-      <ListItemButton
-        disabled // TODO: Remove when navigation is implemented
-        onClick={() => handleEventClick(event.id)}
-        sx={{
-          borderRadius: 1,
-          '&:hover': {
-            bgcolor: 'action.hover'
-          }
-        }}
-      >
-        <Box display="flex" alignItems="center" width="100%" gap={2}>
-          <Stack spacing={0.25} sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                lineHeight: 1.2,
-                wordBreak: 'break-word'
-              }}
-            >
-              {event.name}
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{
-                lineHeight: 1,
-                wordBreak: 'break-word'
-              }}
-            >
-              {event.location}
-            </Typography>
-          </Stack>
+      <Link href={`/events/${event.slug}/edit`} style={{ textDecoration: 'none', width: '100%' }}>
+        <ListItemButton
+          sx={{
+            borderRadius: 2,
+            py: 1.5,
+            px: 2,
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              bgcolor: 'action.hover',
+              transform: 'translateX(4px)',
+              boxShadow: 1
+            }
+          }}
+        >
+          <Box display="flex" alignItems="center" width="100%" gap={2}>
+            <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  lineHeight: 1.3,
+                  wordBreak: 'break-word',
+                  color: 'text.primary'
+                }}
+              >
+                {event.name}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  lineHeight: 1.2,
+                  wordBreak: 'break-word',
+                  fontSize: '0.8rem'
+                }}
+              >
+                {event.location}
+              </Typography>
+            </Stack>
 
-          <Box display="flex" alignItems="center" gap={1}>
-            <CalendarToday
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={1}
               sx={{
-                fontSize: 16,
-                color: 'text.secondary'
-              }}
-            />
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{
-                fontWeight: 500,
-                whiteSpace: 'nowrap'
+                bgcolor: 'action.hover',
+                borderRadius: 1.5,
+                px: 1.5,
+                py: 0.75
               }}
             >
-              {dayjs(event.startDate).format('MMM D')}
-            </Typography>
+              <CalendarToday
+                sx={{
+                  fontSize: 16,
+                  color: 'primary.main'
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                  color: 'text.primary'
+                }}
+              >
+                {dayjs(event.startDate).format('MMM D')}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      </ListItemButton>
+        </ListItemButton>
+      </Link>
     </ListItem>
   );
 }

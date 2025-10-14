@@ -67,6 +67,17 @@ class JudgingSessionsSelector {
       .execute();
   }
 
+  async getByTeam(teamId: string): Promise<JudgingSession | null> {
+    const teamSession = await this.db
+      .selectFrom('judging_sessions')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .where('team_id', '=', teamId)
+      .executeTakeFirst();
+
+    return teamSession || null;
+  }
+
   async deleteAll(): Promise<number> {
     const sessions = await this.db
       .selectFrom('judging_sessions')
@@ -101,8 +112,8 @@ export class JudgingSessionsRepository {
     return {
       sessionId: id,
       status: 'not-started',
-      called: false,
-      queued: false,
+      called: null,
+      queued: null,
       startTime: null,
       startDelta: null
     };
@@ -151,5 +162,19 @@ export class JudgingSessionsRepository {
     }
 
     return dbSessions;
+  }
+
+  async swapTeams(teamId1: string, teamId2: string, divisionId: string): Promise<void> {
+    const session1 = await this.byDivisionId(divisionId).getByTeam(teamId1);
+    const session2 = await this.byDivisionId(divisionId).getByTeam(teamId2);
+
+    if (!session1 || !session2) {
+      throw new Error('One or both teams do not have a judging session in this division');
+    }
+
+    await Promise.all([
+      this.byId(session1.id).update({ team_id: teamId2 }),
+      this.byId(session2.id).update({ team_id: teamId1 })
+    ]);
   }
 }

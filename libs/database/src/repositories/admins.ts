@@ -137,6 +137,52 @@ class AdminSelector {
       .executeTakeFirst();
     return !!result;
   }
+
+  async delete(): Promise<void> {
+    await this.db.deleteFrom('admins').where('id', '=', this.getAdminIdQuery()).execute();
+  }
+
+  async updateProfile(updates: { firstName?: string; lastName?: string }): Promise<void> {
+    await this.db
+      .updateTable('admins')
+      .set({
+        ...(updates.firstName && { first_name: updates.firstName }),
+        ...(updates.lastName && { last_name: updates.lastName }),
+        last_updated: new Date()
+      })
+      .where('id', '=', this.getAdminIdQuery())
+      .execute();
+  }
+
+  async updatePassword(passwordHash: string, passwordSalt: string): Promise<void> {
+    await this.db
+      .updateTable('admins')
+      .set({
+        password_hash: passwordHash,
+        password_salt: passwordSalt,
+        last_password_set_date: new Date(),
+        last_updated: new Date()
+      })
+      .where('id', '=', this.getAdminIdQuery())
+      .execute();
+  }
+}
+
+class AdminsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private eventId: string
+  ) {}
+
+  async getAll(): Promise<Admin[]> {
+    return await this.db
+      .selectFrom('admin_events')
+      .innerJoin('admins', 'admin_events.admin_id', 'admins.id')
+      .selectAll('admins')
+      .where('admin_events.event_id', '=', this.eventId)
+      .orderBy('admins.username', 'asc')
+      .execute();
+  }
 }
 
 export class AdminsRepository {
@@ -151,6 +197,10 @@ export class AdminsRepository {
       type: 'username',
       value: username
     });
+  }
+
+  byEventId(eventId: string): AdminsSelector {
+    return new AdminsSelector(this.db, eventId);
   }
 
   async getAll(): Promise<Admin[]> {

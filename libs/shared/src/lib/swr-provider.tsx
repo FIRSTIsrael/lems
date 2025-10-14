@@ -21,14 +21,21 @@ const swrFetcher = async (args: FetcherArgs) => {
     [url, schema] = args;
   }
 
-  const result = schema ? await apiFetch(url, {}, schema) : await apiFetch(url, {});
-  if (!result.ok) {
-    const error = new Error('An error occurred while fetching the data.') as SWRError;
-    error.info = result.error;
-    error.status = result.status;
+  try {
+    const result = schema ? await apiFetch(url, {}, schema) : await apiFetch(url, {});
+
+    if (!result.ok) {
+      const error = new Error('An error occurred while fetching the data.') as SWRError;
+      error.info = result.error;
+      error.status = result.status;
+      throw error;
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
     throw error;
   }
-  return result.data;
 };
 
 interface SWRProviderProps {

@@ -1,35 +1,63 @@
 import { getTranslations } from 'next-intl/server';
-import { Card, CardContent, List, Typography } from '@mui/material';
+import { Box, Card, CardContent, List, Typography } from '@mui/material';
+import { AdminSeasonResponseSchema } from '@lems/types/api/admin/seasons';
+import { AdminSummarizedEventsResponseSchema, EventSummary } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
 import EventListItem from './event-list-item';
-
-// TODO: Replace with actual event type from backend
-interface Event {
-  id: string;
-  name: string;
-  location: string;
-  startDate: string;
-}
 
 export default async function UpcomingEventsWidget() {
   const t = await getTranslations('pages.index.widgets.upcoming-events');
 
-  // TODO: Replace with actual backend call
-  const events: Event[] = [];
+  const seasonResult = await apiFetch('/admin/seasons/current', {}, AdminSeasonResponseSchema);
 
-  // Show max 4 upcoming events
-  const upcomingEvents = events.slice(0, 4);
+  let upcomingEvents: EventSummary[] = [];
+
+  if (seasonResult.ok) {
+    const eventsResult = await apiFetch(
+      `/admin/events/season/${seasonResult.data.id}/summary`,
+      {},
+      AdminSummarizedEventsResponseSchema
+    );
+
+    if (eventsResult.ok) {
+      const now = new Date();
+      upcomingEvents = eventsResult.data
+        .filter(event => new Date(event.startDate) >= now)
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        .slice(0, 4);
+    }
+  }
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom ml={2}>
+      <CardContent sx={{ pb: 1.5 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 2,
+            ml: 2,
+            fontWeight: 700,
+            color: 'text.primary'
+          }}
+        >
           {t('title')}
         </Typography>
 
         {upcomingEvents.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" sx={{ py: 2 }} ml={2}>
-            {t('no-events')}
-          </Typography>
+          <Box
+            sx={{
+              py: 4,
+              px: 2,
+              textAlign: 'center',
+              bgcolor: 'action.hover',
+              borderRadius: 2,
+              mx: 2
+            }}
+          >
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
+              {t('no-events')}
+            </Typography>
+          </Box>
         ) : (
           <List sx={{ width: '100%', p: 0 }}>
             {upcomingEvents.map(event => (

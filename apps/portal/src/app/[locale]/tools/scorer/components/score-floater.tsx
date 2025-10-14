@@ -5,7 +5,7 @@ import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import { MissionContext } from './mission-context';
 
-const ScoreFloater = () => {
+export const ScoreFloater = () => {
   const { points, resetScore } = useContext(MissionContext);
 
   return (
@@ -40,5 +40,3 @@ const ScoreFloater = () => {
     </Slide>
   );
 };
-
-export default ScoreFloater;

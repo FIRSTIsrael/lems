@@ -14,6 +14,10 @@ const nextConfig = {
     svgr: false
   },
 
+  output: 'standalone',
+
+  basePath: '/admin',
+
   reactStrictMode: true,
 
   compiler: {

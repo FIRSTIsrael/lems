@@ -13,11 +13,15 @@ import { TablesRepository } from './repositories/tables';
 import { JudgingSessionsRepository } from './repositories/judging-sessions';
 import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 import { AwardsRepository } from './repositories/awards';
+import { EventUsersRepository } from './repositories/event-users';
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const PG_HOST = process.env.PG_HOST || 'localhost';
 const PG_PORT = parseInt(process.env.PG_PORT || '5432');
 const PG_USER = process.env.PG_USER || 'postgres';
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
+const PG_SSL_CA = process.env.PG_SSL_CA;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = process.env.DB_NAME || 'lems-local';
 
@@ -37,6 +41,7 @@ export class Database {
   public teams: TeamsRepository;
   public events: EventsRepository;
   public divisions: DivisionsRepository;
+  public eventUsers: EventUsersRepository;
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
   public tables: TablesRepository;
@@ -51,7 +56,13 @@ export class Database {
           port: PG_PORT,
           user: PG_USER,
           password: PG_PASSWORD,
-          database: DB_NAME
+          database: DB_NAME,
+          ssl: IS_PRODUCTION
+            ? {
+                ca: PG_SSL_CA,
+                rejectUnauthorized: true
+              }
+            : false
         })
       })
     });
@@ -73,6 +84,7 @@ export class Database {
     this.teams = new TeamsRepository(this.kysely, this.space);
     this.events = new EventsRepository(this.kysely);
     this.divisions = new DivisionsRepository(this.kysely, this.space);
+    this.eventUsers = new EventUsersRepository(this.kysely);
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
     this.tables = new TablesRepository(this.kysely);

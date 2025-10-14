@@ -1,0 +1,53 @@
+name: Deploy Scheduler (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment (staging or production)'
+        required: true
+        type: string
+      image_tag:
+        description: 'Docker image tag to use'
+        required: true
+        type: string
+      registry:
+        description: 'Docker registry URL'
+        required: true
+        type: string
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: Build Scheduler
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 1200
+      
+      - name: Build Docker image
+        working-directory: apps/scheduler
+        run: |
+          docker build \
+            -t ${{ inputs.registry }}/lems-scheduler:${{ inputs.image_tag }} \
+            -f Dockerfile \
+            .
+          
+          echo "✅ Docker image built successfully"
+          echo "ℹ️  All configuration will be provided at runtime via docker-compose environment variables"
+      
+      - name: Push Docker image
+        run: docker push ${{ inputs.registry }}/lems-scheduler:${{ inputs.image_tag }}

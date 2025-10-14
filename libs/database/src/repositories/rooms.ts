@@ -35,6 +35,10 @@ class RoomSelector {
 
     return updatedRoom;
   }
+  
+  async delete(): Promise<void> {
+    await this.db.deleteFrom('judging_rooms').where('id', '=', this.id).execute();
+  }
 }
 
 class RoomsSelector {
@@ -73,12 +77,17 @@ export class RoomsRepository {
     return new RoomsSelector(this.db, divisionId);
   }
 
-  async create(newRoom: InsertableJudgingRoom): Promise<boolean> {
-    const result = await this.db
+  async create(newRoom: InsertableJudgingRoom): Promise<JudgingRoom> {
+    const [createdRoom] = await this.db
       .insertInto('judging_rooms')
       .values(newRoom)
       .returningAll()
       .execute();
-    return result.length > 0;
+    
+    if (!createdRoom) {
+      throw new Error('Failed to create room');
+    }
+    
+    return createdRoom;
   }
 }

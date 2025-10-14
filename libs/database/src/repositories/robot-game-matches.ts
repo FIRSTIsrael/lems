@@ -102,6 +102,42 @@ class RobotGameMatchesSelector {
     return matchesWithParticipants;
   }
 
+  async getByTeam(teamId: string) {
+    const matchesWithParticipants = [];
+
+    const teamParticipants = await this.db
+      .selectFrom('robot_game_match_participants')
+      .selectAll()
+      .where('team_id', '=', teamId)
+      .execute();
+
+    const matchIds = [...new Set(teamParticipants.map(p => p.match_id))];
+
+    for (const matchId of matchIds) {
+      const match = await this.db
+        .selectFrom('robot_game_matches')
+        .selectAll()
+        .where('id', '=', matchId)
+        .where('division_id', '=', this.divisionId)
+        .executeTakeFirst();
+
+      if (match) {
+        const participants = await this.db
+          .selectFrom('robot_game_match_participants')
+          .selectAll()
+          .where('match_id', '=', match.id)
+          .execute();
+
+        matchesWithParticipants.push({
+          ...match,
+          participants
+        });
+      }
+    }
+
+    return matchesWithParticipants.sort((a, b) => a.number - b.number);
+  }
+
   async deleteAll(): Promise<number> {
     const matches = await this.db
       .selectFrom('robot_game_matches')
@@ -145,16 +181,16 @@ export class RobotGameMatchesRepository {
 
     participants.forEach(participant => {
       participantStates[participant.table_id] = {
-        queued: false,
-        present: false,
-        ready: false
+        queued: null,
+        present: null,
+        ready: null
       };
     });
 
     return {
       matchId: id,
       status: 'not-started',
-      called: false,
+      called: null,
       participants: participantStates
     };
   }
@@ -236,5 +272,43 @@ export class RobotGameMatchesRepository {
     }
 
     return result;
+  }
+
+  async swapTeams(teamId1: string, teamId2: string): Promise<void> {
+    const team1Participants = await this.db
+      .selectFrom('robot_game_match_participants')
+      .selectAll()
+      .where('team_id', '=', teamId1)
+      .execute();
+
+    const team2Participants = await this.db
+      .selectFrom('robot_game_match_participants')
+      .selectAll()
+      .where('team_id', '=', teamId2)
+      .execute();
+
+    const updates = [];
+
+    for (const participant of team1Participants) {
+      updates.push(
+        this.db
+          .updateTable('robot_game_match_participants')
+          .set({ team_id: teamId2 })
+          .where('pk', '=', participant.pk)
+          .execute()
+      );
+    }
+
+    for (const participant of team2Participants) {
+      updates.push(
+        this.db
+          .updateTable('robot_game_match_participants')
+          .set({ team_id: teamId1 })
+          .where('pk', '=', participant.pk)
+          .execute()
+      );
+    }
+
+    await Promise.all(updates);
   }
 }

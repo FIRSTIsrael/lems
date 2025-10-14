@@ -15,6 +15,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('event_id', 'uuid', col => col.notNull())
     .addColumn('role', 'text', col => col.notNull())
     .addColumn('role_info', 'jsonb') // JSON field for role configuration
+    .addColumn('identifier', 'text')
     .addColumn('password', 'varchar(4)', col => col.notNull())
     .execute();
 

@@ -17,7 +17,7 @@ import {
 import { CheckCircle, Delete } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
-import { TeamSwapper } from './team-swapper';
+import { TeamSwapper } from './team-swapper/team-swapper';
 
 interface ScheduleExistsProps {
   division: Division;
@@ -71,7 +71,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
         >
           {t('alerts.schedule-set-up')}
         </Alert>
-        <TeamSwapper />
+        <TeamSwapper division={division} />
       </Stack>
 
       <Dialog

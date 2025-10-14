@@ -20,7 +20,7 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
     >
       <CardMedia
         sx={{ height: 140, objectFit: 'contain' }}
-        src={season.logoUrl || '/assets/FIRST-Logo.svg'}
+        src={season.logoUrl || '/admin/assets/FIRST-Logo.svg'}
         component="img"
         title={season.name}
       />

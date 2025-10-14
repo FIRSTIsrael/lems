@@ -12,8 +12,8 @@ export default async function EventLayout({ children, params }: EventLayoutProps
   const { slug } = await params;
 
   const [userEventsResult, eventResult] = await Promise.all([
-    apiFetch('/admin/events/me', undefined, AdminEventsResponseSchema),
-    apiFetch(`/admin/events/slug/${slug}`, undefined, AdminEventResponseSchema)
+    apiFetch('/admin/events/me', {}, AdminEventsResponseSchema),
+    apiFetch(`/admin/events/slug/${slug}`, {}, AdminEventResponseSchema)
   ]);
 
   if (!userEventsResult.ok) {

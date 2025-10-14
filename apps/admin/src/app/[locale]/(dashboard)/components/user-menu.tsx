@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Avatar,
@@ -16,6 +15,7 @@ import {
 import { Logout } from '@mui/icons-material';
 import { AdminUser } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
+import { useRouter } from '../../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 
 interface UserMenuProps {

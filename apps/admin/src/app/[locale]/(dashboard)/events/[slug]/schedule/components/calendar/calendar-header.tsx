@@ -73,6 +73,7 @@ interface SchedulerRequest {
   judging_session_length_seconds: number;
   judging_cycle_time_seconds: number;
   breaks: Array<ScheduleBreak>;
+  timezone: string;
 }
 
 function calculateBreaks(
@@ -129,19 +130,23 @@ export function prepareSchedulerRequest(
   scheduleContext: ScheduleContextType,
   divisionId: string
 ): SchedulerRequest {
+  const fieldStartInTz = scheduleContext.fieldStart.tz(scheduleContext.timezone, true);
+  const judgingStartInTz = scheduleContext.judgingStart.tz(scheduleContext.timezone, true);
+
   return {
     division_id: divisionId,
-    matches_start: scheduleContext.fieldStart.toISOString(),
+    matches_start: fieldStartInTz.toISOString(),
     practice_rounds: scheduleContext.practiceRounds,
     ranking_rounds: scheduleContext.rankingRounds,
     match_length_seconds: getDuration(scheduleContext.matchLength),
     practice_match_cycle_time_seconds: getDuration(scheduleContext.practiceCycleTime),
     ranking_match_cycle_time_seconds: getDuration(scheduleContext.rankingCycleTime),
     stagger_matches: scheduleContext.staggerMatches,
-    judging_start: scheduleContext.judgingStart.toISOString(),
+    judging_start: judgingStartInTz.toISOString(),
     judging_session_length_seconds: getDuration(scheduleContext.judgingSessionLength),
     judging_cycle_time_seconds: getDuration(scheduleContext.judgingSessionCycleTime),
-    breaks: calculateBreaks(calendarContext, scheduleContext)
+    breaks: calculateBreaks(calendarContext, scheduleContext),
+    timezone: scheduleContext.timezone
   };
 }
 

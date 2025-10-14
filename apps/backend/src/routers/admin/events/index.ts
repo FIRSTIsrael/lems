@@ -5,8 +5,10 @@ import { attachEvent } from '../../../middlewares/admin/attach-event';
 import { requirePermission } from '../../../middlewares/admin/require-permission';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
-import eventTeamsRouter from './teams/index';
-import eventDivisionsRouter from './divisions/index';
+import eventUsersRouter from './users';
+import eventTeamsRouter from './teams';
+import eventDivisionsRouter from './divisions';
+import eventSettingsRouter from './settings';
 
 const router = express.Router({ mergeParams: true });
 
@@ -132,6 +134,8 @@ router.use('/:eventId', attachEvent());
 
 router.use('/:eventId/divisions', eventDivisionsRouter);
 router.use('/:eventId/teams', eventTeamsRouter);
+router.use('/:eventId/users', eventUsersRouter);
+router.use('/:eventId/settings', eventSettingsRouter);
 
 router.get('/:eventId', async (req: AdminEventRequest, res) => {
   const event = await db.events.byId(req.eventId).get();

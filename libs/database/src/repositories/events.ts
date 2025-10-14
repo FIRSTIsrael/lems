@@ -1,6 +1,7 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
+import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
 import { TeamWithDivision, Team, Division, Admin } from '../schema';
 
 class EventSelector {
@@ -60,6 +61,20 @@ class EventSelector {
         event_id: event.id,
         admin_id: adminId
       })
+      .execute();
+  }
+
+  async removeAdmin(adminId: string): Promise<void> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db
+      .deleteFrom('admin_events')
+      .where('event_id', '=', event.id)
+      .where('admin_id', '=', adminId)
       .execute();
   }
 
@@ -177,15 +192,84 @@ class EventSelector {
       );
     });
   }
+
+  async removeTeams(teamIds: string[]): Promise<void> {
+    return this.db.transaction().execute(async trx => {
+      await Promise.all(
+        teamIds.map(id =>
+          trx.deleteFrom('team_divisions').where('team_id', '=', id).execute()
+        )
+      );
+    });
+  }
+
+  async getSettings(): Promise<EventSettings | null> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const settings = await this.db
+      .selectFrom('event_settings')
+      .where('event_id', '=', event.id)
+      .selectAll()
+      .executeTakeFirst();
+
+    return settings || null;
+  }
+
+  async updateSettings(updateData: UpdateableEventSettings): Promise<EventSettings | null> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const updatedSettings = await this.db
+      .updateTable('event_settings')
+      .set(updateData)
+      .where('event_id', '=', event.id)
+      .returningAll()
+      .executeTakeFirst();
+
+    return updatedSettings || null;
+  }
 }
 
 class EventsSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private selector: { type: 'after' | 'bySeason'; value: number | string }
+    private selector: {
+      type: 'after' | 'bySeason' | 'byTeam';
+      value: number | string;
+    }
   ) {}
 
   private getEventsQuery() {
+    if (this.selector.type === 'byTeam') {
+      // For byTeam, we need to join and use distinct, so we explicitly select events columns
+      const query = this.db
+        .selectFrom('events')
+        .innerJoin('divisions', 'divisions.event_id', 'events.id')
+        .innerJoin('team_divisions', 'team_divisions.division_id', 'divisions.id')
+        .where('team_divisions.team_id', '=', this.selector.value as string)
+        .select([
+          'events.pk',
+          'events.id',
+          'events.name',
+          'events.slug',
+          'events.start_date',
+          'events.end_date',
+          'events.location',
+          'events.coordinates',
+          'events.season_id'
+        ])
+        .distinctOn('events.id')
+        .orderBy('events.start_date', 'asc');
+      return query;
+    }
+
     let query = this.db.selectFrom('events').selectAll();
 
     if (this.selector.type === 'after') {
@@ -215,27 +299,40 @@ class EventsSelector {
         'events.season_id',
         'divisions.id as division_id',
         'divisions.name as division_name',
-        'divisions.color as division_color'
+        'divisions.color as division_color',
+        'divisions.has_awards',
+        'divisions.has_users',
+        'divisions.has_schedule'
       ])
-      .select(eb => [eb.fn.count('team_divisions.team_id').as('team_count')]);
+      .select(eb => [
+        eb.fn.count('team_divisions.team_id').as('team_count'),
+        sql<string | null>`events.coordinates::text`.as('coordinates')
+      ]);
 
     if (this.selector.type === 'after') {
       query = query.where('events.start_date', '>=', new Date(this.selector.value as number));
     } else if (this.selector.type === 'bySeason') {
       query = query.where('events.season_id', '=', this.selector.value as string);
+    } else if (this.selector.type === 'byTeam') {
+      query = query.where('team_divisions.team_id', '=', this.selector.value as string);
     }
 
-    query = query.groupBy([
-      'events.id',
-      'events.name',
-      'events.slug',
-      'events.start_date',
-      'events.location',
-      'events.season_id',
-      'divisions.id',
-      'divisions.name',
-      'divisions.color'
-    ]);
+    query = query
+      .groupBy([
+        'events.id',
+        'events.name',
+        'events.slug',
+        'events.start_date',
+        'events.location',
+        'events.season_id',
+        'divisions.id',
+        'divisions.name',
+        'divisions.color',
+        'divisions.has_awards',
+        'divisions.has_users',
+        'divisions.has_schedule'
+      ])
+      .groupBy(sql`events.coordinates::text`);
 
     const result = await query.execute();
 
@@ -252,6 +349,11 @@ class EventsSelector {
       );
     } else if (this.selector.type === 'bySeason') {
       adminQuery = adminQuery.where('events.season_id', '=', this.selector.value as string);
+    } else if (this.selector.type === 'byTeam') {
+      adminQuery = adminQuery
+        .innerJoin('divisions', 'divisions.event_id', 'events.id')
+        .innerJoin('team_divisions', 'team_divisions.division_id', 'divisions.id')
+        .where('team_divisions.team_id', '=', this.selector.value as string);
     }
 
     const adminAssignments = await adminQuery.execute();
@@ -278,7 +380,6 @@ class EventsSelector {
           location: row.location,
           team_count: 0,
           divisions: [],
-          is_fully_set_up: false,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });
@@ -294,12 +395,30 @@ class EventsSelector {
         event.divisions.push({
           id: row.division_id,
           name: row.division_name,
-          color: row.division_color
+          color: row.division_color,
+          has_awards: row.has_awards,
+          has_users: row.has_users,
+          has_schedule: row.has_schedule
         });
       }
     }
 
-    return Array.from(eventsMap.values());
+    return Array.from(eventsMap.values()).map(event => {
+      const isFullySetUp = event.divisions.every(
+        (division: { has_awards: boolean; has_users: boolean; has_schedule: boolean }) =>
+          division.has_awards && division.has_users && division.has_schedule
+      );
+
+      return {
+        ...event,
+        divisions: event.divisions.map((division: { id: string; name: string; color: string }) => ({
+          id: division.id,
+          name: division.name,
+          color: division.color
+        })),
+        is_fully_set_up: isFullySetUp
+      };
+    });
   }
 }
 
@@ -322,6 +441,10 @@ export class EventsRepository {
     return new EventsSelector(this.db, { type: 'bySeason', value: seasonId });
   }
 
+  byTeam(teamId: string): EventsSelector {
+    return new EventsSelector(this.db, { type: 'byTeam', value: teamId });
+  }
+
   async getAll() {
     const events = await this.db.selectFrom('events').selectAll().execute();
     return events;
@@ -333,6 +456,9 @@ export class EventsRepository {
       .values(event)
       .returningAll()
       .execute();
+
+    await this.db.insertInto('event_settings').values({ event_id: createdEvent.id }).execute();
+
     return createdEvent;
   }
 }

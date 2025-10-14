@@ -26,7 +26,7 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
         <Avatar
           variant="rounded"
           sx={{ width: 64, height: 64 }}
-          src={logoUrl ?? '/assets/FIRST-Logo.svg'}
+          src={logoUrl ?? '/admin/assets/FIRST-Logo.svg'}
         />
         <Box>
           <Typography variant="h4" component="h2" dir="ltr">

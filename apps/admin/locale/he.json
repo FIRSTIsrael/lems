@@ -85,50 +85,57 @@
           "name": "שם הקבוצה",
           "affiliation": "שיוך",
           "actions": "פעולות",
-          "city": "עיר"
+          "city": "עיר",
+          "status": "סטטוס"
+        },
+        "status": {
+          "active": "פעיל",
+          "inactive": "לא פעיל"
         }
       },
       "creation-dialog": {
         "title": "יצירת קבוצה",
         "actions": {
           "cancel": "ביטול"
-        },
-        "form": {
-          "fields": {
-            "name": {
-              "label": "שם הקבוצה",
-              "placeholder": "למשל, אבירי הברזל"
-            },
-            "number": {
-              "label": "מספר הקבוצה",
-              "placeholder": "למשל, 1234"
-            },
-            "affiliation": {
-              "label": "בית ספר/ארגון",
-              "placeholder": "למשל, בית ספר יצחק שדה"
-            },
-            "city": {
-              "label": "עיר",
-              "placeholder": "למשל, תל אביב"
-            },
-            "logo": {
-              "label": "לוגו הקבוצה",
-              "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
-              "placeholder": "מקבל קבצי תמונה"
-            }
-          },
-          "errors": {
-            "name-required": "שדה שם הקבוצה נדרש.",
-            "number-required": "שדה מספר הקבוצה נדרש.",
-            "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
-            "number-exists": "מספר קבוצה זה כבר קיים.",
-            "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
-            "city-required": "שדה עיר נדרש.",
-            "error": "שגיאה התרחשה בעת יצירת הקבוצה."
-          },
-          "submit": "יצירת קבוצה",
-          "submitting": "יוצר קבוצה..."
         }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "שם הקבוצה",
+            "placeholder": "למשל, אבירי הברזל"
+          },
+          "number": {
+            "label": "מספר הקבוצה",
+            "placeholder": "למשל, 1234"
+          },
+          "affiliation": {
+            "label": "בית ספר/ארגון",
+            "placeholder": "למשל, בית ספר יצחק שדה"
+          },
+          "city": {
+            "label": "עיר",
+            "placeholder": "למשל, תל אביב"
+          },
+          "logo": {
+            "label": "לוגו הקבוצה",
+            "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
+            "placeholder": "מקבל קבצי תמונה"
+          }
+        },
+        "errors": {
+          "name-required": "שדה שם הקבוצה נדרש.",
+          "number-required": "שדה מספר הקבוצה נדרש.",
+          "number-invalid": "מספר הקבוצה חייב להיות מספר תקין.",
+          "number-exists": "מספר קבוצה זה כבר קיים.",
+          "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
+          "city-required": "שדה עיר נדרש.",
+          "error": "שגיאה התרחשה בעת יצירת הקבוצה."
+        },
+        "submit": "יצירת קבוצה",
+        "submitting": "יוצר קבוצה...",
+        "update": "עדכון קבוצה",
+        "updating": "מעדכן קבוצה..."
       },
       "import-dialog": {
         "title": "ייבוא קבוצות מקובץ CSV",
@@ -168,6 +175,18 @@
           "and-more": "...ועוד {count}",
           "close": "סגור"
         }
+      },
+      "delete-dialog": {
+        "title": "מחיקת קבוצה",
+        "message": "האם אתם בטוחים שברצונכם למחוק את קבוצה #{number}? פעולה זו לא ניתנת לביטול",
+        "cancel": "ביטול",
+        "deleting": "מוחק...",
+        "confirm": "מחיקת הקבוצת",
+        "error": "מחיקת הקבוצה נכשלה, ודאו שהקבוצה לא רשומה לאף אירוע."
+      },
+      "update-dialog": {
+        "title": "עדכון קבוצה",
+        "cancel": "ביטול"
       }
     },
     "index": {
@@ -186,6 +205,15 @@
         },
         "registered-teams": {
           "description": "קבוצות רשומות"
+        },
+        "total-events": {
+          "description": "סה\"כ אירועים"
+        },
+        "total-admins": {
+          "description": "משתמשי מנהל"
+        },
+        "event-participation": {
+          "description": "רישומים לאירועים"
         },
         "upcoming-events": {
           "title": "אירועים קרובים",
@@ -314,8 +342,17 @@
           "split": "מפוצל"
         },
         "schedule-exists": {
-          "message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
-          "view-schedule": "צפייה בלוח זמנים"
+          "division-message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
+          "event-message": "נקבע לוח זמנים עבור {eventName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
+          "view-schedule": "צפייה בלוח זמנים",
+          "delete-schedule": "מחיקת לוח זמנים",
+          "delete-schedule-dialog": {
+            "title": "מחיקת לוח זמנים",
+            "message": "האם אתם בטוחים שברצונכם למחוק את לוח הזמנים? פעולה זו אינה ניתנת לביטול ותסיר את כל המקצים וסבבי השיפוט המתוזמנים.",
+            "cancel": "ביטול",
+            "confirm": "מחיקת לוח זמנים",
+            "deleting": "מוחק..."
+          }
         },
         "registration-button": {
           "title": "רישום קבוצות",
@@ -332,6 +369,14 @@
             "cancel": "ביטול"
           },
           "no-teams-selected": "לא נבחרו קבוצות"
+        },
+        "remove-dialog": {
+          "title": "ביטול רישום לקבוצה",
+          "message": "האם אתם בטוחים שברצונכם לבטל את הרישום של קבוצה #{number} לאירוע זה? פעולה זו לא ניתנת לביטול",
+          "cancel": "ביטול",
+          "removing": "מבטל רישום...",
+          "confirm": "ביטול רישום",
+          "error": "ביטול רישום הקבוצה נכשל."
         },
         "unified": {
           "columns": {
@@ -361,6 +406,14 @@
           },
           "validation": {
             "name-required": "שם הבית הוא שדה חובה."
+          },
+          "delete": {
+            "title": "מחיקת בית",
+            "message": "האם אתה בטוח שברצונך למחוק את הבית {name}?",
+            "warning": "פעולה זו תמחק לצמיתות את הבית, כולל כל הקבוצות, לוחות הזמנים והנתונים הקשורים אליו. פעולה זו לא ניתנת לביטול.",
+            "cancel": "ביטול",
+            "confirm": "מחק בית",
+            "deleting": "מוחק..."
           },
           "alerts": {
             "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
@@ -394,8 +447,16 @@
       "venue": {
         "title": "{eventName}: היכל",
         "schedule-exists": {
-          "message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך פרטי היכל, יש למחוק קודם את לוח הזמנים.",
-          "view-schedule": "צפייה בלוח זמנים"
+          "message": "נקבע לוח זמנים. כדי לערוך פרטי היכל, יש למחוק קודם את לוח הזמנים.",
+          "view-schedule": "צפייה בלוח זמנים",
+          "delete-schedule": "מחיקת לוח זמנים",
+          "delete-schedule-dialog": {
+            "title": "מחיקת לוח זמנים",
+            "message": "האם אתם בטוחים שברצונכם למחוק את לוח הזמנים? פעולה זו אינה ניתנת לביטול ותסיר את כל המקצים וסבבי השיפוט המתוזמנים.",
+            "cancel": "ביטול",
+            "confirm": "מחיקת לוח זמנים",
+            "deleting": "מוחק..."
+          }
         },
         "rooms": {
           "title": "חדרי שיפוט",
@@ -451,6 +512,59 @@
           }
         }
       },
+      "settings": {
+        "title": "{eventName}: הגדרות",
+        "event-settings": {
+          "title": "הגדרות אירוע",
+          "advancement-percent": "אחוז העלייה",
+          "advancement-percent-description": "אחוז הקבוצות שעולות מסבבי הדירוג",
+          "save-button": "שמירת הגדרות",
+          "saving": "שומר...",
+          "advancing-teams": "({advancingTeams}/{totalTeams} קבוצות)"
+        },
+        "event-actions": {
+          "title": "פעולות אירוע",
+          "complete-event": "סיום אירוע",
+          "complete-event-description": "סמן אירוע זה כמושלם. לא ניתן יהיה לשנות את תוצאות האירוע לאחר מכן.",
+          "publish-event": "פרסום אירוע",
+          "publish-event-description": "הפוך את תוצאות האירוע לציבוריות ואפשר לציבור לצפות בהן.",
+          "already-completed": "האירוע כבר הושלם",
+          "already-published": "האירוע כבר פורסם"
+        },
+        "danger-zone": {
+          "title": "אזור סכנה",
+          "delete-event": "מחיקת אירוע",
+          "delete-event-description": "מחק לצמיתות את האירוע וכל הנתונים הקשורים אליו. פעולה זו אינה ניתנת לביטול.",
+          "delete-disabled": "מחיקת אירוע אינה זמינה עדיין"
+        },
+        "dialogs": {
+          "complete-event": {
+            "title": "סיום אירוע",
+            "message": "האם אתם בטוחים שברצונכם לסיים את האירוע? לאחר הסיום, לא ניתן יהיה לשנות את תוצאות האירוע.",
+            "eventName": "אירוע: {eventName}",
+            "confirm": "סיום אירוע",
+            "cancel": "ביטול",
+            "completing": "מסיים..."
+          },
+          "publish-event": {
+            "title": "פרסום אירוע",
+            "message": "האם אתם בטוחים שברצונכם לפרסם את האירוע? פעולה זו תהפוך את התוצאות לציבוריות ונראות לכולם.",
+            "eventName": "אירוע: {eventName}",
+            "confirm": "פרסום אירוע",
+            "cancel": "ביטול",
+            "publishing": "מפרסם..."
+          }
+        },
+        "messages": {
+          "save-success": "הגדרות נשמרו בהצלחה",
+          "save-error": "שמירת ההגדרות נכשלה",
+          "complete-success": "האירוע הושלם בהצלחה",
+          "complete-error": "סיום האירוע נכשל",
+          "publish-success": "האירוע פורסם בהצלחה",
+          "publish-error": "פרסום האירוע נכשל",
+          "load-error": "טעינת הגדרות האירוע נכשלה"
+        }
+      },
       "schedule": {
         "title": "{eventName}: לוח זמנים",
         "delete-schedule": "מחיקת לוח זמנים",
@@ -468,11 +582,11 @@
         "links": {
           "teams": {
             "title": "ניהול קבוצות",
-            "description": "רישום וניהול קבוצות עבור בית זה"
+            "description": "רישום וניהול קבוצות"
           },
           "venue": {
             "title": "ניהול היכל",
-            "description": "הגדרת חדרים ושולחנות עבור בית זה"
+            "description": "הגדרת חדרים ושולחנות"
           }
         },
         "settings": {
@@ -492,7 +606,8 @@
           },
           "settings": {
             "title": "הגדרות",
-            "stagger-matches": "הרצה מדורגת"
+            "stagger-matches": "הרצה מדורגת",
+            "timezone": "אזור זמן"
           },
           "timing": {
             "practice-cycle-time": "מחזור משחקי אימון",
@@ -529,8 +644,30 @@
             "generating": "יוצר לוח זמנים..."
           }
         },
-        "teamSwap": {
-          "placeholder": "מסך החלפת קבוצות - בקרוב"
+        "team-swap": {
+          "description": "החלף קבוצות בין מושבי שיפוט ולוח זמנים של משחקים. בחר קבוצה כדי לראות את לוח הזמנים שלה, ולאחר מכן בחר משבצת זמן להחלפה.",
+          "select-team": "בחירת קבוצה",
+          "no-teams": "אין קבוצות בבית זה",
+          "schedule": "לוח זמנים נוכחי",
+          "judging-session": "מפגש שיפוט",
+          "matches": "מקצים",
+          "select-team-to-continue": "בחר קבוצה כדי לראות משבצות זמן זמינות",
+          "select-judging-time": "בחירת משבצת זמן יעד",
+          "empty": "ריק",
+          "current-team": "קבוצה נוכחית",
+          "confirm-dialog": {
+            "title": "אישור החלפת קבוצות",
+            "message": "להחליף קבוצה {team1Number} מ-{room1Name} בשעה {time1} עם קבוצה {team2Number} ב-{room2Name} בשעה {time2}?",
+            "cancel": "ביטול",
+            "confirm": "אישור החלפה",
+            "swapping": "מחליף..."
+          },
+          "team-label": "קבוצה {number}",
+          "round": "סבב",
+          "match": "סבב {stage} {round} - מקצה #{number}",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "placeholder": "חיפוש קבוצות...",
+          "unknown-team": "קבוצה {number}"
         }
       },
       "awards": {
@@ -611,6 +748,90 @@
           "title": "אינטגרציות בקרוב",
           "description": "אנחנו עובדים על הבאת אינטגרציות חזקות כדי לייעל את ניהול האירועים שלכם."
         }
+      },
+      "users": {
+        "title": "{eventName}: משתמשים",
+        "sections": {
+          "eventAdmins": {
+            "title": "מנהלי אירוע",
+            "description": "נהל משתמשים שיכולים לנהל את האירוע הזה. משתמשים אלה יקבלו גישה לתכונות ניהול האירוע.",
+            "currentAdmins": "מנהלים נוכחיים",
+            "assignAdmins": "הקצה מנהלים",
+            "removeAdmin": "הסר מנהל",
+            "noAdmins": "לא הוקצו מנהלים לאירוע זה."
+          },
+          "volunteerUsers": {
+            "title": "משתמשי מתנדבים",
+            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל בית.",
+            "systemManagedRoles": {
+              "title": "תפקידים המנוהלים על ידי המערכת",
+              "description": "תפקידים אלה מנוהלים אוטומטית על ידי המערכת ולא ניתן לערוך אותם באופן ידני.",
+              "roleDescription": "מנוהל אוטומטית על ידי המערכת",
+              "toggleableRoleDescription": "ניתן לאפשר או לבטל תפקיד זה עבור האירוע שלך",
+              "enabled": "פעיל",
+              "disabled": "כבוי"
+            },
+            "mandatoryRoles": {
+              "title": "תפקידי חובה",
+              "description": "תפקידים אלה נדרשים לכל בית באירוע."
+            },
+            "optionalRoles": {
+              "title": "תפקידים אופציונליים",
+              "description": "תפקידים אלה אופציונליים אך ניתן להקצותם לפי הצורך."
+            },
+            "addSlot": "הוסף מתנדב",
+            "slot": "מתנדב",
+            "slots": "מתנדבים",
+            "removeSlot": "הסר מתנדב",
+            "noSlotsAssigned": "לא הוקצו מתנדבים לתפקיד זה.",
+            "divisions": "בתים",
+            "selectAll": "בחר הכל",
+            "identifier": "מזהה",
+            "identifierHelp": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
+            "saveSlots": "שמור הקצאות",
+            "saving": "שומר...",
+            "saveSuccess": "ההקצאות נשמרו בהצלחה!",
+            "saveError": "שגיאה בשמירת ההקצאות. אנא נסה שוב.",
+            "validation": {
+              "title": "אנא תקן את הבעיות הבאות:",
+              "missingMandatoryRole": "{role} נדרש עבור {division}",
+              "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
+            },
+            "loading": "טוען...",
+            "downloadPasswords": "הורד קובץ סיסמאות",
+            "status": {
+              "existing-users": "יש משתמשים",
+              "existing-users-tooltip": "לאירוע זה יש כבר משתמשים מוגדרים",
+              "new-users": "הגדרה חדשה",
+              "new-users-tooltip": "זוהי הגדרת משתמשים חדשה"
+            }
+          }
+        },
+        "dialogs": {
+          "assignAdmins": {
+            "title": "הקצה מנהלי אירוע",
+            "searchPlaceholder": "חפש משתמשי מנהל...",
+            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "noAvailableAdmins": "אין משתמשי מנהל נוספים זמינים להקצאה.",
+            "selectedCount": "{count} {count, plural, =1 {משתמש} other {משתמשים}} נבחרו",
+            "cancel": "ביטול",
+            "save": "הקצה נבחרים"
+          },
+          "addVolunteer": {
+            "title": "הוסף מתנדב {role}",
+            "selectUser": "בחר משתמש",
+            "changeUser": "שנה משתמש",
+            "searchPlaceholder": "חפש משתמשי מתנדבים...",
+            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "noAvailableVolunteers": "אין משתמשי מתנדבים זמינים לתפקיד זה.",
+            "selectDivisions": "בחר בתים",
+            "selectAll": "בחר הכל",
+            "identifier": "מזהה (אופציונלי)",
+            "identifierHelp": "הוסף מזהה כדי להבדיל את המתנדב הזה (עד 12 תווים)",
+            "cancel": "ביטול",
+            "add": "הוסף מתנדב"
+          }
+        }
       }
     },
     "users": {
@@ -684,6 +905,46 @@
         },
         "errors": {
           "fetch-error": "נכשל בטעינת הרשאות המשתמש."
+        }
+      },
+      "delete": {
+        "title": "מחיקת משתמש",
+        "message": "האם אתה בטוח שברצונך למחוק את {userName}?",
+        "warning": "פעולה זו תמחק לצמיתות את המשתמש, כולל כל שיוכי האירועים וההרשאות שלו. פעולה זו לא ניתנת לביטול.",
+        "cancel": "ביטול",
+        "confirm": "מחק משתמש",
+        "deleting": "מוחק..."
+      },
+      "edit": {
+        "title": "עריכת משתמש: {userName}",
+        "cancel": "ביטול",
+        "profile": {
+          "title": "פרטי פרופיל",
+          "fields": {
+            "firstName": {
+              "label": "שם פרטי"
+            },
+            "lastName": {
+              "label": "שם משפחה"
+            }
+          },
+          "errors": {
+            "firstName-required": "שם פרטי נדרש.",
+            "lastName-required": "שם משפחה נדרש."
+          },
+          "submit": "עדכן פרופיל",
+          "submitting": "מעדכן..."
+        },
+        "password": {
+          "title": "איפוס סיסמה",
+          "fields": {
+            "password": {
+              "label": "סיסמה חדשה",
+              "placeholder": "הזן סיסמה חדשה ובטוחה"
+            }
+          },
+          "submit": "איפוס סיסמה",
+          "submitting": "מאפס..."
         }
       }
     }

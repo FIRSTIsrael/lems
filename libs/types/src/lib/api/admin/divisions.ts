@@ -8,6 +8,7 @@ export const AdminDivisionResponseSchema = z.object({
   pitMapUrl: z.url().nullable(),
   hasSchedule: z.boolean(),
   hasAwards: z.boolean(),
+  hasUsers: z.boolean(),
   scheduleSettings: z
     .object({
       matchLength: z.number(),
@@ -17,6 +18,7 @@ export const AdminDivisionResponseSchema = z.object({
       judgingSessionCycleTime: z.number()
     })
     .nullable()
+    .default(null)
 });
 
 export type Division = z.infer<typeof AdminDivisionResponseSchema>;

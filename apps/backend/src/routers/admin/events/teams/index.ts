@@ -34,4 +34,21 @@ router.post(
   }
 );
 
+router.delete(
+  '/remove',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    const teamsToRemove = req.body;
+
+    if (!teamsToRemove || !Array.isArray(teamsToRemove)) {
+      res.status(400).json({ error: 'Invalid team removal data' });
+      return;
+    }
+
+    await db.events.byId(req.eventId).removeTeams(teamsToRemove);
+
+    res.status(200).end();
+  }
+);
+
 export default router;

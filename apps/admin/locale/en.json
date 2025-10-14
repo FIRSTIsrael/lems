@@ -78,50 +78,57 @@
           "name": "Team Name",
           "affiliation": "Affiliation",
           "actions": "Actions",
-          "city": "City"
+          "city": "City",
+          "status": "Status"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
         }
       },
       "creation-dialog": {
         "title": "Create Team",
         "actions": {
           "cancel": "Cancel"
-        },
-        "form": {
-          "fields": {
-            "name": {
-              "label": "Team Name",
-              "placeholder": "e.g., Iron Patriots"
-            },
-            "number": {
-              "label": "Team Number",
-              "placeholder": "e.g., 1234"
-            },
-            "affiliation": {
-              "label": "School/Organization",
-              "placeholder": "e.g., Lincoln Elementary"
-            },
-            "city": {
-              "label": "City",
-              "placeholder": "e.g., New York"
-            },
-            "logo": {
-              "label": "Team Logo",
-              "description": "Upload a team logo (JPG, PNG, or SVG)",
-              "placeholder": "Accepts image files"
-            }
-          },
-          "errors": {
-            "name-required": "Team name is required.",
-            "number-required": "Team number is required.",
-            "number-invalid": "Team number must be a valid number.",
-            "number-exists": "This team number already exists.",
-            "affiliation-required": "School/Organization name is required.",
-            "city-required": "City is required.",
-            "error": "An error occurred while creating the team."
-          },
-          "submit": "Create Team",
-          "submitting": "Creating team..."
         }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "Team Name",
+            "placeholder": "e.g., Iron Patriots"
+          },
+          "number": {
+            "label": "Team Number",
+            "placeholder": "e.g., 1234"
+          },
+          "affiliation": {
+            "label": "School/Organization",
+            "placeholder": "e.g., Lincoln Elementary"
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "e.g., New York"
+          },
+          "logo": {
+            "label": "Team Logo",
+            "description": "Upload a team logo (JPG, PNG, or SVG)",
+            "placeholder": "Accepts image files"
+          }
+        },
+        "errors": {
+          "name-required": "Team name is required.",
+          "number-required": "Team number is required.",
+          "number-invalid": "Team number must be a valid number.",
+          "number-exists": "This team number already exists.",
+          "affiliation-required": "School/Organization name is required.",
+          "city-required": "City is required.",
+          "error": "An error occurred while creating the team."
+        },
+        "submit": "Create Team",
+        "submitting": "Creating team...",
+        "update": "Update Team",
+        "updating": "Updating team..."
       },
       "import-dialog": {
         "title": "Import Teams from CSV",
@@ -161,6 +168,18 @@
           "and-more": "...and {count} more",
           "close": "Close"
         }
+      },
+      "delete-dialog": {
+        "title": "Delete Team",
+        "message": "Are you sure you want to delete team #{number}? This action cannot be undone.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "confirm": "Delete Team",
+        "error": "Failed to delete team, make sure this team is not registered to any events."
+      },
+      "update-dialog": {
+        "title": "Update Team",
+        "cancel": "Cancel"
       }
     },
     "index": {
@@ -179,6 +198,15 @@
         },
         "registered-teams": {
           "description": "Registered Teams"
+        },
+        "total-events": {
+          "description": "Total Events"
+        },
+        "total-admins": {
+          "description": "Admin Users"
+        },
+        "event-participation": {
+          "description": "Event Registrations"
         },
         "upcoming-events": {
           "title": "Upcoming Events",
@@ -307,8 +335,17 @@
           "split": "Split"
         },
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "division-message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
+          "event-message": "A schedule has been set for {eventName}. To edit teams, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "registration-button": {
           "title": "Register Teams",
@@ -325,6 +362,14 @@
             "cancel": "Cancel"
           },
           "no-teams-selected": "No teams selected"
+        },
+        "remove-dialog": {
+          "title": "Remove Team",
+          "message": "Are you sure you want to remove team #{number} from this event? This action cannot be undone.",
+          "cancel": "Cancel",
+          "removing": "Removing...",
+          "confirm": "Remove Team",
+          "error": "Failed to remove team."
         },
         "unified": {
           "columns": {
@@ -354,6 +399,14 @@
           },
           "validation": {
             "name-required": "Division name is required."
+          },
+          "delete": {
+            "title": "Delete Division",
+            "message": "Are you sure you want to delete the division {name}?",
+            "warning": "This action will permanently delete the division, including all teams, schedules, and related data. This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete Division",
+            "deleting": "Deleting..."
           },
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
@@ -387,8 +440,16 @@
       "venue": {
         "title": "{eventName}: Venue",
         "schedule-exists": {
-          "message": "A schedule has been set for {divisionName}. To edit venue details, you must first delete the schedule.",
-          "view-schedule": "View Schedule"
+          "message": "A schedule has been set. To edit venue details, you must first delete the schedule.",
+          "view-schedule": "View Schedule",
+          "delete-schedule": "Delete Schedule",
+          "delete-schedule-dialog": {
+            "title": "Delete Schedule",
+            "message": "Are you sure you want to delete the schedule? This action cannot be undone and will remove all scheduled matches and judging sessions.",
+            "cancel": "Cancel",
+            "confirm": "Delete Schedule",
+            "deleting": "Deleting..."
+          }
         },
         "rooms": {
           "title": "Judging Rooms",
@@ -444,6 +505,59 @@
           }
         }
       },
+      "settings": {
+        "title": "{eventName}: Settings",
+        "event-settings": {
+          "title": "Event Settings",
+          "advancement-percent": "Advancement Percentage",
+          "advancement-percent-description": "Percentage of teams that advance from ranking rounds",
+          "save-button": "Save Settings",
+          "saving": "Saving...",
+          "advancing-teams": "({advancingTeams}/{totalTeams} teams)"
+        },
+        "event-actions": {
+          "title": "Event Actions",
+          "complete-event": "Complete Event",
+          "complete-event-description": "Mark this event as completed. Event results can no longer be modified.",
+          "publish-event": "Publish Event",
+          "publish-event-description": "Make event results public and allow the public to view them.",
+          "already-completed": "Event is already completed",
+          "already-published": "Event is already published"
+        },
+        "danger-zone": {
+          "title": "Danger Zone",
+          "delete-event": "Delete Event",
+          "delete-event-description": "Permanently delete this event and all associated data. This action cannot be undone.",
+          "delete-disabled": "Event deletion is not yet available"
+        },
+        "dialogs": {
+          "complete-event": {
+            "title": "Complete Event",
+            "message": "Are you sure you want to complete this event? Once completed, event results can no longer be modified.",
+            "eventName": "Event: {eventName}",
+            "confirm": "Complete Event",
+            "cancel": "Cancel",
+            "completing": "Completing..."
+          },
+          "publish-event": {
+            "title": "Publish Event",
+            "message": "Are you sure you want to publish this event? This will make the results public and visible to everyone.",
+            "eventName": "Event: {eventName}",
+            "confirm": "Publish Event",
+            "cancel": "Cancel",
+            "publishing": "Publishing..."
+          }
+        },
+        "messages": {
+          "save-success": "Settings saved successfully",
+          "save-error": "Failed to save settings",
+          "complete-success": "Event completed successfully",
+          "complete-error": "Failed to complete event",
+          "publish-success": "Event published successfully",
+          "publish-error": "Failed to publish event",
+          "load-error": "Failed to load event settings"
+        }
+      },
       "schedule": {
         "title": "{eventName}: Schedule",
         "delete-schedule": "Delete Schedule",
@@ -461,11 +575,11 @@
         "links": {
           "teams": {
             "title": "Manage Teams",
-            "description": "Register and manage teams for this division"
+            "description": "Register and manage teams"
           },
           "venue": {
             "title": "Manage Venue",
-            "description": "Set up rooms and tables for this division"
+            "description": "Set up rooms and tables"
           }
         },
         "settings": {
@@ -485,7 +599,8 @@
           },
           "settings": {
             "title": "Settings",
-            "stagger-matches": "Stagger matches"
+            "stagger-matches": "Stagger matches",
+            "timezone": "Timezone"
           },
           "timing": {
             "practice-cycle-time": "Practice Match cycle time",
@@ -522,8 +637,30 @@
             "generating": "Generating..."
           }
         },
-        "teamSwap": {
-          "placeholder": "Team Swap view coming soon"
+        "team-swap": {
+          "description": "Swap teams between judging sessions and match schedules. Select a team to see their schedule, then choose a time slot to swap with.",
+          "select-team": "Select Team",
+          "no-teams": "No teams in this division",
+          "schedule": "Current Schedule",
+          "judging-session": "Judging Session",
+          "matches": "Matches",
+          "select-team-to-continue": "Select a team to view available time slots",
+          "select-judging-time": "Select Target Time Slot",
+          "empty": "Empty",
+          "current-team": "Current Team",
+          "confirm-dialog": {
+            "title": "Confirm Team Swap",
+            "message": "Swap Team {team1Number} from {room1Name} at {time1} with Team {team2Number} in {room2Name} at {time2}?",
+            "cancel": "Cancel",
+            "confirm": "Confirm Swap",
+            "swapping": "Swapping..."
+          },
+          "team-label": "Team {number}",
+          "round": "Round",
+          "match": "{stage} Round {round} - match #{number}",
+          "no-teams-found": "No Teams Found",
+          "placeholder": "Search Teams...",
+          "unknown-team": "Team {number}"
         }
       },
       "awards": {
@@ -604,6 +741,90 @@
           "title": "Integrations Coming Soon",
           "description": "We're working on bringing you powerful integrations to streamline your event management."
         }
+      },
+      "users": {
+        "title": "{eventName}: Users",
+        "sections": {
+          "eventAdmins": {
+            "title": "Event Administrators",
+            "description": "Manage users who can administer this event. These users will have access to event management features.",
+            "currentAdmins": "Current Administrators",
+            "assignAdmins": "Assign Admins",
+            "removeAdmin": "Remove Admin",
+            "noAdmins": "No administrators assigned to this event."
+          },
+          "volunteerUsers": {
+            "title": "Volunteer Users",
+            "description": "Manage volunteer role slots for this event. Ensure all mandatory roles are filled for each division.",
+            "systemManagedRoles": {
+              "title": "System-Managed Roles",
+              "description": "These roles are automatically managed by the system and cannot be edited manually.",
+              "roleDescription": "Managed automatically by the system",
+              "toggleableRoleDescription": "This role can be enabled or disabled for your event",
+              "enabled": "Enabled",
+              "disabled": "Disabled"
+            },
+            "mandatoryRoles": {
+              "title": "Mandatory Roles",
+              "description": "These roles are required for each division in the event."
+            },
+            "optionalRoles": {
+              "title": "Optional Roles",
+              "description": "These roles are optional but can be assigned as needed."
+            },
+            "addSlot": "Add Slot",
+            "slot": "slot",
+            "slots": "slots",
+            "removeSlot": "Remove Slot",
+            "noSlotsAssigned": "No slots assigned for this role.",
+            "divisions": "Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier",
+            "identifierHelp": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
+            "saveSlots": "Save Slots",
+            "saving": "Saving...",
+            "saveSuccess": "Slots saved successfully!",
+            "saveError": "Failed to save slots. Please try again.",
+            "validation": {
+              "title": "Please fix the following issues:",
+              "missingMandatoryRole": "{role} is required for {division}",
+              "missingMandatoryRoleSingle": "{role} is required for this event"
+            },
+            "loading": "Loading...",
+            "downloadPasswords": "Download Passwords",
+            "status": {
+              "new-users-tooltip": "This is a new users configuration",
+              "existing-users-tooltip": "This event has users already configured",
+              "new-users": "New Setup",
+              "existing-users": "Has Users"
+            }
+          }
+        },
+        "dialogs": {
+          "assignAdmins": {
+            "title": "Assign Event Administrators",
+            "searchPlaceholder": "Search for admin users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableAdmins": "No additional admin users available to assign.",
+            "selectedCount": "{count} {count, plural, =1 {user} other {users}} selected",
+            "cancel": "Cancel",
+            "save": "Assign Selected"
+          },
+          "addVolunteer": {
+            "title": "Add {role} Volunteer",
+            "selectUser": "Select User",
+            "changeUser": "Change User",
+            "searchPlaceholder": "Search for volunteer users...",
+            "noSearchResults": "No users found matching your search.",
+            "noAvailableVolunteers": "No volunteer users available for this role.",
+            "selectDivisions": "Select Divisions",
+            "selectAll": "Select All",
+            "identifier": "Identifier (Optional)",
+            "identifierHelp": "Add an identifier to distinguish this volunteer (max 12 characters)",
+            "cancel": "Cancel",
+            "add": "Add Volunteer"
+          }
+        }
       }
     },
     "users": {
@@ -677,6 +898,46 @@
         },
         "errors": {
           "fetch-error": "Failed to load user permissions."
+        }
+      },
+      "delete": {
+        "title": "Delete User",
+        "message": "Are you sure you want to delete {userName}?",
+        "warning": "This action will permanently delete the user, including all their event associations and granted permissions. This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete User",
+        "deleting": "Deleting..."
+      },
+      "edit": {
+        "title": "Edit User: {userName}",
+        "cancel": "Cancel",
+        "profile": {
+          "title": "Profile Information",
+          "fields": {
+            "firstName": {
+              "label": "First Name"
+            },
+            "lastName": {
+              "label": "Last Name"
+            }
+          },
+          "errors": {
+            "firstName-required": "First name is required.",
+            "lastName-required": "Last name is required."
+          },
+          "submit": "Update Profile",
+          "submitting": "Updating..."
+        },
+        "password": {
+          "title": "Reset Password",
+          "fields": {
+            "password": {
+              "label": "New Password",
+              "placeholder": "Enter a new secure password"
+            }
+          },
+          "submit": "Reset Password",
+          "submitting": "Resetting..."
         }
       }
     }

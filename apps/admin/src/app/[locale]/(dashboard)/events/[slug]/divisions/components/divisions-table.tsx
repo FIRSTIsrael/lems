@@ -26,6 +26,7 @@ import { ColorPicker, apiFetch } from '@lems/shared';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
 import { Division } from '@lems/types/api/admin';
 import { defaultColor } from '../../../../../../../theme';
+import { DeleteDivisionDialog } from './delete-division-dialog';
 
 interface DivisionsTableProps {
   divisions: Division[];
@@ -42,6 +43,8 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     color: hexToHsva(defaultColor)
   });
   const [nameError, setNameError] = useState<string>('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [divisionToDelete, setDivisionToDelete] = useState<Division | null>(null);
 
   const handleEditStart = (division: Division) => {
     setEditingDivision(division.id);
@@ -89,6 +92,20 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
       setEditForm({ name: '', color: hexToHsva(defaultColor) });
       await onEditDivision();
     }
+  };
+
+  const handleDelete = async (division: Division) => {
+    setDivisionToDelete(division);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    await onEditDivision();
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDivisionToDelete(null);
   };
 
   return (
@@ -190,7 +207,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                       >
                         <EditIcon />
                       </IconButton>
-                      <IconButton disabled color="error" size="small">
+                      <IconButton onClick={() => handleDelete(division)} color="error" size="small">
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
@@ -209,6 +226,12 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
           )}
         </TableBody>
       </Table>
+      <DeleteDivisionDialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        division={divisionToDelete}
+        onDelete={handleDeleteConfirm}
+      />
     </TableContainer>
   );
 };

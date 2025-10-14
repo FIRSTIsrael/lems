@@ -1,30 +1,41 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box } from '@mui/material';
 import { Edit, Security, Delete } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { AdminUser } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
+import { useSession } from '../../components/session-context';
 import { UsersSearch } from './users-search';
 import { PermissionsEditorDialog } from './permissions-editor-dialog';
+import { DeleteUserDialog } from './delete-user-dialog';
+import { EditUserDialog } from './edit-user-dialog';
 
 interface UsersDataGridProps {
   users: AdminUser[];
 }
 
+type DialogType = 'permissions' | 'delete' | 'edit' | null;
+
+interface DialogState {
+  type: DialogType;
+  userId: string;
+  userName: string;
+  user?: AdminUser;
+}
+
 export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
+  const session = useSession();
   const [searchValue, setSearchValue] = useState('');
-  const [permissionsDialog, setPermissionsDialog] = useState<{
-    open: boolean;
-    userId: string;
-    userName: string;
-  }>({
-    open: false,
+  const [dialog, setDialog] = useState<DialogState>({
+    type: null,
     userId: '',
-    userName: ''
+    userName: '',
+    user: undefined
   });
 
   const { data: users } = useSWR<AdminUser[]>('/admin/users', {
@@ -52,19 +63,54 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
   };
 
   const openPermissionsDialog = (userId: string, firstName: string, lastName: string) => {
-    setPermissionsDialog({
-      open: true,
+    setDialog({
+      type: 'permissions',
       userId,
-      userName: `${firstName} ${lastName}`
+      userName: `${firstName} ${lastName}`,
+      user: undefined
     });
   };
 
-  const closePermissionsDialog = () => {
-    setPermissionsDialog({
-      open: false,
-      userId: '',
-      userName: ''
+  const openDeleteDialog = (userId: string, firstName: string, lastName: string) => {
+    setDialog({
+      type: 'delete',
+      userId,
+      userName: `${firstName} ${lastName}`,
+      user: undefined
     });
+  };
+
+  const openEditDialog = (user: AdminUser) => {
+    setDialog({
+      type: 'edit',
+      userId: user.id,
+      userName: `${user.firstName} ${user.lastName}`,
+      user
+    });
+  };
+
+  const closeDialog = () => {
+    setDialog({
+      type: null,
+      userId: '',
+      userName: '',
+      user: undefined
+    });
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    const result = await apiFetch(`/admin/users/${userId}`, {
+      method: 'DELETE'
+    });
+
+    if (!result.ok) {
+      if (result.status === 403) {
+        throw new Error('You cannot delete your own account');
+      }
+      throw new Error('Failed to delete user');
+    }
+
+    mutate('/admin/users');
   };
 
   const columns: GridColDef[] = [
@@ -124,20 +170,17 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
           key="edit"
           icon={<Edit />}
           label="Edit user"
-          disabled
           onClick={() => {
-            // TODO: Implement edit functionality
-            console.log('Edit user:', params.row.id);
+            openEditDialog(params.row);
           }}
         />,
         <GridActionsCellItem
           key="delete"
           icon={<Delete />}
           label="Delete user"
-          disabled
+          disabled={params.row.id === session.user.id}
           onClick={() => {
-            // TODO: Implement delete functionality
-            console.log('Delete user:', params.row.id);
+            openDeleteDialog(params.row.id, params.row.firstName, params.row.lastName);
           }}
         />
       ]
@@ -181,11 +224,23 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
       </Box>
 
       <PermissionsEditorDialog
-        open={permissionsDialog.open}
-        onClose={closePermissionsDialog}
-        userId={permissionsDialog.userId}
-        userName={permissionsDialog.userName}
+        open={dialog.type === 'permissions'}
+        onClose={closeDialog}
+        userId={dialog.userId}
+        userName={dialog.userName}
       />
+
+      <DeleteUserDialog
+        open={dialog.type === 'delete'}
+        onClose={closeDialog}
+        userId={dialog.userId}
+        userName={dialog.userName}
+        onDelete={handleDeleteUser}
+      />
+
+      {dialog.user && (
+        <EditUserDialog open={dialog.type === 'edit'} onClose={closeDialog} user={dialog.user} />
+      )}
     </Box>
   );
 };
