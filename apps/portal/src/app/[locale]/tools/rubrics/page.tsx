@@ -1,5 +1,5 @@
 import { Paper, Typography, Box } from '@mui/material';
-import JudgingTimer from './components/judging-timer';
+import { JudgingTimer } from './components/judging-timer';
 
 export default function RubricsPage() {
   return (

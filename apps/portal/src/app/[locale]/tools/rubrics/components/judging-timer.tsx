@@ -325,4 +325,4 @@ const JudgingTimer = () => {
   );
 };
 
-export default JudgingTimer;
+export { JudgingTimer };
