@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Container, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
+import { Container, Paper, Tabs, Tab } from '@mui/material';
 import {
   getEventData,
   getDivisionData,
@@ -72,29 +72,15 @@ const EventPage = () => {
           scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
         >
+          <Tab label={t('teams')} />
           <Tab label={t('quick-links.scoreboard')} />
           <Tab label={t('quick-links.awards')} />
           <Tab label={t('quick-links.field-schedule')} />
           <Tab label={t('quick-links.judging-schedule')} />
-          <Tab label={t('teams')} />
         </Tabs>
       </Paper>
 
-      {/* Tab Content */}
-      {/* Scoreboard Tab */}
-      {selectedTab === 0 && <Scoreboard data={mockScoreboardData} eventSlug={slug} />}
-
-      {/* Awards Tab */}
-      {selectedTab === 1 && <Awards awards={mockAwardsData} eventSlug={slug} />}
-
-      {/* Field Schedule Tab */}
-      {selectedTab === 2 && <FieldSchedule rounds={mockFieldScheduleData} eventSlug={slug} />}
-
-      {/* Judging Schedule Tab */}
-      {selectedTab === 3 && <JudgingSchedule sessions={mockJudgingScheduleData} eventSlug={slug} />}
-
-      {/* Teams Tab */}
-      {selectedTab === 4 && divisionData && (
+      {selectedTab === 0 && (
         <Paper sx={{ p: 3 }}>
           <TeamsList
             teams={divisionData.teams}
@@ -103,17 +89,13 @@ const EventPage = () => {
         </Paper>
       )}
 
-      {selectedTab === 4 && !divisionData && allTeams && (
-        <Paper sx={{ p: 3 }}>
-          <TeamsList teams={allTeams} divisionColor="#666666" />
-        </Paper>
-      )}
+      {selectedTab === 1 && <Scoreboard data={mockScoreboardData} eventSlug={slug} />}
 
-      {selectedTab === 4 && !divisionData && !allTeams && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <CircularProgress />
-        </Paper>
-      )}
+      {selectedTab === 2 && <Awards awards={mockAwardsData} eventSlug={slug} />}
+
+      {selectedTab === 3 && <FieldSchedule rounds={mockFieldScheduleData} eventSlug={slug} />}
+
+      {selectedTab === 4 && <JudgingSchedule sessions={mockJudgingScheduleData} eventSlug={slug} />}
     </Container>
   );
 };
