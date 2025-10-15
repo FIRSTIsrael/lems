@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, Divider } from '@mui/material';
 import {
   Timer as TimerIcon,
@@ -12,110 +12,47 @@ import {
   SkipNext as SkipNextIcon,
   SkipPrevious as SkipPreviousIcon
 } from '@mui/icons-material';
-import { useTranslations, useLocale } from 'next-intl';
-import { useJudgingTimer, formatTime } from '../../../../../hooks/use-judging-timer';
-import { useJudgingSounds } from '../../../../../hooks/use-judging-sounds';
+import { useJudgingTimer, formatTime, JUDGING_STAGES } from '../hooks/use-judging-timer';
 
 const JudgingTimer = () => {
-  const t = useTranslations('tools.rubrics.judging-timer');
-  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
 
   const [timerState, timerControls] = useJudgingTimer();
-  const playJudgingSound = useJudgingSounds();
-  const {
-    currentStage,
-    nextStage,
-    stageTimeRemaining: timeRemainingInStage,
-    totalTimeRemaining,
-    isRunning,
-    isFinished,
-    currentStage: currentStageIndex,
-    stages
-  } = timerState;
-
-  const {
-    start,
-    pause,
-    resume,
-    stop,
-    reset,
-    nextStage: goToNextStage,
-    restartCurrentStage
-  } = timerControls;
-
-  const prevStageIndex = useRef(currentStageIndex);
-  const prevIsRunning = useRef(isRunning);
-  const prevIsFinished = useRef(isFinished);
-
-  useEffect(() => {
-    if (isRunning && !prevIsRunning.current) {
-      playJudgingSound('start');
-    }
-
-    if (currentStageIndex > prevStageIndex.current) {
-      playJudgingSound('change');
-    }
-    if (isFinished && !prevIsFinished.current) {
-      playJudgingSound('end');
-    }
-
-    prevStageIndex.current = currentStageIndex;
-    prevIsRunning.current = isRunning;
-    prevIsFinished.current = isFinished;
-  }, [currentStageIndex, isRunning, isFinished, playJudgingSound]);
-
-  const handleToggleTimer = () => {
-    setIsOpen(!isOpen);
-  };
+  const { currentStage, stageTimeRemaining, totalTimeRemaining, isRunning, isFinished } =
+    timerState;
+  const { start, pause, resume, stop, reset, forward, back } = timerControls;
 
   const handlePlayPause = () => {
     if (isRunning) {
       pause();
-    } else if (timeRemainingInStage === currentStage.duration) {
+    } else if (stageTimeRemaining === JUDGING_STAGES[currentStage].duration) {
       start();
     } else {
       resume();
     }
   };
 
-  const handleNextStage = () => {
-    goToNextStage();
-  };
-
-  const handleRestartStage = () => {
-    restartCurrentStage();
-    playJudgingSound('change');
-  };
-
-  const getCurrentStageName = () => {
-    return locale === 'he' ? currentStage.nameHe : currentStage.name;
-  };
-
-  const getNextStageName = () => {
-    if (!nextStage) return null;
-    return locale === 'he' ? nextStage.nameHe : nextStage.name;
-  };
-
   return (
     <>
-      <Fab
-        sx={{
-          position: 'fixed',
-          bottom: { xs: 16, md: 24 },
-          right: { xs: 16, md: 24 },
-          zIndex: 1000,
-          bgcolor: 'primary.main',
-          color: 'white',
-          transition: 'all 0.3s ease-in-out',
-          '&:hover': {
-            bgcolor: 'primary.dark'
-          }
-        }}
-        onClick={handleToggleTimer}
-      >
-        <TimerIcon />
-      </Fab>
+      {!isOpen && (
+        <Fab
+          sx={{
+            position: 'fixed',
+            bottom: { xs: 16, md: 24 },
+            right: { xs: 16, md: 24 },
+            zIndex: 1000,
+            bgcolor: 'primary.main',
+            color: 'white',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              bgcolor: 'primary.dark'
+            }
+          }}
+          onClick={() => setIsOpen(true)}
+        >
+          <TimerIcon />
+        </Fab>
+      )}
 
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
@@ -137,7 +74,7 @@ const JudgingTimer = () => {
           }}
         >
           <IconButton
-            onClick={handleToggleTimer}
+            onClick={() => setIsOpen(false)}
             sx={{
               position: 'absolute',
               top: 8,
@@ -151,25 +88,25 @@ const JudgingTimer = () => {
 
           <Box sx={{ p: 2, pb: 1 }}>
             <Typography variant="subtitle1" fontWeight={600} color="text.primary" gutterBottom>
-              {t('current-stage')}: {getCurrentStageName()}
+              CURENT STAGE: NAME
             </Typography>
 
-            {nextStage && (
+            {currentStage !== JUDGING_STAGES.length - 1 && (
               <Typography variant="body2" color="text.secondary">
-                {t('next-stage')}: {getNextStageName()}
+                NEXT STAGE: NAME
               </Typography>
             )}
           </Box>
 
           <Box sx={{ px: 2, pb: 1 }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              {stages.map((stage, index) => {
+              {JUDGING_STAGES.map((stage, index) => {
                 let progressPercentage = 0;
 
-                if (index < currentStageIndex) {
+                if (index < currentStage) {
                   progressPercentage = 100;
-                } else if (index === currentStageIndex) {
-                  const timeElapsed = stage.duration - timeRemainingInStage;
+                } else if (index === currentStage) {
+                  const timeElapsed = stage.duration - stageTimeRemaining;
                   progressPercentage = (timeElapsed / stage.duration) * 100;
                 } else {
                   progressPercentage = 0;
@@ -195,9 +132,9 @@ const JudgingTimer = () => {
                         height: '100%',
                         width: `${progressPercentage}%`,
                         bgcolor:
-                          index < currentStageIndex
+                          index < currentStage
                             ? 'primary.main'
-                            : index === currentStageIndex
+                            : index === currentStage
                               ? 'primary.main'
                               : 'grey.300',
                         borderRadius: 2,
@@ -209,7 +146,7 @@ const JudgingTimer = () => {
               })}
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-              {t('stage-progress', { current: currentStageIndex + 1, total: stages.length })}
+              PROGRESS
             </Typography>
           </Box>
 
@@ -228,11 +165,11 @@ const JudgingTimer = () => {
                 transition: 'color 0.3s ease-in-out'
               }}
             >
-              {formatTime(timeRemainingInStage)}
+              {formatTime(stageTimeRemaining)}
             </Typography>
 
             <Typography variant="body2" color="text.secondary" sx={{ mt: -0.5 }}>
-              {t('stage-time-remaining')}
+              STAGE TIME REMAINING:
             </Typography>
 
             <Typography
@@ -247,7 +184,7 @@ const JudgingTimer = () => {
               {formatTime(totalTimeRemaining)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {t('total-time-remaining')}
+              TIME REMANING
             </Typography>
           </Box>
 
@@ -295,7 +232,7 @@ const JudgingTimer = () => {
 
             <Stack direction="row" spacing={1} justifyContent="center">
               <IconButton
-                onClick={handleRestartStage}
+                onClick={() => back()}
                 sx={{
                   bgcolor: 'primary.main',
                   color: 'white',
@@ -306,8 +243,8 @@ const JudgingTimer = () => {
               </IconButton>
 
               <IconButton
-                onClick={handleNextStage}
-                disabled={currentStageIndex >= stages.length - 1}
+                onClick={() => forward()}
+                disabled={currentStage >= JUDGING_STAGES.length - 1}
                 sx={{
                   bgcolor: 'primary.main',
                   color: 'white',
