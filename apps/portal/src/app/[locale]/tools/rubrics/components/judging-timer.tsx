@@ -26,11 +26,11 @@ const JudgingTimer = () => {
   const {
     currentStage,
     nextStage,
-    timeRemainingInStage,
+    stageTimeRemaining: timeRemainingInStage,
     totalTimeRemaining,
     isRunning,
     isFinished,
-    currentStageIndex,
+    currentStage: currentStageIndex,
     stages
   } = timerState;
 

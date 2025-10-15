@@ -1,23 +1,25 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react';
+import { useJudgingSounds } from './use-judging-sounds';
 
-export interface JudgingStage {
-  id: string;
-  name: string;
-  nameHe: string;
-  duration: number; // in seconds
-}
+// TODO: Allow selecting from a set of predefined templates
+// That will accommodate multiple regions
+export const JUDGING_STAGES = [
+  { id: 'setup', duration: 120 }, // 2 min
+  { id: 'innovation-presentation', duration: 300 }, // 5 min
+  { id: 'innovation-questions', duration: 300 }, // 5 min
+  { id: 'robot-presentation', duration: 300 }, // 5 min
+  { id: 'robot-questions', duration: 300 }, // 5 min
+  { id: 'final-thoughts', duration: 360 } // 6 min
+];
 
 export interface JudgingTimerState {
-  currentStageIndex: number;
-  currentStage: JudgingStage;
-  nextStage: JudgingStage | null;
-  timeRemainingInStage: number;
+  currentStage: number;
+  stageTimeRemaining: number;
   totalTimeRemaining: number;
   isRunning: boolean;
   isFinished: boolean;
-  stages: JudgingStage[];
 }
 
 export interface JudgingTimerControls {
@@ -26,99 +28,148 @@ export interface JudgingTimerControls {
   resume: () => void;
   stop: () => void;
   reset: () => void;
-  nextStage: () => void;
-  previousStage: () => void;
-  restartCurrentStage: () => void;
+  forward: () => void;
+  back: () => void;
 }
 
-// isr time
-const DEFAULT_STAGES: JudgingStage[] = [
-  { id: 'setup', name: 'Setup Time', nameHe: 'זמן התארגנות', duration: 120 }, // 2 min
-  { id: 'innovation-presentation', name: 'Innovation Project Presentation', nameHe: 'הצגת פרויקט חדשנות', duration: 300 }, // 5 min
-  { id: 'innovation-questions', name: 'Innovation Project Questions', nameHe: 'שאלות פרויקט החדשנות', duration: 300 }, // 5 min
-  { id: 'robot-presentation', name: 'Robot Design Presentation', nameHe: 'הצגת תכנון הרובוט', duration: 300 }, // 5 min
-  { id: 'robot-questions', name: 'Robot Design Questions', nameHe: 'שאלות תכנון הרובוט', duration: 300 }, // 5 min
-  { id: 'summary-sharing', name: 'Summary Sharing', nameHe: 'שיתוף מסכם', duration: 360 } // 6 min
-];
+type TimerState = {
+  currentStage: number;
+  stageTimeRemaining: number;
+  isRunning: boolean;
+};
 
-export const useJudgingTimer = (customStages?: JudgingStage[]): [JudgingTimerState, JudgingTimerControls] => {
-  const stages = customStages || DEFAULT_STAGES;
-  const [currentStageIndex, setCurrentStageIndex] = useState(0);
-  const [timeRemainingInStage, setTimeRemainingInStage] = useState(stages[0].duration);
-  const [isRunning, setIsRunning] = useState(false);
+type TimerAction =
+  | 'START'
+  | 'PAUSE'
+  | 'RESUME'
+  | 'STOP'
+  | 'RESET'
+  | 'TICK'
+  | 'FORWARD'
+  | 'BACK'
+  | { type: 'STAGE_COMPLETE'; nextStage: number };
+
+const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
+  if (typeof action === 'object' && action.type === 'STAGE_COMPLETE') {
+    return {
+      currentStage: action.nextStage,
+      stageTimeRemaining: JUDGING_STAGES[action.nextStage].duration,
+      isRunning: false
+    };
+  }
+
+  switch (action) {
+    case 'START':
+      return { ...state, isRunning: true };
+    case 'PAUSE':
+      return { ...state, isRunning: false };
+    case 'RESUME':
+      return { ...state, isRunning: true };
+    case 'STOP':
+      return {
+        currentStage: 0,
+        stageTimeRemaining: JUDGING_STAGES[0].duration,
+        isRunning: false
+      };
+    case 'RESET':
+      return {
+        currentStage: 0,
+        stageTimeRemaining: JUDGING_STAGES[0].duration,
+        isRunning: false
+      };
+    case 'TICK': {
+      const newTime = state.stageTimeRemaining - 1;
+      if (newTime <= 0 && state.currentStage < JUDGING_STAGES.length - 1) {
+        return {
+          ...state,
+          currentStage: state.currentStage + 1,
+          stageTimeRemaining: JUDGING_STAGES[state.currentStage + 1].duration
+        };
+      }
+      if (newTime <= 0) {
+        return { ...state, isRunning: false, stageTimeRemaining: 0 };
+      }
+      return { ...state, stageTimeRemaining: newTime };
+    }
+    case 'FORWARD': {
+      if (state.currentStage < JUDGING_STAGES.length - 1) {
+        const nextIndex = state.currentStage + 1;
+        return {
+          currentStage: nextIndex,
+          stageTimeRemaining: JUDGING_STAGES[nextIndex].duration,
+          isRunning: false
+        };
+      }
+      return state;
+    }
+    case 'BACK': {
+      // If at the start of current stage (within 1 second), go to previous stage
+      // Otherwise, restart current stage
+      const currentStageDuration = JUDGING_STAGES[state.currentStage].duration;
+      if (state.stageTimeRemaining >= currentStageDuration - 1 && state.currentStage > 0) {
+        const prevIndex = state.currentStage - 1;
+        return {
+          currentStage: prevIndex,
+          stageTimeRemaining: JUDGING_STAGES[prevIndex].duration,
+          isRunning: false
+        };
+      }
+      return {
+        ...state,
+        stageTimeRemaining: currentStageDuration,
+        isRunning: false
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => {
+  const playSound = useJudgingSounds();
+
+  const [state, dispatch] = useReducer(timerReducer, {
+    currentStage: 0,
+    stageTimeRemaining: JUDGING_STAGES[0].duration,
+    isRunning: false
+  });
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const currentStage = stages[currentStageIndex];
-  const nextStage = currentStageIndex < stages.length - 1 ? stages[currentStageIndex + 1] : null;
-  
-  //total time remaining
-  const totalTimeRemaining = stages
-    .slice(currentStageIndex + 1)
-    .reduce((sum, stage) => sum + stage.duration, 0) + timeRemainingInStage;
-
-  const isFinished = currentStageIndex >= stages.length - 1 && timeRemainingInStage === 0;
+  const previousStageRef = useRef(state.currentStage);
 
   const start = useCallback(() => {
-    setIsRunning(true);
-  }, []);
+    dispatch('START');
+    playSound('start');
+  }, [playSound]);
 
   const pause = useCallback(() => {
-    setIsRunning(false);
+    dispatch('PAUSE');
   }, []);
 
   const resume = useCallback(() => {
-    setIsRunning(true);
+    dispatch('RESUME');
   }, []);
 
   const stop = useCallback(() => {
-    setIsRunning(false);
-    setCurrentStageIndex(0);
-    setTimeRemainingInStage(stages[0].duration);
-  }, [stages]);
+    dispatch('STOP');
+  }, []);
 
   const reset = useCallback(() => {
-    setIsRunning(false);
-    setCurrentStageIndex(0);
-    setTimeRemainingInStage(stages[0].duration);
-  }, [stages]);
+    dispatch('RESET');
+  }, []);
 
-  const nextStageHandler = useCallback(() => {
-    if (currentStageIndex < stages.length - 1) {
-      const newIndex = currentStageIndex + 1;
-      setCurrentStageIndex(newIndex);
-      setTimeRemainingInStage(stages[newIndex].duration);
-    }
-  }, [currentStageIndex, stages]);
+  const forward = useCallback(() => {
+    dispatch('FORWARD');
+  }, []);
 
-  const previousStage = useCallback(() => {
-    if (currentStageIndex > 0) {
-      const newIndex = currentStageIndex - 1;
-      setCurrentStageIndex(newIndex);
-      setTimeRemainingInStage(stages[newIndex].duration);
-    }
-  }, [currentStageIndex, stages]);
-
-  const restartCurrentStage = useCallback(() => {
-    setTimeRemainingInStage(stages[currentStageIndex].duration);
-  }, [currentStageIndex, stages]);
+  const back = useCallback(() => {
+    dispatch('BACK');
+  }, []);
 
   useEffect(() => {
-    if (isRunning && timeRemainingInStage > 0) {
+    if (state.isRunning && state.stageTimeRemaining > 0) {
       intervalRef.current = setInterval(() => {
-        setTimeRemainingInStage((prev) => {
-          const newTime = prev - 1;
-          if (newTime <= 0) {
-
-            if (currentStageIndex < stages.length - 1) {
-              setCurrentStageIndex(currentStageIndex + 1);
-              return stages[currentStageIndex + 1].duration;
-            } else {
-              setIsRunning(false);
-              return 0;
-            }
-          }
-          return newTime;
-        });
+        dispatch('TICK');
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -132,31 +183,50 @@ export const useJudgingTimer = (customStages?: JudgingStage[]): [JudgingTimerSta
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, timeRemainingInStage, currentStageIndex, stages]);
+  }, [state.isRunning, state.stageTimeRemaining]);
 
-  const state: JudgingTimerState = {
-    currentStageIndex,
-    currentStage,
-    nextStage,
-    timeRemainingInStage,
-    totalTimeRemaining,
-    isRunning,
-    isFinished,
-    stages
-  };
+  // Handle stage progression sound
+  useEffect(() => {
+    if (state.currentStage !== previousStageRef.current) {
+      playSound('change');
+      previousStageRef.current = state.currentStage;
+    }
+  }, [state.currentStage, playSound]);
 
-  const controls: JudgingTimerControls = {
-    start,
-    pause,
-    resume,
-    stop,
-    reset,
-    nextStage: nextStageHandler,
-    previousStage,
-    restartCurrentStage
-  };
+  // Handle timer completion sound
+  useEffect(() => {
+    if (state.currentStage === JUDGING_STAGES.length - 1 && state.stageTimeRemaining === 0) {
+      playSound('end');
+    }
+  }, [state.currentStage, state.stageTimeRemaining, playSound]);
 
-  return [state, controls];
+  const totalTimeRemaining = useMemo(
+    () =>
+      JUDGING_STAGES.slice(state.currentStage + 1).reduce((sum, stage) => sum + stage.duration, 0) +
+      state.stageTimeRemaining,
+    [state.currentStage, state.stageTimeRemaining]
+  );
+
+  const isFinished =
+    state.currentStage >= JUDGING_STAGES.length - 1 && state.stageTimeRemaining === 0;
+
+  const timerState: JudgingTimerState = useMemo(
+    () => ({
+      currentStage: state.currentStage,
+      stageTimeRemaining: state.stageTimeRemaining,
+      totalTimeRemaining,
+      isRunning: state.isRunning,
+      isFinished
+    }),
+    [state.currentStage, state.stageTimeRemaining, totalTimeRemaining, state.isRunning, isFinished]
+  );
+
+  const controls: JudgingTimerControls = useMemo(
+    () => ({ start, pause, resume, stop, reset, forward, back }),
+    [start, pause, resume, stop, reset, forward, back]
+  );
+
+  return [timerState, controls];
 };
 
 export const formatTime = (seconds: number): string => {
