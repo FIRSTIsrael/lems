@@ -1,16 +1,16 @@
-import { Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box, Container } from '@mui/material';
 import { JudgingTimer } from './components/judging-timer';
 
 export default function RubricsPage() {
   return (
-    <>
-      {/* Placeholder for rubrics content */}
+    <Container maxWidth="md">
       <Paper
         elevation={1}
         sx={{
           p: 4,
           m: 2,
           textAlign: 'center',
+          width: '100%',
           minHeight: '60vh',
           display: 'flex',
           alignItems: 'center',
@@ -23,12 +23,12 @@ export default function RubricsPage() {
             Rubrics
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Rubrics coming soon!
+            Coming soon...
           </Typography>
         </Box>
       </Paper>
 
       <JudgingTimer />
-    </>
+    </Container>
   );
 }
