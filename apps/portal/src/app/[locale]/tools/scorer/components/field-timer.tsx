@@ -50,7 +50,7 @@ export const FieldTimer = () => {
           sx={{
             position: 'fixed',
             bottom: scoreFloaterShown ? { xs: 90, md: 24 } : { xs: 16, md: 24 },
-            right: { xs: 16, md: 24 },
+            left: { xs: 16, md: 24 },
             zIndex: 1000,
             bgcolor: 'primary.main',
             color: 'white',
@@ -71,7 +71,7 @@ export const FieldTimer = () => {
           sx={{
             position: 'fixed',
             bottom: scoreFloaterShown ? { xs: 90, md: 24 } : { xs: 16, md: 24 },
-            right: { xs: 16, md: 24 },
+            left: { xs: 16, md: 24 },
             zIndex: 1001,
             width: { xs: 'calc(100vw - 32px)', sm: 320, md: 360 },
             borderRadius: 3,
