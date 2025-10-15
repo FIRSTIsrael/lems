@@ -3,8 +3,8 @@
 import React, { useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { MenuItem, Menu, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import { Language } from '@mui/icons-material';
-import { ChevronEndIcon, Locale, Locales } from '@lems/localization';
+import { Language, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { DirectionalIcon, Locale, Locales } from '@lems/localization';
 import { useRouter } from '../../../../i18n/navigation';
 
 interface LanguageSubmenuProps {
@@ -140,7 +140,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
               {currentLocaleData.displayName}
             </Typography>
           </ListItemText>
-          <ChevronEndIcon fontSize="small" sx={{ ml: 1 }} />
+          <DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} fontSize="small" sx={{ ml: 1 }} />
         </button>
       </MenuItem>
 
