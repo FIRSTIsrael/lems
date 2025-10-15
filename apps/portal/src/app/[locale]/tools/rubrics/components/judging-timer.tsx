@@ -87,72 +87,6 @@ const JudgingTimer = () => {
             <CloseIcon />
           </IconButton>
 
-          <Box sx={{ p: 2, pb: 1 }}>
-            <Typography variant="subtitle1" fontWeight={600} color="text.primary" gutterBottom>
-              CURENT STAGE: NAME
-            </Typography>
-
-            {currentStage !== JUDGING_STAGES.length - 1 && (
-              <Typography variant="body2" color="text.secondary">
-                NEXT STAGE: NAME
-              </Typography>
-            )}
-          </Box>
-
-          <Box sx={{ px: 2, pb: 1 }}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              {JUDGING_STAGES.map((stage, index) => {
-                let progressPercentage = 0;
-
-                if (index < currentStage) {
-                  progressPercentage = 100;
-                } else if (index === currentStage) {
-                  const timeElapsed = stage.duration - stageTimeRemaining;
-                  progressPercentage = (timeElapsed / stage.duration) * 100;
-                } else {
-                  progressPercentage = 0;
-                }
-
-                return (
-                  <Box
-                    key={stage.id}
-                    sx={{
-                      flex: 1,
-                      height: 4,
-                      borderRadius: 2,
-                      bgcolor: 'grey.300',
-                      position: 'relative',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        height: '100%',
-                        width: `${progressPercentage}%`,
-                        bgcolor:
-                          index < currentStage
-                            ? 'primary.main'
-                            : index === currentStage
-                              ? 'primary.main'
-                              : 'grey.300',
-                        borderRadius: 2,
-                        transition: 'width 0.3s ease-in-out, background-color 0.3s ease-in-out'
-                      }}
-                    />
-                  </Box>
-                );
-              })}
-            </Stack>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-              PROGRESS
-            </Typography>
-          </Box>
-
-          <Divider sx={{ mx: 2 }} />
-
           <Box sx={{ px: 3, py: 2, textAlign: 'center' }}>
             <Typography
               variant="h2"
@@ -169,10 +103,6 @@ const JudgingTimer = () => {
               {formatTime(stageTimeRemaining)}
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" sx={{ mt: -0.5 }}>
-              STAGE TIME REMAINING:
-            </Typography>
-
             <Typography
               variant="h6"
               color="text.secondary"
@@ -184,12 +114,65 @@ const JudgingTimer = () => {
             >
               {formatTime(totalTimeRemaining)}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              TIME REMANING
-            </Typography>
           </Box>
 
           <Box width="100%" px="15%" mb={2}>
+            <Box sx={{ px: 2, pb: 1 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                {JUDGING_STAGES.map((stage, index) => {
+                  let progressPercentage = 0;
+
+                  if (index < currentStage) {
+                    progressPercentage = 100;
+                  } else if (index === currentStage) {
+                    const timeElapsed = stage.duration - stageTimeRemaining;
+                    progressPercentage = (timeElapsed / stage.duration) * 100;
+                  } else {
+                    progressPercentage = 0;
+                  }
+
+                  return (
+                    <Box
+                      key={stage.id}
+                      sx={{
+                        flex: 1,
+                        height: 4,
+                        borderRadius: 2,
+                        bgcolor: 'grey.300',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          height: '100%',
+                          width: `${progressPercentage}%`,
+                          bgcolor:
+                            index < currentStage
+                              ? 'primary.main'
+                              : index === currentStage
+                                ? 'primary.main'
+                                : 'grey.300',
+                          borderRadius: 2,
+                          transition: 'width 0.3s ease-in-out, background-color 0.3s ease-in-out'
+                        }}
+                      />
+                    </Box>
+                  );
+                })}
+              </Stack>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 0.5, display: 'block' }}
+              >
+                PROGRESS
+              </Typography>
+            </Box>
+
             <Stack
               direction={{ xs: 'column', md: 'row' }}
               spacing={1}
