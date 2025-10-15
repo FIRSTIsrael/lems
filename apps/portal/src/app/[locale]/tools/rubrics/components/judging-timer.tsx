@@ -103,7 +103,7 @@ const JudgingTimer = () => {
         sx={{
           position: 'fixed',
           bottom: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
+          right: { xs: 16, md: 24 },
           zIndex: 1000,
           bgcolor: 'primary.main',
           color: 'white',
@@ -123,7 +123,7 @@ const JudgingTimer = () => {
           sx={{
             position: 'fixed',
             bottom: { xs: 16, md: 24 },
-            left: { xs: 16, md: 24 },
+            right: { xs: 16, md: 24 },
             zIndex: 999,
             width: { xs: 'calc(100vw - 32px)', sm: 380, md: 420 },
             maxWidth: 'calc(100vw - 32px)',
