@@ -22,6 +22,8 @@ const JudgingTimer = () => {
     timerState;
   const { start, pause, resume, stop, reset, forward, back } = timerControls;
 
+  const isReset = currentStage === 0 && stageTimeRemaining === JUDGING_STAGES[0].duration;
+
   const handlePlayPause = () => {
     if (isRunning) {
       pause();
@@ -43,7 +45,7 @@ const JudgingTimer = () => {
             zIndex: 1000,
             bgcolor: 'primary.main',
             color: 'white',
-            transition: 'all 0.3s ease-in-out',
+            transition: 'bottom 0.3s ease-in-out',
             '&:hover': {
               bgcolor: 'primary.dark'
             }
@@ -61,16 +63,15 @@ const JudgingTimer = () => {
             position: 'fixed',
             bottom: { xs: 16, md: 24 },
             right: { xs: 16, md: 24 },
-            zIndex: 999,
+            zIndex: 1001,
             width: { xs: 'calc(100vw - 32px)', sm: 380, md: 420 },
-            maxWidth: 'calc(100vw - 32px)',
             borderRadius: 3,
             overflow: 'hidden',
             background:
               'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
-            transition: 'all 0.3s ease-in-out'
+            transition: 'bottom 0.3s ease-in-out'
           }}
         >
           <IconButton
@@ -188,72 +189,76 @@ const JudgingTimer = () => {
             </Typography>
           </Box>
 
-          <Box sx={{ px: 2, pb: 2 }}>
-            <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 1 }}>
-              <IconButton
-                onClick={handlePlayPause}
-                disabled={isFinished}
-                sx={{
-                  bgcolor: isRunning ? 'warning.main' : 'success.main',
-                  color: 'white',
-                  '&:hover': { bgcolor: isRunning ? 'warning.dark' : 'success.dark' },
-                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
-                }}
-              >
-                {isRunning ? <PauseIcon /> : <PlayIcon />}
-              </IconButton>
+          <Box width="100%" px="15%" mb={2}>
+            <Stack direction="row" spacing={1} justifyContent="space-between">
+              <Stack direction="row" spacing={1} justifyContent="center">
+                <IconButton
+                  disabled={currentStage === 0}
+                  onClick={() => back()}
+                  sx={{
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.dark' },
+                    '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                  }}
+                >
+                  <SkipPreviousIcon />
+                </IconButton>
 
-              <IconButton
-                onClick={stop}
-                disabled={isFinished || !isRunning}
-                sx={{
-                  bgcolor: 'error.main',
-                  color: 'white',
-                  '&:hover': { bgcolor: 'error.dark' },
-                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
-                }}
-              >
-                <StopIcon />
-              </IconButton>
+                <IconButton
+                  onClick={handlePlayPause}
+                  disabled={isFinished}
+                  sx={{
+                    bgcolor: isRunning ? 'warning.main' : 'success.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: isRunning ? 'warning.dark' : 'success.dark' },
+                    '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                  }}
+                >
+                  {isRunning ? <PauseIcon /> : <PlayIcon />}
+                </IconButton>
 
-              <IconButton
-                onClick={reset}
-                disabled={isRunning}
-                sx={{
-                  bgcolor: 'grey.600',
-                  color: 'white',
-                  '&:hover': { bgcolor: 'grey.700' },
-                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
-                }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Stack>
+                <IconButton
+                  onClick={() => forward()}
+                  disabled={currentStage >= JUDGING_STAGES.length - 1}
+                  sx={{
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.dark' },
+                    '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                  }}
+                >
+                  <SkipNextIcon />
+                </IconButton>
+              </Stack>
 
-            <Stack direction="row" spacing={1} justifyContent="center">
-              <IconButton
-                onClick={() => back()}
-                sx={{
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  '&:hover': { bgcolor: 'primary.dark' }
-                }}
-              >
-                <SkipPreviousIcon />
-              </IconButton>
+              <Stack direction="row" spacing={1} justifyContent="center">
+                <IconButton
+                  onClick={stop}
+                  disabled={isFinished || !isRunning}
+                  sx={{
+                    bgcolor: 'error.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'error.dark' },
+                    '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                  }}
+                >
+                  <StopIcon />
+                </IconButton>
 
-              <IconButton
-                onClick={() => forward()}
-                disabled={currentStage >= JUDGING_STAGES.length - 1}
-                sx={{
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  '&:hover': { bgcolor: 'primary.dark' },
-                  '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
-                }}
-              >
-                <SkipNextIcon />
-              </IconButton>
+                <IconButton
+                  onClick={reset}
+                  disabled={isRunning || isReset}
+                  sx={{
+                    bgcolor: 'grey.600',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'grey.700' },
+                    '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
+                  }}
+                >
+                  <RefreshIcon />
+                </IconButton>
+              </Stack>
             </Stack>
           </Box>
         </Paper>
