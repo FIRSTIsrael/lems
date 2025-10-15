@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, Divider } from '@mui/material';
+import { Typography, Stack, Paper, IconButton, Slide, Box, Fab } from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -12,10 +12,12 @@ import {
   SkipNext as SkipNextIcon,
   SkipPrevious as SkipPreviousIcon
 } from '@mui/icons-material';
+import { DirectionalIcon, useJudgingSessionStageTranslations } from '@lems/localization';
 import { useJudgingTimer, formatTime, JUDGING_STAGES } from '../hooks/use-judging-timer';
 
 const JudgingTimer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { getStage } = useJudgingSessionStageTranslations();
 
   const [timerState, timerControls] = useJudgingTimer();
   const { currentStage, stageTimeRemaining, totalTimeRemaining, isRunning, isFinished } =
@@ -107,7 +109,6 @@ const JudgingTimer = () => {
               variant="h6"
               color="text.secondary"
               sx={{
-                mt: 1,
                 fontFamily: 'monospace',
                 fontSize: { xs: '1rem', sm: '1.2rem' }
               }}
@@ -169,7 +170,7 @@ const JudgingTimer = () => {
                 color="text.secondary"
                 sx={{ mt: 0.5, display: 'block' }}
               >
-                PROGRESS
+                {getStage(JUDGING_STAGES[currentStage].id)}
               </Typography>
             </Box>
 
@@ -189,7 +190,7 @@ const JudgingTimer = () => {
                     '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
                   }}
                 >
-                  <SkipPreviousIcon />
+                  <DirectionalIcon ltr={SkipPreviousIcon} rtl={SkipNextIcon} />
                 </IconButton>
 
                 <IconButton
@@ -215,7 +216,7 @@ const JudgingTimer = () => {
                     '&:disabled': { bgcolor: 'grey.300', color: 'grey.500' }
                   }}
                 >
-                  <SkipNextIcon />
+                  <DirectionalIcon ltr={SkipNextIcon} rtl={SkipPreviousIcon} />
                 </IconButton>
               </Stack>
 
