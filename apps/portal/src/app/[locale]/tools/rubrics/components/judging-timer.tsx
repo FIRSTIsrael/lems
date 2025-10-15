@@ -190,7 +190,11 @@ const JudgingTimer = () => {
           </Box>
 
           <Box width="100%" px="15%" mb={2}>
-            <Stack direction="row" spacing={1} justifyContent="space-between">
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={1}
+              justifyContent="space-between"
+            >
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
                   disabled={currentStage === 0}
