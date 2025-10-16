@@ -1,13 +1,13 @@
 'use client';
 
+import { useState, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import { Formik, Form } from 'formik';
 import { Typography, Stack, Paper, Container, Box, Alert, CircularProgress } from '@mui/material';
-import { LoginFormProps, LoginFormValues } from '../types';
-import { getStepIndex, getActiveSteps, validateForm } from '../utils';
-import { useLoginFlow } from '../hooks/use-login-flow';
-import { LoginStepper } from './login-stepper';
-import { LoginStepContent } from './login-step-content';
+import { useRecaptcha } from '@lems/shared';
+import { LoginFormValues, LoginStep } from '../types';
+import { validateForm } from '../utils';
+import { CurrentLoginStep } from './current-login-step';
 import { SubmitButton } from './submit-button';
 
 const initialValues: LoginFormValues = {
@@ -18,62 +18,59 @@ const initialValues: LoginFormValues = {
   password: ''
 };
 
-export function LoginForm({ eventSlug, recaptchaRequired }: LoginFormProps) {
-  const t = useTranslations('pages.login');
-  const { currentStep, isLoading, handleSubmit } = useLoginFlow(eventSlug, recaptchaRequired);
+interface LoginFormProps {
+  event: { name: string; slug: string };
+  recaptchaRequired: boolean;
+}
 
-  const activeSteps = getActiveSteps(currentStep);
-  const currentStepIndex = getStepIndex(currentStep.step);
+export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
+  const t = useTranslations('pages.login');
+  useRecaptcha(recaptchaRequired);
+
+  const [currentStep, setCurrentStep] = useState<LoginStep>('role');
 
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, mt: 4 }}>
-        <Typography variant="h2" textAlign="center" sx={{ mb: 3 }}>
+        <Typography variant="h1" textAlign="center" sx={{ mb: 3 }}>
           {t('title')}
         </Typography>
 
-        {isLoading && currentStep.step === 'initial' ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <LoginStepper activeSteps={activeSteps} currentStepIndex={currentStepIndex} />
+        <Typography variant="h2" textAlign="center" sx={{ mb: 3 }}>
+          {event.name}
+        </Typography>
 
-            <Formik
-              initialValues={initialValues}
-              onSubmit={handleSubmit}
-              validate={values => validateForm(values, currentStep)}
-              validateOnMount
-              enableReinitialize
-            >
-              {({ isSubmitting, status, isValid, values, setFieldValue }) => (
-                <Form>
-                  <Stack direction="column" spacing={3}>
-                    <LoginStepContent
-                      currentStep={currentStep}
-                      values={values}
-                      isSubmitting={isSubmitting}
-                      onFieldChange={(field, value) => setFieldValue(field, value)}
-                    />
+        <Suspense
+          fallback={
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+              <CircularProgress />
+            </Box>
+          }
+        >
+          <Formik
+            initialValues={initialValues}
+            onSubmit={() => console.log('Submit')}
+            validate={values => validateForm(values, currentStep)}
+            validateOnMount
+            enableReinitialize
+          >
+            {({ isSubmitting, status, isValid }) => (
+              <Form>
+                <Stack direction="column" spacing={3}>
+                  <CurrentLoginStep currentStep={currentStep} />
 
-                    <SubmitButton
-                      isSubmitting={isSubmitting}
-                      isValid={isValid}
-                      isLoading={isLoading}
-                    />
+                  <SubmitButton isSubmitting={isSubmitting} isValid={isValid} />
 
-                    {status && (
-                      <Alert severity="error" sx={{ mt: 2 }}>
-                        {t(`errors.${status}`)}
-                      </Alert>
-                    )}
-                  </Stack>
-                </Form>
-              )}
-            </Formik>
-          </>
-        )}
+                  {status && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                      {t(`errors.${status}`)}
+                    </Alert>
+                  )}
+                </Stack>
+              </Form>
+            )}
+          </Formik>
+        </Suspense>
       </Paper>
     </Container>
   );

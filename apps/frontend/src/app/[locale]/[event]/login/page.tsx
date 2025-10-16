@@ -1,12 +1,10 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
 import { LoginForm } from './components/login-form';
+import { fetchEventBySlug } from './event.graphql';
 
 interface LoginPageProps {
-  params: Promise<{
-    locale: string;
-    event: string;
-  }>;
+  params: Promise<{ event: string }>;
 }
 
 export default async function LoginPage({ params }: LoginPageProps) {
@@ -17,12 +15,15 @@ export default async function LoginPage({ params }: LoginPageProps) {
     redirect(`/${eventSlug}/dashboard`);
   }
 
-  const eventResult = await apiFetch(`/lems/events/${eventSlug}`);
-  if (!eventResult.ok) {
+  let event = null;
+
+  try {
+    event = await fetchEventBySlug(eventSlug);
+  } catch {
     redirect(`/`);
   }
 
   const recaptchaRequired = process.env.RECAPTCHA === 'true';
 
-  return <LoginForm eventSlug={eventSlug} recaptchaRequired={recaptchaRequired} />;
+  return <LoginForm event={event} recaptchaRequired={recaptchaRequired} />;
 }

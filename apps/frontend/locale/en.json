@@ -33,13 +33,13 @@
         "invalid-password": "Invalid password. Please try again.",
         "server-error": "An error occurred. Please try again.",
         "not-found": "No matching users found. Please check your selections.",
-        "NO_USERS_WITH_ROLE": "No users found with this role.",
-        "NO_USERS_IN_DIVISION": "No users found in this division.",
-        "NO_USERS_WITH_ASSOCIATION": "No users found with this assignment.",
-        "USER_NOT_FOUND": "User not found.",
-        "MISSING_EVENT_SLUG": "Event information is missing.",
-        "EVENT_NOT_FOUND": "Event not found.",
-        "NO_USERS_FOR_EVENT": "No users configured for this event."
+        "no-users-with-role": "No users found with this role.",
+        "no-users-in-division": "No users found in this division.",
+        "no-users-with-association": "No users found with this assignment.",
+        "user-not-found": "User not found.",
+        "missing-event-slug": "Event information is missing.",
+        "event-not-found": "Event not found.",
+        "no-users-for-event": "No users configured for this event."
       }
     }
   }

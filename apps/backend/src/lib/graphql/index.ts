@@ -6,7 +6,9 @@ import {
   GraphQLString,
   GraphQLBoolean
 } from 'graphql';
-import { eventResolvers } from './resolvers/event';
+import { eventResolvers } from './resolvers/events/resolver';
+import { isFullySetUpResolver } from './resolvers/events/is-fully-set-up';
+import { volunteerRolesResolver } from './resolvers/events/volunteer-roles';
 
 const EventType = new GraphQLObjectType({
   name: 'Event',
@@ -16,7 +18,14 @@ const EventType = new GraphQLObjectType({
     name: { type: new GraphQLNonNull(GraphQLString) },
     startDate: { type: new GraphQLNonNull(GraphQLString) },
     endDate: { type: new GraphQLNonNull(GraphQLString) },
-    isFullySetUp: { type: new GraphQLNonNull(GraphQLBoolean) }
+    isFullySetUp: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      resolve: isFullySetUpResolver
+    },
+    volunteerRoles: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))),
+      resolve: volunteerRolesResolver
+    }
   }
 });
 
@@ -37,16 +46,10 @@ const QueryType = new GraphQLObjectType({
     event: {
       type: EventType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) }
+        id: { type: GraphQLString },
+        slug: { type: GraphQLString }
       },
       resolve: eventResolvers.Query.event
-    },
-    eventBySlug: {
-      type: EventType,
-      args: {
-        slug: { type: new GraphQLNonNull(GraphQLString) }
-      },
-      resolve: eventResolvers.Query.eventBySlug
     }
   }
 });

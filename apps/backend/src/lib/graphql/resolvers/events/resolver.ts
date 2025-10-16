@@ -2,23 +2,19 @@ import { GraphQLFieldResolver } from 'graphql';
 import { sql } from 'kysely';
 import dayjs from 'dayjs';
 import { Event } from '@lems/database';
-import db from '../../database';
+import db from '../../../database';
 
-interface EventGraphQL {
+export interface EventGraphQL {
   id: string;
   slug: string;
   name: string;
   startDate: string;
   endDate: string;
-  isFullySetUp: boolean;
 }
 
-interface EventByIdArgs {
-  id: string;
-}
-
-interface EventBySlugArgs {
-  slug: string;
+interface EventArgs {
+  id?: string;
+  slug?: string;
 }
 
 interface EventsArgs {
@@ -30,18 +26,12 @@ interface EventsArgs {
 }
 
 async function mapEventToGraphQL(event: Event): Promise<EventGraphQL> {
-  const divisions = await db.events.byId(event.id).getDivisions();
-  const isFullySetUp = divisions.every(
-    division => division.has_awards && division.has_users && division.has_schedule
-  );
-
   return {
     id: event.id,
     slug: event.slug,
     name: event.name,
     startDate: event.start_date.toISOString(),
-    endDate: event.end_date.toISOString(),
-    isFullySetUp
+    endDate: event.end_date.toISOString()
   };
 }
 
@@ -49,7 +39,7 @@ export const eventResolvers = {
   Query: {
     events: (async (_parent, args: EventsArgs) => {
       try {
-        // Build base query with isFullySetUp calculation using subquery
+        // Build base query
         let query = db.raw.sql
           .selectFrom('events')
           .leftJoin('divisions', 'divisions.event_id', 'events.id')
@@ -113,8 +103,7 @@ export const eventResolvers = {
             slug: row.slug,
             name: row.name,
             startDate: row.start_date.toISOString(),
-            endDate: row.end_date.toISOString(),
-            isFullySetUp: row.is_fully_set_up
+            endDate: row.end_date.toISOString()
           })) || []
         );
       } catch (error) {
@@ -123,18 +112,22 @@ export const eventResolvers = {
       }
     }) as GraphQLFieldResolver<unknown, unknown, EventsArgs, Promise<EventGraphQL[]>>,
 
-    event: (async (_parent, args: EventByIdArgs) => {
-      const event = await db.events.byId(args.id).get();
+    event: (async (_parent, args: EventArgs) => {
+      if (!args.id && !args.slug) {
+        throw new Error('Either id or slug must be provided');
+      }
+
+      let event: Event | undefined;
+
+      if (args.id) {
+        event = await db.events.byId(args.id).get();
+      } else if (args.slug) {
+        event = await db.events.bySlug(args.slug).get();
+      }
+
       if (!event) return null;
 
       return mapEventToGraphQL(event);
-    }) as GraphQLFieldResolver<unknown, unknown, EventByIdArgs, Promise<EventGraphQL | null>>,
-
-    eventBySlug: (async (_parent, args: EventBySlugArgs) => {
-      const event = await db.events.bySlug(args.slug).get();
-      if (!event) return null;
-
-      return mapEventToGraphQL(event);
-    }) as GraphQLFieldResolver<unknown, unknown, EventBySlugArgs, Promise<EventGraphQL | null>>
+    }) as GraphQLFieldResolver<unknown, unknown, EventArgs, Promise<EventGraphQL | null>>
   }
 };

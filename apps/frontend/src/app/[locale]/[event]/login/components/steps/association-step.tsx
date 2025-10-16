@@ -1,25 +1,13 @@
 import { Typography, Autocomplete, TextField } from '@mui/material';
 import { useTranslations } from 'next-intl';
 
-interface Association {
-  key: string;
-  value: string;
-  label: string;
-}
-
 interface AssociationStepProps {
-  associations: Association[];
   value: string;
   isSubmitting: boolean;
   onChange: (value: string) => void;
 }
 
-export function AssociationStep({
-  associations,
-  value,
-  isSubmitting,
-  onChange
-}: AssociationStepProps) {
+export function AssociationStep({ value, isSubmitting, onChange }: AssociationStepProps) {
   const t = useTranslations('pages.login');
 
   return (

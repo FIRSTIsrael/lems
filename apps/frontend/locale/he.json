@@ -33,13 +33,13 @@
         "invalid-password": "סיסמה שגויה. אנא נסה שוב.",
         "server-error": "אירעה שגיאה. אנא נסה שוב.",
         "not-found": "לא נמצאו משתמשים תואמים. אנא בדוק את הבחירות שלך.",
-        "NO_USERS_WITH_ROLE": "לא נמצאו משתמשים עם תפקיד זה.",
-        "NO_USERS_IN_DIVISION": "לא נמצאו משתמשים בדיביזיה זו.",
-        "NO_USERS_WITH_ASSOCIATION": "לא נמצאו משתמשים עם שיוך זה.",
-        "USER_NOT_FOUND": "משתמש לא נמצא.",
-        "MISSING_EVENT_SLUG": "מידע האירוע חסר.",
-        "EVENT_NOT_FOUND": "אירוע לא נמצא.",
-        "NO_USERS_FOR_EVENT": "לא הוגדרו משתמשים עבור אירוע זה."
+        "no-users-with-role": "לא נמצאו משתמשים עם תפקיד זה.",
+        "no-users-in-division": "לא נמצאו משתמשים בדיביזיה זו.",
+        "no-users-with-association": "לא נמצאו משתמשים עם שיוך זה.",
+        "user-not-found": "משתמש לא נמצא.",
+        "missing-event-slug": "מידע האירוע חסר.",
+        "event-not-found": "אירוע לא נמצא.",
+        "no-users-for-event": "לא הוגדרו משתמשים עבור אירוע זה."
       }
     }
   }

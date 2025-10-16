@@ -32,6 +32,11 @@ export const eventTypeDefs = `#graphql
     Whether the event is fully set up with all divisions configured
     """
     isFullySetUp: Boolean!
+    
+    """
+    All unique volunteer roles assigned to divisions in this event
+    """
+    volunteerRoles: [String!]!
   }
 
   type Query {
@@ -47,13 +52,8 @@ export const eventTypeDefs = `#graphql
     ): [Event!]!
     
     """
-    Retrieve a specific event by ID
+    Retrieve a specific event by ID or slug
     """
-    event(id: ID!): Event
-    
-    """
-    Retrieve a specific event by slug
-    """
-    eventBySlug(slug: String!): Event
+    event(id: ID, slug: String): Event
   }
 `;
