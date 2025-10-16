@@ -9,10 +9,11 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  Link as MuiLink
+  Link,
+  Paper,
+  IconButton
 } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
-import Link from 'next/link';
+import { ChevronEndIcon } from '@lems/localization';
 
 interface Team {
   id: string;
@@ -31,123 +32,80 @@ interface Team {
 
 interface TeamsListProps {
   teams: Team[];
-  divisionColor?: string;
+  divisionName: string;
 }
 
-const TeamsList: React.FC<TeamsListProps> = ({ teams }) => {
+const TeamsList: React.FC<TeamsListProps> = ({ teams, divisionName }) => {
   const t = useTranslations('pages.event');
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
-  const showDivisions = teams.some(team => team.division);
 
   return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <Typography fontWeight={500}>{t('team')}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography fontWeight={500}>{t('location')}</Typography>
-            </TableCell>
-            {showDivisions && (
+    <Paper sx={{ p: 3 }}>
+      <Typography variant="h2" gutterBottom>
+        {t('division-teams', { divisionName })}
+      </Typography>
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
               <TableCell>
-                <Typography fontWeight={500}>{t('division')}</Typography>
-              </TableCell>
-            )}
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedTeams.map(team => (
-            <TableRow
-              key={team.id}
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)'
-                },
-                '&:active': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.08)'
-                }
-              }}
-            >
-              <TableCell>
-                <MuiLink
-                  component={Link}
-                  href={`/teams/${team.number}`}
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    display: 'block',
-                    '&:hover': {
-                      textDecoration: 'underline'
-                    }
-                  }}
-                >
-                  {team.name} #{team.number}
-                </MuiLink>
+                <Typography fontWeight={500}>{t('teams')}</Typography>
               </TableCell>
               <TableCell>
-                <MuiLink
-                  component={Link}
-                  href={`/teams/${team.number}`}
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    display: 'block',
-                    '&:hover': {
-                      textDecoration: 'underline'
-                    }
-                  }}
-                >
-                  {team.affiliation.name}, {team.affiliation.city}
-                </MuiLink>
+                <Typography fontWeight={500}>{t('location')}</Typography>
               </TableCell>
-              {showDivisions && (
-                <TableCell>
-                  {team.division && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: team.division.color,
-                        fontWeight: 500,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: team.division.color,
-                          display: 'inline-block'
-                        }}
-                      />
-                      {team.division.name}
-                    </Typography>
-                  )}
-                </TableCell>
-              )}
-              <TableCell>
-                <MuiLink
-                  component={Link}
-                  href={`/teams/${team.number}`}
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    display: 'block'
-                  }}
-                >
-                  <ChevronRight />
-                </MuiLink>
-              </TableCell>
+              <TableCell />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {sortedTeams.map(team => (
+              <TableRow
+                key={team.id}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                  },
+                  '&:active': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                  }
+                }}
+              >
+                <TableCell>
+                  {/* Links are added seperatly as <tr> cannot be a child of <a> */}
+                  <Link
+                    href={`/team/${team.number}`}
+                    sx={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      '&:hover': { textDecoration: 'underline' }
+                    }}
+                  >
+                    {team.name} #{team.number}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <Link
+                    href={`/team/${team.number}`}
+                    sx={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      '&:hover': { textDecoration: 'underline' }
+                    }}
+                  >
+                    {team.affiliation.name}, {team.affiliation.city}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <IconButton href={`/team/${team.number}`}>
+                    <ChevronEndIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };
 

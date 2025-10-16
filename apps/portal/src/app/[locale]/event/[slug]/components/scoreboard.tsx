@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import NextLink from 'next/link';
 
 interface Team {
   id: string;
@@ -56,7 +55,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
         const { team } = params.row;
         return (
           <Link
-            component={NextLink}
             href={`/teams/${team.number}`}
             sx={{
               textDecoration: 'none',
@@ -85,17 +83,18 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: isDesktop ? 100 : 70,
       sortable: false,
-      valueGetter: (_, row: ScoreData) => row.scores[index] || '-'
+      valueGetter: (_: never, row: ScoreData) => row.scores[index] || '-'
     }))
   ];
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h2" gutterBottom>
         {t('quick-links.scoreboard')}
       </Typography>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
+          density="compact"
           rows={sortedData}
           columns={columns}
           getRowId={row => row.team.id}

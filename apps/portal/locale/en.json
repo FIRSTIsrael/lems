@@ -135,7 +135,8 @@
         "advancement": "Eligible for Advancement",
         "place": "{place} Place",
         "no-data": "No awards announced yet"
-      }
+      },
+      "division-teams": "{divisionName} teams"
     },
     "tools": {
       "scorer": {

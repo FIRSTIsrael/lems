@@ -31,7 +31,6 @@ const EventPage = () => {
   const eventData = getEventData(slug);
   const divisionId = searchParams.get('divisionId') ?? getEventData(slug).divisions[0].id;
   const divisionData = getDivisionData(slug, divisionId);
-  const allTeams = getAllTeamsForEvent(slug);
   const [selectedTab, setSelectedTab] = useState(0); // Default to scoreboard tab
 
   const handleDivisionSelect = (selectedDivisionId: string) => {
@@ -81,12 +80,7 @@ const EventPage = () => {
       </Paper>
 
       {selectedTab === 0 && (
-        <Paper sx={{ p: 3 }}>
-          <TeamsList
-            teams={divisionData.teams}
-            divisionColor={divisionData.currentDivision.color}
-          />
-        </Paper>
+        <TeamsList divisionName={divisionData.currentDivision.name} teams={divisionData.teams} />
       )}
 
       {selectedTab === 1 && <Scoreboard data={mockScoreboardData} eventSlug={slug} />}

@@ -135,7 +135,8 @@
         "advancement": "זכאים להעפלה",
         "place": "מקום {place}",
         "no-data": "טרם הוכרזו פרסים"
-      }
+      },
+      "division-teams": "קבוצות {divisionName}"
     },
     "tools": {
       "scorer": {
