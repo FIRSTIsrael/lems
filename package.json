@@ -88,7 +88,7 @@
     "@nx/eslint-plugin": "21.4.1",
     "@nx/express": "21.4.1",
     "@nx/js": "21.4.1",
-    "@nx/next": "21.4.1",
+    "@nx/next": "21.6.5",
     "@nx/node": "21.4.1",
     "@nx/react": "21.4.1",
     "@nx/webpack": "21.4.1",
