@@ -4,7 +4,8 @@ import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, IconButton, Stack } from '@mui/material';
-import { ArrowStartIcon } from '@lems/localization';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { useEvent } from '../components/event-context';
 
 interface EventPageTitleProps {
@@ -35,7 +36,7 @@ export function EventPageTitle({ title, children }: EventPageTitleProps) {
             }}
             aria-label={t('back-to-event')}
           >
-            <ArrowStartIcon />
+            <DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />
           </IconButton>
           <Typography variant="h1" component="h1">
             {title}

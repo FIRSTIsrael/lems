@@ -15,8 +15,8 @@ import {
   Container,
   Box
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { ChevronEndIcon } from '@lems/localization';
+import { Visibility, VisibilityOff, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import {
   useRecaptcha,
   createRecaptchaToken,
@@ -166,7 +166,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                     variant="contained"
                     size="large"
                     disabled={isSubmitting || !isValid}
-                    endIcon={<ChevronEndIcon />}
+                    endIcon={<DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} />}
                     sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
                   >
                     {isSubmitting ? t('logging-in') : t('login')}
