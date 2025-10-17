@@ -18,9 +18,11 @@ import { AdminUser } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { AssignAdminsDialog } from './assign-admins-dialog';
+import { useSession } from '../../../../components/session-context';
 
 export function EventAdminsSection() {
   const event = useEvent();
+  const { user } = useSession();
   const t = useTranslations('pages.events.users.sections.eventAdmins');
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -84,6 +86,7 @@ export function EventAdminsSection() {
                 <IconButton
                   color="error"
                   onClick={() => handleRemoveAdmin(admin.id)}
+                  disabled={admin.id === user.id}
                   aria-label={t('removeAdmin')}
                 >
                   <DeleteIcon />

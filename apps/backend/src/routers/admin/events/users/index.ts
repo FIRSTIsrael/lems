@@ -3,7 +3,12 @@ import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminUserResponse } from '../../users/util';
 import { requirePermission } from '../../../../middlewares/admin/require-permission';
-import { makeAdminVolunteerResponse, generateVolunteerPassword, getRoleInfoMapping, formatVolunteerInfo } from './util';
+import {
+  makeAdminVolunteerResponse,
+  generateVolunteerPassword,
+  getRoleInfoMapping,
+  formatVolunteerInfo
+} from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -26,6 +31,11 @@ router.delete(
   '/admins/:adminId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
+    if (req.params.adminId === req.userId) {
+      res.status(400).json({ error: 'CANNOT_REMOVE_SELF' });
+      return;
+    }
+    console.log('>>> Removed admin');
     await db.events.byId(req.eventId).removeAdmin(req.params.adminId);
     res.status(204).end();
   }
@@ -91,25 +101,32 @@ router.post(
   }
 );
 
-router.get('/volunteers/passwords', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminEventRequest, res) => {
-  const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
-  const divisions = await db.divisions.byEventId(req.eventId).getAll();
+router.get(
+  '/volunteers/passwords',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
+    const divisions = await db.divisions.byEventId(req.eventId).getAll();
 
-  const roleInfoMapping = await getRoleInfoMapping(divisions);
+    const roleInfoMapping = await getRoleInfoMapping(divisions);
 
-  const csvLines = ['Role,Divisions,Identifier,Role Info,Password'];
-  
-  volunteers.forEach(volunteer => {
-    csvLines.push(formatVolunteerInfo(volunteer, roleInfoMapping));
-  });
+    const csvLines = ['Role,Divisions,Identifier,Role Info,Password'];
 
-  // Add UTF-8 BOM
-  const BOM = '\ufeff';
-  const csvContent = BOM + csvLines.join('\n');
+    volunteers.forEach(volunteer => {
+      csvLines.push(formatVolunteerInfo(volunteer, roleInfoMapping));
+    });
 
-  res.setHeader('Content-Disposition', `attachment; filename="volunteer_passwords_${req.eventId}.csv"`);
-  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.send(csvContent);
-});
+    // Add UTF-8 BOM
+    const BOM = '\ufeff';
+    const csvContent = BOM + csvLines.join('\n');
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="volunteer_passwords_${req.eventId}.csv"`
+    );
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.send(csvContent);
+  }
+);
 
 export default router;

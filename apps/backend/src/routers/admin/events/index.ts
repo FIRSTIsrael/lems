@@ -19,6 +19,7 @@ router.get('/', async (req: AdminEventRequest, res) => {
 
 router.get('/me', async (req: AdminRequest, res) => {
   const events = await db.admins.byId(req.userId).getEvents();
+  console.log('>>> ', events, req.userId, req.user);
   res.json(events.map(event => makeAdminEventResponse(event)));
 });
 
