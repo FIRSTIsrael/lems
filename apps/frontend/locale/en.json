@@ -1,6 +1,7 @@
 {
   "pages": {
     "login": {
+      "subtitle": "Volunteer Login",
       "continue": "Continue",
       "submitting": "Loading...",
       "steps": {

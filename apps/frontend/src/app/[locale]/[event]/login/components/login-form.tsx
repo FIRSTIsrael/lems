@@ -1,10 +1,9 @@
 'use client';
 
-import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import { Formik, Form } from 'formik';
-import { Typography, Stack, Paper, Container, Box, Alert, CircularProgress } from '@mui/material';
-import { useRecaptcha } from '@lems/shared';
+import { Stack, Box, Alert, alpha, Fade } from '@mui/material';
+import { useRoleTranslations } from '@lems/localization';
 import { LoginFormValues, LoginStep } from '../types';
 import { validateForm, submitLogin } from '../utils';
 import { RoleStep } from './steps/role-step';
@@ -12,7 +11,11 @@ import { DivisionStep } from './steps/division-step';
 import { RoleInfoStep } from './steps/role-info-step';
 import { UserStep } from './steps/user-step';
 import { PasswordStep } from './steps/password-step';
-import { VolunteerProvider } from './volunteer-context';
+import { StepIndicator } from './step-indicator';
+import { CompletedStepSummary } from './step-summaries/completed-step-summary';
+import { CompletedDivisionStepSummary } from './step-summaries/completed-division-step-summary';
+import { CompletedUserStepSummary } from './step-summaries/completed-user-step-summary';
+import { useVolunteer } from './volunteer-context';
 
 const initialValues: LoginFormValues = {
   currentStep: LoginStep.Role,
@@ -23,14 +26,10 @@ const initialValues: LoginFormValues = {
   password: ''
 };
 
-interface LoginFormProps {
-  event: { name: string; slug: string };
-  recaptchaRequired: boolean;
-}
-
-export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
+export function LoginForm() {
   const t = useTranslations('pages.login');
-  useRecaptcha(recaptchaRequired);
+  const { getRole } = useRoleTranslations();
+  const { needsDivision, needsRoleInfo, needsUser } = useVolunteer();
 
   function renderStep(currentStep: LoginStep) {
     switch (currentStep) {
@@ -50,44 +49,77 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
   }
 
   return (
-    <Container maxWidth="sm">
-      <Paper sx={{ p: 4, mt: 4 }}>
-        <Typography variant="h2" textAlign="center" sx={{ mb: 3 }}>
-          {event.name}
-        </Typography>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={submitLogin}
+      validate={values => validateForm(values, values.currentStep)}
+      validateOnMount
+      enableReinitialize
+    >
+      {({ status, values }) => {
+        const availableSteps = [LoginStep.Role];
 
-        <Suspense
-          fallback={
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
-              <CircularProgress />
-            </Box>
-          }
-        >
-          <VolunteerProvider eventSlug={event.slug}>
-            <Formik
-              initialValues={initialValues}
-              onSubmit={submitLogin}
-              validate={values => validateForm(values, values.currentStep)}
-              validateOnMount
-              enableReinitialize
-            >
-              {({ status, values }) => (
-                <Form>
-                  <Stack direction="column" spacing={3}>
-                    {renderStep(values.currentStep)}
+        if (values.currentStep > LoginStep.Role) {
+          if (needsDivision) availableSteps.push(LoginStep.Division);
+          if (needsRoleInfo) availableSteps.push(LoginStep.RoleInfo);
+          if (needsUser) availableSteps.push(LoginStep.User);
+          availableSteps.push(LoginStep.Password);
+        }
 
-                    {status && (
-                      <Alert severity="error" sx={{ mt: 2 }}>
-                        {t(`errors.${status}`)}
-                      </Alert>
-                    )}
-                  </Stack>
-                </Form>
+        const completedSteps = availableSteps.filter(step => step < values.currentStep);
+
+        return (
+          <Form>
+            <Stack direction="column" spacing={3}>
+              <StepIndicator
+                currentStep={values.currentStep}
+                completedSteps={completedSteps}
+                availableSteps={availableSteps}
+              />
+
+              <Box>
+                {values.role && values.currentStep > LoginStep.Role && (
+                  <CompletedStepSummary label={t('fields.role')} value={getRole(values.role)} />
+                )}
+                {needsDivision && values.currentStep > LoginStep.Division && (
+                  <CompletedDivisionStepSummary
+                    divisionId={values.divisionId}
+                    label={t('fields.division')}
+                  />
+                )}
+                {needsRoleInfo && values.currentStep > LoginStep.RoleInfo && (
+                  <CompletedStepSummary
+                    label={t('fields.association')}
+                    value={values.roleInfoValue}
+                  />
+                )}
+                {needsUser && values.currentStep > LoginStep.User && (
+                  <CompletedUserStepSummary userId={values.userId} label={t('fields.user')} />
+                )}
+              </Box>
+
+              <Fade in timeout={500}>
+                <Box>{renderStep(values.currentStep)}</Box>
+              </Fade>
+
+              {status && (
+                <Fade in timeout={300}>
+                  <Alert
+                    severity="error"
+                    sx={{
+                      borderRadius: 2,
+                      background: theme =>
+                        `linear-gradient(135deg, ${alpha(theme.palette.error.main, 0.05)} 0%, ${alpha(theme.palette.error.light, 0.08)} 100%)`
+                    }}
+                  >
+                    {t(`errors.${status}`)}
+                  </Alert>
+                </Fade>
               )}
-            </Formik>
-          </VolunteerProvider>
-        </Suspense>
-      </Paper>
-    </Container>
+            </Stack>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 }

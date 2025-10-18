@@ -1,6 +1,7 @@
 {
   "pages": {
     "login": {
+      "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
       "submitting": "טוען...",
       "steps": {
