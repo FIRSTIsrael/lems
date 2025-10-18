@@ -24,6 +24,7 @@ interface ColorPickerProps {
 }
 
 const PRESET_COLORS = [
+  '#F12E6D',
   '#DF1125',
   '#FC4E12',
   '#E8C511',
@@ -31,7 +32,6 @@ const PRESET_COLORS = [
   '#1EA5FC',
   '#1E538F',
   '#5F41B2',
-  '#F12E6D',
   '#7A6E49',
   '#578887'
 ];
