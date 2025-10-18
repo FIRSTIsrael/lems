@@ -16,7 +16,7 @@ const initialValues: LoginFormValues = {
   currentStep: LoginStep.Role,
   role: '',
   divisionId: '',
-  associationValue: '',
+  roleInfoValue: '',
   userId: '',
   password: ''
 };

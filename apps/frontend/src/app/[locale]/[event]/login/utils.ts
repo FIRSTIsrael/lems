@@ -15,8 +15,8 @@ export const validateForm = (values: LoginFormValues, currentStep: LoginStep) =>
       }
       break;
     case LoginStep.RoleInfo:
-      if (!values.associationValue) {
-        errors.associationValue = 'required';
+      if (!values.roleInfoValue) {
+        errors.roleInfoValue = 'required';
       }
       break;
     default:

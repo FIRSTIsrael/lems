@@ -38,13 +38,6 @@ export function DivisionStep() {
     setFieldValue('currentStep', LoginStep.Password);
   };
 
-  const handleDivisionChange = (
-    _event: React.SyntheticEvent,
-    newValue: (typeof availableDivisions)[0] | null
-  ) => {
-    setFieldValue('divisionId', newValue?.id || '');
-  };
-
   return (
     <>
       <Typography variant="body1" color="text.secondary">
@@ -54,7 +47,9 @@ export function DivisionStep() {
         options={availableDivisions}
         getOptionLabel={option => option.name}
         value={selectedDivision}
-        onChange={handleDivisionChange}
+        onChange={(_, newValue) => {
+          setFieldValue('divisionId', newValue?.id || '');
+        }}
         renderInput={params => (
           <TextField {...params} label={t('fields.division')} required disabled={isSubmitting} />
         )}

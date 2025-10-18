@@ -13,6 +13,7 @@ import { volunteersResolver, divisionsResolver } from './resolvers/events/volunt
 import { eventDivisionsResolver } from './resolvers/events/event-divisions';
 import { divisionTablesResolver } from './resolvers/divisions/division-tables';
 import { divisionRoomsResolver } from './resolvers/divisions/division-rooms';
+import { divisionResolver } from './resolvers/divisions/resolver';
 
 const TableType = new GraphQLObjectType({
   name: 'Table',
@@ -145,6 +146,13 @@ const QueryType = new GraphQLObjectType({
         slug: { type: GraphQLString }
       },
       resolve: eventResolvers.Query.event
+    },
+    division: {
+      type: DivisionType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve: divisionResolver
     }
   }
 });
