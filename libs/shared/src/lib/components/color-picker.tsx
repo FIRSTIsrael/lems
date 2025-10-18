@@ -2,8 +2,18 @@
 
 import React, { useState, useRef, useEffect, CSSProperties } from 'react';
 import { motion } from 'motion/react';
-import { Paper, Popper, ClickAwayListener, Stack, Box, useTheme, alpha } from '@mui/material';
-import { Saturation, Hue, hsvaToHex, HsvaColor } from '@uiw/react-color';
+import {
+  Paper,
+  Popper,
+  ClickAwayListener,
+  Stack,
+  Box,
+  useTheme,
+  alpha,
+  TextField,
+  IconButton
+} from '@mui/material';
+import { Saturation, Hue, hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
 
 interface ColorPickerProps {
   value: HsvaColor;
@@ -12,6 +22,19 @@ interface ColorPickerProps {
   defaultOpen?: boolean;
   sx?: CSSProperties;
 }
+
+const PRESET_COLORS = [
+  '#DF1125',
+  '#FC4E12',
+  '#E8C511',
+  '#80E220',
+  '#1EA5FC',
+  '#1E538F',
+  '#5F41B2',
+  '#F12E6D',
+  '#7A6E49',
+  '#578887'
+];
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({
   value,
@@ -22,22 +45,39 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [hexInput, setHexInput] = useState(hsvaToHex(value));
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  // Handle defaultOpen after component mounts to ensure anchorRef is available
   useEffect(() => {
-    if (defaultOpen) {
-      setOpen(true);
-    }
+    setHexInput(hsvaToHex(value));
+  }, [value]);
+
+  useEffect(() => {
+    if (defaultOpen) setOpen(true);
   }, [defaultOpen]);
 
-  const handleSaturationChange = (newHsva: { h: number; s: number; v: number; a: number }) => {
+  const handleSaturationChange = (newHsva: HsvaColor) => {
     onChange(newHsva);
   };
 
   const handleHueChange = (newHue: { h: number }) => {
-    const newHsva = { ...value, h: newHue.h };
-    onChange(newHsva);
+    onChange({ ...value, h: newHue.h });
+  };
+
+  const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setHexInput(inputValue);
+
+    const hexPattern = /^#?[0-9A-Fa-f]{6}$/;
+    if (hexPattern.test(inputValue)) {
+      const normalized = inputValue.startsWith('#') ? inputValue : `#${inputValue}`;
+      try {
+        const newHsva = hexToHsva(normalized);
+        onChange(newHsva);
+      } catch {
+        // ignore invalid hex conversion
+      }
+    }
   };
 
   const handleTriggerClick = (event: React.MouseEvent) => {
@@ -54,6 +94,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
   const handleClickAway = () => {
     setOpen(false);
+  };
+
+  const handlePresetClick = (hex: string) => {
+    const hsva = hexToHsva(hex);
+    onChange(hsva);
   };
 
   return (
@@ -77,10 +122,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
           { name: 'offset', options: { offset: [0, 8] } },
           {
             name: 'preventOverflow',
-            options: {
-              boundary: 'viewport',
-              padding: 16
-            }
+            options: { boundary: 'viewport', padding: 16 }
           }
         ]}
         style={{ zIndex: theme.zIndex.modal }}
@@ -93,7 +135,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{
               duration: 0.12,
-              ease: [0.4, 0.0, 0.2, 1] // Material Design easing
+              ease: [0.4, 0.0, 0.2, 1]
             }}
             elevation={8}
             sx={{
@@ -148,6 +190,43 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                   style={{ width: '100%', height: '100%' }}
                   radius={16}
                 />
+              </Box>
+
+              <TextField
+                label="Hex"
+                size="small"
+                value={hexInput.replace(/^#/, '')}
+                onChange={handleHexChange}
+                slotProps={{
+                  input: {
+                    startAdornment: <span style={{ color: '#888', marginRight: 4 }}>#</span>
+                  }
+                }}
+              />
+
+              {/* Preset color swatches */}
+              <Box display="flex" flexWrap="wrap" gap={1}>
+                {PRESET_COLORS.map(hex => (
+                  <IconButton
+                    disableRipple
+                    key={hex}
+                    size="small"
+                    onClick={() => handlePresetClick(hex)}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      backgroundColor: hex,
+                      border: `2px solid ${
+                        hsvaToHex(value).toLowerCase() === hex.toLowerCase()
+                          ? theme.palette.text.primary
+                          : 'transparent'
+                      }`,
+                      transition: 'transform 0.1s',
+                      '&:hover': { filter: 'brightness(0.8)', transform: 'scale(1.1)' }
+                    }}
+                  />
+                ))}
               </Box>
 
               <Box
