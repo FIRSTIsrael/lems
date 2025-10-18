@@ -50,9 +50,13 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     throw volunteerError;
   }
 
-  const _needsUser = (volunteers: { divisions: { id: string }[] }[]) => {
+  const _needsUser = (volunteers: VolunteerByRoleGraphQLData['volunteers']) => {
     const assignmentCounts = volunteers.reduce(
       (acc, volunteer) => {
+        if (volunteer.roleInfo) {
+          return acc; // We ignore users with roleInfo as they never require user selection
+        }
+
         for (const division of volunteer.divisions) {
           acc[division.id] ??= 0;
           acc[division.id] = acc[division.id] + 1;

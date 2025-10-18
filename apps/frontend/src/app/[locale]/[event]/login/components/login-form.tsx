@@ -29,7 +29,7 @@ const initialValues: LoginFormValues = {
 export function LoginForm() {
   const t = useTranslations('pages.login');
   const { getRole } = useRoleTranslations();
-  const { needsDivision, needsRoleInfo, needsUser } = useVolunteer();
+  const { needsDivision, needsRoleInfo, needsUser, volunteerData } = useVolunteer();
 
   function renderStep(currentStep: LoginStep) {
     switch (currentStep) {
@@ -51,7 +51,7 @@ export function LoginForm() {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={submitLogin}
+      onSubmit={values => submitLogin(values, volunteerData)}
       validate={values => validateForm(values, values.currentStep)}
       validateOnMount
       enableReinitialize

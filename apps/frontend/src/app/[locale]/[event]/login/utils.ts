@@ -103,8 +103,16 @@ export const buildLoginPayload = (
   };
 };
 
-export const submitLogin = async (values: LoginFormValues) => {
+export const submitLogin = async (
+  values: LoginFormValues,
+  volunteerData: VolunteerByRoleGraphQLData | null
+) => {
+  if (!volunteerData) {
+    throw new Error('Volunteer data is required to submit login');
+  }
+
+  const loginPayload: LoginPayload = buildLoginPayload(values, volunteerData);
+  console.log('Submitting login with values:', loginPayload);
   // TODO: Implement actual login submission
-  console.log('Submitting login with values:', values);
   // This will be replaced with actual authentication logic
 };

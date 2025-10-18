@@ -4,7 +4,8 @@ import { graphqlFetch } from '@lems/shared';
 export const EventDetailsSchema = z.object({
   id: z.string(),
   slug: z.string(),
-  name: z.string()
+  name: z.string(),
+  isFullySetUp: z.boolean()
 });
 
 export type EventDetailsGraphQLData = z.infer<typeof EventDetailsSchema>;
@@ -21,6 +22,7 @@ const EVENT_DETAILS_QUERY = `
       id
       slug
       name
+      isFullySetUp
     }
   }
 `;
