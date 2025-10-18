@@ -3,8 +3,8 @@
 import { useContext } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
-import { MissionContext } from './mission-context';
 import { useTranslations } from 'next-intl';
+import { MissionContext } from './mission-context';
 
 export const ScoreFloater = () => {
   const t = useTranslations('pages.tools.scorer');
