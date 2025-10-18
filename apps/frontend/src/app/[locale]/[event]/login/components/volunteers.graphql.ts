@@ -49,7 +49,9 @@ export const VolunteerByRoleSchema = z.object({
   id: z.string(),
   divisions: z.array(
     z.object({
-      id: z.string()
+      id: z.string(),
+      name: z.string(),
+      color: z.string()
     })
   ),
   volunteers: z.array(
@@ -91,6 +93,8 @@ const VOLUNTEER_BY_ROLE_QUERY = `
       id
       divisions {
         id
+        name
+        color
       }
       volunteers(role: $role) {
         role

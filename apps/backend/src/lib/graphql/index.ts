@@ -15,7 +15,9 @@ import { eventDivisionsResolver } from './resolvers/events/event-divisions';
 const DivisionType = new GraphQLObjectType({
   name: 'Division',
   fields: {
-    id: { type: new GraphQLNonNull(GraphQLString) }
+    id: { type: new GraphQLNonNull(GraphQLString) },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    color: { type: new GraphQLNonNull(GraphQLString) }
   }
 });
 
