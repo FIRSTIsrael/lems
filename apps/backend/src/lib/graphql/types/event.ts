@@ -1,5 +1,30 @@
 export const eventTypeDefs = `#graphql
   """
+  Represents a division in an event
+  """
+  type Division {
+    """
+    Unique identifier for the division
+    """
+    id: ID!
+  }
+
+  """
+  Represents a volunteer in an event
+  """
+  type Volunteer {
+    """
+    The role this volunteer has
+    """
+    role: String!
+    
+    """
+    Divisions this volunteer has access to
+    """
+    divisions: [Division!]!
+  }
+
+  """
   Represents an event in the LEMS system
   """
   type Event {
@@ -32,11 +57,16 @@ export const eventTypeDefs = `#graphql
     Whether the event is fully set up with all divisions configured
     """
     isFullySetUp: Boolean!
+
+    """
+    All divisions in this event
+    """
+    divisions: [Division!]!
     
     """
-    All unique volunteer roles assigned to divisions in this event
+    Get volunteers in this event, optionally filtered by role
     """
-    volunteerRoles: [String!]!
+    volunteers(role: String): [Volunteer!]!
   }
 
   type Query {

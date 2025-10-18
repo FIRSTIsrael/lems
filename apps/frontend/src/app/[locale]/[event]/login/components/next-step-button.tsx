@@ -1,32 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { Box, Button } from '@mui/material';
-import { LoginFormValues, LoginStep } from '../types';
+import { LoginFormValues } from '../types';
 
-export function NextStepButton() {
+interface NextStepButtonProps {
+  type?: 'button' | 'submit';
+  onClick: () => Promise<void>;
+}
+
+export function NextStepButton({ type, onClick }: NextStepButtonProps) {
   const t = useTranslations('pages.login');
+  const { isValid, isSubmitting } = useFormikContext<LoginFormValues>();
+  const [loading, setLoading] = useState(false);
 
-  const { values, isValid, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
-  const isFinalStep = values.currentStep === LoginStep.Password;
-
-  const handleClick = () => {
-    if (isFinalStep) {
-      // Submit the form
-    } else {
-      setFieldValue('currentStep', values.currentStep + 1);
-    }
+  const handleClick = async () => {
+    setLoading(true);
+    await onClick();
+    setLoading(false);
   };
 
   return (
     <Box display="flex" justifyContent="center" width="100%">
       <Button
-        type={isFinalStep ? 'submit' : 'button'}
+        type={type}
         variant="contained"
         size="large"
         disabled={isSubmitting || !isValid}
-        loading={isSubmitting}
+        loading={isSubmitting || loading}
         sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
         onClick={handleClick}
       >

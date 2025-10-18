@@ -8,7 +8,6 @@ import { useRecaptcha } from '@lems/shared';
 import { LoginFormValues, LoginStep } from '../types';
 import { validateForm } from '../utils';
 import { RoleStep } from './steps/role-step';
-import { NextStepButton } from './next-step-button';
 
 const initialValues: LoginFormValues = {
   currentStep: LoginStep.Role,
@@ -62,8 +61,6 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
               <Form>
                 <Stack direction="column" spacing={3}>
                   {renderStep(values.currentStep)}
-
-                  <NextStepButton />
 
                   {status && (
                     <Alert severity="error" sx={{ mt: 2 }}>

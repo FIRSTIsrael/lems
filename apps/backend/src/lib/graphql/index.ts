@@ -8,7 +8,26 @@ import {
 } from 'graphql';
 import { eventResolvers } from './resolvers/events/resolver';
 import { isFullySetUpResolver } from './resolvers/events/is-fully-set-up';
-import { volunteerRolesResolver } from './resolvers/events/volunteer-roles';
+import { volunteersResolver, divisionsResolver } from './resolvers/events/volunteers';
+import { eventDivisionsResolver } from './resolvers/events/event-divisions';
+
+const DivisionType = new GraphQLObjectType({
+  name: 'Division',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLString) }
+  }
+});
+
+const VolunteerType = new GraphQLObjectType({
+  name: 'Volunteer',
+  fields: {
+    role: { type: new GraphQLNonNull(GraphQLString) },
+    divisions: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(DivisionType))),
+      resolve: divisionsResolver
+    }
+  }
+});
 
 const EventType = new GraphQLObjectType({
   name: 'Event',
@@ -22,9 +41,16 @@ const EventType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLBoolean),
       resolve: isFullySetUpResolver
     },
-    volunteerRoles: {
-      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))),
-      resolve: volunteerRolesResolver
+    divisions: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(DivisionType))),
+      resolve: eventDivisionsResolver
+    },
+    volunteers: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(VolunteerType))),
+      args: {
+        role: { type: GraphQLString }
+      },
+      resolve: volunteersResolver
     }
   }
 });
