@@ -10,7 +10,7 @@ export interface LoginFormValues {
 export enum LoginStep {
   Role = 0,
   Division = 1,
-  Association = 2,
+  RoleInfo = 2,
   User = 3,
   Password = 4,
   Complete = 5

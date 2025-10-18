@@ -1,6 +1,32 @@
 import { z } from 'zod';
 import { graphqlFetch } from '@lems/shared';
 
+export const TableRoleInfoSchema = z.object({
+  __typename: z.literal('TableRoleInfo'),
+  tableId: z.string()
+});
+
+export const RoomRoleInfoSchema = z.object({
+  __typename: z.literal('RoomRoleInfo'),
+  roomId: z.string()
+});
+
+export const CategoryRoleInfoSchema = z.object({
+  __typename: z.literal('CategoryRoleInfo'),
+  category: z.string()
+});
+
+export const RoleInfoSchema = z.union([
+  TableRoleInfoSchema,
+  RoomRoleInfoSchema,
+  CategoryRoleInfoSchema
+]);
+
+export type TableRoleInfo = z.infer<typeof TableRoleInfoSchema>;
+export type RoomRoleInfo = z.infer<typeof RoomRoleInfoSchema>;
+export type CategoryRoleInfo = z.infer<typeof CategoryRoleInfoSchema>;
+export type RoleInfo = z.infer<typeof RoleInfoSchema>;
+
 export const VolunteerRolesSchema = z.object({
   id: z.string(),
   volunteers: z.array(
@@ -29,6 +55,8 @@ export const VolunteerByRoleSchema = z.object({
   volunteers: z.array(
     z.object({
       role: z.string(),
+      roleInfo: RoleInfoSchema.nullish(),
+      identifier: z.string().nullish(),
       divisions: z.array(
         z.object({
           id: z.string()
@@ -66,6 +94,19 @@ const VOLUNTEER_BY_ROLE_QUERY = `
       }
       volunteers(role: $role) {
         role
+        roleInfo {
+          __typename
+          ... on TableRoleInfo {
+            tableId
+          }
+          ... on RoomRoleInfo {
+            roomId
+          }
+          ... on CategoryRoleInfo {
+            category
+          }
+        }
+        identifier
         divisions {
           id
         }

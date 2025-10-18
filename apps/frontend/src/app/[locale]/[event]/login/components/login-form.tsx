@@ -8,6 +8,7 @@ import { useRecaptcha } from '@lems/shared';
 import { LoginFormValues, LoginStep } from '../types';
 import { validateForm } from '../utils';
 import { RoleStep } from './steps/role-step';
+import { VolunteerProvider } from './volunteer-context';
 
 const initialValues: LoginFormValues = {
   currentStep: LoginStep.Role,
@@ -50,27 +51,29 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
             </Box>
           }
         >
-          <Formik
-            initialValues={initialValues}
-            onSubmit={() => console.log('Submit')}
-            validate={values => validateForm(values, values.currentStep)}
-            validateOnMount
-            enableReinitialize
-          >
-            {({ status, values }) => (
-              <Form>
-                <Stack direction="column" spacing={3}>
-                  {renderStep(values.currentStep)}
+          <VolunteerProvider eventSlug={event.slug}>
+            <Formik
+              initialValues={initialValues}
+              onSubmit={() => console.log('Submit')}
+              validate={values => validateForm(values, values.currentStep)}
+              validateOnMount
+              enableReinitialize
+            >
+              {({ status, values }) => (
+                <Form>
+                  <Stack direction="column" spacing={3}>
+                    {renderStep(values.currentStep)}
 
-                  {status && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                      {t(`errors.${status}`)}
-                    </Alert>
-                  )}
-                </Stack>
-              </Form>
-            )}
-          </Formik>
+                    {status && (
+                      <Alert severity="error" sx={{ mt: 2 }}>
+                        {t(`errors.${status}`)}
+                      </Alert>
+                    )}
+                  </Stack>
+                </Form>
+              )}
+            </Formik>
+          </VolunteerProvider>
         </Suspense>
       </Paper>
     </Container>

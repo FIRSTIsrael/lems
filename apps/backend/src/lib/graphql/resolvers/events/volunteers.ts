@@ -2,8 +2,24 @@ import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
 import { EventGraphQL } from './resolver';
 
+export type RoleInfoData = TableRoleInfo | RoomRoleInfo | CategoryRoleInfo;
+
+export interface TableRoleInfo {
+  tableId: string;
+}
+
+export interface RoomRoleInfo {
+  roomId: string;
+}
+
+export interface CategoryRoleInfo {
+  category: string;
+}
+
 export interface VolunteerGraphQL {
   role: string;
+  roleInfo?: RoleInfoData | null;
+  identifier?: string | null;
   eventId: string;
 }
 
@@ -50,7 +66,7 @@ export const volunteersResolver: GraphQLFieldResolver<
     let query = db.raw.sql
       .selectFrom('event_users')
       .where('event_users.event_id', '=', event.id)
-      .select('event_users.role')
+      .select(['event_users.role', 'event_users.role_info', 'event_users.identifier'])
       .distinct();
 
     // If a specific role is requested, filter by role
@@ -60,9 +76,11 @@ export const volunteersResolver: GraphQLFieldResolver<
 
     const rolesResult = await query.execute();
 
-    // Transform the results into VolunteerGraphQL objects with eventId
+    // Transform the results into VolunteerGraphQL objects with eventId and roleInfo
     return rolesResult.map(row => ({
       role: row.role,
+      roleInfo: row.role_info ? (row.role_info as unknown as RoleInfoData) : null,
+      identifier: row.identifier || undefined,
       eventId: event.id
     }));
   } catch (error) {

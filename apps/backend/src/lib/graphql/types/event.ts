@@ -10,6 +10,41 @@ export const eventTypeDefs = `#graphql
   }
 
   """
+  Role information for a table assignment
+  """
+  type TableRoleInfo {
+    """
+    The table ID this role is assigned to
+    """
+    tableId: ID!
+  }
+
+  """
+  Role information for a room assignment
+  """
+  type RoomRoleInfo {
+    """
+    The room ID this role is assigned to
+    """
+    roomId: ID!
+  }
+
+  """
+  Role information for a category assignment
+  """
+  type CategoryRoleInfo {
+    """
+    The category ID this role is assigned to
+    """
+    category: ID!
+  }
+
+  """
+  Union type for different role information variants
+  """
+  union RoleInfo = TableRoleInfo | RoomRoleInfo | CategoryRoleInfo
+
+  """
   Represents a volunteer in an event
   """
   type Volunteer {
@@ -17,6 +52,16 @@ export const eventTypeDefs = `#graphql
     The role this volunteer has
     """
     role: String!
+    
+    """
+    Role-specific information if required (table, room, or category assignment)
+    """
+    roleInfo: RoleInfo
+    
+    """
+    User identifier
+    """
+    identifier: String
     
     """
     Divisions this volunteer has access to
