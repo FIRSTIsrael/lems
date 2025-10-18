@@ -50,12 +50,11 @@ router.post('/', requirePermission('MANAGE_USERS'), async (req: AdminRequest, re
       throw new RegistrationError(409, 'Username already exists', 'user-already-exists');
     }
 
-    const { hash, salt } = await hashPassword(password);
+    const { hash } = await hashPassword(password);
 
     const newAdminUser = await db.admins.create({
       username: username.toLowerCase(), // Store usernames in lowercase for consistency
       password_hash: hash,
-      password_salt: salt,
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       last_password_set_date: new Date()
