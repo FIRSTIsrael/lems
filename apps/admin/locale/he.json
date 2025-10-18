@@ -904,7 +904,8 @@
           "cancel": "ביטול"
         },
         "errors": {
-          "fetch-error": "נכשל בטעינת הרשאות המשתמש."
+          "fetch-error": "נכשל בטעינת הרשאות המשתמש.",
+          "cannot-remove-own-manage-users": "אינך יכול להסיר את הרשאת ניהול המשתמשים שלך."
         }
       },
       "delete": {

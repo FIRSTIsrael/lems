@@ -28,14 +28,16 @@ interface PermissionsEditorDialogProps {
   onClose: () => void;
   userId: string;
   userName: string;
+  editorId: string;
 }
 
 interface PermissionsFormProps {
   userId: string;
+  editorId: string;
   onClose: () => void;
 }
 
-const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
+const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, editorId, onClose }) => {
   const t = useTranslations('pages.users.permissions-dialog');
   const getPermissionName = useLocalePermissionName();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,19 +103,24 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         )}
 
         <FormGroup>
-          {ALL_ADMIN_PERMISSIONS.map(permission => (
-            <FormControlLabel
-              key={permission}
-              control={
-                <Checkbox
-                  checked={selectedPermissions.includes(permission)}
-                  onChange={e => handlePermissionChange(permission, e.target.checked)}
-                  disabled={isSubmitting}
-                />
-              }
-              label={getPermissionName(permission)}
-            />
-          ))}
+          {ALL_ADMIN_PERMISSIONS.map(permission => {
+            const isEditor = editorId === userId;
+            const isManageUsers = permission === "MANAGE_USERS";
+            return (
+              <FormControlLabel
+                key={permission}
+                control={
+                  <Checkbox
+                    checked={selectedPermissions.includes(permission)}
+                    onChange={e => handlePermissionChange(permission, e.target.checked)}
+                    disabled={isSubmitting || (isEditor && isManageUsers)}
+                  />
+                }
+                label={getPermissionName(permission)}
+                title={isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined}
+              />
+            );
+          })}
         </FormGroup>
       </DialogContent>
 
@@ -138,7 +145,8 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
   open,
   onClose,
   userId,
-  userName
+  userName,
+  editorId
 }) => {
   const t = useTranslations('pages.users.permissions-dialog');
 
@@ -162,7 +170,7 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
             </DialogContent>
           }
         >
-          <PermissionsForm userId={userId} onClose={onClose} />
+          <PermissionsForm userId={userId} editorId={editorId} onClose={onClose} />
         </Suspense>
       </ErrorBoundary>
     </Dialog>

@@ -897,7 +897,8 @@
           "cancel": "Cancel"
         },
         "errors": {
-          "fetch-error": "Failed to load user permissions."
+          "fetch-error": "Failed to load user permissions.",
+          "cannot-remove-own-manage-users": "You cannot remove your own manage users permission."
         }
       },
       "delete": {

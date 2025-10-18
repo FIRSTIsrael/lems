@@ -16,6 +16,7 @@ import { EditUserDialog } from './edit-user-dialog';
 
 interface UsersDataGridProps {
   users: AdminUser[];
+  editor: AdminUser;
 }
 
 type DialogType = 'permissions' | 'delete' | 'edit' | null;
@@ -27,7 +28,7 @@ interface DialogState {
   user?: AdminUser;
 }
 
-export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
+export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers, editor }) => {
   const t = useTranslations('pages.users.list');
   const session = useSession();
   const [searchValue, setSearchValue] = useState('');
@@ -228,6 +229,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         onClose={closeDialog}
         userId={dialog.userId}
         userName={dialog.userName}
+        editorId={editor.id}
       />
 
       <DeleteUserDialog
