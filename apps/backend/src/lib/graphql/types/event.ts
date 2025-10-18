@@ -49,6 +49,11 @@ export const eventTypeDefs = `#graphql
   """
   type Volunteer {
     """
+    Unique identifier for the volunteer (event user ID)
+    """
+    id: ID!
+    
+    """
     The role this volunteer has
     """
     role: String!

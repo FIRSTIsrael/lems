@@ -6,10 +6,12 @@ import { Formik, Form } from 'formik';
 import { Typography, Stack, Paper, Container, Box, Alert, CircularProgress } from '@mui/material';
 import { useRecaptcha } from '@lems/shared';
 import { LoginFormValues, LoginStep } from '../types';
-import { validateForm } from '../utils';
+import { validateForm, submitLogin } from '../utils';
 import { RoleStep } from './steps/role-step';
 import { DivisionStep } from './steps/division-step';
 import { RoleInfoStep } from './steps/role-info-step';
+import { UserStep } from './steps/user-step';
+import { PasswordStep } from './steps/password-step';
 import { VolunteerProvider } from './volunteer-context';
 
 const initialValues: LoginFormValues = {
@@ -38,6 +40,10 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
         return <DivisionStep />;
       case LoginStep.RoleInfo:
         return <RoleInfoStep />;
+      case LoginStep.User:
+        return <UserStep />;
+      case LoginStep.Password:
+        return <PasswordStep />;
       default:
         return null;
     }
@@ -60,7 +66,7 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
           <VolunteerProvider eventSlug={event.slug}>
             <Formik
               initialValues={initialValues}
-              onSubmit={() => console.log('Submit')}
+              onSubmit={submitLogin}
               validate={values => validateForm(values, values.currentStep)}
               validateOnMount
               enableReinitialize

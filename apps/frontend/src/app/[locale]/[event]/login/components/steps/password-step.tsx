@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { Typography, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { useFormikContext } from 'formik';
 import { FormikTextField } from '@lems/shared';
+import { LoginFormValues } from '../../types';
 
-interface PasswordStepProps {
-  isSubmitting: boolean;
-}
-
-export function PasswordStep({ isSubmitting }: PasswordStepProps) {
+export function PasswordStep() {
   const t = useTranslations('pages.login');
   const [showPassword, setShowPassword] = useState(false);
+  const { isSubmitting } = useFormikContext<LoginFormValues>();
 
   return (
     <>
@@ -26,10 +25,10 @@ export function PasswordStep({ isSubmitting }: PasswordStepProps) {
         disabled={isSubmitting}
         autoComplete="off"
         required
-        inputProps={{
-          maxLength: 4
-        }}
         slotProps={{
+          htmlInput: {
+            maxLength: 4
+          },
           input: {
             endAdornment: (
               <InputAdornment position="end">

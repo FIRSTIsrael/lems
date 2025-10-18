@@ -6,7 +6,7 @@ import {
   fetchVolunteerRoles,
   fetchVolunteerByRole,
   VolunteerByRoleGraphQLData
-} from './volunteers.graphql';
+} from '../graphql/volunteers.graphql';
 
 interface VolunteerContextType {
   allRoles: string[];
@@ -38,11 +38,17 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     { suspense: true, fallbackData: [] }
   );
 
-  const { data: volunteerData = null } = useSWR<VolunteerByRoleGraphQLData | null>(
-    selectedRole ? `volunteer-by-role-${eventSlug}-${selectedRole}` : null,
-    selectedRole ? () => fetchVolunteerByRole(eventSlug, selectedRole) : null,
-    { suspense: true, fallbackData: null }
-  );
+  const { data: volunteerData = null, error: volunteerError } =
+    useSWR<VolunteerByRoleGraphQLData | null>(
+      selectedRole ? `volunteer-by-role-${eventSlug}-${selectedRole}` : null,
+      selectedRole ? () => fetchVolunteerByRole(eventSlug, selectedRole) : null,
+      { suspense: true, fallbackData: null }
+    );
+
+  if (volunteerError) {
+    console.error('Error fetching volunteer data:', volunteerError);
+    throw volunteerError;
+  }
 
   const _needsUser = (volunteers: { divisions: { id: string }[] }[]) => {
     const assignmentCounts = volunteers.reduce(

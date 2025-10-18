@@ -18,8 +18,6 @@ export function NextStepButton({ type, onClick }: NextStepButtonProps) {
   const { isReady } = useVolunteer();
   const [loading, setLoading] = useState(false);
 
-  console.log(isValid, isSubmitting, isReady);
-
   const handleClick = async () => {
     setLoading(true);
     try {

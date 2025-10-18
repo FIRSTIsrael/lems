@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
 import { LoginForm } from './components/login-form';
-import { fetchEventBySlug } from './event.graphql';
+import { fetchEventBySlug } from './graphql/event.graphql';
 
 interface LoginPageProps {
   params: Promise<{ event: string }>;

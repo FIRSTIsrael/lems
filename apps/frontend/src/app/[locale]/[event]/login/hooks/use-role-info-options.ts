@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
-import { RoleInfo } from '../components/volunteers.graphql';
+import { RoleInfo } from '../graphql/volunteers.graphql';
 import { useVolunteer } from '../components/volunteer-context';
-import { fetchDivisionVenue } from './role-info-step.graphql';
+import { fetchDivisionVenue } from '../graphql/role-info-step.graphql';
 
 type RoleInfoType = 'table' | 'room' | 'category';
 

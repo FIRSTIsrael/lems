@@ -89,6 +89,7 @@ const RoleInfoType = new GraphQLUnionType({
 const VolunteerType = new GraphQLObjectType({
   name: 'Volunteer',
   fields: {
+    id: { type: new GraphQLNonNull(GraphQLString) },
     role: { type: new GraphQLNonNull(GraphQLString) },
     roleInfo: { type: RoleInfoType },
     identifier: { type: GraphQLString },
