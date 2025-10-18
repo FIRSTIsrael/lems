@@ -6,7 +6,7 @@ import {
   fetchVolunteerRoles,
   fetchVolunteerByRole,
   VolunteerByRoleGraphQLData
-} from './steps/role-step.graphql';
+} from './volunteers.graphql';
 
 interface VolunteerContextType {
   allRoles: string[];
