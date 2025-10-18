@@ -40,18 +40,16 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
           )}
         </Box>
       </Stack>
-
       {allowCreate && (
-        <Link href="/events/create">
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            href="/events/create"
-            sx={{ borderRadius: 8 }}
-          >
-            {t('create-button')}
-          </Button>
-        </Link>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          component={Link}
+          href="/events/create"
+          sx={{ borderRadius: 8 }}
+        >
+          {t('create-button')}
+        </Button>
       )}
     </Stack>
   );
