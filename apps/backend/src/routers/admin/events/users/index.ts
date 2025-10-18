@@ -31,12 +31,12 @@ router.delete(
   '/admins/:adminId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
-    if (req.params.adminId === req.userId) {
+    const {adminId} = req.params;
+    if (adminId === req.userId) {
       res.status(400).json({ error: 'CANNOT_REMOVE_SELF' });
       return;
     }
-    console.log('>>> Removed admin');
-    await db.events.byId(req.eventId).removeAdmin(req.params.adminId);
+    await db.events.byId(req.eventId).removeAdmin(adminId);
     res.status(204).end();
   }
 );
