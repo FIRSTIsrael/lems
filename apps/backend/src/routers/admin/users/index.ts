@@ -103,8 +103,8 @@ router.patch(
     }
 
     try {
-      const { hash, salt } = await hashPassword(password);
-      await db.admins.byId(userId).updatePassword(hash, salt);
+      const { hash } = await hashPassword(password);
+      await db.admins.byId(userId).updatePassword(hash);
 
       res.status(204).send();
     } catch (error) {

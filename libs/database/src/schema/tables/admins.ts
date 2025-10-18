@@ -5,7 +5,6 @@ export interface AdminsTable {
   id: ColumnType<string, never, never>; // UUID, generated
   username: string;
   password_hash: string;
-  password_salt: string;
   first_name: string;
   last_name: string;
   last_login: Date | null;

@@ -62,8 +62,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
 
     const isValidPassword = await verifyPassword(
       loginDetails.password,
-      adminUser.password_hash,
-      adminUser.password_salt
+      adminUser.password_hash
     );
 
     if (!isValidPassword) {
