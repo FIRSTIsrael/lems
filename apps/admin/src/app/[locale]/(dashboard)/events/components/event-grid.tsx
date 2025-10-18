@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Box, Button, Grid, Typography, CircularProgress } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { Season, EventSummary } from '@lems/types/api/admin';
+import Link from 'next/link';
 import { EventCard } from './event-card';
 
 interface EventGridProps {
@@ -64,9 +65,11 @@ export const EventGrid: React.FC<EventGridProps> = ({
               <Typography variant="body2" sx={{ mb: 3 }}>
                 {t('empty-state.no-events-description')}
               </Typography>
-              <Button variant="contained" startIcon={<Add />} href="/events/create">
-                {t('empty-state.create-new-event')}
-              </Button>
+              <Link href="/events/create" >
+                <Button variant="contained" startIcon={<Add />}>
+                  {t('empty-state.create-new-event')}
+                </Button>
+              </Link>
             </>
           )}
         </Box>
