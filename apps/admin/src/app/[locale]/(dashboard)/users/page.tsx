@@ -9,17 +9,12 @@ export default async function UsersPage() {
   const t = await getTranslations('pages.users');
 
   const result = await apiFetch('/admin/users', {}, AdminUsersResponseSchema);
-  const editorResult = await apiFetch('/admin/users/me', {}, AdminUserResponseSchema);
 
   if (!result.ok) {
     throw new Error('Failed to load users');
   }
-  if (!editorResult.ok) {
-    throw new Error('Failed to load current user');
-  }
 
   const { data: users } = result;
-  const editor = editorResult.data;
 
   return (
     <Box
@@ -36,7 +31,7 @@ export default async function UsersPage() {
         <CreateUserButton />
       </Stack>
       <Box sx={{ flex: 1, minHeight: 0 }}>
-        <UsersDataGrid users={users} editor={editor} />
+        <UsersDataGrid users={users} />
       </Box>
     </Box>
   );

@@ -22,22 +22,21 @@ import { PermissionType } from '@lems/database';
 import { AdminUserPermissions, ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useLocalePermissionName } from '../../../../hooks/localization';
+import { useSession } from '../../components/session-context';
 
 interface PermissionsEditorDialogProps {
   open: boolean;
   onClose: () => void;
   userId: string;
   userName: string;
-  editorId: string;
 }
 
 interface PermissionsFormProps {
   userId: string;
-  editorId: string;
   onClose: () => void;
 }
 
-const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, editorId, onClose }) => {
+const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
   const t = useTranslations('pages.users.permissions-dialog');
   const getPermissionName = useLocalePermissionName();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +103,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, editorId, onC
 
         <FormGroup>
           {ALL_ADMIN_PERMISSIONS.map(permission => {
-            const isEditor = editorId === userId;
+            const isEditor = useSession().user.id === userId;
             const isManageUsers = permission === "MANAGE_USERS";
             return (
               <FormControlLabel
@@ -145,8 +144,7 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
   open,
   onClose,
   userId,
-  userName,
-  editorId
+  userName
 }) => {
   const t = useTranslations('pages.users.permissions-dialog');
 
@@ -170,7 +168,7 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
             </DialogContent>
           }
         >
-          <PermissionsForm userId={userId} editorId={editorId} onClose={onClose} />
+          <PermissionsForm userId={userId} onClose={onClose} />
         </Suspense>
       </ErrorBoundary>
     </Dialog>
