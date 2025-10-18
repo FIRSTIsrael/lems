@@ -1,5 +1,8 @@
+'use client';
+
 import useSWR from 'swr';
 import { useMemo } from 'react';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { RoleInfo } from '../graphql/volunteers.graphql';
 import { useVolunteer } from '../components/volunteer-context';
 import { fetchDivisionVenue } from '../graphql/role-info-step.graphql';
@@ -33,6 +36,7 @@ interface RoleInfoOption {
  */
 export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOption[] => {
   const { volunteerData } = useVolunteer();
+  const { getCategory } = useJudgingCategoryTranslations();
 
   const roleInfoType = getRoleInfoType(volunteerData?.volunteers[0].roleInfo);
   const shouldFetch = roleInfoType && roleInfoType !== 'category' && divisionId;
@@ -56,9 +60,9 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
       }
     } else if (roleInfoType === 'category') {
       allOptions = [
-        { id: 'core-values', name: 'Core Values' },
-        { id: 'robot-design', name: 'Robot Design' },
-        { id: 'innovation-project', name: 'Innovation Project' }
+        { id: 'core-values', name: getCategory('core-values') },
+        { id: 'robot-design', name: getCategory('robot-design') },
+        { id: 'innovation-project', name: getCategory('innovation-project') }
       ];
     }
 
@@ -67,5 +71,5 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
       volunteerData.volunteers.map(v => getRoleInfoValue(v.roleInfo))
     );
     return allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
-  }, [roleInfoType, divisionData, volunteerData?.volunteers]);
+  }, [roleInfoType, volunteerData?.volunteers, divisionData, getCategory]);
 };
