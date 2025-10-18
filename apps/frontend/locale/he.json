@@ -1,9 +1,8 @@
 {
   "pages": {
     "login": {
-      "title": "התחברות לאירוע",
       "continue": "המשך",
-      "submitting": "מעבד...",
+      "submitting": "טוען...",
       "steps": {
         "role": "בחר תפקיד",
         "division": "בחר דיביזיה",

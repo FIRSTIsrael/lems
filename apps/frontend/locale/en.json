@@ -1,9 +1,8 @@
 {
   "pages": {
     "login": {
-      "title": "Login to Event",
       "continue": "Continue",
-      "submitting": "Processing...",
+      "submitting": "Loading...",
       "steps": {
         "role": "Select Role",
         "division": "Select Division",

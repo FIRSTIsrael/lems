@@ -1,4 +1,5 @@
 export interface LoginFormValues {
+  currentStep: LoginStep;
   role: string;
   divisionId: string;
   associationValue: string;
@@ -6,4 +7,11 @@ export interface LoginFormValues {
   password: string;
 }
 
-export type LoginStep = 'role' | 'division' | 'association' | 'user' | 'password' | 'complete';
+export enum LoginStep {
+  Role = 0,
+  Division = 1,
+  Association = 2,
+  User = 3,
+  Password = 4,
+  Complete = 5
+}

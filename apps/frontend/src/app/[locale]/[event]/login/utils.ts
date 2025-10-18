@@ -7,15 +7,12 @@ export const validateForm = (values: LoginFormValues, currentStep: LoginStep) =>
   const errors: Partial<LoginFormValues> = {};
 
   switch (currentStep) {
-    case 'role':
+    case LoginStep.Role:
       if (!values.role) {
         errors.role = 'required';
       }
       break;
-    case 'division':
-    case 'association':
-    case 'user':
-    case 'password':
+    default:
       break;
   }
 
