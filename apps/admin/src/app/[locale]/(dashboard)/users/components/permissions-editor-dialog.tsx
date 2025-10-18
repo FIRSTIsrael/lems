@@ -37,6 +37,7 @@ interface PermissionsFormProps {
 }
 
 const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
+  const { user } = useSession();
   const t = useTranslations('pages.users.permissions-dialog');
   const getPermissionName = useLocalePermissionName();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -103,7 +104,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
 
         <FormGroup>
           {ALL_ADMIN_PERMISSIONS.map(permission => {
-            const isEditor = useSession().user.id === userId;
+            const isEditor = user.id === userId;
             const isManageUsers = permission === "MANAGE_USERS";
             return (
               <FormControlLabel
