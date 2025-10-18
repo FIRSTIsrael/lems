@@ -33,16 +33,20 @@ class TeamSelector {
     return updatedTeam || null;
   }
 
-  async updateLogo(logo: Buffer): Promise<Team | null> {
+  async updateLogo(logo: Buffer | null): Promise<Team | null> {
     const team = await this.getTeamQuery().executeTakeFirst();
     if (!team) return null;
 
-    const logoUrl = await this.space
-      .putObject(`teams/${team.id}/logo.jpg`, logo, 'image/jpeg')
-      .catch(error => {
-        console.error('Error uploading team logo:', error);
-        throw new Error('Failed to upload team logo');
-      });
+    let logoUrl: string | null = null;
+
+    if (logo) {
+      logoUrl = await this.space
+        .putObject(`teams/${team.id}/logo.jpg`, logo, 'image/jpeg')
+        .catch(error => {
+          console.error('Error uploading team logo:', error);
+          throw new Error('Failed to upload team logo');
+        });
+    }
 
     const updatedTeam = await this.db
       .updateTable('teams')

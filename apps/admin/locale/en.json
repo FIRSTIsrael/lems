@@ -128,7 +128,9 @@
         "submit": "Create Team",
         "submitting": "Creating team...",
         "update": "Update Team",
-        "updating": "Updating team..."
+        "updating": "Updating team...",
+        "remove-logo": "Remove logo",
+        "logo-removed": "Logo removed"
       },
       "import-dialog": {
         "title": "Import Teams from CSV",

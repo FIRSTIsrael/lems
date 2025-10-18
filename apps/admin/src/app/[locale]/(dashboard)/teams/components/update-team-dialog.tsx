@@ -23,7 +23,7 @@ export const UpdateTeamDialog: React.FC<UpdateTeamDialogProps> = ({ team, open, 
           <TeamForm
             route={`/admin/teams/${team.id}`}
             onSuccess={onClose}
-            team={{ ...team, number: String(team.number) }}
+            team={{ ...team, number: String(team.number), logoUrl: team.logoUrl ?? undefined }}
             isEditing={true}
             method="PUT"
           />
