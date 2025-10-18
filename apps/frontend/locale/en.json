@@ -14,6 +14,9 @@
         "role": "Please select your role for this event:",
         "division": "Please select the division you are working in:",
         "association": "Please select your assignment:",
+        "roleInfo-table": "Please select the table you are assigned to:",
+        "roleInfo-room": "Please select the room you are assigned to:",
+        "roleInfo-category": "Please select the category you are assigned to:",
         "user": "Multiple users match your selection. Please choose your account:",
         "password": "Please enter your 4-character password:"
       },
@@ -21,6 +24,9 @@
         "role": "Role",
         "division": "Division",
         "association": "Assignment",
+        "table": "Table",
+        "room": "Room",
+        "category": "Category",
         "user": "User",
         "password": "Password",
         "password-helper": "4-character password"

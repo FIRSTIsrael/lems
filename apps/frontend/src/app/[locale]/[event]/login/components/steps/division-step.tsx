@@ -1,18 +1,18 @@
+'use client';
+
 import { Typography, Autocomplete, TextField, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useFormikContext } from 'formik';
+import { LoginFormValues, LoginStep } from '../../types';
+import { NextStepButton } from '../next-step-button';
 import { useVolunteer } from '../volunteer-context';
 
-interface DivisionStepProps {
-  value: string;
-  isSubmitting: boolean;
-  onChange: (value: string) => void;
-}
-
-export function DivisionStep({ value, isSubmitting, onChange }: DivisionStepProps) {
+export function DivisionStep() {
   const t = useTranslations('pages.login');
-  const { volunteerData, isReady } = useVolunteer();
+  const { values, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
+  const { volunteerData, needsRoleInfo, needsUser } = useVolunteer();
 
-  if (!isReady || !volunteerData) {
+  if (!volunteerData) {
     return null;
   }
 
@@ -22,7 +22,28 @@ export function DivisionStep({ value, isSubmitting, onChange }: DivisionStepProp
 
   const availableDivisions = volunteerData.divisions.filter(d => divisionsWithVolunteers.has(d.id));
 
-  const selectedDivision = availableDivisions.find(d => d.id === value) || null;
+  const selectedDivision = availableDivisions.find(d => d.id === values.divisionId) || null;
+
+  const handleNext = async () => {
+    if (needsRoleInfo) {
+      setFieldValue('currentStep', LoginStep.RoleInfo);
+      return;
+    }
+
+    if (needsUser) {
+      setFieldValue('currentStep', LoginStep.User);
+      return;
+    }
+
+    setFieldValue('currentStep', LoginStep.Password);
+  };
+
+  const handleDivisionChange = (
+    _event: React.SyntheticEvent,
+    newValue: (typeof availableDivisions)[0] | null
+  ) => {
+    setFieldValue('divisionId', newValue?.id || '');
+  };
 
   return (
     <>
@@ -33,7 +54,7 @@ export function DivisionStep({ value, isSubmitting, onChange }: DivisionStepProp
         options={availableDivisions}
         getOptionLabel={option => option.name}
         value={selectedDivision}
-        onChange={(_, newValue) => onChange(newValue?.id || '')}
+        onChange={handleDivisionChange}
         renderInput={params => (
           <TextField {...params} label={t('fields.division')} required disabled={isSubmitting} />
         )}
@@ -53,6 +74,7 @@ export function DivisionStep({ value, isSubmitting, onChange }: DivisionStepProp
         )}
         disabled={isSubmitting}
       />
+      <NextStepButton onClick={handleNext} />
     </>
   );
 }

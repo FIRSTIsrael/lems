@@ -11,13 +11,39 @@ import { eventResolvers } from './resolvers/events/resolver';
 import { isFullySetUpResolver } from './resolvers/events/is-fully-set-up';
 import { volunteersResolver, divisionsResolver } from './resolvers/events/volunteers';
 import { eventDivisionsResolver } from './resolvers/events/event-divisions';
+import { divisionTablesResolver } from './resolvers/divisions/division-tables';
+import { divisionRoomsResolver } from './resolvers/divisions/division-rooms';
+
+const TableType = new GraphQLObjectType({
+  name: 'Table',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLString) },
+    name: { type: new GraphQLNonNull(GraphQLString) }
+  }
+});
+
+const RoomType = new GraphQLObjectType({
+  name: 'Room',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLString) },
+    name: { type: new GraphQLNonNull(GraphQLString) }
+  }
+});
 
 const DivisionType = new GraphQLObjectType({
   name: 'Division',
   fields: {
     id: { type: new GraphQLNonNull(GraphQLString) },
     name: { type: new GraphQLNonNull(GraphQLString) },
-    color: { type: new GraphQLNonNull(GraphQLString) }
+    color: { type: new GraphQLNonNull(GraphQLString) },
+    tables: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(TableType))),
+      resolve: divisionTablesResolver
+    },
+    rooms: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(RoomType))),
+      resolve: divisionRoomsResolver
+    }
   }
 });
 

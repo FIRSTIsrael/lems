@@ -8,6 +8,8 @@ import { useRecaptcha } from '@lems/shared';
 import { LoginFormValues, LoginStep } from '../types';
 import { validateForm } from '../utils';
 import { RoleStep } from './steps/role-step';
+import { DivisionStep } from './steps/division-step';
+import { RoleInfoStep } from './steps/role-info-step';
 import { VolunteerProvider } from './volunteer-context';
 
 const initialValues: LoginFormValues = {
@@ -32,6 +34,10 @@ export function LoginForm({ event, recaptchaRequired }: LoginFormProps) {
     switch (currentStep) {
       case LoginStep.Role:
         return <RoleStep />;
+      case LoginStep.Division:
+        return <DivisionStep />;
+      case LoginStep.RoleInfo:
+        return <RoleInfoStep />;
       default:
         return null;
     }

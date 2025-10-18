@@ -12,12 +12,16 @@ export function RoleStep() {
   const t = useTranslations('pages.login');
   const { getRole } = useRoleTranslations();
   const { values, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
-  const { allRoles, setSelectedRole, needsDivision, needsRoleInfo, needsUser } = useVolunteer();
+  const { allRoles, setSelectedRole, volunteerData, needsDivision, needsRoleInfo, needsUser } =
+    useVolunteer();
 
   const handleNext = async () => {
     if (needsDivision) {
       setFieldValue('currentStep', LoginStep.Division);
       return;
+    } else if (volunteerData && volunteerData.divisions.length === 1) {
+      // If only one division exists, auto-set it
+      setFieldValue('divisionId', volunteerData.divisions[0].id);
     }
 
     if (needsRoleInfo) {

@@ -9,6 +9,16 @@ export const validateForm = (values: LoginFormValues, currentStep: LoginStep) =>
         errors.role = 'required';
       }
       break;
+    case LoginStep.Division:
+      if (!values.divisionId) {
+        errors.divisionId = 'required';
+      }
+      break;
+    case LoginStep.RoleInfo:
+      if (!values.associationValue) {
+        errors.associationValue = 'required';
+      }
+      break;
     default:
       break;
   }
