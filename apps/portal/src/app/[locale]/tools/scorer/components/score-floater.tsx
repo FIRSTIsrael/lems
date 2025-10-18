@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useContext } from 'react';
+import { useContext } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import { MissionContext } from './mission-context';
