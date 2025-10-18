@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { Box, Stack, Button, CircularProgress, Alert } from '@mui/material';
-import { CloudUpload } from '@mui/icons-material';
+import { CloudUpload, DeleteForever } from '@mui/icons-material';
 import { FileUpload, FormikTextField, apiFetch } from '@lems/shared';
 import { AdminTeamResponseSchema } from '@lems/types/api/admin';
 
@@ -29,7 +29,7 @@ interface TeamFormProps {
   route: string;
   method: 'POST' | 'PUT';
   onSuccess?: () => void;
-  team?: TeamFormValues;
+  team?: TeamFormValues & { logoUrl?: string };
   isEditing?: boolean;
 }
 
@@ -42,6 +42,17 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 }) => {
   const t = useTranslations('pages.teams.team-form');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(team?.logoUrl ?? null);
+  const [removeLogo, setRemoveLogo] = useState(false);
+
+  useEffect(() => {
+    if (selectedFile) {
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setPreviewUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [selectedFile]);
 
   const initialValues: TeamFormValues = team ?? {
     name: '',
@@ -96,6 +107,10 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 
       if (selectedFile) {
         formData.append('logo', selectedFile);
+      }
+
+      if (removeLogo) {
+        formData.append('removeLogo', 'true');
       }
 
       const result = await apiFetch(
@@ -196,11 +211,46 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                 />
               </Stack>
 
+              {previewUrl && (
+                <>
+                  <Box
+                    component="img"
+                    src={previewUrl}
+                    alt="Team Logo Preview"
+                    sx={{
+                      mt: 2,
+                      maxWidth: '100%',
+                      maxHeight: 200,
+                      objectFit: 'contain',
+                      borderRadius: 1,
+                      border: '1px solid #ddd'
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="error"
+                    startIcon={<DeleteForever />}
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      setRemoveLogo(true);
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    {t('remove-logo')}
+                  </Button>
+                </>
+              )}
+              {removeLogo && !selectedFile && <Alert severity="info">{t('logo-removed')}</Alert>}
+
               <FileUpload
                 label={t('fields.logo.label')}
                 accept=".jpg,.jpeg,.png,.svg,image/*"
                 selectedFile={selectedFile}
-                setSelectedFile={setSelectedFile}
+                setSelectedFile={file => {
+                  setSelectedFile(file);
+                  setRemoveLogo(false);
+                }}
                 description={t('fields.logo.description')}
                 disabled={isSubmitting}
                 placeholder={t('fields.logo.placeholder')}

@@ -135,7 +135,9 @@
         "submit": "יצירת קבוצה",
         "submitting": "יוצר קבוצה...",
         "update": "עדכון קבוצה",
-        "updating": "מעדכן קבוצה..."
+        "updating": "מעדכן קבוצה...",
+        "remove-logo": "הסר לוגו",
+        "logo-removed": "לוגו הוסר"
       },
       "import-dialog": {
         "title": "ייבוא קבוצות מקובץ CSV",
