@@ -30,6 +30,20 @@ const DIGITALOCEAN_SPACE = process.env.DIGITALOCEAN_SPACE || 'lems-dev';
 const DIGITALOCEAN_KEY = process.env.DIGITALOCEAN_KEY || '';
 const DIGITALOCEAN_SECRET = process.env.DIGITALOCEAN_SECRET || '';
 
+/**
+ * Low-level database access for advanced queries.
+ * Available via `db.raw` for use in GraphQL resolvers and other scenarios
+ * where repository methods don't provide enough flexibility.
+ */
+export interface DatabaseRawAccess {
+  /** Kysely query builder for PostgreSQL */
+  sql: Kysely<KyselyDatabaseSchema>;
+  /** MongoDB database instance */
+  mongo: Db;
+  /** Object storage client for S3-compatible storage (DigitalOcean Spaces) */
+  storage: ObjectStorage;
+}
+
 export class Database {
   private kysely: Kysely<KyselyDatabaseSchema>;
   private mongoClient: MongoClient;
@@ -48,6 +62,22 @@ export class Database {
   public robotGameMatches: RobotGameMatchesRepository;
   public awards: AwardsRepository;
 
+  /**
+   * Direct access to low-level database connections for advanced queries.
+   * Use this when repository methods don't provide enough flexibility,
+   * such as in GraphQL resolvers with complex filtering requirements.
+   *
+   * @property sql - Kysely query builder for PostgreSQL
+   * @property mongo - MongoDB database instance
+   * @property storage - Object storage client for S3-compatible storage
+   */
+  public get raw(): DatabaseRawAccess {
+    return {
+      sql: this.kysely,
+      mongo: this.mongoDb,
+      storage: this.space
+    };
+  }
   constructor() {
     this.kysely = new Kysely<KyselyDatabaseSchema>({
       dialect: new PostgresDialect({

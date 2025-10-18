@@ -1,4 +1,5 @@
 import { Kysely, sql } from 'kysely';
+import dayjs from 'dayjs';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
@@ -196,9 +197,7 @@ class EventSelector {
   async removeTeams(teamIds: string[]): Promise<void> {
     return this.db.transaction().execute(async trx => {
       await Promise.all(
-        teamIds.map(id =>
-          trx.deleteFrom('team_divisions').where('team_id', '=', id).execute()
-        )
+        teamIds.map(id => trx.deleteFrom('team_divisions').where('team_id', '=', id).execute())
       );
     });
   }
@@ -273,7 +272,7 @@ class EventsSelector {
     let query = this.db.selectFrom('events').selectAll();
 
     if (this.selector.type === 'after') {
-      query = query.where('start_date', '>=', new Date(this.selector.value as number));
+      query = query.where('start_date', '>=', dayjs.unix(this.selector.value as number).toDate());
     } else if (this.selector.type === 'bySeason') {
       query = query.where('season_id', '=', this.selector.value as string);
     }
@@ -310,7 +309,11 @@ class EventsSelector {
       ]);
 
     if (this.selector.type === 'after') {
-      query = query.where('events.start_date', '>=', new Date(this.selector.value as number));
+      query = query.where(
+        'events.start_date',
+        '>=',
+        dayjs.unix(this.selector.value as number).toDate()
+      );
     } else if (this.selector.type === 'bySeason') {
       query = query.where('events.season_id', '=', this.selector.value as string);
     } else if (this.selector.type === 'byTeam') {
@@ -345,7 +348,7 @@ class EventsSelector {
       adminQuery = adminQuery.where(
         'events.start_date',
         '>=',
-        new Date(this.selector.value as number)
+        dayjs.unix(this.selector.value as number).toDate()
       );
     } else if (this.selector.type === 'bySeason') {
       adminQuery = adminQuery.where('events.season_id', '=', this.selector.value as string);
