@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { Box, Button, alpha } from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { LoginFormValues } from '../types';
 import { useVolunteer } from './volunteer-context';
 
@@ -36,7 +37,7 @@ export function NextStepButton({ type, onClick }: NextStepButtonProps) {
         size="large"
         disabled={isSubmitting || !isValid || !isReady}
         loading={isSubmitting || loading}
-        endIcon={<ArrowForward />}
+        endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
         sx={{
           borderRadius: 3,
           py: 1.75,
