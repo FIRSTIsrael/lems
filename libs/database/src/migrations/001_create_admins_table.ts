@@ -14,7 +14,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn('username', 'varchar(32)', col => col.notNull().unique())
     .addColumn('password_hash', 'varchar(255)', col => col.notNull())
-    .addColumn('password_salt', 'varchar(255)', col => col.notNull())
     .addColumn('first_name', 'varchar(64)', col => col.notNull())
     .addColumn('last_name', 'varchar(64)', col => col.notNull())
     .addColumn('last_login', 'timestamptz')

@@ -15,7 +15,6 @@ export async function verifyPassword(
   password: string,
   storedHash: string
 ): Promise<boolean> {
-  if (!storedHash) throw new Error("No password hash in database")
   return bcrypt.compare(password, storedHash);
 }
 
