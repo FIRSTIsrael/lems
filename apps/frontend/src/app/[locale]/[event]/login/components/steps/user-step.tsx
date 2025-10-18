@@ -1,14 +1,26 @@
+'use client';
+
 import { Typography, Autocomplete, TextField } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useFormikContext } from 'formik';
+import { LoginFormValues, LoginStep } from '../../types';
+import { NextStepButton } from '../next-step-button';
+import { useVolunteer } from '../volunteer-context';
 
-interface UserStepProps {
-  value: string;
-  isSubmitting: boolean;
-  onChange: (value: string) => void;
-}
-
-export function UserStep({ value, isSubmitting, onChange }: UserStepProps) {
+export function UserStep() {
   const t = useTranslations('pages.login');
+  const { values, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
+  const { volunteerData } = useVolunteer();
+
+  if (!volunteerData) {
+    return null;
+  }
+
+  const selectedVolunteer = volunteerData.volunteers.find(v => v.id === values.userId) || null;
+
+  const handleNext = async () => {
+    setFieldValue('currentStep', LoginStep.Password);
+  };
 
   return (
     <>
@@ -16,15 +28,18 @@ export function UserStep({ value, isSubmitting, onChange }: UserStepProps) {
         {t('instructions.user')}
       </Typography>
       <Autocomplete
-        options={users}
-        getOptionLabel={option => option.identifier || option.id}
-        value={users.find(u => u.id === value) || null}
-        onChange={(_, newValue) => onChange(newValue?.id || '')}
+        options={volunteerData.volunteers}
+        getOptionLabel={option => option.identifier || 'Default'}
+        value={selectedVolunteer}
+        onChange={(_, newValue) => {
+          setFieldValue('userId', newValue?.id || '');
+        }}
         renderInput={params => (
           <TextField {...params} label={t('fields.user')} required disabled={isSubmitting} />
         )}
         disabled={isSubmitting}
       />
+      <NextStepButton onClick={handleNext} />
     </>
   );
 }

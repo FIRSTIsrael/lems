@@ -56,6 +56,7 @@ export const VolunteerByRoleSchema = z.object({
   ),
   volunteers: z.array(
     z.object({
+      id: z.string(),
       role: z.string(),
       roleInfo: RoleInfoSchema.nullish(),
       identifier: z.string().nullish(),
@@ -97,6 +98,7 @@ const VOLUNTEER_BY_ROLE_QUERY = `
         color
       }
       volunteers(role: $role) {
+        id
         role
         roleInfo {
           __typename
