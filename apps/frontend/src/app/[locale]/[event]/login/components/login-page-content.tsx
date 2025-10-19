@@ -67,7 +67,7 @@ export function LoginPageContent({ event, recaptchaRequired }: LoginPageContentP
             }
           >
             <VolunteerProvider eventSlug={event.slug}>
-              <LoginForm />
+              <LoginForm recaptchaRequired={recaptchaRequired} />
             </VolunteerProvider>
           </Suspense>
         </Paper>

@@ -1,3 +1,4 @@
+import { apiFetch } from '@lems/shared';
 import { LoginFormValues, LoginStep } from './types';
 import type { VolunteerByRoleGraphQLData } from './graphql/volunteers.graphql';
 
@@ -105,14 +106,33 @@ export const buildLoginPayload = (
 
 export const submitLogin = async (
   values: LoginFormValues,
-  volunteerData: VolunteerByRoleGraphQLData | null
+  volunteerData: VolunteerByRoleGraphQLData | null,
+  captchaToken?: string
 ) => {
   if (!volunteerData) {
     throw new Error('Volunteer data is required to submit login');
   }
 
   const loginPayload: LoginPayload = buildLoginPayload(values, volunteerData);
-  console.log('Submitting login with values:', loginPayload);
-  // TODO: Implement actual login submission
-  // This will be replaced with actual authentication logic
+
+  const result = await apiFetch('/lems/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...loginPayload,
+      ...(captchaToken ? { captchaToken } : {})
+    })
+  });
+
+  if (!result.ok) {
+    if (result.status === 429) {
+      throw new Error('too-many-requests');
+    }
+    if (result.status === 401 || result.status === 404) {
+      throw new Error('invalid-password');
+    }
+    throw new Error('server-error');
+  }
+
+  return result.data;
 };

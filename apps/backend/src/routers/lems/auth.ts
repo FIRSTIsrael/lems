@@ -22,26 +22,9 @@ if (!jwtSecret) {
 }
 
 interface LoginRequest {
-  eventSlug: string;
-  role?: string;
-  divisionId?: string;
-  associationKey?: string;
-  associationValue?: string;
-  userId?: string;
-  password?: string;
+  userId: string;
+  password: string;
   captchaToken?: string;
-}
-
-interface LoginResponse {
-  step: 'role' | 'division' | 'association' | 'user' | 'password' | 'complete';
-  roles?: string[];
-  divisions?: Array<{ id: string; name: string }>;
-  associations?: Array<{ key: string; value: string; label: string }>;
-  users?: Array<{ id: string; identifier: string | null }>;
-  requiresDivision?: boolean;
-  requiresAssociation?: boolean;
-  associationKey?: string;
-  multipleUsers?: boolean;
 }
 
 router.post('/login', loginRateLimiter, async (req: Request, res: Response, next: NextFunction) => {
@@ -62,175 +45,36 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   }
 
   try {
-    if (!loginDetails.eventSlug) {
-      res.status(400).json({ error: 'MISSING_EVENT_SLUG' });
+    if (!loginDetails.userId || !loginDetails.password) {
+      res.status(400).json({ error: 'MISSING_CREDENTIALS' });
       return;
     }
 
-    // Get the event
-    const event = await db.events.bySlug(loginDetails.eventSlug).get();
-    if (!event) {
-      res.status(404).json({ error: 'EVENT_NOT_FOUND' });
+    const volunteerUser = await db.eventUsers.byId(loginDetails.userId).get();
+
+    if (!volunteerUser) {
+      console.log(`🔑 LEMS login failed - user not found: ${loginDetails.userId}`);
+      res.status(404).json({ error: 'USER_ID_NOT_FOUND' });
       return;
     }
 
-    // Get all event users and divisions
-    const eventUsers = await db.eventUsers.byEventId(event.id).getAll();
-    const divisions = await db.divisions.byEventId(event.id).getAll();
+    const isValidPassword = loginDetails.password == volunteerUser.password;
 
-    if (eventUsers.length === 0) {
-      res.status(400).json({ error: 'NO_USERS_FOR_EVENT' });
+    if (!isValidPassword) {
+      console.log(`🔑 LEMS login failed - invalid password: ${loginDetails.userId}`);
+      res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
 
-    // Step 1: Role selection
-    if (!loginDetails.role) {
-      const roles = [...new Set(eventUsers.map(user => user.role))].sort();
-      const response: LoginResponse = {
-        step: 'role',
-        roles
-      };
-      res.json(response);
-      return;
-    }
+    console.log(`🔑 LEMS login successful: ${loginDetails.userId}`);
 
-    // Filter users by role
-    let filteredUsers = eventUsers.filter(user => user.role === loginDetails.role);
-
-    if (filteredUsers.length === 0) {
-      res.status(404).json({ error: 'NO_USERS_WITH_ROLE' });
-      return;
-    }
-
-    // Step 2: Division selection (if needed)
-    const allUsersHaveAllDivisions = filteredUsers.every(
-      user => user.divisions.length === divisions.length
-    );
-
-    if (!allUsersHaveAllDivisions && !loginDetails.divisionId) {
-      const response: LoginResponse = {
-        step: 'division',
-        divisions: divisions.map(div => ({ id: div.id, name: div.name })),
-        requiresDivision: true
-      };
-      res.json(response);
-      return;
-    }
-
-    // Filter users by division if provided
-    if (loginDetails.divisionId) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.divisions.includes(loginDetails.divisionId!)
-      );
-
-      if (filteredUsers.length === 0) {
-        res.status(404).json({ error: 'NO_USERS_IN_DIVISION' });
-        return;
-      }
-    }
-
-    // Step 3: Association selection (if needed)
-    const usersWithAssociations = filteredUsers.filter(user => user.role_info);
-
-    if (usersWithAssociations.length > 0 && !loginDetails.associationKey) {
-      // Determine the association key from role_info
-      const associationKeys = new Set<string>();
-      usersWithAssociations.forEach(user => {
-        if (user.role_info) {
-          Object.keys(user.role_info).forEach(key => associationKeys.add(key));
-        }
-      });
-
-      if (associationKeys.size > 0) {
-        const firstKey = Array.from(associationKeys)[0];
-        const associations = [
-          ...new Set(
-            usersWithAssociations
-              .map(user => user.role_info?.[firstKey])
-              .filter(Boolean)
-              .map(val => String(val))
-          )
-        ].map(value => ({
-          key: firstKey,
-          value,
-          label: value
-        }));
-
-        const response: LoginResponse = {
-          step: 'association',
-          associations,
-          requiresAssociation: true,
-          associationKey: firstKey
-        };
-        res.json(response);
-        return;
-      }
-    }
-
-    // Filter users by association if provided
-    if (loginDetails.associationKey && loginDetails.associationValue) {
-      filteredUsers = filteredUsers.filter(
-        user =>
-          user.role_info?.[loginDetails.associationKey!] === loginDetails.associationValue
-      );
-
-      if (filteredUsers.length === 0) {
-        res.status(404).json({ error: 'NO_USERS_WITH_ASSOCIATION' });
-        return;
-      }
-    }
-
-    // Step 4: User selection (if multiple users match)
-    if (filteredUsers.length > 1 && !loginDetails.userId) {
-      const response: LoginResponse = {
-        step: 'user',
-        users: filteredUsers.map(user => ({
-          id: user.id,
-          identifier: user.identifier
-        })),
-        multipleUsers: true
-      };
-      res.json(response);
-      return;
-    }
-
-    // Determine the user
-    const targetUser = loginDetails.userId
-      ? filteredUsers.find(user => user.id === loginDetails.userId)
-      : filteredUsers[0];
-
-    if (!targetUser) {
-      res.status(404).json({ error: 'USER_NOT_FOUND' });
-      return;
-    }
-
-    // Step 5: Password verification
-    if (!loginDetails.password) {
-      const response: LoginResponse = {
-        step: 'password'
-      };
-      res.json(response);
-      return;
-    }
-
-    // Verify password (plain text comparison for 4-character passwords)
-    if (loginDetails.password !== targetUser.password) {
-      console.log(`🔑 LEMS login failed - invalid password: ${targetUser.id}`);
-      res.status(401).json({ error: 'INVALID_PASSWORD' });
-      return;
-    }
-
-    console.log(`🔑 LEMS login successful: ${targetUser.role} (${targetUser.id})`);
-
-    const expires = dayjs().add(7, 'days');
+    const expires = dayjs().endOf('day');
     const expiresInSeconds = expires.diff(dayjs(), 'second');
 
     const token = jwt.sign(
       {
-        userId: targetUser.id,
-        eventId: event.id,
-        role: targetUser.role,
-        userType: 'event-user'
+        userId: volunteerUser.id,
+        userType: 'voluneer'
       },
       jwtSecret,
       {
@@ -246,22 +90,13 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
       sameSite: 'strict'
     });
 
-    const response: LoginResponse = {
-      step: 'complete'
-    };
-
     res.json({
-      ...response,
-      user: {
-        id: targetUser.id,
-        role: targetUser.role,
-        identifier: targetUser.identifier,
-        divisions: targetUser.divisions
-      }
+      id: volunteerUser.id,
+      loginTime: new Date()
     });
-  } catch (err) {
-    console.error('LEMS login error:', err);
-    next(err);
+  } catch (error) {
+    console.error('LEMS login error:', error);
+    next(error);
   }
 });
 
@@ -279,9 +114,9 @@ router.get('/verify', async (req: Request, res: Response) => {
       return;
     }
 
-    const tokenData = jwt.verify(token, jwtSecret) as any;
+    const tokenData = jwt.verify(token, jwtSecret) as { userId: string; userType: string };
 
-    if (tokenData.userType !== 'event-user') {
+    if (tokenData.userType !== 'volunteer') {
       res.status(403).json({ error: 'FORBIDDEN' });
       return;
     }
@@ -293,7 +128,7 @@ router.get('/verify', async (req: Request, res: Response) => {
     }
 
     res.json({ ok: true, user });
-  } catch (err) {
+  } catch {
     res.status(401).json({ error: 'UNAUTHORIZED' });
   }
 });

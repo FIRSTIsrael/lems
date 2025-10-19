@@ -1,9 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Formik, Form } from 'formik';
+import { useRouter } from 'next/navigation';
+import { Formik, Form, FormikHelpers } from 'formik';
 import { Stack, Box, Alert, alpha, Fade } from '@mui/material';
 import { useRoleTranslations } from '@lems/localization';
+import { createRecaptchaToken, removeRecaptchaBadge } from '@lems/shared';
 import { LoginFormValues, LoginStep } from '../types';
 import { validateForm, submitLogin } from '../utils';
 import { RoleStep } from './steps/role-step';
@@ -26,8 +28,13 @@ const initialValues: LoginFormValues = {
   password: ''
 };
 
-export function LoginForm() {
+interface LoginFormProps {
+  recaptchaRequired: boolean;
+}
+
+export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   const t = useTranslations('pages.login');
+  const router = useRouter();
   const { getRole } = useRoleTranslations();
   const { needsDivision, needsRoleInfo, needsUser, volunteerData } = useVolunteer();
 
@@ -48,10 +55,32 @@ export function LoginForm() {
     }
   }
 
+  const handleSubmit = async (
+    values: LoginFormValues,
+    { setSubmitting, setStatus }: FormikHelpers<LoginFormValues>
+  ) => {
+    setStatus(null);
+    setSubmitting(true);
+
+    try {
+      const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
+      await submitLogin(values, volunteerData, captchaToken);
+
+      removeRecaptchaBadge();
+
+      router.push(`/lems/${values.role}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'server-error';
+      setStatus(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={values => submitLogin(values, volunteerData)}
+      onSubmit={handleSubmit}
       validate={values => validateForm(values, values.currentStep)}
       validateOnMount
       enableReinitialize
