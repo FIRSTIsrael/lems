@@ -16,7 +16,12 @@
         "location": "Location",
         "teams-registered": "{count} teams registered",
         "registration-open": "Registration Open",
-        "registration-closed": "Registration Closed"
+        "registration-closed": "Registration Closed",
+        "view-event": "View Event",
+        "view-results": "View Results",
+        "view-details": "View Details",
+        "status-completed": "Completed",
+        "status-upcoming": "Upcoming"
       },
       "search": {
         "title": "Search Teams & Events",
