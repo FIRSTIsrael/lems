@@ -15,10 +15,12 @@ import {
 } from '@mui/material';
 import {
   Language as WebsiteIcon,
-  ArrowForward as ArrowIcon,
+  ArrowForward,
+  ArrowBack,
   Storage as GitHubIcon,
   Map as MapIcon
 } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 
 const RESOURCES = [
   {
@@ -98,7 +100,7 @@ export const ResourceLinksSection = () => {
                     </Typography>
                   </Box>
                   <IconButton size="small">
-                    <ArrowIcon />
+                    <DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />
                   </IconButton>
                 </Stack>
               </CardContent>

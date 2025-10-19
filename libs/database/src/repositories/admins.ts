@@ -154,12 +154,11 @@ class AdminSelector {
       .execute();
   }
 
-  async updatePassword(passwordHash: string, passwordSalt: string): Promise<void> {
+  async updatePassword(passwordHash: string): Promise<void> {
     await this.db
       .updateTable('admins')
       .set({
         password_hash: passwordHash,
-        password_salt: passwordSalt,
         last_password_set_date: new Date(),
         last_updated: new Date()
       })

@@ -3,9 +3,11 @@
 import { useContext } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
+import { useTranslations } from 'next-intl';
 import { MissionContext } from './mission-context';
 
 export const ScoreFloater = () => {
+  const t = useTranslations('pages.tools.scorer');
   const { points, resetScore } = useContext(MissionContext);
 
   return (
@@ -31,7 +33,7 @@ export const ScoreFloater = () => {
         }}
       >
         <Typography sx={{ color: '#FFF' }} fontWeight={500} fontSize="1.25rem">
-          {points} נק&apos;
+          {t('score', { points })}
         </Typography>
         <IconButton sx={{ color: '#FFF' }} onClick={resetScore}>
           <RestartAltRoundedIcon />

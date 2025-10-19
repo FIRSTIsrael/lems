@@ -4,7 +4,8 @@ import useSWR from 'swr';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Button } from '@mui/material';
-import { Event as EventIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { Event as EventIcon, ArrowForward, ArrowBack } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { EventSummary, PortalEventSummariesResponseSchema } from '@lems/types/api/portal';
 import { EventsSection } from './events-section';
 
@@ -57,7 +58,7 @@ export const ActiveEventsSection = () => {
       />
 
       <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Button variant="outlined" size="large" href="/events" endIcon={<ArrowIcon />}>
+        <Button variant="outlined" size="large" href="/events" endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
           {t('view-all-events')}
         </Button>
       </Box>
