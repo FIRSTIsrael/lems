@@ -7,8 +7,10 @@ import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
   CalendarToday as CalendarIcon,
-  ArrowForward as ArrowIcon
+  ArrowForward,
+  ArrowBack
 } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from '../../components/homepage/live-icon';
 
@@ -28,7 +30,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       case 'past':
         return (
           <Chip
-            label="Completed"
+            label={tEvents('status-completed')}
             color="primary"
             size="small"
             variant="outlined"
@@ -38,7 +40,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       default:
         return (
           <Chip
-            label="Upcoming"
+            label={tEvents('status-upcoming')}
             color="primary"
             size="small"
             variant="outlined"
@@ -123,17 +125,17 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
           variant={variant === 'active' ? 'contained' : 'outlined'}
           color={variant === 'active' ? 'error' : 'primary'}
           size="small"
-          endIcon={<ArrowIcon />}
+          endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
           sx={{
             minWidth: { xs: '100%', sm: 'auto' },
             whiteSpace: 'nowrap'
           }}
         >
           {variant === 'active'
-            ? 'View Event'
+            ? tEvents('view-event')
             : variant === 'past'
-              ? 'View Results'
-              : 'View Details'}
+              ? tEvents('view-results')
+              : tEvents('view-details')}
         </Button>
       </Stack>
     </Box>
