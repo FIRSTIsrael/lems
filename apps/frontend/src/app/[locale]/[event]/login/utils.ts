@@ -2,32 +2,32 @@ import { LoginFormValues, LoginStep } from './types';
 import type { VolunteerByRoleGraphQLData } from './graphql/volunteers.graphql';
 
 export const validateForm = (values: LoginFormValues, currentStep: LoginStep) => {
-  const errors: Partial<LoginFormValues> = {};
+  const errors: Partial<Record<keyof LoginFormValues, boolean>> = {};
 
   switch (currentStep) {
     case LoginStep.Role:
       if (!values.role) {
-        errors.role = 'required';
+        errors.role = true;
       }
       break;
     case LoginStep.Division:
       if (!values.divisionId) {
-        errors.divisionId = 'required';
+        errors.divisionId = true;
       }
       break;
     case LoginStep.RoleInfo:
-      if (!values.roleInfoValue) {
-        errors.roleInfoValue = 'required';
+      if (!values.roleInfoValue.id || !values.roleInfoValue.name) {
+        errors.roleInfoValue = true;
       }
       break;
     case LoginStep.User:
       if (!values.userId) {
-        errors.userId = 'required';
+        errors.userId = true;
       }
       break;
     case LoginStep.Password:
       if (!values.password) {
-        errors.password = 'required';
+        errors.password = true;
       }
       break;
     default:
@@ -62,9 +62,9 @@ export const inferUserId = (
       if (!v.roleInfo) return false;
       const roleInfo = v.roleInfo as Record<string, string>;
       return (
-        roleInfo.tableId === values.roleInfoValue ||
-        roleInfo.roomId === values.roleInfoValue ||
-        roleInfo.category === values.roleInfoValue
+        roleInfo.tableId === values.roleInfoValue.id ||
+        roleInfo.roomId === values.roleInfoValue.id ||
+        roleInfo.category === values.roleInfoValue.id
       );
     });
   }

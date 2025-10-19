@@ -2,7 +2,7 @@ export interface LoginFormValues {
   currentStep: LoginStep;
   role: string;
   divisionId: string;
-  roleInfoValue: string;
+  roleInfoValue: { id: string; name: string };
   userId: string;
   password: string;
 }

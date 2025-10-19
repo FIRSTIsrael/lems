@@ -26,7 +26,7 @@ export function RoleInfoStep() {
     throw new Error('Role info type could not be determined');
   }
 
-  const selectedOption = availableOptions.find(opt => opt.id === values.roleInfoValue) || null;
+  const selectedOption = availableOptions.find(opt => opt.id === values.roleInfoValue.id) || null;
 
   const handleNext = () => {
     setFieldValue('currentStep', needsUser ? LoginStep.User : LoginStep.Password);
@@ -52,7 +52,7 @@ export function RoleInfoStep() {
         getOptionLabel={option => option.name}
         value={selectedOption}
         onChange={(_, newValue) => {
-          setFieldValue('associationValue', newValue?.id || '');
+          setFieldValue('roleInfoValue', newValue || { id: '', name: '' });
         }}
         renderInput={params => (
           <TextField
@@ -75,19 +75,21 @@ export function RoleInfoStep() {
           />
         )}
         disabled={isSubmitting}
-        PaperComponent={({ children, ...props }) => (
-          <Paper
-            {...props}
-            elevation={8}
-            sx={{
-              mt: 1,
-              borderRadius: 2,
-              overflow: 'hidden'
-            }}
-          >
-            {children}
-          </Paper>
-        )}
+        slots={{
+          paper: ({ children, ...props }) => (
+            <Paper
+              {...props}
+              elevation={8}
+              sx={{
+                mt: 1,
+                borderRadius: 2,
+                overflow: 'hidden'
+              }}
+            >
+              {children}
+            </Paper>
+          )
+        }}
         sx={{ mb: 3 }}
       />
       <NextStepButton onClick={handleNext} />

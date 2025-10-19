@@ -21,7 +21,7 @@ const initialValues: LoginFormValues = {
   currentStep: LoginStep.Role,
   role: '',
   divisionId: '',
-  roleInfoValue: '',
+  roleInfoValue: { id: '', name: '' },
   userId: '',
   password: ''
 };
@@ -71,11 +71,13 @@ export function LoginForm() {
         return (
           <Form>
             <Stack direction="column" spacing={3}>
-              <StepIndicator
-                currentStep={values.currentStep}
-                completedSteps={completedSteps}
-                availableSteps={availableSteps}
-              />
+              <Box display={{ xs: 'none', md: 'block' }}>
+                <StepIndicator
+                  currentStep={values.currentStep}
+                  completedSteps={completedSteps}
+                  availableSteps={availableSteps}
+                />
+              </Box>
 
               <Box>
                 {values.role && values.currentStep > LoginStep.Role && (
@@ -90,7 +92,7 @@ export function LoginForm() {
                 {needsRoleInfo && values.currentStep > LoginStep.RoleInfo && (
                   <CompletedStepSummary
                     label={t('fields.association')}
-                    value={values.roleInfoValue}
+                    value={values.roleInfoValue.name}
                   />
                 )}
                 {needsUser && values.currentStep > LoginStep.User && (
