@@ -7,13 +7,20 @@ interface CompletedStepSummaryProps {
   label: string;
   value: string;
   color?: string;
+  onStepClick?: () => void;
 }
 
-export function CompletedStepSummary({ label, value, color }: CompletedStepSummaryProps) {
+export function CompletedStepSummary({
+  label,
+  value,
+  color,
+  onStepClick
+}: CompletedStepSummaryProps) {
   return (
     <Fade in timeout={500}>
       <Paper
         elevation={0}
+        onClick={onStepClick}
         sx={{
           p: 2,
           mb: 2,
@@ -22,11 +29,14 @@ export function CompletedStepSummary({ label, value, color }: CompletedStepSumma
           border: theme => `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
           borderRadius: 2,
           transition: 'all 0.3s ease',
+          cursor: onStepClick ? 'pointer' : 'default',
           '&:hover': {
             background: theme =>
               `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.primary.light, 0.08)} 100%)`,
-            transform: 'translateY(-1px)',
-            boxShadow: theme => `0 4px 12px ${alpha(theme.palette.primary.main, 0.1)}`
+            transform: onStepClick ? 'translateY(-1px)' : 'none',
+            boxShadow: onStepClick
+              ? theme => `0 4px 12px ${alpha(theme.palette.primary.main, 0.1)}`
+              : 'none'
           }
         }}
       >

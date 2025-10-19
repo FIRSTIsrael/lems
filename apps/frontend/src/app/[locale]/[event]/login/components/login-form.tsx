@@ -56,7 +56,7 @@ export function LoginForm() {
       validateOnMount
       enableReinitialize
     >
-      {({ status, values }) => {
+      {({ status, values, setFieldValue }) => {
         const availableSteps = [LoginStep.Role];
 
         if (values.currentStep > LoginStep.Role) {
@@ -67,6 +67,15 @@ export function LoginForm() {
         }
 
         const completedSteps = availableSteps.filter(step => step < values.currentStep);
+
+        const handleStepClick = (targetStep: LoginStep) => {
+          setFieldValue('currentStep', targetStep);
+
+          setFieldValue('password', '');
+          if (targetStep < LoginStep.Division) setFieldValue('divisionId', '');
+          if (targetStep < LoginStep.RoleInfo) setFieldValue('roleInfoValue', { id: '', name: '' });
+          if (targetStep < LoginStep.User) setFieldValue('userId', '');
+        };
 
         return (
           <Form>
@@ -81,22 +90,32 @@ export function LoginForm() {
 
               <Box>
                 {values.role && values.currentStep > LoginStep.Role && (
-                  <CompletedStepSummary label={t('fields.role')} value={getRole(values.role)} />
+                  <CompletedStepSummary
+                    label={t('fields.role')}
+                    value={getRole(values.role)}
+                    onStepClick={() => handleStepClick(LoginStep.Role)}
+                  />
                 )}
                 {needsDivision && values.currentStep > LoginStep.Division && (
                   <CompletedDivisionStepSummary
                     divisionId={values.divisionId}
                     label={t('fields.division')}
+                    onStepClick={() => handleStepClick(LoginStep.Division)}
                   />
                 )}
                 {needsRoleInfo && values.currentStep > LoginStep.RoleInfo && (
                   <CompletedStepSummary
                     label={t('fields.association')}
                     value={values.roleInfoValue.name}
+                    onStepClick={() => handleStepClick(LoginStep.RoleInfo)}
                   />
                 )}
                 {needsUser(values.divisionId) && values.currentStep > LoginStep.User && (
-                  <CompletedUserStepSummary userId={values.userId} label={t('fields.user')} />
+                  <CompletedUserStepSummary
+                    userId={values.userId}
+                    label={t('fields.user')}
+                    onStepClick={() => handleStepClick(LoginStep.User)}
+                  />
                 )}
               </Box>
 
