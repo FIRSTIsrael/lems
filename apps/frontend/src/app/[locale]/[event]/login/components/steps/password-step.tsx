@@ -137,7 +137,7 @@ export function PasswordStep() {
             }
           }}
         >
-          {isSubmitting ? t('submitting') : 'Sign In'}
+          {isSubmitting ? t('submitting') : t('sign-in')}
         </Button>
       </Box>
     </Box>

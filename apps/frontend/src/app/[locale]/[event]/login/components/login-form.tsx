@@ -62,7 +62,7 @@ export function LoginForm() {
         if (values.currentStep > LoginStep.Role) {
           if (needsDivision) availableSteps.push(LoginStep.Division);
           if (needsRoleInfo) availableSteps.push(LoginStep.RoleInfo);
-          if (needsUser) availableSteps.push(LoginStep.User);
+          if (needsUser(values.divisionId)) availableSteps.push(LoginStep.User);
           availableSteps.push(LoginStep.Password);
         }
 
@@ -95,7 +95,7 @@ export function LoginForm() {
                     value={values.roleInfoValue.name}
                   />
                 )}
-                {needsUser && values.currentStep > LoginStep.User && (
+                {needsUser(values.divisionId) && values.currentStep > LoginStep.User && (
                   <CompletedUserStepSummary userId={values.userId} label={t('fields.user')} />
                 )}
               </Box>

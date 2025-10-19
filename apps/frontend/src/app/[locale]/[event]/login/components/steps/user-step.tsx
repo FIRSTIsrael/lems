@@ -5,18 +5,16 @@ import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { LoginFormValues, LoginStep } from '../../types';
 import { NextStepButton } from '../next-step-button';
-import { useVolunteer } from '../volunteer-context';
+import { useUserOptions } from '../../hooks/use-user-options';
 
 export function UserStep() {
   const t = useTranslations('pages.login');
   const { values, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
-  const { volunteerData } = useVolunteer();
 
-  if (!volunteerData) {
-    return null;
-  }
+  const options = useUserOptions(values.divisionId);
+  if (!options) return null;
 
-  const selectedVolunteer = volunteerData.volunteers.find(v => v.id === values.userId) || null;
+  const selectedVolunteer = options.find(v => v.id === values.userId) || null;
 
   const handleNext = async () => {
     setFieldValue('currentStep', LoginStep.Password);
@@ -38,7 +36,7 @@ export function UserStep() {
         {t('instructions.user')}
       </Typography>
       <Autocomplete
-        options={volunteerData.volunteers}
+        options={options}
         getOptionLabel={option => option.identifier || 'Default'}
         value={selectedVolunteer}
         onChange={(_, newValue) => {
@@ -65,19 +63,21 @@ export function UserStep() {
           />
         )}
         disabled={isSubmitting}
-        PaperComponent={({ children, ...props }) => (
-          <Paper
-            {...props}
-            elevation={8}
-            sx={{
-              mt: 1,
-              borderRadius: 2,
-              overflow: 'hidden'
-            }}
-          >
-            {children}
-          </Paper>
-        )}
+        slots={{
+          paper: ({ children, ...props }) => (
+            <Paper
+              {...props}
+              elevation={8}
+              sx={{
+                mt: 1,
+                borderRadius: 2,
+                overflow: 'hidden'
+              }}
+            >
+              {children}
+            </Paper>
+          )
+        }}
         sx={{ mb: 3 }}
       />
       <NextStepButton onClick={handleNext} />

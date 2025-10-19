@@ -29,7 +29,10 @@ export function RoleInfoStep() {
   const selectedOption = availableOptions.find(opt => opt.id === values.roleInfoValue.id) || null;
 
   const handleNext = () => {
-    setFieldValue('currentStep', needsUser ? LoginStep.User : LoginStep.Password);
+    setFieldValue(
+      'currentStep',
+      needsUser(values.divisionId) ? LoginStep.User : LoginStep.Password
+    );
   };
 
   return (

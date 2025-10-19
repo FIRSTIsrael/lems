@@ -57,7 +57,7 @@ export const inferUserId = (
     );
   }
 
-  if (values.roleInfoValue) {
+  if (values.roleInfoValue.id) {
     filteredVolunteers = filteredVolunteers.filter(v => {
       if (!v.roleInfo) return false;
       const roleInfo = v.roleInfo as Record<string, string>;

@@ -29,7 +29,7 @@ export function RoleStep() {
       return;
     }
 
-    if (needsUser) {
+    if (needsUser()) {
       setFieldValue('currentStep', LoginStep.User);
       return;
     }

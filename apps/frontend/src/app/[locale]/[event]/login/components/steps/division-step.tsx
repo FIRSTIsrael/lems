@@ -30,7 +30,7 @@ export function DivisionStep() {
       return;
     }
 
-    if (needsUser) {
+    if (needsUser(selectedDivision?.id)) {
       setFieldValue('currentStep', LoginStep.User);
       return;
     }

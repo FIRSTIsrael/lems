@@ -4,6 +4,7 @@
       "subtitle": "Volunteer Login",
       "continue": "Continue",
       "submitting": "Loading...",
+      "sign-in": "Sign In",
       "steps": {
         "role": "Select Role",
         "division": "Select Division",
@@ -12,14 +13,14 @@
         "password": "Enter Password"
       },
       "instructions": {
-        "role": "Please select your role for this event:",
-        "division": "Please select the division you are working in:",
+        "role": "Please select your role:",
+        "division": "Please select your assigned division:",
         "association": "Please select your assignment:",
         "roleInfo-table": "Please select the table you are assigned to:",
         "roleInfo-room": "Please select the room you are assigned to:",
         "roleInfo-category": "Please select the category you are assigned to:",
         "user": "Multiple users match your selection. Please choose your account:",
-        "password": "Please enter your 4-character password:"
+        "password": "Please enter your password:"
       },
       "fields": {
         "role": "Role",

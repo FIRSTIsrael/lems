@@ -19,7 +19,7 @@ interface VolunteerContextType {
 
   needsDivision: boolean;
   needsRoleInfo: boolean;
-  needsUser: boolean;
+  needsUser: (divisionId?: string) => boolean;
 }
 
 const VolunteerContext = createContext<VolunteerContextType | undefined>(undefined);
@@ -50,7 +50,10 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     throw volunteerError;
   }
 
-  const _needsUser = (volunteers: VolunteerByRoleGraphQLData['volunteers']) => {
+  const _needsUser = (
+    volunteers: VolunteerByRoleGraphQLData['volunteers'],
+    divisionId?: string
+  ) => {
     const assignmentCounts = volunteers.reduce(
       (acc, volunteer) => {
         if (volunteer.roleInfo) {
@@ -66,6 +69,10 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
       {} as Record<string, number>
     );
 
+    if (divisionId) {
+      return (assignmentCounts[divisionId] || 0) > 1;
+    }
+
     return Object.values(assignmentCounts).some(count => count > 1);
   };
 
@@ -73,12 +80,10 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     const totalDivisions = volunteerData?.divisions.length || 0;
     const volunteers = volunteerData?.volunteers || [];
 
-    console.log(volunteers);
-
     return {
       needsDivision: volunteers.some(v => v.divisions.length < totalDivisions),
       needsRoleInfo: volunteers.some(v => !!v.roleInfo),
-      needsUser: _needsUser(volunteers)
+      needsUser: (divisionId?: string) => _needsUser(volunteers, divisionId)
     };
   }, [volunteerData]);
 
