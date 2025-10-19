@@ -85,7 +85,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       validateOnMount
       enableReinitialize
     >
-      {({ status, values, setFieldValue }) => {
+      {({ status, values, setFieldValue, setStatus }) => {
         const availableSteps = [LoginStep.Role];
 
         if (values.currentStep > LoginStep.Role) {
@@ -99,6 +99,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
         const handleStepClick = (targetStep: LoginStep) => {
           setFieldValue('currentStep', targetStep);
+          setStatus(null);
 
           setFieldValue('password', '');
           if (targetStep < LoginStep.Division) setFieldValue('divisionId', '');
