@@ -32,27 +32,24 @@ export interface DivisionGraphQL {
   id: string;
 }
 
-export const divisionsResolver: GraphQLFieldResolver<
+export const volunteerDivisionsResolver: GraphQLFieldResolver<
   VolunteerGraphQL,
   unknown,
   unknown,
   Promise<DivisionGraphQL[]>
 > = async (volunteer: VolunteerGraphQL) => {
   try {
-    // Fetch all divisions that have this volunteer role
+    // Fetch all divisions assigned to this specific volunteer via the junction table
     const divisions = await db.raw.sql
-      .selectFrom('event_users')
-      .innerJoin('event_user_divisions', 'event_user_divisions.user_id', 'event_users.id')
+      .selectFrom('event_user_divisions')
       .innerJoin('divisions', 'divisions.id', 'event_user_divisions.division_id')
-      .where('event_users.event_id', '=', volunteer.eventId)
-      .where('event_users.role', '=', volunteer.role)
+      .where('event_user_divisions.user_id', '=', volunteer.id)
       .select('divisions.id')
-      .distinct()
       .execute();
 
     return divisions.map(d => ({ id: d.id }));
   } catch (error) {
-    console.error('Error fetching divisions for volunteer role:', volunteer.role, error);
+    console.error('Error fetching divisions for volunteer:', volunteer.id, error);
     throw error;
   }
 };

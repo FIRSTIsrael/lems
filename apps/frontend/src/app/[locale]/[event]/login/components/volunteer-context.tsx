@@ -73,6 +73,8 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     const totalDivisions = volunteerData?.divisions.length || 0;
     const volunteers = volunteerData?.volunteers || [];
 
+    console.log(volunteers);
+
     return {
       needsDivision: volunteers.some(v => v.divisions.length < totalDivisions),
       needsRoleInfo: volunteers.some(v => !!v.roleInfo),

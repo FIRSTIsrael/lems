@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 import { eventResolvers } from './resolvers/events/resolver';
 import { isFullySetUpResolver } from './resolvers/events/is-fully-set-up';
-import { volunteersResolver, divisionsResolver } from './resolvers/events/volunteers';
+import { volunteersResolver, volunteerDivisionsResolver } from './resolvers/events/volunteers';
 import { eventDivisionsResolver } from './resolvers/events/event-divisions';
 import { divisionTablesResolver } from './resolvers/divisions/division-tables';
 import { divisionRoomsResolver } from './resolvers/divisions/division-rooms';
@@ -95,7 +95,7 @@ const VolunteerType = new GraphQLObjectType({
     identifier: { type: GraphQLString },
     divisions: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(DivisionType))),
-      resolve: divisionsResolver
+      resolve: volunteerDivisionsResolver
     }
   }
 });
