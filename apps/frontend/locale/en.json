@@ -46,7 +46,13 @@
         "user-not-found": "User not found.",
         "missing-event-slug": "Event information is missing.",
         "event-not-found": "Event not found.",
-        "no-users-for-event": "No users configured for this event."
+        "no-users-for-event": "No users configured for this event.",
+        "title": "Something went wrong",
+        "description": "We encountered an unexpected error while loading the login page.",
+        "unknown": "An unexpected error occurred. Please try again.",
+        "support-text": "If this problem persists, please contact support.",
+        "back-home": "Back to Home",
+        "try-again": "Try Again"
       }
     }
   }

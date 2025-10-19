@@ -66,22 +66,22 @@ export const eventResolvers = {
         // Apply date filters at database level
         if (args.startAfter) {
           const startAfter = dayjs(args.startAfter).toDate();
-          query = query.where('events.start_date', '>', startAfter);
+          query = query.where('events.start_date', '>=', startAfter);
         }
 
         if (args.startBefore) {
           const startBefore = dayjs(args.startBefore).toDate();
-          query = query.where('events.start_date', '<', startBefore);
+          query = query.where('events.start_date', '<=', startBefore);
         }
 
         if (args.endAfter) {
           const endAfter = dayjs(args.endAfter).toDate();
-          query = query.where('events.end_date', '>', endAfter);
+          query = query.where('events.end_date', '>=', endAfter);
         }
 
         if (args.endBefore) {
           const endBefore = dayjs(args.endBefore).toDate();
-          query = query.where('events.end_date', '<', endBefore);
+          query = query.where('events.end_date', '<=', endBefore);
         }
 
         // Apply fullySetUp filter at database level using HAVING

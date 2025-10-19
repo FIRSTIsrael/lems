@@ -6,6 +6,7 @@ import { Typography, Paper, Container, Box, CircularProgress, alpha } from '@mui
 import { useRecaptcha } from '@lems/shared';
 import { VolunteerProvider } from './volunteer-context';
 import { LoginForm } from './login-form';
+import { LoginErrorBoundary } from './login-error-boundary';
 
 interface LoginPageContentProps {
   event: { name: string; slug: string };
@@ -59,17 +60,19 @@ export function LoginPageContent({ event, recaptchaRequired }: LoginPageContentP
               `0 8px 32px ${alpha(theme.palette.primary.main, 0.12)}, 0 2px 8px ${alpha(theme.palette.common.black, 0.04)}`
           }}
         >
-          <Suspense
-            fallback={
-              <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
-                <CircularProgress />
-              </Box>
-            }
-          >
-            <VolunteerProvider eventSlug={event.slug}>
-              <LoginForm recaptchaRequired={recaptchaRequired} />
-            </VolunteerProvider>
-          </Suspense>
+          <LoginErrorBoundary>
+            <Suspense
+              fallback={
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
+                  <CircularProgress />
+                </Box>
+              }
+            >
+              <VolunteerProvider eventSlug={event.slug}>
+                <LoginForm recaptchaRequired={recaptchaRequired} />
+              </VolunteerProvider>
+            </Suspense>
+          </LoginErrorBoundary>
         </Paper>
       </Container>
     </Box>
