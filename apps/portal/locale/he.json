@@ -25,7 +25,16 @@
       },
       "search": {
         "title": "חיפוש קבוצות ואירועים",
-        "placeholder": "חפשו קבוצות או אירועים..."
+        "placeholder": "חפשו קבוצות או אירועים...",
+        "start-typing": "התחילו להקליד כדי לחפש",
+        "search-hint": "חפשו לפי שם קבוצה, מספר, עיר, שם אירוע או מיקום",
+        "searching": "מחפש...",
+        "no-results": "לא נמצאו תוצאות",
+        "no-results-hint": "לא נמצאו תוצאות עבור \"{query}\". נסו מילות מפתח אחרות.",
+        "results-count": "{count} תוצאות",
+        "more-results": "+{count} תוצאות נוספות",
+        "type-team": "קבוצה",
+        "type-event": "אירוע"
       },
       "quick-actions": {
         "title": "פעולות מהירות",
@@ -119,5 +128,6 @@
         "judging-timer": "טיימר מפגש שיפוט"
       }
     }
-  }
+  },
+  "from": "מ"
 }
