@@ -59,6 +59,11 @@ router.post(
 
     const existingVolunteers = await db.eventUsers.byEventId(req.eventId).getAll();
     for (const volunteer of existingVolunteers) {
+      if (volunteer.role === 'judge' || volunteer.role === 'referee') {
+        // Judge and referee are managed by the system
+        continue;
+      }
+
       await db.eventUsers.delete(volunteer.id);
     }
 
