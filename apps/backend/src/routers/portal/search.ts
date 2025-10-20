@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import dayjs from 'dayjs';
 import db from '../../lib/database';
 import { makePortalTeamSummaryResponse } from './teams/util';
 
@@ -56,10 +57,11 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
           const matchesSlug = event.slug.toLowerCase().includes(searchTerm);
           
           if (status !== 'all') {
-            const now = new Date();
+            const today = dayjs().startOf('day');
+            const eventDate = dayjs(event.start_date).startOf('day');
             const eventStatus = 
-              event.start_date > now ? 'upcoming' :
-              event.end_date < now ? 'past' : 'active';
+              eventDate.isAfter(today) ? 'upcoming' :
+              eventDate.isBefore(today) ? 'past' : 'active';
             
             if (eventStatus !== status) return false;
           }
@@ -70,10 +72,11 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
         .map(async event => {
           const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
           
-          const now = new Date();
+          const today = dayjs().startOf('day');
+          const eventDate = dayjs(event.start_date).startOf('day');
           const eventStatus = 
-            event.start_date > now ? 'upcoming' :
-            event.end_date < now ? 'past' : 'active';
+            eventDate.isAfter(today) ? 'upcoming' :
+            eventDate.isBefore(today) ? 'past' : 'active';
           
           return {
             type: 'event' as const,
