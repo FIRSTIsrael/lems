@@ -1,8 +1,8 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
-import { Typography, Stack, Paper, Box, Divider } from '@mui/material';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { useTranslations } from 'next-intl';
+import { Typography, Paper, Box, Divider, Grid } from '@mui/material';
+import { EmojiEvents } from '@mui/icons-material';
 import NextLink from 'next/link';
 
 interface Team {
@@ -26,26 +26,31 @@ interface AwardsProps {
 
 const Awards: React.FC<AwardsProps> = ({ awards }) => {
   const t = useTranslations('pages.event');
-  const locale = useLocale();
-  const isHebrew = locale === 'he';
 
-  const getColorByPlace = (place: number): string => {
+  const getColorByPlace = (place: number | null): string => {
     switch (place) {
-      case 1: return '#FFD700'; // Gold
-      case 2: return '#C0C0C0'; // Silver  
-      case 3: return '#CD7F32'; // Bronze
-      default: return '#4CAF50'; // Green for other awards
+      case 1:
+        return 'award.first';
+      case 2:
+        return 'award.second';
+      case 3:
+        return 'award.third';
+      default:
+        return 'award.other';
     }
   };
 
   // Group awards by name, then sort by place
-  const awardsByName = awards.reduce((acc, award) => {
-    if (!acc[award.name]) {
-      acc[award.name] = [];
-    }
-    acc[award.name].push(award);
-    return acc;
-  }, {} as Record<string, Award[]>);
+  const awardsByName = awards.reduce(
+    (acc, award) => {
+      if (!acc[award.name]) {
+        acc[award.name] = [];
+      }
+      acc[award.name].push(award);
+      return acc;
+    },
+    {} as Record<string, Award[]>
+  );
 
   // Sort each award group by place
   Object.keys(awardsByName).forEach(awardName => {
@@ -55,61 +60,59 @@ const Awards: React.FC<AwardsProps> = ({ awards }) => {
   const renderAwardSection = (awardName: string, awardList: Award[]) => {
     return (
       <Box key={awardName} sx={{ mb: 4 }}>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            textAlign: 'left', 
-            mb: 2, 
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: 'left',
+            mb: 2,
             fontWeight: 600,
             color: 'text.primary'
           }}
         >
           {awardName}
         </Typography>
-        
-        <Stack spacing={1.5} sx={{ 
-          alignItems: 'flex-start'
-        }}>
-          {awardList.map((award, index) => {
+
+        <Grid container spacing={2}>
+          {awardList.map(award => {
             const isTeamAward = typeof award.winner !== 'string';
-            const winnerText = isTeamAward 
+            const winnerText = isTeamAward
               ? `${(award.winner as Team).name} #${(award.winner as Team).number}`
-              : award.winner as string;
+              : (award.winner as string);
+
+            const trophyColor = getColorByPlace(award.place);
 
             return (
-              <Box 
+              <Grid
+                size={{ xs: 12, sm: 6, lg: 3 }}
                 key={award.id}
-                sx={{ 
-                  minHeight: 40,
-                  px: 2,
-                  py: 1,
-                  bgcolor: index === 0 ? 'rgba(255, 215, 0, 0.1)' : 'transparent',
-                  borderRadius: 1,
-                  border: index === 0 ? '1px solid rgba(255, 215, 0, 0.3)' : 'none',
+                sx={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  justifyContent: 'space-between',
-                  flexDirection: isHebrew ? 'row-reverse' : 'row'
+                  p: 2,
+                  bgcolor: 'grey.50',
+                  borderRadius: 2,
+                  border: '1px solid',
+                  borderColor: 'grey.200'
                 }}
               >
-                <EmojiEventsIcon 
-                  sx={{ 
-                    color: getColorByPlace(award.place),
-                    fontSize: 20
-                  }} 
+                <EmojiEvents
+                  sx={{
+                    color: trophyColor,
+                    fontSize: '1.5rem'
+                  }}
                 />
-                
+
                 {isTeamAward ? (
-                  <Typography 
+                  <Typography
                     component={NextLink}
                     href={`/teams/${(award.winner as Team).number}`}
                     variant="body1"
-                    sx={{ 
+                    fontWeight={600}
+                    sx={{
                       textDecoration: 'none',
                       color: 'text.primary',
-                      fontWeight: index === 0 ? 600 : 400,
-                      '&:hover': { 
+                      '&:hover': {
                         textDecoration: 'underline',
                         color: 'primary.main'
                       }
@@ -118,21 +121,21 @@ const Awards: React.FC<AwardsProps> = ({ awards }) => {
                     {winnerText}
                   </Typography>
                 ) : (
-                  <Typography 
+                  <Typography
                     variant="body1"
-                    sx={{ 
-                      color: 'text.primary',
-                      fontWeight: index === 0 ? 600 : 400
+                    fontWeight={600}
+                    sx={{
+                      color: 'text.primary'
                     }}
                   >
                     {winnerText}
                   </Typography>
                 )}
-              </Box>
+              </Grid>
             );
           })}
-        </Stack>
-        
+        </Grid>
+
         {Object.keys(awardsByName).indexOf(awardName) < Object.keys(awardsByName).length - 1 && (
           <Divider sx={{ mt: 3, mb: 1 }} />
         )}
@@ -142,11 +145,11 @@ const Awards: React.FC<AwardsProps> = ({ awards }) => {
 
   return (
     <Paper sx={{ p: 4 }}>
-      <Typography 
-        variant="h4" 
-        sx={{ 
-          textAlign: 'center', 
-          mb: 4, 
+      <Typography
+        variant="h4"
+        sx={{
+          textAlign: 'center',
+          mb: 4,
           fontWeight: 700,
           color: 'primary.main'
         }}
@@ -156,7 +159,7 @@ const Awards: React.FC<AwardsProps> = ({ awards }) => {
 
       {Object.keys(awardsByName).length > 0 ? (
         <Box>
-          {Object.entries(awardsByName).map(([awardName, awardList]) => 
+          {Object.entries(awardsByName).map(([awardName, awardList]) =>
             renderAwardSection(awardName, awardList)
           )}
         </Box>
