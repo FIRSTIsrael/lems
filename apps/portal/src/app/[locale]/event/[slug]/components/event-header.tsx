@@ -13,7 +13,7 @@ interface EventHeaderProps {
   location: string;
 }
 
-const EventHeader: React.FC<EventHeaderProps> = ({
+export const EventHeader: React.FC<EventHeaderProps> = ({
   seasonName,
   seasonSlug,
   eventName,
@@ -53,5 +53,3 @@ const EventHeader: React.FC<EventHeaderProps> = ({
     </Stack>
   );
 };
-
-export default EventHeader;

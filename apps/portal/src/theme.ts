@@ -96,5 +96,5 @@ export const mainTheme = createTheme(baseTheme, {
 
 export const getLocalizedTheme = (locale: Locale = 'he') => {
   const { direction, muiLocale, xDataGridLocale, xDatePickersLocale } = Locales[locale];
-  return createTheme(baseTheme, { direction }, muiLocale, xDataGridLocale, xDatePickersLocale);
+  return createTheme(mainTheme, { direction }, muiLocale, xDataGridLocale, xDatePickersLocale);
 };

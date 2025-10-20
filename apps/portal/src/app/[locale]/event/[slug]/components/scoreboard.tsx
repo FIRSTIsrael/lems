@@ -26,7 +26,7 @@ interface ScoreboardProps {
   eventSlug: string;
 }
 
-const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
+export const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
   const t = useTranslations('pages.event');
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -123,5 +123,3 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
     </Paper>
   );
 };
-
-export default Scoreboard;

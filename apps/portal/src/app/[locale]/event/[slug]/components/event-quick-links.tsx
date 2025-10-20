@@ -11,7 +11,7 @@ interface EventQuickLinksProps {
   hasAwards?: boolean;
 }
 
-const EventQuickLinks: React.FC<EventQuickLinksProps> = ({
+export const EventQuickLinks: React.FC<EventQuickLinksProps> = ({
   eventSlug,
   divisionId,
   hasAwards = false
@@ -120,5 +120,3 @@ const EventQuickLinks: React.FC<EventQuickLinksProps> = ({
     </Paper>
   );
 };
-
-export default EventQuickLinks;

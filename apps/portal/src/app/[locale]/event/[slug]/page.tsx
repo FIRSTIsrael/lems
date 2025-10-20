@@ -7,19 +7,18 @@ import { Container, Paper, Tabs, Tab } from '@mui/material';
 import {
   getEventData,
   getDivisionData,
-  getAllTeamsForEvent,
   mockScoreboardData,
   mockFieldScheduleData,
   mockJudgingScheduleData,
   mockAwardsData
 } from './components/mock-event-data';
-import TeamsList from './components/teams-list';
+import { TeamsList } from './components/teams-list';
 import { DivisionSelector } from './components/division-selector';
-import EventHeader from './components/event-header';
-import Scoreboard from './components/scoreboard';
+import { EventHeader } from './components/event-header';
+import { Scoreboard } from './components/scoreboard';
 import FieldSchedule from './components/field-schedule';
 import JudgingSchedule from './components/judging-schedule';
-import Awards from './components/awards';
+import { Awards } from './components/awards';
 
 const EventPage = () => {
   const params = useParams();

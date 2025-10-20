@@ -45,28 +45,67 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
   return (
     <Paper sx={{ p: 0 }}>
       <Box sx={{ p: 3, pb: 0 }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h2" gutterBottom>
           {t('quick-links.judging-schedule')}
         </Typography>
       </Box>
-      
+
       <Paper sx={{ p: 0, mt: 2, bgcolor: 'white' }}>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table sx={{ 
-            tableLayout: 'fixed', 
-            width: '100%',
-            minWidth: isMobile ? '500px' : '100%'
-          }}>
+          <Table
+            sx={{
+              tableLayout: 'fixed',
+              width: '100%',
+              minWidth: isMobile ? '500px' : '100%'
+            }}
+          >
             <TableHead>
               <TableRow>
-                <TableCell sx={{ bgcolor: 'grey.200', color: 'black', width: '120px', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
+                <TableCell
+                  sx={{
+                    bgcolor: 'grey.200',
+                    color: 'black',
+                    width: '120px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    borderTop: '1px solid #ddd',
+                    borderBottom: '1px solid #ddd',
+                    borderLeft: 'none',
+                    borderRight: 'none'
+                  }}
+                >
                   <Typography fontWeight={600}>{t('judging-schedule.start-time')}</Typography>
                 </TableCell>
-                <TableCell sx={{ bgcolor: 'grey.200', color: 'black', width: '120px', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
+                <TableCell
+                  sx={{
+                    bgcolor: 'grey.200',
+                    color: 'black',
+                    width: '120px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    borderTop: '1px solid #ddd',
+                    borderBottom: '1px solid #ddd',
+                    borderLeft: 'none',
+                    borderRight: 'none'
+                  }}
+                >
                   <Typography fontWeight={600}>{t('judging-schedule.end-time')}</Typography>
                 </TableCell>
                 {rooms.map((_, index) => (
-                  <TableCell key={index} sx={{ bgcolor: 'grey.200', color: 'black', minWidth: '120px', fontWeight: 'bold', textAlign: 'center', borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none' }}>
+                  <TableCell
+                    key={index}
+                    sx={{
+                      bgcolor: 'grey.200',
+                      color: 'black',
+                      minWidth: '120px',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      borderTop: '1px solid #ddd',
+                      borderBottom: '1px solid #ddd',
+                      borderLeft: 'none',
+                      borderRight: 'none'
+                    }}
+                  >
                     <Typography fontWeight={600}>
                       {t('judging-schedule.room')} {index + 1}
                     </Typography>
@@ -78,20 +117,41 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
               {sessions.map((session, sessionIndex) => (
                 <TableRow
                   key={sessionIndex}
-                  sx={{ 
+                  sx={{
                     bgcolor: 'white',
-                    '& td': sessionIndex === 0 ? { 
-                      bgcolor: 'white !important',
-                      borderTop: '3px solid white'
-                    } : {}
+                    '& td':
+                      sessionIndex === 0
+                        ? {
+                            bgcolor: 'white !important',
+                            borderTop: '3px solid white'
+                          }
+                        : {}
                   }}
                 >
-                  <TableCell sx={{ textAlign: 'center', borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                  <TableCell
+                    sx={{
+                      textAlign: 'center',
+                      borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none',
+                      borderBottom: '1px solid #ddd',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      py: 1.5
+                    }}
+                  >
                     <Typography sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
                       {dayjs(session.startTime).format('HH:mm')}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center', borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                  <TableCell
+                    sx={{
+                      textAlign: 'center',
+                      borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none',
+                      borderBottom: '1px solid #ddd',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      py: 1.5
+                    }}
+                  >
                     <Typography sx={{ fontFamily: 'monospace', fontWeight: 500 }}>
                       {dayjs(session.endTime).format('HH:mm')}
                     </Typography>
@@ -99,7 +159,17 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
                   {rooms.map(roomKey => {
                     const team = session.teams[roomKey as keyof typeof session.teams];
                     return (
-                      <TableCell key={roomKey} sx={{ textAlign: 'center', borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none', borderBottom: '1px solid #ddd', borderLeft: 'none', borderRight: 'none', py: 1.5 }}>
+                      <TableCell
+                        key={roomKey}
+                        sx={{
+                          textAlign: 'center',
+                          borderTop: sessionIndex === 0 ? '2px solid #ddd' : 'none',
+                          borderBottom: '1px solid #ddd',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          py: 1.5
+                        }}
+                      >
                         {team ? (
                           <Tooltip title={team.name} arrow>
                             <Link
@@ -109,7 +179,7 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
                                 color: 'black',
                                 textDecoration: 'none',
                                 fontWeight: 500,
-                                '&:hover': { 
+                                '&:hover': {
                                   textDecoration: 'underline',
                                   color: 'primary.main'
                                 }
@@ -130,7 +200,7 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
           </Table>
         </TableContainer>
       </Paper>
-      
+
       {sessions.length === 0 && (
         <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
           <Typography variant="body1" color="text.secondary">

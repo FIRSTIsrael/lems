@@ -21,11 +21,11 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({
   onDivisionSelect
 }) => {
   return (
-    <Grid container direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
+    <Grid container direction="row" spacing={2} mb={3}>
       {divisions.map(division => {
         const isActive = division.id === currentDivisionId;
         return (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={division.id}>
+          <Grid size={{ xs: 6, md: 3 }} key={division.id}>
             <Button
               key={division.id}
               variant={isActive ? 'contained' : 'outlined'}

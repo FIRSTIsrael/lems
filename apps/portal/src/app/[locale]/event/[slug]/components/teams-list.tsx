@@ -35,7 +35,7 @@ interface TeamsListProps {
   divisionName: string;
 }
 
-const TeamsList: React.FC<TeamsListProps> = ({ teams, divisionName }) => {
+export const TeamsList: React.FC<TeamsListProps> = ({ teams, divisionName }) => {
   const t = useTranslations('pages.event');
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
@@ -108,5 +108,3 @@ const TeamsList: React.FC<TeamsListProps> = ({ teams, divisionName }) => {
     </Paper>
   );
 };
-
-export default TeamsList;
