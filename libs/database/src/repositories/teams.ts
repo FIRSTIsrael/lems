@@ -176,6 +176,28 @@ export class TeamsRepository {
     return teams;
   }
 
+  async getSearchableTeams(searchTerm: string, limit: number): Promise<Array<{ id: string; number: number; name: string; city: string; affiliation: string; logo_url: string | null }>> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .select(['id', 'number', 'name', 'city', 'affiliation', 'logo_url'])
+      .where(eb => eb.or([
+        eb('name', 'ilike', `%${searchTerm}%`),
+        eb('number', '=', parseInt(searchTerm) || -1),
+        eb('affiliation', 'ilike', `%${searchTerm}%`),
+        eb('city', 'ilike', `%${searchTerm}%`)
+      ]))
+      .orderBy(eb => eb.case()
+        .when('name', 'ilike', searchTerm).then(100)
+        .when('number', '=', parseInt(searchTerm) || -1).then(95)
+        .when('name', 'ilike', `${searchTerm}%`).then(80)
+        .else(50)
+        .end(), 'desc')
+      .limit(limit)
+      .execute();
+    
+    return teams;
+  }
+
   async getAllWithActiveStatus(): Promise<Array<Team & { active: boolean }>> {
     const currentSeason = await this.db
       .selectFrom('seasons')
