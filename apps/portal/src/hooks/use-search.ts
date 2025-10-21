@@ -1,5 +1,4 @@
 'use client';
-//
 import { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { EventSummary, TeamSummary } from '@lems/types/api/portal';

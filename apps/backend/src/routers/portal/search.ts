@@ -67,9 +67,7 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
           return matchesName || matchesLocation || matchesSlug;
         })
         .slice(0, Math.floor(resultLimit / (type === 'all' ? 2 : 1)))
-        .map(async event => {
-          const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-          
+        .map(event => {
           const now = new Date();
           const eventStatus = 
             event.start_date > now ? 'upcoming' :
@@ -79,15 +77,11 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
             type: 'event' as const,
             id: `event-${event.id}`,
             data: {
-              id: event.id,
               slug: event.slug,
               name: event.name,
               startDate: event.start_date,
               endDate: event.end_date,
               location: event.location,
-              coordinates: event.coordinates,
-              seasonId: event.season_id,
-              teamsRegistered: registeredTeams.length,
               status: eventStatus
             }
           };
