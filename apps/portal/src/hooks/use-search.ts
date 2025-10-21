@@ -1,7 +1,6 @@
 'use client';
 import { useState, useMemo, useDeferredValue } from 'react';
 import useSWR from 'swr';
-import { useDebounce } from './use-debounce';
 
 export interface SearchResult {
   type: 'team' | 'event';
@@ -27,12 +26,10 @@ export interface UseSearchOptions {
 }
 
 export const useSearch = (options: UseSearchOptions = {}) => {
-  //const { minQueryLength = 2, debounceMs = 300 } = options;
   const { minQueryLength = 2 } = options;
   
   const [query, setQuery] = useState('');
   
-  //const debouncedQuery = useDebounce(query, 300);
   const debouncedQuery = useDeferredValue(query);
 
   const searchUrl = useMemo(() => {
