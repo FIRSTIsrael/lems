@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import useSWR from 'swr';
+import { useDebounce } from './use-debounce';
 
 export interface SearchResult {
   type: 'team' | 'event';
@@ -29,15 +30,8 @@ export const useSearch = (options: UseSearchOptions = {}) => {
   const { minQueryLength = 2, debounceMs = 300 } = options;
   
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, debounceMs);
-
-    return () => clearTimeout(timer);
-  }, [query, debounceMs]);
+  
+  const debouncedQuery = useDebounce(query, debounceMs);
 
   const searchUrl = useMemo(() => {
     if (!debouncedQuery || debouncedQuery.length < minQueryLength) {
@@ -47,7 +41,7 @@ export const useSearch = (options: UseSearchOptions = {}) => {
     const params = new URLSearchParams({
       q: debouncedQuery,
       type: 'all',
-      limit: '50'
+      limit: '40' // idk about this, should we even have a limit?
     });
 
     return `/portal/search?${params.toString()}`;
@@ -56,9 +50,8 @@ export const useSearch = (options: UseSearchOptions = {}) => {
   const { data: searchResponse, error, isLoading } = useSWR<SearchResponse>(
     searchUrl,
     { 
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      dedupingInterval: 1000
+      revalidateOnFocus: false,  
+      dedupingInterval: 1000    
     }
   );
 
@@ -68,7 +61,6 @@ export const useSearch = (options: UseSearchOptions = {}) => {
 
   const clearSearch = () => {
     setQuery('');
-    setDebouncedQuery('');
   };
 
   return {
