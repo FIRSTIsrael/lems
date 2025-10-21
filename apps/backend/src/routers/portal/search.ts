@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import db from '../../lib/database';
-import { makePortalTeamSummaryResponse } from './teams/util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -40,7 +39,11 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
         .map(team => ({
           type: 'team' as const,
           id: `team-${team.id}`,
-          data: makePortalTeamSummaryResponse(team, null)
+          title: `${team.name} #${team.number}`,
+          subtitle: team.city || '',
+          description: team.affiliation || '',
+          url: `/teams/${team.number}`,
+          logoUrl: team.logo_url || undefined
         }));
 
       results.push(...matchingTeams);
@@ -76,14 +79,10 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
           return {
             type: 'event' as const,
             id: `event-${event.id}`,
-            data: {
-              slug: event.slug,
-              name: event.name,
-              startDate: event.start_date,
-              endDate: event.end_date,
-              location: event.location,
-              status: eventStatus
-            }
+            title: event.name,
+            subtitle: event.location || '',
+            description: `Event • ${eventStatus}`,
+            url: `/events/${event.slug}`
           };
         });
 
@@ -92,17 +91,12 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
     }
 
     const sortedResults = results.sort((a, b) => {
-      const getRelevanceScore = (item: { type: string; data: { name: string; number?: number } }) => {
-        if (item.type === 'team') {
-          if (item.data.name.toLowerCase() === searchTerm) return 100;
-          if (item.data.number?.toString() === searchTerm) return 95;
-          if (item.data.name.toLowerCase().startsWith(searchTerm)) return 80;
-          return 50;
-        } else {
-          if (item.data.name.toLowerCase() === searchTerm) return 100;
-          if (item.data.name.toLowerCase().startsWith(searchTerm)) return 80;
-          return 50;
-        }
+      const getRelevanceScore = (item: { type: string; title: string }) => {
+        const title = item.title.toLowerCase();
+        if (title === searchTerm) return 100;
+        if (title.startsWith(searchTerm)) return 80;
+        if (title.includes(searchTerm)) return 50;
+        return 25;
       };
       
       return getRelevanceScore(b) - getRelevanceScore(a);

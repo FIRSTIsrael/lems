@@ -1,12 +1,15 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
-import { EventSummary, TeamSummary } from '@lems/types/api/portal';
 
 export interface SearchResult {
   type: 'team' | 'event';
   id: string;
-  data: TeamSummary | EventSummary;
+  title: string;
+  subtitle: string;
+  description: string;
+  url: string;
+  logoUrl?: string;
 }
 
 export interface SearchResponse {
@@ -60,40 +63,8 @@ export const useSearch = (options: UseSearchOptions = {}) => {
   );
 
   const processedResults = useMemo(() => {
-    if (!searchResponse?.results) return [];
-
-    return searchResponse.results.map(result => ({
-      ...result,
-      title: result.type === 'team' 
-        ? `${(result.data as TeamSummary).name} #${(result.data as TeamSummary).number}`
-        : (result.data as EventSummary).name,
-      subtitle: result.type === 'team'
-        ? ` ${(result.data as TeamSummary).city}`
-        : (result.data as EventSummary).location,
-      description: result.type === 'team'
-        ? (result.data as TeamSummary).affiliation
-        : `${(result.data as EventSummary).teamsRegistered} teams registered • ${(result.data as EventSummary).status}`,
-      url: result.type === 'team'
-        ? `/teams/${(result.data as TeamSummary).number}`
-        : `/events/${(result.data as EventSummary).slug}`
-    }));
+    return searchResponse?.results || [];
   }, [searchResponse]);
-
-  // Get search statistics
-  const searchStats = useMemo(() => {
-    if (!processedResults.length) {
-      return { total: 0, teams: 0, events: 0 };
-    }
-
-    const teamResults = processedResults.filter(r => r.type === 'team').length;
-    const eventResults = processedResults.filter(r => r.type === 'event').length;
-    
-    return {
-      total: processedResults.length,
-      teams: teamResults,
-      events: eventResults
-    };
-  }, [processedResults]);
 
   const clearSearch = () => {
     setQuery('');
@@ -103,12 +74,8 @@ export const useSearch = (options: UseSearchOptions = {}) => {
   return {
     query,
     setQuery,
-    debouncedQuery,
     searchResults: processedResults,
-    searchStats,
     isSearching: isLoading,
-    hasQuery: debouncedQuery.length >= minQueryLength,
-    isEmpty: processedResults.length === 0 && debouncedQuery.length >= minQueryLength && !isLoading,
     clearSearch,
     error: error?.message || null
   };

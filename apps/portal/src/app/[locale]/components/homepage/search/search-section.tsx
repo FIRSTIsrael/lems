@@ -26,7 +26,6 @@ import {
   Event as EventsIcon,
   LocationOn as LocationIcon
 } from '@mui/icons-material';
-import { TeamSummary } from '@lems/types/api/portal';
 import { useSearch } from '../../../../../hooks/use-search';
 import { SearchResultAvatar } from './search-result-avatar';
 
@@ -36,17 +35,15 @@ export const SearchSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const {
-    query,
-    setQuery,
-    searchResults,
-    searchStats,
-    isSearching,
-    isEmpty,
-    hasQuery,
-    clearSearch,
-    error
-  } = useSearch();
+  const { query, setQuery, searchResults, isSearching, clearSearch, error } = useSearch();
+
+  const hasQuery = query.length >= 2;
+  const isEmpty = searchResults.length === 0 && hasQuery && !isSearching;
+  const searchStats = {
+    total: searchResults.length,
+    teams: searchResults.filter(r => r.type === 'team').length,
+    events: searchResults.filter(r => r.type === 'event').length
+  };
 
   const handleSearchChange = (value: string) => {
     setQuery(value);
@@ -219,7 +216,7 @@ export const SearchSection = () => {
                               teamData={
                                 result.type === 'team'
                                   ? {
-                                      logoUrl: (result.data as TeamSummary).logoUrl || undefined
+                                      logoUrl: result.logoUrl
                                     }
                                   : undefined
                               }
