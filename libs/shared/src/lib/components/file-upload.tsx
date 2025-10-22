@@ -30,9 +30,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
-
-    // Reset input so next selection doesn't include previous files
-    event.target.value = '';
   };
 
   const getDisplayText = () => {

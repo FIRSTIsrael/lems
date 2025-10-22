@@ -137,7 +137,10 @@
         "update": "עדכון קבוצה",
         "updating": "מעדכן קבוצה...",
         "remove-logo": "הסר לוגו",
-        "logo-removed": "לוגו הוסר"
+        "logo-removed": "לוגו הוסר",
+        "edit-logo": "ערוך לוגו",
+        "close": "סגור",
+        "logo-preview-title": "לוגו קבוצה"
       },
       "import-dialog": {
         "title": "ייבוא קבוצות מקובץ CSV",
