@@ -3,16 +3,14 @@ import { Event as EventIcon } from '@mui/icons-material';
 
 interface SearchResultAvatarProps {
   resultType: 'team' | 'event';
-  teamData?: {
-    logoUrl?: string;
-  };
+  src?: string | null;
 }
 
-export const SearchResultAvatar = ({ resultType, teamData }: SearchResultAvatarProps) => {
+export const SearchResultAvatar = ({ resultType, src }: SearchResultAvatarProps) => {
   if (resultType === 'team') {
     return (
       <Avatar
-        src={teamData?.logoUrl || '/assets/default-avatar.svg'}
+        src={src || '/assets/default-avatar.svg'}
         sx={{
           width: 32,
           height: 32,

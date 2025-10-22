@@ -34,7 +34,8 @@
         "results-count": "{count} תוצאות",
         "more-results": "+{count} תוצאות נוספות",
         "type-team": "קבוצה",
-        "type-event": "אירוע"
+        "type-event": "אירוע",
+        "error": "שגיאה בחיפוש: {error}"
       },
       "quick-actions": {
         "title": "פעולות מהירות",

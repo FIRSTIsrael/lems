@@ -34,7 +34,8 @@
         "results-count": "{count} results",
         "more-results": "+{count} more results",
         "type-team": "team",
-        "type-event": "event"
+        "type-event": "event",
+        "error": "Search error: {error}"
       },
       "quick-actions": {
         "title": "Quick Actions",
