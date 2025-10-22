@@ -45,7 +45,6 @@ const EventPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Header */}
       <EventHeader
         seasonName={currentData.seasonName}
         seasonSlug={currentData.seasonSlug}
@@ -54,14 +53,12 @@ const EventPage = () => {
         location={currentData.location}
       />
 
-      {/* Division Picker */}
       <EventDivisionSelector
         divisions={currentData.divisions}
         currentDivisionId={divisionId}
         onDivisionSelect={handleDivisionSelect}
       />
 
-      {/* Main Navigation Tabs */}
       <Paper sx={{ mb: 3 }}>
         <Tabs
           value={selectedTab}
