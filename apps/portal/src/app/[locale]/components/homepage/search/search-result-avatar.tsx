@@ -11,24 +11,13 @@ export const SearchResultAvatar = ({ resultType, src }: SearchResultAvatarProps)
     return (
       <Avatar
         src={src || '/assets/default-avatar.svg'}
-        sx={{
-          width: 32,
-          height: 32,
-          objectFit: 'cover'
-        }}
+        sx={{ width: 32, height: 32, objectFit: 'cover' }}
       />
     );
   }
 
   return (
-    <Avatar
-      sx={{
-        src: '/assets/default-avatar.svg',
-        width: 32,
-        height: 32,
-        objectFit: 'cover'
-      }}
-    >
+    <Avatar sx={{ width: 32, height: 32, objectFit: 'cover' }}>
       <EventIcon sx={{ fontSize: 18 }} />
     </Avatar>
   );
