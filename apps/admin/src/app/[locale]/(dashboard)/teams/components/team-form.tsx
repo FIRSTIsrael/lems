@@ -247,8 +247,13 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Logo Edit Modal */}
-                  <Dialog open={logoModalOpen} onClose={() => setLogoModalOpen(false)} fullWidth>
+                  {/* Logo Edit Dialog */}
+                  <Dialog
+                    open={logoModalOpen}
+                    onClose={() => setLogoModalOpen(false)}
+                    maxWidth="xs"
+                    fullWidth
+                  >
                     <DialogTitle>{t('edit-logo')}</DialogTitle>
                     <DialogContent>
                       <Stack spacing={2} sx={{ mt: 1 }}>
