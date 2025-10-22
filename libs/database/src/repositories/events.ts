@@ -195,11 +195,21 @@ class EventSelector {
   }
 
   async removeTeams(teamIds: string[]): Promise<void> {
-    return this.db.transaction().execute(async trx => {
-      await Promise.all(
-        teamIds.map(id => trx.deleteFrom('team_divisions').where('team_id', '=', id).execute())
-      );
-    });
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db
+      .deleteFrom('team_divisions')
+      .where('team_id', 'in', teamIds)
+      .where(
+        'division_id',
+        'in',
+        this.db.selectFrom('divisions').select('id').where('event_id', '=', event.id)
+      )
+      .execute();
   }
 
   async getSettings(): Promise<EventSettings | null> {
