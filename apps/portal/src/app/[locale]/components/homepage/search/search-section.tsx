@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import {
   Box,
   Typography,
@@ -15,7 +16,6 @@ import {
   ClickAwayListener,
   MenuItem,
   Chip,
-  Avatar,
   alpha,
   useTheme
 } from '@mui/material';
@@ -26,8 +26,8 @@ import {
   Event as EventsIcon,
   LocationOn as LocationIcon
 } from '@mui/icons-material';
-import { TeamSummary } from '@lems/types/api/portal';
-import { useSearch } from '../../../../hooks/use-search';
+import { useSearch } from '../../../../../hooks/use-search';
+import { SearchResultAvatar } from './search-result-avatar';
 
 export const SearchSection = () => {
   const t = useTranslations('pages.index.search');
@@ -35,17 +35,15 @@ export const SearchSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const {
-    query,
-    setQuery,
-    searchResults,
-    searchStats,
-    isSearching,
-    isEmpty,
-    hasQuery,
-    clearSearch,
-    error
-  } = useSearch();
+  const { query, setQuery, searchResults, isSearching, clearSearch, error } = useSearch();
+
+  const hasQuery = query.length >= 2;
+  const isEmpty = searchResults.length === 0 && hasQuery && !isSearching;
+  const searchStats = {
+    total: searchResults.length,
+    teams: searchResults.filter(r => r.type === 'team').length,
+    events: searchResults.filter(r => r.type === 'event').length
+  };
 
   const handleSearchChange = (value: string) => {
     setQuery(value);
@@ -60,27 +58,6 @@ export const SearchSection = () => {
   const handleClickAway = () => {
     setIsOpen(false);
   };
-
-  const handleResultClick = (result: { url: string }) => {
-    setIsOpen(false);
-    window.location.href = result.url;
-  };
-
-  const getTeamAvatar = (team: TeamSummary) => (
-    <Avatar
-      src={team.logoUrl || '/assets/default-avatar.svg'}
-      alt={`Team ${team.number}`}
-      sx={{ width: 32, height: 32, objectFit: 'cover' }}
-    >
-      #{team.number}
-    </Avatar>
-  );
-
-  const getEventIcon = () => (
-    <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-      <EventsIcon sx={{ fontSize: 18 }} />
-    </Avatar>
-  );
 
   const highlightText = (text: string, highlight: string) => {
     if (!highlight) return text;
@@ -223,8 +200,10 @@ export const SearchSection = () => {
                       {searchResults.slice(0, 8).map(result => (
                         <MenuItem
                           key={result.id}
-                          onClick={() => handleResultClick(result)}
-                          sx={{ py: 1.5 }}
+                          component={Link}
+                          href={result.url}
+                          onClick={() => setIsOpen(false)}
+                          sx={{ py: 1.5, textDecoration: 'none', color: 'inherit' }}
                         >
                           <Stack
                             direction="row"
@@ -232,9 +211,16 @@ export const SearchSection = () => {
                             alignItems="center"
                             sx={{ width: '100%' }}
                           >
-                            {result.type === 'team'
-                              ? getTeamAvatar(result.data as TeamSummary)
-                              : getEventIcon()}
+                            <SearchResultAvatar
+                              resultType={result.type}
+                              teamData={
+                                result.type === 'team'
+                                  ? {
+                                      logoUrl: result.logoUrl
+                                    }
+                                  : undefined
+                              }
+                            />
                             <Box sx={{ flex: 1, minWidth: 0 }}>
                               <Typography variant="body2" fontWeight="medium" noWrap>
                                 {highlightText(result.title, query)}

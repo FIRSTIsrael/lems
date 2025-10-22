@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import dayjs from 'dayjs';
 import db from '../../lib/database';
-import { makePortalTeamSummaryResponse } from './teams/util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -26,100 +25,41 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
 
   try {
         if (type === 'all' || type === 'teams') {
-      const teams = await db.teams.getAll();
+      const teamLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
+      const matchingTeams = await db.teams.getSearchableTeams(searchTerm, teamLimit);
       
-      const matchingTeams = teams
-        .filter(team => {
-          const matchesName = team.name.toLowerCase().includes(searchTerm);
-          const matchesNumber = team.number.toString().includes(searchTerm);
-          const matchesAffiliation = team.affiliation?.toLowerCase().includes(searchTerm);
-          const matchesCity = team.city?.toLowerCase().includes(searchTerm);
-          
-          return matchesName || matchesNumber || matchesAffiliation || matchesCity;
-        })
-        .slice(0, Math.floor(resultLimit / (type === 'all' ? 2 : 1)))
-        .map(team => ({
-          type: 'team' as const,
-          id: `team-${team.id}`,
-          data: makePortalTeamSummaryResponse(team, null)
-        }));
+      const processedTeams = matchingTeams.map(team => ({
+        type: 'team' as const,
+        id: `team-${team.id}`,
+        title: `${team.name} #${team.number}`,
+        subtitle: [team.city, team.affiliation].filter(Boolean).join(' | '),
+        description: team.affiliation || '',
+        url: `/teams/${team.number}`,
+        logoUrl: team.logo_url || undefined
+      }));
 
-      results.push(...matchingTeams);
+      results.push(...processedTeams);
     }
 
     if (type === 'all' || type === 'events') {
-      const events = await db.events.getAll();
+      const eventLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
+      const matchingEvents = await db.events.getSearchableEvents(searchTerm, status, eventLimit);
       
-      const matchingEvents = events
-        .filter(event => {
-          const matchesName = event.name.toLowerCase().includes(searchTerm);
-          const matchesLocation = event.location?.toLowerCase().includes(searchTerm);
-          const matchesSlug = event.slug.toLowerCase().includes(searchTerm);
-          
-          if (status !== 'all') {
-            const today = dayjs().startOf('day');
-            const eventDate = dayjs(event.start_date).startOf('day');
-            const eventStatus = 
-              eventDate.isAfter(today) ? 'upcoming' :
-              eventDate.isBefore(today) ? 'past' : 'active';
-            
-            if (eventStatus !== status) return false;
-          }
-          
-          return matchesName || matchesLocation || matchesSlug;
-        })
-        .slice(0, Math.floor(resultLimit / (type === 'all' ? 2 : 1)))
-        .map(async event => {
-          const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-          
-          const today = dayjs().startOf('day');
-          const eventDate = dayjs(event.start_date).startOf('day');
-          const eventStatus = 
-            eventDate.isAfter(today) ? 'upcoming' :
-            eventDate.isBefore(today) ? 'past' : 'active';
-          
-          return {
-            type: 'event' as const,
-            id: `event-${event.id}`,
-            data: {
-              id: event.id,
-              slug: event.slug,
-              name: event.name,
-              startDate: event.start_date,
-              endDate: event.end_date,
-              location: event.location,
-              coordinates: event.coordinates,
-              seasonId: event.season_id,
-              teamsRegistered: registeredTeams.length,
-              status: eventStatus
-            }
-          };
-        });
+      const processedEvents = matchingEvents.map(event => ({
+        type: 'event' as const,
+        id: `event-${event.id}`,
+        title: event.name,
+        subtitle: event.location || '',
+        description: `Event • ${event.status}`,
+        url: `/events/${event.slug}`
+      }));
 
-      const resolvedEvents = await Promise.all(matchingEvents);
-      results.push(...resolvedEvents);
+      results.push(...processedEvents);
     }
-
-    const sortedResults = results.sort((a, b) => {
-      const getRelevanceScore = (item: { type: string; data: { name: string; number?: number } }) => {
-        if (item.type === 'team') {
-          if (item.data.name.toLowerCase() === searchTerm) return 100;
-          if (item.data.number?.toString() === searchTerm) return 95;
-          if (item.data.name.toLowerCase().startsWith(searchTerm)) return 80;
-          return 50;
-        } else {
-          if (item.data.name.toLowerCase() === searchTerm) return 100;
-          if (item.data.name.toLowerCase().startsWith(searchTerm)) return 80;
-          return 50;
-        }
-      };
-      
-      return getRelevanceScore(b) - getRelevanceScore(a);
-    });
-
+    
     res.status(200).json({
-      results: sortedResults,
-      total: sortedResults.length,
+      results,
+      total: results.length,
       query: q,
       type,
       status

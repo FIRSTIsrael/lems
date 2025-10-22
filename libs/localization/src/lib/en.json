@@ -3,6 +3,11 @@
     "practice": "Practice",
     "ranking": "Ranking"
   },
+  "judging-categories": {
+    "core-values": "Core Values",
+    "innovation-project": "Innovation Project",
+    "robot-design": "Robot Design"
+  },
     "judging-session-stages": {
     "setup": "Setup Time",
     "innovation-presentation": "Presentation - Innovation Project",

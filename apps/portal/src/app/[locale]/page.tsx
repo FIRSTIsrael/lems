@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { Box, Container, Grid, Stack } from '@mui/material';
 import { Season } from '@lems/types/api/portal';
 import { Hero } from './components/homepage/hero';
-import { SearchSection } from './components/homepage/search-section';
+import { SearchSection } from './components/homepage/search/search-section';
 import { ActiveEventsSection } from './components/homepage/active-events-section';
 import { QuickActionsSection } from './components/homepage/quick-actions-section';
 import { ResourceLinksSection } from './components/homepage/resource-links-section';
