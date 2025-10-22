@@ -1,16 +1,10 @@
 'use client';
 
+import { EventDetailsDivision } from '@lems/types/api/portal';
 import { Typography, Button, Box, Chip, Grid } from '@mui/material';
 
-interface Division {
-  id: string;
-  name: string;
-  color: string;
-  teamCount: number;
-}
-
 interface EventDivisionSelectorProps {
-  divisions: Division[];
+  divisions: EventDetailsDivision[];
   currentDivisionId?: string;
   onDivisionSelect: (divisionId: string) => void;
 }

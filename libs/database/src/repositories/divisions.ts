@@ -1,7 +1,12 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
-import { InsertableDivision, Division, UpdateableDivision } from '../schema/tables/divisions';
+import {
+  InsertableDivision,
+  Division,
+  UpdateableDivision,
+  DivisionSummary
+} from '../schema/tables/divisions';
 
 class DivisionSelector {
   constructor(
@@ -72,6 +77,25 @@ class DivisionsSelector {
       .where('event_id', '=', this.eventId)
       .orderBy('name', 'asc')
       .execute();
+  }
+
+  async getAllSummaries(): Promise<DivisionSummary[]> {
+    const divisions = await this.db
+      .selectFrom('divisions')
+      .selectAll()
+      .where('event_id', '=', this.eventId)
+      .orderBy('name', 'asc')
+      .execute();
+
+    for (const division of divisions as DivisionSummary[]) {
+      const [{ team_count }] = await this.db
+        .selectFrom('team_divisions')
+        .where('division_id', '=', division.id)
+        .select(db => db.fn.count<number>('team_id').as('team_count'))
+        .execute();
+      division.team_count = team_count;
+    }
+    return divisions as DivisionSummary[];
   }
 
   async deleteAll(): Promise<number> {

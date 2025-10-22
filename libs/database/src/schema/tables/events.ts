@@ -1,4 +1,5 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
+import { DivisionSummary } from './divisions';
 
 export interface EventsTable {
   pk: ColumnType<number, never, never>; // Serial primary key
@@ -34,4 +35,18 @@ export interface EventSummary {
   season_id: string;
   is_fully_set_up: boolean;
   assigned_admin_ids: string[];
+}
+
+export interface EventDetails {
+  id: string;
+  name: string;
+  slug: string;
+  start_date: Date;
+  end_date: Date;
+  location: string;
+  coordinates: string | null;
+  season_id: string;
+  divisions: DivisionSummary[];
+  season_name: string;
+  season_slug: string;
 }

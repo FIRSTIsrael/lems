@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { EventSummary } from '@lems/database';
+import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
-import { makePortalEventSummaryResponse } from './util';
+import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -80,6 +80,29 @@ router.get('/', async (req: Request, res: Response) => {
 
   res.json(events.map(makePortalEventSummaryResponse));
   return;
+});
+
+router.get('/:slug', async (req: Request, res: Response) => {
+  const { slug } = req.params;
+
+  const event = await db.events.bySlug(slug).get();
+
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
+  const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
+  const season = await db.seasons.byId(event.season_id).get();
+
+  const eventSummary: EventDetails = {
+    ...event,
+    divisions,
+    season_name: season.name,
+    season_slug: season.slug
+  };
+
+  res.json(makePortalEventDetailsResponse(eventSummary));
 });
 
 export default router;

@@ -17,10 +17,32 @@ export const PortalEventSummaryResponseSchema = z.object({
   status: z.enum(['upcoming', 'active', 'past'])
 });
 
+export const PortalEventDetailsDivisionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  color: z.string(),
+  teamCount: z.number()
+});
+
+export const PortalEventDetailsResponseSchema = z.object({
+  ...PortalEventResponseSchema.shape,
+  seasonName: z.string(),
+  seasonSlug: z.string(),
+  divisions: z.array(PortalEventDetailsDivisionSchema)
+});
+
 export type Event = z.infer<typeof PortalEventResponseSchema>;
 
 export type EventSummary = z.infer<typeof PortalEventSummaryResponseSchema>;
 
+export type EventDetailsDivision = z.infer<typeof PortalEventDetailsDivisionSchema>;
+
+export type EventDetails = z.infer<typeof PortalEventDetailsResponseSchema>;
+
 export const PortalEventsResponseSchema = z.array(PortalEventResponseSchema);
 
 export const PortalEventSummariesResponseSchema = z.array(PortalEventSummaryResponseSchema);
+
+export const PortalEventDetailsDivisionsSchema = z.array(PortalEventDetailsDivisionSchema);
+
+export const PortalEventsDetailsResponseSchema = z.array(PortalEventDetailsResponseSchema);
