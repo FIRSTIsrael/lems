@@ -25,7 +25,17 @@
       },
       "search": {
         "title": "Search Teams & Events",
-        "placeholder": "Search for teams, or events..."
+        "placeholder": "Search for teams, or events...",
+        "start-typing": "Start typing to search",
+        "search-hint": "Search by team name, number, city, event name, or location",
+        "searching": "Searching...",
+        "no-results": "No results found",
+        "no-results-hint": "No results found for \"{query}\". Try different keywords.",
+        "results-count": "{count} results",
+        "more-results": "+{count} more results",
+        "type-team": "team",
+        "type-event": "event",
+        "error": "Search error: {error}"
       },
       "quick-actions": {
         "title": "Quick Actions",
