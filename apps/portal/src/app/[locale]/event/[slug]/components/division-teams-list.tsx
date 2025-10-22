@@ -30,12 +30,12 @@ interface Team {
   };
 }
 
-interface TeamsListProps {
+interface DivisionTeamsListProps {
   teams: Team[];
   divisionName: string;
 }
 
-export const TeamsList: React.FC<TeamsListProps> = ({ teams, divisionName }) => {
+export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ teams, divisionName }) => {
   const t = useTranslations('pages.event');
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 

@@ -9,13 +9,13 @@ interface Division {
   teamCount: number;
 }
 
-interface DivisionSelectorProps {
+interface EventDivisionSelectorProps {
   divisions: Division[];
   currentDivisionId?: string;
   onDivisionSelect: (divisionId: string) => void;
 }
 
-export const DivisionSelector: React.FC<DivisionSelectorProps> = ({
+export const EventDivisionSelector: React.FC<EventDivisionSelectorProps> = ({
   divisions,
   currentDivisionId,
   onDivisionSelect

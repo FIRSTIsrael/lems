@@ -119,12 +119,12 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
   );
 };
 
-interface AwardsProps {
+interface DivisionAwardsProps {
   awards: Award[];
   eventSlug: string;
 }
 
-export const Awards: React.FC<AwardsProps> = ({ awards }) => {
+export const DivisionAwards: React.FC<DivisionAwardsProps> = ({ awards }) => {
   const t = useTranslations('pages.event');
 
   // Group awards by name, then sort by place

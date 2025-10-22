@@ -12,13 +12,13 @@ import {
   mockJudgingScheduleData,
   mockAwardsData
 } from './components/mock-event-data';
-import { TeamsList } from './components/teams-list';
-import { DivisionSelector } from './components/division-selector';
+import { DivisionTeamsList } from './components/division-teams-list';
+import { EventDivisionSelector } from './components/event-division-selector';
 import { EventHeader } from './components/event-header';
-import { Scoreboard } from './components/scoreboard';
-import FieldSchedule from './components/field-schedule';
-import JudgingSchedule from './components/judging-schedule';
-import { Awards } from './components/awards';
+import { DivisionScoreboard } from './components/division-scoreboard';
+import { DivisionFieldSchedule } from './components/divison-field-schedule';
+import { DivisionJudgingSchedule } from './components/division-judging-schedule';
+import { DivisionAwards } from './components/divsion-awards';
 
 const EventPage = () => {
   const params = useParams();
@@ -55,7 +55,7 @@ const EventPage = () => {
       />
 
       {/* Division Picker */}
-      <DivisionSelector
+      <EventDivisionSelector
         divisions={currentData.divisions}
         currentDivisionId={divisionId}
         onDivisionSelect={handleDivisionSelect}
@@ -79,16 +79,23 @@ const EventPage = () => {
       </Paper>
 
       {selectedTab === 0 && (
-        <TeamsList divisionName={divisionData.currentDivision.name} teams={divisionData.teams} />
+        <DivisionTeamsList
+          divisionName={divisionData.currentDivision.name}
+          teams={divisionData.teams}
+        />
       )}
 
-      {selectedTab === 1 && <Scoreboard data={mockScoreboardData} eventSlug={slug} />}
+      {selectedTab === 1 && <DivisionScoreboard data={mockScoreboardData} eventSlug={slug} />}
 
-      {selectedTab === 2 && <Awards awards={mockAwardsData} eventSlug={slug} />}
+      {selectedTab === 2 && <DivisionAwards awards={mockAwardsData} eventSlug={slug} />}
 
-      {selectedTab === 3 && <FieldSchedule rounds={mockFieldScheduleData} eventSlug={slug} />}
+      {selectedTab === 3 && (
+        <DivisionFieldSchedule rounds={mockFieldScheduleData} eventSlug={slug} />
+      )}
 
-      {selectedTab === 4 && <JudgingSchedule sessions={mockJudgingScheduleData} eventSlug={slug} />}
+      {selectedTab === 4 && (
+        <DivisionJudgingSchedule sessions={mockJudgingScheduleData} eventSlug={slug} />
+      )}
     </Container>
   );
 };

@@ -30,12 +30,12 @@ interface JudgingSession {
   };
 }
 
-interface JudgingScheduleProps {
+interface DivisionJudgingScheduleProps {
   sessions: JudgingSession[];
   eventSlug: string;
 }
 
-const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
+export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = ({ sessions }) => {
   const t = useTranslations('pages.event');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -211,5 +211,3 @@ const JudgingSchedule: React.FC<JudgingScheduleProps> = ({ sessions }) => {
     </Paper>
   );
 };
-
-export default JudgingSchedule;

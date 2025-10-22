@@ -42,12 +42,12 @@ interface FieldRound {
   matches: FieldMatch[];
 }
 
-interface FieldScheduleProps {
+interface DivisionFieldScheduleProps {
   rounds: FieldRound[];
   eventSlug: string;
 }
 
-const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
+export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ rounds }) => {
   const t = useTranslations('pages.event');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -182,5 +182,3 @@ const FieldSchedule: React.FC<FieldScheduleProps> = ({ rounds }) => {
     </Paper>
   );
 };
-
-export default FieldSchedule;

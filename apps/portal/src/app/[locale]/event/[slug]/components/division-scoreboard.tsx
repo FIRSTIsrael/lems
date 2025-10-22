@@ -21,12 +21,12 @@ interface ScoreData {
   maxScore: number;
 }
 
-interface ScoreboardProps {
+interface DivisionScoreboardProps {
   data: ScoreData[];
   eventSlug: string;
 }
 
-export const Scoreboard: React.FC<ScoreboardProps> = ({ data }) => {
+export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
   const t = useTranslations('pages.event');
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
