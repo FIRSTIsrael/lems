@@ -2,6 +2,7 @@ import { Delete } from '@mui/icons-material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { Team } from '@lems/types/api/admin';
 import { useState } from 'react';
+import { Tooltip } from '@mui/material';
 import { DeleteTeamDialog } from './delete-team-dialog';
 
 interface DeleteTeamButtonProps {
@@ -10,15 +11,26 @@ interface DeleteTeamButtonProps {
 
 export const DeleteTeamButton: React.FC<DeleteTeamButtonProps> = ({ team }) => {
   const [showDeletionDialog, setShowDeletionDialog] = useState(false);
+  const isDisabled = team.status === 'active' || team.status === 'inactive';
 
   return (
     <>
-      <GridActionsCellItem
-        key="delete"
-        icon={<Delete />}
-        label="Delete team"
-        onClick={() => setShowDeletionDialog(true)}
-      />
+      <Tooltip
+        title={
+          isDisabled ? 'Cannot delete team which has participated in an event in the past' : ''
+        }
+      >
+        <span>
+          <GridActionsCellItem
+            key="delete"
+            icon={<Delete />}
+            label="Delete team"
+            disabled={isDisabled}
+            onClick={() => setShowDeletionDialog(true)}
+          />
+        </span>
+      </Tooltip>
+
       <DeleteTeamDialog
         team={team}
         open={showDeletionDialog}
