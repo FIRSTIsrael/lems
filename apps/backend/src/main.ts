@@ -11,7 +11,6 @@ import './lib/database';
 import { expressLogger } from './lib/logger';
 import lemsRouter from './routers/lems';
 import apiRouter from './routers/api/index';
-import authRouter from './routers/auth';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
@@ -43,7 +42,6 @@ app.use('/', expressLogger);
 app.use('/dashboard', dashboardRouter);
 
 // Old LEMS app, needs migration
-app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
 // Application routers
@@ -60,6 +58,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'ROUTE_NOT_DEFINED' });
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res, next) => {
   console.log(err);
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
