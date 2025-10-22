@@ -102,6 +102,11 @@
       "teams": "קבוצות",
       "team": "קבוצה",
       "division": "בית",
+      "not-found": {
+        "title": "אירוע לא נמצא",
+        "description": "האירוע שאתה מחפש לא קיים במאגר הנתונים שלנו.",
+        "back-to-events": "חזרה לאירועים"
+      },
       "quick-links": {
         "title": "קישורים מהירים",
         "scoreboard": "לוח תוצאות",

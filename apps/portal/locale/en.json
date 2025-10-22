@@ -102,6 +102,11 @@
       "teams": "Teams",
       "team": "Team",
       "division": "Division",
+      "not-found": {
+        "title": "Event Not Found",
+        "description": "The event you're looking for doesn't exist in our database.",
+        "back-to-events": "Back to Events"
+      },
       "quick-links": {
         "title": "Quick Links",
         "scoreboard": "Scoreboard",

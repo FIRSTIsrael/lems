@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import useSWR from 'swr';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { DivisionData } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { DivisionJudgingSchedule } from './division-judging-schedule';
 import { DivisionScoreboard } from './division-scoreboard';
 import { DivisionTeamsList } from './division-teams-list';
@@ -19,10 +19,14 @@ export interface EventDivisionProps {
 export const EventDivision: React.FC<EventDivisionProps> = ({ divisionId }) => {
   const t = useTranslations('pages.event');
   const [selectedTab, setSelectedTab] = useState(0); // Default to scoreboard tab
-  const { data: divisionData } = useSWR<DivisionData | null>(`/portal/divisions/${divisionId}`, {
-    suspense: true,
-    fallbackData: null
-  });
+  const { data: divisionData } = useRealtimeData<DivisionData | null>(
+    `/portal/divisions/${divisionId}`,
+    undefined,
+    {
+      suspense: true,
+      fallbackData: null
+    }
+  );
 
   if (!divisionData) {
     return null;
