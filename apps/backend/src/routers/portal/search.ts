@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import dayjs from 'dayjs';
 import db from '../../lib/database';
 
 const router = express.Router({ mergeParams: true });
@@ -8,7 +7,7 @@ interface SearchQuery {
   q?: string;
   type?: 'teams' | 'events' | 'all';
   status?: 'active' | 'upcoming' | 'past' | 'all';
-  limit?: string; 
+  limit?: string;
 }
 
 router.get('/', async (req: Request<object, object, object, SearchQuery>, res: Response) => {
@@ -20,14 +19,14 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
   }
 
   const searchTerm = q.trim().toLowerCase();
-  const resultLimit = Math.min(parseInt(limit, 10) || 50, 100); // Max 100? maybe less? maybe no max at all? idk 
+  const resultLimit = Math.min(parseInt(limit, 10) || 50, 100); // Max 100? maybe less? maybe no max at all? idk
   const results = [];
 
   try {
-        if (type === 'all' || type === 'teams') {
+    if (type === 'all' || type === 'teams') {
       const teamLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
       const matchingTeams = await db.teams.getSearchableTeams(searchTerm, teamLimit);
-      
+
       const processedTeams = matchingTeams.map(team => ({
         type: 'team' as const,
         id: `team-${team.id}`,
@@ -44,7 +43,7 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
     if (type === 'all' || type === 'events') {
       const eventLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
       const matchingEvents = await db.events.getSearchableEvents(searchTerm, status, eventLimit);
-      
+
       const processedEvents = matchingEvents.map(event => ({
         type: 'event' as const,
         id: `event-${event.id}`,
@@ -56,7 +55,7 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
 
       results.push(...processedEvents);
     }
-    
+
     res.status(200).json({
       results,
       total: results.length,
@@ -64,7 +63,6 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
       type,
       status
     });
-
   } catch (error) {
     console.error('Search error:', error);
     res.status(500).json({ error: 'Internal server error during search' });
