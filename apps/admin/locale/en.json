@@ -136,8 +136,11 @@
         "submitting": "Creating team...",
         "update": "Update Team",
         "updating": "Updating team...",
-        "remove-logo": "Remove logo",
-        "logo-removed": "Logo removed"
+        "remove-logo": "Remove Logo",
+        "logo-removed": "Logo removed",
+        "edit-logo": "Edit Logo",
+        "close": "Close",
+        "logo-preview-title": "Team Logo"
       },
       "import-dialog": {
         "title": "Import Teams from CSV",
