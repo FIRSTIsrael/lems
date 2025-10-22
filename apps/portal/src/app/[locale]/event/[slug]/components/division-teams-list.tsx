@@ -14,29 +14,15 @@ import {
   IconButton
 } from '@mui/material';
 import { ChevronEndIcon } from '@lems/localization';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: {
-    name: string;
-    city: string;
-  };
-  division?: {
-    id: string;
-    name: string;
-    color: string;
-  };
-}
+import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionTeamsListProps {
-  teams: Team[];
   divisionName: string;
 }
 
-export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ teams, divisionName }) => {
+export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionName }) => {
   const t = useTranslations('pages.event');
+  const teams = useDivisionTeams();
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
@@ -92,7 +78,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ teams, div
                       '&:hover': { textDecoration: 'underline' }
                     }}
                   >
-                    {team.affiliation.name}, {team.affiliation.city}
+                    {team.affiliation}, {team.city}
                   </Link>
                 </TableCell>
                 <TableCell>

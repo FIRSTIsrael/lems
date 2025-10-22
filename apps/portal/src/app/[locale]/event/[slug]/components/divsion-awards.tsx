@@ -4,20 +4,9 @@ import { useTranslations } from 'next-intl';
 import { Typography, Paper, Box, Divider, Grid, Stack } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import NextLink from 'next/link';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-}
-
-interface Award {
-  id: string;
-  name: string;
-  place: number;
-  winner: Team | string;
-  category: 'team' | 'personal' | 'advancement';
-}
+import { Award } from '@lems/types/api/portal';
+import { useAwardTranslations } from '@lems/localization';
+import { useDivisionTeams } from './division-teams-context';
 
 interface AwardSectionProps {
   awardName: string;
@@ -25,6 +14,8 @@ interface AwardSectionProps {
 }
 
 export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList }) => {
+  const teams = useDivisionTeams();
+  const { getName } = useAwardTranslations();
   const getColorByPlace = (place: number | null): string => {
     switch (place) {
       case 1:
@@ -49,15 +40,17 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
           color: 'text.primary'
         }}
       >
-        {awardName}
+        {getName(awardName)}
       </Typography>
 
       <Grid container spacing={2}>
         {awardList.map(award => {
+          if (!award.winner) {
+            return null;
+          }
           const isTeamAward = typeof award.winner !== 'string';
-          const winnerText = isTeamAward
-            ? `${(award.winner as Team).name} #${(award.winner as Team).number}`
-            : (award.winner as string);
+          const team = isTeamAward ? teams.find(t => t.id === award.winner) : null;
+          const winnerText = team ? `${team.name} #${team.number}` : (award.winner as string);
 
           const trophyColor = getColorByPlace(award.place);
 
@@ -83,10 +76,10 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
                 }}
               />
 
-              {isTeamAward ? (
+              {team ? (
                 <Typography
                   component={NextLink}
-                  href={`/teams/${(award.winner as Team).number}`}
+                  href={`/teams/${team.number}`}
                   variant="body1"
                   fontWeight={600}
                   sx={{
@@ -121,7 +114,6 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
 
 interface DivisionAwardsProps {
   awards: Award[];
-  eventSlug: string;
 }
 
 export const DivisionAwards: React.FC<DivisionAwardsProps> = ({ awards }) => {

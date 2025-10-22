@@ -125,8 +125,6 @@
       },
       "judging-schedule": {
         "start-time": "התחלה",
-        "end-time": "סיום",
-        "room": "חדר",
         "no-data": "אין לוח זמנים שיפוט זמין"
       },
       "awards": {

@@ -18,29 +18,25 @@ import {
   useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
-
-interface JudgingSession {
-  startTime: string;
-  endTime: string;
-  teams: {
-    room1?: { number: number; name: string };
-    room2?: { number: number; name: string };
-    room3?: { number: number; name: string };
-    room4?: { number: number; name: string };
-  };
-}
+import { JudgingRoom, JudgingSession } from '@lems/types/api/portal';
+import { groupSessionsByTime } from '@lems/shared/utils';
+import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionJudgingScheduleProps {
   sessions: JudgingSession[];
-  eventSlug: string;
+  rooms: JudgingRoom[];
 }
 
-export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = ({ sessions }) => {
+export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = ({
+  sessions,
+  rooms
+}) => {
   const t = useTranslations('pages.event');
+  const teams = useDivisionTeams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const rooms = ['room1', 'room2', 'room3', 'room4'];
+  const groupedSessions = groupSessionsByTime(sessions, rooms);
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -67,22 +63,17 @@ export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = (
                     {t('judging-schedule.start-time')}
                   </Typography>
                 </TableCell>
-                <TableCell width={80} align="center">
-                  <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                    {t('judging-schedule.end-time')}
-                  </Typography>
-                </TableCell>
-                {rooms.map((_, index) => (
-                  <TableCell key={index} width={80} align="center">
+                {rooms.map(room => (
+                  <TableCell key={room.id} width={80} align="center">
                     <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                      {t('judging-schedule.room')} {index + 1}
+                      {room.name}
                     </Typography>
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {sessions.map((session, sessionIndex) => (
+              {groupedSessions.map((session, sessionIndex) => (
                 <TableRow key={sessionIndex} sx={{ bgcolor: 'white' }}>
                   <TableCell align="center">
                     <Typography
@@ -90,22 +81,13 @@ export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = (
                       fontWeight={500}
                       fontSize={isMobile ? '0.75rem' : '1rem'}
                     >
-                      {dayjs(session.startTime).format('HH:mm')}
+                      {dayjs(session.time).format('HH:mm')}
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
-                    <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
-                      {dayjs(session.endTime).format('HH:mm')}
-                    </Typography>
-                  </TableCell>
-                  {rooms.map(roomKey => {
-                    const team = session.teams[roomKey as keyof typeof session.teams];
+                  {session.rooms.map(room => {
+                    const team = teams.find(team => team.id === room.teamId);
                     return (
-                      <TableCell key={roomKey} align="center">
+                      <TableCell key={room.id} align="center">
                         {team ? (
                           <Tooltip title={team.name} arrow>
                             <Link

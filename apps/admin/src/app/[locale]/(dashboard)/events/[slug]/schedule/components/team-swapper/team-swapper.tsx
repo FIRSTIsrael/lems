@@ -13,9 +13,9 @@ import {
   TeamSchedule,
   JudgingSessionsWithRooms
 } from '@lems/types/api/admin/schedule';
+import { groupSessionsByTime } from '@lems/shared/utils';
 import { useEvent } from '../../../components/event-context';
 import { RoomWithTeam } from './types';
-import { groupSessionsByTime } from './utils';
 import { TeamSelector } from './team-selector';
 import { TeamScheduleView } from './team-schedule-view';
 import { JudgingSessionSelector } from './judging-session-selector';

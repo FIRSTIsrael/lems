@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { EventDetails } from '@lems/types/api/portal';
 import { EventDivisionSelector } from './components/event-division-selector';
 import { EventHeader } from './components/event-header';
+import { EventDivision } from './components/event-division';
 
 const EventPage = () => {
   const params = useParams();
@@ -43,6 +44,8 @@ const EventPage = () => {
         currentDivisionId={divisionId}
         onDivisionSelect={handleDivisionSelect}
       />
+
+      <EventDivision divisionId={divisionId} />
     </Container>
   );
 };

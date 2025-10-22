@@ -20,39 +20,40 @@ import {
   alpha
 } from '@mui/material';
 import NextLink from 'next/link';
-
-interface FieldMatch {
-  number: number;
-  time: string;
-  teams: {
-    table1?: { number: number; name: string };
-    table2?: { number: number; name: string };
-    table3?: { number: number; name: string };
-    table4?: { number: number; name: string };
-    table5?: { number: number; name: string };
-    table6?: { number: number; name: string };
-    table7?: { number: number; name: string };
-    table8?: { number: number; name: string };
-  };
-}
-
-interface FieldRound {
-  stage: string;
-  number: number;
-  matches: FieldMatch[];
-}
+import { RobotGameMatch, RobotGameTable } from '@lems/types/api/portal';
+import { useMatchStageTranslations } from '@lems/localization';
+import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionFieldScheduleProps {
-  rounds: FieldRound[];
-  eventSlug: string;
+  schedule: RobotGameMatch[];
+  tables: RobotGameTable[];
 }
 
-export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ rounds }) => {
+export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({
+  schedule,
+  tables
+}) => {
   const t = useTranslations('pages.event');
+  const teams = useDivisionTeams();
+  const { getStage } = useMatchStageTranslations();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const tables = ['table1', 'table2', 'table3', 'table4', 'table5', 'table6', 'table7', 'table8'];
+  // Group matches by round (stage + number)
+  const groupedMatches = schedule.reduce(
+    (acc, match) => {
+      if (match.stage === 'TEST') {
+        return acc;
+      }
+      const key = `${match.stage}-${match.round}`;
+      if (!acc[key]) {
+        acc[key] = { stage: match.stage, round: match.round, matches: [] };
+      }
+      acc[key].matches.push(match);
+      return acc;
+    },
+    {} as Record<string, { stage: string; round: number; matches: RobotGameMatch[] }>
+  );
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -63,7 +64,7 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ ro
       </Box>
 
       <Stack spacing={3} mt={2}>
-        {rounds.map((round, roundIndex) => (
+        {Object.values(groupedMatches).map((roundObject, roundIndex) => (
           <Paper key={roundIndex} sx={{ p: 0, bgcolor: 'white' }}>
             <TableContainer sx={{ overflowX: 'auto' }}>
               <Table
@@ -86,8 +87,8 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ ro
                     >
                       <Typography fontWeight={500}>
                         {t('field-schedule.round', {
-                          stage: round.stage,
-                          number: round.number
+                          stage: getStage(roundObject.stage),
+                          number: roundObject.round
                         })}
                       </Typography>
                     </TableCell>
@@ -113,7 +114,7 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ ro
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {round.matches.map((match, matchIndex) => (
+                  {roundObject.matches.map((match, matchIndex) => (
                     <TableRow key={matchIndex} sx={{ bgcolor: 'white' }}>
                       <TableCell align="center">
                         <Typography fontWeight={500} fontSize={isMobile ? '0.75rem' : '1rem'}>
@@ -126,13 +127,16 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ ro
                           fontWeight={500}
                           fontSize={isMobile ? '0.75rem' : '1rem'}
                         >
-                          {dayjs(match.time).format('HH:mm')}
+                          {dayjs(match.scheduledTime).format('HH:mm')}
                         </Typography>
                       </TableCell>
-                      {tables.map(tableKey => {
-                        const team = match.teams[tableKey as keyof typeof match.teams];
+                      {tables.map(table => {
+                        const team = teams.find(
+                          team =>
+                            team.id === match.participants.find(p => p.tableId === table.id)?.teamId
+                        );
                         return (
-                          <TableCell key={tableKey} align="center">
+                          <TableCell key={table.id} align="center">
                             {team ? (
                               <Tooltip title={team.name} arrow>
                                 <Link
@@ -172,7 +176,7 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({ ro
         ))}
       </Stack>
 
-      {rounds.length === 0 && (
+      {Object.keys(groupedMatches).length === 0 && (
         <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
           <Typography variant="body1" color="text.secondary">
             {t('field-schedule.no-data')}

@@ -1,4 +1,5 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
+import { RobotGameMatchParticipant } from './robot-game-match-participants';
 
 export type RobotGameMatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 
@@ -15,3 +16,9 @@ export interface RobotGameMatchesTable {
 export type RobotGameMatch = Selectable<RobotGameMatchesTable>;
 export type InsertableRobotGameMatch = Insertable<RobotGameMatchesTable>;
 export type UpdateableRobotGameMatch = Updateable<RobotGameMatchesTable>;
+
+// Utility Types
+
+export interface RobotGameMatchWithParticipants extends RobotGameMatch {
+  participants: RobotGameMatchParticipant[];
+}

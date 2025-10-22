@@ -4,46 +4,34 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: {
-    name: string;
-    city: string;
-  };
-}
-
-interface ScoreData {
-  team: Team;
-  scores: number[];
-  maxScore: number;
-}
+import { DivisionScoreboardEntry } from '@lems/types/api/portal';
+import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionScoreboardProps {
-  data: ScoreData[];
-  eventSlug: string;
+  data: DivisionScoreboardEntry[];
 }
 
 export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
   const t = useTranslations('pages.event');
+  const teams = useDivisionTeams();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  const matches = data[0]?.scores.length ?? 3; // Default to 3 matches
+  console.log(data);
+
+  const numberOfMatches = Math.max(...data.map(entry => entry.scores?.length || 0));
 
   // Sort teams by max score (descending)
-  const sortedData = [...data].sort((a, b) => b.maxScore - a.maxScore);
+  const sortedData = data.sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
 
-  const columns: GridColDef<ScoreData>[] = [
+  const columns: GridColDef<DivisionScoreboardEntry>[] = [
     {
       field: 'rank',
       headerName: t('scoreboard.rank'),
       width: isDesktop ? 75 : 50,
       sortable: false,
       valueGetter: (_, row) => {
-        return sortedData.findIndex(team => team.team.number === row.team.number) + 1;
+        return row.robotGameRank ?? '-';
       }
     },
     {
@@ -52,7 +40,10 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
       width: isDesktop ? 225 : 120,
       sortable: false,
       renderCell: params => {
-        const { team } = params.row;
+        const team = teams.find(t => t.id === params.row.teamId);
+        if (!team) {
+          return <Typography color="text.secondary">-</Typography>;
+        }
         return (
           <Link
             href={`/teams/${team.number}`}
@@ -76,14 +67,14 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
       headerName: t('scoreboard.best-score'),
       width: isDesktop ? 120 : 80,
       sortable: true,
-      valueGetter: (_, row) => row.maxScore
+      valueGetter: (_, row) => row.maxScore || '-'
     },
-    ...Array.from({ length: matches }, (_, index) => ({
+    ...Array.from({ length: numberOfMatches }, (_, index) => ({
       field: `match${index + 1}`,
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: isDesktop ? 100 : 70,
       sortable: false,
-      valueGetter: (_: never, row: ScoreData) => row.scores[index] || '-'
+      valueGetter: (_: never, row: DivisionScoreboardEntry) => row.scores?.[index] || '-'
     }))
   ];
 
@@ -97,7 +88,7 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
           density="compact"
           rows={sortedData}
           columns={columns}
-          getRowId={row => row.team.id}
+          getRowId={row => row.teamId}
           slots={{
             noRowsOverlay: () => (
               <Box display="flex" alignItems="center" justifyContent="center" height="100%">
