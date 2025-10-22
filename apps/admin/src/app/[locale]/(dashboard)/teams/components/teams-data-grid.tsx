@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridFilterOperator } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
@@ -70,41 +70,38 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       valueFormatter: (value: number) => value.toString()
     },
     {
-      field: 'active',
+      field: 'status',
       headerName: t('columns.status'),
-      width: 120,
+      width: 150,
       sortable: true,
       filterable: true,
-      type: 'boolean',
-      renderCell: params => (
-        <Chip
-          label={params.row.active ? t('status.active') : t('status.inactive')}
-          color={params.row.active ? 'success' : 'default'}
-          size="small"
-          variant="filled"
-        />
-      ),
-      valueGetter: (value: boolean) => value,
+      type: 'singleSelect',
+      valueOptions: ['active', 'inactive', 'uninitiated'],
+      renderCell: params => {
+        const status = params.row.status || 'uninitiated';
+        const color =
+          status === 'active' ? 'success' : status === 'inactive' ? 'default' : 'warning';
+
+        return <Chip label={t(`status.${status}`)} color={color} size="small" variant="filled" />;
+      },
+      valueGetter: (value: string) => value || 'uninitiated',
       filterOperators: [
         {
           label: t('status.active'),
-          value: 'isTrue',
-          getApplyFilterFn: () => {
-            return (value: boolean): boolean => {
-              return value === true;
-            };
-          }
+          value: 'active',
+          getApplyFilterFn: () => (value: string) => value === 'active'
         },
         {
           label: t('status.inactive'),
-          value: 'isFalse',
-          getApplyFilterFn: () => {
-            return (value: boolean): boolean => {
-              return value === false;
-            };
-          }
+          value: 'inactive',
+          getApplyFilterFn: () => (value: string) => value === 'inactive'
+        },
+        {
+          label: t('status.uninitiated'),
+          value: 'uninitiated',
+          getApplyFilterFn: () => (value: string) => value === 'uninitiated'
         }
-      ]
+      ] as GridFilterOperator[]
     },
     {
       field: 'name',

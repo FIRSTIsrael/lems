@@ -176,7 +176,9 @@ export class TeamsRepository {
     return teams;
   }
 
-  async getAllWithActiveStatus(): Promise<Array<Team & { active: boolean }>> {
+  async getAllWithStatus(): Promise<
+    Array<Team & { status: 'active' | 'inactive' | 'uninitiated' }>
+  > {
     const currentSeason = await this.db
       .selectFrom('seasons')
       .select('id')
@@ -184,26 +186,40 @@ export class TeamsRepository {
       .where('end_date', '>=', new Date())
       .executeTakeFirst();
 
-    if (!currentSeason) {
-      const teams = await this.getAll();
-      return teams.map(team => ({ ...team, active: false }));
-    }
-
-    const activeTeamIds = await this.db
-      .selectFrom('team_divisions')
-      .innerJoin('divisions', 'team_divisions.division_id', 'divisions.id')
-      .innerJoin('events', 'divisions.event_id', 'events.id')
-      .select('team_divisions.team_id')
-      .where('events.season_id', '=', currentSeason.id)
-      .execute();
+    const activeTeamIds = currentSeason?.id
+      ? await this.db
+          .selectFrom('team_divisions')
+          .innerJoin('divisions', 'team_divisions.division_id', 'divisions.id')
+          .innerJoin('events', 'divisions.event_id', 'events.id')
+          .select('team_divisions.team_id')
+          .where('events.season_id', '=', currentSeason.id)
+          .distinct()
+          .execute()
+      : [];
 
     const activeTeamIdSet = new Set(activeTeamIds.map(t => t.team_id));
 
+    const anySeasonTeamIds = await this.db
+      .selectFrom('team_divisions')
+      .select('team_id')
+      .distinct()
+      .execute();
+
+    const anySeasonTeamIdSet = new Set(anySeasonTeamIds.map(t => t.team_id));
+
     const teams = await this.getAll();
-    return teams.map(team => ({
-      ...team,
-      active: activeTeamIdSet.has(team.id)
-    }));
+
+    return teams.map(team => {
+      if (activeTeamIdSet.has(team.id)) {
+        return { ...team, status: 'active' };
+      }
+
+      if (anySeasonTeamIdSet.has(team.id)) {
+        return { ...team, status: 'inactive' };
+      }
+
+      return { ...team, status: 'uninitiated' };
+    });
   }
 
   async create(team: InsertableTeam): Promise<Team> {

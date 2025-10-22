@@ -90,7 +90,8 @@
         },
         "status": {
           "active": "פעיל",
-          "inactive": "לא פעיל"
+          "inactive": "לא פעיל",
+          "uninitiated": "לא יזום"
         }
       },
       "creation-dialog": {

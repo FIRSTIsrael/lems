@@ -83,7 +83,8 @@
         },
         "status": {
           "active": "Active",
-          "inactive": "Inactive"
+          "inactive": "Inactive",
+          "uninitiated": "Uninitiated"
         }
       },
       "creation-dialog": {

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const TeamStatusEnum = z.enum(['active', 'inactive', 'uninitiated']);
+
 export const AdminTeamResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -8,7 +10,7 @@ export const AdminTeamResponseSchema = z.object({
   affiliation: z.string(),
   city: z.string(),
   coordinates: z.string().nullable(),
-  active: z.boolean().optional()
+  status: TeamStatusEnum.optional()
 });
 
 export type Team = z.infer<typeof AdminTeamResponseSchema>;

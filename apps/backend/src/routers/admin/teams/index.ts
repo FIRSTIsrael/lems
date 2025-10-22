@@ -9,7 +9,7 @@ import { makeAdminTeamResponse, parseTeamList } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminRequest, res) => {
-  const teams = await db.teams.getAllWithActiveStatus();
+  const teams = await db.teams.getAllWithStatus();
   res.json(teams.map(team => makeAdminTeamResponse(team)));
 });
 
