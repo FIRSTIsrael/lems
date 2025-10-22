@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import dayjs from 'dayjs';
 import db from '../../lib/database';
 
 const router = express.Router({ mergeParams: true });
@@ -19,22 +20,22 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
   }
 
   const searchTerm = q.trim().toLowerCase();
-  const resultLimit = Math.min(parseInt(limit, 10) || 50, 100); // Max 100? maybe less? maybe no max at all? idk
+  const resultLimit = Math.min(Number.parseInt(limit) || 50, 100);
   const results = [];
 
   try {
     if (type === 'all' || type === 'teams') {
       const teamLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
-      const matchingTeams = await db.teams.getSearchableTeams(searchTerm, teamLimit);
+      const matchingTeams = await db.teams.search(searchTerm, teamLimit);
 
       const processedTeams = matchingTeams.map(team => ({
         type: 'team' as const,
         id: `team-${team.id}`,
+        slug: team.number.toString(),
         title: `${team.name} #${team.number}`,
-        subtitle: [team.city, team.affiliation].filter(Boolean).join(' | '),
+        location: [team.city, team.affiliation].filter(Boolean).join(' , '),
         description: team.affiliation || '',
-        url: `/teams/${team.number}`,
-        logoUrl: team.logo_url || undefined
+        logoUrl: team.logo_url || null
       }));
 
       results.push(...processedTeams);
@@ -42,27 +43,34 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
 
     if (type === 'all' || type === 'events') {
       const eventLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
-      const matchingEvents = await db.events.getSearchableEvents(searchTerm, status, eventLimit);
+      const matchingEvents = await db.events.search(searchTerm, status, eventLimit);
 
-      const processedEvents = matchingEvents.map(event => ({
-        type: 'event' as const,
-        id: `event-${event.id}`,
-        title: event.name,
-        subtitle: event.location || '',
-        description: `Event • ${event.status}`,
-        url: `/events/${event.slug}`
-      }));
+      const processedEvents = matchingEvents.map(event => {
+        let eventStatus = status;
+        if (status === 'all') {
+          const today = dayjs().startOf('day');
+          const eventDate = dayjs(event.start_date).startOf('day');
+          eventStatus = eventDate.isAfter(today)
+            ? 'upcoming'
+            : eventDate.isBefore(today)
+              ? 'past'
+              : 'active';
+        }
+
+        return {
+          type: 'event' as const,
+          id: `event-${event.id}`,
+          slug: event.slug,
+          title: event.name,
+          location: event.location || '',
+          description: `Event • ${eventStatus}`
+        };
+      });
 
       results.push(...processedEvents);
     }
 
-    res.status(200).json({
-      results,
-      total: results.length,
-      query: q,
-      type,
-      status
-    });
+    res.status(200).json({ results, total: results.length });
   } catch (error) {
     console.error('Search error:', error);
     res.status(500).json({ error: 'Internal server error during search' });

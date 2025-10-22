@@ -453,15 +453,21 @@ export class EventsRepository {
     return events;
   }
 
-  async getSearchableEvents(searchTerm: string, status: string, limit: number): Promise<Array<{ id: string; name: string; slug: string; start_date: Date; end_date: Date; location: string; status: string }>> {
+  async search(
+    searchTerm: string,
+    status: 'active' | 'upcoming' | 'past' | 'all',
+    limit: number
+  ): Promise<Event[]> {
     let query = this.db
       .selectFrom('events')
-      .select(['id', 'name', 'slug', 'start_date', 'end_date', 'location'])
-      .where(eb => eb.or([
-        eb('name', 'ilike', `%${searchTerm}%`),
-        eb('location', 'ilike', `%${searchTerm}%`),
-        eb('slug', 'ilike', `%${searchTerm}%`)
-      ]));
+      .selectAll()
+      .where(eb =>
+        eb.or([
+          eb('name', 'ilike', `%${searchTerm}%`),
+          eb('location', 'ilike', `%${searchTerm}%`),
+          eb('slug', 'ilike', `%${searchTerm}%`)
+        ])
+      );
 
     if (status !== 'all') {
       const now = new Date();
@@ -475,19 +481,25 @@ export class EventsRepository {
     }
 
     const events = await query
-      .orderBy(eb => eb.case()
-        .when('name', 'ilike', searchTerm).then(100)
-        .when('name', 'ilike', `${searchTerm}%`).then(80)
-        .else(50)
-        .end(), 'desc')
+      .orderBy(
+        eb =>
+          eb
+            .case()
+            .when('name', 'ilike', searchTerm)
+            .then(100)
+            .when('name', 'ilike', `${searchTerm}%`)
+            .then(80)
+            .else(50)
+            .end(),
+        'desc'
+      )
       .limit(limit)
       .execute();
 
     const now = new Date();
     return events.map(event => ({
       ...event,
-      status: event.start_date > now ? 'upcoming' :
-              event.end_date < now ? 'past' : 'active'
+      status: event.start_date > now ? 'upcoming' : event.end_date < now ? 'past' : 'active'
     }));
   }
 
