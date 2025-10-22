@@ -16,11 +16,26 @@
         "location": "מיקום",
         "teams-registered": "{count} קבוצות רשומות",
         "registration-open": "הרשמה פתוחה",
-        "registration-closed": "הרשמה סגורה"
+        "registration-closed": "הרשמה סגורה",
+        "view-event": "צפייה באירוע",
+        "view-results": "צפייה בתוצאות",
+        "view-details": "פרטים נוספים",
+        "status-completed": "הושלם",
+        "status-upcoming": "קרוב"
       },
       "search": {
         "title": "חיפוש קבוצות ואירועים",
-        "placeholder": "חפשו קבוצות או אירועים..."
+        "placeholder": "חפשו קבוצות או אירועים...",
+        "start-typing": "התחילו להקליד כדי לחפש",
+        "search-hint": "חפשו לפי שם קבוצה, מספר, עיר, שם אירוע או מיקום",
+        "searching": "מחפש...",
+        "no-results": "לא נמצאו תוצאות",
+        "no-results-hint": "לא נמצאו תוצאות עבור \"{query}\". נסו מילות מפתח אחרות.",
+        "results-count": "{count} תוצאות",
+        "more-results": "+{count} תוצאות נוספות",
+        "type-team": "קבוצה",
+        "type-event": "אירוע",
+        "error": "שגיאה בחיפוש: {error}"
       },
       "quick-actions": {
         "title": "פעולות מהירות",
@@ -145,7 +160,8 @@
       "scorer": {
         "title": "מחשבון ניקוד",
         "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
-        "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה."
+        "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה.",
+        "score": "{points} נק'"
       }
     }
   },

@@ -1,4 +1,5 @@
 import { Kysely, sql } from 'kysely';
+import dayjs from 'dayjs';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
@@ -194,13 +195,21 @@ class EventSelector {
   }
 
   async removeTeams(teamIds: string[]): Promise<void> {
-    return this.db.transaction().execute(async trx => {
-      await Promise.all(
-        teamIds.map(id =>
-          trx.deleteFrom('team_divisions').where('team_id', '=', id).execute()
-        )
-      );
-    });
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db
+      .deleteFrom('team_divisions')
+      .where('team_id', 'in', teamIds)
+      .where(
+        'division_id',
+        'in',
+        this.db.selectFrom('divisions').select('id').where('event_id', '=', event.id)
+      )
+      .execute();
   }
 
   async getSettings(): Promise<EventSettings | null> {
@@ -273,7 +282,7 @@ class EventsSelector {
     let query = this.db.selectFrom('events').selectAll();
 
     if (this.selector.type === 'after') {
-      query = query.where('start_date', '>=', new Date(this.selector.value as number));
+      query = query.where('start_date', '>=', dayjs.unix(this.selector.value as number).toDate());
     } else if (this.selector.type === 'bySeason') {
       query = query.where('season_id', '=', this.selector.value as string);
     }
@@ -310,7 +319,11 @@ class EventsSelector {
       ]);
 
     if (this.selector.type === 'after') {
-      query = query.where('events.start_date', '>=', new Date(this.selector.value as number));
+      query = query.where(
+        'events.start_date',
+        '>=',
+        dayjs.unix(this.selector.value as number).toDate()
+      );
     } else if (this.selector.type === 'bySeason') {
       query = query.where('events.season_id', '=', this.selector.value as string);
     } else if (this.selector.type === 'byTeam') {
@@ -345,7 +358,7 @@ class EventsSelector {
       adminQuery = adminQuery.where(
         'events.start_date',
         '>=',
-        new Date(this.selector.value as number)
+        dayjs.unix(this.selector.value as number).toDate()
       );
     } else if (this.selector.type === 'bySeason') {
       adminQuery = adminQuery.where('events.season_id', '=', this.selector.value as string);
@@ -448,6 +461,56 @@ export class EventsRepository {
   async getAll() {
     const events = await this.db.selectFrom('events').selectAll().execute();
     return events;
+  }
+
+  async search(
+    searchTerm: string,
+    status: 'active' | 'upcoming' | 'past' | 'all',
+    limit: number
+  ): Promise<Event[]> {
+    let query = this.db
+      .selectFrom('events')
+      .selectAll()
+      .where(eb =>
+        eb.or([
+          eb('name', 'ilike', `%${searchTerm}%`),
+          eb('location', 'ilike', `%${searchTerm}%`),
+          eb('slug', 'ilike', `%${searchTerm}%`)
+        ])
+      );
+
+    if (status !== 'all') {
+      const now = new Date();
+      if (status === 'upcoming') {
+        query = query.where('start_date', '>', now);
+      } else if (status === 'past') {
+        query = query.where('end_date', '<', now);
+      } else if (status === 'active') {
+        query = query.where('start_date', '<=', now).where('end_date', '>=', now);
+      }
+    }
+
+    const events = await query
+      .orderBy(
+        eb =>
+          eb
+            .case()
+            .when('name', 'ilike', searchTerm)
+            .then(100)
+            .when('name', 'ilike', `${searchTerm}%`)
+            .then(80)
+            .else(50)
+            .end(),
+        'desc'
+      )
+      .limit(limit)
+      .execute();
+
+    const now = new Date();
+    return events.map(event => ({
+      ...event,
+      status: event.start_date > now ? 'upcoming' : event.end_date < now ? 'past' : 'active'
+    }));
   }
 
   async create(event: InsertableEvent): Promise<Event> {

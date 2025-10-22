@@ -17,8 +17,10 @@ import {
   Calculate as CalculatorIcon,
   Event as EventIcon,
   EmojiEvents as TrophyIcon,
-  ArrowForward as ArrowIcon
+  ArrowForward,
+  ArrowBack
 } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 
 const ACTIONS = [
   {
@@ -90,7 +92,7 @@ export const QuickActionsSection = () => {
                     </Typography>
                   </Box>
                   <IconButton size="small">
-                    <ArrowIcon />
+                    <DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />
                   </IconButton>
                 </Stack>
               </CardContent>

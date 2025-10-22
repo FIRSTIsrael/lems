@@ -18,8 +18,11 @@ export const makePortalEventResponse = (event: DbEvent): Event => ({
 });
 
 export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSummary => {
-  const dateDiff = dayjs().diff(event.date, 'day');
-  const eventStatus = dateDiff === 0 ? 'active' : dateDiff > 0 ? 'past' : 'upcoming';
+  const today = dayjs().startOf('day');
+  const eventDate = dayjs(event.date).startOf('day');
+  const eventStatus = eventDate.isAfter(today) ? 'upcoming' 
+    : eventDate.isBefore(today) ? 'past' 
+    : 'active';
 
   return {
     id: event.id,

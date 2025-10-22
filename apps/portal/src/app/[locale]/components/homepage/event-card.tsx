@@ -16,9 +16,11 @@ import {
 import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
-  ArrowForward as ArrowIcon,
+  ArrowForward,
+  ArrowBack,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from './live-icon';
 
@@ -72,22 +74,22 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
             component="span"
             variant="contained"
             color="error"
-            endIcon={<ArrowIcon />}
+            endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
             sx={{ ml: 'auto' }}
           >
-            View Event
+            {t('view-event')}
           </Button>
         );
       case 'past':
         return (
-          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<ArrowIcon />}>
-            View Results
+          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
+            {t('view-results')}
           </Button>
         );
       default: // upcoming
         return (
-          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<ArrowIcon />}>
-            View Details
+          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
+            {t('view-details')}
           </Button>
         );
     }

@@ -3,6 +3,19 @@
     "practice": "אימון",
     "ranking": "דירוג"
   },
+  "judging-categories": {
+    "core-values": "ערכי הליבה",
+    "innovation-project": "פרויקט החדשנות",
+    "robot-design": "תכנון הרובוט"
+  },
+  "judging-session-stages": {
+    "setup": "זמן התארגנות",
+    "innovation-presentation": "הצגה - פרויקט חדשנות",
+    "innovation-questions": "שאלות - פרויקט חדשנות",
+    "robot-presentation": "הצגה - תכנון הרובוט",
+    "robot-questions": "שאלות - תכנון הרובוט",
+    "final-thoughts": "שיקוף מסכם"
+  },
   "awards": {
     "core-values": {
       "name": "ערכי הליבה",

@@ -1,25 +1,21 @@
 import bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
 
 const SALT_ROUNDS = 12;
 
 export interface HashedPassword {
   hash: string;
-  salt: string;
 }
 
 export async function hashPassword(password: string): Promise<HashedPassword> {
-  const salt = randomBytes(32).toString('hex');
-  const hash = await bcrypt.hash(password + salt, SALT_ROUNDS);
-  return { hash, salt };
+  const hash = await bcrypt.hash(password, SALT_ROUNDS);
+  return { hash };
 }
 
 export async function verifyPassword(
   password: string,
-  storedHash: string,
-  storedSalt: string
+  storedHash: string
 ): Promise<boolean> {
-  return bcrypt.compare(password + storedSalt, storedHash);
+  return bcrypt.compare(password, storedHash);
 }
 
 export function validatePassword(password: string): { isValid: boolean; error: string | null } {
