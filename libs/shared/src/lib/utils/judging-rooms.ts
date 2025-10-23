@@ -45,7 +45,7 @@ export const groupSessionsByTime = (
     const timeSlot = sessionsByTime[timeKey];
     timeSlot.rooms = rooms.map(room => {
       const session = sessions.find(
-        s => s.roomId === room.id && new Date(s.scheduledTime).toISOString() === timeKey
+        s => s.roomId === room.id && new Date(s.scheduledTime).getTime() === Number(timeKey)
       );
       return {
         id: room.id,
