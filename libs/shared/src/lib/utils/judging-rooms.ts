@@ -28,7 +28,7 @@ export const groupSessionsByTime = (
   const sessionsByTime = sessions.reduce(
     (acc, session) => {
       session.scheduledTime = new Date(session.scheduledTime);
-      const timeKey = session.scheduledTime.toISOString();
+      const timeKey = session.scheduledTime.getTime();
       if (!acc[timeKey]) {
         acc[timeKey] = {
           time: session.scheduledTime,
