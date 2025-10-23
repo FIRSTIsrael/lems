@@ -110,6 +110,52 @@
         "view-details": "View Details"
       }
     },
+    "event": {
+      "general-info": "General Information",
+      "event-date": "Event Date",
+      "location": "Location",
+      "teams": "Teams",
+      "team": "Team",
+      "division": "Division",
+      "not-found": {
+        "title": "Event Not Found",
+        "description": "The event you're looking for doesn't exist in our database.",
+        "back-to-events": "Back to Events"
+      },
+      "quick-links": {
+        "title": "Quick Links",
+        "scoreboard": "Scoreboard",
+        "awards": "Awards",
+        "field-schedule": "Field Schedule",
+        "judging-schedule": "Judging Schedule",
+        "general-schedule": "General Schedule"
+      },
+      "scoreboard": {
+        "rank": "Rank",
+        "best-score": "Best Score",
+        "match": "Match",
+        "no-data": "No scoreboard data available"
+      },
+      "field-schedule": {
+        "round": "{stage} Round {number}",
+        "match": "Match",
+        "time": "Time",
+        "table": "Table",
+        "no-data": "No field schedule available"
+      },
+      "judging-schedule": {
+        "start-time": "Start",
+        "no-data": "No judging schedule available"
+      },
+      "awards": {
+        "team-awards": "Team Awards",
+        "personal-awards": "Personal Awards",
+        "advancement": "Eligible for Advancement",
+        "place": "{place} Place",
+        "no-data": "No awards announced yet"
+      },
+      "division-teams": "{divisionName} teams"
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",

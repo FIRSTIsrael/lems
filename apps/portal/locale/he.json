@@ -110,6 +110,52 @@
         "view-details": "פרטים נוספים"
       }
     },
+    "event": {
+      "general-info": "מידע כללי",
+      "event-date": "תאריך האירוע",
+      "location": "מיקום",
+      "teams": "קבוצות",
+      "team": "קבוצה",
+      "division": "בית",
+      "not-found": {
+        "title": "אירוע לא נמצא",
+        "description": "האירוע שאתה מחפש לא קיים במאגר הנתונים שלנו.",
+        "back-to-events": "חזרה לאירועים"
+      },
+      "quick-links": {
+        "title": "קישורים מהירים",
+        "scoreboard": "לוח תוצאות",
+        "awards": "פרסים",
+        "field-schedule": "לוח זמנים זירה",
+        "judging-schedule": "לוח זמנים שיפוט",
+        "general-schedule": "לוח זמנים כללי"
+      },
+      "scoreboard": {
+        "rank": "דירוג",
+        "best-score": "ניקוד הטוב ביותר",
+        "match": "מקצה",
+        "no-data": "אין נתוני לוח תוצאות זמינים"
+      },
+      "field-schedule": {
+        "round": "סיבוב {number} - {stage}",
+        "match": "מקצה",
+        "time": "שעה",
+        "table": "שולחן",
+        "no-data": "אין לוח זמנים זירה זמין"
+      },
+      "judging-schedule": {
+        "start-time": "התחלה",
+        "no-data": "אין לוח זמנים שיפוט זמין"
+      },
+      "awards": {
+        "team-awards": "פרסי קבוצות",
+        "personal-awards": "פרסים אישיים",
+        "advancement": "זכאים להעפלה",
+        "place": "מקום {place}",
+        "no-data": "טרם הוכרזו פרסים"
+      },
+      "division-teams": "קבוצות {divisionName}"
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",

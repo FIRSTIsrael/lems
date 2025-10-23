@@ -1,5 +1,9 @@
-import { Event as DbEvent, EventSummary as DbEventSummary } from '@lems/database';
-import { Event, EventSummary } from '@lems/types/api/portal';
+import {
+  Event as DbEvent,
+  EventSummary as DbEventSummary,
+  EventDetails as DbEventDetails
+} from '@lems/database';
+import { Event, EventDetails, EventSummary } from '@lems/types/api/portal';
 import dayjs from 'dayjs';
 
 export const makePortalEventResponse = (event: DbEvent): Event => ({
@@ -32,3 +36,21 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     status: eventStatus
   };
 };
+
+export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDetails => ({
+  id: event.id,
+  slug: event.slug,
+  name: event.name,
+  startDate: event.start_date,
+  endDate: event.end_date,
+  location: event.location,
+  seasonId: event.season_id,
+  divisions: event.divisions.map(division => ({
+    id: division.id,
+    name: division.name,
+    color: division.color,
+    teamCount: division.team_count
+  })),
+  seasonName: event.season_name,
+  seasonSlug: event.season_slug
+});

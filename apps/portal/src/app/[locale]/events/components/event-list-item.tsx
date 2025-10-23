@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Chip, Button, alpha, useTheme } from '@mui/material';
+import { Box, Typography, Stack, Chip, Button, alpha, useTheme, Link } from '@mui/material';
 import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
@@ -122,6 +122,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
         </Box>
 
         <Button
+          component={Link}
           variant={variant === 'active' ? 'contained' : 'outlined'}
           color={variant === 'active' ? 'error' : 'primary'}
           size="small"
@@ -130,6 +131,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
             minWidth: { xs: '100%', sm: 'auto' },
             whiteSpace: 'nowrap'
           }}
+          href={`/event/${event.slug}`}
         >
           {variant === 'active'
             ? tEvents('view-event')

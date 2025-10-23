@@ -1,4 +1,15 @@
-import { JudgingSession, Room } from '@lems/types/api/admin';
+interface Room {
+  id: string;
+  name: string;
+}
+
+interface JudgingSession {
+  id: string;
+  number: number;
+  teamId: string | null;
+  roomId: string;
+  scheduledTime: Date | string;
+}
 
 export interface JudgingSessionTime {
   time: Date;
@@ -16,7 +27,8 @@ export const groupSessionsByTime = (
 ): JudgingSessionTime[] => {
   const sessionsByTime = sessions.reduce(
     (acc, session) => {
-      const timeKey = session.scheduledTime.toISOString();
+      session.scheduledTime = new Date(session.scheduledTime);
+      const timeKey = session.scheduledTime.getTime();
       if (!acc[timeKey]) {
         acc[timeKey] = {
           time: session.scheduledTime,
@@ -33,7 +45,7 @@ export const groupSessionsByTime = (
     const timeSlot = sessionsByTime[timeKey];
     timeSlot.rooms = rooms.map(room => {
       const session = sessions.find(
-        s => s.roomId === room.id && s.scheduledTime.toISOString() === timeKey
+        s => s.roomId === room.id && new Date(s.scheduledTime).getTime() === Number(timeKey)
       );
       return {
         id: room.id,
