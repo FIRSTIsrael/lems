@@ -61,7 +61,7 @@ const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
               {team.city} • {team.affiliation}
             </Typography>
           </Stack>
-          {teamScoreboard && (
+          {/* {teamScoreboard && (
             <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
               <Chip
                 label={t('header.rank', { rank: teamScoreboard.robotGameRank || 0 })}
@@ -74,7 +74,7 @@ const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
                 variant="outlined"
               />
             </Stack>
-          )}
+          )} */}
         </Box>
       </Stack>
     </Paper>
