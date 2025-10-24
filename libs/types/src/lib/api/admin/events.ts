@@ -31,7 +31,8 @@ export const AdminEventSettingsResponseSchema = z.object({
   visible: z.boolean(),
   completed: z.boolean(),
   published: z.boolean(),
-  advancementPercent: z.number().min(0).max(100)
+  advancementPercent: z.number().min(0).max(100),
+  eventType: z.enum(['OFFSEASON', 'OFFICIAL'])
 });
 
 export type EventSettings = z.infer<typeof AdminEventSettingsResponseSchema>;

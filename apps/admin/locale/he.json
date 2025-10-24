@@ -522,7 +522,11 @@
           "saving": "שומר...",
           "advancing-teams": "({advancingTeams}/{totalTeams} קבוצות)",
           "visible": "גלוי",
-          "visible-description": "האם אירוע זה גלוי בפורטל."
+          "visible-description": "האם אירוע זה גלוי בפורטל.",
+          "event-type": "סוג אירוע",
+          "event-type-description": "מגדיר אם האירוע הוא רשמי או אופסיזון.",
+          "event-type-official": "רשמי",
+          "event-type-offseason": "אופסיזון"
         },
         "event-actions": {
           "title": "פעולות אירוע",

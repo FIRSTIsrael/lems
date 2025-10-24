@@ -13,7 +13,11 @@ import {
   CircularProgress,
   Grid,
   FormControlLabel,
-  Switch
+  Switch,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -45,6 +49,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   );
 
   const [visible, setVisible] = useState<boolean>(settings.visible || false);
+  const [eventType, setEventType] = useState<'OFFSEASON' | 'OFFICIAL'>(
+    settings.eventType || 'OFFICIAL'
+  );
 
   const totalTeams = teams.length;
   const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
@@ -53,6 +60,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
     if (settings) {
       setAdvancementPercent(settings.advancementPercent);
       setVisible(settings.visible);
+      setEventType(settings.eventType);
     }
   }, [settings]);
 
@@ -69,7 +77,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
         body: JSON.stringify({
           ...settings,
           advancementPercent,
-          visible
+          visible,
+          eventType
         })
       });
 
@@ -107,6 +116,23 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           />
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
             {t('event-settings.visible-description')}
+          </Typography>
+        </Box>
+
+        <Box sx={{ mb: 3 }}>
+          <FormControl fullWidth>
+            <InputLabel>{t('event-settings.event-type')}</InputLabel>
+            <Select
+              value={eventType}
+              label={t('event-settings.event-type')}
+              onChange={e => setEventType(e.target.value as 'OFFSEASON' | 'OFFICIAL')}
+            >
+              <MenuItem value="OFFICIAL">{t('event-settings.event-type-official')}</MenuItem>
+              <MenuItem value="OFFSEASON">{t('event-settings.event-type-offseason')}</MenuItem>
+            </Select>
+          </FormControl>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            {t('event-settings.event-type-description')}
           </Typography>
         </Box>
 
@@ -151,7 +177,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
             onClick={handleSaveSettings}
             disabled={
               isSaving ||
-              (advancementPercent === settings.advancementPercent && visible === settings.visible)
+              (advancementPercent === settings.advancementPercent &&
+                visible === settings.visible &&
+                eventType === settings.eventType)
             }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >
