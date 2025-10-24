@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Typography, Paper, Box, Divider, Grid, Stack } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
@@ -79,7 +80,7 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
               {team ? (
                 <Typography
                   component={NextLink}
-                  href={`/teams/${team.number}`}
+                  href={`/event/${eventSlug}/team/${team.number}`}
                   variant="body1"
                   fontWeight={600}
                   sx={{

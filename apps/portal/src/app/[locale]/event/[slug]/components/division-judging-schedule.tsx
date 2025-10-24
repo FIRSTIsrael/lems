@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
@@ -31,6 +32,8 @@ export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = (
   sessions,
   rooms
 }) => {
+  const params = useParams();
+  const eventSlug = params.slug as string;
   const t = useTranslations('pages.event');
   const teams = useDivisionTeams();
   const theme = useTheme();
@@ -92,7 +95,7 @@ export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = (
                           <Tooltip title={team.name} arrow>
                             <Link
                               component={NextLink}
-                              href={`/teams/${team.number}`}
+                              href={`/event/${eventSlug}/team/${team.number}`}
                               sx={{
                                 color: 'black',
                                 textDecoration: 'none',

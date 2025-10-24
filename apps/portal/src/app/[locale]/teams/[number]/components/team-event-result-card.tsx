@@ -48,7 +48,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
             <Typography variant="h4" fontWeight="600" color="primary">
               {eventResult.eventName}
             </Typography>
-            <Button variant="text" href={`/events/${eventResult.eventSlug}/teams/${team.number}`}>
+            <Button variant="text" href={`/event/${eventResult.eventSlug}/team/${team.number}`}>
               {t('view-details')}
             </Button>
           </Stack>

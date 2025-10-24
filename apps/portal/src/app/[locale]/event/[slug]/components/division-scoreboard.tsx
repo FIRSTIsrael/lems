@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
@@ -12,6 +13,8 @@ interface DivisionScoreboardProps {
 }
 
 export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
+  const params = useParams();
+  const eventSlug = params.slug as string;
   const t = useTranslations('pages.event');
   const teams = useDivisionTeams();
   const theme = useTheme();
@@ -46,7 +49,7 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
         }
         return (
           <Link
-            href={`/teams/${team.number}`}
+            href={`/event/${eventSlug}/team/${team.number}`}
             sx={{
               textDecoration: 'none',
               color: 'text.primary',

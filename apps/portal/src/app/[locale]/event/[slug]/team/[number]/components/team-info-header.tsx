@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Paper, Button, Avatar, Chip, Stack, Typography, Box } from '@mui/material';
+import { Paper, Button, Avatar, Stack, Typography, Box } from '@mui/material';
 import { ArrowBack, ArrowForward, LocationOn as LocationIcon } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { Team } from '@lems/types/api/portal';

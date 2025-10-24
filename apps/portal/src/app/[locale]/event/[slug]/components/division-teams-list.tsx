@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -22,6 +23,8 @@ interface DivisionTeamsListProps {
 }
 
 export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionName }) => {
+  const params = useParams();
+  const eventSlug = params.slug as string;
   const t = useTranslations('pages.event');
   const teams = useDivisionTeams();
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
@@ -60,7 +63,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                 <TableCell>
                   {/* Links are added seperatly as <tr> cannot be a child of <a> */}
                   <Link
-                    href={`/team/${team.number}`}
+                    href={`/event/${eventSlug}/team/${team.number}`}
                     sx={{
                       textDecoration: 'none',
                       color: 'inherit',
@@ -72,7 +75,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/team/${team.number}`}
+                    href={`/event/${eventSlug}/team/${team.number}`}
                     sx={{
                       textDecoration: 'none',
                       color: 'inherit',
@@ -83,7 +86,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <IconButton href={`/team/${team.number}`}>
+                  <IconButton href={`/event/${eventSlug}/team/${team.number}`}>
                     <DirectionalIcon ltr={ChevronLeft} rtl={ChevronRight} />
                   </IconButton>
                 </TableCell>

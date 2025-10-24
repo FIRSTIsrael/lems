@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
@@ -33,6 +34,8 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({
   schedule,
   tables
 }) => {
+  const params = useParams();
+  const eventSlug = params.slug as string;
   const t = useTranslations('pages.event');
   const teams = useDivisionTeams();
   const { getStage } = useMatchStageTranslations();
@@ -141,7 +144,7 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({
                               <Tooltip title={team.name} arrow>
                                 <Link
                                   component={NextLink}
-                                  href={`/teams/${team.number}`}
+                                  href={`/event/${eventSlug}/team/${team.number}`}
                                   sx={{
                                     color: 'black',
                                     textDecoration: 'none',
