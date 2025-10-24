@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
+import { loadEvent } from '../../../middlewares/portal/load-event';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -82,6 +83,7 @@ router.get('/', async (req: Request, res: Response) => {
   return;
 });
 
+router.use('/:slug', loadEvent());
 router.get('/:slug', async (req: Request, res: Response) => {
   const { slug } = req.params;
 
