@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
-import { Paper, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab, Box } from '@mui/material';
 import { DivisionData } from '@lems/types/api/portal';
 import { DivisionJudgingSchedule } from './division-judging-schedule';
 import { DivisionScoreboard } from './division-scoreboard';
@@ -51,22 +51,27 @@ export const EventDivision: React.FC<EventDivisionProps> = ({ divisionId }) => {
         </Tabs>
       </Paper>
 
-      {selectedTab === 0 && <DivisionTeamsList divisionName={divisionData.name} />}
+      <Box width="100%">
+        {selectedTab === 0 && <DivisionTeamsList divisionName={divisionData.name} />}
 
-      {selectedTab === 1 && <DivisionScoreboard data={divisionData.scoreboard} />}
+        {selectedTab === 1 && <DivisionScoreboard data={divisionData.scoreboard} />}
 
-      {selectedTab === 2 && <DivisionAwards awards={divisionData.awards} />}
+        {selectedTab === 2 && <DivisionAwards awards={divisionData.awards} />}
 
-      {selectedTab === 3 && (
-        <DivisionFieldSchedule schedule={divisionData.fieldSchedule} tables={divisionData.tables} />
-      )}
+        {selectedTab === 3 && (
+          <DivisionFieldSchedule
+            schedule={divisionData.fieldSchedule}
+            tables={divisionData.tables}
+          />
+        )}
 
-      {selectedTab === 4 && (
-        <DivisionJudgingSchedule
-          sessions={divisionData.judgingSchedule}
-          rooms={divisionData.rooms}
-        />
-      )}
+        {selectedTab === 4 && (
+          <DivisionJudgingSchedule
+            sessions={divisionData.judgingSchedule}
+            rooms={divisionData.rooms}
+          />
+        )}
+      </Box>
     </DivisionTeamsProvider>
   );
 };

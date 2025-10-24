@@ -13,7 +13,8 @@ import {
   Paper,
   IconButton
 } from '@mui/material';
-import { ChevronEndIcon } from '@lems/localization';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionTeamsListProps {
@@ -83,7 +84,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                 </TableCell>
                 <TableCell>
                   <IconButton href={`/team/${team.number}`}>
-                    <ChevronEndIcon />
+                    <DirectionalIcon ltr={ChevronLeft} rtl={ChevronRight} />
                   </IconButton>
                 </TableCell>
               </TableRow>

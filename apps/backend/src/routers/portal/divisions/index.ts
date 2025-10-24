@@ -35,7 +35,7 @@ router.get('/:divisionId', async (req: Request, res: Response) => {
       makePortalDivisionDetailsResponse(
         division,
         teams,
-        eventSettings.published ? awards : [],
+        eventSettings?.published ? awards : [],
         rooms,
         tables,
         fieldSchedule,
