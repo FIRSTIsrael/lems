@@ -42,7 +42,7 @@ router.get('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const events = await db.events.bySeason(season.id).getAllSummaries();
+    const events = await db.events.bySeason(season.id).getAllSummaries(true);
     res.json(events.map(makePortalEventSummaryResponse));
     return;
   }
@@ -55,7 +55,7 @@ router.get('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const events = await db.events.after(timestamp).getAllSummaries();
+    const events = await db.events.after(timestamp).getAllSummaries(true);
     res.json(events.map(makePortalEventSummaryResponse));
     return;
   }

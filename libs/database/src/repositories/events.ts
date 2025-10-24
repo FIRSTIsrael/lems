@@ -294,9 +294,10 @@ class EventsSelector {
     return await this.getEventsQuery().execute();
   }
 
-  async getAllSummaries(): Promise<EventSummary[]> {
+  async getAllSummaries(portal: boolean = false): Promise<EventSummary[]> {
     let query = this.db
       .selectFrom('events')
+      .innerJoin('event_settings', 'event_settings.event_id', 'events.id')
       .innerJoin('divisions', 'divisions.event_id', 'events.id')
       .leftJoin('team_divisions', 'team_divisions.division_id', 'divisions.id')
       .select([
@@ -317,6 +318,10 @@ class EventsSelector {
         eb.fn.count('team_divisions.team_id').as('team_count'),
         sql<string | null>`events.coordinates::text`.as('coordinates')
       ]);
+
+    if (portal) {
+      query = query.where('event_settings.visible', '=', true);
+    }
 
     if (this.selector.type === 'after') {
       query = query.where(
