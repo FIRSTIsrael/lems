@@ -39,12 +39,12 @@ import {
   localizedScoresheet
 } from '@lems/season';
 import { enqueueSnackbar } from 'notistack';
-import ScoresheetMission from './scoresheet-mission';
-import ScoresheetAlert from './scoresheet-alert';
-import GpSelector from './gp';
 import { RoleAuthorizer } from '../../role-authorizer';
 import { localizeTeam } from '../../../localization/teams';
 import { localizedMatchStage } from '../../../localization/field';
+import ScoresheetMission from './scoresheet-mission';
+import ScoresheetAlert from './scoresheet-alert';
+import GpSelector from './gp';
 import ScoresheetSignature from './scoresheet-signature';
 
 interface ErrorWithMessage {

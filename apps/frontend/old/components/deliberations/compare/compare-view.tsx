@@ -15,6 +15,7 @@ import {
   CoreValuesAwardsTypes,
   CoreValuesAwards
 } from '@lems/types';
+import { makeCvValuesForAllRubrics } from '@lems/season';
 import CompareRubricRemarks from './compare-rubric-remarks';
 import CompareNominations from './compare-nominations';
 import CompareBatteryChart from './compare-battery-chart';
@@ -23,7 +24,6 @@ import CompareRubricScores from './compare-rubric-scores';
 import CompareExceedingRemarks from './compare-exceeding-remarks';
 import CompareTeamInfo from './compare-team-info';
 import CompareCvForms from './compare-cv-forms';
-import { makeCvValuesForAllRubrics } from '@lems/season';
 
 export interface CompareContextType {
   teams: Array<WithId<Team>>;

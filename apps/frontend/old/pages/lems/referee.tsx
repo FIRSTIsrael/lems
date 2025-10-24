@@ -10,12 +10,12 @@ import {
   DivisionState,
   Team
 } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import Layout from '../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
 import StrictRefereeDisplay from '../../components/field/referee/strict-referee-display';
-import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../localization/event';
 
 interface Props {

@@ -16,12 +16,12 @@ import {
   WSServerEmittedEvents,
   JudgingCategory
 } from '@lems/types';
-import EditRubricButton from './edit-rubric-button';
-import StartJudgingSessionButton from './start-judging-session-button';
+import { localizedJudgingCategory } from '@lems/season';
 import StyledTeamTooltip from '../general/styled-team-tooltip';
 import { RoleAuthorizer } from '../role-authorizer';
-import { localizedJudgingCategory } from '@lems/season';
 import StatusIcon from '../general/status-icon';
+import EditRubricButton from './edit-rubric-button';
+import StartJudgingSessionButton from './start-judging-session-button';
 
 interface Props {
   division: WithId<Division>;

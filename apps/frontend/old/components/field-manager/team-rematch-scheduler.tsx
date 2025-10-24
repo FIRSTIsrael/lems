@@ -255,7 +255,7 @@ const TeamRematchScheduler: React.FC<TeamRematchSchedulerProps> = ({
             disabled={selectedMatch === null || selectedParticipant === null}
             onClick={() => {
               // Cannot be null since button is disabled when it's null
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+               
               onScheduleRematch(team, selectedMatch!, selectedParticipant!);
               setSelectedMatch(null);
               setSelectedParticipant(null);

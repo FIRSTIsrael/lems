@@ -19,9 +19,9 @@ import DeliberationTimer from '../deliberation-timer';
 import TrashDroppable from '../trash-droppable';
 import TeamSelection from '../../general/team-selection';
 import CompareModal from '../compare/compare-modal';
-import EndDeliberationStageButton from './end-deliberation-stage-button';
 import ManualAdditionButton from '../manual-addition-button';
 import DisqualificationButton from '../disqualification-button';
+import EndDeliberationStageButton from './end-deliberation-stage-button';
 
 interface FinalDeliberationControlPanelProps {
   deliberation: WithId<JudgingDeliberation>;

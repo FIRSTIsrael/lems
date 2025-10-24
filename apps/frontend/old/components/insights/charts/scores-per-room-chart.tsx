@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ObjectId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
-import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ComposedChart,
   Area,
@@ -14,6 +13,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { blue, green, red } from '@mui/material/colors';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface ScoresPerRoomChartProps {
   divisionId: ObjectId;

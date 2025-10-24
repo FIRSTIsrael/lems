@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
-import { Division } from './division';
 import { EventUserAllowedRoles } from '../roles';
+import { Division } from './division';
 
 export interface FllEvent {
   name: string;

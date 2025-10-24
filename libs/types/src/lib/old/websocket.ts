@@ -9,11 +9,10 @@ import { Rubric } from './schemas/rubric';
 import { Ticket } from './schemas/ticket';
 import { Team } from './schemas/team';
 import { Scoresheet } from './schemas/scoresheet';
-import { DivisionState, PresentationState } from './schemas/division-state';
+import { DivisionState, PresentationState , AudienceDisplayState } from './schemas/division-state';
 import { JudgingSession } from './schemas/judging-session';
 import { JudgingDeliberation } from './schemas/deliberation';
 import { CoreValuesForm } from './schemas/core-values-form';
-import { AudienceDisplayState } from './schemas/division-state';
 import { JudgingRoom } from './schemas/judging-room';
 import { Award } from './schemas/award';
 
@@ -289,7 +288,7 @@ export interface WSClientEmittedEvents {
   ) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-empty-object-type
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface WSInterServerEvents {
   // ...
 }

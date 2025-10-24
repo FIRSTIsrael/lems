@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { DivisionState } from '@lems/types';
 import * as db from '@lems/database';
-
 import divisionValidator from '../../../middlewares/lems/division-validator';
+import roleValidator from '../../../middlewares/lems/role-validator';
 import sessionsRouter from './sessions';
 import matchesRouter from './matches';
 import roomsRouter from './rooms';
@@ -18,7 +18,6 @@ import cvFormsRouter from './cv-forms';
 import exportRouter from './export';
 import insightsRouter from './insights';
 import deliberationsRouter from './deliberations';
-import roleValidator from '../../../middlewares/lems/role-validator';
 
 const router = express.Router({ mergeParams: true });
 

@@ -14,9 +14,9 @@ import {
   Box
 } from '@mui/material';
 import { DeliberationAnomaly } from '@lems/types';
-import AnomalyIcon from './anomaly-icon';
 import { groupBy } from '@lems/utils/objects';
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
+import AnomalyIcon from './anomaly-icon';
 
 interface AnomalyTeamsProps extends ButtonProps {
   teams: Array<DeliberationTeam>;

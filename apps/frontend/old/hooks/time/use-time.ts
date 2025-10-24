@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useTimeSync } from '../../lib/timesync';
 import dayjs, { Dayjs } from 'dayjs';
+import { useTimeSync } from '../../lib/timesync';
 
 interface UseTimeOptions {
   interval?: number;

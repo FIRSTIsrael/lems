@@ -109,7 +109,7 @@ const Page: NextPage<Props> = ({
     const sortedTeams = teams.sort((a, b) => getScore(b) - getScore(a));
 
     picklist.forEach((teamId, index) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       const score = getScore(sortedTeams.find(t => t._id === teamId)!);
       const excludeTies = sortedTeams.filter(st => getScore(st) !== score || st._id === teamId);
       const rank = excludeTies.findIndex(st => st._id === teamId);

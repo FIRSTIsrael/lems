@@ -15,6 +15,7 @@ import {
   JudgingDeliberation,
   DivisionWithEvent
 } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import RubricStatusReferences from '../../components/judging/rubric-status-references';
 import JudgingRoomSchedule from '../../components/judging/judging-room-schedule';
@@ -23,7 +24,6 @@ import WelcomeHeader from '../../components/general/welcome-header';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { localizedRoles } from '../../localization/roles';
 import { useWebsocket } from '../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
 import CategoryDeliberationHeader from '../../components/judging/category-deliberation-header';
 import { localizeDivisionTitle } from '../../localization/event';
 

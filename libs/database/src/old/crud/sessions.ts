@@ -1,5 +1,5 @@
-import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
+import db from '../database';
 
 export const getSession = (filter: Filter<any>) => {
   return db.collection<any>('sessions').findOne(filter);

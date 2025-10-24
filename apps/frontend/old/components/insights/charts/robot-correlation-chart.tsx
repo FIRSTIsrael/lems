@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { Division } from '@lems/types';
-import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ScatterChart,
   Scatter,
@@ -13,6 +12,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { red } from '@mui/material/colors';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface RobotCorrelationChartProps {
   division: WithId<Division>;

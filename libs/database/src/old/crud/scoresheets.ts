@@ -1,5 +1,5 @@
-import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
+import db from '../database';
 
 export const getScoresheet = (filter: Filter<any>) => {
   return db.collection<any>('scoresheets').findOne(filter);

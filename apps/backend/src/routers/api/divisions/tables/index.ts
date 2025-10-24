@@ -1,10 +1,9 @@
 import express, { Request, Response } from 'express';
-
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-import matchesRouter from './matches';
-import roleValidator from '../../../../middlewares/lems/role-validator';
 import { RobotGameTable } from '@lems/types';
+import roleValidator from '../../../../middlewares/lems/role-validator';
+import matchesRouter from './matches';
 
 const router = express.Router({ mergeParams: true });
 

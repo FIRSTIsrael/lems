@@ -10,13 +10,13 @@ import {
 } from '@lems/types';
 import { localizedAward } from '@lems/season';
 import { Deck, DeckView, DeckRef } from '@lems/presentations';
+import { apiFetch } from '../../lib/utils/fetch';
+import { localizeDivisionTitle } from '../../localization/event';
 import TitleSlide from './title-slide';
 import ImageSlide from './image-slide';
 import AwardWinnerChromaSlide from './award-winner-chroma-slide';
 import AwardWinnerSlide from './award-winner-slide';
 import AdvancingTeamsSlide from './advancing-teams-slide';
-import { apiFetch } from '../../lib/utils/fetch';
-import { localizeDivisionTitle } from '../../localization/event';
 
 interface AwardsPresentationProps extends BoxProps {
   division: WithId<DivisionWithEvent>;

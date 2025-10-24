@@ -12,11 +12,11 @@ import {
   TableRow
 } from '@mui/material';
 import { DivisionWithEvent, SafeUser, RoleTypes, DivisionScheduleEntry } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
-import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface DivisionScheduleRowProps {

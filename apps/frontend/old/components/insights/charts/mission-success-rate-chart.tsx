@@ -3,7 +3,6 @@ import { WithId } from 'mongodb';
 import { green } from '@mui/material/colors';
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { Division } from '@lems/types';
-import { apiFetch } from '../../../lib/utils/fetch';
 import {
   BarChart,
   Bar,
@@ -14,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface MissionSuccessRateChartProps {
   division: WithId<Division>;

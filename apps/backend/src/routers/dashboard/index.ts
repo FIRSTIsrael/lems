@@ -1,6 +1,6 @@
 import express from 'express';
-import dashboardDivisionsRouter from './divisions/index';
 import { dashboardAuthMiddleware } from '../../middlewares/dashboard/auth';
+import dashboardDivisionsRouter from './divisions/index';
 
 const router = express.Router({ mergeParams: true });
 

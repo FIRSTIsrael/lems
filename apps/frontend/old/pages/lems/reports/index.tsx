@@ -4,12 +4,12 @@ import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { SafeUser, DivisionWithEvent, RoleTypes } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
+import { WithId } from 'mongodb';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
-import { enqueueSnackbar } from 'notistack';
-import { WithId } from 'mongodb';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface GridPaperLinkProps {

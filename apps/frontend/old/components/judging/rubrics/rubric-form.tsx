@@ -35,15 +35,15 @@ import {
 } from '@lems/types';
 import { fullMatch } from '@lems/utils/objects';
 import { RubricsSchema, localizedJudgingCategory } from '@lems/season';
+import { enqueueSnackbar } from 'notistack';
+import { RoleAuthorizer } from '../../role-authorizer';
+import { localizeTeam } from '../../../localization/teams';
+import CVFieldUncheckedIcon from '../../icons/cv-field-unchecked-icon';
 import AwardCandidatureCheckbox from './award-candidature-checkbox';
 import RatingRow from './rating-row';
 import HeaderRow from './header-row';
 import TitleRow from './title-row';
 import FeedbackRow from './feedback-row';
-import { enqueueSnackbar } from 'notistack';
-import { RoleAuthorizer } from '../../role-authorizer';
-import { localizeTeam } from '../../../localization/teams';
-import CVFieldUncheckedIcon from '../../icons/cv-field-unchecked-icon';
 
 interface RubricFormProps {
   division: WithId<Division>;

@@ -3,12 +3,12 @@ import Grid from '@mui/material/Grid';
 import { Award, AwardNames, JudgingDeliberation, Team } from '@lems/types';
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { localizedAward } from '@lems/season';
-import AwardList from '../award-list';
-import { localizeTeam } from '../../../localization/teams';
-import PersonalAwardWinnerList from './personal-award-winner-list';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
+import AwardList from '../award-list';
+import { localizeTeam } from '../../../localization/teams';
 import { DeliberationContext } from '../deliberation';
+import PersonalAwardWinnerList from './personal-award-winner-list';
 
 interface ReviewLayoutProps {
   awards: Array<WithId<Award>>;

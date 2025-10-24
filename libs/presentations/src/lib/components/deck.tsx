@@ -129,7 +129,7 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
           slideCount: slideIds.length,
           slideIds,
           navigationDirection,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+           
           slidePortalNode: slidePortalNode!,
           initialized: fullyInitialized,
           activeView: {

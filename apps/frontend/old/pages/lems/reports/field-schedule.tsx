@@ -11,13 +11,13 @@ import {
   RobotGameMatch,
   RobotGameTable
 } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import ReportRoundSchedule from '../../../components/field/report-round-schedule';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { useWebsocket } from '../../../hooks/use-websocket';
-import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {

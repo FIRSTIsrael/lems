@@ -11,10 +11,10 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import RoundScheduleEditor from './round-schedule-editor';
 import { purple } from '@mui/material/colors';
-import { localizedMatchStage } from '../../localization/field';
 import { Socket } from 'socket.io-client';
+import { localizedMatchStage } from '../../localization/field';
+import RoundScheduleEditor from './round-schedule-editor';
 
 type RoundInfo = { stage: RobotGameMatchStage; number: number };
 

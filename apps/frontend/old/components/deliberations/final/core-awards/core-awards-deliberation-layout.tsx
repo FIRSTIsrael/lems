@@ -6,11 +6,10 @@ import { JudgingCategory, Team, JudgingCategoryTypes, AwardLimits } from '@lems/
 import { localizedJudgingCategory } from '@lems/season';
 import FinalDeliberationControlPanel from '../final-deliberation-control-panel';
 import ScoresPerRoomChart from '../../../insights/charts/scores-per-room-chart';
-import CoreAwardsDeliberationGrid from './core-awards-deliberation-grid';
 import TeamPool from '../../team-pool';
 import AwardList from '../../award-list';
-
 import { DeliberationContext } from '../../deliberation';
+import CoreAwardsDeliberationGrid from './core-awards-deliberation-grid';
 
 const CoreAwardsDeliberationLayout: React.FC = () => {
   const {
@@ -67,7 +66,7 @@ const CoreAwardsDeliberationLayout: React.FC = () => {
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
           startDeliberation={start}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
+           
           endDeliberationStage={endStage ?? (() => {})}
           nextStageUnlocked={nextStageUnlocked}
           compareProps={compareContextProps}

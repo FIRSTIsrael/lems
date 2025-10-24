@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import dashboardTeamsRouter from './teams/index';
 import * as db from '@lems/database';
 import eventSalesforceValidator from '../../../middlewares/dashboard/event-salesforce-validator';
+import dashboardTeamsRouter from './teams/index';
 
 const router = express.Router({ mergeParams: true });
 

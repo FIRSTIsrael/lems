@@ -13,12 +13,12 @@ import {
   TableRow
 } from '@mui/material';
 import { DivisionWithEvent, SafeUser, RoleTypes, Award, AwardNames } from '@lems/types';
+import { localizedAward } from '@lems/season';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeDivisionTitle } from '../../../localization/event';
-import { localizedAward } from '@lems/season';
 
 interface Props {
   user: WithId<SafeUser>;

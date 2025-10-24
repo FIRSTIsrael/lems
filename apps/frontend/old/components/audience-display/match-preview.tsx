@@ -2,10 +2,10 @@ import React from 'react';
 import { WithId } from 'mongodb';
 import { Division, RobotGameMatch } from '@lems/types';
 import { Box, Paper, Stack, Typography } from '@mui/material';
-import { localizedMatchStage } from '../../localization/field';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import { alpha, darken } from '@mui/material/styles';
+import { localizedMatchStage } from '../../localization/field';
 
 interface MatchPreviewProps {
   division: WithId<Division>;

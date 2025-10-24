@@ -4,9 +4,9 @@ import ScoresPerRoomChart from '../../insights/charts/scores-per-room-chart';
 import TeamPool from '../team-pool';
 import AwardList from '../award-list';
 import { DeliberationContext } from '../deliberation';
+import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 import CategoryDeliberationsGrid from './category-deliberations-grid';
 import CategoryDeliberationControlPanel from './category-deliberation-control-panel';
-import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 
 const CategoryDeliberationLayout: React.FC = () => {
   const {

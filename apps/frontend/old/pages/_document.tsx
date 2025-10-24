@@ -5,8 +5,8 @@ import {
   createEmotionCache
 } from '@mui/material-nextjs/v15-pagesRouter';
 import { Html, Head, Main, NextScript, DocumentProps, DocumentContext } from 'next/document';
-import { baseTheme } from '../lib/theme';
 import { Locales, Locale, getEmotionCacheOptions } from '@lems/localization';
+import { baseTheme } from '../lib/theme';
 
 export default function LEMSDocument(props: DocumentProps & DocumentHeadTagsProps) {
   const locale = props.locale || 'he'; // Default to Hebrew if no locale is provided

@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-
 import * as db from '@lems/database';
 import { MissionClause } from '@lems/types';
 import { scoresheet, ScoresheetError } from '@lems/shared/scoresheet';

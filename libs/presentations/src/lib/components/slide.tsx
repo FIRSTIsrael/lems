@@ -1,9 +1,9 @@
 import { createContext, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { SlideId, DeckContext } from './deck';
 import { useSlide } from '../hooks/use-slides';
 import { ActivationThresholds, useCollectSteps } from '../hooks/use-steps';
 import { GOTO_FINAL_STEP } from '../hooks/use-deck-state';
+import { SlideId, DeckContext } from './deck';
 import { SlideScaler } from './slide-scaler';
 
 export type SlideContextType = {

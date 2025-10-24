@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import ImportIcon from '@mui/icons-material/UploadRounded';
 import FileIcon from '@mui/icons-material/AttachFile';
-import { apiFetch } from '../../lib/utils/fetch';
 import { useSnackbar } from 'notistack';
+import { apiFetch } from '../../lib/utils/fetch';
 
 interface UploadFileButtonProps extends ButtonProps {
   urlPath: string;

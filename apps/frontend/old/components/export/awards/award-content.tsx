@@ -3,8 +3,8 @@ import { WithId } from 'mongodb';
 import Image from 'next/image';
 import { Stack, Typography, Box } from '@mui/material';
 import { localizedAward, localizedAwardPlace } from '@lems/season';
-import ExportAwardSignature from './award-signature';
 import { localizeDivisionTitle } from '../../../localization/event';
+import ExportAwardSignature from './award-signature';
 
 // Duplicated code, move to some common folder
 interface AwardToExport {

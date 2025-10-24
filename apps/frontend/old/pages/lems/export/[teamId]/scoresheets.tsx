@@ -1,11 +1,9 @@
-import { Team, Scoresheet, SafeUser } from '@lems/types';
-import { serverSideGetRequests } from '../../../../lib/utils/fetch';
+import { Team, Scoresheet, SafeUser , DivisionWithEvent } from '@lems/types';
 import { WithId } from 'mongodb';
 import { NextPage, GetServerSideProps } from 'next';
 import { Box } from '@mui/material';
-import { DivisionWithEvent } from '@lems/types';
+import { serverSideGetRequests , getUserAndDivision } from '../../../../lib/utils/fetch';
 import { RoleAuthorizer } from '../../../../components/role-authorizer';
-import { getUserAndDivision } from '../../../../lib/utils/fetch';
 import { ExportScoresheetPage } from '../../../../components/export/scoresheets/scoresheet-page';
 
 interface Props {

@@ -4,8 +4,8 @@ import { FormikValues } from 'formik';
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Team } from '@lems/types';
-import CVFormSubjectSelect from './cv-form-subject';
 import FormikTeamField from '../formik/formik-team-field';
+import CVFormSubjectSelect from './cv-form-subject';
 
 interface CVFormHeaderProps {
   teams: Array<WithId<Team>>;

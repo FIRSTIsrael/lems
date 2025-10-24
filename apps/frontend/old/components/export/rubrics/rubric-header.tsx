@@ -2,8 +2,7 @@ import { WithId } from 'mongodb';
 import { JudgingCategory, Rubric, SEASON_NAME, DivisionWithEvent } from '@lems/types';
 import Grid from '@mui/material/Grid';
 import { Stack, Typography } from '@mui/material';
-import { localizedJudgingCategory } from '@lems/season';
-import { RubricsSchema } from '@lems/season';
+import { localizedJudgingCategory , RubricsSchema } from '@lems/season';
 import Markdown from 'react-markdown';
 import { localizeDivisionTitle } from '../../../localization/event';
 
@@ -33,7 +32,7 @@ export const RubricHeader: React.FC<RubricHeaderProps> = ({ rubric, schema, divi
         </Stack>
       </Grid>
       <Grid size={2}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        { }
         <img
           alt="לוגו של תוכניות FIRST LEGO League Challenge"
           src="/assets/audience-display/sponsors/fllc-horizontal.svg"

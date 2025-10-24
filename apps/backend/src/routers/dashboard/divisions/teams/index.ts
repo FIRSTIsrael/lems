@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
-
 import * as db from '@lems/database';
+import { ObjectId } from 'mongodb';
 import dashboardTeamValidator from '../../../../middlewares/dashboard/team-validator';
 import scheduleRouter from './schedule';
 import exportRouter from './export';
 import uploadRouter from './upload';
-import { ObjectId } from 'mongodb';
 
 const router = express.Router({ mergeParams: true });
 

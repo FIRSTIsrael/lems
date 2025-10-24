@@ -1,6 +1,6 @@
 import express from 'express';
-import divisionsRouter from './divisions/index';
 import csrfValidator from '../../middlewares/csrf-validator';
+import divisionsRouter from './divisions/index';
 
 const router = express.Router({ mergeParams: true });
 

@@ -3,7 +3,6 @@ import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import { WithId } from 'mongodb';
-import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { Paper, Tabs, Tab } from '@mui/material';
 import {
   CoreValuesForm,
@@ -17,6 +16,7 @@ import {
   RobotGameTable,
   RobotGameMatch
 } from '@lems/types';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import TicketPanel from '../../components/general/ticket-panel';

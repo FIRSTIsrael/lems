@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { ObjectId } from 'mongodb';
+import { ObjectId , WithId } from 'mongodb';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { WithId } from 'mongodb';
 import { Button, Paper, Stack, Typography, Box } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import NextLink from 'next/link';
@@ -17,8 +16,8 @@ import {
   DivisionWithEvent,
   Award
 } from '@lems/types';
-import { localizedJudgingCategory } from '@lems/season';
-import { rubricsSchemas } from '@lems/season';
+import { localizedJudgingCategory , rubricsSchemas } from '@lems/season';
+import { enqueueSnackbar } from 'notistack';
 import Layout from '../../../../../components/layout';
 import RubricForm from '../../../../../components/judging/rubrics/rubric-form';
 import { RoleAuthorizer } from '../../../../../components/role-authorizer';
@@ -29,7 +28,6 @@ import {
 } from '../../../../../lib/utils/fetch';
 import { useWebsocket } from '../../../../../hooks/use-websocket';
 import { localizeTeam } from '../../../../../localization/teams';
-import { enqueueSnackbar } from 'notistack';
 import { localizeDivisionTitle } from '../../../../../localization/event';
 
 interface RubricSelectorProps {

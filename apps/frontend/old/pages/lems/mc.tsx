@@ -4,7 +4,6 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 import { Paper, Tabs, Tab } from '@mui/material';
-import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import {
   DivisionState,
   RobotGameMatch,
@@ -14,6 +13,7 @@ import {
   Award,
   DivisionWithEvent
 } from '@lems/types';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import Layout from '../../components/layout';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import McSchedule from '../../components/mc/mc-schedule';

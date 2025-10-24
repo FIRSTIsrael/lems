@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
-
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
+import { JudgingRoom } from '@lems/types';
+import roleValidator from '../../../../middlewares/lems/role-validator';
 import sessionsRouter from './sessions';
 import rubricsRouter from './rubrics';
-import roleValidator from '../../../../middlewares/lems/role-validator';
-import { JudgingRoom } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });
 

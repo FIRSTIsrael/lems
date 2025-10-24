@@ -12,9 +12,9 @@ import {
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { WithId } from 'mongodb';
+import { compareScoreArrays } from '@lems/utils/arrays';
 import { localizedMatchStage } from '../../../localization/field';
 import { localizeTeam } from '../../../localization/teams';
-import { compareScoreArrays } from '@lems/utils/arrays';
 
 interface ScoreboardScoresProps {
   scoresheets: Array<WithId<Scoresheet>>;

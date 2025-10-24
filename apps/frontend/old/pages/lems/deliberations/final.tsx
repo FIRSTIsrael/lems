@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -31,12 +32,10 @@ import ChampionsDeliberationLayout from '../../../components/deliberations/final
 import CoreAwardsDeliberationLayout from '../../../components/deliberations/final/core-awards/core-awards-deliberation-layout';
 import OptionalAwardsDeliberationLayout from '../../../components/deliberations/final/optional-awards/optional-awards-deliberation-layout';
 import ReviewLayout from '../../../components/deliberations/final/review-layout';
-import { Deliberation } from '../../../components/deliberations/deliberation';
-import { DeliberationRef } from '../../../components/deliberations/deliberation';
+import { Deliberation , DeliberationRef } from '../../../components/deliberations/deliberation';
 import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 import { getDefaultPicklistLimit } from '../../../lib/utils/math';
 import { localizeDivisionTitle } from '../../../localization/event';
-import { resolve } from 'path';
 
 interface Props {
   user: WithId<SafeUser>;
@@ -68,10 +67,10 @@ const Page: NextPage<Props> = ({
   robotConsistency
 }) => {
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+   
   const deliberationId = initialDeliberations.find(d => d.isFinalDeliberation)!._id;
   const [currentStage, setCurrentStage] = useState<FinalDeliberationStage>(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+     
     initialDeliberations.find(d => d.isFinalDeliberation)!.stage!
   ); // Store a local copy for stage changes.
   const deliberation = useRef<DeliberationRef>(null);
@@ -134,7 +133,7 @@ const Page: NextPage<Props> = ({
   const categoryRanks: { [key in JudgingCategory]: Array<ObjectId> } = initialDeliberations
     .filter(d => !d.isFinalDeliberation)
     .reduce(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       (acc, current) => ({ ...acc, [current.category!]: current.awards[current.category!] }),
       {} as { [key in JudgingCategory]: Array<ObjectId> }
     );
@@ -434,7 +433,7 @@ const Page: NextPage<Props> = ({
       >
         <Deliberation
           ref={deliberation}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+           
           initialState={initialDeliberations.find(d => d.isFinalDeliberation)!}
           rooms={rooms}
           sessions={sessions}

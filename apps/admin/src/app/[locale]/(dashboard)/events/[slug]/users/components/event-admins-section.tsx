@@ -17,8 +17,8 @@ import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { AdminUser } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-import { AssignAdminsDialog } from './assign-admins-dialog';
 import { useSession } from '../../../../components/session-context';
+import { AssignAdminsDialog } from './assign-admins-dialog';
 
 export function EventAdminsSection() {
   const event = useEvent();

@@ -11,10 +11,10 @@ import {
   TableRow,
   TableCell
 } from '@mui/material';
-import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 import { Division, JudgingCategory } from '@lems/types';
 import { localizedJudgingCategory } from '@lems/season';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface CategoryScoresChartProps {
   division: WithId<Division>;

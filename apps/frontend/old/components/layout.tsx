@@ -20,8 +20,6 @@ import {
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { apiFetch } from '../lib/utils/fetch';
-import { errorAnimation } from '../lib/utils/animations';
 import {
   DivisionWithEvent,
   DivisionState,
@@ -33,6 +31,8 @@ import {
   InsightsAllowedRoles,
   ConnectionStatus
 } from '@lems/types';
+import { apiFetch } from '../lib/utils/fetch';
+import { errorAnimation } from '../lib/utils/animations';
 import ConnectionIndicator from './connection-indicator';
 import DivisionDropdown from './general/division-dropdown';
 import ReportLink from './general/report-link';
@@ -132,7 +132,7 @@ const Layout: React.FC<LayoutProps> = ({
               <Stack direction="row" spacing={2}>
                 {isEventUser && (
                   // isEventUser should be false if division?.event is undefined
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                   
                   (<DivisionDropdown event={division!.event} selected={division!._id.toString()} />)
                 )}
                 {showInsights && <InsightsLink />}

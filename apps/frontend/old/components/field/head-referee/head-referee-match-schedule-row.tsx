@@ -11,8 +11,8 @@ import {
 } from '@lems/types';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
 import BooleanIcon from '../../general/boolean-icon';
-import EditScoresheetButton from './edit-scoresheet-button';
 import { localizeTeam } from '../../../localization/teams';
+import EditScoresheetButton from './edit-scoresheet-button';
 
 interface HeadRefereeMatchScheduleRowProps {
   division: WithId<Division>;

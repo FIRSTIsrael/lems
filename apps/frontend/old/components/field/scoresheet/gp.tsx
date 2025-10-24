@@ -19,8 +19,8 @@ import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ExceededNotesCell from '../../judging/rubrics/exceeded-notes-cell';
 import { SafeUser, ScoresheetStatus } from '@lems/types';
+import ExceededNotesCell from '../../judging/rubrics/exceeded-notes-cell';
 import { RoleAuthorizer } from '../../role-authorizer';
 
 interface GpSelectorProps {

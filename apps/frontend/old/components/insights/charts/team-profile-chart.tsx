@@ -3,7 +3,6 @@ import { WithId } from 'mongodb';
 import { Skeleton } from '@mui/material';
 import { red, green, blue } from '@mui/material/colors';
 import { Division, JudgingCategory, Team } from '@lems/types';
-import { apiFetch } from '../../../lib/utils/fetch';
 import {
   RadarChart,
   PolarGrid,
@@ -14,6 +13,7 @@ import {
   Text
 } from 'recharts';
 import { localizedJudgingCategory } from '@lems/season';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface TeamProfileChartProps {
   division: WithId<Division>;

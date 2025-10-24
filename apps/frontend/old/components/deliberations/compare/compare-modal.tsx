@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { IconButton, LinearProgress, Modal, Paper, Box } from '@mui/material';
-import CompareView, { CompareViewProps } from './compare-view';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import useCountdown from '../../../hooks/time/use-countdown';
+import CompareView, { CompareViewProps } from './compare-view';
 
 interface CompareModalProps extends CompareViewProps {
   open: boolean;

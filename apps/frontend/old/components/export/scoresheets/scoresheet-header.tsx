@@ -1,8 +1,7 @@
 import { WithId } from 'mongodb';
 import { Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { DivisionWithEvent, Team, Scoresheet } from '@lems/types';
-import { SEASON_NAME } from '@lems/types';
+import { DivisionWithEvent, Team, Scoresheet , SEASON_NAME } from '@lems/types';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface ScoresheetHeaderProps {
@@ -30,7 +29,7 @@ export const ScoresheetHeader: React.FC<ScoresheetHeaderProps> = ({
         </Stack>
       </Grid>
       <Grid size={2}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        { }
         <img
           alt="לוגו של תוכניות FIRST LEGO League Challenge"
           src="/assets/audience-display/sponsors/fllc-horizontal.svg"

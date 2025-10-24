@@ -18,9 +18,9 @@ import {
   RobotGameMatchStages,
   MATCH_LENGTH
 } from '@lems/types';
+import React from 'react';
 import { localizedMatchStage } from '../../../localization/field';
 import StyledTeamTooltip from '../../general/styled-team-tooltip';
-import React from 'react';
 
 interface TableScheduleRowProps {
   match: WithId<RobotGameMatch>;

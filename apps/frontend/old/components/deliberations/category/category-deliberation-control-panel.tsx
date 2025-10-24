@@ -13,13 +13,13 @@ import {
 } from '@lems/types';
 import { Button, Typography, Stack, Paper, Divider } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
+import { localizedJudgingCategory } from '@lems/season';
 import DeliberationTimer from '../deliberation-timer';
 import TrashDroppable from '../trash-droppable';
-import LockCategoryDeliberationButton from './lock-category-deliberation-button';
 import TeamSelection from '../../general/team-selection';
-import { localizedJudgingCategory } from '@lems/season';
 import CompareModal from '../compare/compare-modal';
 import { getDefaultPicklistLimit } from '../../../lib/utils/math';
+import LockCategoryDeliberationButton from './lock-category-deliberation-button';
 
 interface DeliberationControlPanelProps {
   teamCount: number;

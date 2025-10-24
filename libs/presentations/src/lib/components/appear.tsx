@@ -99,7 +99,7 @@ export const Stepper: React.FC<StepperProps> = ({
 
   return (
     <SteppedComponent {...props} numSteps={values.length} alwaysAppearActive={alwaysVisible}>
-      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+      { }
       {(step, isActive) => (renderFn || renderChildrenFn!)(values[step], step, isActive)}
     </SteppedComponent>
   );

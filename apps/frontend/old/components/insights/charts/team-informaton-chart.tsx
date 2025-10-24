@@ -1,9 +1,9 @@
 import { WithId } from 'mongodb';
 import { Avatar, Stack, Table, TableBody, TableRow, TableCell, Skeleton } from '@mui/material';
-import { apiFetch } from '../../../lib/utils/fetch';
 import { useEffect, useState } from 'react';
 import { AwardNames, CVFormCategoryNames, Division, Team } from '@lems/types';
 import { cvFormSchema, localizedAward } from '@lems/season';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface TeamInformationChartProps {
   division: WithId<Division>;

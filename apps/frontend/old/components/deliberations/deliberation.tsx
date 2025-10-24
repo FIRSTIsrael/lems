@@ -161,7 +161,7 @@ export const Deliberation = forwardRef<DeliberationRef, DeliberationProps>(
 
         if (!acc[award.name]) acc[award.name] = 0;
         // Literally defined as 0 in the line above...
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+         
         acc[award.name]! += 1;
         return acc;
       },

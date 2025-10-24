@@ -20,8 +20,8 @@ import {
 } from '@lems/season';
 import { JudgingCategory, Rubric } from '@lems/types';
 import { average } from '@lems/utils/arrays';
-import { CompareContext } from './compare-view';
 import { localizeTeam } from '../../../localization/teams';
+import { CompareContext } from './compare-view';
 
 interface CompareTeamInfoProps {
   teamId: ObjectId;

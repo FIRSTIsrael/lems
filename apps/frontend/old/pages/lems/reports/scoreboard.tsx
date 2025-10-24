@@ -13,6 +13,7 @@ import {
   Scoresheet,
   Team
 } from '@lems/types';
+import { compareScoreArrays } from '@lems/utils/arrays';
 import Layout from '../../../components/layout';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import { useWebsocket } from '../../../hooks/use-websocket';
@@ -20,7 +21,6 @@ import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fe
 import { localizedMatchStage } from '../../../localization/field';
 import { localizedRoles } from '../../../localization/roles';
 import { localizeTeam } from '../../../localization/teams';
-import { compareScoreArrays } from '@lems/utils/arrays';
 import { localizeDivisionTitle } from '../../../localization/event';
 
 interface Props {

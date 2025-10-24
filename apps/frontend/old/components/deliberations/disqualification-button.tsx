@@ -11,8 +11,8 @@ import {
 } from '@mui/material';
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
 import { Team } from '@lems/types';
-import TeamSelection from '../general/team-selection';
 import { red } from '@mui/material/colors';
+import TeamSelection from '../general/team-selection';
 
 interface DisqualificationButtonProps extends ButtonProps {
   teams: Array<WithId<Team>>;

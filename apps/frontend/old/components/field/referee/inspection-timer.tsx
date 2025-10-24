@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { Paper, Typography } from '@mui/material';
-import Countdown from '../../general/countdown';
 import { INSPECTION_TIMER_LENGTH } from '@lems/types';
+import Countdown from '../../general/countdown';
 
 interface InspectionTimerProps {
   startTime: Date;

@@ -3,8 +3,8 @@ import { WithId } from 'mongodb';
 import { FllEvent, Division } from '@lems/types';
 import { Box, IconButton, Typography, Menu, MenuItem } from '@mui/material';
 import HomeIcon from '@mui/icons-material/HomeRounded';
-import { apiFetch } from '../../lib/utils/fetch';
 import { useRouter } from 'next/router';
+import { apiFetch } from '../../lib/utils/fetch';
 
 interface DropdownOptionProps {
   id: string;

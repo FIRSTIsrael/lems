@@ -16,9 +16,9 @@ import {
 } from '@mui/material';
 import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
 import dayjs from 'dayjs';
+import { WithId } from 'mongodb';
 import Countdown from '../general/countdown';
 import { useTime } from '../../hooks/time/use-time';
-import { WithId } from 'mongodb';
 
 interface TimerProps {
   progress: number;

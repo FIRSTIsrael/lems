@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { Division } from '@lems/types';
-import { apiFetch } from '../../../lib/utils/fetch';
 import {
   ComposedChart,
   Area,
@@ -15,6 +14,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { blue } from '@mui/material/colors';
+import { apiFetch } from '../../../lib/utils/fetch';
 
 interface ScoresPerTableChartProps {
   division: WithId<Division>;

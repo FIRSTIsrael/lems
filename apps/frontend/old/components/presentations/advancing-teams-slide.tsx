@@ -4,8 +4,8 @@ import { Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Team } from '@lems/types';
 import { Appear, Slide } from '@lems/presentations';
-import LogoStack from './logo-stack';
 import { localizeTeam } from '../../localization/teams';
+import LogoStack from './logo-stack';
 
 interface AdvancingTeamsSlideProps {
   teams: Array<WithId<Team>>;

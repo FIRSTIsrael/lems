@@ -1,8 +1,8 @@
 import { JudgingCategory, CoreValuesAwardsTypes, SEASON_NAME } from '@lems/types';
-import { RubricsSchema } from './typing';
-import { rubricSchemaFeedbackFields } from './common';
 import { localizedJudgingCategory } from '../judging';
 import { localizedOptionalAward } from '../rubrics';
+import { RubricsSchema } from './typing';
+import { rubricSchemaFeedbackFields } from './common';
 
 const category = 'core-values' as JudgingCategory;
 

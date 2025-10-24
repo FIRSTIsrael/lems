@@ -2,7 +2,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/Remove';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { Status } from '@lems/types';
-
 import type { JSX } from "react";
 
 interface StatusIconProps {

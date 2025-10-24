@@ -121,7 +121,7 @@ const Page: NextPage<Props> = ({
                 sx={{ width: 36, height: 36 }}
                 onClick={() => {
                   // Button is disabled if selectedTeam is null
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                   
                   addTeam(selectedTeam!._id);
                   setSelectedTeam(null);
                 }}

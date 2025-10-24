@@ -17,10 +17,10 @@ import {
   cvFormSchema,
   inferCvrubricSchema
 } from '@lems/season';
-import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
 import { fullMatch, getDiff } from '@lems/utils/objects';
-import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 import { rankArray } from '@lems/utils/arrays';
+import { getBackgroundColor, getHoverBackgroundColor } from '../../../lib/utils/theme';
+import { DeliberationTeam } from '../../../hooks/use-deliberation-teams';
 
 interface CategoryDeliberationsGridProps {
   category: JudgingCategory;

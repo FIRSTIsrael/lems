@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { WithId, ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-
 import { Award, Team, AwardNames } from '@lems/types';
 import roleValidator from '../../../middlewares/lems/role-validator';
 

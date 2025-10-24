@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-
 import * as db from '@lems/database';
 import { JudgingCategory, JudgingCategoryTypes } from '@lems/types';
 import { makeCvValuesForAllRubrics } from '@lems/season';

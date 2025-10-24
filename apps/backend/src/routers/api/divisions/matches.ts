@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-
 import * as db from '@lems/database';
 
 const router = express.Router({ mergeParams: true });

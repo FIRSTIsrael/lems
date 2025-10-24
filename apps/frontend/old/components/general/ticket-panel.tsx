@@ -3,11 +3,11 @@ import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
 import Grid from '@mui/material/Grid';
 import { Division, Team, Ticket, WSClientEmittedEvents, WSServerEmittedEvents } from '@lems/types';
-import TicketCard from './ticket-card';
 import { green } from '@mui/material/colors';
 import { Paper, Typography, Collapse, Button } from '@mui/material';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import TicketCard from './ticket-card';
 
 interface TicketPanelProps {
   division: WithId<Division>;

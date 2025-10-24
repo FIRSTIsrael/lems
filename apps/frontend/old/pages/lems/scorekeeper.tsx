@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 import { WithId } from 'mongodb';
 import { Paper, Tabs, Tab, Stack } from '@mui/material';
-import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import {
   SafeUser,
   RobotGameMatch,
@@ -12,13 +11,14 @@ import {
   MATCH_AUTOLOAD_THRESHOLD,
   DivisionWithEvent
 } from '@lems/types';
+import { enqueueSnackbar } from 'notistack';
+import { TabContext, TabPanel } from '../../components/general/tab-managment';
 import { RoleAuthorizer } from '../../components/role-authorizer';
 import Layout from '../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../lib/utils/fetch';
 import { useWebsocket } from '../../hooks/use-websocket';
 import { useTime } from '../../hooks/time/use-time';
 import { localizedRoles } from '../../localization/roles';
-import { enqueueSnackbar } from 'notistack';
 import FieldControl from '../../components/field/scorekeeper/field-control';
 import VideoSwitch from '../../components/field/scorekeeper/video-switch';
 import PresentationController from '../../components/field/scorekeeper/presentation-controller';

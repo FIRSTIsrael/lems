@@ -13,14 +13,14 @@ import {
   RoleTypes,
   MATCH_LENGTH
 } from '@lems/types';
+import Grid from '@mui/material/Grid';
+import Image from 'next/image';
 import { RoleAuthorizer } from '../../../components/role-authorizer';
 import Countdown from '../../../components/general/countdown';
 import Layout from '../../../components/layout';
 import { getUserAndDivision, serverSideGetRequests } from '../../../lib/utils/fetch';
 import { useWebsocket } from '../../../hooks/use-websocket';
 import { useTime } from '../../../hooks/time/use-time';
-import Grid from '@mui/material/Grid';
-import Image from 'next/image';
 
 interface Props {
   user: WithId<SafeUser>;

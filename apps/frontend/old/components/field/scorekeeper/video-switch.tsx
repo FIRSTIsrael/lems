@@ -5,9 +5,9 @@ import {
   WSClientEmittedEvents,
   WSServerEmittedEvents
 } from '@lems/types';
-import { localizedAudienceDisplayScreen } from '../../../localization/field';
 import { Socket } from 'socket.io-client';
 import { enqueueSnackbar } from 'notistack';
+import { localizedAudienceDisplayScreen } from '../../../localization/field';
 
 interface VideoSwitchProps {
   divisionState: DivisionState;

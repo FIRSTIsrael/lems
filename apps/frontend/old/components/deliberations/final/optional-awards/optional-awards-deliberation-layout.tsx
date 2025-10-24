@@ -70,7 +70,7 @@ const OptionalAwardsDeliberationLayout: React.FC = () => {
           teams={teams.filter(team => eligibleTeams.includes(team._id))}
           deliberation={deliberation}
           startDeliberation={start}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
+           
           endDeliberationStage={endStage ?? (() => {})}
           nextStageUnlocked={nextStageUnlocked}
           compareProps={compareContextProps}

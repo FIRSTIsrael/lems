@@ -1,5 +1,5 @@
-import db from '../database';
 import { Filter, ObjectId } from 'mongodb';
+import db from '../database';
 
 export const getAward = (filter: any) => {
   return db.collection('awards').findOne(filter);
