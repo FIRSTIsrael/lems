@@ -4,6 +4,7 @@ import { EventSettings } from '@lems/types/api/admin';
 
 export const makeAdminSettingsResponse = (settings: DbEventSettings): EventSettings => {
   return {
+    visible: settings.visible,
     completed: settings.completed,
     published: settings.published,
     advancementPercent: settings.advancement_percent,
@@ -12,6 +13,10 @@ export const makeAdminSettingsResponse = (settings: DbEventSettings): EventSetti
 
 export const makeUpdateableEventSettings = (settings: Partial<EventSettings>): UpdateableEventSettings => {
   const updateData: UpdateableEventSettings = {};
+
+  if (settings.visible !== undefined) {
+    updateData.visible = settings.visible;
+  }
   
   if (settings.completed !== undefined) {
     updateData.completed = settings.completed;

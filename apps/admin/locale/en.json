@@ -513,7 +513,9 @@
           "advancement-percent-description": "Percentage of teams that advance from ranking rounds",
           "save-button": "Save Settings",
           "saving": "Saving...",
-          "advancing-teams": "({advancingTeams}/{totalTeams} teams)"
+          "advancing-teams": "({advancingTeams}/{totalTeams} teams)",
+          "visible": "Visible",
+          "visible-description": "Whether this event is visible on the portal."
         },
         "event-actions": {
           "title": "Event Actions",

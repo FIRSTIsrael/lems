@@ -11,7 +11,9 @@ import {
   Slider,
   Button,
   CircularProgress,
-  Grid
+  Grid,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -42,12 +44,15 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
     settings.advancementPercent || 50
   );
 
+  const [visible, setVisible] = useState<boolean>(settings.visible || false);
+
   const totalTeams = teams.length;
   const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
 
   useEffect(() => {
     if (settings) {
       setAdvancementPercent(settings.advancementPercent);
+      setVisible(settings.visible);
     }
   }, [settings]);
 
@@ -63,7 +68,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...settings,
-          advancementPercent
+          advancementPercent,
+          visible
         })
       });
 
@@ -87,6 +93,22 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
         <Typography variant="h6" gutterBottom>
           {t('event-settings.title')}
         </Typography>
+
+        <Box sx={{ mb: 3 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={visible}
+                onChange={(_, checked) => setVisible(checked)}
+                color="primary"
+              />
+            }
+            label={t('event-settings.visible')}
+          />
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            {t('event-settings.visible-description')}
+          </Typography>
+        </Box>
 
         <Grid container spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
           <Grid size={3}>
@@ -127,7 +149,10 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           <Button
             variant="contained"
             onClick={handleSaveSettings}
-            disabled={isSaving || advancementPercent === settings.advancementPercent}
+            disabled={
+              isSaving ||
+              (advancementPercent === settings.advancementPercent && visible === settings.visible)
+            }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >
             {isSaving ? t('event-settings.saving') : t('event-settings.save-button')}

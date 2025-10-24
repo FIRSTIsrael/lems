@@ -7,6 +7,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable('event_settings')
     .addColumn('pk', 'serial', col => col.primaryKey())
     .addColumn('event_id', 'uuid', col => col.notNull().unique())
+    .addColumn('visible', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('completed', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('published', 'boolean', col => col.notNull().defaultTo(false))
     .addColumn('advancement_percent', 'integer', col => col.notNull().defaultTo(0))
