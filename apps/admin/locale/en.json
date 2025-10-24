@@ -85,6 +85,9 @@
           "active": "Active",
           "inactive": "Inactive",
           "uninitiated": "Uninitiated"
+        },
+        "delete": {
+          "disabled": "Cannot delete team which has participated in an event in the past."
         }
       },
       "creation-dialog": {

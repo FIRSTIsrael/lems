@@ -92,6 +92,9 @@
           "active": "פעיל",
           "inactive": "לא פעיל",
           "uninitiated": "לא יזום"
+        },
+        "delete": {
+          "disabled": "לא ניתן למחוק קבוצה שהשתתפה באירוע בעבר."
         }
       },
       "creation-dialog": {
