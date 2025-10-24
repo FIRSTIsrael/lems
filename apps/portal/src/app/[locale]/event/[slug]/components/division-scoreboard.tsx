@@ -8,7 +8,7 @@ import { DivisionScoreboardEntry } from '@lems/types/api/portal';
 import { useDivisionTeams } from './division-teams-context';
 
 interface DivisionScoreboardProps {
-  data: DivisionScoreboardEntry[];
+  data?: DivisionScoreboardEntry[];
 }
 
 export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
@@ -17,12 +17,12 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  console.log(data);
+  if (!data || data.length === 0) {
+    return null; // Should only occur while loading
+  }
 
   const numberOfMatches = Math.max(...data.map(entry => entry.scores?.length || 0));
-
-  // Sort teams by max score (descending)
-  const sortedData = data.sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
+  const sortedData = [...data].sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
 
   const columns: GridColDef<DivisionScoreboardEntry>[] = [
     {
