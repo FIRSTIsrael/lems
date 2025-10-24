@@ -2,12 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Paper,
-  Typography,
-  Stack,
-  Box
-} from '@mui/material';
+import { Paper, Typography, Stack, Box } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 
 interface ScheduleEntry {
@@ -60,14 +55,13 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({
 }) => {
   const t = useTranslations('pages.team-in-event');
 
-  // Combine and sort schedule entries
   const scheduleEntries: ScheduleEntry[] = [
     ...teamMatches.map(match => {
       const table = tables.find(t => match.participants.some(p => p.tableId === t.id));
       return {
         time: match.scheduledTime,
-        type: t('schedule.match-type', { 
-          stage: match.stage, 
+        type: t('schedule.match-type', {
+          stage: match.stage,
           number: match.number,
           table: table?.name || '',
           teamNumber: teamNumber
@@ -75,12 +69,12 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({
         location: table?.name || '',
         isMatch: true
       };
-    }), 
+    }),
     ...teamJudging.map(session => {
       const room = rooms.find(r => r.id === session.roomId);
       return {
         time: session.scheduledTime,
-        type: t('schedule.judging-session', { 
+        type: t('schedule.judging-session', {
           number: session.number,
           room: room?.name || '',
           teamNumber: teamNumber
@@ -111,7 +105,7 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({
               p: 2,
               borderBottom: index < scheduleEntries.length - 1 ? '1px solid' : 'none',
               borderColor: 'grey.200',
-              '&:hover': { 
+              '&:hover': {
                 bgcolor: 'grey.50'
               }
             }}
@@ -120,19 +114,21 @@ const TeamSchedule: React.FC<TeamScheduleProps> = ({
               <Typography variant="body2" fontWeight="600">
                 {entry.time.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
               </Typography>
-              <Box sx={{ 
-                width: '1px', 
-                height: '20px', 
-                bgcolor: 'grey.400', 
-                mx: 2 
-              }} />
+              <Box
+                sx={{
+                  width: '1px',
+                  height: '20px',
+                  bgcolor: 'grey.400',
+                  mx: 2
+                }}
+              />
               <Typography variant="body2" fontWeight="600">
                 {entry.type}
               </Typography>
             </Box>
           </Box>
         ))}
-        
+
         {scheduleEntries.length === 0 && (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">

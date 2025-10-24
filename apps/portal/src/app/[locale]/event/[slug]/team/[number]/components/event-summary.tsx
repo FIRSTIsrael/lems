@@ -2,19 +2,8 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Paper,
-  Typography,
-  Grid,
-  Box,
-  Stack,
-  Divider
-} from '@mui/material';
-import {
-  EmojiEvents,
-  TrendingUp as ScoreIcon,
-  SmartToy as RobotIcon
-} from '@mui/icons-material';
+import { Paper, Typography, Grid, Box, Stack, Divider } from '@mui/material';
+import { EmojiEvents, TrendingUp as ScoreIcon, SmartToy as RobotIcon } from '@mui/icons-material';
 
 interface Award {
   id: string;
@@ -33,10 +22,7 @@ interface EventSummaryProps {
   teamScoreboard?: TeamScoreboard;
 }
 
-const EventSummary: React.FC<EventSummaryProps> = ({
-  teamAwards,
-  teamScoreboard
-}) => {
+const EventSummary: React.FC<EventSummaryProps> = ({ teamAwards, teamScoreboard }) => {
   const t = useTranslations('pages.team-in-event');
 
   const getAwardIcon = (award: { name: string; place: number }) => {
@@ -54,7 +40,6 @@ const EventSummary: React.FC<EventSummaryProps> = ({
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
-      {/* Awards Section */}
       <Box mb={2}>
         <Typography variant="h6" fontWeight="700" mb={1}>
           {t('performance.event-summary')}
@@ -85,8 +70,7 @@ const EventSummary: React.FC<EventSummaryProps> = ({
                 </Grid>
               );
             })}
-          
-          {/* Best Score */}
+
           {teamScoreboard && teamScoreboard.scores && teamScoreboard.scores.length > 0 && (
             <Grid
               size={{ xs: 12, sm: 6, lg: 3 }}
@@ -112,8 +96,7 @@ const EventSummary: React.FC<EventSummaryProps> = ({
               </Typography>
             </Grid>
           )}
-          
-          {/* Robot Game Rank */}
+
           {teamScoreboard && teamScoreboard.robotGameRank && (
             <Grid
               size={{ xs: 12, sm: 6, lg: 3 }}
@@ -142,7 +125,6 @@ const EventSummary: React.FC<EventSummaryProps> = ({
         </Grid>
       </Box>
 
-      {/* Match Results */}
       {teamScoreboard && teamScoreboard.scores && teamScoreboard.scores.length > 0 && (
         <>
           <Divider sx={{ my: 2 }} />

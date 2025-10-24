@@ -4,17 +4,8 @@ import React from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Paper, 
-  Button
-} from '@mui/material';
-import { 
-  ArrowBack,
-  ArrowForward
-} from '@mui/icons-material';
+import { Box, Container, Typography, Paper, Button } from '@mui/material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { DirectionalIcon } from '@lems/localization';
 import { TeamInEventData, mockTeamInEventData } from './mock-data';
@@ -92,10 +83,7 @@ export default function TeamInEventPage() {
           teamScoreboard={teamScoreboard}
         />
 
-        <EventSummary
-          teamAwards={teamAwards}
-          teamScoreboard={teamScoreboard}
-        />
+        <EventSummary teamAwards={teamAwards} teamScoreboard={teamScoreboard} />
 
         <TeamSchedule
           teamMatches={teamMatches}

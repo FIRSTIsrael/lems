@@ -13,18 +13,13 @@ interface TeamInfoHeaderProps {
   eventName: string;
   eventSlug: string;
   divisionName: string;
-  teamScoreboard?: {
-    robotGameRank: number | null;
-    maxScore: number | null;
-  };
 }
 
 const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
   team,
   eventName,
   eventSlug,
-  divisionName,
-  teamScoreboard
+  divisionName
 }) => {
   const t = useTranslations('pages.team-in-event');
 
@@ -61,20 +56,6 @@ const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
               {team.city} • {team.affiliation}
             </Typography>
           </Stack>
-          {/* {teamScoreboard && (
-            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-              <Chip
-                label={t('header.rank', { rank: teamScoreboard.robotGameRank || 0 })}
-                color="primary"
-                variant="outlined"
-              />
-              <Chip
-                label={t('header.best-score', { score: teamScoreboard.maxScore || 0 })}
-                color="success"
-                variant="outlined"
-              />
-            </Stack>
-          )} */}
         </Box>
       </Stack>
     </Paper>
