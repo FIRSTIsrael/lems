@@ -515,11 +515,10 @@
           "saving": "Saving...",
           "advancing-teams": "({advancingTeams}/{totalTeams} teams)",
           "visible": "Visible",
-          "visible-description": "Whether this event is visible on the portal.",
-          "event-type": "Event Type",
-          "event-type-description": "Defines whether the event is official or offseason.",
-          "event-type-official": "Official",
-          "event-type-offseason": "Off-Season"
+          "visible-description": "Whether this event is visible to the public",
+          "official": "Official Event",
+          "official-description": "Whether this event is official",
+          "official-subtitle": "Turn this setting off for off-season, or other unofficial events."
         },
         "event-actions": {
           "title": "Event Actions",
