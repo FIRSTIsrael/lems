@@ -33,6 +33,7 @@ export interface EventSummary {
     color: string;
   }[];
   season_id: string;
+  visible: boolean;
   is_fully_set_up: boolean;
   assigned_admin_ids: string[];
 }

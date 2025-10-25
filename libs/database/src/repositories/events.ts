@@ -251,13 +251,15 @@ class EventSelector {
     if (!event) {
       throw new Error('Event not found');
     }
-    const visibility = (await this.db
-      .selectFrom('event_settings')
-      .select('visible')
-      .where('event_id', '=', event.id)
-      .executeTakeFirst())?.visible
+    const visibility = (
+      await this.db
+        .selectFrom('event_settings')
+        .select('visible')
+        .where('event_id', '=', event.id)
+        .executeTakeFirst()
+    )?.visible;
 
-      return visibility ?? null;
+    return visibility ?? null;
   }
 }
 
@@ -309,7 +311,7 @@ class EventsSelector {
     return await this.getEventsQuery().execute();
   }
 
-  async getAllSummaries(portal: boolean = false): Promise<EventSummary[]> {
+  async getAllSummaries(): Promise<EventSummary[]> {
     let query = this.db
       .selectFrom('events')
       .innerJoin('event_settings', 'event_settings.event_id', 'events.id')
@@ -327,16 +329,13 @@ class EventsSelector {
         'divisions.color as division_color',
         'divisions.has_awards',
         'divisions.has_users',
-        'divisions.has_schedule'
+        'divisions.has_schedule',
+        'event_settings.visible'
       ])
       .select(eb => [
         eb.fn.count('team_divisions.team_id').as('team_count'),
         sql<string | null>`events.coordinates::text`.as('coordinates')
       ]);
-
-    if (portal) {
-      query = query.where('event_settings.visible', '=', true);
-    }
 
     if (this.selector.type === 'after') {
       query = query.where(
@@ -479,7 +478,12 @@ export class EventsRepository {
   }
 
   async getAll() {
-    const events = await this.db.selectFrom('events').selectAll().execute();
+    const events = await this.db
+      .selectFrom('events')
+      .selectAll()
+      .innerJoin('event_settings', 'event_settings.event_id', 'events.id')
+      .select('event_settings.visible')
+      .execute();
     return events;
   }
 
