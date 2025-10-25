@@ -29,10 +29,10 @@ export const AdminSummarizedEventsResponseSchema = z.array(AdminEventSummaryResp
 
 export const AdminEventSettingsResponseSchema = z.object({
   visible: z.boolean(),
+  official: z.boolean(),
   completed: z.boolean(),
   published: z.boolean(),
-  advancementPercent: z.number().min(0).max(100),
-  eventType: z.enum(['OFFSEASON', 'OFFICIAL'])
+  advancementPercent: z.number().min(0).max(100)
 });
 
 export type EventSettings = z.infer<typeof AdminEventSettingsResponseSchema>;

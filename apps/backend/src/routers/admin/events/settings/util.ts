@@ -4,10 +4,10 @@ import { EventSettings } from '@lems/types/api/admin';
 export const makeAdminSettingsResponse = (settings: DbEventSettings): EventSettings => {
   return {
     visible: settings.visible,
+    official: settings.official,
     completed: settings.completed,
     published: settings.published,
-    advancementPercent: settings.advancement_percent,
-    eventType: settings.event_type
+    advancementPercent: settings.advancement_percent
   };
 };
 
@@ -20,6 +20,10 @@ export const makeUpdateableEventSettings = (
     updateData.visible = settings.visible;
   }
 
+  if (settings.official !== undefined) {
+    updateData.official = settings.official;
+  }
+
   if (settings.completed !== undefined) {
     updateData.completed = settings.completed;
   }
@@ -30,10 +34,6 @@ export const makeUpdateableEventSettings = (
 
   if (settings.advancementPercent !== undefined) {
     updateData.advancement_percent = settings.advancementPercent;
-  }
-
-  if (settings.eventType !== undefined) {
-    updateData.event_type = settings.eventType;
   }
 
   return updateData;
