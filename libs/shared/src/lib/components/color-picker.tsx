@@ -24,16 +24,14 @@ interface ColorPickerProps {
 }
 
 const PRESET_COLORS = [
-  '#F12E6D',
   '#DF1125',
   '#FC4E12',
+  '#F12E6D',
   '#E8C511',
   '#80E220',
   '#1EA5FC',
   '#1E538F',
-  '#5F41B2',
-  '#7A6E49',
-  '#578887'
+  '#5F41B2'
 ];
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({
@@ -217,13 +215,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                       height: 24,
                       borderRadius: '50%',
                       backgroundColor: hex,
-                      border: `2px solid ${
-                        hsvaToHex(value).toLowerCase() === hex.toLowerCase()
-                          ? theme.palette.text.primary
-                          : 'transparent'
-                      }`,
-                      transition: 'transform 0.1s',
-                      '&:hover': { filter: 'brightness(0.8)', transform: 'scale(1.1)' }
+                      transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        transform: 'scale(1.15)',
+                        boxShadow: `0 4px 12px ${alpha(hex, 0.4)}}`
+                      }
                     }}
                   />
                 ))}
