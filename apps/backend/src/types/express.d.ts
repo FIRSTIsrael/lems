@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { FllEvent, Division, Team } from '@lems/types';
+import { Event, Division, Team } from '@lems/types';
 import { Request } from 'express';
 
 declare global {
@@ -9,7 +9,7 @@ declare global {
       user?: string; // User id if the user is currently logged in
       userType?: 'admin' | 'event-user'; // Type of user, if the user is logged in
       division?: WithId<Division>;
-      event?: WithId<FllEvent>;
+      event?: WithId<Event>;
       team?: WithId<Team>;
       teamNumber?: number;
     }

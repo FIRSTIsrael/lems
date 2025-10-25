@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
-import { loadEvent } from '../../../middlewares/portal/load-event';
+import { attachEvent } from '../../../middlewares/portal/attach-event';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -83,14 +83,12 @@ router.get('/', async (req: Request, res: Response) => {
   return;
 });
 
-router.use('/:slug', loadEvent());
+router.use('/:slug', attachEvent());
 router.get('/:slug', async (req: Request, res: Response) => {
-  const { slug } = req.params;
-
-  const event = await db.events.bySlug(slug).get();
+  const event = req.event;
 
   if (!event) {
-    res.status(404).json({ error: 'Event not found' });
+    res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     return;
   }
 
