@@ -13,11 +13,7 @@ import {
   CircularProgress,
   Grid,
   FormControlLabel,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
+  Switch
 } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -49,9 +45,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   );
 
   const [visible, setVisible] = useState<boolean>(settings.visible || false);
-  const [eventType, setEventType] = useState<'OFFSEASON' | 'OFFICIAL'>(
-    settings.eventType || 'OFFICIAL'
-  );
+  const [official, setOfficial] = useState<boolean>(settings.official || true);
 
   const totalTeams = teams.length;
   const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
@@ -60,7 +54,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
     if (settings) {
       setAdvancementPercent(settings.advancementPercent);
       setVisible(settings.visible);
-      setEventType(settings.eventType);
+      setOfficial(settings.official);
     }
   }, [settings]);
 
@@ -78,7 +72,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           ...settings,
           advancementPercent,
           visible,
-          eventType
+          official
         })
       });
 
@@ -120,19 +114,21 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
         </Box>
 
         <Box sx={{ mb: 3 }}>
-          <FormControl fullWidth>
-            <InputLabel>{t('event-settings.event-type')}</InputLabel>
-            <Select
-              value={eventType}
-              label={t('event-settings.event-type')}
-              onChange={e => setEventType(e.target.value as 'OFFSEASON' | 'OFFICIAL')}
-            >
-              <MenuItem value="OFFICIAL">{t('event-settings.event-type-official')}</MenuItem>
-              <MenuItem value="OFFSEASON">{t('event-settings.event-type-offseason')}</MenuItem>
-            </Select>
-          </FormControl>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-            {t('event-settings.event-type-description')}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={official}
+                onChange={(_, checked) => setOfficial(checked)}
+                color="primary"
+              />
+            }
+            label={t('event-settings.official')}
+          />
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            {t('event-settings.official-description')}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            {t('event-settings.official-subtitle')}
           </Typography>
         </Box>
 
@@ -179,7 +175,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               isSaving ||
               (advancementPercent === settings.advancementPercent &&
                 visible === settings.visible &&
-                eventType === settings.eventType)
+                official === settings.official)
             }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >

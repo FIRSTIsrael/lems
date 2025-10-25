@@ -362,7 +362,8 @@ class EventsSelector {
         'divisions.color',
         'divisions.has_awards',
         'divisions.has_users',
-        'divisions.has_schedule'
+        'divisions.has_schedule',
+        'event_settings.visible'
       ])
       .groupBy(sql`events.coordinates::text`);
 
