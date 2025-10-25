@@ -21,49 +21,44 @@ export default function TeamInEventPage() {
 
   const t = useTranslations('pages.team-in-event');
 
-  // Mock data for now - replace with actual API call
   const { data: teamData, error } = useSWR<TeamInEventData | null>(
     `/portal/events/${eventSlug}/teams/${teamNumber}`,
-    {
-      suspense: true,
-      fallbackData: null
-    }
+    { suspense: true, fallbackData: null }
   );
 
-  // Use mock data for development - replace with actual API call
   const data = teamData || {
     ...mockTeamInEventData,
     eventSlug: eventSlug
   };
 
-  if (!data || !data.team) {
-    if (error) {
-      return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
-          <Container maxWidth="xl" sx={{ py: 2 }}>
-            <Paper sx={{ p: 6, textAlign: 'center' }}>
-              <Typography variant="h4" gutterBottom color="text.secondary">
-                {t('not-found.title', { number: teamNumber || 'Unknown' })}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                {t('not-found.description')}
-              </Typography>
-              <Button
-                component={Link}
-                href={`/event/${eventSlug}`}
-                variant="outlined"
-                startIcon={<DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />}
-              >
-                {t('not-found.back-to-event')}
-              </Button>
-            </Paper>
-          </Container>
-        </Box>
-      );
-    }
-    return null;
+  // TODO: remove false when we have a backend
+  if (false && error) {
+    return (
+      <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+        <Container maxWidth="xl" sx={{ py: 2 }}>
+          <Paper sx={{ p: 6, textAlign: 'center' }}>
+            <Typography variant="h4" gutterBottom color="text.secondary">
+              {t('not-found.title', { number: teamNumber || 'Unknown' })}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              {t('not-found.description')}
+            </Typography>
+            <Button
+              component={Link}
+              href={`/event/${eventSlug}`}
+              variant="outlined"
+              startIcon={<DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />}
+            >
+              {t('not-found.back-to-event')}
+            </Button>
+          </Paper>
+        </Container>
+      </Box>
+    );
   }
 
+  // TODO: Make and endpoint that returns the team data in division
+  // This will remove the need for all the filter commands, and the division data as a whole
   const { team, division, eventName } = data;
   const teamScoreboard = division.scoreboard.find(entry => entry.teamId === team.id);
   const teamAwards = division.awards.filter(award => award.winner === team.number.toString());
@@ -80,7 +75,6 @@ export default function TeamInEventPage() {
           eventName={eventName}
           eventSlug={eventSlug}
           divisionName={division.name}
-          teamScoreboard={teamScoreboard}
         />
 
         <EventSummary teamAwards={teamAwards} teamScoreboard={teamScoreboard} />
