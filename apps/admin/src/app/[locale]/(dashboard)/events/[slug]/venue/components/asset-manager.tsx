@@ -79,9 +79,7 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
       const result = await makeApiRequest(
         `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`,
         'POST',
-        {
-          name
-        }
+        { name }
       );
 
       if (result.ok) {
@@ -89,9 +87,8 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
         showSuccess();
         mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
 
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 1);
+        // Timeout is required for the focus to work
+        setTimeout(() => inputRef.current?.focus(), 10);
       } else {
         setErrors({ new: t('messages.save-error') });
       }
