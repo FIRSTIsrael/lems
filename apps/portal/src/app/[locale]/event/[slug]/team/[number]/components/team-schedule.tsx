@@ -98,7 +98,14 @@ export const TeamSchedule: React.FC<TeamScheduleProps> = ({
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper
+      sx={{
+        p: 3,
+        flexGrow: { xs: 0, lg: 1 },
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
         <ScheduleIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">

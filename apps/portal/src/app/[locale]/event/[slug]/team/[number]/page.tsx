@@ -4,7 +4,7 @@ import React from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Box, Container, Typography, Paper, Button } from '@mui/material';
+import { Box, Container, Typography, Paper, Button, Grid } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { DirectionalIcon } from '@lems/localization';
@@ -70,22 +70,27 @@ export default function TeamInEventPage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       <Container maxWidth="xl" sx={{ py: 2 }}>
-        <TeamInfoHeader
-          team={team}
-          eventName={eventName}
-          eventSlug={eventSlug}
-          divisionName={division.name}
-        />
+        <Grid container spacing={3} sx={{ alignItems: { lg: 'stretch' } }}>
+          <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 0, lg: 3 } }}>
+            <TeamInfoHeader
+              team={team}
+              eventName={eventName}
+              eventSlug={eventSlug}
+              divisionName={division.name}
+            />
+            <EventSummary teamAwards={teamAwards} teamScoreboard={teamScoreboard} />
+          </Grid>
 
-        <EventSummary teamAwards={teamAwards} teamScoreboard={teamScoreboard} />
-
-        <TeamSchedule
-          teamMatches={teamMatches}
-          teamJudging={teamJudging}
-          tables={division.tables}
-          rooms={division.rooms}
-          teamNumber={team.number}
-        />
+          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <TeamSchedule
+              teamMatches={teamMatches}
+              teamJudging={teamJudging}
+              tables={division.tables}
+              rooms={division.rooms}
+              teamNumber={team.number}
+            />
+          </Grid>
+        </Grid>
       </Container>
     </Box>
   );

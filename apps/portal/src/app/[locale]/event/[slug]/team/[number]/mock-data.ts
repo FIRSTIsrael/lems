@@ -58,7 +58,27 @@ export const mockTeamInEventData: TeamInEventData = {
         participants: [
           { teamId: '1', tableId: 'table2' }
         ]
-      }
+      },
+      {
+        id: 'match3',
+        round: 1,
+        number: 6,
+        stage: 'Ranking',
+        scheduledTime: new Date('2024-01-15T10:30:00'),
+        participants: [
+          { teamId: '1', tableId: 'table3' }
+        ]
+      },
+      {
+        id: 'match4',
+        round: 1,
+        number: 7,
+        stage: 'Ranking',
+        scheduledTime: new Date('2024-01-15T10:30:00'),
+        participants: [
+          { teamId: '1', tableId: 'table4' }
+        ]
+      },
     ],
     judgingSchedule: [
       {
@@ -74,7 +94,12 @@ export const mockTeamInEventData: TeamInEventData = {
     ],
     tables: [
       { id: 'table1', name: 'Table 1' },
-      { id: 'table2', name: 'Table 2' }
+      { id: 'table2', name: 'Table 2' },
+      { id: 'table3', name: 'Table 3' },
+      { id: 'table4', name: 'Table 4' },
+      { id: 'table5', name: 'Table 5' },
+      { id: 'table6', name: 'Table 6' },
+      { id: 'table7', name: 'Table 7' },
     ],
     scoreboard: [
       {

@@ -24,7 +24,13 @@ const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
   const t = useTranslations('pages.team-in-event');
 
   return (
-    <Paper sx={{ p: 3, mb: 3 }}>
+    <Paper sx={{ 
+      p: 3, 
+      mb: { xs: 3, lg: 0 },
+      flexGrow: { xs: 0, lg: 1 },
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
         <Button
           component={Link}
