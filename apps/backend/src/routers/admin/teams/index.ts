@@ -9,7 +9,28 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminRequest, res) => {
   const teams = await db.teams.getAllWithActiveStatus();
-  res.json(teams.map(team => makeAdminTeamResponse(team)));
+  if (!req.query.extraFields) {
+    const response = teams.map(team => makeAdminTeamResponse(team));
+    res.json(response);
+    return;
+  }
+  if (req.query.extraFields == 'deletable') {
+    const teamDivisions = await db.teams.getAllTeamDivisions();
+    const teamIdsInDivisions = new Set(teamDivisions.map(td => td.team_id));
+
+    const response = teams.map(team => {
+      const baseResponse = makeAdminTeamResponse(team);
+      return {
+        ...baseResponse,
+        deletable: !teamIdsInDivisions.has(team.id)
+      };
+    });
+    console.log(response);
+
+    res.json(response);
+  } else {
+    res.status(400).json({ error: 'Invalid extraFields query' });
+  }
 });
 
 router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
