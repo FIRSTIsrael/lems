@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import express, { Request, Response } from 'express';
 
 import fileUpload from 'express-fileupload';
-import { uploadFile } from '../../../../lib/upload';
+import { uploadFile } from '../../../../../src/lib/upload';
 import * as db from '@lems/database';
 import { randomAlphanumericString } from '@lems/utils/random';
 

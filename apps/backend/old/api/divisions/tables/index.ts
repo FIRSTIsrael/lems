@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 import matchesRouter from './matches';
-import roleValidator from '../../../../middlewares/lems/role-validator';
+import roleValidator from '../../../../../old/lems/middleware/role-validator';
 import { RobotGameTable } from '@lems/types';
 
 const router = express.Router({ mergeParams: true });

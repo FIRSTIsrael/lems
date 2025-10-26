@@ -8,16 +8,11 @@ import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
 import './lib/database';
-import { expressLogger } from './lib/logger';
 import lemsRouter from './routers/lems';
-import apiRouter from './routers/api/index';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
-import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
-import wsAuth from './middlewares/websocket/auth';
-import wsValidateDivision from './middlewares/websocket/division-validator';
 
 const app = express();
 const server = http.createServer(app);
@@ -36,13 +31,9 @@ app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));
 app.use('/timesync', timesyncServer.requestHandler);
 
 app.use(express.json());
-app.use('/', expressLogger);
 
-// Integrations
-app.use('/dashboard', dashboardRouter);
-
-// Old LEMS app, needs migration
-app.use('/api', apiRouter);
+// TODO: new logger
+// app.use('/', expressLogger);
 
 // Application routers
 app.use('/lems', lemsRouter);
@@ -65,8 +56,11 @@ app.use((err, req, res, next) => {
 });
 
 const namespace = io.of(/^\/division\/\w+$/);
-namespace.use(wsAuth);
-namespace.use(wsValidateDivision);
+
+// TODO: Add new middlewares
+// namespace.use(wsAuth);
+// namespace.use(wsValidateDivision);
+
 namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');

@@ -3,7 +3,7 @@ import { WithId, ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
 import { Award, Team, AwardNames } from '@lems/types';
-import roleValidator from '../../../middlewares/lems/role-validator';
+import roleValidator from '../../../../old/lems/middleware/role-validator';
 
 const router = express.Router({ mergeParams: true });
 
