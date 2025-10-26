@@ -12,7 +12,6 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
-import dashboardRouter from './routers/dashboard/index';
 import websocket from './websocket/index';
 
 const app = express();
@@ -35,9 +34,6 @@ app.use(express.json());
 
 // TODO: new logger
 // app.use('/', expressLogger);
-
-// Integrations
-app.use('/dashboard', dashboardRouter);
 
 // Application routers
 app.use('/lems', lemsRouter);
