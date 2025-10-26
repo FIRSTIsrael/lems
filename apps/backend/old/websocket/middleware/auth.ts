@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
-import { JwtTokenData } from '../../types/auth';
-import { parseCookie } from '../../lib/cookie-parser';
+import { JwtTokenData } from '../../../src/types/auth';
+import { parseCookie } from '../../../src/lib/cookie-parser';
 
 const jwtSecret = process.env.JWT_SECRET;
 
