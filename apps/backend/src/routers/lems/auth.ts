@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { RecaptchaResponse } from '../../types/auth';
 import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
+import { makeLemsUserResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -74,7 +75,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
     const token = jwt.sign(
       {
         userId: volunteerUser.id,
-        userType: 'voluneer'
+        userType: 'volunteer'
       },
       jwtSecret,
       {
@@ -127,7 +128,7 @@ router.get('/verify', async (req: Request, res: Response) => {
       return;
     }
 
-    res.json({ ok: true, user });
+    res.json({ ok: true, user: makeLemsUserResponse(user) });
   } catch {
     res.status(401).json({ error: 'UNAUTHORIZED' });
   }

@@ -26,7 +26,7 @@ export default async function middleware(request: NextRequest) {
   const isLemsRoute = segments[0] === 'lems';
 
   if (isLemsRoute) {
-    const backendUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3333';
+    const backendUrl = process.env.LOCAL_BASE_URL || 'http://localhost:3333';
 
     try {
       const authResponse = await fetch(`${backendUrl}/lems/auth/verify`, {
