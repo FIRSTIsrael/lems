@@ -3,25 +3,14 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Grid, Box } from '@mui/material';
+import { TeamInEventData } from '@lems/types/api/portal';
 import { AwardsSection } from './event-summaary/awards-section';
 import { PerformanceMetrics } from './event-summaary/performance';
 import { MatchResults } from './event-summaary/match-results';
 
-interface Award {
-  id: string;
-  name: string;
-  place: number;
-}
-
-interface TeamScoreboard {
-  robotGameRank: number | null;
-  maxScore: number | null;
-  scores: number[] | null;
-}
-
 interface EventSummaryProps {
-  teamAwards: Award[];
-  teamScoreboard?: TeamScoreboard;
+  teamAwards: TeamInEventData['awards'];
+  teamScoreboard: TeamInEventData['scoreboard'];
 }
 
 export const EventSummary: React.FC<EventSummaryProps> = ({ teamAwards, teamScoreboard }) => {
@@ -45,9 +34,7 @@ export const EventSummary: React.FC<EventSummaryProps> = ({ teamAwards, teamScor
         </Grid>
       </Box>
 
-      {teamScoreboard?.scores && teamScoreboard.scores.length > 0 && (
-        <MatchResults scores={teamScoreboard.scores} />
-      )}
+      <MatchResults scores={teamScoreboard?.scores || []} />
     </Paper>
   );
 };

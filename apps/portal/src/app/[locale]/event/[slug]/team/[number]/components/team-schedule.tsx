@@ -15,8 +15,6 @@ import {
 } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 
-// TODO: remove all these interfaces once we have a unified data model from the backend
-// And types from @lems/types/api/portal
 interface ScheduleEntry {
   time: Date;
   type: string;
@@ -25,76 +23,53 @@ interface ScheduleEntry {
 }
 
 interface Match {
-  id: string;
-  scheduledTime: Date;
+  scheduledTime: string | Date;
   stage: string;
   number: number;
-  participants: Array<{ teamId: string | null; tableId: string }>;
+  tableName: string;
 }
 
 interface JudgingSession {
-  id: string;
-  scheduledTime: Date;
+  scheduledTime: string | Date;
   number: number;
-  teamId: string;
-  roomId: string;
-}
-
-interface Table {
-  id: string;
-  name: string;
-}
-
-interface Room {
-  id: string;
-  name: string;
+  roomName: string;
 }
 
 interface TeamScheduleProps {
   teamMatches: Match[];
   teamJudging: JudgingSession[];
-  tables: Table[];
-  rooms: Room[];
   teamNumber: number;
 }
 
 export const TeamSchedule: React.FC<TeamScheduleProps> = ({
   teamMatches,
   teamJudging,
-  tables,
-  rooms,
   teamNumber
 }) => {
   const t = useTranslations('pages.team-in-event');
 
   const scheduleEntries: ScheduleEntry[] = [
-    ...teamMatches.map(match => {
-      const table = tables.find(t => match.participants.some(p => p.tableId === t.id));
-      return {
-        time: match.scheduledTime,
-        type: t('schedule.match-type', {
-          stage: match.stage,
-          number: match.number,
-          table: table?.name || '',
-          teamNumber: teamNumber
-        }),
-        location: table?.name || '',
-        isMatch: true
-      };
-    }),
-    ...teamJudging.map(session => {
-      const room = rooms.find(r => r.id === session.roomId);
-      return {
-        time: session.scheduledTime,
-        type: t('schedule.judging-session', {
-          number: session.number,
-          room: room?.name || '',
-          teamNumber: teamNumber
-        }),
-        location: room?.name || '',
-        isMatch: false
-      };
-    })
+    ...teamMatches.map(match => ({
+      time: new Date(match.scheduledTime),
+      type: t('schedule.match-type', {
+        stage: match.stage,
+        number: match.number,
+        table: match.tableName,
+        teamNumber: teamNumber
+      }),
+      location: match.tableName,
+      isMatch: true
+    })),
+    ...teamJudging.map(session => ({
+      time: new Date(session.scheduledTime),
+      type: t('schedule.judging-session', {
+        number: session.number,
+        room: session.roomName,
+        teamNumber: teamNumber
+      }),
+      location: session.roomName,
+      isMatch: false
+    }))
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 
   return (

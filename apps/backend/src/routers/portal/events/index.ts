@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
-import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
+import { makePortalEventDetailsResponse, makePortalEventSummaryResponse, makePortalTeamInEventResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -103,6 +103,80 @@ router.get('/:slug', async (req: Request, res: Response) => {
   };
 
   res.json(makePortalEventDetailsResponse(eventSummary));
+});
+
+router.get('/:slug/teams/:number', async (req: Request, res: Response) => {
+  const { slug, number } = req.params;
+  const teamNumber = parseInt(number, 10);
+
+  if (isNaN(teamNumber)) {
+    res.status(400).json({ error: 'Invalid team number' });
+    return;
+  }
+
+  const event = await db.events.bySlug(slug).get();
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
+  const team = await db.teams.byNumber(teamNumber).get();
+  if (!team) {
+    res.status(404).json({ error: 'Team not found' });
+    return;
+  }
+
+  const registeredTeams = await db.events.bySlug(slug).getRegisteredTeams();
+  const teamInEvent = registeredTeams.find(t => t.id === team.id);
+  
+  if (!teamInEvent) {
+    res.status(404).json({ error: 'Team not registered for this event' });
+    return;
+  }
+
+  const division = await db.divisions.byId(teamInEvent.division_id).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
+    return;
+  }
+
+  const [awards, fieldSchedule, judgingSchedule, rooms, tables] = await Promise.all([
+    db.awards.byDivisionId(division.id).getAll(),
+    db.robotGameMatches.byDivisionId(division.id).getAll(),
+    db.judgingSessions.byDivisionId(division.id).getAll(),
+    db.rooms.byDivisionId(division.id).getAll(),
+    db.tables.byDivisionId(division.id).getAll()
+  ]);
+
+  const teamAwards = awards.filter(award => 
+    award.winner_id === team.id || award.winner_name === team.name
+  );
+  
+  const teamMatches = fieldSchedule.filter(match =>
+    match.participants.some(p => p.team_id === team.id)
+  );
+  
+  const teamJudgingSessions = judgingSchedule.filter(session => 
+    session.team_id === team.id
+  );
+
+  // TODO: Implement proper scoreboard queries when database has match results
+  const teamScoreboard = null;
+
+  const teamInEventData = makePortalTeamInEventResponse({
+    team,
+    division,
+    teamAwards,
+    teamMatches,
+    teamJudgingSessions,
+    rooms,
+    tables,
+    teamScoreboard,
+    eventName: event.name,
+    eventSlug: event.slug
+  });
+
+  res.json(teamInEventData);
 });
 
 export default router;

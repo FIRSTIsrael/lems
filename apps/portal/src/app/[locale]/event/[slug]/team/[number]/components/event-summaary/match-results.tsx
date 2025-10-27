@@ -11,9 +11,7 @@ interface MatchResultsProps {
 export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
   const t = useTranslations('pages.team-in-event');
 
-  if (!scores || scores.length === 0) {
-    return null;
-  }
+  const displayScores = scores && scores.length > 0 ? scores : [0, 0, 0];
 
   return (
     <>
@@ -23,7 +21,7 @@ export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
           {t('performance.match-results')}
         </Typography>
         <Grid container spacing={2}>
-          {scores.map((score, index) => (
+          {displayScores.map((score, index) => (
             <Grid
               size={{ xs: 6, sm: 4, md: 3 }}
               key={index}
