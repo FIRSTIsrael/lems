@@ -25,7 +25,6 @@ router.get('/', async (req: AdminRequest, res) => {
         deletable: !teamIdsInDivisions.has(team.id)
       };
     });
-    console.log(response);
 
     res.json(response);
   } else {
