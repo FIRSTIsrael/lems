@@ -4,12 +4,15 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLString,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLInt
 } from 'graphql';
 import { eventResolvers } from './resolvers/events/resolver';
 import { divisionResolver } from './resolvers/divisions/resolver';
+import { teamsResolver } from './resolvers/teams';
 import { EventType } from './types/event';
 import { DivisionType } from './types/divisions/division';
+import { RootTeamType } from './types/team';
 
 const QueryType = new GraphQLObjectType({
   name: 'Query',
@@ -39,6 +42,15 @@ const QueryType = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve: divisionResolver
+    },
+    teams: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(RootTeamType))),
+      args: {
+        ids: { type: new GraphQLList(new GraphQLNonNull(GraphQLString)) },
+        searchTerm: { type: GraphQLString },
+        limit: { type: GraphQLInt }
+      },
+      resolve: teamsResolver
     }
   }
 });
