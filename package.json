@@ -99,7 +99,7 @@
     "@swc/helpers": "~0.5.11",
     "@swc/plugin-emotion": "^11.1.0",
     "@types/bcrypt": "^6.0.0",
-    "@types/express": "^5.0.3",
+    "@types/express": "^5.0.4",
     "@types/express-fileupload": "^1.5.1",
     "@types/grecaptcha": "^3.0.9",
     "@types/jsonwebtoken": "^9.0.10",
