@@ -84,7 +84,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                 </TableCell>
                 <TableCell>
                   <IconButton href={`/team/${team.number}`}>
-                    <DirectionalIcon ltr={ChevronLeft} rtl={ChevronRight} />
+                    <DirectionalIcon rtl={ChevronLeft} ltr={ChevronRight} />
                   </IconButton>
                 </TableCell>
               </TableRow>
