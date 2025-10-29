@@ -4,6 +4,6 @@ import { schema } from '../../lib/graphql';
 
 const router = express.Router({ mergeParams: true });
 
-router.all('/v1', createHandler({ schema }));
+router.all('/', createHandler({ schema }));
 
 export default router;

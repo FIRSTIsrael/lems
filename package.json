@@ -44,6 +44,7 @@
     "formik": "^2.4.6",
     "graphql": "^16.11.0",
     "graphql-http": "^1.22.4",
+    "graphql-ws": "^6.0.6",
     "idb": "^8.0.3",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.5",
@@ -67,13 +68,12 @@
     "react-signature-canvas": "^1.0.7",
     "recharts": "^2.15.4",
     "serve-favicon": "^2.5.1",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "stylis": "^4.3.6",
     "swr": "^2.3.6",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
     "winston": "^3.17.0",
+    "ws": "^8.18.3",
     "zod": "^4.1.9"
   },
   "devDependencies": {

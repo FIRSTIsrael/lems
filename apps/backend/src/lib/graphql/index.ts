@@ -10,9 +10,12 @@ import {
 import { eventResolvers } from './resolvers/events/resolver';
 import { divisionResolver } from './resolvers/divisions/resolver';
 import { teamsResolver } from './resolvers/teams';
+import { updateTeamArrivalResolver } from './resolvers/divisions/update-team-arrival';
+import { teamArrivalUpdatedResolver } from './resolvers/divisions/team-arrival-subscription';
 import { EventType } from './types/event';
 import { DivisionType } from './types/divisions/division';
 import { RootTeamType } from './types/team';
+import { TeamArrivalPayloadType } from './types/divisions/team-arrival';
 
 const QueryType = new GraphQLObjectType({
   name: 'Query',
@@ -55,6 +58,38 @@ const QueryType = new GraphQLObjectType({
   }
 });
 
+const MutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    updateTeamArrival: {
+      type: new GraphQLNonNull(TeamArrivalPayloadType),
+      args: {
+        divisionId: { type: new GraphQLNonNull(GraphQLString) },
+        teamId: { type: new GraphQLNonNull(GraphQLString) },
+        arrived: { type: new GraphQLNonNull(GraphQLBoolean) }
+      },
+      resolve: updateTeamArrivalResolver,
+      description: 'Update the arrival status of a team in a division'
+    }
+  }
+});
+
+const SubscriptionType = new GraphQLObjectType({
+  name: 'Subscription',
+  fields: {
+    teamArrivalUpdated: {
+      type: new GraphQLNonNull(TeamArrivalPayloadType),
+      args: {
+        divisionId: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      subscribe: teamArrivalUpdatedResolver,
+      description: 'Subscribe to team arrival status updates for a specific division'
+    }
+  }
+});
+
 export const schema = new GraphQLSchema({
-  query: QueryType
+  query: QueryType,
+  mutation: MutationType,
+  subscription: SubscriptionType
 });
