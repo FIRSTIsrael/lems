@@ -15,7 +15,7 @@
 import type { Server as HTTPServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
-import { schema } from './graphql';
+import { schema } from '..';
 
 interface ConnectionContext extends Record<string, unknown> {
   divisionId: string;

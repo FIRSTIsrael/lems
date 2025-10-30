@@ -11,7 +11,7 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
-import { initGraphQLWebSocket } from './lib/graphql-ws-server';
+import { initGraphQLWebSocket } from './lib/graphql/websocket/graphql-ws-server';
 
 const app = express();
 const server = http.createServer(app);

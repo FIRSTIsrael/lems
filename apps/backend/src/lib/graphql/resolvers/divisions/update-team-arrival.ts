@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
-import { PubSub } from '../../../pubsub';
+import { PubSub } from '../../websocket/pubsub';
 
 interface UpdateTeamArrivalArgs {
   divisionId: string;
@@ -50,7 +50,7 @@ export const updateTeamArrivalResolver: GraphQLFieldResolver<
 
     // Publish the update to subscribers
     const channel = PubSub.divisionChannel(divisionId, 'teamArrivalUpdated');
-    const { pubsub } = await import('../../../pubsub');
+    const { pubsub } = await import('../../websocket/pubsub');
     pubsub.publish(channel, payload);
 
     console.log(

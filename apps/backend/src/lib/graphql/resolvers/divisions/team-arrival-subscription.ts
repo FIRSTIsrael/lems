@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { PubSub } from '../../../pubsub';
+import { PubSub } from '../../websocket/pubsub';
 
 interface TeamArrivalSubscriptionArgs {
   divisionId: string;
@@ -31,7 +31,7 @@ export const teamArrivalUpdatedResolver: GraphQLFieldResolver<
       let resolveNext: ((value: IteratorResult<TeamArrivalPayload>) => void) | null = null;
 
       // Get the pubsub instance
-      const { pubsub } = await import('../../../pubsub');
+      const { pubsub } = await import('../../websocket/pubsub');
 
       // Subscribe to the PubSub channel
       const subscription = pubsub.subscribe<TeamArrivalPayload>(channel, payload => {
