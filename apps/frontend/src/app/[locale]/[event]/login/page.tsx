@@ -22,7 +22,8 @@ export default async function LoginPage({ params }: LoginPageProps) {
     if (!event?.isFullySetUp) {
       throw new Error('Event not fully set up');
     }
-  } catch {
+  } catch (error) {
+    console.log(error);
     redirect(`/`);
   }
 

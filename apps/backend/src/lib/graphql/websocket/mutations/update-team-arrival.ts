@@ -6,6 +6,7 @@ import { MutationContext } from '../types';
 interface UpdateTeamArrivalArgs {
   teamId: string;
   arrived: boolean;
+  divisionId?: string;
 }
 
 interface TeamArrivalPayload {
@@ -17,8 +18,8 @@ interface TeamArrivalPayload {
 
 /**
  * Mutation resolver for updating team arrival status
- * The divisionId is automatically scoped from the WebSocket connection context for security
- * This prevents clients from accidentally (or maliciously) updating teams in other divisions
+ * The divisionId can be provided as an argument (for HTTP requests)
+ * or from the WebSocket connection context (for WebSocket mutations)
  * This also publishes the update to all subscribed clients
  */
 export const updateTeamArrivalResolver: GraphQLFieldResolver<
@@ -28,10 +29,13 @@ export const updateTeamArrivalResolver: GraphQLFieldResolver<
   Promise<TeamArrivalPayload>
 > = async (_, args, context) => {
   const { teamId, arrived } = args;
-  const divisionId = context.divisionId;
+  // Use divisionId from args (HTTP) or context (WebSocket)
+  const divisionId = args.divisionId || context.divisionId;
 
   if (!divisionId) {
-    throw new Error('No division context available. Connection must include divisionId.');
+    throw new Error(
+      'No division context available. Provide divisionId as an argument or use WebSocket connection.'
+    );
   }
 
   try {

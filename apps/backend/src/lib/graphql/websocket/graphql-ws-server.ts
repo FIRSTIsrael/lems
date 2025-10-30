@@ -59,8 +59,8 @@ export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws
 
       // Context factory - provides context to resolvers
       context: async ctx => {
-        // The context from onConnect is available here
-        return ctx;
+        // The context from onConnect is available in ctx.extra
+        return ctx.extra as unknown as ConnectionContext;
       },
 
       onSubscribe: async () => {

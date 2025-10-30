@@ -65,10 +65,12 @@ const MutationType = new GraphQLObjectType({
       type: new GraphQLNonNull(TeamArrivalPayloadType),
       args: {
         teamId: { type: new GraphQLNonNull(GraphQLString) },
-        arrived: { type: new GraphQLNonNull(GraphQLBoolean) }
+        arrived: { type: new GraphQLNonNull(GraphQLBoolean) },
+        divisionId: { type: GraphQLString }
       },
       resolve: updateTeamArrivalResolver,
-      description: 'Update the arrival status of a team.'
+      description:
+        'Update the arrival status of a team. DivisionId can be provided as an argument or from WebSocket context.'
     }
   }
 });

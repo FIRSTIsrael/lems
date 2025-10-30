@@ -1,5 +1,7 @@
 import { apiFetch } from '@lems/shared';
 import { LemsUser } from '@lems/types/api/lems';
+import { getGraphQLWsUrl } from '../../../../lib/api-config';
+import { GraphQLWSProvider } from '../../../../lib/graphql';
 import { EventProvider } from './components/event-context';
 import { fetchEventData } from './graphql/event-data.grqphql';
 
@@ -58,7 +60,18 @@ export default async function VolunteerLayout({ children, searchParams }: Volunt
       canSwitchDivisions: eventData.event.divisions.length > 1
     };
 
-    return <EventProvider value={eventContext}>{children}</EventProvider>;
+    return (
+      <EventProvider value={eventContext}>
+        <GraphQLWSProvider
+          url={getGraphQLWsUrl()}
+          divisionId={currentDivision.id}
+          userId={user.id}
+          roles={[user.role]}
+        >
+          {children}
+        </GraphQLWSProvider>
+      </EventProvider>
+    );
   } catch (error) {
     console.error('Error in volunteer layout:', error);
     throw error;
