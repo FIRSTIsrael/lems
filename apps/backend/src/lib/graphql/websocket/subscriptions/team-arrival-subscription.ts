@@ -1,9 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { PubSub } from '../../websocket/pubsub';
-
-interface TeamArrivalSubscriptionArgs {
-  divisionId: string;
-}
+import { pubsub } from '../pubsub';
+import { SubscriptionContext } from '../types';
 
 interface TeamArrivalPayload {
   teamId: string;
@@ -15,23 +12,26 @@ interface TeamArrivalPayload {
 /**
  * Subscription resolver for team arrival updates
  * Clients subscribe to receive real-time updates when team arrival status changes
+ * The divisionId is automatically scoped from the WebSocket connection context
  */
 export const teamArrivalUpdatedResolver: GraphQLFieldResolver<
   unknown,
-  unknown,
-  TeamArrivalSubscriptionArgs
-> = (_, args) => {
-  const { divisionId } = args;
-  const channel = PubSub.divisionChannel(divisionId, 'teamArrivalUpdated');
+  SubscriptionContext,
+  Record<string, never>
+> = (_, _args, context) => {
+  const divisionId = context.divisionId;
+
+  if (!divisionId) {
+    throw new Error('No division context available. Connection must include divisionId.');
+  }
+
+  const channel = pubsub.divisionChannel(divisionId, 'teamArrivalUpdated');
 
   // Return an async iterator that yields values when events are published
   return {
     [Symbol.asyncIterator]: async function* () {
       const queue: TeamArrivalPayload[] = [];
       let resolveNext: ((value: IteratorResult<TeamArrivalPayload>) => void) | null = null;
-
-      // Get the pubsub instance
-      const { pubsub } = await import('../../websocket/pubsub');
 
       // Subscribe to the PubSub channel
       const subscription = pubsub.subscribe<TeamArrivalPayload>(channel, payload => {

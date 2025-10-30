@@ -1,17 +1,3 @@
-/**
- * GraphQL WebSocket Server Setup
- *
- * This module sets up a production-ready WebSocket server for GraphQL subscriptions
- * using the graphql-ws protocol. It handles:
- * - Connection lifecycle management
- * - Authentication (TODO: to be implemented)
- * - Division-based access control
- * - Graceful shutdown
- * - Error handling and logging
- */
-
-/* eslint-disable react-hooks/rules-of-hooks */
-
 import type { Server as HTTPServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
@@ -35,29 +21,23 @@ interface ConnectionParams {
  * @param path - The WebSocket endpoint path (default: '/graphql/ws')
  */
 export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws') {
-  // Create WebSocket server
   const wsServer = new WebSocketServer({
     server: httpServer,
     path,
-    // Production settings
     perMessageDeflate: false, // Disable compression for better performance
     maxPayload: 100 * 1024 // 100KB max message size
   });
 
-  // Track active connections for monitoring
   let connectionCount = 0;
 
-  // Use graphql-ws to handle WebSocket connections
   const serverCleanup = useServer(
     {
       schema,
 
-      // Connection initialization - runs when a client connects
       onConnect: async ctx => {
         connectionCount++;
         console.log(`🔌 GraphQL WS: New connection (total: ${connectionCount})`);
 
-        // Extract connection params from the client
         const connectionParams = ctx.connectionParams as ConnectionParams;
 
         // TODO: Implement authentication
@@ -68,7 +48,6 @@ export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws
           roles: connectionParams?.roles || []
         };
 
-        // Validate that divisionId is provided
         if (!context.divisionId) {
           console.warn('⚠️  GraphQL WS: Connection rejected - no divisionId provided');
           return false; // Reject connection
@@ -84,17 +63,14 @@ export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws
         return ctx;
       },
 
-      // Handle subscription
       onSubscribe: async () => {
         console.log(`📡 GraphQL WS: New subscription started`);
       },
 
-      // Handle subscription completion
       onComplete: async () => {
         console.log(`🏁 GraphQL WS: Subscription completed`);
       },
 
-      // Handle disconnection
       onDisconnect: async (_ctx, code, reason) => {
         connectionCount--;
         console.log(
@@ -102,7 +78,6 @@ export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws
         );
       },
 
-      // Error handling
       onError: (_ctx, _message, errors) => {
         console.error('❗ GraphQL WS Error:', errors);
       }
@@ -112,7 +87,6 @@ export function initGraphQLWebSocket(httpServer: HTTPServer, path = '/graphql/ws
 
   console.log(`✅ GraphQL WebSocket server initialized on ${path}`);
 
-  // Return cleanup function for graceful shutdown
   return {
     cleanup: async () => {
       console.log('🛑 Shutting down GraphQL WebSocket server...');

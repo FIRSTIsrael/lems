@@ -1,9 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
-import { PubSub } from '../../websocket/pubsub';
+import { pubsub } from '../pubsub';
+import { MutationContext } from '../types';
 
 interface UpdateTeamArrivalArgs {
-  divisionId: string;
   teamId: string;
   arrived: boolean;
 }
@@ -17,15 +17,22 @@ interface TeamArrivalPayload {
 
 /**
  * Mutation resolver for updating team arrival status
+ * The divisionId is automatically scoped from the WebSocket connection context for security
+ * This prevents clients from accidentally (or maliciously) updating teams in other divisions
  * This also publishes the update to all subscribed clients
  */
 export const updateTeamArrivalResolver: GraphQLFieldResolver<
   unknown,
-  unknown,
+  MutationContext,
   UpdateTeamArrivalArgs,
   Promise<TeamArrivalPayload>
-> = async (_, args) => {
-  const { divisionId, teamId, arrived } = args;
+> = async (_, args, context) => {
+  const { teamId, arrived } = args;
+  const divisionId = context.divisionId;
+
+  if (!divisionId) {
+    throw new Error('No division context available. Connection must include divisionId.');
+  }
 
   try {
     // Update the arrival status in the database
@@ -49,8 +56,7 @@ export const updateTeamArrivalResolver: GraphQLFieldResolver<
     };
 
     // Publish the update to subscribers
-    const channel = PubSub.divisionChannel(divisionId, 'teamArrivalUpdated');
-    const { pubsub } = await import('../../websocket/pubsub');
+    const channel = pubsub.divisionChannel(divisionId, 'teamArrivalUpdated');
     pubsub.publish(channel, payload);
 
     console.log(

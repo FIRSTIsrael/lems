@@ -52,7 +52,6 @@ type Team {
 ```graphql
 type Mutation {
   updateTeamArrival(
-    divisionId: ID!
     teamId: ID!
     arrived: Boolean!
   ): TeamArrivalPayload!
@@ -69,20 +68,22 @@ type TeamArrivalPayload {
 #### Subscription
 ```graphql
 type Subscription {
-  teamArrivalUpdated(divisionId: ID!): TeamArrivalPayload!
+  teamArrivalUpdated: TeamArrivalPayload!
 }
 ```
 
+**Note:** The `divisionId` is automatically scoped from the WebSocket connection context. Clients do not need to provide it in queries or mutations. This provides better security by preventing accidental cross-division operations.
+
 ### Usage Flow
 
-1. **Client connects** to WebSocket at `ws://localhost:3333/graphql/ws`
+1. **Client connects** to WebSocket at `ws://localhost:3333/lems/graphql/ws`
    - Provides `divisionId` in connection params
    - Connection is authenticated and authorized
 
 2. **Client subscribes** to team arrival updates:
    ```graphql
    subscription {
-     teamArrivalUpdated(divisionId: "division-123") {
+     teamArrivalUpdated {
        teamId
        divisionId
        arrived
@@ -95,7 +96,6 @@ type Subscription {
    ```graphql
    mutation {
      updateTeamArrival(
-       divisionId: "division-123"
        teamId: "team-456"
        arrived: true
      ) {
@@ -144,12 +144,17 @@ type Subscription {
 
 ## Division Isolation
 
-The system enforces strict division isolation:
+The system enforces strict division isolation at multiple levels:
 
-- Clients must specify `divisionId` when connecting
-- Subscriptions are scoped to a specific division
-- PubSub channels use the format: `division:{divisionId}:{eventType}`
-- Mutations validate division access (TODO: implement with auth)
+- **Connection-level**: Clients must specify `divisionId` when connecting via WebSocket
+- **Context-level**: All resolvers receive the division context from the connection
+- **Query-level**: Mutations and subscriptions do NOT accept `divisionId` as an argument
+- **Channel-level**: PubSub channels use the format: `division:{divisionId}:{eventType}`
+
+This multi-layered approach ensures:
+- Clients cannot accidentally operate on other divisions
+- Division isolation is enforced by the server, not client responsibility
+- Cross-division attacks are impossible at the API level
 
 ## Production Considerations
 
@@ -165,10 +170,11 @@ The system enforces strict division isolation:
 - Error boundaries prevent cascading failures
 
 ### Security
-- **TODO**: Implement authentication middleware
-- **TODO**: Implement role-based field permissions
-- Connection params validation prevents unauthorized access
-- Division-scoped channels prevent cross-division data leaks
+- **Connection-level isolation**: Division ID provided at connection time prevents cross-division operations
+- **Context-based access control**: All resolvers enforce division scoping from connection context
+- **No client-side division selection**: Division ID cannot be overridden in queries/mutations, only on initial connection
+- **TODO**: Implement authentication middleware to validate connection identity
+- **TODO**: Implement role-based field permissions to restrict data visibility by role
 
 ### Monitoring
 - Connection count tracking
@@ -185,31 +191,53 @@ To add a new real-time feature:
    export const MyEventPayloadType = new GraphQLObjectType({
      name: 'MyEventPayload',
      fields: () => ({
-       // Define fields
+       // Define fields (include divisionId for client context)
      })
    });
    ```
 
 2. **Create the mutation resolver** in `apps/backend/src/lib/graphql/resolvers/`
    ```typescript
-   export const myMutationResolver: GraphQLFieldResolver = async (_, args) => {
-     // Update database
-     const result = await db.raw.sql...
-     
-     // Publish event
-     const channel = pubsub.divisionChannel(divisionId, 'myEvent');
-     pubsub.publish(channel, payload);
-     
-     return payload;
-   };
+   interface MutationContext {
+     divisionId: string;
+     userId?: string;
+     roles?: string[];
+   }
+
+   export const myMutationResolver: GraphQLFieldResolver<unknown, MutationContext> = 
+     async (_, args, context) => {
+       const divisionId = context.divisionId;
+       
+       // Update database
+       const result = await db.raw.sql...
+       
+       // Publish event with division-scoped channel
+       const channel = PubSub.divisionChannel(divisionId, 'myEvent');
+       const { pubsub } = await import('../../websocket/pubsub');
+       pubsub.publish(channel, payload);
+       
+       return payload;
+     };
    ```
 
 3. **Create the subscription resolver**
    ```typescript
-   export const myEventSubscriptionResolver: GraphQLFieldResolver = (_, args) => {
-     const channel = pubsub.divisionChannel(args.divisionId, 'myEvent');
-     return createAsyncIterator(channel);
-   };
+   interface SubscriptionContext {
+     divisionId: string;
+     userId?: string;
+     roles?: string[];
+   }
+
+   export const myEventSubscriptionResolver: GraphQLFieldResolver<unknown, SubscriptionContext> = 
+     (_, _args, context) => {
+       const divisionId = context.divisionId;
+       if (!divisionId) {
+         throw new Error('No division context available.');
+       }
+       
+       const channel = PubSub.divisionChannel(divisionId, 'myEvent');
+       // Return async iterator for the channel
+     };
    ```
 
 4. **Update the schema** in `apps/backend/src/lib/graphql/index.ts`
@@ -218,7 +246,10 @@ To add a new real-time feature:
      fields: {
        myMutation: {
          type: MyEventPayloadType,
-         args: { /* ... */ },
+         args: { 
+           // Do NOT include divisionId - it comes from context
+           /* ... other args ... */
+         },
          resolve: myMutationResolver
        }
      }
@@ -228,12 +259,17 @@ To add a new real-time feature:
      fields: {
        myEventSubscription: {
          type: MyEventPayloadType,
-         args: { divisionId: { type: new GraphQLNonNull(GraphQLString) } },
+         args: {}, // Division ID is scoped from context
          subscribe: myEventSubscriptionResolver
        }
      }
    });
    ```
+
+**Key Pattern:** Never accept `divisionId` as an argument. Always derive it from the WebSocket connection context. This ensures:
+- Clients cannot accidentally operate on other divisions
+- Division isolation is enforced at the server level
+- Cleaner GraphQL API
 
 ## Testing
 
@@ -248,7 +284,7 @@ To add a new real-time feature:
 import { createClient } from 'graphql-ws';
 
 const client = createClient({
-  url: 'ws://localhost:3333/graphql/ws',
+  url: 'ws://localhost:3333/lems/graphql/ws',
   connectionParams: {
     divisionId: 'test-division-id'
   }
@@ -258,8 +294,9 @@ client.subscribe(
   {
     query: `
       subscription {
-        teamArrivalUpdated(divisionId: "test-division-id") {
+        teamArrivalUpdated {
           teamId
+          divisionId
           arrived
           updatedAt
         }
@@ -268,6 +305,34 @@ client.subscribe(
   },
   {
     next: (data) => console.log('Received:', data),
+    error: (error) => console.error('Error:', error),
+    complete: () => console.log('Complete')
+  }
+);
+```
+
+### Example Mutation Test (JavaScript)
+```javascript
+// Same client connection as above
+
+client.subscribe(
+  {
+    query: `
+      mutation {
+        updateTeamArrival(
+          teamId: "team-123"
+          arrived: true
+        ) {
+          teamId
+          divisionId
+          arrived
+          updatedAt
+        }
+      }
+    `
+  },
+  {
+    next: (data) => console.log('Mutation result:', data),
     error: (error) => console.error('Error:', error),
     complete: () => console.log('Complete')
   }

@@ -10,8 +10,8 @@ import {
 import { eventResolvers } from './resolvers/events/resolver';
 import { divisionResolver } from './resolvers/divisions/resolver';
 import { teamsResolver } from './resolvers/teams';
-import { updateTeamArrivalResolver } from './resolvers/divisions/update-team-arrival';
-import { teamArrivalUpdatedResolver } from './resolvers/divisions/team-arrival-subscription';
+import { updateTeamArrivalResolver } from './websocket/mutations/update-team-arrival';
+import { teamArrivalUpdatedResolver } from './websocket/subscriptions/team-arrival-subscription';
 import { EventType } from './types/event';
 import { DivisionType } from './types/divisions/division';
 import { RootTeamType } from './types/team';
@@ -64,12 +64,11 @@ const MutationType = new GraphQLObjectType({
     updateTeamArrival: {
       type: new GraphQLNonNull(TeamArrivalPayloadType),
       args: {
-        divisionId: { type: new GraphQLNonNull(GraphQLString) },
         teamId: { type: new GraphQLNonNull(GraphQLString) },
         arrived: { type: new GraphQLNonNull(GraphQLBoolean) }
       },
       resolve: updateTeamArrivalResolver,
-      description: 'Update the arrival status of a team in a division'
+      description: 'Update the arrival status of a team.'
     }
   }
 });
@@ -79,11 +78,9 @@ const SubscriptionType = new GraphQLObjectType({
   fields: {
     teamArrivalUpdated: {
       type: new GraphQLNonNull(TeamArrivalPayloadType),
-      args: {
-        divisionId: { type: new GraphQLNonNull(GraphQLString) }
-      },
+      args: {},
       subscribe: teamArrivalUpdatedResolver,
-      description: 'Subscribe to team arrival status updates for a specific division'
+      description: 'Subscribe to team arrival status updates for your connected division'
     }
   }
 });

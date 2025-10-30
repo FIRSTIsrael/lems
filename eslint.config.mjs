@@ -71,15 +71,6 @@ export default [
       }
     },
     rules: {
-      // React Hooks rules
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // React rules
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react/jsx-uses-react': 'off',
-
       // Import rules
       'import/no-unresolved': 'off', // Disabled for now since its not detecting @lems imports
       'import/no-duplicates': 'warn',
@@ -119,6 +110,15 @@ export default [
     rules: {
       // JSX Accessibility rules
       ...jsxA11y.configs.recommended.rules,
+
+      // React Hooks rules
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // React rules
+      'react/prop-types': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
 
       'jsx-a11y/anchor-is-valid': [
         'error',

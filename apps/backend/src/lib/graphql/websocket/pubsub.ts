@@ -86,6 +86,16 @@ class PubSub {
    * @param eventType - The event type
    * @returns Formatted channel name
    */
+  divisionChannel(divisionId: string, eventType: string): string {
+    return `division:${divisionId}:${eventType}`;
+  }
+
+  /**
+   * Static helper to create a division-scoped channel name
+   * @param divisionId - The division ID
+   * @param eventType - The event type
+   * @returns Formatted channel name
+   */
   static divisionChannel(divisionId: string, eventType: string): string {
     return `division:${divisionId}:${eventType}`;
   }
