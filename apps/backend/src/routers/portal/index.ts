@@ -1,5 +1,5 @@
 import express from 'express';
-import { cache } from '../../middlewares/cache';
+import { cache } from '../../middleware/cache';
 import seasonsRouter from './seasons';
 import eventsRouter from './events';
 import teamsRouter from './teams';

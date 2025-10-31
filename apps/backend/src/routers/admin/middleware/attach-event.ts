@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
-import { AdminEventRequest, AdminRequest } from '../../types/express';
-import database from '../../lib/database';
+import { AdminEventRequest, AdminRequest } from '../../../types/express';
+import database from '../../../lib/database';
 
 /**
  * Middleware to attach the event ID to the request.

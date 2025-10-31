@@ -1,5 +1,5 @@
 import express from 'express';
-import { authMiddleware } from '../../middlewares/scheduler/auth';
+import { authMiddleware } from './middleware/auth';
 import divisionsRouter from './divisions';
 
 const router = express.Router({ mergeParams: true });

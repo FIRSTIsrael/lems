@@ -2,18 +2,17 @@ import rateLimit from 'express-rate-limit';
 import express, { NextFunction, Request, Response } from 'express';
 import dayjs from 'dayjs';
 import jwt from 'jsonwebtoken';
-import { RecaptchaResponse } from '../../types/auth';
-import db from '../../lib/database';
-import { getRecaptchaResponse } from '../../lib/security/captcha';
+import { RecaptchaResponse } from '../../../types/auth';
+import db from '../../../lib/database';
+import { getRecaptchaResponse } from '../../../lib/security/captcha';
 import { makeLemsUserResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-// Configure rate limiter: max 10 requests per minute
 const loginRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // limit each IP to 10 requests per windowMs
-  message: { error: 'TOO_MANY_REQUESTS' } // Response when rate limit is exceeded
+  max: 10, // 10 requests per windowMs
+  message: { error: 'TOO_MANY_REQUESTS' }
 });
 
 const jwtSecret = process.env.JWT_SECRET;

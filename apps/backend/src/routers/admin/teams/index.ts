@@ -3,7 +3,7 @@ import fileUpload, { UploadedFile } from 'express-fileupload';
 import { UpdateableTeam } from '@lems/database';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });

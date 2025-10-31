@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { PortalTeamRequest } from '../../types/express';
-import database from '../../lib/database';
+import { PortalTeamRequest } from '../../../types/express';
+import database from '../../../lib/database';
 
 /**
  * Middleware to attach the team to the request.

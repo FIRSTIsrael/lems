@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { JwtTokenData } from '../../types/auth';
-import { AdminRequest } from '../../types/express';
-import { extractToken } from '../../lib/security/auth';
+import { JwtTokenData } from '../../../types/auth';
+import { AdminRequest } from '../../../types/express';
+import { extractToken } from '../../../lib/security/auth';
 
 const jwtSecret = process.env.JWT_SECRET;
 

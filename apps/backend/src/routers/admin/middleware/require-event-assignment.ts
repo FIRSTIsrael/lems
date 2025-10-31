@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
-import { AdminRequest } from '../../types/express';
-import database from '../../lib/database';
+import { AdminRequest } from '../../../types/express';
+import database from '../../../lib/database';
 
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
