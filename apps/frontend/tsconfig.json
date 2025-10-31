@@ -32,6 +32,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
+    "../../dist/apps/frontend/.next/types/**/*.ts"
   ],
   "exclude": [
     // TODO: remove this, its just for being able to build
