@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo, useState } from 'react';
-import { useSuspenseQuery, skipToken } from '@apollo/client/react';
+import { useSuspenseQuery, useQuery } from '@apollo/client/react';
 import {
   GET_VOLUNTEER_ROLES_QUERY,
   GET_VOLUNTEER_BY_ROLE_QUERY,
@@ -12,6 +12,7 @@ interface VolunteerContextType {
   allRoles: string[];
 
   isReady: boolean;
+  isLoadingVolunteerData: boolean;
   volunteerData: VolunteerByRoleGraphQLData | null;
 
   selectedRole: string | null;
@@ -30,8 +31,7 @@ interface VolunteerProviderProps {
 }
 
 /**
- * Volunteer provider that manages volunteer data fetching using Apollo Client hooks
- * This component uses Suspense for data loading and error boundaries for error handling
+ * Volunteer provider that manages volunteer data fetching
  */
 export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -40,9 +40,12 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     variables: { slug: eventSlug }
   });
 
-  const { data: volunteerData } = useSuspenseQuery(
+  const { data: volunteerData, loading: isLoadingVolunteerData } = useQuery(
     GET_VOLUNTEER_BY_ROLE_QUERY,
-    selectedRole ? { variables: { slug: eventSlug, role: selectedRole } } : skipToken
+    {
+      variables: { slug: eventSlug, role: selectedRole! },
+      skip: !selectedRole
+    }
   );
 
   // Extract and deduplicate roles
@@ -90,11 +93,12 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     };
   }, [volunteerDataValue]);
 
-  const isReady = selectedRole && volunteerDataValue;
+  const isReady = selectedRole && volunteerDataValue && !isLoadingVolunteerData;
 
   const value: VolunteerContextType = {
     allRoles,
     volunteerData: volunteerDataValue,
+    isLoadingVolunteerData,
     isReady: !!isReady,
     selectedRole,
     setSelectedRole,
