@@ -4,9 +4,11 @@ import express from 'express';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
 import cors from 'cors';
+import { expressMiddleware } from '@as-integrations/express5';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
 import './lib/database';
+import { createApolloServer, type GraphQLContext } from './lib/graphql/apollo-server';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -33,6 +35,23 @@ app.use(express.json());
 // TODO: new logger
 // app.use('/', expressLogger);
 
+const apolloServer = createApolloServer(server);
+await apolloServer.start();
+console.log('✅ Apollo Server initialized');
+
+app.use(
+  '/lems/graphql',
+  expressMiddleware(apolloServer, {
+    context: async (/* { req } */): Promise<GraphQLContext> => {
+      // TODO: Extract user from req.cookies or headers
+      // const user = await authenticate(req);
+      return {
+        // user,
+      };
+    }
+  })
+);
+
 // Application routers
 app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
@@ -57,6 +76,7 @@ console.log('💫 Starting server...');
 const port = 3333;
 server.listen(port, () => {
   console.log(`✅ Server started on port ${port}.`);
+  console.log(`🚀 GraphQL endpoint: http://localhost:${port}/lems/graphql`);
 });
 
 server.on('error', console.error);
