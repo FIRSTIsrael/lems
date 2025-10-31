@@ -1,8 +1,10 @@
 import type { Server } from 'http';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { typeDefs } from './schema';
+import { loadLemsGraphQLSchema } from '@lems/types/api/lems/graphql';
 import { resolvers } from './resolvers';
+
+export const typeDefs = loadLemsGraphQLSchema();
 
 /**
  * GraphQL context object available to all resolvers.

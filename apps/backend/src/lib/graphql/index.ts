@@ -8,6 +8,5 @@
  * - resolvers: Resolver map for all Query, Mutation, and type fields
  */
 
-export { createApolloServer, type GraphQLContext } from './apollo-server';
-export { typeDefs } from './schema';
+export { createApolloServer, type GraphQLContext, typeDefs } from './apollo-server';
 export { resolvers } from './resolvers';
