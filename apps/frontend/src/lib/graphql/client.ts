@@ -9,7 +9,8 @@ import { RetryLink } from '@apollo/client/link/retry';
  * - HTTP link pointing to the LEMS GraphQL endpoint
  * - Error handling and logging
  * - Automatic retry logic with exponential backoff
- * - Normalized cache with type policies
+ * - Normalized cache with type policies for all LEMS entity types
+ * - TypeScript-friendly error handling
  *
  * @returns Configured Apollo Client instance
  */

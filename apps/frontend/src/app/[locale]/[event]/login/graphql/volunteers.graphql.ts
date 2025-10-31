@@ -1,83 +1,67 @@
-import { z } from 'zod';
-import { graphqlFetch } from '@lems/shared';
+import { gql } from '@apollo/client';
+import type { TypedDocumentNode } from '@apollo/client';
 
-export const TableRoleInfoSchema = z.object({
-  __typename: z.literal('TableRoleInfo'),
-  tableId: z.string()
-});
+// Type definitions for role info
+type TableRoleInfo = {
+  __typename: 'TableRoleInfo';
+  tableId: string;
+};
 
-export const RoomRoleInfoSchema = z.object({
-  __typename: z.literal('RoomRoleInfo'),
-  roomId: z.string()
-});
+type RoomRoleInfo = {
+  __typename: 'RoomRoleInfo';
+  roomId: string;
+};
 
-export const CategoryRoleInfoSchema = z.object({
-  __typename: z.literal('CategoryRoleInfo'),
-  category: z.string()
-});
+type CategoryRoleInfo = {
+  __typename: 'CategoryRoleInfo';
+  category: string;
+};
 
-export const RoleInfoSchema = z.union([
-  TableRoleInfoSchema,
-  RoomRoleInfoSchema,
-  CategoryRoleInfoSchema
-]);
+export type RoleInfo = TableRoleInfo | RoomRoleInfo | CategoryRoleInfo;
 
-export type TableRoleInfo = z.infer<typeof TableRoleInfoSchema>;
-export type RoomRoleInfo = z.infer<typeof RoomRoleInfoSchema>;
-export type CategoryRoleInfo = z.infer<typeof CategoryRoleInfoSchema>;
-export type RoleInfo = z.infer<typeof RoleInfoSchema>;
+export interface VolunteerByRoleGraphQLData {
+  id: string;
+  divisions: {
+    id: string;
+    name: string;
+    color: string;
+  }[];
+  volunteers: {
+    id: string;
+    role: string;
+    roleInfo: RoleInfo | null | undefined;
+    identifier: string | null | undefined;
+    divisions: Array<{ id: string }>;
+  }[];
+}
 
-export const VolunteerRolesSchema = z.object({
-  id: z.string(),
-  volunteers: z.array(
-    z.object({
-      role: z.string()
-    })
-  )
-});
+// Query result types
+type GetVolunteerRolesQuery = {
+  event: {
+    id: string;
+    volunteers: Array<{
+      role: string;
+    }>;
+  } | null;
+};
 
-export type VolunteerRolesGraphQLData = z.infer<typeof VolunteerRolesSchema>;
+type GetVolunteerRolesQueryVariables = {
+  slug: string;
+};
 
-export const VolunteerRolesResponseSchema = z.object({
-  event: VolunteerRolesSchema.nullable()
-});
+type GetVolunteerByRoleQuery = {
+  event: VolunteerByRoleGraphQLData | null;
+};
 
-export type VolunteerRolesResponseData = z.infer<typeof VolunteerRolesResponseSchema>;
+type GetVolunteerByRoleQueryVariables = {
+  slug: string;
+  role: string;
+};
 
-// Schema for fetching volunteers by role with their divisions
-export const VolunteerByRoleSchema = z.object({
-  id: z.string(),
-  divisions: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      color: z.string()
-    })
-  ),
-  volunteers: z.array(
-    z.object({
-      id: z.string(),
-      role: z.string(),
-      roleInfo: RoleInfoSchema.nullish(),
-      identifier: z.string().nullish(),
-      divisions: z.array(
-        z.object({
-          id: z.string()
-        })
-      )
-    })
-  )
-});
-
-export type VolunteerByRoleGraphQLData = z.infer<typeof VolunteerByRoleSchema>;
-
-export const VolunteerByRoleResponseSchema = z.object({
-  event: VolunteerByRoleSchema.nullable()
-});
-
-export type VolunteerByRoleResponseData = z.infer<typeof VolunteerByRoleResponseSchema>;
-
-const VOLUNTEER_ROLES_QUERY = `
+export const GET_VOLUNTEER_ROLES_QUERY: TypedDocumentNode<
+  GetVolunteerRolesQuery,
+  GetVolunteerRolesQueryVariables
+> = gql`
   query GetVolunteerRoles($slug: String!) {
     event(slug: $slug) {
       id
@@ -88,7 +72,10 @@ const VOLUNTEER_ROLES_QUERY = `
   }
 `;
 
-const VOLUNTEER_BY_ROLE_QUERY = `
+export const GET_VOLUNTEER_BY_ROLE_QUERY: TypedDocumentNode<
+  GetVolunteerByRoleQuery,
+  GetVolunteerByRoleQueryVariables
+> = gql`
   query GetVolunteerByRole($slug: String!, $role: String!) {
     event(slug: $slug) {
       id
@@ -120,31 +107,3 @@ const VOLUNTEER_BY_ROLE_QUERY = `
     }
   }
 `;
-
-/**
- * Fetch all unique volunteer roles for an event by slug
- */
-export const fetchVolunteerRoles = async (slug: string) => {
-  const response = await graphqlFetch(VOLUNTEER_ROLES_QUERY, VolunteerRolesResponseSchema, {
-    slug
-  });
-  if (!response.event) {
-    throw new Error('Event not found');
-  }
-  // Transform the volunteers array into a Set of unique roles
-  return Array.from(new Set(response.event.volunteers.map(v => v.role)));
-};
-
-/**
- * Fetch volunteer data by role for an event by slug
- */
-export const fetchVolunteerByRole = async (slug: string, role: string) => {
-  const response = await graphqlFetch(VOLUNTEER_BY_ROLE_QUERY, VolunteerByRoleResponseSchema, {
-    slug,
-    role
-  });
-  if (!response.event) {
-    throw new Error('Event not found');
-  }
-  return response.event;
-};

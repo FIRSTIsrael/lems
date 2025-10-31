@@ -1,23 +1,8 @@
-import { z } from 'zod';
-import { graphqlFetch } from '@lems/shared';
+import { gql } from '@apollo/client';
+import { serverGraphQLQuery } from '../../../../../lib/graphql/server';
 
-export const EventDetailsSchema = z.object({
-  id: z.string(),
-  slug: z.string(),
-  name: z.string(),
-  isFullySetUp: z.boolean()
-});
-
-export type EventDetailsGraphQLData = z.infer<typeof EventDetailsSchema>;
-
-export const EventDetailsResponseSchema = z.object({
-  event: EventDetailsSchema.nullable()
-});
-
-export type EventDetailsResponseData = z.infer<typeof EventDetailsResponseSchema>;
-
-const EVENT_DETAILS_QUERY = `
-  query GetEventDetails($slug: String!) {
+export const GET_EVENT_BY_SLUG_QUERY = gql`
+  query GetEventBySlug($slug: String!) {
     event(slug: $slug) {
       id
       slug
@@ -27,13 +12,28 @@ const EVENT_DETAILS_QUERY = `
   }
 `;
 
-/**
- * Fetch event details by slug
- */
-export const fetchEventBySlug = async (slug: string) => {
-  const response = await graphqlFetch(EVENT_DETAILS_QUERY, EventDetailsResponseSchema, { slug });
-  if (!response.event) {
+export interface EventDetails {
+  id: string;
+  slug: string;
+  name: string;
+  isFullySetUp: boolean;
+}
+
+export const fetchEventBySlug = async (slug: string): Promise<EventDetails> => {
+  const { data, errors } = await serverGraphQLQuery<{ event: EventDetails | null }>(
+    GET_EVENT_BY_SLUG_QUERY,
+    { slug }
+  );
+
+  if (errors) {
+    throw new Error(
+      `GraphQL error: ${errors.map((e: { message: string }) => e.message).join(', ')}`
+    );
+  }
+
+  if (!data?.event) {
     throw new Error('Event not found');
   }
-  return response.event;
+
+  return data.event;
 };

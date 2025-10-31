@@ -1,4 +1,4 @@
-import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache, gql, type TypedDocumentNode } from '@apollo/client';
 
 /**
  * Server-side Apollo Client for fetching data in Next.js App Router
@@ -44,24 +44,46 @@ function extractGraphQLErrors(error: unknown): Array<{ message: string }> | null
 /**
  * Execute a GraphQL query on the server side
  *
- * @param query - GraphQL query document
- * @param variables - Query variables
- * @returns Promise with the query result
+ * For full type safety and inference, queries should be defined as TypedDocumentNode:
  *
  * @example
- * const result = await serverGraphQLQuery(GET_EVENT_QUERY, { id: 'abc123' });
- * if (result.errors) throw new Error('Query failed');
- * return result.data;
+ * import { TypedDocumentNode } from '@apollo/client';
+ *
+ * type GetEventQuery = {
+ *   event: {
+ *     id: string;
+ *     name: string;
+ *   } | null;
+ * };
+ *
+ * type GetEventQueryVariables = { id: string };
+ *
+ * const GET_EVENT: TypedDocumentNode<GetEventQuery, GetEventQueryVariables> = gql`
+ *   query GetEvent($id: String!) {
+ *     event(id: $id) {
+ *       id
+ *       name
+ *     }
+ *   }
+ * `;
+ *
+ * // Type-safe execution with inference
+ * const { data, errors } = await serverGraphQLQuery(GET_EVENT, { id: '123' });
+ * // data type is GetEventQuery
+ *
+ * @param query - TypedDocumentNode or gql document
+ * @param variables - Query variables
+ * @returns Promise with the query result
  */
 export async function serverGraphQLQuery<TData = Record<string, unknown>>(
-  query: ReturnType<typeof gql>,
+  query: TypedDocumentNode<TData> | ReturnType<typeof gql>,
   variables?: Record<string, unknown>
 ): Promise<{ data: TData | null; errors?: Array<{ message: string }> }> {
   const client = getServerApolloClient();
 
   try {
     const result = await client.query<TData>({
-      query,
+      query: query as ReturnType<typeof gql>,
       variables,
       fetchPolicy: 'no-cache' // Always fetch fresh data on server
     });
@@ -79,19 +101,19 @@ export async function serverGraphQLQuery<TData = Record<string, unknown>>(
 /**
  * Execute a GraphQL mutation on the server side
  *
- * @param mutation - GraphQL mutation document
+ * @param mutation - TypedDocumentNode or gql document
  * @param variables - Mutation variables
  * @returns Promise with the mutation result
  */
 export async function serverGraphQLMutation<TData = Record<string, unknown>>(
-  mutation: ReturnType<typeof gql>,
+  mutation: TypedDocumentNode<TData> | ReturnType<typeof gql>,
   variables?: Record<string, unknown>
 ): Promise<{ data: TData | null; errors?: Array<{ message: string }> }> {
   const client = getServerApolloClient();
 
   try {
     const result = await client.mutate<TData>({
-      mutation,
+      mutation: mutation as ReturnType<typeof gql>,
       variables,
       fetchPolicy: 'no-cache'
     });
