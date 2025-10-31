@@ -10,6 +10,10 @@ interface DivisionWithId {
   id: string;
 }
 
+/**
+ * Resolver for Division.rooms field.
+ * Fetches all rooms in a division.
+ */
 export const divisionRoomsResolver: GraphQLFieldResolver<
   DivisionWithId,
   unknown,

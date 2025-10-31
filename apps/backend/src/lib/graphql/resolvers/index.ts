@@ -34,15 +34,10 @@ export const resolvers = {
   },
   RoleInfo: {
     __resolveType(obj: Record<string, unknown>) {
-      if ('tableId' in obj) {
-        return 'TableRoleInfo';
-      }
-      if ('roomId' in obj) {
-        return 'RoomRoleInfo';
-      }
-      if ('category' in obj) {
-        return 'CategoryRoleInfo';
-      }
+      // Discriminate union type based on object properties
+      if ('tableId' in obj) return 'TableRoleInfo';
+      if ('roomId' in obj) return 'RoomRoleInfo';
+      if ('category' in obj) return 'CategoryRoleInfo';
       return null;
     }
   }

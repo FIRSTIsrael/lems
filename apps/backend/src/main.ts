@@ -32,9 +32,9 @@ app.use('/timesync', timesyncServer.requestHandler);
 
 app.use(express.json());
 
-// TODO: new logger
-// app.use('/', expressLogger);
-
+// GraphQL: Initialize Apollo Server and register middleware
+// This must be registered before the routers to ensure /lems/graphql
+// takes precedence over /lems/* routes
 const apolloServer = createApolloServer(server);
 await apolloServer.start();
 console.log('✅ Apollo Server initialized');
@@ -66,6 +66,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'ROUTE_NOT_DEFINED' });
 });
 
+// Error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res, next) => {
   console.log(err);

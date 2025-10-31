@@ -10,6 +10,10 @@ interface DivisionWithId {
   id: string;
 }
 
+/**
+ * Resolver for Division.tables field.
+ * Fetches all tables in a division.
+ */
 export const divisionTablesResolver: GraphQLFieldResolver<
   DivisionWithId,
   unknown,

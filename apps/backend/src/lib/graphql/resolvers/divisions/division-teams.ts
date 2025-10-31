@@ -19,6 +19,10 @@ interface TeamsArgs {
   ids?: string[];
 }
 
+/**
+ * Resolver for Division.teams field.
+ * Fetches all teams in a division, optionally filtered by IDs.
+ */
 export const divisionTeamsResolver: GraphQLFieldResolver<
   DivisionWithId,
   unknown,
@@ -28,23 +32,37 @@ export const divisionTeamsResolver: GraphQLFieldResolver<
   try {
     const teams = await db.teams.byDivisionId(division.id).getAll();
 
-    let filteredTeams = teams;
-    if (args.ids && args.ids.length > 0) {
-      const idsSet = new Set(args.ids);
-      filteredTeams = teams.filter(team => idsSet.has(team.id));
+    // Filter by IDs if provided
+    if (!args.ids || args.ids.length === 0) {
+      return teams.map(buildResult(division.id));
     }
 
-    return filteredTeams.map(t => ({
-      id: t.id,
-      number: t.number,
-      name: t.name,
-      affiliation: t.affiliation,
-      city: t.city,
-      location: t.coordinates,
-      divisionId: division.id
-    }));
+    const idsSet = new Set(args.ids);
+    return teams.filter(team => idsSet.has(team.id)).map(buildResult(division.id));
   } catch (error) {
     console.error('Error fetching teams for division:', division.id, error);
     throw error;
   }
 };
+
+/**
+ * Maps a database Team to GraphQL TeamGraphQL, binding to a division.
+ */
+function buildResult(divisionId: string) {
+  return (team: {
+    id: string;
+    number: number;
+    name: string;
+    affiliation: string;
+    city: string;
+    coordinates: string | null;
+  }) => ({
+    id: team.id,
+    number: team.number,
+    name: team.name,
+    affiliation: team.affiliation,
+    city: team.city,
+    location: team.coordinates,
+    divisionId
+  });
+}
