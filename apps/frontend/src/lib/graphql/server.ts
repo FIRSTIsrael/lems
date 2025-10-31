@@ -1,4 +1,5 @@
 import { ApolloClient, HttpLink, InMemoryCache, gql, type TypedDocumentNode } from '@apollo/client';
+import { getApiBase } from '@lems/shared';
 
 /**
  * Server-side Apollo Client for fetching data in Next.js App Router
@@ -11,7 +12,7 @@ let serverApolloClient: ApolloClient | null = null;
 
 function getServerApolloClient() {
   if (!serverApolloClient) {
-    const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql';
+    const endpoint = `${getApiBase()}/lems/graphql`;
 
     serverApolloClient = new ApolloClient({
       link: new HttpLink({

@@ -1,6 +1,8 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
 import { ErrorLink } from '@apollo/client/link/error';
+import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client/errors';
 import { RetryLink } from '@apollo/client/link/retry';
+import { getApiBase } from '@lems/shared';
 
 /**
  * Creates a configured Apollo Client instance for the LEMS frontend.
@@ -17,32 +19,26 @@ import { RetryLink } from '@apollo/client/link/retry';
 export function createApolloClient() {
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
+    uri: `${getApiBase()}/lems/graphql`,
     credentials: 'include', // Send cookies with requests
     fetch
   });
 
-  // Error handling and logging
   const errorLink = new ErrorLink(({ error, operation }) => {
-    if (error) {
-      console.error(`[GraphQL error]: Operation "${operation.operationName}" - ${error.message}`, {
-        error
-      });
-
-      // Handle specific error types
-      if ('statusCode' in error && typeof error.statusCode === 'number') {
-        switch (error.statusCode) {
-          case 401:
-            console.error('Authentication required. Please log in.');
-            break;
-          case 403:
-            console.error('Access forbidden. Insufficient permissions.');
-            break;
-          case 500:
-            console.error('Server error. Please try again later.');
-            break;
-        }
-      }
+    if (CombinedGraphQLErrors.is(error)) {
+      error.errors.forEach(({ message, locations, path }) =>
+        console.log(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}, Operation: ${operation.operationName}`
+        )
+      );
+    } else if (CombinedProtocolErrors.is(error)) {
+      error.errors.forEach(({ message, extensions }) =>
+        console.log(
+          `[Protocol error]: Message: ${message}, Extensions: ${JSON.stringify(extensions)}`
+        )
+      );
+    } else {
+      console.error(`[Network error]: ${error}, Operation: ${operation}`);
     }
   });
 
@@ -81,7 +77,10 @@ export function createApolloClient() {
         Division: { keyFields: ['id'] },
         Team: { keyFields: ['id'] },
         RootTeam: { keyFields: ['id'] },
-        Volunteer: { keyFields: ['id'] },
+        Volunteer: {
+          // Use id when available, otherwise don't normalize
+          keyFields: object => (object.id ? ['id'] : false)
+        },
         Table: { keyFields: ['id'] },
         Room: { keyFields: ['id'] }
       }

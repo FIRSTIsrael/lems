@@ -20,6 +20,10 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
   try {
     const eventData = await fetchEventData(eventId);
 
+    if (!eventData.event) {
+      throw new Error('Event not found');
+    }
+
     if (!eventData.event.divisions || eventData.event.divisions.length === 0) {
       throw new Error('No divisions available for this event');
     }
