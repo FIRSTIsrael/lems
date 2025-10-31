@@ -2,10 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Roboto, Heebo } from 'next/font/google';
+import { ApolloProvider } from '@apollo/client/react';
 import { Locales, configureDayjs } from '@lems/localization';
 import { SWRProvider } from '@lems/shared';
+import { createApolloClient } from '../../lib/graphql/client';
 import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
+
+const apollo = createApolloClient();
 
 export const metadata: Metadata = {
   title: 'Events Portal: FIRST LEGO League Challenge IL',
@@ -50,9 +54,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <SWRProvider>
-            <MuiProvider locale={locale}>{children}</MuiProvider>
-          </SWRProvider>
+          <ApolloProvider client={apollo}>
+            <SWRProvider>
+              <MuiProvider locale={locale}>{children}</MuiProvider>
+            </SWRProvider>
+          </ApolloProvider>
         </NextIntlClientProvider>
       </body>
     </html>
