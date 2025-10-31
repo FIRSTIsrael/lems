@@ -25,17 +25,16 @@ export function EventProvider({
   divisions: { id: string; name: string }[];
 }) {
   const searchParams = useSearchParams();
-  const divisionParam = searchParams.get('division');
+  const divisionId = searchParams.get('division');
 
   let currentDivision: { id: string; name: string };
 
-  if (divisionParam) {
-    const selectedDivision = divisions.find(d => d.id === divisionParam);
+  if (divisionId) {
+    const selectedDivision = divisions.find(d => d.id === divisionId);
     if (selectedDivision) {
       currentDivision = selectedDivision;
     } else {
-      // Division not found, default to first
-      currentDivision = divisions[0];
+      throw new Error(`Division ${divisionId} not found`);
     }
   } else {
     // No division parameter, default to first
