@@ -1,8 +1,8 @@
 import express from 'express';
 import db from '../../../../lib/database';
 import { AdminDivisionRequest, AdminEventRequest } from '../../../../types/express';
-import { attachDivision } from '../../../../middlewares/admin/attach-division';
-import { requirePermission } from '../../../../middlewares/admin/require-permission';
+import { attachDivision } from '../../middleware/attach-division';
+import { requirePermission } from '../../middleware/require-permission';
 import { makeAdminDivisionResponse } from './util';
 import divisionRoomsRouter from './rooms';
 import divisionTablesRouter from './tables';

@@ -45,7 +45,7 @@ export async function graphqlFetch<TSchema extends z.ZodTypeAny>(
   schema: TSchema,
   variables?: Record<string, unknown>
 ): Promise<z.infer<TSchema>> {
-  const result = await apiFetch('/lems/gql/v1', {
+  const result = await apiFetch('/lems/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

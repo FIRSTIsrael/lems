@@ -67,8 +67,6 @@
     "react-signature-canvas": "^1.0.7",
     "recharts": "^2.15.4",
     "serve-favicon": "^2.5.1",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "stylis": "^4.3.6",
     "swr": "^2.3.6",
     "timesync": "^1.0.11",

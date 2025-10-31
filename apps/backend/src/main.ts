@@ -4,7 +4,6 @@ import express from 'express';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
 import cors from 'cors';
-import { Server } from 'socket.io';
 import timesyncServer from 'timesync/server';
 import './lib/dayjs';
 import './lib/database';
@@ -12,17 +11,16 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
-import websocket from './websocket/index';
 
 const app = express();
 const server = http.createServer(app);
+
+app.use(cookies());
+
 const corsOptions = {
   origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],
   credentials: true
 };
-const io = new Server(server, { cors: corsOptions });
-
-app.use(cookies());
 app.use(cors(corsOptions));
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
@@ -54,14 +52,6 @@ app.use((err, req, res, next) => {
   console.log(err);
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
-
-const namespace = io.of(/^\/division\/\w+$/);
-
-// TODO: Add new middlewares
-// namespace.use(wsAuth);
-// namespace.use(wsValidateDivision);
-
-namespace.on('connection', websocket);
 
 console.log('💫 Starting server...');
 const port = 3333;

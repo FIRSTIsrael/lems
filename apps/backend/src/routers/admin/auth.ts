@@ -7,14 +7,14 @@ import { AdminRequest } from '../../types/express';
 import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
+import { makeAdminUserResponse } from './users/util';
 
 const router = express.Router({ mergeParams: true });
 
-// Configure rate limiter: max 10 requests per minute
 const loginRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // limit each IP to 10 requests per windowMs
-  message: { error: 'TOO_MANY_REQUESTS' } // Response when rate limit is exceeded
+  max: 10, // 10 requests per windowMs
+  message: { error: 'TOO_MANY_REQUESTS' }
 });
 
 const jwtSecret = process.env.JWT_SECRET;
@@ -60,10 +60,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
       return;
     }
 
-    const isValidPassword = await verifyPassword(
-      loginDetails.password,
-      adminUser.password_hash
-    );
+    const isValidPassword = await verifyPassword(loginDetails.password, adminUser.password_hash);
 
     if (!isValidPassword) {
       console.log(`🔑 Admin login failed - invalid password: ${loginDetails.username}`);
@@ -123,7 +120,7 @@ router.get('/verify', async (req: AdminRequest, res) => {
     return;
   }
 
-  res.json({ ok: true, user });
+  res.json({ ok: true, user: makeAdminUserResponse(user) });
 });
 
 export default router;

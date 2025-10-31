@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import {  SchedulerRequest } from '../../types/express';
-import database from '../../lib/database';
+import { NextFunction, Response } from 'express';
+import { AdminDivisionRequest, AdminEventRequest } from '../../../types/express';
+import database from '../../../lib/database';
 
 /**
  * Middleware to attach the division ID to the request.
@@ -8,7 +8,7 @@ import database from '../../lib/database';
  * If the division is not bound to the event preceding it, a 400 error is returned.
  */
 export const attachDivision = () => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: AdminEventRequest, res: Response, next: NextFunction) => {
     try {
       const divisionId = req.params.divisionId;
 
@@ -24,7 +24,12 @@ export const attachDivision = () => {
         return;
       }
 
-      (req as unknown as SchedulerRequest).divisionId = division.id;
+      if (division.event_id !== req.eventId) {
+        res.status(400).json({ error: 'DIVISION_NOT_IN_EVENT' });
+        return;
+      }
+
+      (req as AdminDivisionRequest).divisionId = division.id;
 
       next();
     } catch (error) {

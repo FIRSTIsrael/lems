@@ -2,7 +2,7 @@ import express from 'express';
 import { ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 
 const router = express.Router({ mergeParams: true });
 

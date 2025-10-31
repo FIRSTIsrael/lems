@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { extractToken } from '../../lib/security/auth';
+import { extractToken } from '../../../lib/security/auth';
 
 const schedulerJwtSecret = process.env.SCHEDULER_JWT_SECRET;
 

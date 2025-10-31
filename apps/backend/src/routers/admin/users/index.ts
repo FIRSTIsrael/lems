@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../../../lib/database';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 import { hashPassword } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminUserResponse } from './util';

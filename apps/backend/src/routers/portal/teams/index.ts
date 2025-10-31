@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import db from '../../../lib/database';
 import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
-import { attachTeam } from '../../../middlewares/portal/attach-team';
+import { attachTeam } from '../../../middleware/portal/attach-team';
 import { PortalTeamRequest } from '../../../types/express';
 import { makePortalTeamSummaryResponse } from './util';
 

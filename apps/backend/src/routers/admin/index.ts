@@ -1,5 +1,5 @@
 import express from 'express';
-import { authMiddleware } from '../../middlewares/admin/auth';
+import { authMiddleware } from './middleware/auth';
 import usersRouter from './users';
 import authRouter from './auth';
 import seasonsRouter from './seasons';

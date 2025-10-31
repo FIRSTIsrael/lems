@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { PermissionType } from '@lems/database';
-import { AdminRequest } from '../../types/express';
-import db from '../../lib/database';
+import { AdminRequest } from '../../../types/express';
+import db from '../../../lib/database';
 
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
