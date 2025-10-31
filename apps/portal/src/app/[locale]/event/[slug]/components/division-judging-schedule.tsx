@@ -19,8 +19,8 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import { JudgingRoom, JudgingSession } from '@lems/types/api/portal';
-import { groupSessionsByTime } from '@lems/shared/utils';
 import { useDivisionTeams } from './division-teams-context';
+import { groupSessionsByTime } from './utils';
 
 interface DivisionJudgingScheduleProps {
   sessions: JudgingSession[];

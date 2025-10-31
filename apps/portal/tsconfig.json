@@ -32,7 +32,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "../../dist/apps/admin/.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

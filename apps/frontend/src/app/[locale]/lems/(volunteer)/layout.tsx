@@ -5,7 +5,9 @@ import { fetchEventData } from './graphql/event-data.grqphql';
 
 interface VolunteerLayoutProps {
   children: React.ReactNode;
-  searchParams?: Record<string, string | string[]>;
+  searchParams?: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 }
 
 export default async function VolunteerLayout({ children, searchParams }: VolunteerLayoutProps) {
@@ -15,14 +17,12 @@ export default async function VolunteerLayout({ children, searchParams }: Volunt
     throw new Error('Failed to verify LEMS authentication');
   }
 
+  const { division: divisionParam } = (await searchParams) || {};
+
   const { user } = result.data as { ok: boolean; user: LemsUser };
   const { eventId } = user;
 
   let divisionId: string | undefined;
-
-  // Get the division from query params
-  const rawSearchParams = searchParams as Record<string, string | string[] | undefined>;
-  const divisionParam = rawSearchParams?.division;
   if (Array.isArray(divisionParam)) {
     divisionId = divisionParam[0];
   } else {
@@ -49,7 +49,6 @@ export default async function VolunteerLayout({ children, searchParams }: Volunt
       currentDivision = eventData.event.divisions[0];
     }
 
-    // Create event context
     const eventContext = {
       eventId: eventData.event.id,
       eventName: eventData.event.name,

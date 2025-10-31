@@ -34,6 +34,9 @@
     "next-env.d.ts",
   ],
   "exclude": [
+    // TODO: remove this, its just for being able to build
+    "./old/**/*.ts",
+    "./old/**/*.tsx",
     "node_modules",
     "jest.config.ts",
     "**/*.spec.ts",
