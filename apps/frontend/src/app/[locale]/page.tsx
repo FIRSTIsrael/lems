@@ -8,9 +8,7 @@ import { UpcomingEventsSection } from './components/homepage/upcoming-events-sec
 export default async function Page() {
   const authResult = await apiFetch('/lems/auth/verify');
   if (authResult.ok) {
-    // TODO: Redirect to role-specific page based on user role
-    // For now, redirect to a generic dashboard or home
-    redirect(`/dashboard`);
+    redirect(`/lems`);
   }
 
   return (
