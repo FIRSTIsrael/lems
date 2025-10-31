@@ -1,6 +1,6 @@
 import { apiFetch } from '@lems/shared';
 import { LemsUser } from '@lems/types/api/lems';
-import { fetchEventData } from './graphql/event-data.grqphql';
+import { fetchEventData } from './graphql/event-data.graphql';
 import { EventProvider } from './components/event-context';
 
 interface VolunteerLayoutProps {
