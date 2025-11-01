@@ -50,6 +50,20 @@ services:
       - LOCAL_BASE_URL=${LOCAL_BASE_URL}
       - RECAPTCHA=${RECAPTCHA}
 
+  portal:
+    image: ${REGISTRY}/lems-portal:${IMAGE_TAG}
+    ports:
+      - '3000:3000'
+    networks:
+      - lems-network
+    restart: always
+    environment:
+      # Note: NEXT_PUBLIC_* variables must be set at build time and are embedded in the bundle
+      # The portal app uses NEXT_PUBLIC_BASE_URL which was set during docker build
+      
+      # Runtime environment variables for server-side only features:
+      - LOCAL_BASE_URL=${LOCAL_BASE_URL}
+
   scheduler:
     image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
     ports:
