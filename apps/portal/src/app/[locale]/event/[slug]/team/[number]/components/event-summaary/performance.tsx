@@ -4,10 +4,10 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Stack } from '@mui/material';
 import { TrendingUp as ScoreIcon, SmartToy as RobotIcon } from '@mui/icons-material';
-import { TeamInEventData } from '@lems/types/api/portal';
+import { TeamAtEventData } from '@lems/types/api/portal';
 
 interface PerformanceMetricsProps {
-  scoreboard: TeamInEventData['scoreboard'];
+  scoreboard: TeamAtEventData['scoreboard'];
 }
 
 export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ scoreboard }) => {

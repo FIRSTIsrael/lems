@@ -35,31 +35,43 @@ export type TeamEventResult = z.infer<typeof PortalTeamEventResultSchema>;
 
 export const PortalTeamEventResultsSchema = z.array(PortalTeamEventResultSchema);
 
-export const PortalTeamInEventDataResponseSchema = z.object({
-  team: PortalTeamResponseSchema,
-  eventName: z.string(),
-  eventSlug: z.string(),
-  divisionName: z.string(),
-  awards: z.array(z.object({
+export const PortalTeamAtEventDataResponseSchema = z.object({
+  team: PortalTeamResponseSchema.shape,
+  event: {
+    id: z.string(),
     name: z.string(),
-    place: z.number()
-  })),
-  matches: z.array(z.object({
+    slug: z.string()
+  },
+  division: {
+    id: z.string(),
+    name: z.string()
+  },
+  awards: z.array(
+    z.object({
+      name: z.string(),
+      place: z.number()
+    })
+  ),
+  matches: z.array(
+    z.object({
+      number: z.number(),
+      stage: z.string(),
+      scheduledTime: z.coerce.date(),
+      table: { id: z.string(), name: z.string() }
+    })
+  ),
+  judgingSession: z.object({
     number: z.number(),
-    stage: z.string(),
     scheduledTime: z.coerce.date(),
-    tableName: z.string()
-  })),
-  judgingSessions: z.array(z.object({
-    number: z.number(),
-    roomName: z.string(),
-    scheduledTime: z.coerce.date()
-  })),
-  scoreboard: z.object({
-    robotGameRank: z.number().nullable(),
-    maxScore: z.number().nullable(),
-    scores: z.array(z.number()).nullable()
-  }).nullable()
+    room: { id: z.string(), name: z.string() }
+  }),
+  scoreboard: z
+    .object({
+      rank: z.number().nullable(),
+      maxScore: z.number().nullable(),
+      scores: z.array(z.number()).nullable()
+    })
+    .nullable()
 });
 
-export type TeamInEventData = z.infer<typeof PortalTeamInEventDataResponseSchema>;
+export type TeamAtEventData = z.infer<typeof PortalTeamAtEventDataResponseSchema>;

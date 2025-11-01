@@ -8,20 +8,20 @@ import { Box, Container, Typography, Paper, Button, Grid } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { DirectionalIcon } from '@lems/localization';
-import { TeamInEventData } from '@lems/types/api/portal';
+import { TeamAtEventData } from '@lems/types/api/portal';
 import { TeamInfoHeader } from './components/team-info-header';
 import { EventSummary } from './components/event-summary';
 import { TeamSchedule } from './components/team-schedule';
 
-export default function TeamInEventPage() {
+export default function TeamAtEventPage() {
+  const t = useTranslations('pages.team-in-event');
+
   const params = useParams();
   const eventSlug = params.slug as string;
   const teamNumber =
     params.number && typeof params.number === 'string' ? parseInt(params.number, 10) : null;
 
-  const t = useTranslations('pages.team-in-event');
-
-  const { data: teamData, error } = useSWR<TeamInEventData | null>(
+  const { data: teamData, error } = useSWR<TeamAtEventData | null>(
     `/portal/events/${eventSlug}/teams/${teamNumber}`,
     { suspense: true, fallbackData: null }
   );

@@ -3,10 +3,10 @@
 import React from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
-import { TeamInEventData } from '@lems/types/api/portal';
+import { TeamAtEventData } from '@lems/types/api/portal';
 
 interface AwardsSectionProps {
-  awards: TeamInEventData['awards'];
+  awards: TeamAtEventData['awards'];
 }
 
 export const AwardsSection: React.FC<AwardsSectionProps> = ({ awards }) => {

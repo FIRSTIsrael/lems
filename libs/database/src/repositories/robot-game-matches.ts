@@ -4,6 +4,7 @@ import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   InsertableRobotGameMatch,
   RobotGameMatch,
+  RobotGameMatchWithParticipants,
   UpdateableRobotGameMatch
 } from '../schema/tables/robot-game-matches';
 import {
@@ -102,7 +103,7 @@ class RobotGameMatchesSelector {
     return matchesWithParticipants;
   }
 
-  async getByTeam(teamId: string) {
+  async getByTeam(teamId: string): Promise<RobotGameMatchWithParticipants[]> {
     const matchesWithParticipants = [];
 
     const teamParticipants = await this.db

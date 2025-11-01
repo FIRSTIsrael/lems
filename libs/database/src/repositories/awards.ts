@@ -19,6 +19,13 @@ class AwardsSelector {
       .execute();
   }
 
+  async getByTeam(teamId: string): Promise<Award[]> {
+    return await this.getAwardsQuery()
+      .where('winner_id', '=', teamId)
+      .orderBy('awards.place', 'asc')
+      .execute();
+  }
+
   async get(name: string): Promise<Award[]> {
     return await this.getAwardsQuery()
       .where('name', '=', name)
