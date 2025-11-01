@@ -40,7 +40,6 @@
     "express": "^5.1.0",
     "express-fileupload": "^1.5.2",
     "express-rate-limit": "^8.0.1",
-    "express-winston": "^4.2.0",
     "formik": "^2.4.6",
     "graphql": "^16.11.0",
     "graphql-http": "^1.22.4",
@@ -49,6 +48,7 @@
     "kysely": "^0.28.5",
     "merge-anything": "^6.0.6",
     "mongodb": "^6.18.0",
+    "morgan": "^1.10.1",
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
     "next": "^15.5.3",
@@ -71,7 +71,6 @@
     "swr": "^2.3.6",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
-    "winston": "^3.17.0",
     "zod": "^4.1.9"
   },
   "devDependencies": {

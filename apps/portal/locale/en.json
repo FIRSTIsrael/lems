@@ -156,6 +156,52 @@
       },
       "division-teams": "{divisionName} teams"
     },
+    "team-in-event": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in this event.",
+        "back-to-event": "Back to Event"
+      },
+      "header": {
+        "back-to-event": "Back to Event",
+        "rank": "Rank #{rank}",
+        "best-score": "Best Score: {score}"
+      },
+      "performance": {
+        "title": "Robot Performance",
+        "event-summary": "Event Summary",
+        "match-scores": "Match Scores",
+        "match-number": "Match {number}",
+        "match-results": "Match Results",
+        "points": "{score} points",
+        "best-score": "Highest Score",
+        "highest-score": "Highest Score",
+        "robot-rank": "Robot Game Rank",
+        "robot-game-rank": "Robot Game Rank",
+        "no-scores": "No scores available yet",
+        "no-data": "No performance data available yet"
+      },
+      "awards": {
+        "title": "Awards",
+        "place-suffix": {
+          "1": "st Place",
+          "2": "nd Place",
+          "3": "rd Place",
+          "other": "th Place"
+        },
+        "no-awards": "No awards yet"
+      },
+      "schedule": {
+        "title": "Schedule",
+        "field-matches": "Field Matches",
+        "judging-sessions": "Judging Session",
+        "match-type": "{stage} Match #{number} - Table {table}",
+        "judging-session": "Judging Session #{number} - {room}",
+        "no-matches": "No matches scheduled",
+        "no-judging": "No judging sessions scheduled",
+        "no-schedule": "No schedule available"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",
