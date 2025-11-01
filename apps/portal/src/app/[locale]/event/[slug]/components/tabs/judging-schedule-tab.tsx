@@ -19,25 +19,19 @@ import {
   useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
-import { JudgingRoom, JudgingSession } from '@lems/types/api/portal';
-import { useDivisionTeams } from './division-teams-context';
-import { groupSessionsByTime } from './utils';
+import { groupSessionsByTime } from '../utils';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionJudgingScheduleProps {
-  sessions: JudgingSession[];
-  rooms: JudgingRoom[];
-}
+export const JudgingScheduleTab = () => {
+  const t = useTranslations('pages.event');
 
-export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = ({
-  sessions,
-  rooms
-}) => {
   const params = useParams();
   const eventSlug = params.slug as string;
-  const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const { teams, rooms, judgingSchedule: sessions } = useDivisionData();
 
   const groupedSessions = groupSessionsByTime(sessions, rooms);
 

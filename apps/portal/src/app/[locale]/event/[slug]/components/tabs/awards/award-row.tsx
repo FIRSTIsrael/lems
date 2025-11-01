@@ -1,34 +1,24 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { Typography, Paper, Box, Divider, Grid, Stack } from '@mui/material';
+import { Typography, Box, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import NextLink from 'next/link';
 import { Award } from '@lems/types/api/portal';
 import { useAwardTranslations } from '@lems/localization';
-import { useDivisionTeams } from './division-teams-context';
+import { useDivisionData } from '../../division-data-context';
 
-interface AwardSectionProps {
+interface AwardRowProps {
   awardName: string;
   awardList: Award[];
 }
 
-export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList }) => {
-  const teams = useDivisionTeams();
+export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList }) => {
+  const params = useParams();
+  const eventSlug = params.slug as string;
+
+  const { teams } = useDivisionData();
   const { getName } = useAwardTranslations();
-  const getColorByPlace = (place: number | null): string => {
-    switch (place) {
-      case 1:
-        return 'award.first';
-      case 2:
-        return 'award.second';
-      case 3:
-        return 'award.third';
-      default:
-        return 'award.other';
-    }
-  };
 
   return (
     <Box>
@@ -113,49 +103,15 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awardList
   );
 };
 
-interface DivisionAwardsProps {
-  awards: Award[];
-}
-
-export const DivisionAwards: React.FC<DivisionAwardsProps> = ({ awards }) => {
-  const t = useTranslations('pages.event');
-
-  // Group awards by name, then sort by place
-  const awardsByName = awards.reduce(
-    (acc, award) => {
-      if (!acc[award.name]) {
-        acc[award.name] = [];
-      }
-      acc[award.name].push(award);
-      return acc;
-    },
-    {} as Record<string, Award[]>
-  );
-
-  // Sort each award group by place
-  Object.keys(awardsByName).forEach(awardName => {
-    awardsByName[awardName].sort((a, b) => a.place - b.place);
-  });
-
-  return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h2" gutterBottom>
-        {t('quick-links.awards')}
-      </Typography>
-
-      {Object.keys(awardsByName).length > 0 ? (
-        <Stack spacing={3} divider={<Divider />}>
-          {Object.entries(awardsByName).map(([awardName, awardList]) => (
-            <AwardSection key={awardName} awardName={awardName} awardList={awardList} />
-          ))}
-        </Stack>
-      ) : (
-        <Box display="flex" alignItems="center" justifyContent="center" py={8}>
-          <Typography variant="h6" color="text.secondary">
-            {t('awards.no-data')}
-          </Typography>
-        </Box>
-      )}
-    </Paper>
-  );
+const getColorByPlace = (place: number | null): string => {
+  switch (place) {
+    case 1:
+      return 'award.first';
+    case 2:
+      return 'award.second';
+    case 3:
+      return 'award.third';
+    default:
+      return 'award.other';
+  }
 };

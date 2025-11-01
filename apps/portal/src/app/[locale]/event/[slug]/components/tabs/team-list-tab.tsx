@@ -16,30 +16,28 @@ import {
 } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { useDivisionTeams } from './division-teams-context';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionTeamsListProps {
-  divisionName: string;
-}
+export const TeamsTab: React.FC = () => {
+  const t = useTranslations('pages.event');
 
-export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionName }) => {
   const params = useParams();
   const eventSlug = params.slug as string;
-  const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
+
+  const { teams } = useDivisionData();
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h2" gutterBottom>
-        {t('division-teams', { divisionName })}
+        {t('teams')}
       </Typography>
       <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography fontWeight={500}>{t('teams')}</Typography>
+                <Typography fontWeight={500}>{t('team')}</Typography>
               </TableCell>
               <TableCell>
                 <Typography fontWeight={500}>{t('location')}</Typography>
@@ -87,7 +85,7 @@ export const DivisionTeamsList: React.FC<DivisionTeamsListProps> = ({ divisionNa
                 </TableCell>
                 <TableCell>
                   <IconButton href={`/event/${eventSlug}/team/${team.number}`}>
-                    <DirectionalIcon ltr={ChevronLeft} rtl={ChevronRight} />
+                    <DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} />
                   </IconButton>
                 </TableCell>
               </TableRow>

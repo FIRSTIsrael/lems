@@ -1,14 +1,14 @@
 'use client';
 
+import useSWR from 'swr';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { Box, Button, Container, Link, Paper, Typography } from '@mui/material';
 import { Event as EventIcon } from '@mui/icons-material';
-import useSWR from 'swr';
 import { EventDetails } from '@lems/types/api/portal';
 import { useTranslations } from 'next-intl';
-import { EventDivisionSelector } from './components/event-division-selector';
+import { DivisionSelector } from './components/division-selector';
 import { EventHeader } from './components/event-header';
-import { EventDivision } from './components/event-division';
+import { DivisionTabBar } from './components/division-tab-bar';
 
 const EventPage = () => {
   const params = useParams();
@@ -45,29 +45,22 @@ const EventPage = () => {
     return null;
   }
 
-  const divisionId = searchParams.get('divisionId') ?? eventData.divisions[0].id;
+  const selectedDivisionId = searchParams.get('division') || eventData.divisions[0]?.id;
+  const selectedDivision = eventData.divisions.find(division => division.id === selectedDivisionId);
 
-  const handleDivisionSelect = (selectedDivisionId: string) => {
-    router.push(`/event/${slug}?divisionId=${selectedDivisionId}`);
-  };
+  if (!selectedDivision) {
+    // Should never happen but here as a failsafe
+    router.replace(`/event/${slug}?division=${eventData.divisions[0]?.id}`);
+    return null;
+  }
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <EventHeader
-        seasonName={eventData.seasonName}
-        seasonSlug={eventData.seasonSlug}
-        eventName={eventData.name}
-        startDate={eventData.startDate}
-        location={eventData.location}
-      />
+      <EventHeader eventData={eventData} />
 
-      <EventDivisionSelector
-        divisions={eventData.divisions}
-        currentDivisionId={divisionId}
-        onDivisionSelect={handleDivisionSelect}
-      />
+      <DivisionSelector divisions={eventData.divisions} />
 
-      <EventDivision divisionId={divisionId} />
+      <DivisionTabBar divisionId={selectedDivision.id} />
     </Container>
   );
 };

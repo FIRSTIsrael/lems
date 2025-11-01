@@ -6,23 +6,18 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DivisionScoreboardEntry } from '@lems/types/api/portal';
-import { useDivisionTeams } from './division-teams-context';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionScoreboardProps {
-  data?: DivisionScoreboardEntry[];
-}
+export const ScoreboardTab = () => {
+  const t = useTranslations('pages.event');
 
-export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
   const params = useParams();
   const eventSlug = params.slug as string;
-  const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  if (!data || data.length === 0) {
-    return null; // Should only occur while loading
-  }
+  const { scoreboard: data, teams } = useDivisionData();
 
   const numberOfMatches = Math.max(...data.map(entry => entry.scores?.length || 0));
   const sortedData = [...data].sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
@@ -86,7 +81,7 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
       <Typography variant="h2" gutterBottom>
         {t('quick-links.scoreboard')}
       </Typography>
-      <Box sx={{ height: 600, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
           density="compact"
           rows={sortedData}
