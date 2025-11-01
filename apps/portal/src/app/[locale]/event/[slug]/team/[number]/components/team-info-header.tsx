@@ -8,7 +8,7 @@ import { ArrowBack, ArrowForward, LocationOn as LocationIcon } from '@mui/icons-
 import { DirectionalIcon } from '@lems/localization';
 import { useTeamAtEventData } from './team-at-event-data-context';
 
-const TeamInfoHeader: React.FC = () => {
+export const TeamInfoHeader: React.FC = () => {
   const { team, event, division } = useTeamAtEventData();
 
   const t = useTranslations('pages.team-in-event');
@@ -59,5 +59,3 @@ const TeamInfoHeader: React.FC = () => {
     </Paper>
   );
 };
-
-export { TeamInfoHeader };

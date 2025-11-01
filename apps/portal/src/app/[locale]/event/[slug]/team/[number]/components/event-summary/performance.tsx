@@ -9,17 +9,6 @@ import { useTeamAtEventData } from '../team-at-event-data-context';
 export const PerformanceMetrics: React.FC = () => {
   const { scoreboard } = useTeamAtEventData();
   const t = useTranslations('pages.team-in-event');
-  // Hide cards for unpublished events from team page, show a link to the team at event page instead - not done
-
-  // if (!scoreboard) {
-  //   return (
-  //     <Grid size={{ xs: 12 }}>
-  //       <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
-  //         {t('performance.no-data')}
-  //       </Typography>
-  //     </Grid>
-  //   );
-  // }
 
   const hasScores = scoreboard?.scores && scoreboard.scores.length > 0;
   const highestScore = hasScores ? Math.max(...scoreboard.scores!) : null;
