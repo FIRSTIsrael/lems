@@ -42,6 +42,10 @@ export interface PortalTeamAtEventRequest extends Request {
   eventId: string;
 }
 
+export interface PortalDivisionRequest extends Request {
+  divisionId: string;
+}
+
 export interface SchedulerRequest extends Request {
   divisionId: string;
 }
