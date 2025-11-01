@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
@@ -20,27 +21,23 @@ import {
   alpha
 } from '@mui/material';
 import NextLink from 'next/link';
-import { RobotGameMatch, RobotGameTable } from '@lems/types/api/portal';
+import { RobotGameMatch } from '@lems/types/api/portal';
 import { useMatchStageTranslations } from '@lems/localization';
-import { useDivisionTeams } from './division-teams-context';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionFieldScheduleProps {
-  schedule: RobotGameMatch[];
-  tables: RobotGameTable[];
-}
-
-export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({
-  schedule,
-  tables
-}) => {
+export const FieldScheduleTab: React.FC = () => {
   const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
   const { getStage } = useMatchStageTranslations();
+
+  const params = useParams();
+  const eventSlug = params.slug as string;
+
+  const { teams, tables, fieldSchedule } = useDivisionData();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Group matches by round (stage + number)
-  const groupedMatches = schedule.reduce(
+  const groupedMatches = fieldSchedule.reduce(
     (acc, match) => {
       if (match.stage === 'TEST') {
         return acc;
@@ -141,7 +138,7 @@ export const DivisionFieldSchedule: React.FC<DivisionFieldScheduleProps> = ({
                               <Tooltip title={team.name} arrow>
                                 <Link
                                   component={NextLink}
-                                  href={`/teams/${team.number}`}
+                                  href={`/event/${eventSlug}/team/${team.number}`}
                                   sx={{
                                     color: 'black',
                                     textDecoration: 'none',

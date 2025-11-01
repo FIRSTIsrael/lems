@@ -29,15 +29,19 @@ export interface AdminDivisionRequest extends AdminEventRequest {
   divisionId: string;
 }
 
+export interface PortalEventRequest extends Request {
+  eventId: string;
+}
+
 export interface PortalTeamRequest extends Request {
   teamId: string;
 }
 
-export interface SchedulerRequest extends Request {
-  divisionId: string;
+export interface PortalTeamAtEventRequest extends Request {
+  teamId: string;
+  eventId: string;
 }
 
-export interface LemsRequest extends Request {
-  userId: string;
-  userType: 'event-user';
+export interface SchedulerRequest extends Request {
+  divisionId: string;
 }

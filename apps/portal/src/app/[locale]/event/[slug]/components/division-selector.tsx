@@ -1,29 +1,38 @@
 'use client';
 
 import { EventDetailsDivision } from '@lems/types/api/portal';
-import { Typography, Button, Box, Chip, Grid } from '@mui/material';
+import { Grid, Box, Typography, Chip, Button } from '@mui/material';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-interface EventDivisionSelectorProps {
+interface DivisionSelectorProps {
   divisions: EventDetailsDivision[];
-  currentDivisionId?: string;
-  onDivisionSelect: (divisionId: string) => void;
 }
 
-export const EventDivisionSelector: React.FC<EventDivisionSelectorProps> = ({
-  divisions,
-  currentDivisionId,
-  onDivisionSelect
-}) => {
+export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
+
+  if (divisions.length <= 1 || !selectedDivisionId) {
+    return null; // This component should only be shown on events with multiple divisions
+  }
+
+  const handleDivisionChange = (divisionId: string) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set('division', divisionId);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
   return (
     <Grid container direction="row" spacing={2} mb={3}>
       {divisions.map(division => {
-        const isActive = division.id === currentDivisionId;
+        const isActive = division.id === selectedDivisionId;
         return (
           <Grid size={{ xs: 6, md: 3 }} key={division.id}>
             <Button
               key={division.id}
               variant={isActive ? 'contained' : 'outlined'}
-              onClick={() => onDivisionSelect(division.id)}
+              onClick={() => handleDivisionChange(division.id)}
               fullWidth
               sx={{
                 borderRadius: 3,

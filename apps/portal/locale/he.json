@@ -156,6 +156,52 @@
       },
       "division-teams": "קבוצות {divisionName}"
     },
+    "team-in-event": {
+      "not-found": {
+        "title": "קבוצה #{number} לא נמצאה",
+        "description": "הקבוצה שאתה מחפש לא קיימת באירוע זה.",
+        "back-to-event": "חזרה לאירוע"
+      },
+      "header": {
+        "back-to-event": "חזרה לאירוע",
+        "rank": "דירוג במשחק הרובוט #{rank}",
+        "best-score": "ניקוד הגבוה ביותר: {score}"
+      },
+      "performance": {
+        "title": "ביצועי רובוט",
+        "event-summary": "סיכום אירוע",
+        "match-scores": "ניקוד משחק הרובוט",
+        "match-number": "מקצה {number}",
+        "match-results": "תוצאות מקצים",
+        "points": "{score} נקודות",
+        "best-score": "ניקוד הגבוה ביותר",
+        "highest-score": "הניקוד הגבוה ביותר",
+        "robot-rank": "דירוג משחק רובוט",
+        "robot-game-rank": "דירוג במשחק הרובוט",
+        "no-scores": "אין ניקודים זמינים עדיין",
+        "no-data": "אין נתוני ביצועים זמינים עדיין"
+      },
+      "awards": {
+        "title": "פרסים",
+        "place-suffix": {
+          "1": "מקום ראשון",
+          "2": "מקום שני",
+          "3": "מקום שלישי",
+          "other": "מקום {place}"
+        },
+        "no-awards": "לא פורסמו פרסים לאירוע זה"
+      },
+      "schedule": {
+        "title": "לוח זמנים",
+        "field-matches": "מקצי זירה",
+        "judging-sessions": "מפגש שיפוט",
+        "match-type": "מקצה {stage} #{number} - שולחן {table}",
+        "judging-session": "מפגש שיפוט #{number} - {room}",
+        "no-matches": "אין מקצים מתוכננים",
+        "no-judging": "אין מפגשי שיפוט מתוכננים",
+        "no-schedule": "אין לוח זמנים זמין"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
