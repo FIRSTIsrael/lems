@@ -3,16 +3,7 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import {
-  Paper,
-  Typography,
-  Stack,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Divider
-} from '@mui/material';
+import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 
 interface ScheduleEntry {
@@ -97,7 +88,7 @@ export const TeamSchedule: React.FC<TeamScheduleProps> = ({
       )}
 
       {scheduleEntries.length > 0 && (
-        <List disablePadding>
+        <Stack spacing={0} divider={<Divider />}>
           {scheduleEntries.map((entry, index) => (
             <React.Fragment key={index}>
               <ListItem
@@ -130,10 +121,9 @@ export const TeamSchedule: React.FC<TeamScheduleProps> = ({
                   }
                 />
               </ListItem>
-              {index < scheduleEntries.length - 1 && <Divider />}
             </React.Fragment>
           ))}
-        </List>
+        </Stack>
       )}
     </Paper>
   );

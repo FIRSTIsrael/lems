@@ -26,8 +26,9 @@ export default function TeamInEventPage() {
     { suspense: true, fallbackData: null }
   );
 
+  if (!teamData) {
+    if (!error) return null;
 
-  if (error || !teamData) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
         <Container maxWidth="xl" sx={{ py: 2 }}>
