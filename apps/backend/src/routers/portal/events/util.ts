@@ -1,10 +1,10 @@
+import dayjs from 'dayjs';
 import {
   Event as DbEvent,
   EventSummary as DbEventSummary,
   EventDetails as DbEventDetails
 } from '@lems/database';
 import { Event, EventDetails, EventSummary } from '@lems/types/api/portal';
-import dayjs from 'dayjs';
 
 export const makePortalEventResponse = (event: DbEvent): Event => ({
   id: event.id,
@@ -20,9 +20,11 @@ export const makePortalEventResponse = (event: DbEvent): Event => ({
 export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSummary => {
   const today = dayjs().startOf('day');
   const eventDate = dayjs(event.date).startOf('day');
-  const eventStatus = eventDate.isAfter(today) ? 'upcoming' 
-    : eventDate.isBefore(today) ? 'past' 
-    : 'active';
+  const eventStatus = eventDate.isAfter(today)
+    ? 'upcoming'
+    : eventDate.isBefore(today)
+      ? 'past'
+      : 'active';
 
   return {
     id: event.id,

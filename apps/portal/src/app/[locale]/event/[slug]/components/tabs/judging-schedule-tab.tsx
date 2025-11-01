@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import {
@@ -18,23 +19,19 @@ import {
   useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
-import { JudgingRoom, JudgingSession } from '@lems/types/api/portal';
-import { useDivisionTeams } from './division-teams-context';
-import { groupSessionsByTime } from './utils';
+import { groupSessionsByTime } from '../utils';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionJudgingScheduleProps {
-  sessions: JudgingSession[];
-  rooms: JudgingRoom[];
-}
-
-export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = ({
-  sessions,
-  rooms
-}) => {
+export const JudgingScheduleTab = () => {
   const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
+
+  const params = useParams();
+  const eventSlug = params.slug as string;
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const { teams, rooms, judgingSchedule: sessions } = useDivisionData();
 
   const groupedSessions = groupSessionsByTime(sessions, rooms);
 
@@ -92,7 +89,7 @@ export const DivisionJudgingSchedule: React.FC<DivisionJudgingScheduleProps> = (
                           <Tooltip title={team.name} arrow>
                             <Link
                               component={NextLink}
-                              href={`/teams/${team.number}`}
+                              href={`/event/${eventSlug}/team/${team.number}`}
                               sx={{
                                 color: 'black',
                                 textDecoration: 'none',

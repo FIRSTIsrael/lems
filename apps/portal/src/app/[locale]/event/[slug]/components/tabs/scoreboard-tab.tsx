@@ -1,25 +1,24 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
+import { Box, Typography, useMediaQuery, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DivisionScoreboardEntry } from '@lems/types/api/portal';
-import { useDivisionTeams } from './division-teams-context';
+import { useDivisionData } from '../division-data-context';
 
-interface DivisionScoreboardProps {
-  data?: DivisionScoreboardEntry[];
-}
-
-export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) => {
+export const ScoreboardTab = () => {
   const t = useTranslations('pages.event');
-  const teams = useDivisionTeams();
+
+  const params = useParams();
+  const eventSlug = params.slug as string;
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  if (!data || data.length === 0) {
-    return null; // Should only occur while loading
-  }
+  const { scoreboard: data, teams } = useDivisionData();
 
   const numberOfMatches = Math.max(...data.map(entry => entry.scores?.length || 0));
   const sortedData = [...data].sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
@@ -45,8 +44,9 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
           return <Typography color="text.secondary">-</Typography>;
         }
         return (
-          <Link
-            href={`/teams/${team.number}`}
+          <Typography
+            component={Link}
+            href={`/event/${eventSlug}/team/${team.number}`}
             sx={{
               textDecoration: 'none',
               color: 'text.primary',
@@ -58,7 +58,7 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
             }}
           >
             {isDesktop ? `${team.name} #${team.number}` : `#${team.number}`}
-          </Link>
+          </Typography>
         );
       }
     },
@@ -83,7 +83,7 @@ export const DivisionScoreboard: React.FC<DivisionScoreboardProps> = ({ data }) 
       <Typography variant="h2" gutterBottom>
         {t('quick-links.scoreboard')}
       </Typography>
-      <Box sx={{ height: 600, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
           density="compact"
           rows={sortedData}

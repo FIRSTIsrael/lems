@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
+import { attachEvent } from '../middleware/attach-event';
+import { PortalEventRequest } from '../../../types/express';
+import eventTeamRouter from './teams';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -82,16 +85,10 @@ router.get('/', async (req: Request, res: Response) => {
   return;
 });
 
-router.get('/:slug', async (req: Request, res: Response) => {
-  const { slug } = req.params;
+router.use('/:slug', attachEvent());
 
-  const event = await db.events.bySlug(slug).get();
-
-  if (!event) {
-    res.status(404).json({ error: 'Event not found' });
-    return;
-  }
-
+router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
+  const event = await db.events.byId(req.eventId).get();
   const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
   const season = await db.seasons.byId(event.season_id).get();
 
@@ -104,5 +101,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
 
   res.json(makePortalEventDetailsResponse(eventSummary));
 });
+
+router.use('/:slug/teams', eventTeamRouter);
 
 export default router;

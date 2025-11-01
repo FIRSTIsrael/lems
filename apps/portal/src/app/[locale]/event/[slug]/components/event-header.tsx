@@ -1,25 +1,17 @@
 'use client';
 
+import dayjs from 'dayjs';
+import Link from 'next/link';
 import { Box, Typography, Stack } from '@mui/material';
 import { CalendarToday, LocationOn } from '@mui/icons-material';
-import Link from 'next/link';
-import dayjs from 'dayjs';
-
+import { EventDetails } from '@lems/types/api/portal';
 interface EventHeaderProps {
-  seasonName: string;
-  seasonSlug: string;
-  eventName: string;
-  startDate: Date;
-  location: string;
+  eventData: EventDetails;
 }
 
-export const EventHeader: React.FC<EventHeaderProps> = ({
-  seasonName,
-  seasonSlug,
-  eventName,
-  startDate,
-  location
-}) => {
+export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
+  const { seasonName, seasonSlug, name: eventName, startDate, location } = eventData;
+
   return (
     <Stack spacing={1} mb={3}>
       <Link href={`/events?seasonSlug=${seasonSlug}`} style={{ textDecoration: 'none' }}>

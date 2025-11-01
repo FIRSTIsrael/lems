@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Chip, Button, alpha, useTheme, Link } from '@mui/material';
+import { Box, Typography, Stack, Chip, Button, alpha, useTheme } from '@mui/material';
 import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
