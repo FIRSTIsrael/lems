@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as path from 'path';
 import express from 'express';
+import morgan from 'morgan';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
 import cors from 'cors';
@@ -16,6 +17,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cookies());
+app.use(morgan('combined'));
 
 const corsOptions = {
   origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],

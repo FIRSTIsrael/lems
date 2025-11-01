@@ -4,13 +4,10 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Stack } from '@mui/material';
 import { TrendingUp as ScoreIcon, SmartToy as RobotIcon } from '@mui/icons-material';
-import { TeamAtEventData } from '@lems/types/api/portal';
+import { useTeamAtEventData } from '../team-at-event-data-context';
 
-interface PerformanceMetricsProps {
-  scoreboard: TeamAtEventData['scoreboard'];
-}
-
-export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ scoreboard }) => {
+export const PerformanceMetrics: React.FC = () => {
+  const { scoreboard } = useTeamAtEventData();
   const t = useTranslations('pages.team-in-event');
   // Hide cards for unpublished events from team page, show a link to the team at event page instead - not done
 
@@ -73,7 +70,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ scoreboa
           </Typography>
         </Stack>
         <Typography variant="h6" fontWeight="600" color="primary">
-          {scoreboard?.robotGameRank || 0}
+          {scoreboard?.rank || 0}
         </Typography>
       </Grid>
     </>

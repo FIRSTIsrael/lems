@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box } from '@mui/material';
-import { TeamsTab } from './tabs/team-list-tab';
+import { TeamsTab } from './tabs/teams-tab';
 import { DivisionDataProvider } from './division-data-context';
 import { ScoreboardTab } from './tabs/scoreboard-tab';
 import { AwardsTab } from './tabs/awards/awards-tab';

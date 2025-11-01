@@ -5,62 +5,41 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
+import { useMatchStageTranslations } from '@lems/localization';
+import { useTeamAtEventData } from './team-at-event-data-context';
 
 interface ScheduleEntry {
   time: Date;
-  type: string;
+  description: string;
   location: string;
-  isMatch: boolean;
 }
 
-interface Match {
-  scheduledTime: string | Date;
-  stage: string;
-  number: number;
-  tableName: string;
-}
-
-interface JudgingSession {
-  scheduledTime: string | Date;
-  number: number;
-  roomName: string;
-}
-
-interface TeamScheduleProps {
-  teamMatches: Match[];
-  teamJudging: JudgingSession[];
-  teamNumber: number;
-}
-
-export const TeamSchedule: React.FC<TeamScheduleProps> = ({
-  teamMatches,
-  teamJudging,
-  teamNumber
-}) => {
+export const TeamSchedule: React.FC = () => {
   const t = useTranslations('pages.team-in-event');
+  const { getStage } = useMatchStageTranslations();
+
+  const { matches, judgingSession, team } = useTeamAtEventData();
 
   const scheduleEntries: ScheduleEntry[] = [
-    ...teamMatches.map(match => ({
+    ...matches.map(match => ({
       time: new Date(match.scheduledTime),
-      type: t('schedule.match-type', {
-        stage: match.stage,
+      description: t('schedule.match-type', {
+        stage: getStage(match.stage),
         number: match.number,
-        table: match.tableName,
-        teamNumber: teamNumber
+        table: match.table.name,
+        teamNumber: team.number
       }),
-      location: match.tableName,
-      isMatch: true
+      location: match.table.name
     })),
-    ...teamJudging.map(session => ({
-      time: new Date(session.scheduledTime),
-      type: t('schedule.judging-session', {
-        number: session.number,
-        room: session.roomName,
-        teamNumber: teamNumber
+    {
+      time: new Date(judgingSession.scheduledTime),
+      description: t('schedule.judging-session', {
+        number: judgingSession.number,
+        room: judgingSession.room.name,
+        teamNumber: team.number
       }),
-      location: session.roomName,
-      isMatch: false
-    }))
+      location: judgingSession.room.name
+    }
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 
   return (
@@ -115,7 +94,7 @@ export const TeamSchedule: React.FC<TeamScheduleProps> = ({
                         }}
                       />
                       <Typography variant="body2" fontWeight="600">
-                        {entry.type}
+                        {entry.description}
                       </Typography>
                     </Box>
                   }

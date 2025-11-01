@@ -3,15 +3,14 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Box, Divider } from '@mui/material';
+import { useTeamAtEventData } from '../team-at-event-data-context';
 
-interface MatchResultsProps {
-  scores: number[];
-}
-
-export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
+export const MatchResults: React.FC = () => {
+  const { scoreboard } = useTeamAtEventData();
   const t = useTranslations('pages.team-in-event');
 
-  const displayScores = scores && scores.length > 0 ? scores : [0, 0, 0];
+  const displayScores =
+    scoreboard?.scores && scoreboard.scores.length > 0 ? scoreboard.scores : [0, 0, 0];
 
   return (
     <>

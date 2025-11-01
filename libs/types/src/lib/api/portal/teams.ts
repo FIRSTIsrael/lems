@@ -36,16 +36,16 @@ export type TeamEventResult = z.infer<typeof PortalTeamEventResultSchema>;
 export const PortalTeamEventResultsSchema = z.array(PortalTeamEventResultSchema);
 
 export const PortalTeamAtEventDataResponseSchema = z.object({
-  team: PortalTeamResponseSchema.shape,
-  event: {
+  team: PortalTeamResponseSchema,
+  event: z.object({
     id: z.string(),
     name: z.string(),
     slug: z.string()
-  },
-  division: {
+  }),
+  division: z.object({
     id: z.string(),
     name: z.string()
-  },
+  }),
   awards: z.array(
     z.object({
       name: z.string(),
@@ -57,13 +57,13 @@ export const PortalTeamAtEventDataResponseSchema = z.object({
       number: z.number(),
       stage: z.string(),
       scheduledTime: z.coerce.date(),
-      table: { id: z.string(), name: z.string() }
+      table: z.object({ id: z.string(), name: z.string() })
     })
   ),
   judgingSession: z.object({
     number: z.number(),
     scheduledTime: z.coerce.date(),
-    room: { id: z.string(), name: z.string() }
+    room: z.object({ id: z.string(), name: z.string() })
   }),
   scoreboard: z
     .object({

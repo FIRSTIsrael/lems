@@ -2,8 +2,9 @@
 
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography, useMediaQuery, Link, Paper } from '@mui/material';
+import { Box, Typography, useMediaQuery, Paper } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DivisionScoreboardEntry } from '@lems/types/api/portal';
 import { useDivisionData } from '../division-data-context';
@@ -43,7 +44,8 @@ export const ScoreboardTab = () => {
           return <Typography color="text.secondary">-</Typography>;
         }
         return (
-          <Link
+          <Typography
+            component={Link}
             href={`/event/${eventSlug}/team/${team.number}`}
             sx={{
               textDecoration: 'none',
@@ -56,7 +58,7 @@ export const ScoreboardTab = () => {
             }}
           >
             {isDesktop ? `${team.name} #${team.number}` : `#${team.number}`}
-          </Link>
+          </Typography>
         );
       }
     },

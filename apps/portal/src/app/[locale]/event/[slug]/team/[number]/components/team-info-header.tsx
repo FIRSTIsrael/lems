@@ -6,35 +6,27 @@ import { useTranslations } from 'next-intl';
 import { Paper, Button, Avatar, Stack, Typography, Box } from '@mui/material';
 import { ArrowBack, ArrowForward, LocationOn as LocationIcon } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { Team } from '@lems/types/api/portal';
+import { useTeamAtEventData } from './team-at-event-data-context';
 
-interface TeamInfoHeaderProps {
-  team: Team;
-  eventName: string;
-  eventSlug: string;
-  divisionName: string;
-}
+const TeamInfoHeader: React.FC = () => {
+  const { team, event, division } = useTeamAtEventData();
 
-const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
-  team,
-  eventName,
-  eventSlug,
-  divisionName
-}) => {
   const t = useTranslations('pages.team-in-event');
 
   return (
-    <Paper sx={{ 
-      p: 3, 
-      mb: { xs: 3, lg: 0 },
-      flexGrow: { xs: 0, lg: 1 },
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <Paper
+      sx={{
+        p: 3,
+        mb: { xs: 3, lg: 0 },
+        flexGrow: { xs: 0, lg: 1 },
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
         <Button
           component={Link}
-          href={`/event/${eventSlug}`}
+          href={`/event/${event.slug}`}
           variant="outlined"
           startIcon={<DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />}
           size="small"
@@ -42,7 +34,7 @@ const TeamInfoHeader: React.FC<TeamInfoHeaderProps> = ({
           {t('header.back-to-event')}
         </Button>
         <Typography variant="body2" color="text.secondary">
-          {eventName} • {divisionName}
+          {event.name} • {division.name}
         </Typography>
       </Stack>
 

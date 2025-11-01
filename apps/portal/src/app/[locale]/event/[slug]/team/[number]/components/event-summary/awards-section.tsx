@@ -3,13 +3,11 @@
 import React from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
-import { TeamAtEventData } from '@lems/types/api/portal';
+import { useTeamAtEventData } from '../team-at-event-data-context';
 
-interface AwardsSectionProps {
-  awards: TeamAtEventData['awards'];
-}
+export const AwardsSection: React.FC = () => {
+  const { awards } = useTeamAtEventData();
 
-export const AwardsSection: React.FC<AwardsSectionProps> = ({ awards }) => {
   const getAwardIcon = (award: { name: string; place: number }) => {
     switch (award.place) {
       case 1:

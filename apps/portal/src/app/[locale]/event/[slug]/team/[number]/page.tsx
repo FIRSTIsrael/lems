@@ -1,86 +1,32 @@
 'use client';
 
 import React from 'react';
-import useSWR from 'swr';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { Box, Container, Typography, Paper, Button, Grid } from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
-import { useTranslations } from 'next-intl';
-import { DirectionalIcon } from '@lems/localization';
-import { TeamAtEventData } from '@lems/types/api/portal';
+import { Box, Container, Grid } from '@mui/material';
 import { TeamInfoHeader } from './components/team-info-header';
-import { EventSummary } from './components/event-summary';
+import { EventSummary } from './components/event-summary/event-summary';
 import { TeamSchedule } from './components/team-schedule';
+import { TeamAtEventDataProvider } from './components/team-at-event-data-context';
 
 export default function TeamAtEventPage() {
-  const t = useTranslations('pages.team-in-event');
-
-  const params = useParams();
-  const eventSlug = params.slug as string;
-  const teamNumber =
-    params.number && typeof params.number === 'string' ? parseInt(params.number, 10) : null;
-
-  const { data: teamData, error } = useSWR<TeamAtEventData | null>(
-    `/portal/events/${eventSlug}/teams/${teamNumber}`,
-    { suspense: true, fallbackData: null }
-  );
-
-  if (!teamData) {
-    if (!error) return null;
-
-    return (
+  return (
+    <TeamAtEventDataProvider>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
         <Container maxWidth="xl" sx={{ py: 2 }}>
-          <Paper sx={{ p: 6, textAlign: 'center' }}>
-            <Typography variant="h4" gutterBottom color="text.secondary">
-              {t('not-found.title', { number: teamNumber || 'Unknown' })}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              {t('not-found.description')}
-            </Typography>
-            <Button
-              component={Link}
-              href={`/event/${eventSlug}`}
-              variant="outlined"
-              startIcon={<DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />}
+          <Grid container spacing={3} sx={{ alignItems: { lg: 'stretch' } }}>
+            <Grid
+              size={{ xs: 12, lg: 8 }}
+              sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 0, lg: 3 } }}
             >
-              {t('not-found.back-to-event')}
-            </Button>
-          </Paper>
+              <TeamInfoHeader />
+              <EventSummary />
+            </Grid>
+
+            <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+              <TeamSchedule />
+            </Grid>
+          </Grid>
         </Container>
       </Box>
-    );
-  }
-
-  const { team, eventName, divisionName, awards, matches, judgingSessions, scoreboard } = teamData;
-
-  return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
-      <Container maxWidth="xl" sx={{ py: 2 }}>
-        <Grid container spacing={3} sx={{ alignItems: { lg: 'stretch' } }}>
-          <Grid
-            size={{ xs: 12, lg: 8 }}
-            sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 0, lg: 3 } }}
-          >
-            <TeamInfoHeader
-              team={team}
-              eventName={eventName}
-              eventSlug={eventSlug}
-              divisionName={divisionName}
-            />
-            <EventSummary teamAwards={awards} teamScoreboard={scoreboard} />
-          </Grid>
-
-          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <TeamSchedule
-              teamMatches={matches}
-              teamJudging={judgingSessions}
-              teamNumber={team.number}
-            />
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+    </TeamAtEventDataProvider>
   );
 }

@@ -12,10 +12,17 @@ interface DivisionDataProviderProps {
 }
 
 export function DivisionDataProvider({ children, divisionId }: DivisionDataProviderProps) {
-  const { data: divisionData } = useSWR<DivisionData | null>(`/portal/divisions/${divisionId}`, {
-    suspense: true,
-    fallbackData: null
-  });
+  const { data: divisionData, error } = useSWR<DivisionData | null>(
+    `/portal/divisions/${divisionId}`,
+    {
+      suspense: true,
+      fallbackData: null
+    }
+  );
+
+  if (error) {
+    throw new Error('Failed to load division data');
+  }
 
   if (!divisionData) {
     return null;
