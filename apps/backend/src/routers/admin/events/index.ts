@@ -1,8 +1,8 @@
 import express from 'express';
 import { UpdateableEvent } from '@lems/database';
 import db from '../../../lib/database';
-import { attachEvent } from '../../../middlewares/admin/attach-event';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { attachEvent } from '../middleware/attach-event';
+import { requirePermission } from '../middleware/require-permission';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
 import eventUsersRouter from './users';

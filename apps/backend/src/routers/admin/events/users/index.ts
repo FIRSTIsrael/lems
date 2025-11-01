@@ -2,7 +2,7 @@ import express from 'express';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminUserResponse } from '../../users/util';
-import { requirePermission } from '../../../../middlewares/admin/require-permission';
+import { requirePermission } from '../../middleware/require-permission';
 import {
   makeAdminVolunteerResponse,
   generateVolunteerPassword,

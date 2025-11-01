@@ -2,8 +2,12 @@ import express from 'express';
 import { SchedulerRequest } from '@lems/types';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
-import { requirePermission } from '../../../../../middlewares/admin/require-permission';
-import { makeAdminJudgingSessionResponse, makeAdminJudgingRoomResponse, makeAdminRobotGameMatchResponse } from './util';
+import { requirePermission } from '../../../middleware/require-permission';
+import {
+  makeAdminJudgingSessionResponse,
+  makeAdminJudgingRoomResponse,
+  makeAdminRobotGameMatchResponse
+} from './util';
 
 const router = express.Router({ mergeParams: true });
 

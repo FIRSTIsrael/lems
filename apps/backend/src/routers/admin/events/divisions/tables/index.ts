@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../../../../../lib/database';
-import { requirePermission } from '../../../../../middlewares/admin/require-permission';
+import { requirePermission } from '../../../middleware/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { generateVolunteerPassword } from '../../users/util';
 
@@ -63,15 +63,14 @@ router.delete(
     const { tableId } = req.params;
     await db.tables.byId(tableId).delete();
 
-    const tableEventUser = await db.eventUsers
-      .byRoleInfo('tableId', tableId)
-      .get();
-      
+    const tableEventUser = await db.eventUsers.byRoleInfo('tableId', tableId).get();
+
     if (tableEventUser) {
       await db.eventUsers.delete(tableEventUser.id);
     }
 
     res.status(204).end();
-  });
+  }
+);
 
 export default router;
