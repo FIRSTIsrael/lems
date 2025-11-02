@@ -10,7 +10,7 @@ import timesyncServer from 'timesync/server';
 import './lib/dayjs';
 import './lib/database';
 import { createApolloServer, type GraphQLContext } from './lib/graphql/apollo-server';
-import { initializeRedis, cleanupRedis } from './lib/redis';
+import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -37,9 +37,12 @@ app.use(express.json());
 
 // Redis: Initialize connection on startup
 try {
-  await initializeRedis();
+  const redis = getRedisClient();
+  await redis.ping();
+  console.log('✅ Redis initialized and connection verified');
 } catch (error) {
-  console.error('⚠️  Redis initialization failed, continuing without Redis:', error);
+  console.error('⚠️ Failed to initialize Redis:', error);
+  throw new Error('Redis initialization failed');
 }
 
 // GraphQL: Initialize Apollo Server and register middleware
@@ -96,7 +99,7 @@ server.on('error', console.error);
 process.on('SIGTERM', async () => {
   console.log('⚠️  SIGTERM received, shutting down gracefully...');
   server.close(async () => {
-    await cleanupRedis();
+    await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
     process.exit(0);
   });
@@ -105,7 +108,7 @@ process.on('SIGTERM', async () => {
 process.on('SIGINT', async () => {
   console.log('⚠️  SIGINT received, shutting down gracefully...');
   server.close(async () => {
-    await cleanupRedis();
+    await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
     process.exit(0);
   });
