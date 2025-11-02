@@ -72,7 +72,7 @@ services:
       - lems-network
     restart: always
     environment:
-      - LOCAL_BASE_URL="${LOCAL_BASE_URL}"
+      - LOCAL_BASE_URL=${LOCAL_BASE_URL}
       - SCHEDULER_JWT_SECRET=${SCHEDULER_JWT_SECRET}
 
 networks:
