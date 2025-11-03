@@ -6,7 +6,9 @@ import { makePortalDivisionDetailsResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/:divisionId', attachDivision(), async (req: PortalDivisionRequest, res: Response) => {
+router.use('/:divisionId', attachDivision());
+
+router.get('/:divisionId', async (req: PortalDivisionRequest, res: Response) => {
   const divisionId = req.divisionId;
   const division = await db.divisions.byId(divisionId).get();
 
