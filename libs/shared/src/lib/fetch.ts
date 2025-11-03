@@ -121,7 +121,9 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
   }
 
   try {
-    const response = await fetch(getApiBase() + path, fetchOptions);
+    const fullUrl = getApiBase() + path;
+    console.log('Making API request to:', fullUrl);
+    const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
       let errorData: unknown;
