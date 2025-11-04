@@ -1,119 +1,170 @@
 import Redis from 'ioredis';
+import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisClient } from './redis-client';
 
-/**
- * Redis Streams-based Pub/Sub implementation
- * Provides at-least-once delivery semantics with persistence
- * Supports multi-instance deployments via consumer groups
- */
+export interface RedisEvent {
+  type: RedisEventTypes;
+  divisionId: string;
+  timestamp: number;
+  data: Record<string, unknown>;
+  version?: number;
+}
+
 export class RedisStreamsPubSub {
   private publisher: Redis;
-  private consumerGroup: string;
-  private consumerName: string;
-  private instanceId: string;
+  private eventVersionMap: Map<RedisEventTypes, number> = new Map();
+  private readonly messageRetentionMs = 30 * 1000; // 30 seconds
 
   constructor() {
     this.publisher = getRedisClient();
-    this.consumerGroup = process.env.REDIS_CONSUMER_GROUP || 'lems-graphql';
-    this.instanceId = process.env.INSTANCE_ID || `instance-${process.pid}`;
-    this.consumerName = `${this.consumerGroup}-${this.instanceId}`;
   }
 
   /**
-   * Publish a message to a stream channel
-   * Messages are persisted in Redis and can be consumed by all subscribers
-   *
-   * @param channel - The stream key (prefixed with 'stream:')
-   * @param payload - The data to publish
-   * @returns The stream message ID
+   * Get channel name for a specific event type in a division
    */
-  async publish(channel: string, payload: Record<string, unknown>): Promise<string> {
-    const streamKey = this.getStreamKey(channel);
-
-    try {
-      const messageId = await this.publisher.xadd(
-        streamKey,
-        'MAXLEN',
-        '~',
-        '10000', // Keep ~10k messages per stream
-        '*', // Auto-generate message ID
-        'data',
-        JSON.stringify({
-          payload,
-          timestamp: Date.now(),
-          instanceId: this.instanceId
-        })
-      );
-
-      return messageId;
-    } catch (error) {
-      console.error(`Error publishing to stream ${streamKey}:`, error);
-      throw error;
-    }
+  private getChannelName(divisionId: string, eventType: RedisEventTypes): string {
+    return `division:${divisionId}:${eventType}`;
   }
 
   /**
-   * Initialize a consumer group for a stream
-   * Must be called before consuming messages
-   *
-   * @param channel - The stream channel
+   * Publish an event via Pub/Sub and buffer for recovery
    */
-  async initializeConsumerGroup(channel: string): Promise<void> {
-    const streamKey = this.getStreamKey(channel);
+  async publish(
+    divisionId: string,
+    eventType: RedisEventTypes,
+    data: Record<string, unknown>
+  ): Promise<void> {
+    const currentVersion = (this.eventVersionMap.get(eventType) || 0) + 1;
+    this.eventVersionMap.set(eventType, currentVersion);
 
-    try {
-      await this.publisher.xgroup(
-        'CREATE',
-        streamKey,
-        this.consumerGroup,
-        '0', // Start from the beginning
-        'MKSTREAM' // Create stream if it doesn't exist
-      );
-      console.log(`✅ Consumer group initialized: ${this.consumerGroup} for stream ${streamKey}`);
-    } catch (error: unknown) {
-      // Consumer group might already exist
-      const errorMessage = (error as Error)?.message || '';
-      if (errorMessage?.includes('BUSYGROUP')) {
-        console.log(`⚠️  Consumer group already exists: ${this.consumerGroup}`);
-      } else {
-        throw error;
+    const event: RedisEvent = {
+      type: eventType,
+      divisionId,
+      timestamp: Date.now(),
+      data,
+      version: currentVersion
+    };
+
+    // Publish to event-type-specific channel
+    const channel = this.getChannelName(divisionId, eventType);
+    await this.publisher.publish(channel, JSON.stringify(event));
+    await this.bufferEvent(divisionId, eventType, event);
+  }
+
+  /**
+   * Buffer event in Redis sorted set for recovery
+   */
+  private async bufferEvent(
+    divisionId: string,
+    eventType: RedisEventTypes,
+    event: RedisEvent
+  ): Promise<void> {
+    const bufferKey = `buffer:${divisionId}:${eventType}`;
+    const timestamp = Date.now();
+
+    await this.publisher.zadd(bufferKey, timestamp, JSON.stringify(event));
+    await this.publisher.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
+    await this.publisher.expire(bufferKey, 35);
+  }
+
+  /**
+   * Recover missed events from buffer for a specific event type
+   */
+  private async recoverMissedEvents(
+    divisionId: string,
+    eventType: RedisEventTypes,
+    clientLastVersion: number
+  ): Promise<RedisEvent[]> {
+    const bufferKey = `buffer:${divisionId}:${eventType}`;
+    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1);
+    const events: RedisEvent[] = [];
+
+    for (const data of bufferedData) {
+      const event = JSON.parse(data) as RedisEvent;
+      if ((event.version || 0) > clientLastVersion) {
+        events.push(event);
       }
     }
+
+    // Check if gap is too large
+    const serverVersion = this.eventVersionMap.get(eventType) || 0;
+    if (serverVersion - clientLastVersion > 1000) {
+      events.push({
+        type: eventType,
+        divisionId,
+        timestamp: Date.now(),
+        data: { _gap: true },
+        version: serverVersion
+      });
+    }
+
+    return events;
   }
 
   /**
-   * Get the fully qualified stream key
-   *
-   * @param channel - The channel name
-   * @returns The stream key with 'stream:' prefix
+   * Subscribe to division events with optional recovery
+   * Each event type gets its own channel
    */
-  private getStreamKey(channel: string): string {
-    return `stream:${channel}`;
-  }
+  async *asyncIterator(
+    divisionId: string,
+    eventTypes: RedisEventTypes[],
+    clientLastVersions?: Map<RedisEventTypes, number>
+  ): AsyncGenerator<RedisEvent, void, unknown> {
+    const subscriber = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      password: process.env.REDIS_PASSWORD,
+      db: parseInt(process.env.REDIS_DB || '0', 10)
+    });
 
-  /**
-   * Get instance ID for identification across instances
-   */
-  getInstanceId(): string {
-    return this.instanceId;
-  }
+    try {
+      // Phase 1: Recover missed events for each event type
+      if (clientLastVersions) {
+        for (const eventType of eventTypes) {
+          const clientLastVersion = clientLastVersions.get(eventType) || 0;
+          const recovered = await this.recoverMissedEvents(
+            divisionId,
+            eventType,
+            clientLastVersion
+          );
 
-  /**
-   * Get consumer group name
-   */
-  getConsumerGroup(): string {
-    return this.consumerGroup;
+          for (const event of recovered) {
+            yield event;
+          }
+        }
+      }
+
+      // Phase 2: Subscribe to event-type-specific channels
+      const channels = eventTypes.map(et => this.getChannelName(divisionId, et));
+      await subscriber.subscribe(...channels);
+
+      // Create a promise that resolves when a message arrives on any channel
+      const messageHandler = new Promise<RedisEvent | null>(resolve => {
+        subscriber.on('message', (_, message) => {
+          try {
+            const event = JSON.parse(message) as RedisEvent;
+            resolve(event);
+          } catch {
+            resolve(null);
+          }
+        });
+      });
+
+      while (true) {
+        const event = await messageHandler;
+        if (event) {
+          yield event;
+        }
+      }
+    } finally {
+      await subscriber.quit();
+    }
   }
 }
 
 // Singleton instance
 let pubSubInstance: RedisStreamsPubSub | null = null;
 
-/**
- * Get or create the Redis Streams Pub/Sub instance
- *
- * @returns RedisStreamsPubSub instance
- */
 export function getRedisStreamsPubSub(): RedisStreamsPubSub {
   if (!pubSubInstance) {
     pubSubInstance = new RedisStreamsPubSub();

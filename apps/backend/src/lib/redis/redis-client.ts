@@ -1,17 +1,10 @@
 import Redis from 'ioredis';
 
 /**
- * Singleton Redis client instance for the application
- * Used for general operations, caching, and pub/sub
+ * Singleton Redis client instance, for commands
  */
 let redisClient: Redis | null = null;
 
-/**
- * Get or create the Redis client instance
- * Implements singleton pattern to ensure only one connection
- *
- * @returns Redis client instance
- */
 export function getRedisClient(): Redis {
   if (!redisClient) {
     redisClient = new Redis({
@@ -73,10 +66,6 @@ export function createRedisSubscriber(): Redis {
   return subscriber;
 }
 
-/**
- * Close the Redis client connection
- * Should be called during graceful shutdown
- */
 export async function closeRedisClient(): Promise<void> {
   if (redisClient) {
     await redisClient.quit();
