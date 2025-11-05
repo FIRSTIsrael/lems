@@ -10,7 +10,7 @@ export interface RedisEvent {
   version?: number;
 }
 
-export class RedisStreamsPubSub {
+export class RedisPubSub {
   private publisher: Redis;
   private eventVersionMap: Map<RedisEventTypes, number> = new Map();
   private readonly messageRetentionMs = 30 * 1000; // 30 seconds
@@ -68,7 +68,8 @@ export class RedisStreamsPubSub {
   }
 
   /**
-   * Recover missed events from buffer for a specific event type
+   * Recover missed events from buffer for a specific event type.
+   * Returns all events that were missed since the provided last version
    */
   private async recoverMissedEvents(
     divisionId: string,
@@ -162,12 +163,11 @@ export class RedisStreamsPubSub {
   }
 }
 
-// Singleton instance
-let pubSubInstance: RedisStreamsPubSub | null = null;
+let pubSubInstance: RedisPubSub | null = null;
 
-export function getRedisStreamsPubSub(): RedisStreamsPubSub {
+export function getRedisPubSub(): RedisPubSub {
   if (!pubSubInstance) {
-    pubSubInstance = new RedisStreamsPubSub();
+    pubSubInstance = new RedisPubSub();
   }
   return pubSubInstance;
 }
