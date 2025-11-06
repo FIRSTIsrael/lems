@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express';
 import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
-import { attachEvent } from '../../../middlewares/portal/attach-event';
+import { attachEvent } from '../middleware/attach-event';
+import { PortalEventRequest } from '../../../types/express';
+import eventTeamRouter from './teams';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -89,12 +91,13 @@ router.get('/', async (req: Request, res: Response) => {
   return;
 });
 
-router.use('/:slug', attachEvent());
 router.get('/:slug', async (req: Request, res: Response) => {
-  const event = req.event;
+  const { slug } = req.params;
+
+  const event = await db.events.bySlug(slug).get();
 
   if (!event) {
-    res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+    res.status(404).json({ error: 'Event not found' });
     return;
   }
 
@@ -110,5 +113,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
 
   res.json(makePortalEventDetailsResponse(eventSummary));
 });
+
+router.use('/:slug/teams', eventTeamRouter);
 
 export default router;

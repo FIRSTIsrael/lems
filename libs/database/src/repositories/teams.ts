@@ -80,6 +80,31 @@ class TeamSelector {
     return updatedTeam || null;
   }
 
+  /**
+   * Checks if the team is registered in the given event.
+   * Returns the division ID the team is registered to, otherwise null.
+   */
+  async isInEvent(eventId: string): Promise<string | null> {
+    let id: string;
+    if (this.selector.type === 'id') {
+      id = this.selector.value;
+    } else {
+      const team = await this.getTeamQuery().executeTakeFirst();
+      if (!team) return null;
+      id = team.id;
+    }
+
+    const record = await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('divisions', 'team_divisions.division_id', 'divisions.id')
+      .selectAll()
+      .where('team_divisions.team_id', '=', id)
+      .where('divisions.event_id', '=', eventId)
+      .executeTakeFirst();
+
+    return record ? record.division_id : null;
+  }
+
   async isInDivision(divisionId: string): Promise<boolean> {
     let id: string;
     if (this.selector.type === 'id') {

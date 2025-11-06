@@ -1,5 +1,5 @@
 import { Form, Formik, FormikValues } from 'formik';
-import { Socket } from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
 import { WithId } from 'mongodb';
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -38,7 +38,7 @@ interface CVFormProps {
   user: WithId<SafeUser>;
   division: WithId<Division>;
   teams: Array<WithId<Team>>;
-  socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
+  socket: any;
   cvForm?: WithId<CoreValuesForm>;
   readOnly?: boolean;
   onSubmit?: () => void;
@@ -191,7 +191,7 @@ const CVForm: React.FC<CVFormProps> = ({
             division._id.toString(),
             initialCvForm._id.toString(),
             { ...values, severity },
-            response => {
+            (response: any) => {
               if (response.ok) {
                 enqueueSnackbar('הטופס עודכן בהצלחה!', { variant: 'success' });
                 actions.resetForm();
@@ -207,7 +207,7 @@ const CVForm: React.FC<CVFormProps> = ({
             'createCvForm',
             division._id.toString(),
             { ...values, severity },
-            response => {
+            (response: any) => {
               if (response.ok) {
                 enqueueSnackbar('הטופס הוגש בהצלחה!', { variant: 'success' });
                 actions.resetForm();

@@ -6,7 +6,7 @@ import {
   validateUsername
 } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 import { makeAdminUserResponse } from './util';
 
 const router = express.Router({ mergeParams: true });

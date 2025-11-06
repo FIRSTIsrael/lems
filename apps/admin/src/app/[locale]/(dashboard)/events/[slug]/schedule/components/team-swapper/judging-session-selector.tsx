@@ -103,7 +103,7 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
                               ? t('empty')
                               : isCurrentTeam
                                 ? t('current-team')
-                                : t('unknown-team', {number: roomTeam?.number || '?'})}
+                                : t('unknown-team', { number: roomTeam?.number || '?' })}
                           </Typography>
                         </Stack>
                       </CardContent>

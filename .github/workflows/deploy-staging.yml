@@ -28,6 +28,16 @@ jobs:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+  build-portal:
+    name: Build & Push Portal
+    uses: ./.github/workflows/deploy-portal.yml
+    with:
+      environment: staging
+      image_tag: staging-${{ github.sha }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
   build-scheduler:
     name: Build & Push Scheduler
     uses: ./.github/workflows/deploy-scheduler.yml

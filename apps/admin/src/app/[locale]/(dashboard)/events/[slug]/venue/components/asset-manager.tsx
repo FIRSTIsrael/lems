@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import { useTranslations } from 'next-intl';
 import {
@@ -32,6 +32,7 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
   const [saving, setSaving] = useState<{ [key: string]: boolean }>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const {
     data: assets = [] as T[],
@@ -78,15 +79,16 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
       const result = await makeApiRequest(
         `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`,
         'POST',
-        {
-          name
-        }
+        { name }
       );
 
       if (result.ok) {
         setNewAssetName('');
         showSuccess();
         mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
+
+        // Timeout is required for the focus to work
+        setTimeout(() => inputRef.current?.focus(), 10);
       } else {
         setErrors({ new: t('messages.save-error') });
       }
@@ -205,6 +207,7 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
             size="small"
             placeholder={t(`${assetType as string}.name-placeholder`)}
             value={newAssetName}
+            inputRef={inputRef}
             onChange={e => {
               setNewAssetName(e.target.value);
               if (errors.new) {

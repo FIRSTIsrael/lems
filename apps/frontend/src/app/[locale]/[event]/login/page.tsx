@@ -12,7 +12,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
 
   const authResult = await apiFetch('/lems/auth/verify');
   if (authResult.ok) {
-    redirect(`/${eventSlug}/dashboard`); //TODO: Actual URL
+    redirect(`/lems`);
   }
 
   let event = null;
