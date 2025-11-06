@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useSuspenseQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import dayjs from 'dayjs';
 import { Box, Typography, Stack } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
@@ -18,7 +18,7 @@ export const UpcomingEventsSection: React.FC = () => {
     };
   }, []);
 
-  const { data } = useSuspenseQuery(GET_EVENTS_QUERY, {
+  const { data, loading } = useQuery(GET_EVENTS_QUERY, {
     variables: {
       fullySetUp: true,
       startAfter: endOfDay,
@@ -27,7 +27,7 @@ export const UpcomingEventsSection: React.FC = () => {
   });
 
   const upcomingEvents: Event[] =
-    data.events.map((event: HomepageEvent) => ({
+    data?.events.map((event: HomepageEvent) => ({
       id: event.id,
       name: event.name,
       slug: event.slug,
@@ -37,6 +37,10 @@ export const UpcomingEventsSection: React.FC = () => {
       coordinates: null,
       seasonId: ''
     })) || [];
+
+  if (loading) {
+    return null; // TODO: Actual loading state
+  }
 
   if (upcomingEvents.length === 0) {
     return (
