@@ -4,13 +4,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
-import { 
-  Box, 
-  Typography, 
-  useMediaQuery, 
-  Paper, 
-  Stack
-} from '@mui/material';
+import { Box, Typography, useMediaQuery, Paper, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DivisionScoreboardEntry } from '@lems/types/api/portal';
 import { useDivisionData } from '../division-data-context';
@@ -84,7 +78,6 @@ export const ScoreboardTab = () => {
     }))
   ];
 
-  // Mobile Scoreboard Component - Grid-like layout
   const MobileScoreboard = () => {
     if (sortedData.length === 0) {
       return (
@@ -98,16 +91,15 @@ export const ScoreboardTab = () => {
 
     return (
       <Box sx={{ width: '100%', overflowX: 'auto' }}>
-        {/* Header Row */}
         <Box
           display="grid"
-          gridTemplateColumns={`60px 1fr 80px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
+          gridTemplateColumns={`50px 80px 70px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
           gap={1}
           sx={{
             bgcolor: 'grey.100',
             p: 1,
             borderRadius: '4px 4px 0 0',
-            minWidth: 300 + (numberOfMatches * 60)
+            minWidth: 200 + numberOfMatches * 60 + (numberOfMatches + 2) * 8
           }}
         >
           <Typography variant="body2" fontWeight={600} textAlign="center">
@@ -126,7 +118,6 @@ export const ScoreboardTab = () => {
           ))}
         </Box>
 
-        {/* Data Rows */}
         <Stack spacing={0}>
           {sortedData.map((entry, rowIndex) => {
             const team = teams.find(t => t.id === entry.teamId);
@@ -136,23 +127,21 @@ export const ScoreboardTab = () => {
               <Box
                 key={entry.teamId}
                 display="grid"
-                gridTemplateColumns={`60px 1fr 80px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
+                gridTemplateColumns={`50px 80px 70px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
                 gap={1}
                 sx={{
                   bgcolor: rowIndex % 2 === 0 ? 'white' : 'grey.50',
                   p: 1,
                   borderBottom: '1px solid',
                   borderColor: 'grey.200',
-                  minWidth: 300 + (numberOfMatches * 60),
+                  minWidth: 200 + numberOfMatches * 60 + (numberOfMatches + 2) * 8,
                   alignItems: 'center'
                 }}
               >
-                {/* Rank */}
                 <Typography variant="body2" fontWeight={500} textAlign="center">
                   {entry.robotGameRank ?? '-'}
                 </Typography>
 
-                {/* Team Name */}
                 <Typography
                   component={Link}
                   href={`/event/${eventSlug}/team/${team.number}`}
@@ -170,26 +159,24 @@ export const ScoreboardTab = () => {
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  #{team.number} {team.name}
+                  #{team.number}
                 </Typography>
 
-                {/* Best Score */}
-                <Typography 
-                  variant="body2" 
-                  fontWeight={600} 
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
                   textAlign="center"
                   color="primary.main"
                 >
                   {entry.maxScore ?? '-'}
                 </Typography>
 
-                {/* Match Scores */}
                 {Array.from({ length: numberOfMatches }, (_, index) => {
                   const score = entry.scores?.[index];
                   return (
-                    <Typography 
+                    <Typography
                       key={index}
-                      variant="body2" 
+                      variant="body2"
                       textAlign="center"
                       color={score ? 'text.primary' : 'text.disabled'}
                     >
@@ -210,8 +197,7 @@ export const ScoreboardTab = () => {
       <Typography variant="h2" gutterBottom>
         {t('quick-links.scoreboard')}
       </Typography>
-      
-      {/* Desktop DataGrid */}
+
       {isDesktop && (
         <Box sx={{ width: '100%' }}>
           <DataGrid
@@ -242,8 +228,7 @@ export const ScoreboardTab = () => {
           />
         </Box>
       )}
-      
-      {/* Mobile Card Layout */}
+
       {!isDesktop && <MobileScoreboard />}
     </Paper>
   );
