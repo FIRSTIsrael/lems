@@ -2,13 +2,17 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/clien
 import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client/errors';
 import { RetryLink } from '@apollo/client/link/retry';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
+import { OperationTypeNode } from 'graphql';
 import { getApiBase } from '@lems/shared';
 
 /**
  * Creates a configured Apollo Client instance for the LEMS frontend.
  *
  * Features:
- * - HTTP link pointing to the LEMS GraphQL endpoint
+ * - HTTP link for queries and mutations
+ * - WebSocket link for subscriptions (graphql-ws)
  * - Error handling and logging
  * - Automatic retry logic with exponential backoff
  * - Normalized cache with type policies for all LEMS entity types
@@ -17,12 +21,23 @@ import { getApiBase } from '@lems/shared';
  * @returns Configured Apollo Client instance
  */
 export function createApolloClient() {
+  const apiBase = getApiBase() || 'http://localhost:3333';
+
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
-    uri: `${getApiBase()}/lems/graphql`,
+    uri: `${apiBase}/lems/graphql`,
     credentials: 'include', // Send cookies with requests
     fetch
   });
+
+  // WebSocket link for subscriptions
+  const wsLink = new GraphQLWsLink(
+    createClient({
+      url: `${apiBase.replace(/^https?/, 'ws')}/lems/graphql`,
+      retryAttempts: Infinity, // Retry indefinitely
+      shouldRetry: () => true // Retry on all connection failures
+    })
+  );
 
   const errorLink = new ErrorLink(({ error, operation }) => {
     if (CombinedGraphQLErrors.is(error)) {
@@ -42,7 +57,6 @@ export function createApolloClient() {
     }
   });
 
-  // Retry logic with exponential backoff
   const retryLink = new RetryLink({
     delay: {
       initial: 300,
@@ -66,7 +80,14 @@ export function createApolloClient() {
     }
   });
 
-  const link = ApolloLink.from([errorLink, retryLink, httpLink]);
+  // Split traffic: subscriptions use WebSocket, queries and mutations use HTTP
+  const splitLink = ApolloLink.split(
+    ({ operationType }) => operationType === OperationTypeNode.SUBSCRIPTION,
+    wsLink,
+    ApolloLink.from([errorLink, retryLink, httpLink])
+  );
+
+  const link = splitLink;
 
   // Create Apollo Client with normalized cache
   return new ApolloClient({
