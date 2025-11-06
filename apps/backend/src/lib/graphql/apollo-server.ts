@@ -33,6 +33,8 @@ export interface GraphQLContext {
  * - Type-safe context for all resolvers
  */
 export function createApolloServer(httpServer: Server, wsServerCleanup: Disposable) {
+  console.log('[Apollo] Creating Apollo Server instance');
+
   return new ApolloServer<GraphQLContext>({
     schema,
     plugins: [
@@ -40,8 +42,10 @@ export function createApolloServer(httpServer: Server, wsServerCleanup: Disposab
 
       {
         async serverWillStart() {
+          console.log('[Apollo] Server starting');
           return {
             async drainServer() {
+              console.log('[Apollo] Draining server');
               await wsServerCleanup.dispose();
             }
           };

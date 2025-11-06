@@ -11,7 +11,7 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
-import { createApolloServer, schema, type GraphQLContext } from './lib/graphql/apollo-server';
+import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
@@ -48,16 +48,39 @@ try {
 }
 
 // WebSocket: Create WebSocket server for subscriptions
+console.log('[Main] Creating WebSocket server at path /lems/graphql');
 const wsServer = new WebSocketServer({
   server,
   path: '/lems/graphql'
 });
 
-// GraphQL: Initialize Apollo Server and register middleware
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const serverCleanup = useServer({ schema }, wsServer);
+const serverCleanup = useServer(
+  {
+    schema,
+    context: async (): Promise<GraphQLContext> => {
+      // TODO: Extract user from connection params or headers
+      // const user = await authenticate(connectionParams);
+      return {
+        // user,
+      };
+    },
+    onConnect: async () => {
+      console.log('[WebSocket] Client connected');
+      return true;
+    },
+    onDisconnect: () => {
+      console.log('[WebSocket] Client disconnected');
+    },
+    onError: (ctx, message, errors) => {
+      console.error('[WebSocket] GraphQL Error:', { message, errors });
+    }
+  },
+  wsServer
+);
 console.log('✅ WebSocket server initialized for subscriptions');
 
+// GraphQL: Initialize Apollo Server
 // This must be registered before the routers to ensure /lems/graphql
 // takes precedence over /lems/* routes
 const apolloServer = createApolloServer(server, serverCleanup);
