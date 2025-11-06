@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
-import { fetchEventBySlug } from './graphql/event.graphql';
+import { getClient } from '../../../../lib/graphql/ssr-client';
+import { GET_EVENT_BY_SLUG_QUERY, EventDetails } from './graphql/event.graphql';
 import { LoginPageContent } from './components/login-page-content';
 
 interface LoginPageProps {
@@ -18,11 +19,23 @@ export default async function LoginPage({ params }: LoginPageProps) {
   let event = null;
 
   try {
-    event = await fetchEventBySlug(eventSlug);
+    const client = getClient();
+    const result = await client.query<{ event: EventDetails | null }>({
+      query: GET_EVENT_BY_SLUG_QUERY,
+      variables: { slug: eventSlug }
+    });
+
+    if (!result.data?.event) {
+      throw new Error('Event not found');
+    }
+
+    event = result.data.event;
+
     if (!event?.isFullySetUp) {
       throw new Error('Event not fully set up');
     }
-  } catch {
+  } catch (error) {
+    console.log(`GraphQL error: ${error instanceof Error ? error.message : String(error)}`);
     redirect(`/`);
   }
 
