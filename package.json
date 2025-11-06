@@ -46,6 +46,7 @@
     "formik": "^2.4.6",
     "graphql": "^16.11.0",
     "graphql-http": "^1.22.4",
+    "graphql-ws": "^6.0.6",
     "idb": "^8.0.3",
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",

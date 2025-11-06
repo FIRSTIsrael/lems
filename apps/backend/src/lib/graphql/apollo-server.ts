@@ -24,6 +24,7 @@ export interface GraphQLContext {
  *
  * Features:
  * - Graceful shutdown via HTTP server drain plugin
+ * - WebSocket support for subscriptions (via graphql-ws integration)
  * - Introspection enabled in development (Apollo Sandbox, GraphQL Playground)
  * - Type-safe context for all resolvers
  */
@@ -35,3 +36,4 @@ export function createApolloServer(httpServer: Server) {
     introspection: process.env.NODE_ENV !== 'production'
   });
 }
+
