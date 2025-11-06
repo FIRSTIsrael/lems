@@ -517,8 +517,7 @@
           "visible": "Visible",
           "visible-description": "Whether this event is visible to the public",
           "official": "Official Event",
-          "official-description": "Whether this event is official",
-          "official-subtitle": "Turn this setting off for off-season, or other unofficial events."
+          "official-description": "Whether this event is official"
         },
         "event-actions": {
           "title": "Event Actions",

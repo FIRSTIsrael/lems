@@ -524,8 +524,7 @@
           "visible": "גלוי",
           "visible-description": "האם אירוע זה חשוף לציבור",
           "official": "סוג אירוע",
-          "official-description": "האם אירוע זה הוא אירוע רשמי",
-          "official-subtitle": "כבו את ההגדרה הזו עבור אירועי אוף סיזון, או אירועים קהילתיים אחרים."
+          "official-description": "האם אירוע זה הוא אירוע רשמי"
         },
         "event-actions": {
           "title": "פעולות אירוע",

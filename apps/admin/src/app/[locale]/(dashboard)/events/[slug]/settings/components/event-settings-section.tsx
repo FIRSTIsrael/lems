@@ -97,43 +97,38 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           {t('event-settings.title')}
         </Typography>
 
-        <Box sx={{ mb: 3 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={visible}
-                onChange={(_, checked) => setVisible(checked)}
-                color="primary"
-              />
-            }
-            label={t('event-settings.visible')}
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-            {t('event-settings.visible-description')}
-          </Typography>
-        </Box>
-
-        <Box sx={{ mb: 3 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={official}
-                onChange={(_, checked) => setOfficial(checked)}
-                color="primary"
-              />
-            }
-            label={t('event-settings.official')}
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-            {t('event-settings.official-description')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-            {t('event-settings.official-subtitle')}
-          </Typography>
-        </Box>
-
-        <Grid container spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
+        <Grid container spacing={3} sx={{ mb: 2 }}>
           <Grid size={3}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={visible}
+                  onChange={(_, checked) => setVisible(checked)}
+                  color="primary"
+                />
+              }
+              label={t('event-settings.visible')}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {t('event-settings.visible-description')}
+            </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={official}
+                  onChange={(_, checked) => setOfficial(checked)}
+                  color="primary"
+                />
+              }
+              sx={{ mt: 2 }}
+              label={t('event-settings.official')}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {t('event-settings.official-description')}
+            </Typography>
+          </Grid>
+
+          <Grid size={4} spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {t('event-settings.advancement-percent')}
               {totalTeams > 0 && (
@@ -164,7 +159,6 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               />
             </Box>
           </Grid>
-          <Grid size={9} />
         </Grid>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
