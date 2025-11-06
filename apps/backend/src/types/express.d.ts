@@ -1,20 +1,4 @@
-import { WithId } from 'mongodb';
-import { Event, Division, Team } from '@lems/types';
 import { Request } from 'express';
-
-declare global {
-  namespace Express {
-    interface Request {
-      // Old - should be removed or updated
-      user?: string; // User id if the user is currently logged in
-      userType?: 'admin' | 'event-user'; // Type of user, if the user is logged in
-      division?: WithId<Division>;
-      event?: WithId<Event>;
-      team?: WithId<Team>;
-      teamNumber?: number;
-    }
-  }
-}
 
 export interface AdminRequest extends Request {
   userId: string;

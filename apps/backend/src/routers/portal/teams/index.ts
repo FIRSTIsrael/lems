@@ -17,11 +17,15 @@ router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response)
   const seasons = (await db.seasons.getAll()).sort((a, b) =>
     dayjs(b.start_date).diff(a.start_date)
   );
+
   for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAll();
+    const events = await db.events.bySeason(season.id).getAllSummaries();
     for (const event of events) {
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-      for (const division of divisions) {
+      if (!event.visible) {
+        continue;
+      }
+
+      for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           res.status(200).json(makePortalTeamSummaryResponse(team, season.name));
           return;
@@ -36,10 +40,14 @@ router.get('/:teamNumber/seasons', async (req: PortalTeamRequest, res: Response)
   const seasons = await db.seasons.getAll();
   const teamSeasons = [];
   for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAll();
+    const events = await db.events.bySeason(season.id).getAllSummaries();
+
     eventsLoop: for (const event of events) {
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-      for (const division of divisions) {
+      if (!event.visible) {
+        continue;
+      }
+
+      for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           teamSeasons.push(season);
           break eventsLoop;
@@ -64,11 +72,15 @@ router.get(
       return;
     }
 
-    const events = await db.events.bySeason(season.id).getAll();
+    const events = await db.events.bySeason(season.id).getAllSummaries();
     const eventResults = [];
+
     for (const event of events) {
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-      for (const division of divisions) {
+      if (!event.visible) {
+        continue;
+      }
+
+      for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           const eventResult = { eventName: event.name, eventSlug: event.slug };
 
@@ -110,11 +122,15 @@ router.get(
       return;
     }
 
-    const events = await db.events.bySeason(season.id).getAll();
+    const events = await db.events.bySeason(season.id).getAllSummaries();
     const teamEvents = [];
+
     for (const event of events) {
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-      for (const division of divisions) {
+      if (!event.visible) {
+        continue;
+      }
+
+      for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           teamEvents.push(event);
           break;

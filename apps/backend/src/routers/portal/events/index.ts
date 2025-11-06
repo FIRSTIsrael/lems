@@ -21,7 +21,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const registeredTeams = await db.events.bySlug(eventSlug).getRegisteredTeams();
     const divisions = await db.divisions.byEventId(event.id).getAll();
-    const visibility = await db.events.byId(event.id).getVisibility();
+    const settings = await db.events.byId(event.id).getSettings();
 
     const eventSummary: EventSummary = {
       ...event,
@@ -30,7 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
       location: event.location,
       season_id: event.season_id,
       team_count: registeredTeams.length,
-      visible: visibility,
+      visible: settings.visible,
       is_fully_set_up: false,
       assigned_admin_ids: []
     };
@@ -47,9 +47,7 @@ router.get('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const events = (await db.events.bySeason(season.id).getAllSummaries()).filter(
-      e => e.visible === true
-    );
+    const events = (await db.events.bySeason(season.id).getAllSummaries()).filter(e => e.visible);
     res.json(events.map(makePortalEventSummaryResponse));
     return;
   }
@@ -62,10 +60,8 @@ router.get('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const events = (await db.events.after(timestamp).getAllSummaries()).filter(
-      e => e.visible === true
-    );
-    res.json(events.map(makePortalEventSummaryResponse));
+    const events = await db.events.after(timestamp).getAllSummaries();
+    res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }
 
@@ -75,32 +71,28 @@ router.get('/', async (req: Request, res: Response) => {
     allEvents.map(async event => {
       const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
       const divisions = await db.divisions.byEventId(event.id).getAll();
+      const settings = await db.events.byId(event.id).getSettings();
 
       return {
         ...event,
         divisions,
         date: event.start_date.toISOString(),
         team_count: registeredTeams.length,
+        visible: settings.visible,
         is_fully_set_up: false,
         assigned_admin_ids: []
       };
     })
   );
 
-  res.json(events.map(makePortalEventSummaryResponse));
+  res.json(events.filter(event => event.visible).map(makePortalEventSummaryResponse));
   return;
 });
 
-router.get('/:slug', async (req: Request, res: Response) => {
-  const { slug } = req.params;
+router.use('/:slug', attachEvent());
 
-  const event = await db.events.bySlug(slug).get();
-
-  if (!event) {
-    res.status(404).json({ error: 'Event not found' });
-    return;
-  }
-
+router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
+  const event = await db.events.byId(req.eventId).get();
   const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
   const season = await db.seasons.byId(event.season_id).get();
 

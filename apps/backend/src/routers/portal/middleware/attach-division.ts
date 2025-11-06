@@ -23,6 +23,13 @@ export const attachDivision = () => {
         return;
       }
 
+      const eventSettings = await database.events.byId(division.event_id).getSettings();
+
+      if (!eventSettings.visible) {
+        res.status(404).json({ error: 'DIVISION_NOT_FOUND' });
+        return;
+      }
+
       (req as PortalDivisionRequest).divisionId = division.id;
 
       next();

@@ -244,23 +244,6 @@ class EventSelector {
 
     return updatedSettings || null;
   }
-
-  async getVisibility(): Promise<boolean | null> {
-    const event = await this.get();
-
-    if (!event) {
-      throw new Error('Event not found');
-    }
-    const visibility = (
-      await this.db
-        .selectFrom('event_settings')
-        .select('visible')
-        .where('event_id', '=', event.id)
-        .executeTakeFirst()
-    )?.visible;
-
-    return visibility ?? null;
-  }
 }
 
 class EventsSelector {
@@ -479,13 +462,7 @@ export class EventsRepository {
   }
 
   async getAll() {
-    const events = await this.db
-      .selectFrom('events')
-      .selectAll()
-      .innerJoin('event_settings', 'event_settings.event_id', 'events.id')
-      .select('event_settings.visible')
-      .execute();
-    return events;
+    return await this.db.selectFrom('events').selectAll().execute();
   }
 
   async search(
