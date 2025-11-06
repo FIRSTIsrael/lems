@@ -1,10 +1,7 @@
 'use client';
 
-import { ApolloProvider } from '@apollo/client/react';
 import { SWRProvider } from '@lems/shared';
-import { createApolloClient } from '../../lib/graphql/client';
-
-const apollo = createApolloClient();
+import { ApolloWrapper } from './apollo-wrapper';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -12,12 +9,12 @@ interface ProvidersProps {
 
 /**
  * Client-side providers wrapper for Apollo Client and SWR
- * This component must be a client component to use ApolloProvider
+ * This component wraps children with ApolloWrapper and SWRProvider
  */
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ApolloProvider client={apollo}>
+    <ApolloWrapper>
       <SWRProvider>{children}</SWRProvider>
-    </ApolloProvider>
+    </ApolloWrapper>
   );
 }
