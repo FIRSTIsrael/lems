@@ -1,6 +1,27 @@
 import { gql } from '@apollo/client';
 import type { TypedDocumentNode } from '@apollo/client';
-import { serverGraphQLQuery } from '../../../../lib/graphql/server';
+
+export interface HomepageEvent {
+  id: string;
+  name: string;
+  slug: string;
+  startDate: string;
+  endDate: string;
+  isFullySetUp: boolean;
+}
+
+// Query result types
+type GetEventsQuery = {
+  events: HomepageEvent[];
+};
+
+type GetEventsQueryVariables = {
+  fullySetUp?: boolean;
+  startAfter?: string;
+  startBefore?: string;
+  endAfter?: string;
+  endBefore?: string;
+};
 
 export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryVariables> = gql`
   query GetEvents(
@@ -26,37 +47,3 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
     }
   }
 `;
-
-export interface HomepageEvent {
-  id: string;
-  name: string;
-  slug: string;
-  startDate: string;
-  endDate: string;
-  isFullySetUp: boolean;
-}
-
-// Query result types
-type GetEventsQuery = {
-  events: HomepageEvent[];
-};
-
-type GetEventsQueryVariables = {
-  fullySetUp?: boolean;
-  startAfter?: string;
-  startBefore?: string;
-  endAfter?: string;
-  endBefore?: string;
-};
-
-export const fetchEvents = async (filters?: GetEventsQueryVariables): Promise<HomepageEvent[]> => {
-  const { data, errors } = await serverGraphQLQuery(GET_EVENTS_QUERY, filters);
-
-  if (errors) {
-    throw new Error(
-      `GraphQL error: ${errors.map((e: { message: string }) => e.message).join(', ')}`
-    );
-  }
-
-  return data?.events ?? [];
-};
