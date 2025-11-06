@@ -65,26 +65,7 @@ router.get('/', async (req: Request, res: Response) => {
     return;
   }
 
-  const allEvents = await db.events.getAll();
-
-  const events: EventSummary[] = await Promise.all(
-    allEvents.map(async event => {
-      const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-      const settings = await db.events.byId(event.id).getSettings();
-
-      return {
-        ...event,
-        divisions,
-        date: event.start_date.toISOString(),
-        team_count: registeredTeams.length,
-        visible: settings.visible,
-        is_fully_set_up: false,
-        assigned_admin_ids: []
-      };
-    })
-  );
-
+  const events = await db.events.getAllSummaries();
   res.json(events.filter(event => event.visible).map(makePortalEventSummaryResponse));
   return;
 });
