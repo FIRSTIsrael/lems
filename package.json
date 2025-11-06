@@ -24,6 +24,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.1",
+    "@graphql-tools/schema": "^10.0.27",
     "@hello-pangea/dnd": "^18.0.1",
     "@json2csv/plainjs": "^7.0.6",
     "@mui/icons-material": "^7.3.1",
@@ -76,6 +77,7 @@
     "swr": "^2.3.6",
     "timesync": "^1.0.11",
     "tslib": "^2.8.1",
+    "ws": "^8.18.3",
     "zod": "^4.1.9"
   },
   "devDependencies": {

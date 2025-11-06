@@ -7,9 +7,11 @@ import cookies from 'cookie-parser';
 import cors from 'cors';
 import { expressMiddleware } from '@as-integrations/express5';
 import timesyncServer from 'timesync/server';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
-import { createApolloServer, type GraphQLContext } from './lib/graphql/apollo-server';
+import { createApolloServer, schema, type GraphQLContext } from './lib/graphql/apollo-server';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
@@ -45,10 +47,20 @@ try {
   throw new Error('Redis initialization failed');
 }
 
+// WebSocket: Create WebSocket server for subscriptions
+const wsServer = new WebSocketServer({
+  server,
+  path: '/lems/graphql'
+});
+
 // GraphQL: Initialize Apollo Server and register middleware
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const serverCleanup = useServer({ schema }, wsServer);
+console.log('✅ WebSocket server initialized for subscriptions');
+
 // This must be registered before the routers to ensure /lems/graphql
 // takes precedence over /lems/* routes
-const apolloServer = createApolloServer(server);
+const apolloServer = createApolloServer(server, serverCleanup);
 await apolloServer.start();
 console.log('✅ Apollo Server initialized');
 
