@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useRef } from 'react';
+import { useMutation } from '@apollo/client/react';
 import {
   Box,
   Stack,
@@ -19,25 +20,80 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import { useEvent } from '../components/event-context';
 import { ConnectionIndicator } from '../components/connection-indicator';
-import { usePitAdminTeams } from './use-pit-admin-teams';
-import type { Team } from './graphql';
+import { usePageData } from '../hooks/use-page-data';
+import {
+  GET_DIVISION_TEAMS,
+  TEAM_ARRIVED_MUTATION,
+  type Team,
+  parseDivisionTeams,
+  createTeamArrivalSubscription
+} from './pit-admin.graphql';
 
 export default function PitAdminPage() {
   const { currentDivision } = useEvent();
-  const { teams, loading, error, markTeamArrived } = usePitAdminTeams(
-    currentDivision.id
-  );
 
+  const teamsMapRef = useRef<Map<string, Team>>(new Map());
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const subscriptions = useMemo(
+    () => [createTeamArrivalSubscription(currentDivision.id, teamsMapRef)],
+    [currentDivision.id]
+  );
+
+  const {
+    data: pageData,
+    loading,
+    error
+  } = usePageData(
+    GET_DIVISION_TEAMS,
+    { divisionId: currentDivision.id },
+    parseDivisionTeams,
+    // TODO: Understand how to type subscriptions
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    subscriptions as any[]
+  );
+
+  // Initialize teams map when page data arrives
+  if (pageData && Array.isArray(pageData)) {
+    const newMap = new Map<string, Team>();
+    (pageData as Team[]).forEach((team: Team) => {
+      newMap.set(team.id, team);
+    });
+    teamsMapRef.current = newMap;
+  }
+
+  const teams = pageData || [];
+
+  // Mutation to mark a team as arrived
+  const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
 
   const handleMarkArrived = async () => {
     if (!selectedTeam) return;
 
+    const currentTeam = teamsMapRef.current.get(selectedTeam.id);
+    if (!currentTeam) {
+      console.error('Team not found:', selectedTeam.id);
+      return;
+    }
+
+    // Save previous state for potential rollback
+    const previousTeam = { ...currentTeam };
+
+    // Optimistically update the UI
+    const optimisticTeam: Team = { ...currentTeam, arrived: true };
+    teamsMapRef.current.set(selectedTeam.id, optimisticTeam);
+
     setSubmitting(true);
     try {
-      await markTeamArrived(selectedTeam.id);
+      await teamArrivedMutation({
+        variables: { teamId: selectedTeam.id, divisionId: currentDivision.id }
+      });
       setSelectedTeam(null); // Clear selection after success
+    } catch (mutationError) {
+      // Revert optimistic update on error
+      teamsMapRef.current.set(selectedTeam.id, previousTeam);
+      console.error('Failed to mark team as arrived:', mutationError);
     } finally {
       setSubmitting(false);
     }
