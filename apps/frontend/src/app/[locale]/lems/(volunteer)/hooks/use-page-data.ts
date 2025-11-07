@@ -224,8 +224,6 @@ export function usePageData<
           prev: TResult,
           { subscriptionData }: { subscriptionData: { data?: unknown } }
         ) => {
-          console.log('got data from subscription', index, subscriptionData);
-
           if (!subscriptionData.data) {
             return prev;
           }
