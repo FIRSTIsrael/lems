@@ -37,14 +37,24 @@ export class SubscriptionBroadcaster extends EventEmitter {
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0', 10),
       enableReadyCheck: false,
-      enableOfflineQueue: false
+      enableOfflineQueue: false,
+      retryStrategy: times => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      }
     });
 
     const channels = Array.from(this.eventTypes).map(et =>
       this.getChannelName(this.divisionId, et)
     );
 
-    await this.subscriber.subscribe(...channels);
+    try {
+      await this.subscriber.subscribe(...channels);
+    } catch (error) {
+      await this.subscriber.quit().catch(() => {});
+      this.subscriber = null;
+      throw error;
+    }
 
     this.subscriber.on('message', (channel, message) => {
       try {
@@ -61,6 +71,10 @@ export class SubscriptionBroadcaster extends EventEmitter {
         error
       );
       this.emit('error', error);
+    });
+
+    this.subscriber.on('close', () => {
+      console.warn(`[Redis:subscriber] Connection closed for division ${this.divisionId}`);
     });
   }
 

@@ -35,7 +35,6 @@ export class RedisPubSub {
   ): Promise<void> {
     const versionKey = this.getVersionKey(divisionId, eventType);
     const currentVersion = (this.eventVersionMap.get(versionKey) || 0) + 1;
-    this.eventVersionMap.set(versionKey, currentVersion);
 
     const event: RedisEvent = {
       type: eventType,
@@ -48,6 +47,9 @@ export class RedisPubSub {
     const channel = this.getChannelName(divisionId, eventType);
     await this.publisher.publish(channel, JSON.stringify(event));
     await this.bufferEvent(divisionId, eventType, event);
+
+    // Increment version after successful publish
+    this.eventVersionMap.set(versionKey, currentVersion);
 
     this.cleanupVersionMapIfNeeded();
   }
@@ -65,23 +67,29 @@ export class RedisPubSub {
 
     const messageQueue: RedisEvent[] = [];
     const maxQueueSize = 1000;
+    const idleTimeoutMs = 30000;
     let resolveWait: (() => void) | null = null;
+    let timeoutHandle: NodeJS.Timeout | null = null;
     let isActive = true;
 
     const messageHandler = (event: RedisEvent) => {
       if (!isActive) return;
-      if (messageQueue.length >= maxQueueSize) {
-        messageQueue.shift();
-      }
+      if (messageQueue.length >= maxQueueSize) messageQueue.shift();
       messageQueue.push(event);
       if (resolveWait) {
+        if (timeoutHandle) clearTimeout(timeoutHandle);
+        timeoutHandle = null;
         resolveWait();
         resolveWait = null;
       }
     };
 
     try {
-      // Phase 1: Recover missed events
+      // Attach listener immediately to prevent message loss
+      broadcaster.on('event', messageHandler);
+
+      // Recover missed events (new events queue up in parallel)
+      const lastSeenVersions = new Map<RedisEventTypes, number>();
       if (clientLastVersions) {
         for (const eventType of eventTypes) {
           const clientLastVersion = clientLastVersions.get(eventType) || 0;
@@ -91,32 +99,44 @@ export class RedisPubSub {
             clientLastVersion
           );
           for (const event of recovered) {
+            if (event.version) lastSeenVersions.set(event.type, event.version);
             yield event;
           }
         }
       }
 
-      // Phase 2: Listen for new events
-      broadcaster.on('event', messageHandler);
+      // Deduplicate: skip queued events with versions <= last recovered
+      const dedupedQueue: RedisEvent[] = [];
+      for (const event of messageQueue) {
+        const lastSeen = lastSeenVersions.get(event.type) || 0;
+        if (!event.version || event.version > lastSeen) {
+          dedupedQueue.push(event);
+        }
+      }
+      messageQueue.length = 0;
+      messageQueue.push(...dedupedQueue);
 
+      // Stream events
       while (isActive) {
         if (messageQueue.length === 0) {
           await new Promise<void>(resolve => {
             resolveWait = resolve;
+            timeoutHandle = setTimeout(() => {
+              if (resolveWait) {
+                resolveWait();
+                resolveWait = null;
+              }
+            }, idleTimeoutMs);
           });
         }
         const event = messageQueue.shift();
-        if (event) {
-          yield event;
-        }
+        if (event) yield event;
       }
     } finally {
       isActive = false;
+      if (timeoutHandle) clearTimeout(timeoutHandle);
       broadcaster.removeListener('event', messageHandler);
-      if (resolveWait) {
-        resolveWait();
-        resolveWait = null;
-      }
+      if (resolveWait) resolveWait();
       broadcaster.decrementSubscribers();
     }
   }
@@ -173,14 +193,17 @@ export class RedisPubSub {
     const versionKey = this.getVersionKey(divisionId, eventType);
     const serverVersion = this.eventVersionMap.get(versionKey) || 0;
 
+    // If gap is too large, send gap marker and skip buffered events
     if (serverVersion - clientLastVersion > this.maxRecoverySize) {
-      events.push({
-        type: eventType,
-        divisionId,
-        timestamp: Date.now(),
-        data: { _gap: true },
-        version: serverVersion
-      });
+      return [
+        {
+          type: eventType,
+          divisionId,
+          timestamp: Date.now(),
+          data: { _gap: true },
+          version: serverVersion
+        }
+      ];
     }
 
     for (const data of bufferedData) {

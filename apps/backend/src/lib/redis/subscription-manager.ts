@@ -15,6 +15,7 @@ export class SubscriptionManager {
   constructor() {
     // Periodically clean up unused broadcasters
     this.cleanupInterval = setInterval(() => this.cleanup(), 60_000); // 60 seconds
+    this.cleanupInterval.unref();
   }
 
   /**
@@ -27,13 +28,15 @@ export class SubscriptionManager {
     const key = this.getKey(divisionId, eventTypes);
 
     // Return existing broadcaster if available
-    if (this.broadcasters.has(key)) {
-      return this.broadcasters.get(key)!;
+    const existing = this.broadcasters.get(key);
+    if (existing) {
+      return existing;
     }
 
     // Return pending connection if one is in progress
-    if (this.pendingConnections.has(key)) {
-      return this.pendingConnections.get(key)!;
+    const pending = this.pendingConnections.get(key);
+    if (pending) {
+      return pending;
     }
 
     // Create new broadcaster with connection promise
@@ -69,8 +72,12 @@ export class SubscriptionManager {
 
     for (const [key, broadcaster] of this.broadcasters.entries()) {
       if (!broadcaster.hasSubscribers()) {
-        await broadcaster.disconnect();
-        keysToDelete.push(key);
+        try {
+          await broadcaster.disconnect();
+          keysToDelete.push(key);
+        } catch (error) {
+          console.error(`[Redis:cleanup] Failed to disconnect broadcaster ${key}:`, error);
+        }
       }
     }
 
