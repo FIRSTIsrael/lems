@@ -206,7 +206,7 @@ export function usePageData<
     subscriptions.forEach((config, index) => {
       const lastSeenVersion = eventVersionsRef.current.get(index);
 
-      console.log(
+      console.debug(
         '[usePageData] Setting up subscription',
         index,
         'with lastSeenVersion:',
