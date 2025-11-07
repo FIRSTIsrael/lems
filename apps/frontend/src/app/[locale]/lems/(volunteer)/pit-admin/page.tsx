@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
 import {
   Box,
@@ -32,12 +32,11 @@ import {
 export default function PitAdminPage() {
   const { currentDivision } = useEvent();
 
-  const teamsMapRef = useRef<Map<string, Team>>(new Map());
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const subscriptions = useMemo(
-    () => [createTeamArrivalSubscription(currentDivision.id, teamsMapRef)],
+    () => [createTeamArrivalSubscription(currentDivision.id)],
     [currentDivision.id]
   );
 
@@ -52,15 +51,6 @@ export default function PitAdminPage() {
     subscriptions
   );
 
-  // Initialize teams map when page data arrives
-  if (pageData && Array.isArray(pageData)) {
-    const newMap = new Map<string, Team>();
-    (pageData as Team[]).forEach((team: Team) => {
-      newMap.set(team.id, team);
-    });
-    teamsMapRef.current = newMap;
-  }
-
   const teams = pageData || [];
 
   // Mutation to mark a team as arrived
@@ -69,28 +59,31 @@ export default function PitAdminPage() {
   const handleMarkArrived = async () => {
     if (!selectedTeam) return;
 
-    const currentTeam = teamsMapRef.current.get(selectedTeam.id);
-    if (!currentTeam) {
-      console.error('Team not found:', selectedTeam.id);
-      return;
-    }
-
-    // Save previous state for potential rollback
-    const previousTeam = { ...currentTeam };
-
-    // Optimistically update the UI
-    const optimisticTeam: Team = { ...currentTeam, arrived: true };
-    teamsMapRef.current.set(selectedTeam.id, optimisticTeam);
-
     setSubmitting(true);
     try {
       await teamArrivedMutation({
-        variables: { teamId: selectedTeam.id, divisionId: currentDivision.id }
+        variables: { teamId: selectedTeam.id, divisionId: currentDivision.id },
+        update: (cache) => {
+          // Optimistically update the cache
+          cache.modify({
+            fields: {
+              division(existingDivision = {}) {
+                if (!existingDivision.teams) {
+                  return existingDivision;
+                }
+                return {
+                  ...existingDivision,
+                  teams: (existingDivision.teams as Team[]).map(team =>
+                    team.id === selectedTeam.id ? { ...team, arrived: true } : team
+                  )
+                };
+              }
+            }
+          });
+        }
       });
       setSelectedTeam(null); // Clear selection after success
     } catch (mutationError) {
-      // Revert optimistic update on error
-      teamsMapRef.current.set(selectedTeam.id, previousTeam);
       console.error('Failed to mark team as arrived:', mutationError);
     } finally {
       setSubmitting(false);

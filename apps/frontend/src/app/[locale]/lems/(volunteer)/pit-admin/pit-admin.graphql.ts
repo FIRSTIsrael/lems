@@ -73,12 +73,10 @@ export function parseDivisionTeams(queryData: QueryData): Team[] {
  * Creates a subscription configuration for team arrival updates.
  *
  * @param divisionId - The division ID to subscribe to
- * @param teamsMapRef - Ref to the teams map for reconciliation
  * @returns Subscription configuration for use with usePageData hook
  */
 export function createTeamArrivalSubscription(
-  divisionId: string,
-  teamsMapRef: React.RefObject<Map<string, Team>>
+  divisionId: string
 ): SubscriptionConfig<SubscriptionData, QueryData, SubscriptionVars> {
   return {
     subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
@@ -93,14 +91,14 @@ export function createTeamArrivalSubscription(
       const subscriptionData = data as { teamArrivalUpdated: Team };
       const updatedTeam = subscriptionData.teamArrivalUpdated;
 
-      teamsMapRef.current.set(updatedTeam.id, updatedTeam);
-
       if (prev.division) {
         return {
           ...prev,
           division: {
             ...prev.division,
-            teams: Array.from(teamsMapRef.current.values())
+            teams: prev.division.teams.map(team =>
+              team.id === updatedTeam.id ? updatedTeam : team
+            )
           }
         };
       }
