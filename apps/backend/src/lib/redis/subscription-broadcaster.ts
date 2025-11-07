@@ -13,6 +13,12 @@ export interface RedisEvent {
 /**
  * Manages a shared Redis subscriber for a specific division and event types.
  * Broadcasts all received messages to multiple listeners (clients).
+ *
+ * SCALING NOTE: Each broadcaster creates one Redis subscriber connection.
+ * With default Redis config (10,000 max clients) and typical load:
+ * - ~50-100 concurrent divisions = 50-100 connections (safe)
+ * - Monitor with: redis-cli CLIENT LIST | wc -l
+ * - If approaching limits, consider Redis connection pooling or clustering
  */
 export class SubscriptionBroadcaster extends EventEmitter {
   private subscriber: Redis | null = null;
@@ -38,6 +44,7 @@ export class SubscriptionBroadcaster extends EventEmitter {
       db: parseInt(process.env.REDIS_DB || '0', 10),
       enableReadyCheck: false,
       enableOfflineQueue: false,
+      lazyConnect: false,
       retryStrategy: times => {
         const delay = Math.min(times * 50, 2000);
         return delay;
@@ -51,6 +58,10 @@ export class SubscriptionBroadcaster extends EventEmitter {
     try {
       await this.subscriber.subscribe(...channels);
     } catch (error) {
+      console.error(
+        `[Redis:subscriber] Failed to subscribe for division ${this.divisionId}:`,
+        error
+      );
       await this.subscriber.quit().catch(() => {});
       this.subscriber = null;
       throw error;
@@ -62,6 +73,7 @@ export class SubscriptionBroadcaster extends EventEmitter {
         this.emit('event', event);
       } catch (error) {
         console.error(`[Redis:message] Failed to parse message on channel ${channel}:`, error);
+        // Continue processing other messages
       }
     });
 
@@ -75,6 +87,10 @@ export class SubscriptionBroadcaster extends EventEmitter {
 
     this.subscriber.on('close', () => {
       console.warn(`[Redis:subscriber] Connection closed for division ${this.divisionId}`);
+    });
+
+    this.subscriber.on('reconnecting', () => {
+      console.log(`[Redis:subscriber] Reconnecting for division ${this.divisionId}`);
     });
   }
 

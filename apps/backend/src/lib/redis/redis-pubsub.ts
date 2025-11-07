@@ -9,16 +9,13 @@ let pubSubInstance: RedisPubSub | null = null;
 
 /**
  * Handles publishing events via Redis Pub/Sub with message buffering and recovery.
- * Maintains per-division version tracking to detect and recover missed events.
+ * Uses Redis INCR for atomic, persistent version tracking.
  */
 export class RedisPubSub {
   private publisher: Redis;
-  private eventVersionMap: Map<string, number> = new Map();
-  private versionMapLastCleanup = Date.now();
   private subscriptionManager: SubscriptionManager;
   private readonly messageRetentionMs = 30 * 1000; // 30 seconds
   private readonly maxRecoverySize = 1000;
-  private readonly versionMapCleanupInterval = 3600 * 1000; // 1 hour
 
   constructor() {
     this.publisher = getRedisClient();
@@ -26,36 +23,56 @@ export class RedisPubSub {
   }
 
   /**
-   * Publish an event via Pub/Sub and buffer it for recovery
+   * Publish an event via Pub/Sub and buffer it for recovery.
+   * Uses Redis INCR for atomic, persistent version tracking.
    */
   async publish(
     divisionId: string,
     eventType: RedisEventTypes,
     data: Record<string, unknown>
   ): Promise<void> {
-    const versionKey = this.getVersionKey(divisionId, eventType);
-    const currentVersion = (this.eventVersionMap.get(versionKey) || 0) + 1;
+    try {
+      // Atomically increment version in Redis
+      const versionKey = this.getVersionKey(divisionId, eventType);
+      const version = await this.publisher.incr(versionKey);
 
-    const event: RedisEvent = {
-      type: eventType,
-      divisionId,
-      timestamp: Date.now(),
-      data,
-      version: currentVersion
-    };
+      // Set TTL on version key (1 hour) to prevent unbounded growth
+      await this.publisher.expire(versionKey, 3600);
 
-    const channel = this.getChannelName(divisionId, eventType);
-    await this.publisher.publish(channel, JSON.stringify(event));
-    await this.bufferEvent(divisionId, eventType, event);
+      const event: RedisEvent = {
+        type: eventType,
+        divisionId,
+        timestamp: Date.now(),
+        data,
+        version
+      };
 
-    // Increment version after successful publish
-    this.eventVersionMap.set(versionKey, currentVersion);
+      const channel = this.getChannelName(divisionId, eventType);
 
-    this.cleanupVersionMapIfNeeded();
+      // Publish and buffer atomically using pipeline
+      const pipeline = this.publisher.pipeline();
+      pipeline.publish(channel, JSON.stringify(event));
+
+      // Buffer event for recovery
+      const bufferKey = `buffer:${divisionId}:${eventType}`;
+      const timestamp = Date.now();
+      pipeline.zadd(bufferKey, timestamp, JSON.stringify(event));
+      pipeline.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
+      pipeline.expire(bufferKey, 60); // 1 minute TTL for buffer
+
+      await pipeline.exec();
+    } catch (error) {
+      console.error(
+        `[Redis:publish] Failed to publish event ${eventType} for division ${divisionId}:`,
+        error
+      );
+      throw error; // Re-throw to let caller handle
+    }
   }
 
   /**
-   * Subscribe to division events with optional message recovery
+   * Subscribe to division events with optional message recovery.
+   * Includes backpressure handling for slow consumers.
    */
   async *asyncIterator(
     divisionId: string,
@@ -66,7 +83,7 @@ export class RedisPubSub {
     broadcaster.incrementSubscribers();
 
     const messageQueue: RedisEvent[] = [];
-    const maxQueueSize = 1000;
+    const maxQueueSize = 100; // Reduced from 1000 for faster detection
     const idleTimeoutMs = 30000;
     let resolveWait: (() => void) | null = null;
     let timeoutHandle: NodeJS.Timeout | null = null;
@@ -74,7 +91,16 @@ export class RedisPubSub {
 
     const messageHandler = (event: RedisEvent) => {
       if (!isActive) return;
-      if (messageQueue.length >= maxQueueSize) messageQueue.shift();
+
+      // Backpressure: disconnect slow consumers
+      if (messageQueue.length >= maxQueueSize) {
+        console.warn(
+          `[Redis:backpressure] Client exceeded queue limit for division ${divisionId}, disconnecting`
+        );
+        isActive = false;
+        return;
+      }
+
       messageQueue.push(event);
       if (resolveWait) {
         if (timeoutHandle) clearTimeout(timeoutHandle);
@@ -142,10 +168,12 @@ export class RedisPubSub {
   }
 
   /**
-   * Shutdown the subscription manager
+   * Shutdown the pub/sub system and cleanup resources
    */
   async shutdown(): Promise<void> {
     await this.subscriptionManager.shutdown();
+    // Note: Publisher connection is shared singleton managed by redis-client.ts
+    // Call closeRedisClient() from main shutdown handler
   }
 
   /**
@@ -163,23 +191,8 @@ export class RedisPubSub {
   }
 
   /**
-   * Buffer event in Redis sorted set for recovery
-   */
-  private async bufferEvent(
-    divisionId: string,
-    eventType: RedisEventTypes,
-    event: RedisEvent
-  ): Promise<void> {
-    const bufferKey = `buffer:${divisionId}:${eventType}`;
-    const timestamp = Date.now();
-
-    await this.publisher.zadd(bufferKey, timestamp, JSON.stringify(event));
-    await this.publisher.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
-    await this.publisher.expire(bufferKey, 35);
-  }
-
-  /**
-   * Recover missed events from buffer for a specific event type
+   * Recover missed events from buffer for a specific event type.
+   * Uses Redis to check current version.
    */
   private async recoverMissedEvents(
     divisionId: string,
@@ -187,13 +200,13 @@ export class RedisPubSub {
     clientLastVersion: number
   ): Promise<RedisEvent[]> {
     const bufferKey = `buffer:${divisionId}:${eventType}`;
-    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1);
-    const events: RedisEvent[] = [];
-
     const versionKey = this.getVersionKey(divisionId, eventType);
-    const serverVersion = this.eventVersionMap.get(versionKey) || 0;
 
-    // If gap is too large, send gap marker and skip buffered events
+    // Get current server version from Redis
+    const serverVersionStr = await this.publisher.get(versionKey);
+    const serverVersion = serverVersionStr ? parseInt(serverVersionStr, 10) : 0;
+
+    // If gap is too large, send gap marker
     if (serverVersion - clientLastVersion > this.maxRecoverySize) {
       return [
         {
@@ -206,41 +219,23 @@ export class RedisPubSub {
       ];
     }
 
+    // Retrieve buffered events
+    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1);
+    const events: RedisEvent[] = [];
+
     for (const data of bufferedData) {
-      const event = JSON.parse(data) as RedisEvent;
-      if ((event.version || 0) > clientLastVersion) {
-        events.push(event);
+      try {
+        const event = JSON.parse(data) as RedisEvent;
+        if ((event.version || 0) > clientLastVersion) {
+          events.push(event);
+        }
+      } catch (error) {
+        console.error(`[Redis:recovery] Failed to parse buffered event:`, error);
+        // Skip corrupted event and continue
       }
     }
 
     return events;
-  }
-
-  /**
-   * Periodically clean up version map entries for inactive divisions
-   */
-  private cleanupVersionMapIfNeeded(): void {
-    const now = Date.now();
-    if (now - this.versionMapLastCleanup < this.versionMapCleanupInterval) {
-      return;
-    }
-
-    this.versionMapLastCleanup = now;
-    const activeDivisions = this.subscriptionManager.getActiveDivisions();
-
-    const keysToDelete: string[] = [];
-    for (const versionKey of this.eventVersionMap.keys()) {
-      const divisionId = versionKey.split(':')[0];
-      if (!activeDivisions.has(divisionId)) {
-        keysToDelete.push(versionKey);
-      }
-    }
-
-    keysToDelete.forEach(key => this.eventVersionMap.delete(key));
-
-    if (keysToDelete.length > 0) {
-      console.debug(`[Redis:cleanup] Cleaned up ${keysToDelete.length} version map entries`);
-    }
   }
 }
 
@@ -252,4 +247,14 @@ export function getRedisPubSub(): RedisPubSub {
     pubSubInstance = new RedisPubSub();
   }
   return pubSubInstance;
+}
+
+/**
+ * Shutdown and reset the singleton instance
+ */
+export async function shutdownRedisPubSub(): Promise<void> {
+  if (pubSubInstance) {
+    await pubSubInstance.shutdown();
+    pubSubInstance = null;
+  }
 }
