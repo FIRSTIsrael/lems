@@ -15,7 +15,6 @@ export class SubscriptionManager {
   constructor() {
     // Periodically clean up unused broadcasters
     this.cleanupInterval = setInterval(() => {
-      // Wrap async cleanup to prevent unhandled promise rejections
       this.cleanup().catch(error => {
         console.error('[Redis:cleanup] Cleanup interval failed:', error);
       });
@@ -52,7 +51,7 @@ export class SubscriptionManager {
         this.broadcasters.set(key, broadcaster);
         return broadcaster;
       } catch (error) {
-        // Clean up failed broadcaster to prevent resource leaks
+        // Clean up failed broadcaster
         await broadcaster.disconnect().catch(() => {});
         throw error;
       } finally {
@@ -63,18 +62,6 @@ export class SubscriptionManager {
 
     this.pendingConnections.set(key, connectionPromise);
     return connectionPromise;
-  }
-
-  /**
-   * Get a Set of active division IDs with ongoing subscriptions
-   */
-  getActiveDivisions(): Set<string> {
-    const activeDivisions = new Set<string>();
-    for (const key of this.broadcasters.keys()) {
-      const divisionId = key.split(':')[0];
-      activeDivisions.add(divisionId);
-    }
-    return activeDivisions;
   }
 
   /**

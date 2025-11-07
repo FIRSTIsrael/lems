@@ -13,12 +13,6 @@ export interface RedisEvent {
 /**
  * Manages a shared Redis subscriber for a specific division and event types.
  * Broadcasts all received messages to multiple listeners (clients).
- *
- * SCALING NOTE: Each broadcaster creates one Redis subscriber connection.
- * With default Redis config (10,000 max clients) and typical load:
- * - ~50-100 concurrent divisions = 50-100 connections (safe)
- * - Monitor with: redis-cli CLIENT LIST | wc -l
- * - If approaching limits, consider Redis connection pooling or clustering
  */
 export class SubscriptionBroadcaster extends EventEmitter {
   private subscriber: Redis | null = null;

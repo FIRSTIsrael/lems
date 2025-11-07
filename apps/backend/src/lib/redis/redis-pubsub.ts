@@ -9,7 +9,6 @@ let pubSubInstance: RedisPubSub | null = null;
 
 /**
  * Handles publishing events via Redis Pub/Sub with message buffering and recovery.
- * Uses Redis INCR for atomic, persistent version tracking.
  */
 export class RedisPubSub {
   private publisher: Redis;
@@ -24,7 +23,6 @@ export class RedisPubSub {
 
   /**
    * Publish an event via Pub/Sub and buffer it for recovery.
-   * Uses Redis INCR for atomic, persistent version tracking.
    */
   async publish(
     divisionId: string,
@@ -32,12 +30,12 @@ export class RedisPubSub {
     data: Record<string, unknown>
   ): Promise<void> {
     try {
-      // Atomically increment version in Redis
       const versionKey = this.getVersionKey(divisionId, eventType);
       const version = await this.publisher.incr(versionKey);
 
-      // Set TTL on version key (1 hour) to prevent unbounded growth
-      await this.publisher.expire(versionKey, 3600);
+      // Set TTL on version key (35 seconds) to prevent unbounded growth
+      // Versions are only recoverable for 30 seconds, so a short TTL is sufficient
+      await this.publisher.expire(versionKey, 35);
 
       const event: RedisEvent = {
         type: eventType,
@@ -49,7 +47,6 @@ export class RedisPubSub {
 
       const channel = this.getChannelName(divisionId, eventType);
 
-      // Publish and buffer atomically using pipeline
       const pipeline = this.publisher.pipeline();
       pipeline.publish(channel, JSON.stringify(event));
 
@@ -58,7 +55,10 @@ export class RedisPubSub {
       const timestamp = Date.now();
       pipeline.zadd(bufferKey, timestamp, JSON.stringify(event));
       pipeline.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
-      pipeline.expire(bufferKey, 60); // 1 minute TTL for buffer
+
+      // Set TTL on buffer (35 seconds) to prevent unbounded growth
+      // Versions are only recoverable for 30 seconds, so a short TTL is sufficient
+      pipeline.expire(bufferKey, 35); // Expires if no events published for 2 minutes
 
       const results = await pipeline.exec();
 
@@ -75,7 +75,7 @@ export class RedisPubSub {
         `[Redis:publish] Failed to publish event ${eventType} for division ${divisionId}:`,
         error
       );
-      throw error; // Re-throw to let caller handle
+      throw error;
     }
   }
 
@@ -92,8 +92,8 @@ export class RedisPubSub {
     broadcaster.incrementSubscribers();
 
     const messageQueue: RedisEvent[] = [];
-    const maxQueueSize = 100; // Reduced from 1000 for faster detection
-    const idleTimeoutMs = 30000;
+    const maxQueueSize = 1000;
+    const idleTimeoutMs = 30_000; // 30 seconds of inactivity will close the subscription
     let resolveWait: (() => void) | null = null;
     let timeoutHandle: NodeJS.Timeout | null = null;
     let isActive = true;
@@ -101,13 +101,12 @@ export class RedisPubSub {
     const messageHandler = (event: RedisEvent) => {
       if (!isActive) return;
 
-      // Backpressure: disconnect slow consumers
+      // Disconnect slow consumers, they should refetch initial data
       if (messageQueue.length >= maxQueueSize) {
         console.warn(
           `[Redis:backpressure] Client exceeded queue limit for division ${divisionId}, disconnecting`
         );
         isActive = false;
-        // Immediately remove listener to prevent further memory growth
         broadcaster.removeListener('event', messageHandler);
         return;
       }
@@ -122,7 +121,6 @@ export class RedisPubSub {
     };
 
     try {
-      // Attach listener immediately to prevent message loss
       broadcaster.on('event', messageHandler);
 
       // Recover missed events (new events queue up in parallel)
@@ -191,8 +189,6 @@ export class RedisPubSub {
    */
   async shutdown(): Promise<void> {
     await this.subscriptionManager.shutdown();
-    // Note: Publisher connection is shared singleton managed by redis-client.ts
-    // Call closeRedisClient() from main shutdown handler
   }
 
   /**
@@ -225,7 +221,7 @@ export class RedisPubSub {
     const serverVersionStr = await this.publisher.get(versionKey);
     const serverVersion = serverVersionStr ? parseInt(serverVersionStr, 10) : 0;
 
-    // If gap is too large, send gap marker
+    // If gap is too large, send gap marker, signal client to refetch
     if (serverVersion - clientLastVersion > this.maxRecoverySize) {
       return [
         {
@@ -258,9 +254,6 @@ export class RedisPubSub {
   }
 }
 
-/**
- * Get or create the singleton RedisPubSub instance
- */
 export function getRedisPubSub(): RedisPubSub {
   if (!pubSubInstance) {
     pubSubInstance = new RedisPubSub();
@@ -268,9 +261,6 @@ export function getRedisPubSub(): RedisPubSub {
   return pubSubInstance;
 }
 
-/**
- * Shutdown and reset the singleton instance
- */
 export async function shutdownRedisPubSub(): Promise<void> {
   if (pubSubInstance) {
     await pubSubInstance.shutdown();

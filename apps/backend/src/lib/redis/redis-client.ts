@@ -2,9 +2,6 @@ import Redis from 'ioredis';
 
 let redisClient: Redis | null = null;
 
-/**
- * Create a new Redis client with production-ready configuration
- */
 function createRedisClient(): Redis {
   redisClient = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
@@ -40,10 +37,6 @@ function createRedisClient(): Redis {
   return redisClient;
 }
 
-/**
- * Get the Redis client singleton.
- * Creates a new connection if one doesn't exist or is not ready.
- */
 export function getRedisClient(): Redis {
   if (!redisClient || redisClient.status === 'end') {
     return createRedisClient();
@@ -51,9 +44,6 @@ export function getRedisClient(): Redis {
   return redisClient;
 }
 
-/**
- * Close the Redis client connection and cleanup resources
- */
 export async function closeRedisClient(): Promise<void> {
   if (redisClient) {
     await redisClient.quit();
