@@ -134,6 +134,15 @@ router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRe
   }
 
   try {
+    const userEvents = await db.admins.byId(user.id).getEvents();
+    for (const event of userEvents) {
+      const eventAdmins = await db.admins.byEventId(event.id).getAll();
+      await db.events.byId(event.id).removeAdmin(user.id);
+      if (eventAdmins.length <= 1) {
+        await db.events.byId(event.id).addAdmin(req.userId);
+      }
+    }
+
     await db.admins.byId(userId).delete();
     res.status(204).send();
   } catch (error) {
