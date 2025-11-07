@@ -520,7 +520,11 @@
           "advancement-percent-description": "אחוז הקבוצות שעולות מסבבי הדירוג",
           "save-button": "שמירת הגדרות",
           "saving": "שומר...",
-          "advancing-teams": "({advancingTeams}/{totalTeams} קבוצות)"
+          "advancing-teams": "({advancingTeams}/{totalTeams} קבוצות)",
+          "visible": "גלוי",
+          "visible-description": "האם אירוע זה חשוף לציבור",
+          "official": "סוג אירוע",
+          "official-description": "האם אירוע זה הוא אירוע רשמי"
         },
         "event-actions": {
           "title": "פעולות אירוע",

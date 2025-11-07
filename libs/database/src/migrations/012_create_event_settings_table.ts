@@ -22,7 +22,10 @@ export async function up(db: Kysely<any>): Promise<void> {
   // Add check constraint for advancement_percent to be between 0 and 100
   await db.schema
     .alterTable('event_settings')
-    .addCheckConstraint('chk_advancement_percent_range', sql`advancement_percent >= 0 AND advancement_percent <= 100`)
+    .addCheckConstraint(
+      'chk_advancement_percent_range',
+      sql`advancement_percent >= 0 AND advancement_percent <= 100`
+    )
     .execute();
 
   // Create indexes
