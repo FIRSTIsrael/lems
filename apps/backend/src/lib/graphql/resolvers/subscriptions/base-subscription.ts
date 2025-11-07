@@ -55,7 +55,7 @@ export async function createSubscriptionIterator(
  * @returns true if event is a gap marker
  */
 export function isRecoveryGapMarker(event: Record<string, unknown>): boolean {
-  return (event as Record<string, unknown>)._gap === true;
+  return event._gap === true;
 }
 
 /**
@@ -78,7 +78,6 @@ export function createBaseSubscriptionResolver<T extends BaseSubscriptionResult>
       return createSubscriptionIterator(divisionId, eventTypes, lastSeenVersion);
     },
     resolve: async (event: Record<string, unknown>): Promise<T | null> => {
-      // Check for gap marker
       if (isRecoveryGapMarker(event.data as Record<string, unknown>)) {
         return null; // Skip gap markers
       }
