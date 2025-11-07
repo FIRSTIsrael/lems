@@ -33,18 +33,11 @@ export interface BaseSubscriptionResult {
  */
 export async function createSubscriptionIterator(
   divisionId: string,
-  eventTypes: RedisEventTypes[],
+  eventType: RedisEventTypes,
   lastSeenVersion: number = 0
 ) {
   const pubSub = getRedisPubSub();
-
-  // Create client version map for recovery: track last seen version for each event type
-  const clientLastVersions = new Map<RedisEventTypes, number>();
-  for (const eventType of eventTypes) {
-    clientLastVersions.set(eventType, lastSeenVersion);
-  }
-
-  return pubSub.asyncIterator(divisionId, eventTypes, clientLastVersions);
+  return pubSub.asyncIterator(divisionId, eventType, lastSeenVersion);
 }
 
 /**
@@ -64,7 +57,7 @@ export function isRecoveryGapMarker(event: Record<string, unknown>): boolean {
  */
 export function createBaseSubscriptionResolver<T extends BaseSubscriptionResult>(
   divisionIdField: string,
-  eventTypes: RedisEventTypes[],
+  eventType: RedisEventTypes,
   eventProcessor: (event: Record<string, unknown>) => Promise<T | null>
 ) {
   return {
@@ -75,7 +68,7 @@ export function createBaseSubscriptionResolver<T extends BaseSubscriptionResult>
       }
 
       const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-      return createSubscriptionIterator(divisionId, eventTypes, lastSeenVersion);
+      return createSubscriptionIterator(divisionId, eventType, lastSeenVersion);
     },
     resolve: async (event: Record<string, unknown>): Promise<T | null> => {
       if (isRecoveryGapMarker(event.data as Record<string, unknown>)) {

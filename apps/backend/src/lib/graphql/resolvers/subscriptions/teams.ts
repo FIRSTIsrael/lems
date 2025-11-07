@@ -33,7 +33,7 @@ const teamArrivalUpdatedSubscribe = (
   }
 
   const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, [RedisEventTypes.TEAM_ARRIVED], lastSeenVersion);
+  return createSubscriptionIterator(divisionId, RedisEventTypes.TEAM_ARRIVED, lastSeenVersion);
 };
 
 /**
