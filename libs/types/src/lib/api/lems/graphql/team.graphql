@@ -1,26 +1,26 @@
 """
-A FIRST LEGO League team registered in a specific division
+A FIRST LEGO League team
 """
 type Team {
   "Unique identifier for the team"
   id: String!
-  
-  "Official FIRST team number"
+
+  "Team number"
   number: String!
-  
+
   "Team name"
   name: String!
-  
+
   "School or organization the team is affiliated with"
   affiliation: String!
-  
+
   "City where the team is based"
   city: String!
-  
+
   "Geographic coordinates or additional location information"
   location: String
-  
-  "Whether the team has checked in at the event venue"
+
+  "Whether the team has checked in at the venue"
   arrived: Boolean!
 }
 
@@ -30,19 +30,19 @@ A FIRST LEGO League team with basic information (not division-specific)
 type RootTeam {
   "Unique identifier for the team"
   id: String!
-  
+
   "Official FIRST team number"
   number: String!
-  
+
   "Team name"
   name: String!
-  
+
   "School or organization the team is affiliated with"
   affiliation: String!
-  
+
   "City where the team is based"
   city: String!
-  
+
   "Geographic coordinates or additional location information"
   location: String
 }
@@ -54,11 +54,38 @@ extend type Query {
   teams(
     "Filter teams by specific IDs"
     ids: [String!]
-    
+
     "Search teams by name, number, or affiliation"
     searchTerm: String
-    
+
     "Maximum number of results to return (default: 20)"
     limit: Int
   ): [RootTeam!]!
+}
+
+extend type Mutation {
+  """
+  Update that a team has arrived in a specific division
+  """
+  teamArrived(
+    "The team ID to update"
+    teamId: String!
+
+    "Relevant division ID"
+    divisionId: String!
+  ): Team!
+}
+
+extend type Subscription {
+  """
+  Subscribe updates when teams arrive at a specific division.
+  Supports message recovery: if reconnected within 30 seconds, buffered messages are automatically sent.
+  Use lastSeenVersion to specify the last version received to enable recovery.
+  """
+  teamArrivalUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): Team!
 }

@@ -8,6 +8,8 @@ import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { teamArrivalResolver } from './divisions/team-arrival';
+import { mutationResolvers } from './mutations';
+import { subscriptionResolvers } from './subscriptions';
 
 export const resolvers = {
   Query: {
@@ -16,6 +18,8 @@ export const resolvers = {
     division: divisionResolver,
     teams: teamsResolver
   },
+  Mutation: mutationResolvers,
+  Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
     divisions: eventDivisionsResolver,

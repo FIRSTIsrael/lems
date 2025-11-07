@@ -7,9 +7,11 @@ import cookies from 'cookie-parser';
 import cors from 'cors';
 import { expressMiddleware } from '@as-integrations/express5';
 import timesyncServer from 'timesync/server';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
-import { createApolloServer, type GraphQLContext } from './lib/graphql/apollo-server';
+import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import lemsRouter from './routers/lems';
@@ -46,10 +48,43 @@ try {
   throw new Error('Redis initialization failed');
 }
 
+// WebSocket: Create WebSocket server for subscriptions
+console.log('[Main] Creating WebSocket server at path /lems/graphql');
+const wsServer = new WebSocketServer({
+  server,
+  path: '/lems/graphql'
+});
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const serverCleanup = useServer(
+  {
+    schema,
+    context: async (): Promise<GraphQLContext> => {
+      // TODO: Extract user from connection params or headers
+      // const user = await authenticate(connectionParams);
+      return {
+        // user,
+      };
+    },
+    onConnect: async () => {
+      console.log('[WebSocket] Client connected');
+      return true;
+    },
+    onDisconnect: () => {
+      console.log('[WebSocket] Client disconnected');
+    },
+    onError: (ctx, message, errors) => {
+      console.error('[WebSocket] GraphQL Error:', { message, errors });
+    }
+  },
+  wsServer
+);
+console.log('✅ WebSocket server initialized for subscriptions');
+
 // GraphQL: Initialize Apollo Server and register middleware
 // This must be registered before the routers to ensure /lems/graphql
 // takes precedence over /lems/* routes
-const apolloServer = createApolloServer(server);
+const apolloServer = createApolloServer(server, serverCleanup);
 await apolloServer.start();
 console.log('✅ Apollo Server initialized');
 
