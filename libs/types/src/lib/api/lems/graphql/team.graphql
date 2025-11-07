@@ -1,0 +1,64 @@
+"""
+A FIRST LEGO League team registered in a specific division
+"""
+type Team {
+  "Unique identifier for the team"
+  id: String!
+  
+  "Official FIRST team number"
+  number: String!
+  
+  "Team name"
+  name: String!
+  
+  "School or organization the team is affiliated with"
+  affiliation: String!
+  
+  "City where the team is based"
+  city: String!
+  
+  "Geographic coordinates or additional location information"
+  location: String
+  
+  "Whether the team has checked in at the event venue"
+  arrived: Boolean!
+}
+
+"""
+A FIRST LEGO League team with basic information (not division-specific)
+"""
+type RootTeam {
+  "Unique identifier for the team"
+  id: String!
+  
+  "Official FIRST team number"
+  number: String!
+  
+  "Team name"
+  name: String!
+  
+  "School or organization the team is affiliated with"
+  affiliation: String!
+  
+  "City where the team is based"
+  city: String!
+  
+  "Geographic coordinates or additional location information"
+  location: String
+}
+
+extend type Query {
+  """
+  Search and retrieve teams across all events with flexible filtering
+  """
+  teams(
+    "Filter teams by specific IDs"
+    ids: [String!]
+    
+    "Search teams by name, number, or affiliation"
+    searchTerm: String
+    
+    "Maximum number of results to return (default: 20)"
+    limit: Int
+  ): [RootTeam!]!
+}

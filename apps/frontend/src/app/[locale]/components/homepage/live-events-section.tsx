@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import useSWR from 'swr';
+import { useQuery } from '@apollo/client/react';
 import dayjs from 'dayjs';
-import { Box, Typography, Stack, CircularProgress } from '@mui/material';
+import { Box, Typography, Stack } from '@mui/material';
 import { FiberManualRecord as LiveIcon } from '@mui/icons-material';
 import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
-import { fetchLiveEvents, HomepageEventsResponseData } from './events.graphql';
+import { GET_EVENTS_QUERY, HomepageEvent } from './events.graphql';
 
 export const LiveEventsSection: React.FC = () => {
   const { now, oneDayAgo } = useMemo(() => {
@@ -18,13 +18,17 @@ export const LiveEventsSection: React.FC = () => {
     };
   }, []);
 
-  const { data, isLoading } = useSWR<HomepageEventsResponseData>(
-    ['live-events', now, oneDayAgo],
-    () => fetchLiveEvents(now, oneDayAgo)
-  );
+  const { data, loading } = useQuery(GET_EVENTS_QUERY, {
+    variables: {
+      fullySetUp: true,
+      startAfter: oneDayAgo,
+      startBefore: now,
+      endAfter: now
+    }
+  });
 
   const liveEvents: Event[] =
-    data?.events.map(event => ({
+    data?.events.map((event: HomepageEvent) => ({
       id: event.id,
       name: event.name,
       slug: event.slug,
@@ -35,12 +39,8 @@ export const LiveEventsSection: React.FC = () => {
       seasonId: ''
     })) || [];
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
+  if (loading) {
+    return null; // TODO: Actual loading state
   }
 
   if (liveEvents.length === 0) {

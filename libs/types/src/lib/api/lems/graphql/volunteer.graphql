@@ -1,0 +1,48 @@
+"""
+A volunteer registered to help run an event
+"""
+type Volunteer {
+  "Unique identifier for the volunteer"
+  id: String!
+  
+  "Role the volunteer is assigned (e.g., 'judge', 'referee', 'queuer')"
+  role: String!
+  
+  "Additional context about the volunteer's role assignment"
+  roleInfo: RoleInfo
+  
+  "Optional identifier or badge number for the volunteer"
+  identifier: String
+  
+  "Divisions this volunteer is assigned to"
+  divisions: [Division!]!
+}
+
+"""
+Role-specific metadata for volunteers with specialized assignments
+"""
+union RoleInfo = TableRoleInfo | RoomRoleInfo | CategoryRoleInfo
+
+"""
+Information for volunteers assigned to a specific competition table
+"""
+type TableRoleInfo {
+  "ID of the table this volunteer is assigned to"
+  tableId: String!
+}
+
+"""
+Information for volunteers assigned to a specific judging room
+"""
+type RoomRoleInfo {
+  "ID of the room this volunteer is assigned to"
+  roomId: String!
+}
+
+"""
+Information for volunteers assigned to a judging category
+"""
+type CategoryRoleInfo {
+  "Judging category (e.g., 'innovation', 'robot-design', 'core-values')"
+  category: String!
+}

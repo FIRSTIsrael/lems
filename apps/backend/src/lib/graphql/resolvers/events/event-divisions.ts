@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
-import { EventGraphQL } from './resolver';
+import type { EventGraphQL } from './resolver';
 
 export interface DivisionGraphQLForEvent {
   id: string;
@@ -8,6 +8,10 @@ export interface DivisionGraphQLForEvent {
   color: string;
 }
 
+/**
+ * Resolver for Event.divisions field.
+ * Fetches all divisions for a given event.
+ */
 export const eventDivisionsResolver: GraphQLFieldResolver<
   EventGraphQL,
   unknown,

@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import useSWR from 'swr';
+import { useQuery } from '@apollo/client/react';
 import dayjs from 'dayjs';
-import { Box, Typography, Stack, CircularProgress } from '@mui/material';
+import { Box, Typography, Stack } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
-import { fetchUpcomingEvents, HomepageEventsResponseData } from './events.graphql';
+import { GET_EVENTS_QUERY, HomepageEvent } from './events.graphql';
 
 export const UpcomingEventsSection: React.FC = () => {
   const { endOfDay, endOfWeek } = useMemo(() => {
@@ -18,13 +18,16 @@ export const UpcomingEventsSection: React.FC = () => {
     };
   }, []);
 
-  const { data, isLoading } = useSWR<HomepageEventsResponseData>(
-    ['upcoming-events', endOfDay, endOfWeek],
-    () => fetchUpcomingEvents(endOfDay, endOfWeek)
-  );
+  const { data, loading } = useQuery(GET_EVENTS_QUERY, {
+    variables: {
+      fullySetUp: true,
+      startAfter: endOfDay,
+      endBefore: endOfWeek
+    }
+  });
 
   const upcomingEvents: Event[] =
-    data?.events.map(event => ({
+    data?.events.map((event: HomepageEvent) => ({
       id: event.id,
       name: event.name,
       slug: event.slug,
@@ -35,12 +38,8 @@ export const UpcomingEventsSection: React.FC = () => {
       seasonId: ''
     })) || [];
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
+  if (loading) {
+    return null; // TODO: Actual loading state
   }
 
   if (upcomingEvents.length === 0) {

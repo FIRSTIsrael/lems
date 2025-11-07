@@ -5,6 +5,8 @@
       "continue": "Continue",
       "submitting": "Loading...",
       "sign-in": "Sign In",
+      "loading": "Loading...",
+      "loadingRole": "Loading role information...",
       "steps": {
         "role": "Select Role",
         "division": "Select Division",
