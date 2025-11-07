@@ -63,9 +63,21 @@ extend type Query {
   ): [RootTeam!]!
 }
 
+"""
+Result of an event affecting a team
+"""
+type TeamEvent {
+  "Team identifier"
+  teamId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
-  Update that a team has arrived in a specific division
+  Update that a team has arrived in a specific division.
+  Returns minimal response containing only the team ID.
   """
   teamArrived(
     "The team ID to update"
@@ -73,19 +85,21 @@ extend type Mutation {
 
     "Relevant division ID"
     divisionId: String!
-  ): Team!
+  ): TeamEvent!
 }
 
 extend type Subscription {
   """
-  Subscribe updates when teams arrive at a specific division.
-  Supports message recovery: if reconnected within 30 seconds, buffered messages are automatically sent.
-  Use lastSeenVersion to specify the last version received to enable recovery.
+  Subscribe to events when teams arrive at a specific division.
+  Returns minimal event data (teamId + version) for efficient updates.
+  The subscription supports message recovery: if reconnected within 30 seconds,
+  buffered events are automatically sent. Use lastSeenVersion to specify the
+  last version received to enable recovery.
   """
   teamArrivalUpdated(
     "The division ID to listen for updates in"
     divisionId: String!
     "The last seen version for message recovery support"
     lastSeenVersion: Int
-  ): Team!
+  ): TeamEvent!
 }
