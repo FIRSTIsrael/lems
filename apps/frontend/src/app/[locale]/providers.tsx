@@ -1,7 +1,7 @@
 'use client';
 
 import { SWRProvider } from '@lems/shared';
-import { ApolloWrapper } from './apollo-wrapper';
+import { ApolloClientProvider } from '../../lib/graphql/apollo-client-provider';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -13,8 +13,8 @@ interface ProvidersProps {
  */
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ApolloWrapper>
+    <ApolloClientProvider>
       <SWRProvider>{children}</SWRProvider>
-    </ApolloWrapper>
+    </ApolloClientProvider>
   );
 }

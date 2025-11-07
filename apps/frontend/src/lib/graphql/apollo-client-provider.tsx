@@ -64,6 +64,6 @@ interface ApolloWrapperProps {
  * Uses ApolloNextAppProvider to properly support Next.js App Router
  * and ensure all client components share the same Apollo Client instance
  */
-export function ApolloWrapper({ children }: ApolloWrapperProps) {
+export function ApolloClientProvider({ children }: ApolloWrapperProps) {
   return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
 }
