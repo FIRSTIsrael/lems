@@ -139,20 +139,34 @@ export class RedisPubSub {
       const channels = eventTypes.map(et => this.getChannelName(divisionId, et));
       await subscriber.subscribe(...channels);
 
-      // Create a promise that resolves when a message arrives on any channel
-      const messageHandler = new Promise<RedisEvent | null>(resolve => {
-        subscriber.on('message', (_, message) => {
-          try {
-            const event = JSON.parse(message) as RedisEvent;
-            resolve(event);
-          } catch {
-            resolve(null);
-          }
-        });
+      // Use a message queue to handle incoming messages
+      const messageQueue: (RedisEvent | null)[] = [];
+      let resolveWait: (() => void) | null = null;
+
+      subscriber.on('message', (channel, message) => {
+        try {
+          const event = JSON.parse(message) as RedisEvent;
+          messageQueue.push(event);
+        } catch (error) {
+          console.error(`[Redis:message] Failed to parse message:`, error);
+          messageQueue.push(null);
+        }
+        // Notify waiting consumer that a message is available
+        if (resolveWait) {
+          resolveWait();
+          resolveWait = null;
+        }
       });
 
       while (true) {
-        const event = await messageHandler;
+        // If queue is empty, wait for a message
+        if (messageQueue.length === 0) {
+          await new Promise<void>(resolve => {
+            resolveWait = resolve;
+          });
+        }
+
+        const event = messageQueue.shift();
         if (event) {
           yield event;
         }
