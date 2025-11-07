@@ -5,17 +5,21 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client';
 /**
  * Configuration for a single subscription event using subscribeToMore
  */
-export interface SubscriptionConfig<TSubscriptionData, TResult> {
+export interface SubscriptionConfig<
+  TSubscriptionData = unknown,
+  TResult = unknown,
+  TSubscriptionVars extends OperationVariables = OperationVariables
+> {
   /** GraphQL subscription document */
-  subscription: TypedDocumentNode<TSubscriptionData, OperationVariables>;
+  subscription: TypedDocumentNode<TSubscriptionData, TSubscriptionVars>;
   /** Variables to pass to the subscription */
-  subscriptionVariables?: OperationVariables;
+  subscriptionVariables?: TSubscriptionVars;
   /**
    * Function to reconcile subscription updates with query result.
    * Receives the previous query result and the subscription response,
    * and must return the updated query result.
    */
-  updateQuery: (prev: TResult, subscriptionData: { data?: TSubscriptionData }) => TResult;
+  updateQuery: (prev: TResult, subscriptionData: { data?: unknown }) => TResult;
 }
 
 export interface UsePageDataResult<TData> {
@@ -37,11 +41,16 @@ export interface UsePageDataResult<TData> {
  * @param subscriptions - Optional array of subscription configurations for real-time updates (must be stable)
  * @returns Page data, loading state, error, and refetch function
  */
-export function usePageData<TResult, TVariables, TData = TResult>(
+export function usePageData<
+  TResult,
+  TVariables,
+  TData = TResult,
+  TSubVars extends OperationVariables = OperationVariables
+>(
   graphqlQuery: TypedDocumentNode<TResult, TVariables>,
   variables?: OperationVariables,
   dataParser?: (data: TResult) => TData,
-  subscriptions?: SubscriptionConfig<unknown, TResult>[]
+  subscriptions?: SubscriptionConfig<unknown, TResult, TSubVars>[]
 ): UsePageDataResult<TData> {
   const [data, setData] = useState<TData | undefined>(undefined);
   const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);

@@ -49,9 +49,7 @@ export default function PitAdminPage() {
     GET_DIVISION_TEAMS,
     { divisionId: currentDivision.id },
     parseDivisionTeams,
-    // TODO: Understand how to type subscriptions
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    subscriptions as any[]
+    subscriptions
   );
 
   // Initialize teams map when page data arrives

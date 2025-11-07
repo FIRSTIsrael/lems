@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import type { SubscriptionConfig } from '../hooks/use-page-data';
 
 export interface Team {
   id: string;
@@ -11,6 +12,9 @@ export interface Team {
 
 type QueryData = { division?: { id: string; teams: Team[] } | null };
 type QueryVars = { divisionId: string };
+
+type SubscriptionData = { teamArrivalUpdated: Team };
+type SubscriptionVars = QueryVars & { lastSeenVersion?: number };
 
 export const GET_DIVISION_TEAMS: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetDivisionTeams($divisionId: String!) {
@@ -40,8 +44,8 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
 `;
 
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  { teamArrivalUpdated: Team },
-  QueryVars & { lastSeenVersion?: number }
+  SubscriptionData,
+  SubscriptionVars
 > = gql`
   subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
     teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -75,13 +79,13 @@ export function parseDivisionTeams(queryData: QueryData): Team[] {
 export function createTeamArrivalSubscription(
   divisionId: string,
   teamsMapRef: React.RefObject<Map<string, Team>>
-) {
+): SubscriptionConfig<SubscriptionData, QueryData, SubscriptionVars> {
   return {
     subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
       if (!data || typeof data !== 'object' || !('teamArrivalUpdated' in data)) {
         return prev;
       }
