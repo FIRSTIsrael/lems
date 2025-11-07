@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, useMemo, useState } from 'react';
-import useSWR from 'swr';
+import { useSuspenseQuery, useQuery } from '@apollo/client/react';
 import {
-  fetchVolunteerRoles,
-  fetchVolunteerByRole,
+  GET_VOLUNTEER_ROLES_QUERY,
+  GET_VOLUNTEER_BY_ROLE_QUERY,
   VolunteerByRoleGraphQLData
 } from '../graphql/volunteers.graphql';
 
@@ -12,6 +12,7 @@ interface VolunteerContextType {
   allRoles: string[];
 
   isReady: boolean;
+  isLoadingVolunteerData: boolean;
   volunteerData: VolunteerByRoleGraphQLData | null;
 
   selectedRole: string | null;
@@ -29,26 +30,29 @@ interface VolunteerProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * Volunteer provider that manages volunteer data fetching
+ */
 export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const { data: allRoles = [] } = useSWR<string[]>(
-    `volunteer-roles-${eventSlug}`,
-    () => fetchVolunteerRoles(eventSlug),
-    { suspense: true, fallbackData: [] }
+  const { data: rolesData } = useSuspenseQuery(GET_VOLUNTEER_ROLES_QUERY, {
+    variables: { slug: eventSlug }
+  });
+
+  const { data: volunteerData, loading: isLoadingVolunteerData } = useQuery(
+    GET_VOLUNTEER_BY_ROLE_QUERY,
+    {
+      variables: { slug: eventSlug, role: selectedRole! },
+      skip: !selectedRole
+    }
   );
 
-  const { data: volunteerData = null, error: volunteerError } =
-    useSWR<VolunteerByRoleGraphQLData | null>(
-      selectedRole ? `volunteer-by-role-${eventSlug}-${selectedRole}` : null,
-      selectedRole ? () => fetchVolunteerByRole(eventSlug, selectedRole) : null,
-      { suspense: true, fallbackData: null }
-    );
-
-  if (volunteerError) {
-    console.error('Error fetching volunteer data:', volunteerError);
-    throw volunteerError;
-  }
+  // Extract and deduplicate roles
+  const allRoles = useMemo(() => {
+    if (!rolesData?.event?.volunteers) return [];
+    return Array.from(new Set(rolesData.event.volunteers.map((v: { role: string }) => v.role)));
+  }, [rolesData]);
 
   const _needsUser = (
     volunteers: VolunteerByRoleGraphQLData['volunteers'],
@@ -76,22 +80,25 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     return Object.values(assignmentCounts).some(count => count > 1);
   };
 
+  const volunteerDataValue = selectedRole ? volunteerData?.event || null : null;
+
   const checkFunctions = useMemo(() => {
-    const totalDivisions = volunteerData?.divisions.length || 0;
-    const volunteers = volunteerData?.volunteers || [];
+    const totalDivisions = volunteerDataValue?.divisions.length || 0;
+    const volunteers = volunteerDataValue?.volunteers || [];
 
     return {
       needsDivision: volunteers.some(v => v.divisions.length < totalDivisions),
       needsRoleInfo: volunteers.some(v => !!v.roleInfo),
       needsUser: (divisionId?: string) => _needsUser(volunteers, divisionId)
     };
-  }, [volunteerData]);
+  }, [volunteerDataValue]);
 
-  const isReady = selectedRole && volunteerData;
+  const isReady = selectedRole && volunteerDataValue && !isLoadingVolunteerData;
 
   const value: VolunteerContextType = {
     allRoles,
-    volunteerData: volunteerData || null,
+    volunteerData: volunteerDataValue,
+    isLoadingVolunteerData,
     isReady: !!isReady,
     selectedRole,
     setSelectedRole,

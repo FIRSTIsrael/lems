@@ -4,6 +4,8 @@
       "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
       "submitting": "טוען...",
+      "loading": "טוען...",
+      "loadingRole": "טוען נתוני תפקיד...",
       "sign-in": "התחברות",
       "steps": {
         "role": "בחרו תפקיד",

@@ -1,7 +1,24 @@
-import { z } from 'zod';
-import { graphqlFetch } from '@lems/shared';
+import { gql, type TypedDocumentNode } from '@apollo/client';
 
-const VOLUNTEER_EVENT_DATA_QUERY = `
+type GetVolunteerEventDataQuery = {
+  event: {
+    id: string;
+    name: string;
+    divisions: Array<{
+      id: string;
+      name: string;
+    }>;
+  } | null;
+};
+
+type GetVolunteerEventDataQueryVariables = {
+  eventId: string;
+};
+
+export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
+  GetVolunteerEventDataQuery,
+  GetVolunteerEventDataQueryVariables
+> = gql`
   query GetVolunteerEventData($eventId: String!) {
     event(id: $eventId) {
       id
@@ -13,28 +30,3 @@ const VOLUNTEER_EVENT_DATA_QUERY = `
     }
   }
 `;
-
-const EventDataSchema = z.object({
-  event: z.object({
-    id: z.string(),
-    name: z.string(),
-    divisions: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string()
-      })
-    )
-  })
-});
-
-type EventData = z.infer<typeof EventDataSchema>;
-
-export async function fetchEventData(eventId: string): Promise<EventData> {
-  try {
-    const data = await graphqlFetch(VOLUNTEER_EVENT_DATA_QUERY, EventDataSchema, { eventId });
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch volunteer event data:', error);
-    throw new Error('Failed to load volunteer event data');
-  }
-}

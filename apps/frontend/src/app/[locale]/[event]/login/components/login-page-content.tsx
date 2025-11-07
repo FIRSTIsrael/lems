@@ -2,11 +2,12 @@
 
 import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
-import { Typography, Paper, Container, Box, CircularProgress, alpha } from '@mui/material';
+import { Typography, Paper, Container, Box, alpha } from '@mui/material';
 import { useRecaptcha } from '@lems/shared';
 import { VolunteerProvider } from './volunteer-context';
 import { LoginForm } from './login-form';
 import { LoginErrorBoundary } from './login-error-boundary';
+import { StepLoading } from './step-loading';
 
 interface LoginPageContentProps {
   event: { name: string; slug: string };
@@ -61,13 +62,7 @@ export function LoginPageContent({ event, recaptchaRequired }: LoginPageContentP
           }}
         >
           <LoginErrorBoundary>
-            <Suspense
-              fallback={
-                <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
-                  <CircularProgress />
-                </Box>
-              }
-            >
+            <Suspense fallback={<StepLoading />}>
               <VolunteerProvider eventSlug={event.slug}>
                 <LoginForm recaptchaRequired={recaptchaRequired} />
               </VolunteerProvider>
