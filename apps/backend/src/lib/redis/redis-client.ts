@@ -2,7 +2,7 @@ import Redis from 'ioredis';
 
 let redisClient: Redis | null = null;
 
-function createRedisClient() {
+function createRedisClient(): Redis {
   redisClient = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
@@ -14,7 +14,8 @@ function createRedisClient() {
     },
     enableReadyCheck: true,
     enableOfflineQueue: true,
-    maxRetriesPerRequest: null
+    maxRetriesPerRequest: null,
+    lazyConnect: false
   });
 
   redisClient.on('connect', () => {
@@ -26,13 +27,19 @@ function createRedisClient() {
   });
 
   redisClient.on('close', () => {
-    console.log('⚠️  Redis client connection closed');
+    console.warn('⚠️  Redis client connection closed');
   });
+
+  redisClient.on('reconnecting', () => {
+    console.log('🔄 Redis client reconnecting...');
+  });
+
+  return redisClient;
 }
 
 export function getRedisClient(): Redis {
-  if (!redisClient) {
-    createRedisClient();
+  if (!redisClient || redisClient.status === 'end') {
+    return createRedisClient();
   }
   return redisClient;
 }
