@@ -48,33 +48,5 @@ export async function createSubscriptionIterator(
  * @returns true if event is a gap marker
  */
 export function isRecoveryGapMarker(event: Record<string, unknown>): boolean {
-  return event._gap === true;
-}
-
-/**
- * Base resolver template for subscriptions.
- * Use this as a reference for creating new subscription resolvers.
- */
-export function createBaseSubscriptionResolver<T extends BaseSubscriptionResult>(
-  divisionIdField: string,
-  eventType: RedisEventTypes,
-  eventProcessor: (event: Record<string, unknown>) => Promise<T | null>
-) {
-  return {
-    subscribe: async (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-      const divisionId = args[divisionIdField] as string;
-      if (!divisionId) {
-        throw new Error(`${divisionIdField} is required for subscription`);
-      }
-
-      const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-      return createSubscriptionIterator(divisionId, eventType, lastSeenVersion);
-    },
-    resolve: async (event: Record<string, unknown>): Promise<T | null> => {
-      if (isRecoveryGapMarker(event.data as Record<string, unknown>)) {
-        return null; // Skip gap markers
-      }
-      return eventProcessor(event);
-    }
-  };
+  return !!event._gap;
 }
