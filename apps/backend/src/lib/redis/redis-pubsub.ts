@@ -10,7 +10,7 @@ export interface RedisEvent {
   version?: number;
 }
 
-export class RedisPubSub {
+class RedisPubSub {
   private publisher: Redis;
   private eventVersionMap: Map<RedisEventTypes, number> = new Map();
   private readonly messageRetentionMs = 30 * 1000; // 30 seconds
@@ -45,7 +45,6 @@ export class RedisPubSub {
       version: currentVersion
     };
 
-    // Publish to event-type-specific channel
     const channel = this.getChannelName(divisionId, eventType);
     await this.publisher.publish(channel, JSON.stringify(event));
     await this.bufferEvent(divisionId, eventType, event);
