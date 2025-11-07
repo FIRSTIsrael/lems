@@ -37,7 +37,7 @@ export class SubscriptionBroadcaster extends EventEmitter {
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0', 10),
       enableReadyCheck: false,
-      enableOfflineQueue: false,
+      enableOfflineQueue: true,
       lazyConnect: false,
       retryStrategy: times => {
         const delay = Math.min(times * 50, 2000);
