@@ -1,7 +1,7 @@
 import { apiFetch } from '@lems/shared';
 import { LemsUser } from '@lems/types/api/lems';
 import { getClient } from '../../../../lib/graphql/ssr-client';
-import { GET_VOLUNTEER_EVENT_DATA_QUERY } from './graphql/event-data.graphql';
+import { GET_VOLUNTEER_EVENT_DATA_QUERY } from './layout.graphql';
 import { EventProvider } from './components/event-context';
 
 interface VolunteerLayoutProps {
