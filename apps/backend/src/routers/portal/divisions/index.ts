@@ -1,17 +1,16 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import db from '../../../lib/database';
+import { PortalDivisionRequest } from '../../../types/express';
+import { attachDivision } from '../middleware/attach-division';
 import { makePortalDivisionDetailsResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/:divisionId', async (req: Request, res: Response) => {
-  const { divisionId } = req.params;
-  const division = await db.divisions.byId(divisionId).get();
+router.use('/:divisionId', attachDivision());
 
-  if (!division) {
-    res.status(404).json({ message: 'Division not found' });
-    return;
-  }
+router.get('/:divisionId', async (req: PortalDivisionRequest, res: Response) => {
+  const divisionId = req.divisionId;
+  const division = await db.divisions.byId(divisionId).get();
 
   const teams = await db.teams.byDivisionId(divisionId).getAll();
   const awards = await db.awards.byDivisionId(divisionId).getAll();

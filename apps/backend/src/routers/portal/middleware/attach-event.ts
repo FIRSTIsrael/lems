@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { EventSettings } from '@lems/database';
 import { PortalEventRequest } from '../../../types/express';
 import database from '../../../lib/database';
 
@@ -16,14 +17,21 @@ export const attachEvent = () => {
         return;
       }
 
-      const event = await database.events.bySlug(eventSlug).get();
+      let settings: EventSettings;
 
-      if (!event) {
+      try {
+        settings = await database.events.bySlug(eventSlug).getSettings();
+      } catch {
         res.status(404).json({ error: 'EVENT_NOT_FOUND' });
         return;
       }
 
-      (req as PortalEventRequest).eventId = event.id;
+      if (!settings.visible) {
+        res.status(404).json({ error: 'EVENT_NOT_FOUND' });
+        return;
+      }
+
+      (req as PortalEventRequest).eventId = settings.event_id;
 
       next();
     } catch (error) {

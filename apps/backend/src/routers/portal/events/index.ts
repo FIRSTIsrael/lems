@@ -21,6 +21,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const registeredTeams = await db.events.bySlug(eventSlug).getRegisteredTeams();
     const divisions = await db.divisions.byEventId(event.id).getAll();
+    const settings = await db.events.byId(event.id).getSettings();
 
     const eventSummary: EventSummary = {
       ...event,
@@ -29,6 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
       location: event.location,
       season_id: event.season_id,
       team_count: registeredTeams.length,
+      visible: settings.visible,
       is_fully_set_up: false,
       assigned_admin_ids: []
     };
@@ -46,7 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const events = await db.events.bySeason(season.id).getAllSummaries();
-    res.json(events.map(makePortalEventSummaryResponse));
+    res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }
 
@@ -59,29 +61,12 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const events = await db.events.after(timestamp).getAllSummaries();
-    res.json(events.map(makePortalEventSummaryResponse));
+    res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }
 
-  const allEvents = await db.events.getAll();
-
-  const events: EventSummary[] = await Promise.all(
-    allEvents.map(async event => {
-      const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-
-      return {
-        ...event,
-        divisions,
-        date: event.start_date.toISOString(),
-        team_count: registeredTeams.length,
-        is_fully_set_up: false,
-        assigned_admin_ids: []
-      };
-    })
-  );
-
-  res.json(events.map(makePortalEventSummaryResponse));
+  const events = await db.events.getAllSummaries();
+  res.json(events.filter(event => event.visible).map(makePortalEventSummaryResponse));
   return;
 });
 
