@@ -1,10 +1,9 @@
-import { createHash } from 'crypto';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { SubscriptionBroadcaster } from './subscription-broadcaster';
 
 /**
- * Manages shared Redis subscribers across multiple divisions.
- * Ensures multiple clients subscribing to the same division reuse the same connection.
+ * Manages shared Redis subscribers across multiple divisions and event types.
+ * Ensures multiple clients subscribing to the same division+eventType combination reuse the same connection.
  * Handles automatic cleanup of unused broadcasters.
  */
 export class SubscriptionManager {
@@ -26,13 +25,13 @@ export class SubscriptionManager {
   }
 
   /**
-   * Get or create a broadcaster for the given division and event types.
+   * Get or create a broadcaster for the given division and event type.
    */
   async getBroadcaster(
     divisionId: string,
-    eventTypes: RedisEventTypes[]
+    eventType: RedisEventTypes
   ): Promise<SubscriptionBroadcaster> {
-    const key = this.getKey(divisionId, eventTypes);
+    const key = this.getKey(divisionId, eventType);
 
     // Return existing broadcaster if available
     const existing = this.broadcasters.get(key);
@@ -48,7 +47,7 @@ export class SubscriptionManager {
 
     // Create new broadcaster with connection promise
     const connectionPromise = (async () => {
-      const broadcaster = new SubscriptionBroadcaster(divisionId, eventTypes);
+      const broadcaster = new SubscriptionBroadcaster(divisionId, eventType);
       try {
         await broadcaster.connect();
         this.broadcasters.set(key, broadcaster);
@@ -108,12 +107,9 @@ export class SubscriptionManager {
   }
 
   /**
-   * Generate a unique key for a division+eventTypes combination
+   * Generate a unique key for a division+eventType combination
    */
-  private getKey(divisionId: string, eventTypes: RedisEventTypes[]): string {
-    const key = Array.from(eventTypes).sort().join(',');
-    const hashSize = 16;
-    const hash = createHash('sha256').update(key).digest('hex').slice(0, hashSize);
-    return `${divisionId}:${hash}`;
+  private getKey(divisionId: string, eventType: RedisEventTypes): string {
+    return `${divisionId}:${eventType}`;
   }
 }

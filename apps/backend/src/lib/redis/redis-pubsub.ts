@@ -87,10 +87,10 @@ export class RedisPubSub {
    */
   async *asyncIterator(
     divisionId: string,
-    eventTypes: RedisEventTypes[],
-    clientLastVersions?: Map<RedisEventTypes, number>
+    eventType: RedisEventTypes,
+    clientLastVersion?: number
   ): AsyncGenerator<RedisEvent, void, unknown> {
-    const broadcaster = await this.subscriptionManager.getBroadcaster(divisionId, eventTypes);
+    const broadcaster = await this.subscriptionManager.getBroadcaster(divisionId, eventType);
     broadcaster.incrementSubscribers();
 
     const messageQueue: RedisEvent[] = [];
@@ -124,27 +124,20 @@ export class RedisPubSub {
       broadcaster.on('event', messageHandler);
 
       // Recover missed events (new events queue up in parallel)
-      const lastSeenVersions = new Map<RedisEventTypes, number>();
-      if (clientLastVersions) {
-        for (const eventType of eventTypes) {
-          const clientLastVersion = clientLastVersions.get(eventType) || 0;
-          const recovered = await this.recoverMissedEvents(
-            divisionId,
-            eventType,
-            clientLastVersion
-          );
-          for (const event of recovered) {
-            if (event.version) lastSeenVersions.set(event.type, event.version);
-            yield event;
-          }
+      let recovered: RedisEvent[] = [];
+      if (clientLastVersion !== undefined) {
+        recovered = await this.recoverMissedEvents(divisionId, eventType, clientLastVersion);
+        for (const event of recovered) {
+          yield event;
         }
       }
 
       // Deduplicate: skip queued events with versions <= last recovered
+      const lastRecoveredVersion =
+        recovered.length > 0 ? recovered[recovered.length - 1].version : 0;
       const dedupedQueue: RedisEvent[] = [];
       for (const event of messageQueue) {
-        const lastSeen = lastSeenVersions.get(event.type) || 0;
-        if (!event.version || event.version > lastSeen) {
+        if (!event.version || event.version > (lastRecoveredVersion || 0)) {
           dedupedQueue.push(event);
         }
       }
