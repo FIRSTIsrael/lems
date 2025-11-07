@@ -48,7 +48,7 @@ const processTeamArrivalEvent = async (
     console.warn(
       `[TeamArrival] Recovery gap detected for division ${divisionId} - client should refetch`
     );
-    return null;
+    return event.data as TeamWithDivisionId; // Its actually just a gap marker
   }
 
   const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';

@@ -62,14 +62,7 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
   TeamArrivedMutationVariables
 > = gql`
   mutation TeamArrived($teamId: String!, $divisionId: String!) {
-    teamArrived(teamId: $teamId, divisionId: $divisionId) {
-      id
-      number
-      name
-      affiliation
-      city
-      arrived
-    }
+    teamArrived(teamId: $teamId, divisionId: $divisionId) {}
   }
 `;
 
@@ -90,11 +83,6 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
     teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
       id
-      number
-      name
-      affiliation
-      city
-      arrived
     }
   }
 `;

@@ -17,16 +17,6 @@ export interface UsePitAdminTeamsResult {
 /**
  * Custom hook for managing pit admin team arrival tracking.
  *
- * Features:
- * - Fetches initial team data from GraphQL query
- * - Subscribes to real-time team arrival updates via GraphQL subscription
- * - Server-side message recovery: automatically fetches buffered updates (Redis) if reconnected within 30 seconds
- *   - Uses lastSeenVersion to track the last event received
- *   - Server sends missed events on resubscription
- *   - Handles recovery gap: if disconnected > 30 seconds, server sends _gap marker and hook refetches initial data
- * - Optimistic UI updates for mutations with rollback on error
- * - Prevents unnecessary re-renders using Map-based state management
- *
  * @param divisionId - The division ID to track teams for
  * @returns Team data, loading state, errors, and mutation function
  */
@@ -76,7 +66,7 @@ export function usePitAdminTeams(divisionId: string): UsePitAdminTeamsResult {
       const updatedTeam = subscriptionData.teamArrivalUpdated;
 
       // Check if this is a gap marker (recovery buffer exceeded, client was offline > 30 seconds)
-      if ((updatedTeam as unknown as Record<string, unknown>)._gap === true) {
+      if ((updatedTeam as unknown as Record<string, unknown>)._gap) {
         console.warn('[PitAdmin] Recovery gap detected - refetching initial data');
         // Refetch initial data since we missed too many updates
         refetchTeams().catch(error => {

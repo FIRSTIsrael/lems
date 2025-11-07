@@ -48,5 +48,5 @@ export async function createSubscriptionIterator(
  * @returns true if event is a gap marker
  */
 export function isRecoveryGapMarker(event: Record<string, unknown>): boolean {
-  return !!event._gap;
+  return event._gap as boolean;
 }
