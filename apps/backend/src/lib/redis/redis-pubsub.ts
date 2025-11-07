@@ -14,6 +14,7 @@ class RedisPubSub {
   private publisher: Redis;
   private eventVersionMap: Map<RedisEventTypes, number> = new Map();
   private readonly messageRetentionMs = 30 * 1000; // 30 seconds
+  private readonly maxRecoverySize = 1000; // Max events to recover
 
   constructor() {
     this.publisher = getRedisClient();
@@ -76,19 +77,13 @@ class RedisPubSub {
     clientLastVersion: number
   ): Promise<RedisEvent[]> {
     const bufferKey = `buffer:${divisionId}:${eventType}`;
-    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1);
+    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1); // All events
     const events: RedisEvent[] = [];
 
-    for (const data of bufferedData) {
-      const event = JSON.parse(data) as RedisEvent;
-      if ((event.version || 0) > clientLastVersion) {
-        events.push(event);
-      }
-    }
-
-    // Check if gap is too large
+    /* Check for large gaps in versions, tell the client to refetch
+       if the gap is more than maxRecoverySize */
     const serverVersion = this.eventVersionMap.get(eventType) || 0;
-    if (serverVersion - clientLastVersion > 1000) {
+    if (serverVersion - clientLastVersion > this.maxRecoverySize) {
       events.push({
         type: eventType,
         divisionId,
@@ -96,6 +91,15 @@ class RedisPubSub {
         data: { _gap: true },
         version: serverVersion
       });
+    }
+
+    /* Iterate through all buffered events, push only events
+       that are newer than clientLastVersion */
+    for (const data of bufferedData) {
+      const event = JSON.parse(data) as RedisEvent;
+      if ((event.version || 0) > clientLastVersion) {
+        events.push(event);
+      }
     }
 
     return events;
