@@ -155,8 +155,9 @@ export function usePageData<
   }, [dataParser, queryData]);
 
   // Set up subscriptions using subscribeToMore
+  // Only set up subscriptions once when the component mounts and queryData arrives
   useEffect(() => {
-    if (!subscriptions || subscriptions.length === 0 || !data) {
+    if (!subscriptions || subscriptions.length === 0 || !queryData) {
       return;
     }
 
@@ -215,7 +216,7 @@ export function usePageData<
     return () => {
       unsubscribers.forEach(unsub => unsub());
     };
-  }, [subscriptions, subscribeToMore, data, refetchData]);
+  }, [subscriptions, subscribeToMore, queryData, refetchData]);
 
   return {
     data,

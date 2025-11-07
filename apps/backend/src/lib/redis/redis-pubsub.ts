@@ -108,10 +108,20 @@ export class RedisPubSub {
         );
         isActive = false;
         broadcaster.removeListener('event', messageHandler);
+
+        // Wake up the consumer so they can exit the loop
+        if (resolveWait) {
+          if (timeoutHandle) clearTimeout(timeoutHandle);
+          timeoutHandle = null;
+          resolveWait();
+          resolveWait = null;
+        }
+
         return;
       }
 
       messageQueue.push(event);
+
       if (resolveWait) {
         if (timeoutHandle) clearTimeout(timeoutHandle);
         timeoutHandle = null;
@@ -165,6 +175,7 @@ export class RedisPubSub {
             break;
           }
         }
+
         const event = messageQueue.shift();
         if (event) yield event;
       }

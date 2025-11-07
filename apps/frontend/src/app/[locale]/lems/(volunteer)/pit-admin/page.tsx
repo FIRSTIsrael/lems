@@ -63,7 +63,7 @@ export default function PitAdminPage() {
     try {
       await teamArrivedMutation({
         variables: { teamId: selectedTeam.id, divisionId: currentDivision.id },
-        update: (cache) => {
+        update: cache => {
           // Optimistically update the cache
           cache.modify({
             fields: {
