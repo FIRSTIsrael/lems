@@ -143,7 +143,6 @@ export function usePageData<
 
       if (disconnectionTimeRef.current !== null) {
         const disconnectionDuration = Date.now() - disconnectionTimeRef.current;
-        console.log(disconnectionDuration);
 
         if (disconnectionDuration > RECOVERY_WINDOW_MS) {
           console.warn(
