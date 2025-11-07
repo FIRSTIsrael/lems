@@ -11,6 +11,7 @@ import './lib/dayjs';
 import './lib/database';
 import { createApolloServer, type GraphQLContext } from './lib/graphql/apollo-server';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
+import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -99,6 +100,7 @@ server.on('error', console.error);
 process.on('SIGTERM', async () => {
   console.log('⚠️  SIGTERM received, shutting down gracefully...');
   server.close(async () => {
+    await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
     process.exit(0);
@@ -108,6 +110,7 @@ process.on('SIGTERM', async () => {
 process.on('SIGINT', async () => {
   console.log('⚠️  SIGINT received, shutting down gracefully...');
   server.close(async () => {
+    await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
     process.exit(0);

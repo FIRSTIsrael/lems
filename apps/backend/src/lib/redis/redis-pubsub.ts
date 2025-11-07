@@ -60,7 +60,16 @@ export class RedisPubSub {
       pipeline.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
       pipeline.expire(bufferKey, 60); // 1 minute TTL for buffer
 
-      await pipeline.exec();
+      const results = await pipeline.exec();
+
+      // Check each command for errors to prevent version drift
+      if (results) {
+        for (const [error] of results) {
+          if (error) {
+            throw new Error(`Pipeline command failed: ${error.message}`);
+          }
+        }
+      }
     } catch (error) {
       console.error(
         `[Redis:publish] Failed to publish event ${eventType} for division ${divisionId}:`,
@@ -98,6 +107,8 @@ export class RedisPubSub {
           `[Redis:backpressure] Client exceeded queue limit for division ${divisionId}, disconnecting`
         );
         isActive = false;
+        // Immediately remove listener to prevent further memory growth
+        broadcaster.removeListener('event', messageHandler);
         return;
       }
 
@@ -145,15 +156,23 @@ export class RedisPubSub {
       // Stream events
       while (isActive) {
         if (messageQueue.length === 0) {
+          let timedOut = false;
           await new Promise<void>(resolve => {
             resolveWait = resolve;
             timeoutHandle = setTimeout(() => {
               if (resolveWait) {
+                timedOut = true;
                 resolveWait();
                 resolveWait = null;
               }
             }, idleTimeoutMs);
           });
+
+          // Exit after idle timeout to free resources
+          if (timedOut && messageQueue.length === 0) {
+            isActive = false;
+            break;
+          }
         }
         const event = messageQueue.shift();
         if (event) yield event;

@@ -14,7 +14,12 @@ export class SubscriptionManager {
 
   constructor() {
     // Periodically clean up unused broadcasters
-    this.cleanupInterval = setInterval(() => this.cleanup(), 60_000); // 60 seconds
+    this.cleanupInterval = setInterval(() => {
+      // Wrap async cleanup to prevent unhandled promise rejections
+      this.cleanup().catch(error => {
+        console.error('[Redis:cleanup] Cleanup interval failed:', error);
+      });
+    }, 60_000); // 60 seconds
     this.cleanupInterval.unref();
   }
 
@@ -42,10 +47,18 @@ export class SubscriptionManager {
     // Create new broadcaster with connection promise
     const connectionPromise = (async () => {
       const broadcaster = new SubscriptionBroadcaster(divisionId, eventTypes);
-      await broadcaster.connect();
-      this.broadcasters.set(key, broadcaster);
-      this.pendingConnections.delete(key);
-      return broadcaster;
+      try {
+        await broadcaster.connect();
+        this.broadcasters.set(key, broadcaster);
+        return broadcaster;
+      } catch (error) {
+        // Clean up failed broadcaster to prevent resource leaks
+        await broadcaster.disconnect().catch(() => {});
+        throw error;
+      } finally {
+        // Always remove pending promise to allow retry
+        this.pendingConnections.delete(key);
+      }
     })();
 
     this.pendingConnections.set(key, connectionPromise);
