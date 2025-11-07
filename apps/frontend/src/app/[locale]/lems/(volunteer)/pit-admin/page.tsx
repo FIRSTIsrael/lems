@@ -6,7 +6,6 @@ import {
   Stack,
   Typography,
   Paper,
-  Chip,
   CircularProgress,
   Alert,
   List,
@@ -18,15 +17,14 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
-import CloudDoneIcon from '@mui/icons-material/CloudDone';
-import CloudOffIcon from '@mui/icons-material/CloudOff';
 import { useEvent } from '../components/event-context';
+import { ConnectionIndicator } from '../components/connection-indicator';
 import { usePitAdminTeams } from './use-pit-admin-teams';
 import type { Team } from './graphql';
 
 export default function PitAdminPage() {
   const { currentDivision } = useEvent();
-  const { teams, loading, error, connected, markTeamArrived } = usePitAdminTeams(
+  const { teams, loading, error, markTeamArrived } = usePitAdminTeams(
     currentDivision.id
   );
 
@@ -57,12 +55,7 @@ export default function PitAdminPage() {
             <Typography variant="h5" component="h1">
               Pit Admin - {currentDivision.name}
             </Typography>
-            <Chip
-              icon={connected ? <CloudDoneIcon /> : <CloudOffIcon />}
-              label={connected ? 'Connected' : 'Disconnected'}
-              color={connected ? 'success' : 'error'}
-              size="small"
-            />
+            <ConnectionIndicator />
           </Stack>
         </Paper>
 

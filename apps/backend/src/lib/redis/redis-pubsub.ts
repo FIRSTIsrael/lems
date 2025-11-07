@@ -93,7 +93,7 @@ export class RedisPubSub {
 
     const messageQueue: RedisEvent[] = [];
     const maxQueueSize = 1000;
-    const idleTimeoutMs = 30_000; // 30 seconds of inactivity will close the subscription
+    const idleTimeoutMs = 60 * 60 * 1000; // 1 hour of inactivity will close the subscription
     let resolveWait: (() => void) | null = null;
     let timeoutHandle: NodeJS.Timeout | null = null;
     let isActive = true;

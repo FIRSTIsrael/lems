@@ -73,21 +73,22 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
   }
 `;
 
-// Subscription for team arrival updates
+// Subscription for team arrival updates with message recovery support
 export interface TeamArrivalUpdatedSubscription {
   teamArrivalUpdated: Team;
 }
 
 export interface TeamArrivalUpdatedSubscriptionVariables {
   divisionId: string;
+  lastSeenVersion?: number;
 }
 
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   TeamArrivalUpdatedSubscription,
   TeamArrivalUpdatedSubscriptionVariables
 > = gql`
-  subscription TeamArrivalUpdated($divisionId: String!) {
-    teamArrivalUpdated(divisionId: $divisionId) {
+  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
+    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
       id
       number
       name

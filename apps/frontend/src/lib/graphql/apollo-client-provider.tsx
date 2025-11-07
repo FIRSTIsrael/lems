@@ -1,5 +1,6 @@
 'use client';
 
+import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
 import { HttpLink, ApolloLink } from '@apollo/client';
 import {
   ApolloClient,
@@ -14,11 +15,23 @@ import { createClient } from 'graphql-ws';
 import { OperationTypeNode } from 'graphql';
 import { getApiBase } from '@lems/shared';
 
+export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting' | 'error';
+
+interface ConnectionStateContextType {
+  state: ConnectionState;
+  lastError: Error | null;
+}
+
+const ConnectionStateContext = createContext<ConnectionStateContextType | undefined>(undefined);
+
 /**
  * Creates an Apollo Client instance for client-side use
- * This is called for each client component tree to create a new client
+ * Integrates with the connection state context to track WebSocket status
  */
-function makeClient() {
+function makeClient(
+  setState: (state: ConnectionState) => void,
+  setError: (error: Error | null) => void
+) {
   const apiBase = getApiBase() || 'http://localhost:3333';
 
   // HTTP link for queries and mutations
@@ -36,7 +49,25 @@ function makeClient() {
     createClient({
       url: `${apiBase.replace(/^https?/, 'ws')}/lems/graphql`,
       retryAttempts: Infinity, // Retry indefinitely
-      shouldRetry: () => true // Retry on all connection failures
+      shouldRetry: () => true, // Retry on all connection failures
+      on: {
+        connected: () => {
+          setState('connected');
+          setError(null);
+        },
+        connecting: () => {
+          setState('reconnecting');
+        },
+        error: (error: unknown) => {
+          setState('error');
+          setError(error instanceof Error ? error : new Error(String(error)));
+          console.warn('[GraphQL WS] Connection error:', error);
+        },
+        closed: () => {
+          setState('disconnected');
+          console.warn('[GraphQL WS] Connection closed');
+        }
+      }
     })
   );
 
@@ -120,15 +151,33 @@ function makeClient() {
   });
 }
 
-interface ApolloWrapperProps {
-  children: React.ReactNode;
+export function ApolloClientProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<ConnectionState>('connected');
+  const [lastError, setLastError] = useState<Error | null>(null);
+
+  const value: ConnectionStateContextType = useMemo(
+    () => ({
+      state,
+      lastError
+    }),
+    [state, lastError]
+  );
+
+  const makeClientWithState = useMemo(() => () => makeClient(setState, setLastError), []);
+
+  return (
+    <ApolloNextAppProvider makeClient={makeClientWithState}>
+      <ConnectionStateContext.Provider value={value}>{children}</ConnectionStateContext.Provider>
+    </ApolloNextAppProvider>
+  );
 }
 
-/**
- * Apollo Client provider wrapper for client components
- * Uses ApolloNextAppProvider to properly support Next.js App Router
- * and ensure all client components share the same Apollo Client instance
- */
-export function ApolloClientProvider({ children }: ApolloWrapperProps) {
-  return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>;
+export function useConnectionState(): ConnectionStateContextType {
+  const context = useContext(ConnectionStateContext);
+
+  if (context === undefined) {
+    throw new Error('useConnectionState must be used within a ConnectionStateProvider');
+  }
+
+  return context;
 }

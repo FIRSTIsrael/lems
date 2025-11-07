@@ -57,5 +57,13 @@
         "try-again": "ניסיון נוסף"
       }
     }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "מחובר",
+      "reconnecting": "מתחבר...",
+      "disconnected": "מנותק",
+      "error": "שגיאה"
+    }
   }
 }

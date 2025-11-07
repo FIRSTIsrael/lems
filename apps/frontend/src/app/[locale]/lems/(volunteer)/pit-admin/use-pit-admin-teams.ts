@@ -11,7 +11,6 @@ export interface UsePitAdminTeamsResult {
   teams: Team[];
   loading: boolean;
   error: Error | undefined;
-  connected: boolean;
   markTeamArrived: (teamId: string) => Promise<void>;
 }
 
@@ -19,29 +18,32 @@ export interface UsePitAdminTeamsResult {
  * Custom hook for managing pit admin team arrival tracking.
  *
  * Features:
- * - Fetches initial team data with cache-and-network policy
- * - Subscribes to real-time team arrival updates
- * - Handles optimistic UI updates for mutations
- * - Automatic recovery on reconnection (subscription resumes automatically)
- * - Connection status tracking
- * - Prevents React render loops by carefully managing state updates
+ * - Fetches initial team data from GraphQL query
+ * - Subscribes to real-time team arrival updates via GraphQL subscription
+ * - Server-side message recovery: automatically fetches buffered updates (Redis) if reconnected within 30 seconds
+ *   - Uses lastSeenVersion to track the last event received
+ *   - Server sends missed events on resubscription
+ *   - Handles recovery gap: if disconnected > 30 seconds, server sends _gap marker and hook refetches initial data
+ * - Optimistic UI updates for mutations with rollback on error
+ * - Prevents unnecessary re-renders using Map-based state management
  *
  * @param divisionId - The division ID to track teams for
- * @returns Team data, loading state, errors, connection status, and mutation function
+ * @returns Team data, loading state, errors, and mutation function
  */
 export function usePitAdminTeams(divisionId: string): UsePitAdminTeamsResult {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [connected, setConnected] = useState(true);
   const teamsMapRef = useRef<Map<string, Team>>(new Map());
+  const lastSeenVersionRef = useRef<number>(0);
 
   // Initial query to fetch all teams
   const {
     data: queryData,
     loading: queryLoading,
-    error: queryError
+    error: queryError,
+    refetch: refetchTeams
   } = useQuery(GET_DIVISION_TEAMS, {
     variables: { divisionId },
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'network-only'
   });
 
   // Initialize teams map when query data arrives
@@ -56,36 +58,40 @@ export function usePitAdminTeams(divisionId: string): UsePitAdminTeamsResult {
     }
   }, [queryData]);
 
-  // Subscribe to team arrival updates
-  const { error: subscriptionError } = useSubscription(TEAM_ARRIVAL_UPDATED_SUBSCRIPTION, {
-    variables: { divisionId },
-    onData: ({ data }) => {
-      if (data.data?.teamArrivalUpdated) {
-        const updatedTeam = data.data.teamArrivalUpdated;
-
-        // Update the team in our map
-        teamsMapRef.current.set(updatedTeam.id, updatedTeam);
-
-        // Update state with new array to trigger re-render
-        setTeams(Array.from(teamsMapRef.current.values()));
-      }
-    },
-    onComplete: () => {
-      setConnected(false);
-    },
-    onError: () => {
-      setConnected(false);
-    },
-    // Subscription automatically reconnects via graphql-ws client configuration
-    shouldResubscribe: true
-  });
-
-  // Track connection status based on subscription state
-  useEffect(() => {
-    if (!subscriptionError) {
-      setConnected(true);
+  // Subscribe to team arrival updates with server-side message recovery via Redis
+  const { error: subscriptionError, data: subscriptionData } = useSubscription(
+    TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
+    {
+      variables: {
+        divisionId,
+        lastSeenVersion: lastSeenVersionRef.current
+      },
+      shouldResubscribe: true
     }
-  }, [subscriptionError]);
+  );
+
+  // Process subscription updates and handle recovery gaps
+  useEffect(() => {
+    if (subscriptionData?.teamArrivalUpdated) {
+      const updatedTeam = subscriptionData.teamArrivalUpdated;
+
+      // Check if this is a gap marker (recovery buffer exceeded, client was offline > 30 seconds)
+      if ((updatedTeam as unknown as Record<string, unknown>)._gap === true) {
+        console.warn('[PitAdmin] Recovery gap detected - refetching initial data');
+        // Refetch initial data since we missed too many updates
+        refetchTeams().catch(error => {
+          console.error('[PitAdmin] Failed to refetch teams after recovery gap:', error);
+        });
+        return;
+      }
+
+      // Update the team in our map
+      teamsMapRef.current.set(updatedTeam.id, updatedTeam);
+
+      // Update state with new array to trigger re-render
+      setTeams(Array.from(teamsMapRef.current.values()));
+    }
+  }, [subscriptionData, refetchTeams]);
 
   // Mutation to mark a team as arrived
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
@@ -122,7 +128,6 @@ export function usePitAdminTeams(divisionId: string): UsePitAdminTeamsResult {
     teams,
     loading: queryLoading && teams.length === 0,
     error: queryError || subscriptionError,
-    connected,
     markTeamArrived
   };
 }

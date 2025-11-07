@@ -57,5 +57,13 @@
         "try-again": "Try Again"
       }
     }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "Connected",
+      "reconnecting": "Reconnecting...",
+      "disconnected": "Disconnected",
+      "error": "Error"
+    }
   }
 }

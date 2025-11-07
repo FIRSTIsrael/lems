@@ -1,10 +1,10 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { getRedisPubSub } from '../../../redis/redis-pubsub';
 import db from '../../../database';
-
-interface TeamArrivalUpdatedArgs {
-  divisionId: string;
-}
+import {
+  createSubscriptionIterator,
+  isRecoveryGapMarker,
+  BaseSubscriptionArgs
+} from './base-subscription';
 
 interface TeamWithDivisionId {
   id: string;
@@ -13,72 +13,82 @@ interface TeamWithDivisionId {
   name: string;
   affiliation: string;
   city: string;
-}
-
-async function* teamArrivalUpdatedGenerator(
-  _root: unknown,
-  args: TeamArrivalUpdatedArgs
-): AsyncGenerator<TeamWithDivisionId, void, unknown> {
-  const { divisionId } = args;
-
-  if (!divisionId) {
-    throw new Error('divisionId is required for teamArrivalUpdated subscription');
-  }
-
-  try {
-    const pubSub = getRedisPubSub();
-    const iterator = pubSub.asyncIterator(divisionId, [RedisEventTypes.TEAM_ARRIVED]);
-
-    for await (const event of iterator) {
-      try {
-        const teamId = (event.data.teamId as string) || '';
-
-        if (!teamId) {
-          continue;
-        }
-
-        const team = await db.raw.sql
-          .selectFrom('teams')
-          .select(['id', 'number', 'name', 'affiliation', 'city'])
-          .where('id', '=', teamId)
-          .executeTakeFirst();
-
-        if (team) {
-          const result = {
-            id: team.id,
-            divisionId,
-            number: team.number,
-            name: team.name,
-            affiliation: team.affiliation,
-            city: team.city
-          };
-          yield result;
-        }
-      } catch (error) {
-        console.error('Error processing team arrival event:', error);
-      }
-    }
-  } catch (error) {
-    console.error('Error in teamArrivalUpdated subscription:', error);
-    throw error;
-  }
+  arrived: boolean;
 }
 
 /**
  * Resolver function for the teamArrivalUpdated subscription field
- * Returns an async generator that yields team data
+ * Supports message recovery via lastSeenVersion parameter.
+ * If client was disconnected < 30 seconds, buffered messages are automatically recovered.
  */
-const teamArrivalUpdatedSubscribe = (root: unknown, args: unknown) => {
-  const typedArgs = args as TeamArrivalUpdatedArgs;
+const teamArrivalUpdatedSubscribe = (
+  _root: unknown,
+  args: BaseSubscriptionArgs & Record<string, unknown>
+) => {
+  const divisionId = args.divisionId as string;
 
-  if (!typedArgs || !typedArgs.divisionId) {
+  if (!divisionId) {
     const errorMsg = 'divisionId is required for teamArrivalUpdated subscription';
     throw new Error(errorMsg);
   }
 
-  const generator = teamArrivalUpdatedGenerator(root, typedArgs);
+  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
+  return createSubscriptionIterator(divisionId, [RedisEventTypes.TEAM_ARRIVED], lastSeenVersion);
+};
 
-  return generator;
+/**
+ * Transforms raw Redis events into Team objects with division context
+ */
+const processTeamArrivalEvent = async (
+  divisionId: string,
+  event: Record<string, unknown>
+): Promise<TeamWithDivisionId | null> => {
+  // Check for gap marker (recovery buffer exceeded)
+  if (isRecoveryGapMarker(event.data as Record<string, unknown>)) {
+    console.warn(
+      `[TeamArrival] Recovery gap detected for division ${divisionId} - client should refetch`
+    );
+    return null;
+  }
+
+  const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';
+
+  if (!teamId) {
+    return null;
+  }
+
+  try {
+    const team = await db.raw.sql
+      .selectFrom('teams')
+      .select(['id', 'number', 'name', 'affiliation', 'city'])
+      .where('id', '=', teamId)
+      .executeTakeFirst();
+
+    if (team) {
+      // Get arrival status from team_divisions
+      const teamDivision = await db.raw.sql
+        .selectFrom('team_divisions')
+        .select('arrived')
+        .where('team_id', '=', teamId)
+        .where('division_id', '=', divisionId)
+        .executeTakeFirst();
+
+      const result = {
+        id: team.id,
+        divisionId,
+        number: team.number,
+        name: team.name,
+        affiliation: team.affiliation,
+        city: team.city,
+        arrived: teamDivision?.arrived ?? false
+      };
+      return result;
+    }
+  } catch (error) {
+    console.error('Error processing team arrival event:', error);
+  }
+
+  return null;
 };
 
 /**
@@ -87,7 +97,12 @@ const teamArrivalUpdatedSubscribe = (root: unknown, args: unknown) => {
  */
 export const teamArrivalUpdatedResolver = {
   subscribe: teamArrivalUpdatedSubscribe,
-  resolve: (team: TeamWithDivisionId) => {
-    return team;
+  resolve: async (event: Record<string, unknown>): Promise<TeamWithDivisionId | null> => {
+    // The event contains division context from the subscription args
+    const divisionId = (event as unknown as { divisionId: string }).divisionId;
+    if (!divisionId) {
+      throw new Error('divisionId missing from subscription event');
+    }
+    return processTeamArrivalEvent(divisionId, event);
   }
 };
