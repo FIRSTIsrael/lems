@@ -82,65 +82,65 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
         '&:hover': getHoverStyles()
       }}
     >
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
-        spacing={2}
-      >
-        <Box sx={{ flex: 1 }}>
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
-            <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
-              {event.name}
-            </Typography>
-            {getStatusChip()}
-          </Stack>
-
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={{ xs: 1, sm: 3 }}
-            sx={{ color: 'text.secondary' }}
-          >
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <CalendarIcon fontSize="small" />
-              <Typography variant="body2">
-                {new Date(event.startDate).toLocaleDateString()}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <LocationIcon fontSize="small" />
-              <Typography variant="body2">{event.location}</Typography>
-            </Stack>
-
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <PeopleIcon fontSize="small" />
-              <Typography variant="body2">
-                {tEvents('teams-registered', { count: event.teamsRegistered })}
-              </Typography>
-            </Stack>
-          </Stack>
-        </Box>
-
-        <Button
-          component={Link}
-          variant={variant === 'active' ? 'contained' : 'outlined'}
-          color={variant === 'active' ? 'error' : 'primary'}
-          size="small"
-          endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
-          sx={{
-            minWidth: { xs: '100%', sm: 'auto' },
-            whiteSpace: 'nowrap'
-          }}
-          href={`/event/${event.slug}`}
+      <Link href={`/event/${event.slug}`} style={{ textDecoration: 'none' }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          spacing={2}
         >
-          {variant === 'active'
-            ? tEvents('view-event')
-            : variant === 'past'
-              ? tEvents('view-results')
-              : tEvents('view-details')}
-        </Button>
-      </Stack>
+          <Box sx={{ flex: 1 }}>
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
+              <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
+                {event.name}
+              </Typography>
+              {getStatusChip()}
+            </Stack>
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secondary' }}
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <CalendarIcon fontSize="small" />
+                <Typography variant="body2">
+                  {new Date(event.startDate).toLocaleDateString()}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <LocationIcon fontSize="small" />
+                <Typography variant="body2">{event.location}</Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <PeopleIcon fontSize="small" />
+                <Typography variant="body2">
+                  {tEvents('teams-registered', { count: event.teamsRegistered })}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Box>
+
+          <Button
+            variant={variant === 'active' ? 'contained' : 'outlined'}
+            color={variant === 'active' ? 'error' : 'primary'}
+            size="small"
+            endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
+            sx={{
+              minWidth: { xs: '100%', sm: 'auto' },
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {variant === 'active'
+              ? tEvents('view-event')
+              : variant === 'past'
+                ? tEvents('view-results')
+                : tEvents('view-details')}
+          </Button>
+        </Stack>
+      </Link>
     </Box>
   );
 };

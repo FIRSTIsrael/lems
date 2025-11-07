@@ -25,7 +25,13 @@ const swrFetcher = async (args: FetcherArgs) => {
     const result = schema ? await apiFetch(url, {}, schema) : await apiFetch(url, {});
 
     if (!result.ok) {
-      const error = new Error('An error occurred while fetching the data.') as SWRError;
+      console.error('API fetch failed:', {
+        url,
+        status: result.status,
+        statusText: result.statusText,
+        error: result.error
+      });
+      const error = new Error(`API request failed: ${result.status} ${result.statusText}`) as SWRError;
       error.info = result.error;
       error.status = result.status;
       throw error;
