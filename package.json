@@ -101,7 +101,7 @@
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.0",
     "@swc/helpers": "~0.5.11",
-    "@swc/plugin-emotion": "^11.5.0",
+    "@swc/plugin-emotion": "^13.0.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
