@@ -11,21 +11,19 @@ export interface RedisEvent {
 }
 
 /**
- * Manages a shared Redis subscriber for a specific division and event types.
+ * Manages a shared Redis subscriber for a specific division and event type.
  * Broadcasts all received messages to multiple listeners (clients).
  */
 export class SubscriptionBroadcaster extends EventEmitter {
   private subscriber: Redis | null = null;
   private subscriptionCount = 0;
-  private eventTypes: Set<RedisEventTypes>;
 
   constructor(
     private divisionId: string,
-    eventTypes: RedisEventTypes[]
+    private eventType: RedisEventTypes
   ) {
     super();
     this.setMaxListeners(Infinity);
-    this.eventTypes = new Set(eventTypes);
   }
 
   async connect(): Promise<void> {
@@ -45,15 +43,13 @@ export class SubscriptionBroadcaster extends EventEmitter {
       }
     });
 
-    const channels = Array.from(this.eventTypes).map(eventType =>
-      this.getChannelName(this.divisionId, eventType)
-    );
+    const channel = this.getChannelName(this.divisionId, this.eventType);
 
     try {
-      await this.subscriber.subscribe(...channels);
+      await this.subscriber.subscribe(channel);
     } catch (error) {
       console.error(
-        `[Redis:subscriber] Failed to subscribe for division ${this.divisionId}:`,
+        `[Redis:subscriber] Failed to subscribe for division ${this.divisionId} event ${this.eventType}:`,
         error
       );
       await this.subscriber.quit().catch(() => {});
