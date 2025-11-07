@@ -265,7 +265,9 @@ export function usePageData<
     return () => {
       unsubscribers.forEach(unsub => unsub());
     };
-  }, [subscriptions, subscribeToMore, queryData, refetchData]);
+    // queryData is only needed to trigger this effect once when data arrives
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subscriptions, subscribeToMore, refetchData, !!queryData]);
 
   return {
     data,
