@@ -25,9 +25,10 @@ export interface RecoveryGapMarker {
 
 /**
  * Result type for subscription generators.
- * Can be either the actual event data (T) or a RecoveryGapMarker.
+ * Every subscription result includes the version for client-side recovery tracking.
+ * Can be either the actual event data (T) with version, or a RecoveryGapMarker.
  */
-export type SubscriptionResult<T> = T | RecoveryGapMarker | null;
+export type SubscriptionResult<T> = (T & { version?: number }) | RecoveryGapMarker | null;
 
 /**
  * Type guard to check if a subscription result is a gap marker.

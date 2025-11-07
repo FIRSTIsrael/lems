@@ -25,6 +25,31 @@ const isGapMarker = (data: unknown): boolean => {
 };
 
 /**
+ * Extracts the version number from subscription data.
+ * Searches for a 'version' field in any top-level object property.
+ *
+ * @param data - The subscription data object
+ * @returns The version number, or undefined if not found
+ */
+const extractVersionFromData = (data: unknown): number | undefined => {
+  if (!data || typeof data !== 'object') {
+    return undefined;
+  }
+
+  // Search for version field in top-level object values
+  for (const value of Object.values(data)) {
+    if (value && typeof value === 'object' && 'version' in value) {
+      const version = (value as Record<string, unknown>).version;
+      if (typeof version === 'number') {
+        return version;
+      }
+    }
+  }
+
+  return undefined;
+};
+
+/**
  * Configuration for a single subscription event using subscribeToMore
  */
 export interface SubscriptionConfig<
@@ -78,6 +103,7 @@ export function usePageData<
 ): UsePageDataResult<TData> {
   const [data, setData] = useState<TData | undefined>(undefined);
   const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
+  const eventVersionsRef = useRef<Map<number, number>>(new Map());
 
   if (subscriptions?.length !== subscriptionCountRef.current) {
     throw new Error(
@@ -85,6 +111,25 @@ export function usePageData<
         'The subscriptions array must remain stable between renders. Use useMemo() to memoize the array.'
     );
   }
+
+  // Initialize versions from sessionStorage on mount
+  useEffect(() => {
+    subscriptions?.forEach((config, index) => {
+      const stored = sessionStorage.getItem(`page-data-version:${index}`);
+      if (stored) {
+        try {
+          const version = parseInt(stored, 10);
+          eventVersionsRef.current.set(index, version);
+        } catch (error) {
+          console.warn(
+            `[usePageData] Failed to parse stored version for subscription ${index}:`,
+            error
+          );
+          sessionStorage.removeItem(`page-data-version:${index}`);
+        }
+      }
+    });
+  }, [subscriptions]);
 
   const {
     data: queryData,
@@ -117,10 +162,16 @@ export function usePageData<
 
     const unsubscribers: Array<() => void> = [];
 
-    subscriptions.forEach(config => {
+    subscriptions.forEach((config, index) => {
+      const lastSeenVersion = eventVersionsRef.current.get(index);
+
+      const subscriptionVariables = lastSeenVersion
+        ? { ...config.subscriptionVariables, lastSeenVersion }
+        : config.subscriptionVariables;
+
       const unsubscribe = subscribeToMore({
         document: config.subscription,
-        variables: config.subscriptionVariables,
+        variables: subscriptionVariables,
         updateQuery: (
           prev: TResult,
           { subscriptionData }: { subscriptionData: { data?: unknown } }
@@ -132,6 +183,12 @@ export function usePageData<
           const hasGapMarker = isGapMarker(subscriptionData.data);
           if (hasGapMarker) {
             console.warn('[usePageData] Recovery gap detected - triggering refetch');
+
+            // Reset version tracking on gap
+            eventVersionsRef.current.delete(index);
+            sessionStorage.removeItem(`page-data-version:${index}`);
+
+            // Refetch full data to recover from gap
             refetchData().catch(err =>
               console.error('[usePageData] Failed to refetch after gap detection:', err)
             );
@@ -140,6 +197,14 @@ export function usePageData<
 
           // Call the user's updateQuery function and ensure we return the result
           const updated = config.updateQuery(prev, subscriptionData as { data?: unknown });
+
+          // Extract and persist version automatically
+          const newVersion = extractVersionFromData(subscriptionData.data);
+          if (newVersion !== undefined) {
+            eventVersionsRef.current.set(index, newVersion);
+            sessionStorage.setItem(`page-data-version:${index}`, String(newVersion));
+          }
+
           return updated || prev;
         }
       } as Parameters<typeof subscribeToMore>[0]);

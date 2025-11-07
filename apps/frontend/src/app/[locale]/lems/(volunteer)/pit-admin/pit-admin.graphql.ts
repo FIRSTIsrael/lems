@@ -10,10 +10,15 @@ export interface Team {
   arrived: boolean;
 }
 
+export interface TeamEvent {
+  teamId: string;
+  version: number;
+}
+
 type QueryData = { division?: { id: string; teams: Team[] } | null };
 type QueryVars = { divisionId: string };
 
-type SubscriptionData = { teamArrivalUpdated: Team };
+type SubscriptionData = { teamArrivalUpdated: TeamEvent };
 type SubscriptionVars = QueryVars & { lastSeenVersion?: number };
 
 export const GET_DIVISION_TEAMS: TypedDocumentNode<QueryData, QueryVars> = gql`
@@ -33,12 +38,13 @@ export const GET_DIVISION_TEAMS: TypedDocumentNode<QueryData, QueryVars> = gql`
 `;
 
 export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
-  { teamArrived: Team },
+  { teamArrived: TeamEvent },
   QueryVars & { teamId: string }
 > = gql`
   mutation TeamArrived($teamId: String!, $divisionId: String!) {
     teamArrived(teamId: $teamId, divisionId: $divisionId) {
-      id
+      teamId
+      version
     }
   }
 `;
@@ -49,12 +55,8 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 > = gql`
   subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
     teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
-      id
-      number
-      name
-      affiliation
-      city
-      arrived
+      teamId
+      version
     }
   }
 `;
@@ -71,6 +73,8 @@ export function parseDivisionTeams(queryData: QueryData): Team[] {
 
 /**
  * Creates a subscription configuration for team arrival updates.
+ * When a team arrives, the subscription returns minimal data (teamId + version).
+ * The reconciler locates the team in the cached query result and marks it as arrived.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook
@@ -88,8 +92,8 @@ export function createTeamArrivalSubscription(
         return prev;
       }
 
-      const subscriptionData = data as { teamArrivalUpdated: Team };
-      const updatedTeam = subscriptionData.teamArrivalUpdated;
+      const subscriptionData = data as { teamArrivalUpdated: TeamEvent };
+      const { teamId } = subscriptionData.teamArrivalUpdated;
 
       if (prev.division) {
         return {
@@ -97,7 +101,7 @@ export function createTeamArrivalSubscription(
           division: {
             ...prev.division,
             teams: prev.division.teams.map(team =>
-              team.id === updatedTeam.id ? updatedTeam : team
+              team.id === teamId ? { ...team, arrived: true } : team
             )
           }
         };

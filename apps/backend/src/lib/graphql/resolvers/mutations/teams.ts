@@ -8,24 +8,21 @@ interface TeamArrivedArgs {
   divisionId: string;
 }
 
-interface TeamWithDivisionId {
-  id: string;
-  divisionId: string;
-  number: number;
-  name: string;
-  affiliation: string;
-  city: string;
+interface TeamEvent {
+  teamId: string;
+  version: number;
 }
 
 /**
  * Resolver for Mutation.teamArrived
- * Marks that a team arrived at a division and publishes an event
+ * Marks that a team arrived at a division and publishes an event.
+ * Returns minimal response containing only teamId and version.
  */
 export const teamArrivedResolver: GraphQLFieldResolver<
   unknown,
   unknown,
   TeamArrivedArgs,
-  Promise<TeamWithDivisionId>
+  Promise<TeamEvent>
 > = async (_root, { teamId, divisionId }) => {
   try {
     const existing = await db.raw.sql
@@ -48,26 +45,14 @@ export const teamArrivedResolver: GraphQLFieldResolver<
       .where('division_id', '=', divisionId)
       .execute();
 
-    const team = await db.raw.sql
-      .selectFrom('teams')
-      .select(['id', 'number', 'name', 'affiliation', 'city'])
-      .where('id', '=', teamId)
-      .executeTakeFirst();
-
-    if (!team) {
-      throw new Error(`Team with ID ${teamId} not found`);
-    }
-
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
 
+    // Return minimal response - version will be 0 since this is the immediate response
+    // The subscription will include the actual version from Redis
     return {
-      divisionId,
-      id: team.id,
-      number: team.number,
-      name: team.name,
-      affiliation: team.affiliation,
-      city: team.city
+      teamId,
+      version: 0
     };
   } catch (error) {
     console.error(

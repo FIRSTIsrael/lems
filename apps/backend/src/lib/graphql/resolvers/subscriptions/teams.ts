@@ -1,20 +1,14 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import db from '../../../database';
 import {
   createSubscriptionIterator,
-  isGapMarker,
   SubscriptionResult,
-  BaseSubscriptionArgs
+  BaseSubscriptionArgs,
+  isGapMarker
 } from './base-subscription';
 
-interface TeamWithDivisionId {
-  id: string;
-  divisionId: string;
-  number: number;
-  name: string;
-  affiliation: string;
-  city: string;
-  arrived: boolean;
+interface TeamEvent {
+  teamId: string;
+  version: number;
 }
 
 /**
@@ -38,17 +32,14 @@ const teamArrivalUpdatedSubscribe = (
 };
 
 /**
- * Transforms raw Redis events into Team objects with division context
+ * Transforms raw Redis events into minimal TeamEvent objects
  */
 const processTeamArrivalEvent = async (
-  divisionId: string,
   event: Record<string, unknown>
-): Promise<SubscriptionResult<TeamWithDivisionId>> => {
+): Promise<SubscriptionResult<TeamEvent>> => {
   // Check for gap marker (recovery buffer exceeded)
   if (isGapMarker(event.data)) {
-    console.warn(
-      `[TeamArrival] Recovery gap detected for division ${divisionId} - client should refetch`
-    );
+    console.warn('[TeamArrival] Recovery gap detected - client should refetch');
     return event.data;
   }
 
@@ -58,38 +49,12 @@ const processTeamArrivalEvent = async (
     return null;
   }
 
-  try {
-    const team = await db.raw.sql
-      .selectFrom('teams')
-      .select(['id', 'number', 'name', 'affiliation', 'city'])
-      .where('id', '=', teamId)
-      .executeTakeFirst();
+  const result: TeamEvent = {
+    teamId,
+    version: (event.version as number) ?? 0
+  };
 
-    if (team) {
-      // Get arrival status from team_divisions
-      const teamDivision = await db.raw.sql
-        .selectFrom('team_divisions')
-        .select('arrived')
-        .where('team_id', '=', teamId)
-        .where('division_id', '=', divisionId)
-        .executeTakeFirst();
-
-      const result: TeamWithDivisionId = {
-        id: team.id,
-        divisionId,
-        number: team.number,
-        name: team.name,
-        affiliation: team.affiliation,
-        city: team.city,
-        arrived: teamDivision?.arrived ?? false
-      };
-      return result;
-    }
-  } catch (error) {
-    console.error('Error processing team arrival event:', error);
-  }
-
-  return null;
+  return result;
 };
 
 /**
@@ -98,14 +63,7 @@ const processTeamArrivalEvent = async (
  */
 export const teamArrivalUpdatedResolver = {
   subscribe: teamArrivalUpdatedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<TeamWithDivisionId>> => {
-    // The event contains division context from the subscription args
-    const divisionId = (event as unknown as { divisionId: string }).divisionId;
-    if (!divisionId) {
-      throw new Error('divisionId missing from subscription event');
-    }
-    return processTeamArrivalEvent(divisionId, event);
+  resolve: async (event: Record<string, unknown>): Promise<SubscriptionResult<TeamEvent>> => {
+    return processTeamArrivalEvent(event);
   }
 };
