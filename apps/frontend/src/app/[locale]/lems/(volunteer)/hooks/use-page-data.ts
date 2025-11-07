@@ -3,6 +3,28 @@ import { useQuery } from '@apollo/client/react';
 import { OperationVariables, TypedDocumentNode } from '@apollo/client';
 
 /**
+ * Detects if a subscription data object contains a gap marker.
+ * Gap markers indicate a potential data inconsistency that requires a refetch.
+ *
+ * @param data - The subscription data object
+ * @returns true if a gap marker is detected, false otherwise
+ */
+const isGapMarker = (data: unknown): boolean => {
+  if (!data || typeof data !== 'object') {
+    return false;
+  }
+
+  // Check for _gap property on any top-level value in the data object
+  for (const value of Object.values(data)) {
+    if (value && typeof value === 'object' && '_gap' in value) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
  * Configuration for a single subscription event using subscribeToMore
  */
 export interface SubscriptionConfig<
@@ -12,8 +34,10 @@ export interface SubscriptionConfig<
 > {
   /** GraphQL subscription document */
   subscription: TypedDocumentNode<TSubscriptionData, TSubscriptionVars>;
+
   /** Variables to pass to the subscription */
   subscriptionVariables?: TSubscriptionVars;
+
   /**
    * Function to reconcile subscription updates with query result.
    * Receives the previous query result and the subscription response,
@@ -105,6 +129,15 @@ export function usePageData<
             return prev;
           }
 
+          const hasGapMarker = isGapMarker(subscriptionData.data);
+          if (hasGapMarker) {
+            console.warn('[usePageData] Recovery gap detected - triggering refetch');
+            refetchData().catch(err =>
+              console.error('[usePageData] Failed to refetch after gap detection:', err)
+            );
+            return prev;
+          }
+
           // Call the user's updateQuery function and ensure we return the result
           const updated = config.updateQuery(prev, subscriptionData as { data?: unknown });
           return updated || prev;
@@ -117,7 +150,7 @@ export function usePageData<
     return () => {
       unsubscribers.forEach(unsub => unsub());
     };
-  }, [subscriptions, subscribeToMore, data]);
+  }, [subscriptions, subscribeToMore, data, refetchData]);
 
   return {
     data,

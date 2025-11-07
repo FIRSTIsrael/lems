@@ -70,7 +70,7 @@ export function parseDivisionTeams(queryData: QueryData): Team[] {
 }
 
 /**
- * Creates a subscription configuration for team arrival updates with recovery support.
+ * Creates a subscription configuration for team arrival updates.
  *
  * @param divisionId - The division ID to subscribe to
  * @param teamsMapRef - Ref to the teams map for reconciliation
@@ -92,12 +92,6 @@ export function createTeamArrivalSubscription(
 
       const subscriptionData = data as { teamArrivalUpdated: Team };
       const updatedTeam = subscriptionData.teamArrivalUpdated;
-
-      if (typeof updatedTeam === 'object' && updatedTeam !== null && '_gap' in updatedTeam) {
-        console.warn('[PitAdmin] Recovery gap detected - query will refetch automatically');
-        // Return unchanged to let the subscription trigger a refetch
-        return prev;
-      }
 
       teamsMapRef.current.set(updatedTeam.id, updatedTeam);
 
