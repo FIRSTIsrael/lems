@@ -62,7 +62,7 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
   TeamArrivedMutationVariables
 > = gql`
   mutation TeamArrived($teamId: String!, $divisionId: String!) {
-    teamArrived(teamId: $teamId, divisionId: $divisionId) {}
+    teamArrived(teamId: $teamId, divisionId: $divisionId)
   }
 `;
 

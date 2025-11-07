@@ -2,7 +2,8 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../database';
 import {
   createSubscriptionIterator,
-  isRecoveryGapMarker,
+  isGapMarker,
+  SubscriptionResult,
   BaseSubscriptionArgs
 } from './base-subscription';
 
@@ -42,13 +43,13 @@ const teamArrivalUpdatedSubscribe = (
 const processTeamArrivalEvent = async (
   divisionId: string,
   event: Record<string, unknown>
-): Promise<TeamWithDivisionId | null> => {
+): Promise<SubscriptionResult<TeamWithDivisionId>> => {
   // Check for gap marker (recovery buffer exceeded)
-  if (isRecoveryGapMarker(event.data as Record<string, unknown>)) {
+  if (isGapMarker(event.data)) {
     console.warn(
       `[TeamArrival] Recovery gap detected for division ${divisionId} - client should refetch`
     );
-    return event.data as TeamWithDivisionId; // Its actually just a gap marker
+    return event.data;
   }
 
   const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';
@@ -73,7 +74,7 @@ const processTeamArrivalEvent = async (
         .where('division_id', '=', divisionId)
         .executeTakeFirst();
 
-      const result = {
+      const result: TeamWithDivisionId = {
         id: team.id,
         divisionId,
         number: team.number,
@@ -97,7 +98,9 @@ const processTeamArrivalEvent = async (
  */
 export const teamArrivalUpdatedResolver = {
   subscribe: teamArrivalUpdatedSubscribe,
-  resolve: async (event: Record<string, unknown>): Promise<TeamWithDivisionId | null> => {
+  resolve: async (
+    event: Record<string, unknown>
+  ): Promise<SubscriptionResult<TeamWithDivisionId>> => {
     // The event contains division context from the subscription args
     const divisionId = (event as unknown as { divisionId: string }).divisionId;
     if (!divisionId) {

@@ -15,11 +15,27 @@ export interface BaseSubscriptionArgs {
 }
 
 /**
- * Result type for subscription generators.
- * All subscription generators should yield objects that extend this.
+ * Represents a recovery gap marker when subscription buffer is exceeded.
+ * Client should refetch initial data when receiving this event.
  */
-export interface BaseSubscriptionResult {
-  [key: string]: unknown;
+export interface RecoveryGapMarker {
+  _gap: true;
+  lastSeenVersion?: number;
+}
+
+/**
+ * Result type for subscription generators.
+ * Can be either the actual event data (T) or a RecoveryGapMarker.
+ */
+export type SubscriptionResult<T> = T | RecoveryGapMarker | null;
+
+/**
+ * Type guard to check if a subscription result is a gap marker.
+ * @param result - The subscription result to check
+ * @returns true if result is a RecoveryGapMarker
+ */
+export function isGapMarker<T>(result: SubscriptionResult<T>): result is RecoveryGapMarker {
+  return (result as RecoveryGapMarker)._gap;
 }
 
 /**
@@ -38,15 +54,4 @@ export async function createSubscriptionIterator(
 ) {
   const pubSub = getRedisPubSub();
   return pubSub.asyncIterator(divisionId, eventType, lastSeenVersion);
-}
-
-/**
- * Helper to check if an event is a gap marker (recovery buffer exceeded).
- * When a gap is detected, the client should refetch initial data.
- *
- * @param event - The event data to check
- * @returns true if event is a gap marker
- */
-export function isRecoveryGapMarker(event: Record<string, unknown>): boolean {
-  return event._gap as boolean;
 }

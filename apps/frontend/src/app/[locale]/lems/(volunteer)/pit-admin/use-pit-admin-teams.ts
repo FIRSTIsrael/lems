@@ -66,7 +66,7 @@ export function usePitAdminTeams(divisionId: string): UsePitAdminTeamsResult {
       const updatedTeam = subscriptionData.teamArrivalUpdated;
 
       // Check if this is a gap marker (recovery buffer exceeded, client was offline > 30 seconds)
-      if ((updatedTeam as unknown as Record<string, unknown>)._gap) {
+      if (typeof updatedTeam === 'object' && updatedTeam !== null && '_gap' in updatedTeam) {
         console.warn('[PitAdmin] Recovery gap detected - refetching initial data');
         // Refetch initial data since we missed too many updates
         refetchTeams().catch(error => {
