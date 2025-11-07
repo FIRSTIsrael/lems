@@ -1,4 +1,3 @@
-import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
 import db from '../../../database';
@@ -16,22 +15,27 @@ interface TeamWithDivisionId {
   city: string;
 }
 
-/**
- * Resolver for Subscription.teamArrivalUpdated
- * Subscribes to team arrival events for a specific division
- */
-export const teamArrivalUpdatedResolver: GraphQLFieldResolver<
-  unknown,
-  unknown,
-  TeamArrivalUpdatedArgs,
-  AsyncGenerator<TeamWithDivisionId, void, unknown>
-> = async function* (_root, { divisionId }) {
+async function* teamArrivalUpdatedGenerator(
+  _root: unknown,
+  args: TeamArrivalUpdatedArgs
+): AsyncGenerator<TeamWithDivisionId, void, unknown> {
+  const { divisionId } = args;
+
+  if (!divisionId) {
+    throw new Error('divisionId is required for teamArrivalUpdated subscription');
+  }
+
   try {
     const pubSub = getRedisPubSub();
+    const iterator = pubSub.asyncIterator(divisionId, [RedisEventTypes.TEAM_ARRIVED]);
 
-    for await (const event of pubSub.asyncIterator(divisionId, [RedisEventTypes.TEAM_ARRIVED])) {
+    for await (const event of iterator) {
       try {
         const teamId = (event.data.teamId as string) || '';
+
+        if (!teamId) {
+          continue;
+        }
 
         const team = await db.raw.sql
           .selectFrom('teams')
@@ -40,7 +44,7 @@ export const teamArrivalUpdatedResolver: GraphQLFieldResolver<
           .executeTakeFirst();
 
         if (team) {
-          yield {
+          const result = {
             id: team.id,
             divisionId,
             number: team.number,
@@ -48,14 +52,42 @@ export const teamArrivalUpdatedResolver: GraphQLFieldResolver<
             affiliation: team.affiliation,
             city: team.city
           };
+          yield result;
         }
       } catch (error) {
         console.error('Error processing team arrival event:', error);
-        // Continue processing events even if one fails
       }
     }
   } catch (error) {
     console.error('Error in teamArrivalUpdated subscription:', error);
     throw error;
+  }
+}
+
+/**
+ * Resolver function for the teamArrivalUpdated subscription field
+ * Returns an async generator that yields team data
+ */
+const teamArrivalUpdatedSubscribe = (root: unknown, args: unknown) => {
+  const typedArgs = args as TeamArrivalUpdatedArgs;
+
+  if (!typedArgs || !typedArgs.divisionId) {
+    const errorMsg = 'divisionId is required for teamArrivalUpdated subscription';
+    throw new Error(errorMsg);
+  }
+
+  const generator = teamArrivalUpdatedGenerator(root, typedArgs);
+
+  return generator;
+};
+
+/**
+ * Subscription resolver object for teamArrivalUpdated
+ * GraphQL subscriptions require a subscribe function
+ */
+export const teamArrivalUpdatedResolver = {
+  subscribe: teamArrivalUpdatedSubscribe,
+  resolve: (team: TeamWithDivisionId) => {
+    return team;
   }
 };
