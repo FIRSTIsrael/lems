@@ -1,6 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { OperationVariables, TypedDocumentNode } from '@apollo/client';
+import { useConnectionState } from '../../../../../lib/graphql/apollo-client-provider';
+
+/**
+ * Maximum time (in milliseconds) the client can recover from events.
+ * If disconnected for longer than this, a full refetch is required.
+ */
+const RECOVERY_WINDOW_MS = 30_000; // 30 seconds
 
 /**
  * Detects if a subscription data object contains a gap marker.
@@ -105,6 +112,9 @@ export function usePageData<
   const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
   const eventVersionsRef = useRef<Map<number, number>>(new Map());
 
+  const { state: connectionState } = useConnectionState();
+  const disconnectionTimeRef = useRef<number | null>(null);
+
   if (subscriptions?.length !== subscriptionCountRef.current) {
     throw new Error(
       `[usePageData] Subscription count changed from ${subscriptionCountRef.current} to ${subscriptions?.length}. ` +
@@ -142,6 +152,36 @@ export function usePageData<
     fetchPolicy: 'network-only'
   });
 
+  // Trigger refetch if disconnected for too long
+  useEffect(() => {
+    if (connectionState === 'connected' && disconnectionTimeRef.current !== null) {
+      const disconnectionDuration = Date.now() - disconnectionTimeRef.current;
+
+      if (disconnectionDuration > RECOVERY_WINDOW_MS) {
+        console.warn(
+          `[usePageData] Connection restored after ${disconnectionDuration}ms (> ${RECOVERY_WINDOW_MS}ms recovery window) - triggering refetch`
+        );
+
+        // Clear versions to force full resubscription
+        eventVersionsRef.current.clear();
+        subscriptions?.forEach((_, index) => {
+          sessionStorage.removeItem(`page-data-version:${index}`);
+        });
+
+        refetchData().catch(err =>
+          console.error('[usePageData] Failed to refetch after reconnection:', err)
+        );
+      }
+
+      disconnectionTimeRef.current = null;
+    } else {
+      if (disconnectionTimeRef.current === null) {
+        disconnectionTimeRef.current = Date.now();
+        console.log('[usePageData] Connection lost');
+      }
+    }
+  }, [connectionState, refetchData, subscriptions]);
+
   // Initialize data when query data arrives
   useEffect(() => {
     let parsedData: TData;
@@ -166,6 +206,13 @@ export function usePageData<
     subscriptions.forEach((config, index) => {
       const lastSeenVersion = eventVersionsRef.current.get(index);
 
+      console.log(
+        '[usePageData] Setting up subscription',
+        index,
+        'with lastSeenVersion:',
+        lastSeenVersion
+      );
+
       const subscriptionVariables = lastSeenVersion
         ? { ...config.subscriptionVariables, lastSeenVersion }
         : config.subscriptionVariables;
@@ -177,6 +224,8 @@ export function usePageData<
           prev: TResult,
           { subscriptionData }: { subscriptionData: { data?: unknown } }
         ) => {
+          console.log('got data from subscription', index, subscriptionData);
+
           if (!subscriptionData.data) {
             return prev;
           }
