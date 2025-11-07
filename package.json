@@ -54,7 +54,7 @@
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.8",
     "merge-anything": "^6.0.6",
-    "mongodb": "^6.18.0",
+    "mongodb": "^7.0.0",
     "morgan": "^1.10.1",
     "motion": "^12.23.24",
     "nanoid": "^5.1.6",
