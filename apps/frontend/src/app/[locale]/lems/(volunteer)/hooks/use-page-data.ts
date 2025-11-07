@@ -109,11 +109,14 @@ export function usePageData<
   subscriptions?: SubscriptionConfig<unknown, TResult, TSubVars>[]
 ): UsePageDataResult<TData> {
   const [data, setData] = useState<TData | undefined>(undefined);
-  const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
   const eventVersionsRef = useRef<Map<number, number>>(new Map());
 
   const { state: connectionState } = useConnectionState();
+  const initialized = useRef(false);
   const disconnectionTimeRef = useRef<number | null>(null);
+
+  const [resubscribe, setResubscribe] = useState(0); // Update to re-run subscriptions
+  const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
 
   if (subscriptions?.length !== subscriptionCountRef.current) {
     throw new Error(
@@ -121,25 +124,6 @@ export function usePageData<
         'The subscriptions array must remain stable between renders. Use useMemo() to memoize the array.'
     );
   }
-
-  // Initialize versions from sessionStorage on mount
-  useEffect(() => {
-    subscriptions?.forEach((config, index) => {
-      const stored = sessionStorage.getItem(`page-data-version:${index}`);
-      if (stored) {
-        try {
-          const version = parseInt(stored, 10);
-          eventVersionsRef.current.set(index, version);
-        } catch (error) {
-          console.warn(
-            `[usePageData] Failed to parse stored version for subscription ${index}:`,
-            error
-          );
-          sessionStorage.removeItem(`page-data-version:${index}`);
-        }
-      }
-    });
-  }, [subscriptions]);
 
   const {
     data: queryData,
@@ -154,28 +138,33 @@ export function usePageData<
 
   // Trigger refetch if disconnected for too long
   useEffect(() => {
-    if (connectionState === 'connected' && disconnectionTimeRef.current !== null) {
-      const disconnectionDuration = Date.now() - disconnectionTimeRef.current;
+    if (connectionState === 'connected') {
+      initialized.current = true;
 
-      if (disconnectionDuration > RECOVERY_WINDOW_MS) {
-        console.warn(
-          `[usePageData] Connection restored after ${disconnectionDuration}ms (> ${RECOVERY_WINDOW_MS}ms recovery window) - triggering refetch`
-        );
+      if (disconnectionTimeRef.current !== null) {
+        const disconnectionDuration = Date.now() - disconnectionTimeRef.current;
+        console.log(disconnectionDuration);
 
-        // Clear versions to force full resubscription
-        eventVersionsRef.current.clear();
-        subscriptions?.forEach((_, index) => {
-          sessionStorage.removeItem(`page-data-version:${index}`);
-        });
+        if (disconnectionDuration > RECOVERY_WINDOW_MS) {
+          console.warn(
+            `[usePageData] Connection restored after ${disconnectionDuration}ms (> ${RECOVERY_WINDOW_MS}ms recovery window) - triggering refetch`
+          );
 
-        refetchData().catch(err =>
-          console.error('[usePageData] Failed to refetch after reconnection:', err)
-        );
+          // Clear versions to force full resubscription
+          eventVersionsRef.current.clear();
+
+          refetchData().catch(err =>
+            console.error('[usePageData] Failed to refetch after reconnection:', err)
+          );
+        } else {
+          // Recover potentially missed events
+          setResubscribe(prev => prev + 1);
+        }
+
+        disconnectionTimeRef.current = null;
       }
-
-      disconnectionTimeRef.current = null;
     } else {
-      if (disconnectionTimeRef.current === null) {
+      if (initialized.current && disconnectionTimeRef.current === null) {
         disconnectionTimeRef.current = Date.now();
         console.log('[usePageData] Connection lost');
       }
@@ -234,7 +223,6 @@ export function usePageData<
 
             // Reset version tracking on gap
             eventVersionsRef.current.delete(index);
-            sessionStorage.removeItem(`page-data-version:${index}`);
 
             // Refetch full data to recover from gap
             refetchData().catch(err =>
@@ -250,7 +238,6 @@ export function usePageData<
           const newVersion = extractVersionFromData(subscriptionData.data);
           if (newVersion !== undefined) {
             eventVersionsRef.current.set(index, newVersion);
-            sessionStorage.setItem(`page-data-version:${index}`, String(newVersion));
           }
 
           return updated || prev;
@@ -263,9 +250,10 @@ export function usePageData<
     return () => {
       unsubscribers.forEach(unsub => unsub());
     };
-    // queryData is only needed to trigger this effect once when data arrives
+
+    // queryData does not need to by in the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subscriptions, subscribeToMore, refetchData, !!queryData]);
+  }, [subscriptions, subscribeToMore, refetchData, !!queryData, resubscribe]);
 
   return {
     data,

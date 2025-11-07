@@ -152,7 +152,7 @@ function makeClient(
 }
 
 export function ApolloClientProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ConnectionState>('connected');
+  const [state, setState] = useState<ConnectionState>('disconnected');
   const [lastError, setLastError] = useState<Error | null>(null);
 
   const value: ConnectionStateContextType = useMemo(
