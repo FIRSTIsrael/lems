@@ -14,11 +14,14 @@ export class SubscriptionManager {
 
   constructor() {
     // Periodically clean up unused broadcasters
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup().catch(error => {
-        console.error('[Redis:cleanup] Cleanup interval failed:', error);
-      });
-    }, 60_000); // 60 seconds
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup().catch(error => {
+          console.error('[Redis:cleanup] Cleanup interval failed:', error);
+        });
+      },
+      60 * 1000 * 60
+    ); // 60 minutes
     this.cleanupInterval.unref();
   }
 

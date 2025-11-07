@@ -2,7 +2,7 @@ import Redis from 'ioredis';
 
 let redisClient: Redis | null = null;
 
-function createRedisClient(): Redis {
+const createRedisClient = (): Redis => {
   redisClient = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
@@ -35,19 +35,19 @@ function createRedisClient(): Redis {
   });
 
   return redisClient;
-}
+};
 
-export function getRedisClient(): Redis {
+export const getRedisClient = (): Redis => {
   if (!redisClient || redisClient.status === 'end') {
     return createRedisClient();
   }
   return redisClient;
-}
+};
 
-export async function closeRedisClient(): Promise<void> {
+export const closeRedisClient = async (): Promise<void> => {
   if (redisClient) {
     await redisClient.quit();
     redisClient = null;
     console.log('✅ Redis client closed');
   }
-}
+};

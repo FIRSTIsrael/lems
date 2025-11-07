@@ -3,7 +3,7 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisClient } from './redis-client';
 import { SubscriptionManager } from './subscription-manager';
 import { RedisEvent } from './subscription-broadcaster';
-export { RedisEvent } from './subscription-broadcaster';
+export { RedisEvent } from './subscription-broadcaster'; // Re-export for external usage
 
 let pubSubInstance: RedisPubSub | null = null;
 
@@ -13,8 +13,10 @@ let pubSubInstance: RedisPubSub | null = null;
 export class RedisPubSub {
   private publisher: Redis;
   private subscriptionManager: SubscriptionManager;
+
   private readonly messageRetentionMs = 30 * 1000; // 30 seconds
   private readonly maxRecoverySize = 1000;
+  private readonly idleTimeoutMs = 60 * 60 * 1000; // 1 hour of inactivity will close the subscription
 
   constructor() {
     this.publisher = getRedisClient();
@@ -33,14 +35,15 @@ export class RedisPubSub {
       const versionKey = this.getVersionKey(divisionId, eventType);
       const version = await this.publisher.incr(versionKey);
 
-      // Set TTL on version key (35 seconds) to prevent unbounded growth
-      // Versions are only recoverable for 30 seconds, so a short TTL is sufficient
-      await this.publisher.expire(versionKey, 35);
+      // Set TTL on version key (60 seconds) to prevent unbounded growth
+      // 30 seconds recovery window + 30 seconds buffer
+      await this.publisher.expire(versionKey, 60);
 
+      const timestamp = Date.now();
       const event: RedisEvent = {
         type: eventType,
         divisionId,
-        timestamp: Date.now(),
+        timestamp,
         data,
         version
       };
@@ -52,13 +55,12 @@ export class RedisPubSub {
 
       // Buffer event for recovery
       const bufferKey = `buffer:${divisionId}:${eventType}`;
-      const timestamp = Date.now();
       pipeline.zadd(bufferKey, timestamp, JSON.stringify(event));
       pipeline.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
 
-      // Set TTL on buffer (35 seconds) to prevent unbounded growth
-      // Versions are only recoverable for 30 seconds, so a short TTL is sufficient
-      pipeline.expire(bufferKey, 35); // Expires if no events published for 2 minutes
+      // Set TTL on buffer (60 seconds) to prevent unbounded growth
+      // 30 seconds recovery window + 30 seconds buffer
+      pipeline.expire(bufferKey, 60);
 
       const results = await pipeline.exec();
 
@@ -92,8 +94,6 @@ export class RedisPubSub {
     broadcaster.incrementSubscribers();
 
     const messageQueue: RedisEvent[] = [];
-    const maxQueueSize = 1000;
-    const idleTimeoutMs = 60 * 60 * 1000; // 1 hour of inactivity will close the subscription
     let resolveWait: (() => void) | null = null;
     let timeoutHandle: NodeJS.Timeout | null = null;
     let isActive = true;
@@ -102,7 +102,7 @@ export class RedisPubSub {
       if (!isActive) return;
 
       // Disconnect slow consumers, they should refetch initial data
-      if (messageQueue.length >= maxQueueSize) {
+      if (messageQueue.length >= this.maxRecoverySize) {
         console.warn(
           `[Redis:backpressure] Client exceeded queue limit for division ${divisionId}, disconnecting`
         );
@@ -163,7 +163,7 @@ export class RedisPubSub {
                 resolveWait();
                 resolveWait = null;
               }
-            }, idleTimeoutMs);
+            }, this.idleTimeoutMs);
           });
 
           // Exit after idle timeout to free resources
@@ -184,9 +184,6 @@ export class RedisPubSub {
     }
   }
 
-  /**
-   * Shutdown the pub/sub system and cleanup resources
-   */
   async shutdown(): Promise<void> {
     await this.subscriptionManager.shutdown();
   }
@@ -207,7 +204,6 @@ export class RedisPubSub {
 
   /**
    * Recover missed events from buffer for a specific event type.
-   * Uses Redis to check current version.
    */
   private async recoverMissedEvents(
     divisionId: string,
@@ -217,7 +213,6 @@ export class RedisPubSub {
     const bufferKey = `buffer:${divisionId}:${eventType}`;
     const versionKey = this.getVersionKey(divisionId, eventType);
 
-    // Get current server version from Redis
     const serverVersionStr = await this.publisher.get(versionKey);
     const serverVersion = serverVersionStr ? parseInt(serverVersionStr, 10) : 0;
 
@@ -254,16 +249,16 @@ export class RedisPubSub {
   }
 }
 
-export function getRedisPubSub(): RedisPubSub {
+export const getRedisPubSub = (): RedisPubSub => {
   if (!pubSubInstance) {
     pubSubInstance = new RedisPubSub();
   }
   return pubSubInstance;
-}
+};
 
-export async function shutdownRedisPubSub(): Promise<void> {
+export const shutdownRedisPubSub = async (): Promise<void> => {
   if (pubSubInstance) {
     await pubSubInstance.shutdown();
     pubSubInstance = null;
   }
-}
+};
