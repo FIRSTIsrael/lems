@@ -83,9 +83,12 @@ router.get(
       for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           const eventResult = { eventName: event.name, eventSlug: event.slug };
+          const eventSettings = await db.events.byId(event.id).getSettings();
 
           const awards = await db.awards.byDivisionId(division.id).getAll();
-          eventResult['awards'] = awards.filter(award => award.winner_id === req.teamId);
+          eventResult['awards'] = eventSettings.published
+            ? awards.filter(award => award.winner_id === req.teamId)
+            : [];
 
           const matches = await db.robotGameMatches.byDivisionId(division.id).getAll();
           eventResult['matches'] = matches

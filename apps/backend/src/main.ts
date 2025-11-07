@@ -81,7 +81,7 @@ const serverCleanup = useServer(
 );
 console.log('✅ WebSocket server initialized for subscriptions');
 
-// GraphQL: Initialize Apollo Server
+// GraphQL: Initialize Apollo Server and register middleware
 // This must be registered before the routers to ensure /lems/graphql
 // takes precedence over /lems/* routes
 const apolloServer = createApolloServer(server, serverCleanup);

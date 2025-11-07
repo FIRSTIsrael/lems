@@ -45,8 +45,8 @@ export class SubscriptionBroadcaster extends EventEmitter {
       }
     });
 
-    const channels = Array.from(this.eventTypes).map(et =>
-      this.getChannelName(this.divisionId, et)
+    const channels = Array.from(this.eventTypes).map(eventType =>
+      this.getChannelName(this.divisionId, eventType)
     );
 
     try {
