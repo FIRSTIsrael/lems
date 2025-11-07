@@ -23,7 +23,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cookies());
-app.use(morgan('combined'));
+app.use(morgan('tiny'));
 
 const corsOptions = {
   origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],
