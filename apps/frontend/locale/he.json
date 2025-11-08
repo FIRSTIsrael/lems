@@ -4,6 +4,8 @@
       "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
       "submitting": "טוען...",
+      "loading": "טוען...",
+      "loadingRole": "טוען נתוני תפקיד...",
       "sign-in": "התחברות",
       "steps": {
         "role": "בחרו תפקיד",
@@ -54,6 +56,14 @@
         "back-home": "חזרה לעמוד הבית",
         "try-again": "ניסיון נוסף"
       }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "מחובר",
+      "reconnecting": "מתחבר...",
+      "disconnected": "מנותק",
+      "error": "שגיאה"
     }
   }
 }

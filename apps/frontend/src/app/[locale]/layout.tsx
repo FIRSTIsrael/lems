@@ -5,6 +5,7 @@ import { Roboto, Heebo } from 'next/font/google';
 import { Locales, configureDayjs } from '@lems/localization';
 import { SWRProvider } from '@lems/shared';
 import { routing } from '../../i18n/routing';
+import { ApolloClientProvider } from '../../lib/graphql/apollo-client-provider';
 import { MuiProvider } from './mui-provider';
 
 export const metadata: Metadata = {
@@ -50,9 +51,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <SWRProvider>
-            <MuiProvider locale={locale}>{children}</MuiProvider>
-          </SWRProvider>
+          <ApolloClientProvider>
+            <SWRProvider>
+              <MuiProvider locale={locale}>{children}</MuiProvider>
+            </SWRProvider>
+          </ApolloClientProvider>
         </NextIntlClientProvider>
       </body>
     </html>

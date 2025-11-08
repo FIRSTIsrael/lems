@@ -6,6 +6,10 @@ interface TeamWithDivisionId {
   divisionId: string;
 }
 
+/**
+ * Resolver for Team.arrived field.
+ * Fetches whether a team has arrived in a specific division.
+ */
 export const teamArrivalResolver: GraphQLFieldResolver<
   TeamWithDivisionId,
   unknown,

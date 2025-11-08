@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
-import { EventGraphQL } from './resolver';
+import type { EventGraphQL } from './resolver';
 
 export type RoleInfoData = TableRoleInfo | RoomRoleInfo | CategoryRoleInfo;
 
@@ -32,6 +32,10 @@ export interface DivisionGraphQL {
   id: string;
 }
 
+/**
+ * Resolver for Volunteer.divisions field.
+ * Fetches all divisions a volunteer is assigned to.
+ */
 export const volunteerDivisionsResolver: GraphQLFieldResolver<
   VolunteerGraphQL,
   unknown,
@@ -39,7 +43,6 @@ export const volunteerDivisionsResolver: GraphQLFieldResolver<
   Promise<DivisionGraphQL[]>
 > = async (volunteer: VolunteerGraphQL) => {
   try {
-    // Fetch all divisions assigned to this specific volunteer via the junction table
     const divisions = await db.raw.sql
       .selectFrom('event_user_divisions')
       .innerJoin('divisions', 'divisions.id', 'event_user_divisions.division_id')
@@ -54,6 +57,10 @@ export const volunteerDivisionsResolver: GraphQLFieldResolver<
   }
 };
 
+/**
+ * Resolver for Event.volunteers field.
+ * Fetches all volunteers for an event, optionally filtered by role.
+ */
 export const volunteersResolver: GraphQLFieldResolver<
   EventGraphQL,
   unknown,
@@ -72,15 +79,14 @@ export const volunteersResolver: GraphQLFieldResolver<
       ])
       .distinct();
 
-    // If a specific role is requested, filter by role
+    // Filter by role if specified
     if (args.role) {
       query = query.where('event_users.role', '=', args.role);
     }
 
-    const rolesResult = await query.execute();
+    const volunteers = await query.execute();
 
-    // Transform the results into VolunteerGraphQL objects with eventId and roleInfo
-    return rolesResult.map(row => ({
+    return volunteers.map(row => ({
       id: row.id,
       role: row.role,
       roleInfo: row.role_info ? (row.role_info as unknown as RoleInfoData) : null,

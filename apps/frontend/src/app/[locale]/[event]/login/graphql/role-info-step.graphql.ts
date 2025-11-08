@@ -1,33 +1,22 @@
-import { z } from 'zod';
-import { graphqlFetch } from '@lems/shared';
+import { gql } from '@apollo/client';
+import type { TypedDocumentNode } from '@apollo/client';
 
-export const TableSchema = z.object({
-  id: z.string(),
-  name: z.string()
-});
+type GetDivisionVenueQuery = {
+  division: {
+    id: string;
+    tables: { id: string; name: string }[];
+    rooms: { id: string; name: string }[];
+  } | null;
+};
 
-export const RoomSchema = z.object({
-  id: z.string(),
-  name: z.string()
-});
+type GetDivisionVenueQueryVariables = {
+  id: string;
+};
 
-export const DivisionRoleInfoSchema = z.object({
-  id: z.string(),
-  tables: z.array(TableSchema),
-  rooms: z.array(RoomSchema)
-});
-
-export type Table = z.infer<typeof TableSchema>;
-export type Room = z.infer<typeof RoomSchema>;
-export type DivisionRoleInfo = z.infer<typeof DivisionRoleInfoSchema>;
-
-export const DivisionRoleInfoResponseSchema = z.object({
-  division: DivisionRoleInfoSchema.nullable()
-});
-
-export type DivisionRoleInfoResponseData = z.infer<typeof DivisionRoleInfoResponseSchema>;
-
-const DIVISION_VENUE_QUERY = `
+export const GET_DIVISION_VENUE_QUERY: TypedDocumentNode<
+  GetDivisionVenueQuery,
+  GetDivisionVenueQueryVariables
+> = gql`
   query GetDivisionVenue($id: String!) {
     division(id: $id) {
       id
@@ -42,18 +31,3 @@ const DIVISION_VENUE_QUERY = `
     }
   }
 `;
-
-/**
- * Fetch tables and rooms for a specific division
- */
-export const fetchDivisionVenue = async (divisionId: string) => {
-  const response = await graphqlFetch(DIVISION_VENUE_QUERY, DivisionRoleInfoResponseSchema, {
-    id: divisionId
-  });
-
-  if (!response.division) {
-    throw new Error(`Division with ID ${divisionId} not found`);
-  }
-
-  return response.division;
-};

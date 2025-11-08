@@ -20,6 +20,7 @@ router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) 
 
   // Must exist, because it was returned from the DB when checking registration
   const division = await db.divisions.byId(teamRegistration).get();
+  const eventSettings = await db.events.byId(event.id).getSettings();
 
   const [teamAwards, teamMatches, teamSession, rooms, tables] = await Promise.all([
     db.awards.byDivisionId(division.id).getByTeam(req.teamId),
@@ -33,7 +34,7 @@ router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) 
     event,
     division,
     team,
-    teamAwards,
+    eventSettings.published ? teamAwards : [],
     teamMatches,
     tables,
     teamSession,

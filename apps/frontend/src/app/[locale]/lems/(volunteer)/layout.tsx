@@ -1,6 +1,7 @@
 import { apiFetch } from '@lems/shared';
 import { LemsUser } from '@lems/types/api/lems';
-import { fetchEventData } from './graphql/event-data.graphql';
+import { getClient } from '../../../../lib/graphql/ssr-client';
+import { GET_VOLUNTEER_EVENT_DATA_QUERY } from './layout.graphql';
 import { EventProvider } from './components/event-context';
 
 interface VolunteerLayoutProps {
@@ -18,7 +19,21 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
   const { eventId } = user;
 
   try {
-    const eventData = await fetchEventData(eventId);
+    const client = getClient();
+    const result = await client.query({
+      query: GET_VOLUNTEER_EVENT_DATA_QUERY,
+      variables: { eventId }
+    });
+
+    if (!result.data?.event) {
+      throw new Error('Event not found');
+    }
+
+    const eventData = result.data;
+
+    if (!eventData.event) {
+      throw new Error('Event not found');
+    }
 
     if (!eventData.event.divisions || eventData.event.divisions.length === 0) {
       throw new Error('No divisions available for this event');

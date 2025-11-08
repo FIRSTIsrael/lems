@@ -1,6 +1,14 @@
 'use client';
 
-import { Typography, Autocomplete, TextField, Box, Paper, alpha } from '@mui/material';
+import {
+  Typography,
+  Autocomplete,
+  TextField,
+  Box,
+  Paper,
+  alpha,
+  CircularProgress
+} from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { useRoleTranslations } from '@lems/localization';
@@ -12,8 +20,15 @@ export function RoleStep() {
   const t = useTranslations('pages.login');
   const { getRole } = useRoleTranslations();
   const { values, isSubmitting, setFieldValue } = useFormikContext<LoginFormValues>();
-  const { allRoles, setSelectedRole, volunteerData, needsDivision, needsRoleInfo, needsUser } =
-    useVolunteer();
+  const {
+    allRoles,
+    setSelectedRole,
+    volunteerData,
+    needsDivision,
+    needsRoleInfo,
+    needsUser,
+    isLoadingVolunteerData
+  } = useVolunteer();
 
   const handleNext = async () => {
     if (needsDivision) {
@@ -62,12 +77,24 @@ export function RoleStep() {
         options={allRoles}
         value={values.role || null}
         onChange={handleRoleChange}
+        loading={isLoadingVolunteerData}
         renderInput={params => (
           <TextField
             {...params}
             label={t('fields.role')}
             required
             disabled={isSubmitting}
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isLoadingVolunteerData ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                )
+              }
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
