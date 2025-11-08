@@ -127,7 +127,7 @@ export const ScoreboardTab = () => {
                 ? 'silver'
                 : entry.robotGameRank === 3
                   ? '#CD7F32'
-                  : 'text.secondary';
+                  : '#1976d2';
 
           return (
             <Paper
@@ -157,9 +157,9 @@ export const ScoreboardTab = () => {
                     minWidth: 40,
                     fontWeight: 600,
                     bgcolor:
-                      entry.robotGameRank && entry.robotGameRank <= 3 ? rankColor : 'grey.300',
-                    color:
-                      entry.robotGameRank && entry.robotGameRank <= 3 ? 'white' : 'text.primary',
+                      entry.robotGameRank && entry.robotGameRank <= 3 ? rankColor : 'transparent',
+                    color: entry.robotGameRank && entry.robotGameRank <= 3 ? 'white' : 'black',
+                    border: entry.robotGameRank && entry.robotGameRank <= 3 ? 'none' : 'black',
                     mr: 2
                   }}
                 />
