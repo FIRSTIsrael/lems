@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import useSWR from 'swr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
@@ -9,16 +10,19 @@ import { RichText } from '@lems/localization';
 
 interface EventsPageHeaderProps {
   currentSeason: Season;
-  seasons: Season[];
 }
 
 export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
-  currentSeason,
-  seasons
+  currentSeason
 }: EventsPageHeaderProps) => {
   const t = useTranslations('pages.events');
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const { data: seasons = [] } = useSWR<Season[]>('/portal/seasons', {
+    suspense: true,
+    fallbackData: []
+  });
 
   const handleSeasonChange = (seasonSlug: string) => {
     const params = new URLSearchParams(searchParams.toString());

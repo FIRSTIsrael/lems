@@ -81,7 +81,7 @@
     },
     "team": {
       "not-found": {
-        "title": "Team #{number} Not Found",
+        "title": "Team not Found",
         "description": "The team you're looking for doesn't exist in our database.",
         "back-to-teams": "Back to Teams"
       },

@@ -19,9 +19,7 @@ const EventPage = () => {
     fallbackData: null
   });
 
-  if (error) {
-    throw new Error('Failed to load event data.');
-  }
+  if (error) throw new Error('Failed to load event data.');
 
   if (!eventData || !eventData.divisions || eventData.divisions.length === 0) {
     return null; // Should be handled by suspense
