@@ -132,8 +132,9 @@
       },
       "scoreboard": {
         "rank": "דירוג",
-        "best-score": "ניקוד הטוב ביותר",
+        "best-score": "ניקוד מירבי",
         "match": "מקצה",
+        "match-scores": "תוצאות מקצים",
         "no-data": "אין נתוני לוח תוצאות זמינים"
       },
       "field-schedule": {

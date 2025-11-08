@@ -134,6 +134,7 @@
         "rank": "Rank",
         "best-score": "Best Score",
         "match": "Match",
+        "match-scores": "Match Scores",
         "no-data": "No scoreboard data available"
       },
       "field-schedule": {
