@@ -3,7 +3,7 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisClient } from './redis-client';
 import { SubscriptionManager } from './subscription-manager';
 import { RedisEvent } from './subscription-broadcaster';
-export { RedisEvent } from './subscription-broadcaster'; // Re-export for external usage
+export type { RedisEvent }; // Re-export for convenience
 
 let pubSubInstance: RedisPubSub | null = null;
 
