@@ -1,10 +1,22 @@
 'use client';
 
+import React from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography, useMediaQuery, Paper, Stack } from '@mui/material';
+import {
+  Box,
+  Typography,
+  useMediaQuery,
+  Paper,
+  Stack,
+  Collapse,
+  IconButton,
+  Chip,
+  Divider
+} from '@mui/material';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DivisionScoreboardEntry } from '@lems/types/api/portal';
 import { useDivisionData } from '../division-data-context';
@@ -19,6 +31,8 @@ export const ScoreboardTab = () => {
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const { scoreboard: data, teams } = useDivisionData();
+
+  const [expandedTeams, setExpandedTeams] = React.useState<Set<string>>(new Set());
 
   const numberOfMatches = Math.max(...data.map(entry => entry.scores?.length || 0));
   const sortedData = [...data].sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
@@ -89,106 +103,139 @@ export const ScoreboardTab = () => {
       );
     }
 
+    const toggleTeamExpansion = (teamId: string) => {
+      const newExpanded = new Set(expandedTeams);
+      if (newExpanded.has(teamId)) {
+        newExpanded.delete(teamId);
+      } else {
+        newExpanded.add(teamId);
+      }
+      setExpandedTeams(newExpanded);
+    };
+
     return (
-      <Box sx={{ width: '100%', overflowX: 'auto' }}>
-        <Box
-          display="grid"
-          gridTemplateColumns={`50px 80px 70px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
-          gap={1}
-          sx={{
-            bgcolor: 'grey.100',
-            p: 1,
-            borderRadius: '4px 4px 0 0',
-            minWidth: 200 + numberOfMatches * 60 + (numberOfMatches + 2) * 8
-          }}
-        >
-          <Typography variant="body2" fontWeight={600} textAlign="center">
-            {t('scoreboard.rank')}
-          </Typography>
-          <Typography variant="body2" fontWeight={600}>
-            {t('team')}
-          </Typography>
-          <Typography variant="body2" fontWeight={600} textAlign="center">
-            {t('scoreboard.best-score')}
-          </Typography>
-          {Array.from({ length: numberOfMatches }, (_, index) => (
-            <Typography key={index} variant="body2" fontWeight={600} textAlign="center">
-              {t('scoreboard.match')} {index + 1}
-            </Typography>
-          ))}
-        </Box>
+      <Stack spacing={1}>
+        {sortedData.map(entry => {
+          const team = teams.find(t => t.id === entry.teamId);
+          if (!team) return null;
 
-        <Stack spacing={0}>
-          {sortedData.map((entry, rowIndex) => {
-            const team = teams.find(t => t.id === entry.teamId);
-            if (!team) return null;
+          const isExpanded = expandedTeams.has(entry.teamId);
+          const rankColor =
+            entry.robotGameRank === 1
+              ? 'gold'
+              : entry.robotGameRank === 2
+                ? 'silver'
+                : entry.robotGameRank === 3
+                  ? '#CD7F32'
+                  : 'text.secondary';
 
-            return (
+          return (
+            <Paper
+              key={entry.teamId}
+              sx={{
+                bgcolor: 'white',
+                border: '1px solid',
+                borderColor: 'grey.200'
+              }}
+            >
               <Box
-                key={entry.teamId}
-                display="grid"
-                gridTemplateColumns={`50px 80px 70px ${Array.from({ length: numberOfMatches }, () => '60px').join(' ')}`}
-                gap={1}
+                onClick={() => toggleTeamExpansion(entry.teamId)}
                 sx={{
-                  bgcolor: rowIndex % 2 === 0 ? 'white' : 'grey.50',
-                  p: 1,
-                  borderBottom: '1px solid',
-                  borderColor: 'grey.200',
-                  minWidth: 200 + numberOfMatches * 60 + (numberOfMatches + 2) * 8,
-                  alignItems: 'center'
+                  display: 'flex',
+                  alignItems: 'center',
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'grey.50'
+                  }
                 }}
               >
-                <Typography variant="body2" fontWeight={500} textAlign="center">
-                  {entry.robotGameRank ?? '-'}
-                </Typography>
-
-                <Typography
-                  component={Link}
-                  href={`/event/${eventSlug}/team/${team.number}`}
+                <Chip
+                  label={entry.robotGameRank ?? '-'}
+                  size="small"
                   sx={{
-                    textDecoration: 'none',
-                    color: 'text.primary',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                      color: 'primary.main'
-                    },
-                    fontWeight: 500,
-                    fontSize: '0.875rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    minWidth: 40,
+                    fontWeight: 600,
+                    bgcolor:
+                      entry.robotGameRank && entry.robotGameRank <= 3 ? rankColor : 'grey.300',
+                    color:
+                      entry.robotGameRank && entry.robotGameRank <= 3 ? 'white' : 'text.primary',
+                    mr: 2
                   }}
-                >
-                  #{team.number}
-                </Typography>
+                />
 
-                <Typography
-                  variant="body2"
-                  fontWeight={600}
-                  textAlign="center"
-                  color="primary.main"
-                >
-                  {entry.maxScore ?? '-'}
-                </Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography
+                    component={Link}
+                    href={`/event/${eventSlug}/team/${team.number}`}
+                    sx={{
+                      textDecoration: 'none',
+                      color: 'text.primary',
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      '&:hover': {
+                        color: 'primary.main'
+                      }
+                    }}
+                  >
+                    {team.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    #{team.number}
+                  </Typography>
+                </Box>
 
-                {Array.from({ length: numberOfMatches }, (_, index) => {
-                  const score = entry.scores?.[index];
-                  return (
-                    <Typography
-                      key={index}
-                      variant="body2"
-                      textAlign="center"
-                      color={score ? 'text.primary' : 'text.disabled'}
-                    >
-                      {score ?? '-'}
-                    </Typography>
-                  );
-                })}
+                <Box sx={{ textAlign: 'right', mr: 1 }}>
+                  <Typography variant="body2" color="text.secondary" fontSize="0.75rem">
+                    {t('scoreboard.best-score')}
+                  </Typography>
+                  <Typography variant="h6" fontWeight={600} color="primary.main">
+                    {entry.maxScore ?? '-'}
+                  </Typography>
+                </Box>
+
+                <IconButton size="small">{isExpanded ? <ExpandLess /> : <ExpandMore />}</IconButton>
               </Box>
-            );
-          })}
-        </Stack>
-      </Box>
+
+              <Collapse in={isExpanded}>
+                <Divider />
+                <Box sx={{ p: 2, pt: 1 }}>
+                  <Typography variant="body2" color="text.secondary" mb={1}>
+                    {t('scoreboard.match-scores')}
+                  </Typography>
+                  <Box display="flex" flexWrap="wrap" gap={1}>
+                    {Array.from({ length: numberOfMatches }, (_, index) => {
+                      const score = entry.scores?.[index];
+                      return (
+                        <Box
+                          key={index}
+                          sx={{
+                            minWidth: 60,
+                            p: 1,
+                            textAlign: 'center',
+                            bgcolor: score ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
+                            color: score ? 'primary.main' : 'text.disabled',
+                            borderRadius: 1,
+                            border: score === entry.maxScore ? '2px solid' : 'none',
+                            borderColor: score === entry.maxScore ? 'primary.main' : 'transparent'
+                          }}
+                        >
+                          <Typography variant="caption" display="block" fontSize="0.7rem">
+                            {t('scoreboard.match')} {index + 1}
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>
+                            {score ?? '-'}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              </Collapse>
+            </Paper>
+          );
+        })}
+      </Stack>
     );
   };
 
