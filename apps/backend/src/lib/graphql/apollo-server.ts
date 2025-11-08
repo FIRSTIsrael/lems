@@ -5,6 +5,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { Disposable } from 'graphql-ws';
 import { loadLemsGraphQLSchema } from '@lems/types/api/lems/graphql';
 import { resolvers } from './resolvers';
+import type { VolunteerUser } from './auth-context';
 
 export const typeDefs = loadLemsGraphQLSchema();
 export const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -13,10 +14,8 @@ export const schema = makeExecutableSchema({ typeDefs, resolvers });
  * GraphQL context object available to all resolvers.
  * Used for dependency injection (auth, dataloaders, etc.)
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GraphQLContext {
-  // Add context properties here (e.g., user, dataloaders, etc.)
-  // user?: User;
+  user?: VolunteerUser;
 }
 
 /**

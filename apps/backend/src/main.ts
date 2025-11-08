@@ -12,6 +12,7 @@ import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
 import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
+import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import lemsRouter from './routers/lems';
@@ -59,12 +60,9 @@ const wsServer = new WebSocketServer({
 const serverCleanup = useServer(
   {
     schema,
-    context: async (): Promise<GraphQLContext> => {
-      // TODO: Extract user from connection params or headers
-      // const user = await authenticate(connectionParams);
-      return {
-        // user,
-      };
+    context: async (ctx): Promise<GraphQLContext> => {
+      const user = await authenticateWebsocket(ctx.connectionParams);
+      return { user };
     },
     onConnect: async () => {
       console.log('[WebSocket] Client connected');
@@ -91,12 +89,9 @@ console.log('✅ Apollo Server initialized');
 app.use(
   '/lems/graphql',
   expressMiddleware(apolloServer, {
-    context: async (/* { req } */): Promise<GraphQLContext> => {
-      // TODO: Extract user from req.cookies or headers
-      // const user = await authenticate(req);
-      return {
-        // user,
-      };
+    context: async ({ req }): Promise<GraphQLContext> => {
+      const user = await authenticateHttp(req);
+      return { user };
     }
   })
 );

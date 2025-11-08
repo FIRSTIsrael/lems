@@ -20,9 +20,22 @@ class EventUserSelector {
     return query;
   }
 
-  async get(): Promise<EventUser | null> {
+  async get(): Promise<(EventUser & { divisions: string[] }) | null> {
     const eventUser = await this.getEventUserQuery().executeTakeFirst();
-    return eventUser || null;
+    if (!eventUser) {
+      return null;
+    }
+
+    const divisionsResult = await this.db
+      .selectFrom('event_user_divisions')
+      .select('division_id')
+      .where('user_id', '=', eventUser.id)
+      .execute();
+
+    return {
+      ...eventUser,
+      divisions: divisionsResult.map(row => row.division_id)
+    };
   }
 
   async delete(): Promise<void> {

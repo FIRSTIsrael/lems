@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
@@ -20,11 +21,23 @@ interface TeamEvent {
  */
 export const teamArrivedResolver: GraphQLFieldResolver<
   unknown,
-  unknown,
+  GraphQLContext,
   TeamArrivedArgs,
   Promise<TeamEvent>
-> = async (_root, { teamId, divisionId }) => {
+> = async (_root, { teamId, divisionId }, context) => {
   try {
+    if (!context.user) {
+      throw new Error('UNAUTHORIZED');
+    }
+
+    if (context.user.role !== 'pit-admin') {
+      throw new Error('FORBIDDEN');
+    }
+
+    if (!context.user.divisions.includes(divisionId)) {
+      throw new Error('FORBIDDEN');
+    }
+
     const existing = await db.raw.sql
       .selectFrom('team_divisions')
       .select(['pk'])
@@ -48,12 +61,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
 
-    // Return minimal response - version will be 0 since this is the immediate response
-    // The subscription will include the actual version from Redis
-    return {
-      teamId,
-      version: 0
-    };
+    return { teamId, version: -1 };
   } catch (error) {
     console.error(
       'Error updating team arrival status for team:',
