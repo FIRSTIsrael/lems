@@ -28,16 +28,14 @@ export const ScoreboardTab = () => {
         {t('quick-links.scoreboard')}
       </Typography>
 
-      {isDesktop && (
+      {isDesktop ? (
         <DesktopScoreboard
           sortedData={sortedData}
           teams={teams}
           matchesPerTeam={matchesPerTeam}
           eventSlug={eventSlug}
         />
-      )}
-
-      {!isDesktop && (
+      ) : (
         <MobileScoreboard
           sortedData={sortedData}
           teams={teams}
