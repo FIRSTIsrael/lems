@@ -215,11 +215,10 @@
   "layouts": {
     "main": {
       "app-bar": {
+        "teams": "קבוצות",
         "events": "אירועים",
         "scorer": "מחשבון ניקוד",
-        "field-timer": "טיימר מקצה זירה",
-        "rubrics": "מחווני שיפוט",
-        "judging-timer": "טיימר מפגש שיפוט"
+        "rubrics": "מחווני שיפוט"
       }
     }
   }

@@ -215,11 +215,10 @@
   "layouts": {
     "main": {
       "app-bar": {
+        "teams": "Teams",
         "events": "Events",
         "scorer": "Scorer",
-        "field-timer": "Field Timer",
-        "rubrics": "Rubrics",
-        "judging-timer": "Judging Timer"
+        "rubrics": "Rubrics"
       }
     }
   }
