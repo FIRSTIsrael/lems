@@ -396,6 +396,7 @@ class EventsSelector {
           location: row.location,
           team_count: 0,
           divisions: [],
+          visible: row.visible,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });

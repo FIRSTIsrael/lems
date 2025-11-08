@@ -48,6 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const events = await db.events.bySeason(season.id).getAllSummaries();
+
     res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }

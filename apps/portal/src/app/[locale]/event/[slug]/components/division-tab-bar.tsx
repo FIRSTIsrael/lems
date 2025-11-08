@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box } from '@mui/material';
 import { TeamsTab } from './tabs/teams-tab';
 import { DivisionDataProvider } from './division-data-context';
-import { ScoreboardTab } from './tabs/scoreboard-tab';
+import { ScoreboardTab } from './tabs/scoreboard/scoreboard-tab';
 import { AwardsTab } from './tabs/awards/awards-tab';
 import { FieldScheduleTab } from './tabs/field-schedule-tab';
 import { JudgingScheduleTab } from './tabs/judging-schedule-tab';
