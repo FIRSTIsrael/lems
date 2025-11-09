@@ -54,6 +54,9 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "teams": {
+      "title": "קבוצות <i>FIRST</i> LEGO League Challenge"
+    },
     "events": {
       "title": "אירועי <i>FIRST</i> LEGO League Challenge",
       "select-season": "בחרו עונה",

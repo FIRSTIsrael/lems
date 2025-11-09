@@ -172,6 +172,8 @@ class TeamsSelector {
 }
 
 export class TeamsRepository {
+  private readonly TEAMS_PER_PAGE = 200;
+
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
     private space: ObjectStorage
@@ -199,6 +201,22 @@ export class TeamsRepository {
       .orderBy('number', 'asc')
       .execute();
     return teams;
+  }
+
+  async getPage(page: number): Promise<Team[]> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .selectAll('teams')
+      .orderBy('number', 'asc')
+      .offset((page - 1) * this.TEAMS_PER_PAGE)
+      .limit(this.TEAMS_PER_PAGE)
+      .execute();
+    return teams;
+  }
+
+  async numberOfPages(): Promise<number> {
+    const count = await this.db.selectFrom('teams').select('id').execute();
+    return Math.ceil(count.length / this.TEAMS_PER_PAGE);
   }
 
   async search(searchTerm: string, limit: number): Promise<Team[]> {

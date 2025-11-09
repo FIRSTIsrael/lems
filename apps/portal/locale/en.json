@@ -110,6 +110,9 @@
         "view-details": "View Details"
       }
     },
+    "teams": {
+      "title": "<i>FIRST</i> LEGO League Challenge Teams"
+    },
     "event": {
       "general-info": "General Information",
       "event-date": "Event Date",
