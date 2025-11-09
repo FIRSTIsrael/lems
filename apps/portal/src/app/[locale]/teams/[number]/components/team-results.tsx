@@ -37,9 +37,14 @@ export const TeamResults: React.FC = () => {
         </Box>
       </Element>
       <Stack spacing={3} sx={{ mt: 3 }}>
-        {eventResults.map(eventResult => (
-          <TeamEventResultCard key={`event-${eventResult.eventSlug}`} eventResult={eventResult} />
-        ))}
+        {eventResults.map(eventResult => {
+          if (!eventResult.results) {
+            return null; // TODO: Event in progress card
+          }
+          return (
+            <TeamEventResultCard key={`event-${eventResult.eventSlug}`} eventResult={eventResult} />
+          );
+        })}
       </Stack>
     </Paper>
   );

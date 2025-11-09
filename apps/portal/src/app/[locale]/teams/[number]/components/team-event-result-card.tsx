@@ -30,7 +30,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
   };
 
   if (!eventResult.results) {
-    return null; // TODO: Result not published yet state
+    return null; // Should not call without results
   }
 
   const { awards, matches, robotGameRank } = eventResult.results;
