@@ -7,13 +7,13 @@ import { Season } from '@lems/types/api/portal';
 import { useTeam } from './team-context';
 
 interface SeasonSelectorProps {
-  season: string;
+  currentSeason: string;
 }
 
-export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ season }) => {
+export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason }) => {
   const team = useTeam();
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { data: seasons } = useSWR<Season[]>(() => `/portal/teams/${team.number}/seasons`, {
     suspense: true,
@@ -34,7 +34,7 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ season }) => {
     <Box p={2}>
       <FormControl size="small" fullWidth>
         <Select
-          value={season === 'latest' ? seasons[0].slug : season}
+          value={currentSeason === 'latest' ? seasons[0].slug : currentSeason}
           onChange={e => handleSeasonChange(e.target.value)}
           displayEmpty
         >

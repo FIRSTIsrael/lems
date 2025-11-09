@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PortalSeasonResponseSchema } from './seasons';
 
 export const PortalTeamResponseSchema = z.object({
   id: z.string(),
@@ -12,7 +13,7 @@ export const PortalTeamResponseSchema = z.object({
 
 export const PortalTeamSummaryResponseSchema = z.object({
   ...PortalTeamResponseSchema.shape,
-  lastCompetedSeason: z.string().nullable()
+  lastCompetedSeason: PortalSeasonResponseSchema
 });
 
 export type Team = z.infer<typeof PortalTeamResponseSchema>;
@@ -26,9 +27,23 @@ export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryRespon
 export const PortalTeamEventResultSchema = z.object({
   eventName: z.string(),
   eventSlug: z.string(),
-  awards: z.array(z.object({ name: z.string(), place: z.number().nullable() })),
-  matches: z.array(z.object({ number: z.number(), score: z.number() })),
-  robotGameRank: z.number()
+  results: z
+    .object({
+      awards: z.array(
+        z.object({
+          name: z.string(),
+          place: z.number().nullable()
+        })
+      ),
+      matches: z.array(
+        z.object({
+          number: z.number(),
+          score: z.number()
+        })
+      ),
+      robotGameRank: z.number()
+    })
+    .nullable()
 });
 
 export type TeamEventResult = z.infer<typeof PortalTeamEventResultSchema>;
