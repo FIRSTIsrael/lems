@@ -7,14 +7,16 @@ import useSWR from 'swr';
 import { Event } from '@lems/types/api/portal';
 import { useSearchParams } from 'next/navigation';
 import { Link, scrollSpy } from 'react-scroll';
-import { useTeam } from './team-context';
 import { SeasonSelector } from './season-selector';
+import { useTeam } from './team-context';
 
 export const TeamContents: React.FC = () => {
   const t = useTranslations('pages.team.navigation');
-  const searchParams = useSearchParams();
-  const season = searchParams.get('season') ?? 'latest';
   const team = useTeam();
+
+  const searchParams = useSearchParams();
+  const season = searchParams.get('season') ?? team.lastCompetedSeason?.slug ?? 'latest';
+
   const [activeSection, setActiveSection] = useState('team-info');
 
   useEffect(() => {
@@ -22,16 +24,14 @@ export const TeamContents: React.FC = () => {
   }, []);
 
   const { data: events = [] } = useSWR<Event[]>(
-    () => `/portal/teams/${team.number}/seasons/${season}/events`,
+    () => `/portal/teams/${team.number}/events?season=${season}`,
     { suspense: true, fallbackData: [] }
   );
-
-  console.log(activeSection);
 
   return (
     <Box sx={{ width: { xs: '100%', md: '300px' }, flexShrink: 0 }}>
       <Paper sx={{ p: 0, mb: 2, position: { md: 'sticky' }, top: { md: 20 } }}>
-        <SeasonSelector season={season} />
+        <SeasonSelector currentSeason={season} />
 
         <Divider />
 

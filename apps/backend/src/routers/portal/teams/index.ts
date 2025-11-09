@@ -1,5 +1,5 @@
-import express, { Response } from 'express';
-import dayjs from 'dayjs';
+import express, { NextFunction, Response } from 'express';
+import { Season } from '@lems/database';
 import db from '../../../lib/database';
 import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
@@ -11,75 +11,109 @@ const router = express.Router({ mergeParams: true });
 
 router.use('/:teamNumber', attachTeam());
 
+/**
+ * Returns a team, as well as the latest season they competed at
+ */
 router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response) => {
   const team = await db.teams.byId(req.teamId).get();
 
-  const seasons = (await db.seasons.getAll()).sort((a, b) =>
-    dayjs(b.start_date).diff(a.start_date)
-  );
+  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+  const seasons = await db.seasons.getAll(); // Sorted by default
 
   for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAllSummaries();
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
+    if (teamEvents.some(event => event.season_id === season.id)) {
+      const seasonResponse = makePortalSeasonResponse(season);
 
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          res.status(200).json(makePortalTeamSummaryResponse(team, season.name));
-          return;
-        }
-      }
+      res.status(200).json(makePortalTeamSummaryResponse(team, seasonResponse));
+      return;
     }
   }
+
   res.status(200).json(makePortalTeamSummaryResponse(team, null));
 });
 
+/**
+ * Returns the seasons a team competed at
+ */
 router.get('/:teamNumber/seasons', async (req: PortalTeamRequest, res: Response) => {
   const seasons = await db.seasons.getAll();
-  const teamSeasons = [];
-  for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAllSummaries();
+  const teamSeasons = new Set();
 
-    eventsLoop: for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
+  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
 
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          teamSeasons.push(season);
-          break eventsLoop;
-        }
+  for (const event of teamEvents) {
+    if (!event.visible) continue;
+
+    if (!teamSeasons.has(event.season_id)) {
+      teamSeasons.add(event.season_id);
+    }
+  }
+
+  const filteredSeasons = seasons.filter(season => teamSeasons.has(season.id));
+  res.status(200).json(filteredSeasons.map(makePortalSeasonResponse));
+});
+
+type PortalTeamWithSeasonRequest = PortalTeamRequest & { seasonId?: string };
+
+const seasonFilter = async (
+  req: PortalTeamWithSeasonRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { season: seasonSlug } = req.query;
+
+  let season: Season | null = null;
+  if (seasonSlug && typeof seasonSlug === 'string') {
+    if (seasonSlug === 'latest') {
+      season = await db.seasons.getCurrent();
+    } else {
+      season = await db.seasons.bySlug(seasonSlug).get();
+      if (!season) {
+        res.status(404).json({ message: 'Season not found' });
+        return;
       }
     }
   }
-  res.status(200).json(teamSeasons.map(makePortalSeasonResponse));
-});
 
+  req.seasonId = season ? season.id : undefined;
+  next();
+};
+
+/**
+ * Returns the events a team has competed at, optionally filtered by season
+ */
 router.get(
-  '/:teamNumber/seasons/:seasonSlug/results',
-  async (req: PortalTeamRequest, res: Response) => {
-    const { seasonSlug } = req.params;
+  '/:teamNumber/events',
+  seasonFilter,
+  async (req: PortalTeamRequest & { seasonId?: string }, res: Response) => {
+    let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    teamEvents = teamEvents.filter(event => event.visible);
 
-    const season =
-      seasonSlug === 'latest'
-        ? await db.seasons.getCurrent()
-        : await db.seasons.bySlug(seasonSlug).get();
-    if (!season) {
-      res.status(404).json({ message: 'Season not found' });
-      return;
+    if (req.seasonId) {
+      teamEvents = teamEvents.filter(event => event.season_id === req.seasonId);
     }
 
-    const events = await db.events.bySeason(season.id).getAllSummaries();
+    res.status(200).json(teamEvents.map(makePortalEventResponse));
+  }
+);
+
+/**
+ * Returns the event results for a team, optionally filtered by season
+ */
+router.get(
+  '/:teamNumber/events/results',
+  seasonFilter,
+  async (req: PortalTeamWithSeasonRequest, res: Response) => {
+    let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    teamEvents = teamEvents.filter(event => event.visible && event.published);
+
+    if (req.seasonId) {
+      teamEvents = teamEvents.filter(event => event.season_id === req.seasonId);
+    }
+
     const eventResults = [];
 
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
-
+    for (const event of teamEvents) {
       for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
           const eventResult = { eventName: event.name, eventSlug: event.slug };
@@ -108,40 +142,6 @@ router.get(
     }
 
     res.status(200).json(eventResults);
-  }
-);
-
-router.get(
-  '/:teamNumber/seasons/:seasonSlug/events',
-  async (req: PortalTeamRequest, res: Response) => {
-    const { seasonSlug } = req.params;
-
-    const season =
-      seasonSlug === 'latest'
-        ? await db.seasons.getCurrent()
-        : await db.seasons.bySlug(seasonSlug).get();
-    if (!season) {
-      res.status(404).json({ message: 'Season not found' });
-      return;
-    }
-
-    const events = await db.events.bySeason(season.id).getAllSummaries();
-    const teamEvents = [];
-
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
-
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          teamEvents.push(event);
-          break;
-        }
-      }
-    }
-
-    res.status(200).json(teamEvents.map(makePortalEventResponse));
   }
 );
 

@@ -6,16 +6,29 @@ import {
 } from '@lems/database';
 import { Event, EventDetails, EventSummary } from '@lems/types/api/portal';
 
-export const makePortalEventResponse = (event: DbEvent): Event => ({
-  id: event.id,
-  slug: event.slug,
-  name: event.name,
-  startDate: event.start_date,
-  endDate: event.end_date,
-  location: event.location,
-  coordinates: event.coordinates,
-  seasonId: event.season_id
-});
+export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event => {
+  let startDate: Date;
+  let endDate: Date;
+
+  if ('date' in event) {
+    startDate = new Date(event.date);
+    endDate = new Date(event.date);
+  } else {
+    startDate = event.start_date;
+    endDate = event.end_date;
+  }
+
+  return {
+    id: event.id,
+    slug: event.slug,
+    name: event.name,
+    startDate,
+    endDate,
+    location: event.location,
+    coordinates: event.coordinates,
+    seasonId: event.season_id
+  };
+};
 
 export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSummary => {
   const today = dayjs().startOf('day');

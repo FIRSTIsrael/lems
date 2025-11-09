@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PortalSeasonResponseSchema } from './seasons';
 
 export const PortalTeamResponseSchema = z.object({
   id: z.string(),
@@ -12,7 +13,7 @@ export const PortalTeamResponseSchema = z.object({
 
 export const PortalTeamSummaryResponseSchema = z.object({
   ...PortalTeamResponseSchema.shape,
-  lastCompetedSeason: z.string().nullable()
+  lastCompetedSeason: PortalSeasonResponseSchema
 });
 
 export type Team = z.infer<typeof PortalTeamResponseSchema>;

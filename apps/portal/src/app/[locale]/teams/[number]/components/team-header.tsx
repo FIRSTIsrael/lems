@@ -45,7 +45,7 @@ export const TeamHeader: React.FC = () => {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
                 <Typography variant="body2">
-                  {t('info.last-competed', { season: team.lastCompetedSeason })}
+                  {t('info.last-competed', { season: team.lastCompetedSeason.name })}
                 </Typography>
               </Stack>
             )}
