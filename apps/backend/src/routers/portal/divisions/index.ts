@@ -2,46 +2,80 @@ import express, { Response } from 'express';
 import db from '../../../lib/database';
 import { PortalDivisionRequest } from '../../../types/express';
 import { attachDivision } from '../middleware/attach-division';
-import { makePortalDivisionDetailsResponse } from './util';
+import { makePortalTeamResponse } from '../teams/util';
+import {
+  makePortalDivisionResponse,
+  makePortalJudgingSessionResponse,
+  makePortalAwardsResponse,
+  makePortalMatchResponse
+} from './util';
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/:divisionId', attachDivision());
 
 router.get('/:divisionId', async (req: PortalDivisionRequest, res: Response) => {
+  const division = await db.divisions.byId(req.divisionId).get();
+  res.status(200).json(makePortalDivisionResponse(division));
+});
+
+router.get('/:divisionId/teams', async (req: PortalDivisionRequest, res: Response) => {
   const divisionId = req.divisionId;
-  const division = await db.divisions.byId(divisionId).get();
-
   const teams = await db.teams.byDivisionId(divisionId).getAll();
-  const awards = await db.awards.byDivisionId(divisionId).getAll();
-  const eventSettings = await db.events.byId(division.event_id).getSettings();
-  const rooms = await db.rooms.byDivisionId(divisionId).getAll();
-  const tables = await db.tables.byDivisionId(divisionId).getAll();
-  const fieldSchedule = await db.robotGameMatches.byDivisionId(divisionId).getAll();
-  const judgingSchedule = await db.judgingSessions.byDivisionId(divisionId).getAll();
+  res.status(200).json(teams.map(makePortalTeamResponse));
+});
 
-  // TODO: Replace with real scoreboard data
+router.get('/:divisionId/schedule/judging', async (req: PortalDivisionRequest, res: Response) => {
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+  const judgingSchedule = await db.judgingSessions.byDivisionId(req.divisionId).getAll();
+
+  const sessions = judgingSchedule.map(session =>
+    makePortalJudgingSessionResponse(session, rooms, teams)
+  );
+  res.status(200).json(sessions);
+});
+
+router.get('/:divisionId/schedule/field', async (req: PortalDivisionRequest, res: Response) => {
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+  const fieldSchedule = await db.robotGameMatches.byDivisionId(req.divisionId).getAll();
+
+  const matches = fieldSchedule.map(match => makePortalMatchResponse(match, tables, teams));
+  res.status(200).json(matches);
+});
+
+// TODO: Implement this properly
+router.get('/:divisionId/scoreboard', async (req: PortalDivisionRequest, res: Response) => {
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+
   const scoreboard = teams.map((team, index) => ({
-    teamId: team.id,
+    team: {
+      id: team.id,
+      name: team.name,
+      number: team.number,
+      affiliation: team.affiliation,
+      city: team.city
+    },
     robotGameRank: index + 1,
     maxScore: 0,
     scores: [0, 0, 0]
   }));
 
-  res
-    .status(200)
-    .json(
-      makePortalDivisionDetailsResponse(
-        division,
-        teams,
-        eventSettings?.published ? awards : [],
-        rooms,
-        tables,
-        fieldSchedule,
-        judgingSchedule,
-        scoreboard
-      )
-    );
+  res.status(200).json(scoreboard);
+});
+
+router.get('/:divisionId/awards', async (req: PortalDivisionRequest, res: Response) => {
+  const division = await db.divisions.byId(req.divisionId).get();
+  const eventSettings = await db.events.byId(division.event_id).getSettings();
+
+  if (!eventSettings?.published) {
+    res.status(200).json(null);
+    return;
+  }
+
+  const awards = await db.awards.byDivisionId(req.divisionId).getAll();
+  res.status(200).json(awards.map(makePortalAwardsResponse));
 });
 
 export default router;

@@ -1,10 +1,12 @@
 'use client';
 
+import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useTheme } from '@mui/material/styles';
 import { Typography, useMediaQuery, Paper } from '@mui/material';
-import { useDivisionData } from '../../division-data-context';
+import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { useDivision } from '../../division-data-context';
 import { MobileScoreboard } from './mobile-scoreboard';
 import { DesktopScoreboard } from './desktop-scoreboard';
 
@@ -14,13 +16,24 @@ export const ScoreboardTab = () => {
   const params = useParams();
   const eventSlug = params.slug as string;
 
+  const division = useDivision();
+
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  const { scoreboard: data, teams } = useDivisionData();
+  const { data: scoreboard } = useSWR<ScoreboardEntry[]>(
+    `/portal/divisions/${division.id}/scoreboard`,
+    { suspense: true }
+  );
 
-  const matchesPerTeam = Math.max(...data.map(entry => entry.scores?.length || 0));
-  const sortedData = [...data].sort((a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0));
+  if (!scoreboard) {
+    return null; // Should be handled by suspense fallback
+  }
+
+  const matchesPerTeam = Math.max(...scoreboard.map(entry => entry.scores?.length || 0));
+  const sortedData = [...scoreboard].sort(
+    (a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0)
+  );
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -31,14 +44,12 @@ export const ScoreboardTab = () => {
       {isDesktop ? (
         <DesktopScoreboard
           sortedData={sortedData}
-          teams={teams}
           matchesPerTeam={matchesPerTeam}
           eventSlug={eventSlug}
         />
       ) : (
         <MobileScoreboard
           sortedData={sortedData}
-          teams={teams}
           matchesPerTeam={matchesPerTeam}
           eventSlug={eventSlug}
         />

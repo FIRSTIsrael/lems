@@ -2,41 +2,36 @@
 
 import React, { createContext, useContext } from 'react';
 import useSWR from 'swr';
-import { DivisionData } from '@lems/types/api/portal';
+import { Division } from '@lems/types/api/portal';
 
-const DivisionDataContext = createContext<DivisionData | null>(null);
+const DivisionContext = createContext<Division | null>(null);
 
-interface DivisionDataProviderProps {
+interface DivisionProviderProps {
   divisionId: string;
   children: React.ReactNode;
 }
 
-export function DivisionDataProvider({ children, divisionId }: DivisionDataProviderProps) {
-  const { data: divisionData, error } = useSWR<DivisionData | null>(
-    `/portal/divisions/${divisionId}`,
-    {
-      suspense: true,
-      fallbackData: null
-    }
-  );
+export function DivisionProvider({ children, divisionId }: DivisionProviderProps) {
+  const { data: divisionData, error } = useSWR<Division | null>(`/portal/divisions/${divisionId}`, {
+    suspense: true,
+    fallbackData: null
+  });
 
   if (error) {
-    throw new Error('Failed to load division data');
+    throw new Error('Failed to load division');
   }
 
   if (!divisionData) {
     return null;
   }
 
-  return (
-    <DivisionDataContext.Provider value={divisionData}>{children}</DivisionDataContext.Provider>
-  );
+  return <DivisionContext.Provider value={divisionData}>{children}</DivisionContext.Provider>;
 }
 
-export const useDivisionData = (): DivisionData => {
-  const data = useContext(DivisionDataContext);
+export const useDivision = (): Division => {
+  const data = useContext(DivisionContext);
   if (!data) {
-    throw new Error('useDivisionTeams must be used within a DivisionTeamsProvider');
+    throw new Error('useDivision must be used within a DivisionProvider');
   }
   return data;
 };
