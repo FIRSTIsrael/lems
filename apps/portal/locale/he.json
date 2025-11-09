@@ -218,6 +218,7 @@
   "layouts": {
     "main": {
       "app-bar": {
+        "teams": "קבוצות",
         "events": "אירועים",
         "scorer": "מחשבון ניקוד",
         "field-timer": "טיימר מקצה זירה",

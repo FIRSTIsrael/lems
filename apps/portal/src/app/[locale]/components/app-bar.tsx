@@ -15,11 +15,18 @@ import {
   Button,
   ListItemIcon
 } from '@mui/material';
-import { AssignmentOutlined, CalculateOutlined, Event, MenuRounded } from '@mui/icons-material';
+import {
+  AssignmentOutlined,
+  CalculateOutlined,
+  Event,
+  MenuRounded,
+  Group
+} from '@mui/icons-material';
 import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 
 const pages = [
+  { name: 'teams', href: '/teams', icon: <Group /> },
   { name: 'events', href: '/events', icon: <Event /> },
   { name: 'scorer', href: '/tools/scorer', icon: <CalculateOutlined /> },
   { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> }
