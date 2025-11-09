@@ -34,7 +34,7 @@ export const TeamInfoHeader: React.FC = () => {
           {t('header.back-to-event')}
         </Button>
         <Typography variant="body2" color="text.secondary">
-          {event.name} • {division.name}
+          {event.name} {division.name && `• ${division.name}`}
         </Typography>
       </Stack>
 
