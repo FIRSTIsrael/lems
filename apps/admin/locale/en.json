@@ -84,6 +84,9 @@
         "status": {
           "active": "Active",
           "inactive": "Inactive"
+        },
+        "delete": {
+          "disabled": "Cannot delete team which has participated in an event in the past."
         }
       },
       "creation-dialog": {

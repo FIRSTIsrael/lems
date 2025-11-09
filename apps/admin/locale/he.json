@@ -91,6 +91,9 @@
         "status": {
           "active": "פעיל",
           "inactive": "לא פעיל"
+        },
+        "delete": {
+          "disabled": "לא ניתן למחוק קבוצה שהשתתפה באירוע בעבר."
         }
       },
       "creation-dialog": {
