@@ -26,6 +26,7 @@ export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryRespon
 export const PortalTeamEventResultSchema = z.object({
   eventName: z.string(),
   eventSlug: z.string(),
+  published: z.boolean(),
   awards: z.array(z.object({ name: z.string(), place: z.number().nullable() })),
   matches: z.array(z.object({ number: z.number(), score: z.number() })),
   robotGameRank: z.number()

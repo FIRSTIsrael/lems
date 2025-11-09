@@ -29,6 +29,39 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
     }
   };
 
+  if (!eventResult.published) {
+    return (
+      <Element name={`event-${eventResult.eventSlug}`}>
+        <Card
+          variant="outlined"
+          sx={{
+            mb: 2,
+            '&:hover': {
+              boxShadow: 4,
+              transform: 'translateY(-2px)',
+              transition: 'all 0.2s ease-in-out'
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+        >
+          <CardContent>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+              <Typography variant="h4" fontWeight="600" color="primary">
+                {eventResult.eventName}
+              </Typography>
+              <Button variant="text" href={`/event/${eventResult.eventSlug}/team/${team.number}`}>
+                {t('view-live-data')}
+              </Button>
+            </Stack>
+            <Typography variant="body1" color="text.secondary">
+              {t('event-in-progress')}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Element>
+    );
+  }
+
   return (
     <Element name={`event-${eventResult.eventSlug}`}>
       <Card

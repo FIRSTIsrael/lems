@@ -107,7 +107,9 @@
         "match-number": "מקצה {number}",
         "robot-game-rank": "דירוג במשחק הרובוט",
         "event-performance": "תוצאות אירוע",
-        "view-details": "פרטים נוספים"
+        "view-details": "פרטים נוספים",
+        "event-in-progress": "אירוע בעיצומו",
+        "view-live-data": "צפייה בנתונים חיים"
       }
     },
     "event": {
