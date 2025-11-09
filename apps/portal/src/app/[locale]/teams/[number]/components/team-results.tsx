@@ -11,18 +11,20 @@ import { TeamEventResultCard } from './team-event-result-card';
 import { useTeam } from './team-context';
 
 export const TeamResults: React.FC = () => {
+  const t = useTranslations('pages.team.events');
+
   const searchParams = useSearchParams();
-  const team = useTeam();
   const season = searchParams.get('season') ?? 'latest';
-  const tEvents = useTranslations('pages.team.events');
+
+  const team = useTeam();
 
   const { data: eventResults } = useSWR<TeamEventResult[]>(
-    () => `/portal/teams/${team.number}/seasons/${season}/results`,
+    () => `/portal/teams/${team.number}/events/results?season=${season}`,
     { suspense: true, fallbackData: [] }
   );
 
   if (!eventResults || eventResults.length === 0) {
-    return null;
+    return null; // Should be handled by suspense boudary
   }
 
   return (
@@ -30,7 +32,7 @@ export const TeamResults: React.FC = () => {
       <Element name="event-results">
         <Box>
           <Typography variant="h2" sx={{ mb: 2, fontWeight: 600 }}>
-            {tEvents('event-performance')}
+            {t('event-performance')}
           </Typography>
         </Box>
       </Element>

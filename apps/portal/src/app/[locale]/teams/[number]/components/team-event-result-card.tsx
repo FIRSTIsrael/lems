@@ -29,6 +29,12 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
     }
   };
 
+  if (!eventResult.results) {
+    return null; // TODO: Result not published yet state
+  }
+
+  const { awards, matches, robotGameRank } = eventResult.results;
+
   return (
     <Element name={`event-${eventResult.eventSlug}`}>
       <Card
@@ -59,8 +65,8 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
               {t('event-summary')}
             </Typography>
             <Grid container spacing={2}>
-              {eventResult.awards &&
-                eventResult.awards.map((award, index) => {
+              {awards &&
+                awards.map((award, index) => {
                   const trophyColor = getAwardIcon(award);
                   return (
                     <Grid
@@ -84,7 +90,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     </Grid>
                   );
                 })}
-              {eventResult.matches && eventResult.matches.length > 0 && (
+              {matches && matches.length > 0 && (
                 <Grid
                   size={{ xs: 12, sm: 6, lg: 3 }}
                   sx={{
@@ -105,11 +111,11 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     </Typography>
                   </Stack>
                   <Typography variant="h6" fontWeight="600" color="primary">
-                    {Math.max(...eventResult.matches.map(m => m.score))}
+                    {Math.max(...matches.map(m => m.score))}
                   </Typography>
                 </Grid>
               )}
-              {eventResult.robotGameRank && (
+              {robotGameRank && (
                 <Grid
                   size={{ xs: 12, sm: 6, lg: 3 }}
                   sx={{
@@ -130,7 +136,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     </Typography>
                   </Stack>
                   <Typography variant="h6" fontWeight="600" color="primary">
-                    {eventResult.robotGameRank}
+                    {robotGameRank}
                   </Typography>
                 </Grid>
               )}
@@ -138,7 +144,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
           </Box>
 
           {/* Match Results */}
-          {eventResult.matches && (
+          {matches && (
             <>
               <Divider sx={{ my: 2 }} />
               <Box>
@@ -146,7 +152,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                   {t('match-results')}
                 </Typography>
                 <Grid container spacing={2}>
-                  {eventResult.matches.map((match, index) => (
+                  {matches.map((match, index) => (
                     <Grid
                       size={{ xs: 12, sm: 6, md: 4 }}
                       key={index}

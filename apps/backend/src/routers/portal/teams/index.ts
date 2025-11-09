@@ -1,5 +1,6 @@
 import express, { NextFunction, Response } from 'express';
 import { Season } from '@lems/database';
+import { TeamEventResult } from '@lems/types/api/portal';
 import db from '../../../lib/database';
 import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
@@ -105,40 +106,47 @@ router.get(
   seasonFilter,
   async (req: PortalTeamWithSeasonRequest, res: Response) => {
     let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
-    teamEvents = teamEvents.filter(event => event.visible && event.published);
+    teamEvents = teamEvents.filter(event => event.visible);
 
     if (req.seasonId) {
       teamEvents = teamEvents.filter(event => event.season_id === req.seasonId);
     }
 
-    const eventResults = [];
+    const eventResults: TeamEventResult[] = [];
 
     for (const event of teamEvents) {
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          const eventResult = { eventName: event.name, eventSlug: event.slug };
-          const eventSettings = await db.events.byId(event.id).getSettings();
+      const eventResult: TeamEventResult = {
+        eventName: event.name,
+        eventSlug: event.slug,
+        results: null
+      };
 
-          const awards = await db.awards.byDivisionId(division.id).getAll();
-          eventResult['awards'] = eventSettings.published
-            ? awards.filter(award => award.winner_id === req.teamId)
-            : [];
-
-          const matches = await db.robotGameMatches.byDivisionId(division.id).getAll();
-          eventResult['matches'] = matches
-            .filter(
-              match =>
-                match.stage === 'RANKING' &&
-                match.participants.some(participant => participant.team_id === req.teamId)
-            )
-            .map(match => ({ number: match.round, score: 0 }));
-
-          eventResult['robotGameRank'] = 1;
-
-          eventResults.push(eventResult);
-          break;
-        }
+      if (!event.published) {
+        continue;
       }
+
+      // TODO: This isn't the most efficient way to check division registration,
+      // we should improve this sometime by batch-requesting
+      const teamDivision = await db.teams.byId(req.teamId).isInEvent(event.id);
+
+      const awards = await db.awards.byDivisionId(teamDivision).getAll();
+      const teamAwards = awards.filter(award => award.winner_id === req.teamId);
+
+      const matches = await db.robotGameMatches.byDivisionId(teamDivision).getByTeam(req.teamId);
+      const teamMatchResults = matches
+        .filter(match => match.stage === 'RANKING')
+        .map(match => ({ number: match.round, score: 0 }));
+
+      const robotGameRank = 1;
+
+      eventResult.results = {
+        awards: teamAwards.map(award => ({
+          name: award.name,
+          place: award.place || null
+        })),
+        matches: teamMatchResults,
+        robotGameRank
+      };
     }
 
     res.status(200).json(eventResults);
