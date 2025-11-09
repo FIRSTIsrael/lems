@@ -1,8 +1,11 @@
 'use client';
 
-import { Paper, Box, Skeleton, Stack } from '@mui/material';
+import { Paper, Box, Skeleton, Stack, useTheme, useMediaQuery } from '@mui/material';
 
 export const LoadingTab = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <Paper sx={{ p: 0 }}>
       <Box sx={{ p: 3, pb: 0 }}>
@@ -17,7 +20,7 @@ export const LoadingTab = () => {
 
             {/* Table header skeleton */}
             <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-              {[1, 2, 3, 4, 5].map(col => (
+              {Array.from({ length: isMobile ? 3 : 5 }).map((_, col) => (
                 <Box key={col} sx={{ flex: 1 }}>
                   <Skeleton variant="text" height={24} />
                 </Box>
