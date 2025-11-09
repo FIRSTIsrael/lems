@@ -4,12 +4,13 @@ import { useTranslations } from 'next-intl';
 import { Paper, Typography, Stack } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/portal';
+import { EventFilter } from '../event-filter';
 import { EventSection } from './event-section';
 
 interface EventsListSectionProps {
   events: EventSummary[];
   searchValue: string;
-  filterTab: number;
+  filterTab: EventFilter;
 }
 
 export const EventsListSection: React.FC<EventsListSectionProps> = ({
@@ -47,15 +48,15 @@ export const EventsListSection: React.FC<EventsListSectionProps> = ({
 
   return (
     <Stack spacing={4}>
-      {(filterTab === 0 || filterTab === 1) && (
+      {(filterTab === EventFilter.ALL || filterTab === EventFilter.ACTIVE) && (
         <EventSection events={filteredEvents} variant="active" />
       )}
 
-      {(filterTab === 0 || filterTab === 2) && (
+      {(filterTab === EventFilter.ALL || filterTab === EventFilter.UPCOMING) && (
         <EventSection events={filteredEvents} variant="upcoming" />
       )}
 
-      {(filterTab === 0 || filterTab === 3) && (
+      {(filterTab === EventFilter.ALL || filterTab === EventFilter.PAST) && (
         <EventSection events={filteredEvents} variant="past" />
       )}
     </Stack>

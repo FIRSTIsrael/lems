@@ -1,5 +1,6 @@
-import express, { Request, Response } from 'express';
-import dayjs from 'dayjs';
+import express, { Request, NextFunction, Response } from 'express';
+import { Season } from '@lems/database';
+import { TeamEventResult } from '@lems/types/api/portal';
 import db from '../../../lib/database';
 import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
@@ -32,137 +33,144 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.use('/:teamNumber', attachTeam());
 
+/**
+ * Returns a team, as well as the latest season they competed at
+ */
 router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response) => {
   const team = await db.teams.byId(req.teamId).get();
 
-  const seasons = (await db.seasons.getAll()).sort((a, b) =>
-    dayjs(b.start_date).diff(a.start_date)
-  );
+  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+  const seasons = await db.seasons.getAll(); // Sorted by default
 
   for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAllSummaries();
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
+    if (teamEvents.some(event => event.season_id === season.id)) {
+      const seasonResponse = makePortalSeasonResponse(season);
 
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          res.status(200).json(makePortalTeamSummaryResponse(team, season.name));
-          return;
-        }
-      }
+      res.status(200).json(makePortalTeamSummaryResponse(team, seasonResponse));
+      return;
     }
   }
+
   res.status(200).json(makePortalTeamSummaryResponse(team, null));
 });
 
+/**
+ * Returns the seasons a team competed at
+ */
 router.get('/:teamNumber/seasons', async (req: PortalTeamRequest, res: Response) => {
   const seasons = await db.seasons.getAll();
-  const teamSeasons = [];
-  for (const season of seasons) {
-    const events = await db.events.bySeason(season.id).getAllSummaries();
+  const teamSeasons = new Set();
 
-    eventsLoop: for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
+  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
 
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          teamSeasons.push(season);
-          break eventsLoop;
-        }
-      }
+  for (const event of teamEvents) {
+    if (!event.visible) continue;
+
+    if (!teamSeasons.has(event.season_id)) {
+      teamSeasons.add(event.season_id);
     }
   }
-  res.status(200).json(teamSeasons.map(makePortalSeasonResponse));
+
+  const filteredSeasons = seasons.filter(season => teamSeasons.has(season.id));
+  res.status(200).json(filteredSeasons.map(makePortalSeasonResponse));
 });
 
-router.get(
-  '/:teamNumber/seasons/:seasonSlug/results',
-  async (req: PortalTeamRequest, res: Response) => {
-    const { seasonSlug } = req.params;
+type PortalTeamWithSeasonRequest = PortalTeamRequest & { seasonId?: string };
 
-    const season =
-      seasonSlug === 'latest'
-        ? await db.seasons.getCurrent()
-        : await db.seasons.bySlug(seasonSlug).get();
-    if (!season) {
-      res.status(404).json({ message: 'Season not found' });
-      return;
-    }
+const seasonFilter = async (
+  req: PortalTeamWithSeasonRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { season: seasonSlug } = req.query;
 
-    const events = await db.events.bySeason(season.id).getAllSummaries();
-    const eventResults = [];
-
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
-
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          const eventResult = { eventName: event.name, eventSlug: event.slug };
-          const eventSettings = await db.events.byId(event.id).getSettings();
-
-          const awards = await db.awards.byDivisionId(division.id).getAll();
-          eventResult['awards'] = eventSettings.published
-            ? awards.filter(award => award.winner_id === req.teamId)
-            : [];
-
-          const matches = await db.robotGameMatches.byDivisionId(division.id).getAll();
-          eventResult['matches'] = matches
-            .filter(
-              match =>
-                match.stage === 'RANKING' &&
-                match.participants.some(participant => participant.team_id === req.teamId)
-            )
-            .map(match => ({ number: match.round, score: 0 }));
-
-          eventResult['robotGameRank'] = 1;
-
-          eventResults.push(eventResult);
-          break;
-        }
+  let season: Season | null = null;
+  if (seasonSlug && typeof seasonSlug === 'string') {
+    if (seasonSlug === 'latest') {
+      season = await db.seasons.getCurrent();
+    } else {
+      season = await db.seasons.bySlug(seasonSlug).get();
+      if (!season) {
+        res.status(404).json({ message: 'Season not found' });
+        return;
       }
     }
-
-    res.status(200).json(eventResults);
   }
-);
 
+  req.seasonId = season ? season.id : undefined;
+  next();
+};
+
+/**
+ * Returns the events a team has competed at, optionally filtered by season
+ */
 router.get(
-  '/:teamNumber/seasons/:seasonSlug/events',
-  async (req: PortalTeamRequest, res: Response) => {
-    const { seasonSlug } = req.params;
+  '/:teamNumber/events',
+  seasonFilter,
+  async (req: PortalTeamRequest & { seasonId?: string }, res: Response) => {
+    let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    teamEvents = teamEvents.filter(event => event.visible);
 
-    const season =
-      seasonSlug === 'latest'
-        ? await db.seasons.getCurrent()
-        : await db.seasons.bySlug(seasonSlug).get();
-    if (!season) {
-      res.status(404).json({ message: 'Season not found' });
-      return;
-    }
-
-    const events = await db.events.bySeason(season.id).getAllSummaries();
-    const teamEvents = [];
-
-    for (const event of events) {
-      if (!event.visible) {
-        continue;
-      }
-
-      for (const division of event.divisions) {
-        if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          teamEvents.push(event);
-          break;
-        }
-      }
+    if (req.seasonId) {
+      teamEvents = teamEvents.filter(event => event.season_id === req.seasonId);
     }
 
     res.status(200).json(teamEvents.map(makePortalEventResponse));
+  }
+);
+
+/**
+ * Returns the event results for a team, optionally filtered by season
+ */
+router.get(
+  '/:teamNumber/events/results',
+  seasonFilter,
+  async (req: PortalTeamWithSeasonRequest, res: Response) => {
+    let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    teamEvents = teamEvents.filter(event => event.visible);
+
+    if (req.seasonId) {
+      teamEvents = teamEvents.filter(event => event.season_id === req.seasonId);
+    }
+
+    const eventResults: TeamEventResult[] = [];
+
+    for (const event of teamEvents) {
+      const eventResult: TeamEventResult = {
+        eventName: event.name,
+        eventSlug: event.slug,
+        results: null
+      };
+
+      if (!event.published) {
+        continue;
+      }
+
+      // TODO: This isn't the most efficient way to check division registration,
+      // we should improve this sometime by batch-requesting
+      const teamDivision = await db.teams.byId(req.teamId).isInEvent(event.id);
+
+      const awards = await db.awards.byDivisionId(teamDivision).getAll();
+      const teamAwards = awards.filter(award => award.winner_id === req.teamId);
+
+      const matches = await db.robotGameMatches.byDivisionId(teamDivision).getByTeam(req.teamId);
+      const teamMatchResults = matches
+        .filter(match => match.stage === 'RANKING')
+        .map(match => ({ number: match.round, score: 0 }));
+
+      const robotGameRank = 1;
+
+      eventResult.results = {
+        awards: teamAwards.map(award => ({
+          name: award.name,
+          place: award.place || null
+        })),
+        matches: teamMatchResults,
+        robotGameRank
+      };
+    }
+
+    res.status(200).json(eventResults);
   }
 );
 

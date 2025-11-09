@@ -1,5 +1,6 @@
 'use client';
 
+import useSWR from 'swr';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -16,7 +17,7 @@ import {
 } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { useDivisionData } from '../division-data-context';
+import { useDivision } from '../division-data-context';
 
 export const TeamsTab: React.FC = () => {
   const t = useTranslations('pages.event');
@@ -24,7 +25,16 @@ export const TeamsTab: React.FC = () => {
   const params = useParams();
   const eventSlug = params.slug as string;
 
-  const { teams } = useDivisionData();
+  const division = useDivision();
+
+  const { data: teams } = useSWR(`/portal/divisions/${division.id}/teams`, {
+    suspense: true
+  });
+
+  if (!teams) {
+    return null; // Should be handled by suspense fallback
+  }
+
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
