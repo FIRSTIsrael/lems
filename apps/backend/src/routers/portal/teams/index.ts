@@ -82,8 +82,12 @@ router.get(
 
       for (const division of event.divisions) {
         if (await db.teams.byId(req.teamId).isInDivision(division.id)) {
-          const eventResult = { eventName: event.name, eventSlug: event.slug };
           const eventSettings = await db.events.byId(event.id).getSettings();
+          const eventResult = { 
+            eventName: event.name, 
+            eventSlug: event.slug,
+            published: eventSettings.published
+          };
 
           const awards = await db.awards.byDivisionId(division.id).getAll();
           eventResult['awards'] = eventSettings.published
