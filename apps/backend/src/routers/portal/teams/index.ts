@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from 'express';
+import express, { Request, NextFunction, Response } from 'express';
 import { Season } from '@lems/database';
 import { TeamEventResult } from '@lems/types/api/portal';
 import db from '../../../lib/database';
@@ -6,9 +6,30 @@ import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
 import { attachTeam } from '../middleware/attach-team';
 import { PortalTeamRequest } from '../../../types/express';
-import { makePortalTeamSummaryResponse } from './util';
+import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
+
+router.get('/', async (req: Request, res: Response) => {
+  const { page } = req.params;
+
+  const numberOfPages = await db.teams.numberOfPages();
+
+  if (!page) {
+    const teams = await db.teams.getAll();
+    res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+  }
+
+  const pageNumber = parseInt(page, 10);
+
+  if (isNaN(pageNumber) || pageNumber < 1) {
+    res.status(400).json({ error: 'Invalid page number' });
+    return;
+  }
+
+  const teams = await db.teams.getPage(pageNumber);
+  res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+});
 
 router.use('/:teamNumber', attachTeam());
 
