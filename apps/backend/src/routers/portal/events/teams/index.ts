@@ -8,6 +8,7 @@ const router = express.Router({ mergeParams: true });
 
 router.use('/:teamNumber', attachTeam());
 
+// Should be removed - we do not need this endpoint
 router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) => {
   const event = await db.events.byId(req.eventId).get();
   const team = await db.teams.byId(req.teamId).get();
@@ -44,5 +45,14 @@ router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) 
   res.json(teamAtEvent);
   return;
 });
+
+router.get('/:teamNumber/schedule', async (req: PortalTeamAtEventRequest, res: Response) => {});
+
+router.get('/:teamNumber/awards', async (req: PortalTeamAtEventRequest, res: Response) => {});
+
+router.get(
+  '/:teamNumber/robot-performance',
+  async (req: PortalTeamAtEventRequest, res: Response) => {}
+);
 
 export default router;
