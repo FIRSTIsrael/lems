@@ -1,1 +1,69 @@
-{}
+{
+  "pages": {
+    "login": {
+      "subtitle": "Volunteer Login",
+      "continue": "Continue",
+      "submitting": "Loading...",
+      "sign-in": "Sign In",
+      "loading": "Loading...",
+      "loadingRole": "Loading role information...",
+      "steps": {
+        "role": "Select Role",
+        "division": "Select Division",
+        "association": "Select Assignment",
+        "user": "Select User",
+        "password": "Enter Password"
+      },
+      "instructions": {
+        "role": "Please select your role:",
+        "division": "Please select your assigned division:",
+        "association": "Please select your assignment:",
+        "roleInfo-table": "Please select the table you are assigned to:",
+        "roleInfo-room": "Please select the room you are assigned to:",
+        "roleInfo-category": "Please select the category you are assigned to:",
+        "user": "Multiple users match your selection. Please choose your account:",
+        "password": "Please enter your password:"
+      },
+      "fields": {
+        "role": "Role",
+        "division": "Division",
+        "association": "Assignment",
+        "table": "Table",
+        "room": "Room",
+        "category": "Category",
+        "user": "User",
+        "password": "Password",
+        "password-helper": "4-character password"
+      },
+      "errors": {
+        "required": "This field is required",
+        "invalid-length": "Password must be exactly 4 characters",
+        "too-many-requests": "Too many login attempts. Please try again later.",
+        "invalid-password": "Invalid password. Please try again.",
+        "server-error": "An error occurred. Please try again.",
+        "not-found": "No matching users found. Please check your selections.",
+        "no-users-with-role": "No users found with this role.",
+        "no-users-in-division": "No users found in this division.",
+        "no-users-with-association": "No users found with this assignment.",
+        "user-not-found": "User not found.",
+        "missing-event-slug": "Event information is missing.",
+        "event-not-found": "Event not found.",
+        "no-users-for-event": "No users configured for this event.",
+        "title": "Something went wrong",
+        "description": "We encountered an unexpected error while loading the login page.",
+        "unknown": "An unexpected error occurred. Please try again.",
+        "support-text": "If this problem persists, please contact support.",
+        "back-home": "Back to Home",
+        "try-again": "Try Again"
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "Connected",
+      "reconnecting": "Reconnecting...",
+      "disconnected": "Disconnected",
+      "error": "Error"
+    }
+  }
+}

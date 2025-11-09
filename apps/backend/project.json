@@ -15,7 +15,14 @@
         "outputPath": "dist/apps/backend",
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": ["apps/backend/src/assets"],
+        "assets": [
+          "apps/backend/src/assets",
+          {
+            "glob": "**/*.graphql",
+            "input": "libs/types/src/lib/api/lems/graphql",
+            "output": "graphql"
+          }
+        ],
         "webpackConfig": "apps/backend/webpack.config.js"
       },
       "configurations": {

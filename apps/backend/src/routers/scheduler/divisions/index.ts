@@ -5,7 +5,7 @@ import {
   InsertableRobotGameMatchParticipant
 } from '@lems/database';
 import db from '../../../lib/database';
-import { attachDivision } from '../../../middlewares/scheduler/attach-division';
+import { attachDivision } from '../middleware/attach-division';
 import { SchedulerRequest } from '../../../types/express';
 import { makeSchedulerLocationResponse, makeSchedulerTeamResponse } from './utils';
 

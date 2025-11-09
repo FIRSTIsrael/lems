@@ -4,7 +4,7 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container } from '@mui/material';
 import useSWR from 'swr';
-import { EventSummary, PortalEventSummariesResponseSchema, Season } from '@lems/types/api/portal';
+import { EventSummary, Season } from '@lems/types/api/portal';
 import { EventsPageHeader } from './components/events-page-header';
 import { EventsSearchSection } from './components/events-search-section';
 import { EventsListSection } from './components/event-list-section';
@@ -22,7 +22,7 @@ export default function EventsPage() {
   });
 
   const { data: seasonEvents = [] } = useSWR<EventSummary[]>(
-    [`/portal/events?season=${seasonData?.slug}`, PortalEventSummariesResponseSchema],
+    () => (seasonData ? `/portal/events?season=${seasonData.slug}` : null),
     { suspense: true, fallbackData: [] }
   );
 

@@ -16,11 +16,26 @@
         "location": "Location",
         "teams-registered": "{count} teams registered",
         "registration-open": "Registration Open",
-        "registration-closed": "Registration Closed"
+        "registration-closed": "Registration Closed",
+        "view-event": "View Event",
+        "view-results": "View Results",
+        "view-details": "View Details",
+        "status-completed": "Completed",
+        "status-upcoming": "Upcoming"
       },
       "search": {
         "title": "Search Teams & Events",
-        "placeholder": "Search for teams, or events..."
+        "placeholder": "Search for teams, or events...",
+        "start-typing": "Start typing to search",
+        "search-hint": "Search by team name, number, city, event name, or location",
+        "searching": "Searching...",
+        "no-results": "No results found",
+        "no-results-hint": "No results found for \"{query}\". Try different keywords.",
+        "results-count": "{count} results",
+        "more-results": "+{count} more results",
+        "type-team": "team",
+        "type-event": "event",
+        "error": "Search error: {error}"
       },
       "quick-actions": {
         "title": "Quick Actions",
@@ -95,11 +110,105 @@
         "view-details": "View Details"
       }
     },
+    "event": {
+      "general-info": "General Information",
+      "event-date": "Event Date",
+      "location": "Location",
+      "teams": "Teams",
+      "team": "Team",
+      "division": "Division",
+      "not-found": {
+        "title": "Event Not Found",
+        "description": "The event you're looking for doesn't exist in our database.",
+        "back-to-events": "Back to Events"
+      },
+      "quick-links": {
+        "title": "Quick Links",
+        "scoreboard": "Scoreboard",
+        "awards": "Awards",
+        "field-schedule": "Field Schedule",
+        "judging-schedule": "Judging Schedule",
+        "general-schedule": "General Schedule"
+      },
+      "scoreboard": {
+        "rank": "Rank",
+        "best-score": "Best Score",
+        "match": "Match",
+        "match-scores": "Match Scores",
+        "no-data": "No scoreboard data available"
+      },
+      "field-schedule": {
+        "round": "{stage} Round {number}",
+        "match": "Match",
+        "time": "Time",
+        "table": "Table",
+        "no-data": "No field schedule available"
+      },
+      "judging-schedule": {
+        "start-time": "Start",
+        "no-data": "No judging schedule available"
+      },
+      "awards": {
+        "team-awards": "Team Awards",
+        "personal-awards": "Personal Awards",
+        "advancement": "Eligible for Advancement",
+        "place": "{place} Place",
+        "no-data": "No awards announced yet"
+      },
+      "division-teams": "{divisionName} teams"
+    },
+    "team-in-event": {
+      "not-found": {
+        "title": "Team #{number} Not Found",
+        "description": "The team you're looking for doesn't exist in this event.",
+        "back-to-event": "Back to Event"
+      },
+      "header": {
+        "back-to-event": "Back to Event",
+        "rank": "Rank #{rank}",
+        "best-score": "Best Score: {score}"
+      },
+      "performance": {
+        "title": "Robot Performance",
+        "event-summary": "Event Summary",
+        "match-scores": "Match Scores",
+        "match-number": "Match {number}",
+        "match-results": "Match Results",
+        "points": "{score} points",
+        "best-score": "Highest Score",
+        "highest-score": "Highest Score",
+        "robot-rank": "Robot Game Rank",
+        "robot-game-rank": "Robot Game Rank",
+        "no-scores": "No scores available yet",
+        "no-data": "No performance data available yet"
+      },
+      "awards": {
+        "title": "Awards",
+        "place-suffix": {
+          "1": "st Place",
+          "2": "nd Place",
+          "3": "rd Place",
+          "other": "th Place"
+        },
+        "no-awards": "No awards yet"
+      },
+      "schedule": {
+        "title": "Schedule",
+        "field-matches": "Field Matches",
+        "judging-sessions": "Judging Session",
+        "match-type": "{stage} Match #{number} - Table {table}",
+        "judging-session": "Judging Session #{number} - {room}",
+        "no-matches": "No matches scheduled",
+        "no-judging": "No judging sessions scheduled",
+        "no-schedule": "No schedule available"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",
-        "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”"
+        "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”",
+        "score": "{points} pts"
       }
     }
   },

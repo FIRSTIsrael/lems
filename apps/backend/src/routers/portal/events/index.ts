@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express';
-import { EventSummary } from '@lems/database';
+import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
-import { makePortalEventSummaryResponse } from './util';
+import { attachEvent } from '../middleware/attach-event';
+import { PortalEventRequest } from '../../../types/express';
+import eventTeamRouter from './teams';
+import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,6 +21,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const registeredTeams = await db.events.bySlug(eventSlug).getRegisteredTeams();
     const divisions = await db.divisions.byEventId(event.id).getAll();
+    const settings = await db.events.byId(event.id).getSettings();
 
     const eventSummary: EventSummary = {
       ...event,
@@ -26,6 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
       location: event.location,
       season_id: event.season_id,
       team_count: registeredTeams.length,
+      visible: settings.visible,
       is_fully_set_up: false,
       assigned_admin_ids: []
     };
@@ -43,7 +48,8 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const events = await db.events.bySeason(season.id).getAllSummaries();
-    res.json(events.map(makePortalEventSummaryResponse));
+
+    res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }
 
@@ -56,30 +62,32 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const events = await db.events.after(timestamp).getAllSummaries();
-    res.json(events.map(makePortalEventSummaryResponse));
+    res.json(events.filter(e => e.visible).map(makePortalEventSummaryResponse));
     return;
   }
 
-  const allEvents = await db.events.getAll();
-
-  const events: EventSummary[] = await Promise.all(
-    allEvents.map(async event => {
-      const registeredTeams = await db.events.byId(event.id).getRegisteredTeams();
-      const divisions = await db.divisions.byEventId(event.id).getAll();
-
-      return {
-        ...event,
-        divisions,
-        date: event.start_date.toISOString(),
-        team_count: registeredTeams.length,
-        is_fully_set_up: false,
-        assigned_admin_ids: []
-      };
-    })
-  );
-
-  res.json(events.map(makePortalEventSummaryResponse));
+  const events = await db.events.getAllSummaries();
+  res.json(events.filter(event => event.visible).map(makePortalEventSummaryResponse));
   return;
 });
+
+router.use('/:slug', attachEvent());
+
+router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
+  const event = await db.events.byId(req.eventId).get();
+  const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
+  const season = await db.seasons.byId(event.season_id).get();
+
+  const eventSummary: EventDetails = {
+    ...event,
+    divisions,
+    season_name: season.name,
+    season_slug: season.slug
+  };
+
+  res.json(makePortalEventDetailsResponse(eventSummary));
+});
+
+router.use('/:slug/teams', eventTeamRouter);
 
 export default router;

@@ -2,7 +2,7 @@ import express from 'express';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminUserResponse } from '../../users/util';
-import { requirePermission } from '../../../../middlewares/admin/require-permission';
+import { requirePermission } from '../../middleware/require-permission';
 import {
   makeAdminVolunteerResponse,
   generateVolunteerPassword,
@@ -31,7 +31,7 @@ router.delete(
   '/admins/:adminId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
-    const {adminId} = req.params;
+    const { adminId } = req.params;
     if (adminId === req.userId) {
       res.status(400).json({ error: 'CANNOT_REMOVE_SELF' });
       return;
@@ -59,6 +59,11 @@ router.post(
 
     const existingVolunteers = await db.eventUsers.byEventId(req.eventId).getAll();
     for (const volunteer of existingVolunteers) {
+      if (volunteer.role === 'judge' || volunteer.role === 'referee') {
+        // Judge and referee are managed by the system
+        continue;
+      }
+
       await db.eventUsers.delete(volunteer.id);
     }
 

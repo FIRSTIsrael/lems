@@ -22,6 +22,7 @@ import { PermissionType } from '@lems/database';
 import { AdminUserPermissions, ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useLocalePermissionName } from '../../../../hooks/localization';
+import { useSession } from '../../components/session-context';
 
 interface PermissionsEditorDialogProps {
   open: boolean;
@@ -36,6 +37,7 @@ interface PermissionsFormProps {
 }
 
 const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) => {
+  const { user } = useSession();
   const t = useTranslations('pages.users.permissions-dialog');
   const getPermissionName = useLocalePermissionName();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,19 +103,24 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         )}
 
         <FormGroup>
-          {ALL_ADMIN_PERMISSIONS.map(permission => (
-            <FormControlLabel
-              key={permission}
-              control={
-                <Checkbox
-                  checked={selectedPermissions.includes(permission)}
-                  onChange={e => handlePermissionChange(permission, e.target.checked)}
-                  disabled={isSubmitting}
-                />
-              }
-              label={getPermissionName(permission)}
-            />
-          ))}
+          {ALL_ADMIN_PERMISSIONS.map(permission => {
+            const isEditor = user.id === userId;
+            const isManageUsers = permission === "MANAGE_USERS";
+            return (
+              <FormControlLabel
+                key={permission}
+                control={
+                  <Checkbox
+                    checked={selectedPermissions.includes(permission)}
+                    onChange={e => handlePermissionChange(permission, e.target.checked)}
+                    disabled={isSubmitting || (isEditor && isManageUsers)}
+                  />
+                }
+                label={getPermissionName(permission)}
+                title={isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined}
+              />
+            );
+          })}
         </FormGroup>
       </DialogContent>
 

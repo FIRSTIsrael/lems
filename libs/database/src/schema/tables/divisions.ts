@@ -24,3 +24,9 @@ export interface DivisionsTable {
 export type Division = Selectable<DivisionsTable>;
 export type InsertableDivision = Insertable<DivisionsTable>;
 export type UpdateableDivision = Updateable<DivisionsTable>;
+
+// Utility types
+
+export interface DivisionSummary extends Division {
+  team_count: number;
+}

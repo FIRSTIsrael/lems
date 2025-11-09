@@ -11,7 +11,9 @@ import {
   Slider,
   Button,
   CircularProgress,
-  Grid
+  Grid,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -42,12 +44,17 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
     settings.advancementPercent || 50
   );
 
+  const [visible, setVisible] = useState<boolean>(settings.visible || false);
+  const [official, setOfficial] = useState<boolean>(settings.official || true);
+
   const totalTeams = teams.length;
   const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
 
   useEffect(() => {
     if (settings) {
       setAdvancementPercent(settings.advancementPercent);
+      setVisible(settings.visible);
+      setOfficial(settings.official);
     }
   }, [settings]);
 
@@ -63,7 +70,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...settings,
-          advancementPercent
+          advancementPercent,
+          visible,
+          official
         })
       });
 
@@ -88,8 +97,38 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           {t('event-settings.title')}
         </Typography>
 
-        <Grid container spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
+        <Grid container spacing={3} sx={{ mb: 2 }}>
           <Grid size={3}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={visible}
+                  onChange={(_, checked) => setVisible(checked)}
+                  color="primary"
+                />
+              }
+              label={t('event-settings.visible')}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {t('event-settings.visible-description')}
+            </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={official}
+                  onChange={(_, checked) => setOfficial(checked)}
+                  color="primary"
+                />
+              }
+              sx={{ mt: 2 }}
+              label={t('event-settings.official')}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {t('event-settings.official-description')}
+            </Typography>
+          </Grid>
+
+          <Grid size={4} spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {t('event-settings.advancement-percent')}
               {totalTeams > 0 && (
@@ -120,14 +159,18 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               />
             </Box>
           </Grid>
-          <Grid size={9} />
         </Grid>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
             onClick={handleSaveSettings}
-            disabled={isSaving || advancementPercent === settings.advancementPercent}
+            disabled={
+              isSaving ||
+              (advancementPercent === settings.advancementPercent &&
+                visible === settings.visible &&
+                official === settings.official)
+            }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >
             {isSaving ? t('event-settings.saving') : t('event-settings.save-button')}

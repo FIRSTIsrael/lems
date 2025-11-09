@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../../../../lib/database';
-import { requirePermission } from '../../../../middlewares/admin/require-permission';
+import { requirePermission } from '../../middleware/require-permission';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminTeamResponse, makeAdminTeamWithDivisionResponse } from '../../teams/util';
 import { isTeamsRegistration } from './utils';

@@ -4,6 +4,7 @@ import React from 'react';
 import { Typography, Button, Stack, Avatar, Box } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 interface SeasonHeaderProps {
   seasonName: string;
@@ -39,11 +40,11 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
           )}
         </Box>
       </Stack>
-
       {allowCreate && (
         <Button
           variant="contained"
           startIcon={<Add />}
+          component={Link}
           href="/events/create"
           sx={{ borderRadius: 8 }}
         >

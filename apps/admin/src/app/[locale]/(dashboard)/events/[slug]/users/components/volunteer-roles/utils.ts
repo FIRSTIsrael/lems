@@ -1,11 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { VolunteerUser } from '@lems/types/api/admin';
 import { VolunteerSlot, Role } from '../../types';
-
-// Type for lead judge role info containing category
-export interface LeadJudgeRoleInfo {
-  category: 'robot-design' | 'innovation-project' | 'core-values';
-}
 
 export const transformVolunteerUsersToSlots = (
   volunteers: VolunteerUser[]
@@ -66,14 +60,3 @@ export const transformVolunteerSlotsToUsers = (
 
   return users;
 };
-
-export const createNewVolunteerSlot = (
-  role: Role,
-  divisions: string[] = [],
-  identifier?: string
-): VolunteerSlot => ({
-  id: uuidv4(),
-  role,
-  divisions,
-  identifier
-});

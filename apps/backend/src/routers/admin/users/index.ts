@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../../../lib/database';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 import { hashPassword } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminUserResponse } from './util';
@@ -103,8 +103,8 @@ router.patch(
     }
 
     try {
-      const { hash, salt } = await hashPassword(password);
-      await db.admins.byId(userId).updatePassword(hash, salt);
+      const { hash } = await hashPassword(password);
+      await db.admins.byId(userId).updatePassword(hash);
 
       res.status(204).send();
     } catch (error) {
@@ -134,6 +134,15 @@ router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRe
   }
 
   try {
+    const userEvents = await db.admins.byId(user.id).getEvents();
+    for (const event of userEvents) {
+      const eventAdmins = await db.admins.byEventId(event.id).getAll();
+      await db.events.byId(event.id).removeAdmin(user.id);
+      if (eventAdmins.length <= 1) {
+        await db.events.byId(event.id).addAdmin(req.userId);
+      }
+    }
+
     await db.admins.byId(userId).delete();
     res.status(204).send();
   } catch (error) {

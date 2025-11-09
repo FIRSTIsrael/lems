@@ -1,0 +1,105 @@
+"""
+A FIRST LEGO League team
+"""
+type Team {
+  "Unique identifier for the team"
+  id: String!
+
+  "Team number"
+  number: String!
+
+  "Team name"
+  name: String!
+
+  "School or organization the team is affiliated with"
+  affiliation: String!
+
+  "City where the team is based"
+  city: String!
+
+  "Geographic coordinates or additional location information"
+  location: String
+
+  "Whether the team has checked in at the venue"
+  arrived: Boolean!
+}
+
+"""
+A FIRST LEGO League team with basic information (not division-specific)
+"""
+type RootTeam {
+  "Unique identifier for the team"
+  id: String!
+
+  "Official FIRST team number"
+  number: String!
+
+  "Team name"
+  name: String!
+
+  "School or organization the team is affiliated with"
+  affiliation: String!
+
+  "City where the team is based"
+  city: String!
+
+  "Geographic coordinates or additional location information"
+  location: String
+}
+
+extend type Query {
+  """
+  Search and retrieve teams across all events with flexible filtering
+  """
+  teams(
+    "Filter teams by specific IDs"
+    ids: [String!]
+
+    "Search teams by name, number, or affiliation"
+    searchTerm: String
+
+    "Maximum number of results to return (default: 20)"
+    limit: Int
+  ): [RootTeam!]!
+}
+
+"""
+Result of an event affecting a team
+"""
+type TeamEvent {
+  "Team identifier"
+  teamId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+extend type Mutation {
+  """
+  Update that a team has arrived in a specific division.
+  Returns minimal response containing only the team ID.
+  """
+  teamArrived(
+    "The team ID to update"
+    teamId: String!
+
+    "Relevant division ID"
+    divisionId: String!
+  ): TeamEvent!
+}
+
+extend type Subscription {
+  """
+  Subscribe to events when teams arrive at a specific division.
+  Returns minimal event data (teamId + version) for efficient updates.
+  The subscription supports message recovery: if reconnected within 30 seconds,
+  buffered events are automatically sent. Use lastSeenVersion to specify the
+  last version received to enable recovery.
+  """
+  teamArrivalUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): TeamEvent!
+}

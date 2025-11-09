@@ -80,6 +80,31 @@ class TeamSelector {
     return updatedTeam || null;
   }
 
+  /**
+   * Checks if the team is registered in the given event.
+   * Returns the division ID the team is registered to, otherwise null.
+   */
+  async isInEvent(eventId: string): Promise<string | null> {
+    let id: string;
+    if (this.selector.type === 'id') {
+      id = this.selector.value;
+    } else {
+      const team = await this.getTeamQuery().executeTakeFirst();
+      if (!team) return null;
+      id = team.id;
+    }
+
+    const record = await this.db
+      .selectFrom('team_divisions')
+      .innerJoin('divisions', 'team_divisions.division_id', 'divisions.id')
+      .selectAll()
+      .where('team_divisions.team_id', '=', id)
+      .where('divisions.event_id', '=', eventId)
+      .executeTakeFirst();
+
+    return record ? record.division_id : null;
+  }
+
   async isInDivision(divisionId: string): Promise<boolean> {
     let id: string;
     if (this.selector.type === 'id') {
@@ -173,6 +198,38 @@ export class TeamsRepository {
       .selectAll('teams')
       .orderBy('number', 'asc')
       .execute();
+    return teams;
+  }
+
+  async search(searchTerm: string, limit: number): Promise<Team[]> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .selectAll()
+      .where(eb =>
+        eb.or([
+          eb('name', 'ilike', `%${searchTerm}%`),
+          eb('number', '=', parseInt(searchTerm) || -1),
+          eb('affiliation', 'ilike', `%${searchTerm}%`),
+          eb('city', 'ilike', `%${searchTerm}%`)
+        ])
+      )
+      .orderBy(
+        eb =>
+          eb
+            .case()
+            .when('name', 'ilike', searchTerm)
+            .then(100)
+            .when('number', '=', parseInt(searchTerm) || -1)
+            .then(95)
+            .when('name', 'ilike', `${searchTerm}%`)
+            .then(80)
+            .else(50)
+            .end(),
+        'desc'
+      )
+      .limit(limit)
+      .execute();
+
     return teams;
   }
 

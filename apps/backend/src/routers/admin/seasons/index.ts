@@ -1,7 +1,7 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import db from '../../../lib/database';
-import { requirePermission } from '../../../middlewares/admin/require-permission';
+import { requirePermission } from '../middleware/require-permission';
 import { AdminRequest } from '../../../types/express';
 import { makeAdminSeasonResponse } from './util';
 

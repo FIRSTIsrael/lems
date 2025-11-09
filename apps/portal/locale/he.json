@@ -16,11 +16,26 @@
         "location": "מיקום",
         "teams-registered": "{count} קבוצות רשומות",
         "registration-open": "הרשמה פתוחה",
-        "registration-closed": "הרשמה סגורה"
+        "registration-closed": "הרשמה סגורה",
+        "view-event": "צפייה באירוע",
+        "view-results": "צפייה בתוצאות",
+        "view-details": "פרטים נוספים",
+        "status-completed": "הושלם",
+        "status-upcoming": "קרוב"
       },
       "search": {
         "title": "חיפוש קבוצות ואירועים",
-        "placeholder": "חפשו קבוצות או אירועים..."
+        "placeholder": "חפשו קבוצות או אירועים...",
+        "start-typing": "התחילו להקליד כדי לחפש",
+        "search-hint": "חפשו לפי שם קבוצה, מספר, עיר, שם אירוע או מיקום",
+        "searching": "מחפש...",
+        "no-results": "לא נמצאו תוצאות",
+        "no-results-hint": "לא נמצאו תוצאות עבור \"{query}\". נסו מילות מפתח אחרות.",
+        "results-count": "{count} תוצאות",
+        "more-results": "+{count} תוצאות נוספות",
+        "type-team": "קבוצה",
+        "type-event": "אירוע",
+        "error": "שגיאה בחיפוש: {error}"
       },
       "quick-actions": {
         "title": "פעולות מהירות",
@@ -95,11 +110,105 @@
         "view-details": "פרטים נוספים"
       }
     },
+    "event": {
+      "general-info": "מידע כללי",
+      "event-date": "תאריך האירוע",
+      "location": "מיקום",
+      "teams": "קבוצות",
+      "team": "קבוצה",
+      "division": "בית",
+      "not-found": {
+        "title": "אירוע לא נמצא",
+        "description": "האירוע שאתה מחפש לא קיים במאגר הנתונים שלנו.",
+        "back-to-events": "חזרה לאירועים"
+      },
+      "quick-links": {
+        "title": "קישורים מהירים",
+        "scoreboard": "לוח תוצאות",
+        "awards": "פרסים",
+        "field-schedule": "לוח זמנים זירה",
+        "judging-schedule": "לוח זמנים שיפוט",
+        "general-schedule": "לוח זמנים כללי"
+      },
+      "scoreboard": {
+        "rank": "דירוג",
+        "best-score": "ניקוד מירבי",
+        "match": "מקצה",
+        "match-scores": "תוצאות מקצים",
+        "no-data": "אין נתוני לוח תוצאות זמינים"
+      },
+      "field-schedule": {
+        "round": "סיבוב {number} - {stage}",
+        "match": "מקצה",
+        "time": "שעה",
+        "table": "שולחן",
+        "no-data": "אין לוח זמנים זירה זמין"
+      },
+      "judging-schedule": {
+        "start-time": "התחלה",
+        "no-data": "אין לוח זמנים שיפוט זמין"
+      },
+      "awards": {
+        "team-awards": "פרסי קבוצות",
+        "personal-awards": "פרסים אישיים",
+        "advancement": "זכאים להעפלה",
+        "place": "מקום {place}",
+        "no-data": "טרם הוכרזו פרסים"
+      },
+      "division-teams": "קבוצות {divisionName}"
+    },
+    "team-in-event": {
+      "not-found": {
+        "title": "קבוצה #{number} לא נמצאה",
+        "description": "הקבוצה שאתה מחפש לא קיימת באירוע זה.",
+        "back-to-event": "חזרה לאירוע"
+      },
+      "header": {
+        "back-to-event": "חזרה לאירוע",
+        "rank": "דירוג במשחק הרובוט #{rank}",
+        "best-score": "ניקוד הגבוה ביותר: {score}"
+      },
+      "performance": {
+        "title": "ביצועי רובוט",
+        "event-summary": "סיכום אירוע",
+        "match-scores": "ניקוד משחק הרובוט",
+        "match-number": "מקצה {number}",
+        "match-results": "תוצאות מקצים",
+        "points": "{score} נקודות",
+        "best-score": "ניקוד הגבוה ביותר",
+        "highest-score": "הניקוד הגבוה ביותר",
+        "robot-rank": "דירוג משחק רובוט",
+        "robot-game-rank": "דירוג במשחק הרובוט",
+        "no-scores": "אין ניקודים זמינים עדיין",
+        "no-data": "אין נתוני ביצועים זמינים עדיין"
+      },
+      "awards": {
+        "title": "פרסים",
+        "place-suffix": {
+          "1": "מקום ראשון",
+          "2": "מקום שני",
+          "3": "מקום שלישי",
+          "other": "מקום {place}"
+        },
+        "no-awards": "לא פורסמו פרסים לאירוע זה"
+      },
+      "schedule": {
+        "title": "לוח זמנים",
+        "field-matches": "מקצי זירה",
+        "judging-sessions": "מפגש שיפוט",
+        "match-type": "מקצה {stage} #{number} - שולחן {table}",
+        "judging-session": "מפגש שיפוט #{number} - {room}",
+        "no-matches": "אין מקצים מתוכננים",
+        "no-judging": "אין מפגשי שיפוט מתוכננים",
+        "no-schedule": "אין לוח זמנים זמין"
+      }
+    },
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
         "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
-        "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה."
+        "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה.",
+        "score": "{points} נק'"
       }
     }
   },

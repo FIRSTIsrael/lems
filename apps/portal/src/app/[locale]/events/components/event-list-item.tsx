@@ -1,14 +1,17 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Chip, Button, alpha, useTheme } from '@mui/material';
 import {
   LocationOn as LocationIcon,
   People as PeopleIcon,
   CalendarToday as CalendarIcon,
-  ArrowForward as ArrowIcon
+  ArrowForward,
+  ArrowBack
 } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from '../../components/homepage/live-icon';
 
@@ -28,7 +31,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       case 'past':
         return (
           <Chip
-            label="Completed"
+            label={tEvents('status-completed')}
             color="primary"
             size="small"
             variant="outlined"
@@ -38,7 +41,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       default:
         return (
           <Chip
-            label="Upcoming"
+            label={tEvents('status-upcoming')}
             color="primary"
             size="small"
             variant="outlined"
@@ -79,63 +82,65 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
         '&:hover': getHoverStyles()
       }}
     >
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
-        spacing={2}
-      >
-        <Box sx={{ flex: 1 }}>
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
-            <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
-              {event.name}
-            </Typography>
-            {getStatusChip()}
-          </Stack>
-
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={{ xs: 1, sm: 3 }}
-            sx={{ color: 'text.secondary' }}
-          >
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <CalendarIcon fontSize="small" />
-              <Typography variant="body2">
-                {new Date(event.startDate).toLocaleDateString()}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <LocationIcon fontSize="small" />
-              <Typography variant="body2">{event.location}</Typography>
-            </Stack>
-
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <PeopleIcon fontSize="small" />
-              <Typography variant="body2">
-                {tEvents('teams-registered', { count: event.teamsRegistered })}
-              </Typography>
-            </Stack>
-          </Stack>
-        </Box>
-
-        <Button
-          variant={variant === 'active' ? 'contained' : 'outlined'}
-          color={variant === 'active' ? 'error' : 'primary'}
-          size="small"
-          endIcon={<ArrowIcon />}
-          sx={{
-            minWidth: { xs: '100%', sm: 'auto' },
-            whiteSpace: 'nowrap'
-          }}
+      <Link href={`/event/${event.slug}`} style={{ textDecoration: 'none' }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          spacing={2}
         >
-          {variant === 'active'
-            ? 'View Event'
-            : variant === 'past'
-              ? 'View Results'
-              : 'View Details'}
-        </Button>
-      </Stack>
+          <Box sx={{ flex: 1 }}>
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
+              <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
+                {event.name}
+              </Typography>
+              {getStatusChip()}
+            </Stack>
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secondary' }}
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <CalendarIcon fontSize="small" />
+                <Typography variant="body2">
+                  {new Date(event.startDate).toLocaleDateString()}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <LocationIcon fontSize="small" />
+                <Typography variant="body2">{event.location}</Typography>
+              </Stack>
+
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <PeopleIcon fontSize="small" />
+                <Typography variant="body2">
+                  {tEvents('teams-registered', { count: event.teamsRegistered })}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Box>
+
+          <Button
+            variant={variant === 'active' ? 'contained' : 'outlined'}
+            color={variant === 'active' ? 'error' : 'primary'}
+            size="small"
+            endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
+            sx={{
+              minWidth: { xs: '100%', sm: 'auto' },
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {variant === 'active'
+              ? tEvents('view-event')
+              : variant === 'past'
+                ? tEvents('view-results')
+                : tEvents('view-details')}
+          </Button>
+        </Stack>
+      </Link>
     </Box>
   );
 };
