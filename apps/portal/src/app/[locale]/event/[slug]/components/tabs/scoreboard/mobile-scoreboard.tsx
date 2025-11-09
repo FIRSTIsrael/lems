@@ -5,19 +5,16 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Paper, Stack, Collapse, IconButton, Chip, Divider } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
-import { Team } from '@lems/types/api/portal/teams';
-import { DivisionScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
 
 interface MobileScoreboardProps {
-  sortedData: DivisionScoreboardEntry[];
-  teams: Team[];
+  sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
 }
 
 export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
   sortedData,
-  teams,
   matchesPerTeam,
   eventSlug
 }) => {
@@ -46,10 +43,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
   return (
     <Stack spacing={1}>
       {sortedData.map(entry => {
-        const team = teams.find(t => t.id === entry.teamId);
-        if (!team) return null;
-
-        const isExpanded = expandedTeams.includes(entry.teamId);
+        const isExpanded = expandedTeams.includes(entry.team.id);
 
         const getRankColor = () => {
           switch (entry.robotGameRank) {
@@ -66,7 +60,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
 
         return (
           <Paper
-            key={entry.teamId}
+            key={entry.team.id}
             sx={{
               bgcolor: 'white',
               border: '1px solid',
@@ -74,7 +68,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
             }}
           >
             <Box
-              onClick={() => toggleTeamExpansion(entry.teamId)}
+              onClick={() => toggleTeamExpansion(entry.team.id)}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -102,7 +96,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
               <Box sx={{ flex: 1 }}>
                 <Typography
                   component={Link}
-                  href={`/event/${eventSlug}/team/${team.number}`}
+                  href={`/event/${eventSlug}/team/${entry.team.number}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'text.primary',
@@ -113,10 +107,10 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     }
                   }}
                 >
-                  {team.name}
+                  {entry.team.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  #{team.number}
+                  #{entry.team.number}
                 </Typography>
               </Box>
 

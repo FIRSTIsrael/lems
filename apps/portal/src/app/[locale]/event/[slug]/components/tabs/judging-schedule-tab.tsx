@@ -1,5 +1,6 @@
 'use client';
 
+import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
@@ -19,8 +20,9 @@ import {
   useTheme
 } from '@mui/material';
 import NextLink from 'next/link';
+import { JudgingSession } from '@lems/types/api/portal';
 import { groupSessionsByTime } from '../utils';
-import { useDivisionData } from '../division-data-context';
+import { useDivision } from '../division-data-context';
 
 export const JudgingScheduleTab = () => {
   const t = useTranslations('pages.event');
@@ -28,10 +30,26 @@ export const JudgingScheduleTab = () => {
   const params = useParams();
   const eventSlug = params.slug as string;
 
+  const division = useDivision();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { teams, rooms, judgingSchedule: sessions } = useDivisionData();
+  const { data: sessions } = useSWR<JudgingSession[]>(
+    `/portal/divisions/${division.id}/schedule/judging`,
+    { suspense: true }
+  );
+
+  if (!sessions) {
+    return null; // Should be handled by suspense fallback
+  }
+
+  // Extract unique rooms from all sessions
+  const roomsMap = new Map<string, { id: string; name: string }>();
+  sessions.forEach(session => {
+    roomsMap.set(session.room.id, session.room);
+  });
+  const rooms = Array.from(roomsMap.values());
 
   const groupedSessions = groupSessionsByTime(sessions, rooms);
 
@@ -83,7 +101,7 @@ export const JudgingScheduleTab = () => {
                       </Typography>
                     </TableCell>
                     {session.rooms.map(room => {
-                      const team = teams.find(team => team.id === room.teamId);
+                      const team = room.team;
                       return (
                         <TableCell key={room.id} align="center">
                           {team ? (
@@ -94,7 +112,6 @@ export const JudgingScheduleTab = () => {
                                 sx={{
                                   color: 'black',
                                   textDecoration: 'none',
-                                  fontWeight: 500,
                                   fontSize: isMobile ? '0.75rem' : '1rem',
                                   '&:hover': {
                                     textDecoration: 'underline',

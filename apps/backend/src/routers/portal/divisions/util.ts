@@ -1,22 +1,24 @@
 import {
   Division as DbDivision,
-  Team as DbTeam,
   Award as DbAward,
+  Team as DbTeam,
   JudgingRoom as DbJudgingRoom,
   RobotGameTable as DbRobotGameTable,
   RobotGameMatchWithParticipants as DbRobotGameMatch,
   JudgingSession as DbJudgingSession
 } from '@lems/database';
-import {
-  Award,
-  DivisionData,
-  DivisionScoreboardEntry,
-  JudgingSession,
-  RobotGameMatch
-} from '@lems/types/api/portal';
+import { Award, Division, JudgingSession, RobotGameMatch } from '@lems/types/api/portal';
 import { makePortalTeamResponse } from '../teams/util';
 
-const makePortalAwardsResponse = (award: DbAward): Award => ({
+export const makePortalDivisionResponse = (division: DbDivision): Division => {
+  return {
+    id: division.id,
+    name: division.name,
+    color: division.color
+  };
+};
+
+export const makePortalAwardsResponse = (award: DbAward): Award => ({
   id: award.id,
   name: award.name,
   type: award.type,
@@ -24,57 +26,58 @@ const makePortalAwardsResponse = (award: DbAward): Award => ({
   place: award.place
 });
 
-const makePortalMatchResponse = (match: DbRobotGameMatch): RobotGameMatch => ({
-  id: match.id,
-  round: match.round,
-  number: match.number,
-  stage: match.stage,
-  scheduledTime: new Date(match.scheduled_time),
-  participants: match.participants.map(participant => ({
-    teamId: participant.team_id,
-    tableId: participant.table_id
-  }))
-});
-
-const makePortalJudgingSessionResponse = (session: DbJudgingSession): JudgingSession => ({
-  id: session.id,
-  number: session.number,
-  teamId: session.team_id,
-  roomId: session.room_id,
-  scheduledTime: new Date(session.scheduled_time)
-});
-
-export const makePortalDivisionDetailsResponse = (
-  division: DbDivision,
-  teams: DbTeam[],
-  awards: DbAward[],
-  rooms: DbJudgingRoom[],
+export const makePortalMatchResponse = (
+  match: DbRobotGameMatch,
   tables: DbRobotGameTable[],
-  fieldSchedule: DbRobotGameMatch[],
-  judgingSchedule: DbJudgingSession[],
-  scoreboard: DivisionScoreboardEntry[]
-): DivisionData => {
-  const responseTeams = teams.map(makePortalTeamResponse);
-  const responseAwards = awards.map(makePortalAwardsResponse);
-  const responseMatches = fieldSchedule.map(makePortalMatchResponse);
-  const responseJudgingSessions = judgingSchedule.map(makePortalJudgingSessionResponse);
+  teams: DbTeam[]
+): RobotGameMatch => {
+  const participants = match.participants.map(participant => {
+    const table = tables.find(t => t.id === participant.table_id);
+    if (!table) {
+      throw new Error(`Table with ID ${participant.table_id} not found`);
+    }
+
+    const team = teams.find(t => t.id === participant.team_id);
+    if (participant.team_id && !team) {
+      throw new Error(`Team with ID ${participant.team_id} not found`);
+    }
+
+    return {
+      team: team ? makePortalTeamResponse(team) : null,
+      table: { id: table.id, name: table.name }
+    };
+  });
 
   return {
-    id: division.id,
-    name: division.name,
-    color: division.color,
-    teams: responseTeams,
-    awards: responseAwards,
-    rooms: rooms.map(room => ({
-      id: room.id,
-      name: room.name
-    })),
-    tables: tables.map(table => ({
-      id: table.id,
-      name: table.name
-    })),
-    fieldSchedule: responseMatches,
-    judgingSchedule: responseJudgingSessions,
-    scoreboard
+    id: match.id,
+    round: match.round,
+    number: match.number,
+    stage: match.stage,
+    scheduledTime: new Date(match.scheduled_time),
+    participants
+  };
+};
+
+export const makePortalJudgingSessionResponse = (
+  session: DbJudgingSession,
+  rooms: DbJudgingRoom[],
+  teams: DbTeam[]
+): JudgingSession => {
+  const room = rooms.find(room => room.id === session.room_id);
+  if (!room) {
+    throw new Error(`Room with ID ${session.room_id} not found`);
+  }
+
+  const team = teams.find(team => team.id === session.team_id);
+  if (session.team_id && !team) {
+    throw new Error(`Team with ID ${session.team_id} not found`);
+  }
+
+  return {
+    id: session.id,
+    number: session.number,
+    team: team ? makePortalTeamResponse(team) : null,
+    room: { id: room.id, name: room.name },
+    scheduledTime: new Date(session.scheduled_time)
   };
 };
