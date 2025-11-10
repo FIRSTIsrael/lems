@@ -1,7 +1,8 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Paper, Tabs, Tab, Box } from '@mui/material';
 import { TeamsTab } from './tabs/teams-tab';
 import { DivisionProvider } from './division-data-context';
@@ -17,14 +18,23 @@ interface DivisionTabBarProps {
 
 export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) => {
   const t = useTranslations('pages.event');
-  const [selectedTab, setSelectedTab] = useState(0);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const activeTab = parseInt(searchParams.get('tab') || '0', 10);
+
+  const handleTabChange = (newTab: number) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set('tab', newTab.toString());
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <DivisionProvider divisionId={divisionId}>
       <Paper sx={{ mb: 3 }}>
         <Tabs
-          value={selectedTab}
-          onChange={(_, value) => setSelectedTab(value)}
+          value={activeTab}
+          onChange={(_, value) => handleTabChange(value)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
@@ -38,17 +48,35 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
       </Paper>
 
       <Box width="100%">
-        <Suspense fallback={<LoadingTab />}>
-          {selectedTab === 0 && <TeamsTab />}
+        {activeTab === 0 && (
+          <Suspense fallback={<LoadingTab />}>
+            <TeamsTab />
+          </Suspense>
+        )}
 
-          {selectedTab === 1 && <ScoreboardTab />}
+        {activeTab === 1 && (
+          <Suspense fallback={<LoadingTab />}>
+            <ScoreboardTab />
+          </Suspense>
+        )}
 
-          {selectedTab === 2 && <AwardsTab />}
+        {activeTab === 2 && (
+          <Suspense fallback={<LoadingTab />}>
+            <AwardsTab />
+          </Suspense>
+        )}
 
-          {selectedTab === 3 && <FieldScheduleTab />}
+        {activeTab === 3 && (
+          <Suspense fallback={<LoadingTab />}>
+            <FieldScheduleTab />
+          </Suspense>
+        )}
 
-          {selectedTab === 4 && <JudgingScheduleTab />}
-        </Suspense>
+        {activeTab === 4 && (
+          <Suspense fallback={<LoadingTab />}>
+            <JudgingScheduleTab />
+          </Suspense>
+        )}
       </Box>
     </DivisionProvider>
   );
