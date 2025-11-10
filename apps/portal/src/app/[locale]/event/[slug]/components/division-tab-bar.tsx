@@ -1,7 +1,8 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Paper, Tabs, Tab, Box } from '@mui/material';
 import { TeamsTab } from './tabs/teams-tab';
 import { DivisionProvider } from './division-data-context';
@@ -17,14 +18,30 @@ interface DivisionTabBarProps {
 
 export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) => {
   const t = useTranslations('pages.event');
-  const [selectedTab, setSelectedTab] = useState(0);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const tabFromUrl = parseInt(searchParams.get('tab') || '0', 10);
+  const [selectedTab, setSelectedTab] = useState(tabFromUrl);
+
+  useEffect(() => {
+    const urlTab = parseInt(searchParams.get('tab') || '0', 10);
+    if (urlTab >= 0 && urlTab <= 4) {
+      setSelectedTab(urlTab);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (newTab: number) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set('tab', newTab.toString());
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
   return (
     <DivisionProvider divisionId={divisionId}>
       <Paper sx={{ mb: 3 }}>
         <Tabs
           value={selectedTab}
-          onChange={(_, value) => setSelectedTab(value)}
+          onChange={(_, value) => handleTabChange(value)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
