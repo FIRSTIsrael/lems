@@ -3,10 +3,12 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import useSWR from 'swr';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 import { useMatchStageTranslations } from '@lems/localization';
-import { useTeamAtEventData } from './team-at-event-data-context';
+import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { useTeamAtEvent } from './team-at-event-context';
 
 interface ScheduleEntry {
   time: Date;
@@ -15,10 +17,23 @@ interface ScheduleEntry {
 }
 
 export const TeamSchedule: React.FC = () => {
+  const { event, team } = useTeamAtEvent();
+
+  const { data } = useSWR<{
+    session: TeamJudgingSession;
+    matches: TeamRobotGameMatch[];
+  } | null>(`/portal/events/${event.slug}/teams/${team.number}/activities`, {
+    suspense: true
+  });
+
   const t = useTranslations('pages.team-in-event');
   const { getStage } = useMatchStageTranslations();
 
-  const { matches, judgingSession, team } = useTeamAtEventData();
+  if (!data) {
+    return null; // Should be handled by suspense
+  }
+
+  const { session: judgingSession, matches } = data;
 
   const scheduleEntries: ScheduleEntry[] = [
     ...matches.map(match => ({

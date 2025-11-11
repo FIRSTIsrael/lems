@@ -4,14 +4,17 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Stack } from '@mui/material';
 import { TrendingUp as ScoreIcon, SmartToy as RobotIcon } from '@mui/icons-material';
-import { useTeamAtEventData } from '../team-at-event-data-context';
 
-export const PerformanceMetrics: React.FC = () => {
-  const { scoreboard } = useTeamAtEventData();
+interface PerformanceMetricsProps {
+  highestScore: number | null;
+  robotGameRank: number | null;
+}
+
+export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
+  highestScore,
+  robotGameRank
+}) => {
   const t = useTranslations('pages.team-in-event');
-
-  const hasScores = scoreboard?.scores && scoreboard.scores.length > 0;
-  const highestScore = hasScores ? Math.max(...scoreboard.scores!) : null;
 
   return (
     <>
@@ -35,7 +38,7 @@ export const PerformanceMetrics: React.FC = () => {
           </Typography>
         </Stack>
         <Typography variant="h6" fontWeight="600" color="primary">
-          {highestScore || 0}
+          {highestScore}
         </Typography>
       </Grid>
 
@@ -59,7 +62,7 @@ export const PerformanceMetrics: React.FC = () => {
           </Typography>
         </Stack>
         <Typography variant="h6" fontWeight="600" color="primary">
-          {scoreboard?.rank || 0}
+          {robotGameRank}
         </Typography>
       </Grid>
     </>

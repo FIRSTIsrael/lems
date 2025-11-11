@@ -1,58 +1,69 @@
 import express, { Response } from 'express';
 import db from '../../../../lib/database';
 import { PortalTeamAtEventRequest } from '../../../../types/express';
-import { attachTeam } from '../../middleware/attach-team';
-import { makePortalTeamAtEventResponse } from './util';
+import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
+import { makePortalAwardsResponse, makePortalDivisionResponse } from '../../divisions/util';
+import { makePortalTeamResponse } from '../../teams/util';
+import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:teamNumber', attachTeam());
+router.use('/:teamNumber', attachTeamAtEvent());
 
-// Should be removed - we do not need this endpoint
 router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) => {
-  const event = await db.events.byId(req.eventId).get();
   const team = await db.teams.byId(req.teamId).get();
+  const division = await db.divisions.byId(req.divisionId).get();
+  const event = await db.events.byId(division.event_id).get();
 
-  const teamRegistration = await db.teams.byId(req.teamId).isInEvent(req.eventId);
-  if (!teamRegistration) {
-    res.status(404).json({ error: 'Team not registered for this event' });
+  res.json({
+    team: makePortalTeamResponse(team),
+    event: {
+      id: event.id,
+      name: event.name,
+      slug: event.slug
+    },
+    division: makePortalDivisionResponse(division)
+  });
+});
+
+router.get('/:teamNumber/activities', async (req: PortalTeamAtEventRequest, res: Response) => {
+  const session = await db.judgingSessions.byDivisionId(req.divisionId).getByTeam(req.teamId);
+  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+  const matches = await db.robotGameMatches.byDivisionId(req.divisionId).getByTeam(req.teamId);
+  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+
+  res.json({
+    session: makePortalTeamJudgingSessionResponse(req.teamId, session, rooms),
+    matches: matches.map(match => makePortalTeamRobotGameMatchResponse(req.teamId, match, tables))
+  });
+});
+
+router.get('/:teamNumber/awards', async (req: PortalTeamAtEventRequest, res: Response) => {
+  const division = await db.divisions.byId(req.divisionId).get();
+  const eventSettings = await db.events.byId(division.event_id).getSettings();
+
+  if (!eventSettings.published) {
+    res.status(200).json([]);
     return;
   }
 
-  // Must exist, because it was returned from the DB when checking registration
-  const division = await db.divisions.byId(teamRegistration).get();
-  const eventSettings = await db.events.byId(event.id).getSettings();
-
-  const [teamAwards, teamMatches, teamSession, rooms, tables] = await Promise.all([
-    db.awards.byDivisionId(division.id).getByTeam(req.teamId),
-    db.robotGameMatches.byDivisionId(division.id).getByTeam(req.teamId),
-    db.judgingSessions.byDivisionId(division.id).getByTeam(req.teamId),
-    db.rooms.byDivisionId(division.id).getAll(),
-    db.tables.byDivisionId(division.id).getAll()
-  ]);
-
-  const teamAtEvent = makePortalTeamAtEventResponse(
-    event,
-    division,
-    team,
-    eventSettings.published ? teamAwards : [],
-    teamMatches,
-    tables,
-    teamSession,
-    rooms
-  );
-
-  res.json(teamAtEvent);
-  return;
+  const teamAwards = await db.awards.byDivisionId(division.id).getByTeam(req.teamId);
+  res.status(200).json(teamAwards.map(makePortalAwardsResponse));
 });
-
-router.get('/:teamNumber/schedule', async (req: PortalTeamAtEventRequest, res: Response) => {});
-
-router.get('/:teamNumber/awards', async (req: PortalTeamAtEventRequest, res: Response) => {});
 
 router.get(
   '/:teamNumber/robot-performance',
-  async (req: PortalTeamAtEventRequest, res: Response) => {}
+  async (req: PortalTeamAtEventRequest, res: Response) => {
+    const scores = [];
+    const highestScore = 0;
+    const robotGameRank = 1;
+
+    res.status(200).json({
+      scores,
+      highestScore,
+      robotGameRank
+    });
+  }
 );
 
 export default router;
