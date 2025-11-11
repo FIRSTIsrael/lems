@@ -42,16 +42,37 @@ const rippleAnimation = keyframes`
   100% { transform: scale(1); }
 `;
 
-/**
- * Connection indicator component
- * Displays WebSocket connection status from the ConnectionStateContext
- */
-export function ConnectionIndicator() {
+interface ConnectionIndicatorProps {
+  compact?: boolean;
+}
+
+export function ConnectionIndicator({ compact = false }: ConnectionIndicatorProps) {
   const t = useTranslations('components.connection-indicator');
 
   const { state } = useConnectionState();
   const config = statusConfig[state];
 
+  if (compact) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '0.675rem',
+          width: '0.675rem',
+          borderRadius: '50%',
+          backgroundColor: config.rippleColor,
+          boxShadow: `0 0 0 0.25rem ${config.rippleColor}33`,
+          animation: `${rippleAnimation} 2s linear infinite`,
+          transition: 'all 0.2s ease-in-out'
+        }}
+        title={t(state)}
+      />
+    );
+  }
+
+  // Desktop: icon + text
   return (
     <Box
       sx={{
@@ -65,6 +86,8 @@ export function ConnectionIndicator() {
         fontSize: '0.875rem',
         fontWeight: 500,
         minWidth: 100,
+        maxWidth: 150,
+        width: 'fit-content',
         transition: 'all 0.2s ease-in-out'
       }}
     >
