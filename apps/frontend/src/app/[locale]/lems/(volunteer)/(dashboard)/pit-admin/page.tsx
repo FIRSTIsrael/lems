@@ -18,9 +18,9 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
-import { useEvent } from '../components/event-context';
-import { ConnectionIndicator } from '../components/connection-indicator';
-import { usePageData } from '../hooks/use-page-data';
+import { useEvent } from '../../components/event-context';
+import { ConnectionIndicator } from '../../components/connection-indicator';
+import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_DIVISION_TEAMS,
   TEAM_ARRIVED_MUTATION,

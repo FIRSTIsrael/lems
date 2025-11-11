@@ -1,5 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { SubscriptionConfig } from '../hooks/use-page-data';
+import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 export interface Team {
   id: string;
