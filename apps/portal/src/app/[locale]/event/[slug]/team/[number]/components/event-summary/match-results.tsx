@@ -3,24 +3,23 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Box, Divider } from '@mui/material';
-import { useTeamAtEventData } from '../team-at-event-data-context';
 
-export const MatchResults: React.FC = () => {
-  const { scoreboard } = useTeamAtEventData();
+interface MatchResultsProps {
+  scores: number[];
+}
+
+export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
   const t = useTranslations('pages.team-in-event');
-
-  const displayScores =
-    scoreboard?.scores && scoreboard.scores.length > 0 ? scoreboard.scores : [0, 0, 0];
 
   return (
     <>
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 3 }} />
       <Box>
         <Typography variant="h6" fontWeight="700" mb={1}>
           {t('performance.match-results')}
         </Typography>
         <Grid container spacing={2}>
-          {displayScores.map((score, index) => (
+          {scores.map((score, index) => (
             <Grid
               size={{ xs: 6, sm: 4, md: 3 }}
               key={index}

@@ -6,10 +6,10 @@ import { useTranslations } from 'next-intl';
 import { Paper, Button, Avatar, Stack, Typography, Box } from '@mui/material';
 import { ArrowBack, ArrowForward, LocationOn as LocationIcon } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { useTeamAtEventData } from './team-at-event-data-context';
+import { useTeamAtEvent } from './team-at-event-context';
 
 export const TeamInfoHeader: React.FC = () => {
-  const { team, event, division } = useTeamAtEventData();
+  const { team, event, division } = useTeamAtEvent();
 
   const t = useTranslations('pages.team-in-event');
 
@@ -34,7 +34,7 @@ export const TeamInfoHeader: React.FC = () => {
           {t('header.back-to-event')}
         </Button>
         <Typography variant="body2" color="text.secondary">
-          {event.name} • {division.name}
+          {event.name} {division.name && `• ${division.name}`}
         </Typography>
       </Stack>
 

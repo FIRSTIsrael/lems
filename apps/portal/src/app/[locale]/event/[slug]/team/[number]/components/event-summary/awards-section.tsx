@@ -3,10 +3,21 @@
 import React from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
-import { useTeamAtEventData } from '../team-at-event-data-context';
+import { Award } from '@lems/types/api/portal';
+import useSWR from 'swr';
+import { useTeamAtEvent } from '../team-at-event-context';
 
 export const AwardsSection: React.FC = () => {
-  const { awards } = useTeamAtEventData();
+  const { event, team } = useTeamAtEvent();
+
+  const { data: awards, isLoading } = useSWR<Award[] | null>(
+    `/portal/events/${event.slug}/teams/${team.number}/awards`,
+    { suspense: true, fallbackData: null }
+  );
+
+  if (!awards || isLoading) {
+    return null;
+  }
 
   const getAwardIcon = (award: { name: string; place: number }) => {
     switch (award.place) {

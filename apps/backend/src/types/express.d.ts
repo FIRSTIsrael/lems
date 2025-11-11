@@ -23,7 +23,7 @@ export interface PortalTeamRequest extends Request {
 
 export interface PortalTeamAtEventRequest extends Request {
   teamId: string;
-  eventId: string;
+  divisionId: string;
 }
 
 export interface PortalDivisionRequest extends Request {
