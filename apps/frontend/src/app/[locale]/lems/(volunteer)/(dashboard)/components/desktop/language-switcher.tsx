@@ -9,11 +9,12 @@ import {
   ListItemText,
   Typography,
   lighten,
+  alpha,
   useTheme
 } from '@mui/material';
 import { Language, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon, Locale, Locales } from '@lems/localization';
-import { useRouter } from '../../../../../../i18n/navigation';
+import { useRouter } from '../../../../../../../i18n/navigation';
 
 interface LanguageSubmenuProps {
   anchorEl: HTMLButtonElement | null;
@@ -39,7 +40,7 @@ const LanguageSubmenu: React.FC<LanguageSubmenuProps> = ({ anchorEl, onClose, on
         horizontal: direction === 'ltr' ? 'right' : 'left'
       }}
       transformOrigin={{
-        vertical: 'top', // how bout now
+        vertical: 'top',
         horizontal: direction === 'ltr' ? 'left' : 'right'
       }}
       slotProps={{
@@ -101,6 +102,7 @@ interface LanguageSwitcherProps {
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) => {
   const router = useRouter();
+  const theme = useTheme();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
 
@@ -126,7 +128,18 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
 
   return (
     <>
-      <MenuItem sx={{ p: 0, borderRadius: 1 }}>
+      <MenuItem
+        sx={{
+          p: 0,
+          borderRadius: 1,
+          bgcolor: alpha(theme.palette.primary.main, 0.1),
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+          width: '100%',
+          '&:hover': {
+            bgcolor: alpha(theme.palette.primary.main, 0.15)
+          }
+        }}
+      >
         <button
           ref={anchorRef}
           onClick={handleToggleSubmenu}
@@ -138,20 +151,30 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
             border: 'none',
             padding: '8px 16px',
             cursor: 'pointer',
-            textAlign: 'start'
+            textAlign: 'start',
+            color: 'inherit'
           }}
           aria-haspopup="true"
           aria-controls={submenuOpen ? 'language-switcher-submenu' : undefined}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 32, color: theme.palette.primary.main }}>
             <Language fontSize="small" />
           </ListItemIcon>
           <ListItemText>
-            <Typography variant="body2" component="span">
+            <Typography
+              variant="body2"
+              component="span"
+              sx={{ fontWeight: 500, color: 'text.primary' }}
+            >
               {currentLocaleData.displayName}
             </Typography>
           </ListItemText>
-          <DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} fontSize="small" sx={{ ml: 1 }} />
+          <DirectionalIcon
+            ltr={ChevronRight}
+            rtl={ChevronLeft}
+            fontSize="small"
+            sx={{ ml: 1, color: 'text.secondary' }}
+          />
         </button>
       </MenuItem>
 

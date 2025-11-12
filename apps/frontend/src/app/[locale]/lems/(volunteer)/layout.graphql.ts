@@ -7,6 +7,7 @@ type GetVolunteerEventDataQuery = {
     divisions: Array<{
       id: string;
       name: string;
+      color: string;
     }>;
   } | null;
 };
@@ -26,6 +27,7 @@ export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
       divisions {
         id
         name
+        color
       }
     }
   }

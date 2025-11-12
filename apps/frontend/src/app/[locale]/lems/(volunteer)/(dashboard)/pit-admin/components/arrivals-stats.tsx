@@ -2,16 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Box,
-  Paper,
-  Stack,
-  Typography,
-  LinearProgress,
-  Chip,
-  useTheme,
-  useMediaQuery
-} from '@mui/material';
+import { Box, Paper, Stack, Typography, LinearProgress, Chip, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -24,7 +15,6 @@ interface ArrivalsStatsProps {
 
 export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const t = useTranslations('components.pit-admin.stats');
 
   const stats = useMemo(() => {
@@ -75,7 +65,7 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
       }}
     >
       <Stack spacing={3}>
-        <Stack direction={isMobile ? 'column' : 'row'} spacing={2} alignItems="flex-start">
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="flex-start">
           <Stack flex={1} spacing={0.5}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <GroupIcon sx={{ opacity: 0.9 }} />
@@ -83,12 +73,42 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
                 {t('total-teams')}
               </Typography>
             </Stack>
-            <Typography variant={isMobile ? 'h4' : 'h3'} sx={{ fontWeight: 700 }}>
-              {stats.total}
-            </Typography>
+
+            <Box display={{ xs: 'block', md: 'none' }}>
+              <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                {stats.total}
+              </Typography>
+            </Box>
+
+            <Box display={{ xs: 'none', md: 'block' }}>
+              <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                {stats.total}
+              </Typography>
+            </Box>
           </Stack>
 
-          <Stack alignItems={isMobile ? 'flex-start' : 'center'} spacing={1}>
+          <Stack flex={1} spacing={0.5}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <GroupIcon sx={{ opacity: 0.9 }} />
+              <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                {t('total-teams')}
+              </Typography>
+            </Stack>
+
+            <Box display={{ xs: 'block', md: 'none' }}>
+              <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                {stats.total}
+              </Typography>
+            </Box>
+
+            <Box display={{ xs: 'none', md: 'block' }}>
+              <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                {stats.total}
+              </Typography>
+            </Box>
+          </Stack>
+
+          <Stack alignItems={{ xs: 'flex-start', md: 'center' }} spacing={1}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
               <Stack spacing={0}>

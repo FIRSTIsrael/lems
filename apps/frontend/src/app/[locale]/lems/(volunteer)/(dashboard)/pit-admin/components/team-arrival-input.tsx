@@ -31,9 +31,10 @@ export function TeamArrivalInput({
   loading = false,
   disabled = false
 }: TeamArrivalInputProps) {
+  const t = useTranslations('components.pit-admin.team-input');
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const t = useTranslations('components.pit-admin.team-input');
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -92,14 +93,14 @@ export function TeamArrivalInput({
         </Stack>
 
         <Stack
-          direction={isMobile ? 'column' : 'row'}
+          direction={{ xs: 'column', md: 'row' }}
           spacing={2}
-          alignItems={isMobile ? 'stretch' : 'flex-end'}
+          alignItems={{ xs: 'stretch', d: 'flex-end' }}
         >
           <Autocomplete
             fullWidth={isMobile}
             sx={{
-              flex: isMobile ? undefined : 1,
+              flex: { xs: undefined, md: 1 },
               '& .MuiOutlinedInput-root': {
                 transition: theme.transitions.create(['box-shadow', 'border-color']),
                 '&:hover': {
@@ -169,7 +170,7 @@ export function TeamArrivalInput({
             onClick={handleMarkArrived}
             disabled={!selectedTeam || submitting || disabled}
             sx={{
-              minWidth: isMobile ? undefined : 140,
+              minWidth: { xs: undefined, md: 140 },
               height: 56,
               fontWeight: 600,
               textTransform: 'none',

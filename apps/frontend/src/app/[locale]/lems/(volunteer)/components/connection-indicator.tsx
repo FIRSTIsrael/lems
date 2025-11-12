@@ -36,19 +36,31 @@ export function ConnectionIndicator({ compact = false }: ConnectionIndicatorProp
     return (
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '0.675rem',
-          width: '0.675rem',
-          borderRadius: '50%',
-          backgroundColor: statusColor,
-          boxShadow: `0 0 0 0.25rem ${statusColor}33`,
-          animation: `${rippleAnimation} 2s linear infinite`,
-          transition: 'all 0.2s ease-in-out'
+          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '0.5rem',
+          p: 1.5,
+          flexShrink: 0,
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1) inset'
         }}
-        title={t(state)}
-      />
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '0.675rem',
+            width: '0.675rem',
+            borderRadius: '50%',
+            backgroundColor: statusColor,
+            boxShadow: `0 0 0 0.25rem ${statusColor}33`,
+            animation: `${rippleAnimation} 2s linear infinite`,
+            transition: 'all 0.2s ease-in-out'
+          }}
+          title={t(state)}
+        />
+      </Box>
     );
   }
 

@@ -18,7 +18,7 @@ import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
 
 export default function PitAdminPage() {
-  const { eventName, currentDivision } = useEvent();
+  const { currentDivision } = useEvent();
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
 
   const subscriptions = useMemo(
@@ -44,7 +44,7 @@ export default function PitAdminPage() {
 
   return (
     <>
-      <PageHeader eventName={eventName} divisionName={currentDivision.name} />
+      <PageHeader />
 
       <Stack spacing={3} sx={{ pt: 3 }}>
         <TeamArrivalInput

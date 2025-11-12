@@ -1,31 +1,17 @@
 'use client';
 
-import { Stack, Typography, Box, useTheme } from '@mui/material';
+import { Stack, Typography, Box } from '@mui/material';
 import { useRoleTranslations } from '@lems/localization';
-import { useUser } from '../../../components/user-context';
-import { useEvent } from '../../components/event-context';
+import { useUser } from '../../../../components/user-context';
+import { useEvent } from '../../../components/event-context';
 
 export const UserInfoSection = () => {
-  const theme = useTheme();
   const user = useUser();
   const event = useEvent();
 
   const { getRole } = useRoleTranslations();
 
-  // Generate a consistent color based on division ID
-  const getDivisionColor = (divisionId: string) => {
-    const colors = [
-      theme.palette.info.main,
-      theme.palette.success.main,
-      theme.palette.warning.main,
-      theme.palette.error.main,
-      theme.palette.secondary.main
-    ];
-    const hash = divisionId.charCodeAt(0) + divisionId.charCodeAt(divisionId.length - 1);
-    return colors[hash % colors.length];
-  };
-
-  const divisionColor = getDivisionColor(event.currentDivision.id);
+  const divisionColor = event.currentDivision.color;
   const displayDivision = !!event.currentDivision.name.trim();
 
   return (
