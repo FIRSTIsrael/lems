@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { Container, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import {
@@ -43,7 +43,7 @@ export default function PitAdminPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ pt: 3, minHeight: '100vh' }}>
+    <>
       <PageHeader eventName={eventName} divisionName={currentDivision.name} />
 
       <Stack spacing={3} sx={{ pt: 3 }}>
@@ -56,6 +56,6 @@ export default function PitAdminPage() {
 
         <ArrivalsStats teams={teams} loading={loading} />
       </Stack>
-    </Container>
+    </>
   );
 }

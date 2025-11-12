@@ -17,7 +17,7 @@ import { MenuRounded } from '@mui/icons-material';
 import { ConnectionIndicator } from '../../components/connection-indicator';
 
 const DRAWER_WIDTH = 300;
-const APP_BAR_HEIGHT = 56;
+const APP_BAR_HEIGHT = 64;
 
 export const MobileAppBar = () => {
   const theme = useTheme();
@@ -99,7 +99,7 @@ const NavigationList: React.FC<NavigationListProps> = ({ items, onItemClick }) =
   const theme = useTheme();
 
   return (
-    <List component={Stack} spacing={1} sx={{ p: 1 }}>
+    <List component={Stack} spacing={1} sx={{ p: 2 }}>
       {items.map(item => (
         <ListItem
           key={item.label}
