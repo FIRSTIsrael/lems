@@ -77,13 +77,14 @@
       "team-input": {
         "title": "רישום הגעת קבוצה",
         "subtitle": "בחרו קבוצה מהרשימה כדי לסמן אותה כהגיעה לאירוע",
-        "search-label": "חיפוש קבוצות לפי מספר או שם",
+        "search-label": "חיפוש קבוצות",
         "search-placeholder": "הקלידו לחיפוש...",
         "button": "סמנו הגעה",
         "submitting": "מעבדים...",
         "no-options": "כל הקבוצות הגיעו!",
         "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "error": "נכשל בסימון הקבוצה כהגיעה"
+        "error": "נכשל בסימון הקבוצה כהגיעה",
+        "team": "קבוצה"
       }
     }
   }

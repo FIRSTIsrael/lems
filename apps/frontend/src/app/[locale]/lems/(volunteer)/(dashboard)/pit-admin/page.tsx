@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { Box, Stack, useTheme } from '@mui/material';
+import { Container, Stack } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import {
@@ -18,7 +18,6 @@ import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
 
 export default function PitAdminPage() {
-  const theme = useTheme();
   const { eventName, currentDivision } = useEvent();
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
 
@@ -44,38 +43,19 @@ export default function PitAdminPage() {
   };
 
   return (
-    <Box
-      sx={{
-        p: 3,
-        minHeight: '100vh',
-        bgcolor:
-          theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
+    <Container maxWidth="lg" sx={{ pt: 3, minHeight: '100vh' }}>
       <PageHeader eventName={eventName} divisionName={currentDivision.name} />
 
-      <Stack
-        component="main"
-        spacing={3}
-        sx={{
-          flex: 1,
-          py: { xs: 2, sm: 3, md: 4 },
-          maxWidth: '1200px',
-          width: '100%',
-          mx: 'auto'
-        }}
-      >
-        <ArrivalsStats teams={teams} loading={loading} />
-
+      <Stack spacing={3} sx={{ pt: 3 }}>
         <TeamArrivalInput
           teams={teams}
           onTeamArrival={handleTeamArrival}
           loading={loading}
           disabled={loading}
         />
+
+        <ArrivalsStats teams={teams} loading={loading} />
       </Stack>
-    </Box>
+    </Container>
   );
 }

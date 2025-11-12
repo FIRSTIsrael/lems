@@ -17,10 +17,11 @@ export function PageHeader({ eventName, divisionName }: PageHeaderProps) {
     <Paper
       sx={{
         p: { xs: 2, sm: 3 },
-        background:
-          theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.background.paper,
         borderBottom: `2px solid ${theme.palette.divider}`,
-        boxShadow: 'none'
+        boxShadow: 'none',
+        maxWidth: 'lg',
+        width: '100%',
+        mx: 'auto'
       }}
     >
       <Stack

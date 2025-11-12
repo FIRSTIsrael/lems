@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Box,
@@ -45,11 +45,11 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
     };
   }, [teams]);
 
-  const getProgressColor = (percentage: number): 'success' | 'warning' | 'error' => {
+  const getProgressColor = useCallback((percentage: number): 'success' | 'warning' | 'error' => {
     if (percentage >= 80) return 'success';
     if (percentage >= 50) return 'warning';
     return 'error';
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -122,6 +122,7 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
               }
             }}
           />
+
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="caption" sx={{ opacity: 0.85 }}>
               {stats.pending > 0 && t('teams-pending', { count: stats.pending })}

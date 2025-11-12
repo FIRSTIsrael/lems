@@ -77,13 +77,14 @@
       "team-input": {
         "title": "Register Team Arrival",
         "subtitle": "Select a team from the list to mark them as arrived at the event",
-        "search-label": "Search teams by number or name",
+        "search-label": "Search teams",
         "search-placeholder": "Type to search...",
         "button": "Mark Arrived",
         "submitting": "Processing...",
         "no-options": "All teams have arrived",
         "all-arrived-message": "All teams have arrived",
-        "error": "Failed to mark team as arrived"
+        "error": "Failed to mark team as arrived",
+        "team": "Team"
       }
     }
   }

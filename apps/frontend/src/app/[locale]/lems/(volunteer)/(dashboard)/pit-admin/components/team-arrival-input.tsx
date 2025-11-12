@@ -108,7 +108,9 @@ export function TeamArrivalInput({
               }
             }}
             options={unarrivedTeams}
-            getOptionLabel={team => `Team ${team.number} - ${team.name}`}
+            getOptionLabel={team =>
+              `Team #${team.number} - ${team.name} (${team.affiliation}, ${team.city})`
+            }
             value={selectedTeam}
             onChange={(_event, newValue) => {
               setSelectedTeam(newValue);
@@ -139,7 +141,7 @@ export function TeamArrivalInput({
                 <Stack spacing={0.5} width="100%">
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      Team {team.number}
+                      {t('team')} {team.number}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       {team.name}
