@@ -1,11 +1,12 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, LinearProgress, Chip, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import WarningIcon from '@mui/icons-material/Warning';
+import { Locale, Locales } from '@lems/localization';
 import type { Team } from '../pit-admin.graphql';
 
 interface ArrivalsStatsProps {
@@ -15,6 +16,9 @@ interface ArrivalsStatsProps {
 
 export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
   const theme = useTheme();
+  const currentLocale = useLocale() as Locale;
+  const direction = Locales[currentLocale].direction;
+
   const t = useTranslations('components.pit-admin.stats');
 
   const stats = useMemo(() => {
@@ -65,8 +69,13 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
       }}
     >
       <Stack spacing={3}>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="flex-start">
-          <Stack flex={1} spacing={0.5}>
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={2}
+          alignItems="flex-start"
+          justifyContent="space-between"
+        >
+          <Stack spacing={0.5}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <GroupIcon sx={{ opacity: 0.9 }} />
               <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
@@ -87,39 +96,29 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
             </Box>
           </Stack>
 
-          <Stack flex={1} spacing={0.5}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <GroupIcon sx={{ opacity: 0.9 }} />
-              <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
-                {t('total-teams')}
-              </Typography>
-            </Stack>
-
-            <Box display={{ xs: 'block', md: 'none' }}>
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats.total}
-              </Typography>
-            </Box>
-
-            <Box display={{ xs: 'none', md: 'block' }}>
-              <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                {stats.total}
-              </Typography>
-            </Box>
-          </Stack>
-
-          <Stack alignItems={{ xs: 'flex-start', md: 'center' }} spacing={1}>
+          <Stack spacing={0.5}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
-              <Stack spacing={0}>
-                <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
-                  {t('arrived')}
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                  {stats.arrived}
-                </Typography>
-              </Stack>
+              <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                {t('arrived')}
+              </Typography>
             </Stack>
+
+            <Box display={{ xs: 'block', md: 'none' }}>
+              <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                {stats.arrived}
+              </Typography>
+            </Box>
+
+            <Box display={{ xs: 'none', md: 'block' }}>
+              <Typography
+                variant="h3"
+                sx={{ fontWeight: 700 }}
+                align={direction === 'rtl' ? 'left' : 'right'}
+              >
+                {stats.arrived}
+              </Typography>
+            </Box>
           </Stack>
         </Stack>
 
