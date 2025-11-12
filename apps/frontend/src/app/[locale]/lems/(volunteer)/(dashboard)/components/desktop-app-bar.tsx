@@ -38,7 +38,7 @@ export const DesktopAppBar = () => {
 };
 
 const navigationItems = [
-  { label: 'Dashboard', href: '#', icon: <Search /> },
+  { label: 'Dashboard', href: '#', icon: <Search />, active: true },
   { label: 'Teams', href: '#', icon: <Search /> },
   { label: 'Matches', href: '#', icon: <Search /> },
   { label: 'Rankings', href: '#', icon: <Search /> }
@@ -62,7 +62,9 @@ const NavigationList: React.FC<NavigationListProps> = ({ items, onItemClick }) =
             '&:hover': {
               '& .navigation-icon': {
                 bgcolor: alpha(theme.palette.primary.main, 0.2),
-                color: 'text.primary'
+                color: 'text.primary',
+                transform: 'translateY(-4px)',
+                boxShadow: item.active ? theme.shadows[6] : theme.shadows[1]
               },
               '& .navigation-text': { color: 'text.primary', fontWeight: 700 }
             }
@@ -81,7 +83,11 @@ const NavigationList: React.FC<NavigationListProps> = ({ items, onItemClick }) =
             alignItems="center"
             justifyContent="center"
             color={item.active ? '' : 'text.secondary'}
-            sx={{ transition: 'background-color 0.25s, color 0.15s' }}
+            sx={{
+              transition: 'background-color 0.25s, color 0.15s, box-shadow 0.15s, transform 0.15s',
+              boxShadow: item.active ? theme.shadows[3] : 'none',
+              transform: 'translateY(0)'
+            }}
           >
             {item.icon}
           </Box>
@@ -89,11 +95,12 @@ const NavigationList: React.FC<NavigationListProps> = ({ items, onItemClick }) =
             className="navigation-text"
             color={item.active ? '' : 'text.secondary'}
             mt={1}
+            align="center"
             variant="body2"
             fontWeight={item.active ? 700 : 600}
             sx={{ transition: 'color 0.15s, font-weight 0.15s' }}
           >
-            Description
+            {item.label}
           </Typography>
         </Box>
       ))}
