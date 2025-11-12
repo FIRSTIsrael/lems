@@ -19,7 +19,7 @@ import { ArrivalsStats } from './components/arrivals-stats';
 
 export default function PitAdminPage() {
   const theme = useTheme();
-  const { currentDivision } = useEvent();
+  const { eventName, currentDivision } = useEvent();
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
 
   const subscriptions = useMemo(
@@ -54,7 +54,7 @@ export default function PitAdminPage() {
         flexDirection: 'column'
       }}
     >
-      <PageHeader divisionName={currentDivision.name} />
+      <PageHeader eventName={eventName} divisionName={currentDivision.name} />
 
       <Stack
         component="main"

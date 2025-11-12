@@ -2,16 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
-import { ConnectionIndicator } from '../../../components/connection-indicator';
 
 interface PageHeaderProps {
+  eventName: string;
   divisionName: string;
 }
 
-/**
- * Professional page header with division info and connection status
- */
-export function PageHeader({ divisionName }: PageHeaderProps) {
+export function PageHeader({ eventName, divisionName }: PageHeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const t = useTranslations('components.pit-admin');
@@ -46,10 +43,9 @@ export function PageHeader({ divisionName }: PageHeaderProps) {
             {t('page-title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-            {divisionName}
+            {`${eventName}${divisionName.trim() && ` • ${divisionName}`}`}
           </Typography>
         </Stack>
-        <ConnectionIndicator />
       </Stack>
     </Paper>
   );

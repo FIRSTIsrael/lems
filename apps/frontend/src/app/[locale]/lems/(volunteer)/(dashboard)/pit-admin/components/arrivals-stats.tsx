@@ -22,10 +22,6 @@ interface ArrivalsStatsProps {
   loading?: boolean;
 }
 
-/**
- * Displays arrival statistics including total teams, arrival count,
- * percentage progress, and missing teams when arrival >= 70%
- */
 export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -79,7 +75,6 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
       }}
     >
       <Stack spacing={3}>
-        {/* Header with total teams */}
         <Stack direction={isMobile ? 'column' : 'row'} spacing={2} alignItems="flex-start">
           <Stack flex={1} spacing={0.5}>
             <Stack direction="row" alignItems="center" spacing={1}>
@@ -93,7 +88,6 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
             </Typography>
           </Stack>
 
-          {/* Arrived count and badge */}
           <Stack alignItems={isMobile ? 'flex-start' : 'center'} spacing={1}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
@@ -106,20 +100,9 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
                 </Typography>
               </Stack>
             </Stack>
-            <Chip
-              label={`${stats.percentage}%`}
-              size="small"
-              sx={{
-                background: 'rgba(255, 255, 255, 0.25)',
-                color: 'white',
-                fontWeight: 600,
-                backdropFilter: 'blur(10px)'
-              }}
-            />
           </Stack>
         </Stack>
 
-        {/* Progress bar */}
         <Stack spacing={1}>
           <LinearProgress
             variant="determinate"
@@ -139,13 +122,24 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
               }
             }}
           />
-          <Typography variant="caption" sx={{ opacity: 0.85 }}>
-            {stats.pending > 0 && t('teams-pending', { count: stats.pending })}
-            {stats.pending === 0 && t('all-arrived')}
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="caption" sx={{ opacity: 0.85 }}>
+              {stats.pending > 0 && t('teams-pending', { count: stats.pending })}
+              {stats.pending === 0 && t('all-arrived')}
+            </Typography>
+            <Chip
+              label={`${stats.percentage}%`}
+              size="small"
+              sx={{
+                background: 'rgba(255, 255, 255, 0.25)',
+                color: 'white',
+                fontWeight: 600,
+                backdropFilter: 'blur(10px)'
+              }}
+            />
+          </Stack>
         </Stack>
 
-        {/* Missing teams alert */}
         {stats.isHighArrival && stats.missingTeams.length > 0 && (
           <Box
             sx={{

@@ -25,10 +25,6 @@ interface TeamArrivalInputProps {
   disabled?: boolean;
 }
 
-/**
- * Team arrival input component with autocomplete functionality.
- * Allows users to search and select teams to mark as arrived.
- */
 export function TeamArrivalInput({
   teams,
   onTeamArrival,
@@ -88,7 +84,6 @@ export function TeamArrivalInput({
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 }, boxShadow: theme.shadows[2] }}>
       <Stack spacing={2.5}>
-        {/* Header */}
         <Stack spacing={0.5}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {t('title')}
@@ -98,14 +93,12 @@ export function TeamArrivalInput({
           </Typography>
         </Stack>
 
-        {/* Error display */}
         {error && (
           <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 1 }}>
             {error}
           </Alert>
         )}
 
-        {/* Input section */}
         <Stack
           direction={isMobile ? 'column' : 'row'}
           spacing={2}
@@ -210,7 +203,6 @@ export function TeamArrivalInput({
           </Button>
         </Stack>
 
-        {/* Info message when all teams arrived */}
         {unarrivedTeams.length === 0 && teams.length > 0 && (
           <Stack
             direction="row"
