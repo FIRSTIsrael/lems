@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import type { ApolloCache } from '@apollo/client';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 export interface Team {
@@ -109,5 +110,32 @@ export function createTeamArrivalSubscription(
 
       return prev;
     }
+  };
+}
+
+/**
+ * Creates an Apollo cache update function for the team arrival mutation.
+ * Optimistically updates the cache to mark a team as arrived.
+ *
+ * @param teamId - The ID of the team that arrived
+ * @returns Cache update function for Apollo useMutation
+ */
+export function createTeamArrivedCacheUpdate(teamId: string) {
+  return (cache: ApolloCache) => {
+    cache.modify({
+      fields: {
+        division(existingDivision = {}) {
+          if (!existingDivision.teams) {
+            return existingDivision;
+          }
+          return {
+            ...existingDivision,
+            teams: (existingDivision.teams as Team[]).map((t: Team) =>
+              t.id === teamId ? { ...t, arrived: true } : t
+            )
+          };
+        }
+      }
+    });
   };
 }

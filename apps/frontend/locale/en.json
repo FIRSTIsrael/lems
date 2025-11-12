@@ -64,6 +64,27 @@
       "reconnecting": "Reconnecting...",
       "disconnected": "Disconnected",
       "error": "Error"
+    },
+    "pit-admin": {
+      "page-title": "Team Registration",
+      "stats": {
+        "total-teams": "Total Teams",
+        "arrived": "Arrived",
+        "all-arrived": "All teams arrived! Great job 🎉",
+        "waiting-for": "Waiting for {count, plural, one {# team} other {# teams}}",
+        "teams-pending": "{count, plural, one {# team pending} other {# teams pending}}"
+      },
+      "team-input": {
+        "title": "Register Team Arrival",
+        "subtitle": "Select a team from the list to mark them as arrived at the event",
+        "search-label": "Search teams by number or name",
+        "search-placeholder": "Type to search...",
+        "button": "Mark Arrived",
+        "submitting": "Processing...",
+        "no-options": "All teams have arrived",
+        "all-arrived-message": "All teams have arrived",
+        "error": "Failed to mark team as arrived"
+      }
     }
   }
 }

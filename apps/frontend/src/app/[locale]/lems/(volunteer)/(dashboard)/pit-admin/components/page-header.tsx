@@ -1,0 +1,56 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Paper, Stack, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { ConnectionIndicator } from '../../../components/connection-indicator';
+
+interface PageHeaderProps {
+  divisionName: string;
+}
+
+/**
+ * Professional page header with division info and connection status
+ */
+export function PageHeader({ divisionName }: PageHeaderProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const t = useTranslations('components.pit-admin');
+
+  return (
+    <Paper
+      sx={{
+        p: { xs: 2, sm: 3 },
+        background:
+          theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.background.paper,
+        borderBottom: `2px solid ${theme.palette.divider}`,
+        boxShadow: 'none'
+      }}
+    >
+      <Stack
+        direction={isMobile ? 'column' : 'row'}
+        alignItems={isMobile ? 'flex-start' : 'center'}
+        justifyContent="space-between"
+        spacing={2}
+      >
+        <Stack spacing={0.5}>
+          <Typography
+            variant={isMobile ? 'h5' : 'h4'}
+            sx={{
+              fontWeight: 700,
+              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            {t('page-title')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+            {divisionName}
+          </Typography>
+        </Stack>
+        <ConnectionIndicator />
+      </Stack>
+    </Paper>
+  );
+}
