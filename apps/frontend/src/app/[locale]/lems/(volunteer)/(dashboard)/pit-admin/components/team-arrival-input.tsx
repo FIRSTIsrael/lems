@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
 import {
   Box,
   Paper,
@@ -11,7 +12,6 @@ import {
   TextField,
   Button,
   CircularProgress,
-  Alert,
   useTheme,
   useMediaQuery
 } from '@mui/material';
@@ -37,7 +37,6 @@ export function TeamArrivalInput({
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Filter teams that haven't arrived yet
   const unarrivedTeams = teams.filter(team => !team.arrived);
@@ -46,14 +45,13 @@ export function TeamArrivalInput({
     if (!selectedTeam) return;
 
     setSubmitting(true);
-    setError(null);
 
     try {
       await onTeamArrival(selectedTeam);
       setSelectedTeam(null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t('error');
-      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -93,12 +91,6 @@ export function TeamArrivalInput({
           </Typography>
         </Stack>
 
-        {error && (
-          <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 1 }}>
-            {error}
-          </Alert>
-        )}
-
         <Stack
           direction={isMobile ? 'column' : 'row'}
           spacing={2}
@@ -120,7 +112,6 @@ export function TeamArrivalInput({
             value={selectedTeam}
             onChange={(_event, newValue) => {
               setSelectedTeam(newValue);
-              setError(null);
             }}
             onKeyDown={handleKeyDown}
             disabled={submitting || disabled}
