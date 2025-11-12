@@ -13,8 +13,7 @@ import {
   MenuItem,
   Container,
   Button,
-  ListItemIcon,
-  useMediaQuery
+  ListItemIcon
 } from '@mui/material';
 import {
   AssignmentOutlined,
@@ -23,7 +22,6 @@ import {
   Event,
   MenuRounded
 } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
 import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 
@@ -39,14 +37,19 @@ interface PortalAppBarProps {
 }
 
 export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-
   return (
     <React.Fragment>
       <AppBar position="static">
         <Container maxWidth="xl">
-          <Toolbar disableGutters>{isDesktop ? <DesktopAppBar /> : <MobileAppBar />}</Toolbar>
+          <Toolbar disableGutters>
+            <Box display={{ xs: 'none', md: 'block' }} flexGrow={1}>
+              <DesktopAppBar />
+            </Box>
+
+            <Box display={{ xs: 'block', md: 'none' }} flexGrow={1}>
+              <MobileAppBar />
+            </Box>
+          </Toolbar>
         </Container>
       </AppBar>
       {children}

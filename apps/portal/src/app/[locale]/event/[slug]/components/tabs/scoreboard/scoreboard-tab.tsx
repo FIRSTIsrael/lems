@@ -3,8 +3,7 @@
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useTheme } from '@mui/material/styles';
-import { Typography, useMediaQuery, Paper } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
 import { useDivision } from '../../division-data-context';
 import { MobileScoreboard } from './mobile-scoreboard';
@@ -17,9 +16,6 @@ export const ScoreboardTab = () => {
   const eventSlug = params.slug as string;
 
   const division = useDivision();
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const { data: scoreboard } = useSWR<ScoreboardEntry[]>(
     `/portal/divisions/${division.id}/scoreboard`,
@@ -41,19 +37,21 @@ export const ScoreboardTab = () => {
         {t('quick-links.scoreboard')}
       </Typography>
 
-      {isDesktop ? (
+      <Box display={{ xs: 'none', md: 'block' }}>
         <DesktopScoreboard
           sortedData={sortedData}
           matchesPerTeam={matchesPerTeam}
           eventSlug={eventSlug}
         />
-      ) : (
+      </Box>
+
+      <Box display={{ xs: 'block', md: 'none' }}>
         <MobileScoreboard
           sortedData={sortedData}
           matchesPerTeam={matchesPerTeam}
           eventSlug={eventSlug}
         />
-      )}
+      </Box>
     </Paper>
   );
 };
