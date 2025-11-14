@@ -114,6 +114,7 @@
       "disconnected": "Disconnected",
       "error": "Error",
       "idle": "Idle"
-    }
+    },
+    "logout": "Logout"
   }
 }

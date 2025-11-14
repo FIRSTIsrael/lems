@@ -1,9 +1,10 @@
 'use client';
 
-import { AppBar, Drawer, IconButton, Toolbar, Box, Divider } from '@mui/material';
+import { AppBar, Drawer, IconButton, Toolbar, Stack, Divider } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close, Menu as MenuIcon } from '@mui/icons-material';
 import { useState } from 'react';
+import { LogoutButton } from '../logout-button';
 import { ConnectionIndicator } from '../../../components/connection-indicator';
 import { NavigationList } from './navigation-list';
 import { LanguageSwitcher } from './language-switcher';
@@ -66,9 +67,11 @@ export const MobileAppBar = () => {
 
         <Divider sx={{ my: 1 }} />
 
-        <Box sx={{ px: 2, py: 1.5 }}>
+        <Stack spacing={2} justifyContent="center" sx={{ px: 2, py: 1.5 }}>
           <LanguageSwitcher onClose={() => setMenuOpen(false)} />
-        </Box>
+
+          <LogoutButton variant="menu-item" onClose={() => setMenuOpen(false)} />
+        </Stack>
       </Drawer>
     </>
   );

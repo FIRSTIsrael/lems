@@ -1,6 +1,7 @@
 'use client';
 
 import { Drawer, Divider, Typography, Stack, Box, useTheme } from '@mui/material';
+import { LogoutButton } from '../logout-button';
 import { ConnectionIndicator } from '../../../components/connection-indicator';
 import { LanguageSwitcher } from './language-switcher';
 import { UserInfoSection } from './user-info-section';
@@ -57,9 +58,16 @@ export const DesktopAppBar = () => {
         </Box>
 
         <Divider />
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center', mb: 1 }}>
+
+        <Stack
+          spacing={2}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ p: 2, display: 'flex', justifyContent: 'center', mb: 1 }}
+        >
           <LanguageSwitcher />
-        </Box>
+          <LogoutButton variant="button" />
+        </Stack>
       </Drawer>
     </>
   );
