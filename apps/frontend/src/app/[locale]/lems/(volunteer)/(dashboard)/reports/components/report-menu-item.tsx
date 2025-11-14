@@ -1,23 +1,23 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardActionArea, Typography, Box, useTheme, useMediaQuery } from '@mui/material';
 
 interface ReportMenuItemProps {
   path: string;
   label: string;
   icon?: React.ReactNode;
-  divisionId?: string;
 }
 
-export function ReportMenuItem({ path, label, icon, divisionId }: ReportMenuItemProps) {
+export function ReportMenuItem({ path, label, icon }: ReportMenuItemProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleClick = () => {
-    const queryString = divisionId ? new URLSearchParams({ divisionId }).toString() : '';
-    const url = `/reports/${path}${queryString ? `?${queryString}` : ''}`;
+    const queryString = searchParams.toString();
+    const url = `/lems/reports/${path}${queryString ? `?${queryString}` : ''}`;
     router.push(url);
   };
 

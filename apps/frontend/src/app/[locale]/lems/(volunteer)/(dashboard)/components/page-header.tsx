@@ -1,10 +1,12 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Paper, Typography, useTheme, Box } from '@mui/material';
 
-export function PageHeader() {
-  const t = useTranslations('pages.reports');
+interface PageHeaderProps {
+  title: string;
+}
+
+export const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
   const theme = useTheme();
 
   return (
@@ -34,9 +36,9 @@ export function PageHeader() {
             fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
           }}
         >
-          {t('page-title')}
+          {title}
         </Typography>
       </Box>
     </Paper>
   );
-}
+};

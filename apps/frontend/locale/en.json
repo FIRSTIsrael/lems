@@ -83,6 +83,27 @@
       "page-title": "Reports",
       "menu": {
         "team-list": "Team List"
+      },
+      "team-list": {
+        "page-title": "Team List",
+        "total-teams": "Total Teams",
+        "arrived-teams": "Arrived",
+        "pending-teams": "Pending",
+        "arrived": "Arrived",
+        "not-arrived": "Pending",
+        "arrived-count": "{count}/{total} arrived",
+        "no-teams": "No teams available",
+        "loading": "Loading teams...",
+        "error-loading": "Failed to load teams. Please try again.",
+        "columns": {
+          "number": "Team #",
+          "name": "Team Name",
+          "affiliation": "Institution",
+          "city": "City",
+          "arrived": "Status"
+        },
+        "sort-ascending": "sorted ascending",
+        "sort-descending": "sorted descending"
       }
     }
   },

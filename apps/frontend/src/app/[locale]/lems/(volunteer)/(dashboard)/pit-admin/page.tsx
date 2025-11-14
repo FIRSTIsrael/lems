@@ -1,9 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import { Stack } from '@mui/material';
 import { useEvent } from '../../components/event-context';
+import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_DIVISION_TEAMS,
@@ -13,11 +15,12 @@ import {
   createTeamArrivalSubscription,
   createTeamArrivedCacheUpdate
 } from './pit-admin.graphql';
-import { PageHeader } from './components/page-header';
 import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
 
 export default function PitAdminPage() {
+  const t = useTranslations('pages.pit-admin');
+
   const { currentDivision } = useEvent();
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
 
@@ -44,7 +47,7 @@ export default function PitAdminPage() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader title={t('page-title')} />
 
       <Stack spacing={3} sx={{ pt: 3 }}>
         <TeamArrivalInput

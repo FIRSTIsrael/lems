@@ -11,21 +11,15 @@ interface ReportItem {
 
 interface ReportMenuGridProps {
   items: ReportItem[];
-  divisionId?: string;
 }
 
-export function ReportMenuGrid({ items, divisionId }: ReportMenuGridProps) {
+export function ReportMenuGrid({ items }: ReportMenuGridProps) {
   return (
     <Box sx={{ width: '100%' }}>
       <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }}>
         {items.map(item => (
           <Grid key={item.path} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <ReportMenuItem
-              path={item.path}
-              label={item.label}
-              icon={item.icon}
-              divisionId={divisionId}
-            />
+            <ReportMenuItem path={item.path} label={item.label} icon={item.icon} />
           </Grid>
         ))}
       </Grid>

@@ -22,6 +22,7 @@ import {
   Event,
   MenuRounded
 } from '@mui/icons-material';
+import { ResponsiveComponent } from '@lems/shared';
 import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 
@@ -42,13 +43,11 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Box display={{ xs: 'none', md: 'block' }} flexGrow={1}>
-              <DesktopAppBar />
-            </Box>
-
-            <Box display={{ xs: 'block', md: 'none' }} flexGrow={1}>
-              <MobileAppBar />
-            </Box>
+            <ResponsiveComponent
+              desktop={<DesktopAppBar />}
+              mobile={<MobileAppBar />}
+              flexGrow={1}
+            />
           </Toolbar>
         </Container>
       </AppBar>
@@ -132,7 +131,6 @@ const MobileAppBar: React.FC = () => {
           }}
           open={Boolean(anchorElNav)}
           onClose={() => setAnchorElNav(null)}
-          sx={{ display: { xs: 'block', md: 'none' } }}
         >
           {pages.map(page => (
             <MenuItem key={page.name} component={Link} href={page.href}>

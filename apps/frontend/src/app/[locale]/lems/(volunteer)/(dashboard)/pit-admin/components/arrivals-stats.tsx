@@ -7,6 +7,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import WarningIcon from '@mui/icons-material/Warning';
 import { Locale, Locales } from '@lems/localization';
+import { ResponsiveComponent } from '@lems/shared';
 import type { Team } from '../pit-admin.graphql';
 
 interface ArrivalsStatsProps {
@@ -83,17 +84,18 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
               </Typography>
             </Stack>
 
-            <Box display={{ xs: 'block', md: 'none' }}>
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats.total}
-              </Typography>
-            </Box>
-
-            <Box display={{ xs: 'none', md: 'block' }}>
-              <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                {stats.total}
-              </Typography>
-            </Box>
+            <ResponsiveComponent
+              desktop={
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {stats.total}
+                </Typography>
+              }
+              mobile={
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                  {stats.total}
+                </Typography>
+              }
+            />
           </Stack>
 
           <Stack spacing={0.5}>
@@ -104,21 +106,22 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
               </Typography>
             </Stack>
 
-            <Box display={{ xs: 'block', md: 'none' }}>
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {stats.arrived}
-              </Typography>
-            </Box>
-
-            <Box display={{ xs: 'none', md: 'block' }}>
-              <Typography
-                variant="h3"
-                sx={{ fontWeight: 700 }}
-                align={direction === 'rtl' ? 'left' : 'right'}
-              >
-                {stats.arrived}
-              </Typography>
-            </Box>
+            <ResponsiveComponent
+              desktop={
+                <Typography
+                  variant="h3"
+                  sx={{ fontWeight: 700 }}
+                  align={direction === 'rtl' ? 'left' : 'right'}
+                >
+                  {stats.arrived}
+                </Typography>
+              }
+              mobile={
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                  {stats.arrived}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
 

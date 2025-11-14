@@ -2,6 +2,7 @@ export * from './number-input';
 export * from './file-upload';
 export * from './color-picker';
 export * from './timezone-picker';
+export * from './responsive-component';
 
 // Formik helpers
 export * from './formik/formik-number-input';

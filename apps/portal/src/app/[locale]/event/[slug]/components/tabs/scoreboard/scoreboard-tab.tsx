@@ -3,7 +3,8 @@
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Paper } from '@mui/material';
+import { Typography, Paper } from '@mui/material';
+import { ResponsiveComponent } from '@lems/shared';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
 import { useDivision } from '../../division-data-context';
 import { MobileScoreboard } from './mobile-scoreboard';
@@ -37,21 +38,22 @@ export const ScoreboardTab = () => {
         {t('quick-links.scoreboard')}
       </Typography>
 
-      <Box display={{ xs: 'none', md: 'block' }}>
-        <DesktopScoreboard
-          sortedData={sortedData}
-          matchesPerTeam={matchesPerTeam}
-          eventSlug={eventSlug}
-        />
-      </Box>
-
-      <Box display={{ xs: 'block', md: 'none' }}>
-        <MobileScoreboard
-          sortedData={sortedData}
-          matchesPerTeam={matchesPerTeam}
-          eventSlug={eventSlug}
-        />
-      </Box>
+      <ResponsiveComponent
+        desktop={
+          <DesktopScoreboard
+            sortedData={sortedData}
+            matchesPerTeam={matchesPerTeam}
+            eventSlug={eventSlug}
+          />
+        }
+        mobile={
+          <MobileScoreboard
+            sortedData={sortedData}
+            matchesPerTeam={matchesPerTeam}
+            eventSlug={eventSlug}
+          />
+        }
+      />
     </Paper>
   );
 };

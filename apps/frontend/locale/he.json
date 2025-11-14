@@ -83,6 +83,27 @@
       "page-title": "דוחות",
       "menu": {
         "team-list": "רשימת קבוצות"
+      },
+      "team-list": {
+        "page-title": "רשימת קבוצות",
+        "total-teams": "סה״כ קבוצות",
+        "arrived-teams": "קבוצות הגיעו",
+        "pending-teams": "קבוצות חסרות",
+        "arrived": "הגיעה",
+        "not-arrived": "חסרה",
+        "arrived-count": "{count} מתוך {total} הגיעו",
+        "no-teams": "אין קבוצות זמינות",
+        "loading": "טוען קבוצות...",
+        "error-loading": "שגיאה בטעינת הקבוצות. אנא נסו שנית.",
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם קבוצה",
+          "affiliation": "מוסד",
+          "city": "עיר",
+          "arrived": "סטטוס"
+        },
+        "sort-ascending": "ממוין בסדר עולה",
+        "sort-descending": "ממוין בסדר יורד"
       }
     }
   },
@@ -93,28 +114,6 @@
       "disconnected": "מנותק",
       "error": "שגיאה",
       "idle": "לא פעיל"
-    },
-    "pit-admin": {
-      "page-title": "רישום קבוצות",
-      "stats": {
-        "total-teams": "מספר קבוצות",
-        "arrived": "הגיעו",
-        "all-arrived": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "waiting-for": "מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
-        "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}"
-      },
-      "team-input": {
-        "title": "רישום הגעת קבוצה",
-        "subtitle": "בחרו קבוצה מהרשימה כדי לסמן אותה כהגיעה לאירוע",
-        "search-label": "חיפוש קבוצות",
-        "search-placeholder": "הקלידו לחיפוש...",
-        "button": "סמנו הגעה",
-        "submitting": "מעבדים...",
-        "no-options": "כל הקבוצות הגיעו!",
-        "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "error": "נכשל בסימון הקבוצה כהגיעה",
-        "team": "קבוצה"
-      }
     }
   }
 }
