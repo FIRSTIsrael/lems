@@ -56,14 +56,6 @@
         "back-home": "Back to Home",
         "try-again": "Try Again"
       }
-    }
-  },
-  "components": {
-    "connection-indicator": {
-      "connected": "Connected",
-      "reconnecting": "Reconnecting...",
-      "disconnected": "Disconnected",
-      "error": "Error"
     },
     "pit-admin": {
       "page-title": "Team Registration",
@@ -86,6 +78,21 @@
         "error": "Failed to mark team as arrived",
         "team": "Team"
       }
+    },
+    "reports": {
+      "page-title": "Reports",
+      "menu": {
+        "team-list": "Team List"
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "Connected",
+      "reconnecting": "Reconnecting...",
+      "disconnected": "Disconnected",
+      "error": "Error",
+      "idle": "Idle"
     }
   }
 }

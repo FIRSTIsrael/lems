@@ -19,7 +19,7 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
   const currentLocale = useLocale() as Locale;
   const direction = Locales[currentLocale].direction;
 
-  const t = useTranslations('components.pit-admin.stats');
+  const t = useTranslations('pages.pit-admin.stats');
 
   const stats = useMemo(() => {
     const total = teams.length;

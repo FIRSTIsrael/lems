@@ -15,7 +15,7 @@ import { createClient } from 'graphql-ws';
 import { OperationTypeNode } from 'graphql';
 import { getApiBase } from '@lems/shared';
 
-export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting' | 'error';
+export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting' | 'error' | 'idle';
 
 interface ConnectionStateContextType {
   state: ConnectionState;
@@ -152,7 +152,7 @@ function makeClient(
 }
 
 export function ApolloClientProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ConnectionState>('disconnected');
+  const [state, setState] = useState<ConnectionState>('idle');
   const [lastError, setLastError] = useState<Error | null>(null);
 
   const value: ConnectionStateContextType = useMemo(

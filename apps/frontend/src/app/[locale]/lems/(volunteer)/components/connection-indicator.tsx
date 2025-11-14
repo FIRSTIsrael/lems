@@ -13,6 +13,7 @@ const statusConfig: {
   connected: '#3cd3b2',
   disconnected: '#f87171',
   reconnecting: '#fbbf24',
+  idle: '#24befb',
   error: '#ef4444'
 } as const;
 
@@ -83,7 +84,16 @@ export function ConnectionIndicator({ compact = false }: ConnectionIndicatorProp
         width: 'fit-content',
         transition: 'all 0.2s ease-in-out',
         backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255, 255, 255, 0.18)'
+        border: '1px solid rgba(255, 255, 255, 0.18)',
+        // 🚀 Glass-like Hover Effect Added Below 🚀
+        '&:hover': {
+          cursor: 'default',
+          bgcolor: 'rgba(255, 255, 255, 0.3)', // Increase background opacity for 'frosting'
+          boxShadow:
+            'inset 0 1px 5px rgba(255, 255, 255, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.1)', // Brighter inner glow
+          border: '1px solid rgba(255, 255, 255, 0.35)', // Brighter border
+          transform: 'scale(1.03)' // Subtle lift on hover
+        }
       }}
     >
       <Box

@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Paper, Typography, useTheme, Box } from '@mui/material';
 
 export function PageHeader() {
-  const t = useTranslations('pages.pit-admin');
+  const t = useTranslations('pages.reports');
   const theme = useTheme();
 
   return (
@@ -13,9 +13,7 @@ export function PageHeader() {
         p: { xs: 2, sm: 3 },
         borderBottom: `2px solid ${theme.palette.divider}`,
         boxShadow: 'none',
-        maxWidth: 'lg',
-        width: '100%',
-        mx: 'auto'
+        backgroundColor: theme.palette.background.paper
       }}
     >
       <Box
@@ -32,7 +30,8 @@ export function PageHeader() {
             background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            backgroundClip: 'text',
+            fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
           }}
         >
           {t('page-title')}

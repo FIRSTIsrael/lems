@@ -31,7 +31,7 @@ export function TeamArrivalInput({
   loading = false,
   disabled = false
 }: TeamArrivalInputProps) {
-  const t = useTranslations('components.pit-admin.team-input');
+  const t = useTranslations('pages.pit-admin.team-input');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
