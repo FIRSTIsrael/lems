@@ -92,6 +92,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
         anchorEl={anchorEl}
         open={submenuOpen}
         onClose={handleClose}
+        disableScrollLock
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: direction === 'ltr' ? 'right' : 'left'

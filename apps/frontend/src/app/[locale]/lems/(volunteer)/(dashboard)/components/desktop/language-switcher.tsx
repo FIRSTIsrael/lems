@@ -35,6 +35,7 @@ const LanguageSubmenu: React.FC<LanguageSubmenuProps> = ({ anchorEl, onClose, on
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
+      disableScrollLock
       anchorOrigin={{
         vertical: 'top',
         horizontal: direction === 'ltr' ? 'right' : 'left'
