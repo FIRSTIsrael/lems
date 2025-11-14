@@ -20,6 +20,12 @@ type Team {
   "Geographic coordinates or additional location information"
   location: String
 
+  "Region where the team is located"
+  region: String!
+
+  "URL-friendly team slug (region-number)"
+  slug: String!
+
   "Whether the team has checked in at the venue"
   arrived: Boolean!
 }
@@ -45,6 +51,12 @@ type RootTeam {
 
   "Geographic coordinates or additional location information"
   location: String
+
+  "Region where the team is located"
+  region: String!
+
+  "URL-friendly team slug (region-number)"
+  slug: String!
 }
 
 extend type Query {

@@ -17,7 +17,7 @@ import {
   CalendarToday as CalendarIcon,
   ArrowForward as ArrowIcon
 } from '@mui/icons-material';
-import { apiFetch } from '@lems/shared';
+import { apiFetch, Flag } from '@lems/shared';
 import { Event } from '@lems/types/api/lems';
 
 interface EventCardProps {
@@ -146,8 +146,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
 
               <Stack direction="row" alignItems="center" spacing={1.5}>
                 <LocationIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontSize="0.95rem"
+                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                >
                   {event.location}
+                  <Flag region={event.region} size={18} />
                 </Typography>
               </Stack>
             </Stack>

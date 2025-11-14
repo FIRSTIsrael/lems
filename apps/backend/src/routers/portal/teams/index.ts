@@ -31,12 +31,12 @@ router.get('/', async (req: Request, res: Response) => {
   res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
 });
 
-router.use('/:teamNumber', attachTeam());
+router.use('/:teamSlug', attachTeam());
 
 /**
  * Returns a team, as well as the latest season they competed at
  */
-router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response) => {
+router.get('/:teamSlug/summary', async (req: PortalTeamRequest, res: Response) => {
   const team = await db.teams.byId(req.teamId).get();
 
   const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
@@ -57,7 +57,7 @@ router.get('/:teamNumber/summary', async (req: PortalTeamRequest, res: Response)
 /**
  * Returns the seasons a team competed at
  */
-router.get('/:teamNumber/seasons', async (req: PortalTeamRequest, res: Response) => {
+router.get('/:teamSlug/seasons', async (req: PortalTeamRequest, res: Response) => {
   const seasons = await db.seasons.getAll();
   const teamSeasons = new Set();
 
@@ -105,7 +105,7 @@ const seasonFilter = async (
  * Returns the events a team has competed at, optionally filtered by season
  */
 router.get(
-  '/:teamNumber/events',
+  '/:teamSlug/events',
   seasonFilter,
   async (req: PortalTeamRequest & { seasonId?: string }, res: Response) => {
     let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
@@ -123,7 +123,7 @@ router.get(
  * Returns the event results for a team, optionally filtered by season
  */
 router.get(
-  '/:teamNumber/events/results',
+  '/:teamSlug/events/results',
   seasonFilter,
   async (req: PortalTeamWithSeasonRequest, res: Response) => {
     let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();

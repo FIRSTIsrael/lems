@@ -100,7 +100,8 @@
           "name": "Team Name",
           "affiliation": "Institution",
           "city": "City",
-          "arrived": "Status"
+          "arrived": "Status",
+          "region": "Region"
         },
         "sort-ascending": "sorted ascending",
         "sort-descending": "sorted descending"

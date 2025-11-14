@@ -19,7 +19,7 @@ export const TeamResults: React.FC = () => {
   const team = useTeam();
 
   const { data: eventResults } = useSWR<TeamEventResult[]>(
-    () => `/portal/teams/${team.number}/events/results?season=${season}`,
+    () => `/portal/teams/${team.slug}/events/results?season=${season}`,
     { suspense: true, fallbackData: [] }
   );
 

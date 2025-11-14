@@ -9,7 +9,9 @@ export const PortalTeamResponseSchema = z.object({
   logoUrl: z.url().nullable(),
   affiliation: z.string(),
   city: z.string(),
-  coordinates: z.string().nullable()
+  coordinates: z.string().nullable(),
+  region: z.string(),
+  slug: z.string()
 });
 
 export const PortalTeamSummaryResponseSchema = z.object({

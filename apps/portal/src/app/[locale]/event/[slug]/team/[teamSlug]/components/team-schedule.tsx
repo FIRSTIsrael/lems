@@ -22,7 +22,7 @@ export const TeamSchedule: React.FC = () => {
   const { data } = useSWR<{
     session: TeamJudgingSession;
     matches: TeamRobotGameMatch[];
-  } | null>(`/portal/events/${event.slug}/teams/${team.number}/activities`, {
+  } | null>(`/portal/events/${event.slug}/teams/${team.slug}/activities`, {
     suspense: true
   });
 

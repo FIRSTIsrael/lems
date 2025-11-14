@@ -86,7 +86,8 @@
           "affiliation": "שיוך",
           "actions": "פעולות",
           "city": "עיר",
-          "status": "סטטוס"
+          "status": "סטטוס",
+          "region": "מדינה"
         },
         "status": {
           "active": "פעיל",
@@ -117,6 +118,11 @@
             "label": "עיר",
             "placeholder": "למשל, תל אביב"
           },
+          "region": {
+            "label": "אזור",
+            "placeholder": "מדינה",
+            "helper-text": "קוד מדינהISO-3166 בן 2 אותיות"
+          },
           "logo": {
             "label": "לוגו הקבוצה",
             "description": "העלאת לוגו קבוצה (JPG, PNG, או SVG)",
@@ -130,6 +136,7 @@
           "number-exists": "מספר קבוצה זה כבר קיים.",
           "affiliation-required": "שדה שם בית הספר/ארגון נדרש.",
           "city-required": "שדה עיר נדרש.",
+          "region-required": "שדה אזור נדרש.",
           "error": "שגיאה התרחשה בעת יצירת הקבוצה."
         },
         "submit": "יצירת קבוצה",
@@ -149,7 +156,7 @@
             "csv-format": "פורמט CSV נדרש:",
             "requirements": {
               "header": "לא צריכה להיות שורת כותרת בקובץ",
-              "columns": "כל ארבעת העמודות (number, name, affiliation, city) נדרשות, לפי הסדר הזה",
+              "columns": "כל ארבעת העמודות (number, name, affiliation, city, region) נדרשות, לפי הסדר הזה",
               "encoding": "הקובץ חייב להיות שמור בקידוד UTF-8"
             },
             "example": "דוגמה לתוכן CSV:"
@@ -282,6 +289,11 @@
                 "label": "שם הבית",
                 "placeholder": "הזן שם בית..."
               }
+            },
+            "region": {
+              "placeholder": "מדינה",
+              "label": "מדינה",
+              "helper-text": "קוד מדינה ISO-3166 בן 2 אותיות"
             }
           },
           "actions": {
@@ -313,6 +325,11 @@
                 "required": "שם הבית נדרש",
                 "min": "שם הבית חייב להכיל לפחות {min} תווים"
               }
+            },
+            "region": {
+              "required": "מדינה נדרשת",
+              "length": "קוד המדינה חייב ליהות באורך 2 תווים",
+              "format": "קוד מדינה לא תקין"
             }
           }
         }

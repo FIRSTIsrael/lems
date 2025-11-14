@@ -164,7 +164,8 @@
         "place": "{place} Place",
         "no-data": "No awards announced yet"
       },
-      "division-teams": "{divisionName} teams"
+      "division-teams": "{divisionName} teams",
+      "region": "Region"
     },
     "team-in-event": {
       "not-found": {

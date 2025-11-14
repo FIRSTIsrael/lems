@@ -17,6 +17,9 @@ type Event {
   "ISO 8601 datetime when the event ends"
   endDate: String!
 
+  "Region where the event is held"
+  region: String!
+
   "Whether all divisions have awards, users, and schedules configured"
   isFullySetUp: Boolean!
 

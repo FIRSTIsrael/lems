@@ -7,6 +7,7 @@ export const LemsEventResponseSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   location: z.string(),
+  region: z.string(),
   coordinates: z.string().nullish(),
   seasonId: z.string()
 });

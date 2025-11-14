@@ -100,7 +100,8 @@
           "name": "שם קבוצה",
           "affiliation": "מוסד",
           "city": "עיר",
-          "arrived": "סטטוס"
+          "arrived": "סטטוס",
+          "region": "מדינה"
         },
         "sort-ascending": "ממוין בסדר עולה",
         "sort-descending": "ממוין בסדר יורד"

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Paper, Button, Avatar, Stack, Typography, Box } from '@mui/material';
 import { ArrowBack, ArrowForward, LocationOn as LocationIcon } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { Flag } from '@lems/shared';
 import { useTeamAtEvent } from './team-at-event-context';
 
 export const TeamInfoHeader: React.FC = () => {
@@ -46,7 +47,10 @@ export const TeamInfoHeader: React.FC = () => {
         />
         <Box sx={{ flex: 1 }}>
           <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
-            {team.name} #{team.number}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {team.name} #{team.number}
+              <Flag region={team.region} size={24} />
+            </Box>
           </Typography>
           <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
             <LocationIcon fontSize="small" color="action" />

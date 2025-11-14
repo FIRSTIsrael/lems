@@ -13,10 +13,12 @@ import {
   TableContainer,
   TableHead,
   Paper,
-  IconButton
+  IconButton,
+  Box
 } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { Flag } from '@lems/shared';
 import { useDivision } from '../division-data-context';
 
 export const TeamsTab: React.FC = () => {
@@ -50,6 +52,9 @@ export const TeamsTab: React.FC = () => {
                 <Typography fontWeight={500}>{t('team')}</Typography>
               </TableCell>
               <TableCell>
+                <Typography fontWeight={500}>{t('region')}</Typography>
+              </TableCell>
+              <TableCell>
                 <Typography fontWeight={500}>{t('location')}</Typography>
               </TableCell>
               <TableCell />
@@ -57,7 +62,7 @@ export const TeamsTab: React.FC = () => {
           </TableHead>
           <TableBody>
             {sortedTeams.map(team => {
-              const href = `/event/${eventSlug}/team/${team.number}`;
+              const href = `/event/${eventSlug}/team/${team.slug}`;
 
               return (
                 <TableRow
@@ -83,6 +88,22 @@ export const TeamsTab: React.FC = () => {
                       }}
                     >
                       {team.name} #{team.number}
+                    </Link>
+                  </TableCell>
+                  <TableCell sx={{ p: 0 }}>
+                    <Link
+                      href={href}
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        display: 'block',
+                        padding: '16px'
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {team.region.toUpperCase()}
+                        <Flag region={team.region} size={24} />
+                      </Box>
                     </Link>
                   </TableCell>
                   <TableCell sx={{ p: 0 }}>

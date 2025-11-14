@@ -33,9 +33,10 @@ export const UpcomingEventsSection: React.FC = () => {
       slug: event.slug,
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
-      location: '',
       coordinates: null,
-      seasonId: ''
+      location: event.location,
+      region: event.region,
+      seasonId: event.seasonId
     })) || [];
 
   if (loading) {

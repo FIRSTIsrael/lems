@@ -15,7 +15,7 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason })
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { data: seasons } = useSWR<Season[]>(() => `/portal/teams/${team.number}/seasons`, {
+  const { data: seasons } = useSWR<Season[]>(() => `/portal/teams/${team.slug}/seasons`, {
     suspense: true,
     fallbackData: []
   });

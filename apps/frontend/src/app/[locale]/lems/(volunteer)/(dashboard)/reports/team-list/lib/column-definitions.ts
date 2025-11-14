@@ -38,6 +38,13 @@ export const COLUMN_DEFINITIONS: ColumnDefinition[] = [
     minWidth: 120
   },
   {
+    id: 'region',
+    labelKey: 'columns.region',
+    sortable: true,
+    align: 'center',
+    minWidth: 120
+  },
+  {
     id: 'arrived',
     labelKey: 'columns.arrived',
     sortable: true,

@@ -157,7 +157,7 @@ export const FieldScheduleTab: React.FC = () => {
                               <Tooltip title={team.name} arrow>
                                 <Link
                                   component={NextLink}
-                                  href={`/event/${eventSlug}/team/${team.number}`}
+                                  href={`/event/${eventSlug}/team/${team.slug}`}
                                   sx={{
                                     color: 'black',
                                     textDecoration: 'none',

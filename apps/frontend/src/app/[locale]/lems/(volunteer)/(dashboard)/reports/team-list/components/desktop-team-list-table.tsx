@@ -17,6 +17,7 @@ import {
   Chip
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import { Flag } from '@lems/shared';
 import { sortTeams, getNextSortDirection, SortField, SortDirection } from '../lib/sorting';
 import { COLUMN_DEFINITIONS } from '../lib/column-definitions';
 import { TeamListTableProps } from './types';
@@ -93,6 +94,19 @@ export function DesktopTeamListTable({ teams }: TeamListTableProps) {
                     <TableCell align="left">{team.name}</TableCell>
                     <TableCell align="left">{team.affiliation}</TableCell>
                     <TableCell align="left">{team.city}</TableCell>
+                    <TableCell align="center">
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 1
+                        }}
+                      >
+                        <span>{team.region.toUpperCase()}</span>
+                        <Flag region={team.region} size={24} />
+                      </Box>
+                    </TableCell>
                     <TableCell align="center">
                       <Chip
                         label={team.arrived ? t('arrived') : t('not-arrived')}

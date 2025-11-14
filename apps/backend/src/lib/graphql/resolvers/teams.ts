@@ -8,6 +8,8 @@ export interface RootTeamGraphQL {
   affiliation: string;
   city: string;
   location: string | null;
+  region: string;
+  slug: string;
 }
 
 interface TeamsQueryArgs {
@@ -57,6 +59,7 @@ function buildResult(team: {
   affiliation: string;
   city: string;
   coordinates: string | null;
+  region: string;
 }): RootTeamGraphQL {
   return {
     id: team.id,
@@ -64,6 +67,8 @@ function buildResult(team: {
     name: team.name,
     affiliation: team.affiliation,
     city: team.city,
-    location: team.coordinates
+    location: team.coordinates,
+    region: team.region,
+    slug: `${team.region}-${team.number}`
   };
 }

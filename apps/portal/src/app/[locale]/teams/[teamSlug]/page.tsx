@@ -11,11 +11,10 @@ import { TeamProvider } from './components/team-context';
 
 export default function TeamPage() {
   const params = useParams();
-  const teamNumber =
-    params.number && typeof params.number === 'string' ? parseInt(params.number, 10) : null;
+  const teamSlug = params.teamSlug && typeof params.teamSlug === 'string' ? params.teamSlug : null;
 
   const { data: team, error } = useSWR<TeamSummary | null>(
-    teamNumber ? `/portal/teams/${teamNumber}/summary` : null,
+    teamSlug ? `/portal/teams/${teamSlug}/summary` : null,
     {
       suspense: true,
       fallbackData: null

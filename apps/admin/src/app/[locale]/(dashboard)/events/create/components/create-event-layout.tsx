@@ -22,6 +22,7 @@ interface EventFormValues {
   slug: string;
   date: Date | null;
   location: string;
+  region: string;
   divisions: Division[];
 }
 
@@ -30,6 +31,7 @@ const initialValues: EventFormValues = {
   slug: '',
   date: null,
   location: '',
+  region: '',
   divisions: [{ name: '', color: hexToHsva(defaultColor) }]
 };
 
@@ -60,6 +62,14 @@ export const CreateEventLayout = () => {
       errors.location = t('validation.location.required');
     } else if (values.location.length < 2) {
       errors.location = t('validation.location.min', { min: 2 });
+    }
+
+    if (!values.region) {
+      errors.region = t('validation.region.required');
+    } else if (values.region.length !== 2) {
+      errors.region = t('validation.region.length');
+    } else if (!/^[A-Z]{2}$/.test(values.region)) {
+      errors.region = t('validation.region.format');
     }
 
     if (values.divisions.length > 1) {
@@ -101,6 +111,7 @@ export const CreateEventLayout = () => {
         slug: values.slug,
         date: values.date?.toISOString() || '',
         location: values.location,
+        region: values.region.toUpperCase(),
         divisions: values.divisions.map(division => ({
           name: division.name,
           color: hsvaToHex(division.color) // Convert to hex string for backend
@@ -225,15 +236,28 @@ export const CreateEventLayout = () => {
                       />
                     </Grid>
 
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikDatePicker name="date" label={t('fields.date.label')} />
                     </Grid>
 
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikTextField
                         name="location"
                         label={t('fields.location.label')}
                         placeholder={t('fields.location.placeholder')}
+                      />
+                    </Grid>
+
+                    <Grid size={4}>
+                      <FormikTextField
+                        name="region"
+                        label={t('fields.region.label')}
+                        placeholder={t('fields.region.placeholder')}
+                        helperText={t('fields.region.helper-text')}
+                        slotProps={{
+                          htmlInput: { maxLength: 2 },
+                          input: { style: { textTransform: 'uppercase' } }
+                        }}
                       />
                     </Grid>
                   </Grid>

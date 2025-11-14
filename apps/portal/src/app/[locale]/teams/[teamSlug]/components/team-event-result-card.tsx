@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Box, Stack, Divider, Grid, Button } from
 import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamEventResult } from '@lems/types/api/portal';
+import { Flag } from '@lems/shared';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
 
@@ -51,10 +52,15 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
       >
         <CardContent>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="h4" fontWeight="600" color="primary">
-              {eventResult.eventName}
-            </Typography>
-            <Button variant="text" href={`/event/${eventResult.eventSlug}/team/${team.number}`}>
+            <Stack direction="row" alignItems="center" gap={1}>
+              <Typography variant="h4" fontWeight="600" color="primary">
+                {eventResult.eventName}
+              </Typography>
+              <Typography variant="h5" sx={{ opacity: 0.7 }}>
+                <Flag region={team.region} size={20} />
+              </Typography>
+            </Stack>
+            <Button variant="text" href={`/event/${eventResult.eventSlug}/team/${team.slug}`}>
               {t('view-details')}
             </Button>
           </Stack>

@@ -26,7 +26,8 @@ export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event 
     endDate,
     location: event.location,
     coordinates: event.coordinates,
-    seasonId: event.season_id
+    seasonId: event.season_id,
+    region: event.region
   };
 };
 
@@ -46,6 +47,7 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     startDate: new Date(event.date),
     endDate: new Date(event.date),
     location: event.location,
+    region: event.region,
     seasonId: event.season_id,
     teamsRegistered: event.team_count,
     status: eventStatus
@@ -59,6 +61,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
+  region: event.region,
   seasonId: event.season_id,
   divisions: event.divisions.map(division => ({
     id: division.id,

@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Box, Stack, Typography, Chip, useTheme } from '@mui/material';
+import { Flag } from '@lems/shared';
 import { TeamListTableProps } from './types';
 
 export const MobileTeamListTable: React.FC<TeamListTableProps> = ({ teams }) => {
@@ -31,8 +32,12 @@ export const MobileTeamListTable: React.FC<TeamListTableProps> = ({ teams }) => 
           >
             <Stack spacing={1}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}
+                >
                   #{team.number} {team.name}
+                  <Flag region={team.region} size={20} />
                 </Typography>
                 <Chip
                   label={team.arrived ? t('arrived') : t('not-arrived')}

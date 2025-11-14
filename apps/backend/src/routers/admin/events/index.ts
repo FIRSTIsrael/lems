@@ -45,10 +45,15 @@ router.get('/season/:seasonId/summary', async (req, res) => {
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
-    const { name, slug, date, location, divisions } = req.body;
+    const { name, slug, date, location, region, divisions } = req.body;
 
-    if (!name || !slug || !date || !location) {
-      res.status(400).json({ error: 'Name, slug, date, and location are required' });
+    if (!name || !slug || !date || !location || !region) {
+      res.status(400).json({ error: 'Name, slug, date, location, and region are required' });
+      return;
+    }
+
+    if (typeof region !== 'string' || region.length !== 2 || !/^[A-Z]{2}$/.test(region)) {
+      res.status(400).json({ error: 'Region must be a 2-letter ISO 3166-1 alpha-2 country code' });
       return;
     }
 
@@ -100,6 +105,7 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       start_date: eventDate,
       end_date: eventDate, // For now, using same date for start and end
       location,
+      region,
       season_id: currentSeason.id
     });
 
@@ -145,7 +151,7 @@ router.get('/:eventId', async (req: AdminEventRequest, res) => {
 router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
     const { slug } = req.params;
-    const { name, date, location } = req.body;
+    const { name, date, location, region } = req.body;
 
     const existingEvent = await db.events.bySlug(slug).get();
     if (!existingEvent) {
@@ -179,6 +185,14 @@ router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminReq
         return;
       }
       updateData.location = location;
+    }
+
+    if (region !== undefined) {
+      if (typeof region !== 'string' || region.length !== 2 || !/^[A-Z]{2}$/.test(region)) {
+        res.status(400).json({ error: 'Region must be a 2-letter ISO 3166-1 alpha-2 country code' });
+        return;
+      }
+      updateData.region = region;
     }
 
     if (Object.keys(updateData).length === 0) {

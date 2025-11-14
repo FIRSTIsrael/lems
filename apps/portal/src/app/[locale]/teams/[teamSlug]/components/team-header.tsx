@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, Avatar } from '@mui/material';
 import { LocationOn as LocationIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Element } from 'react-scroll';
+import { Flag } from '@lems/shared/components/flag';
 import { useTeam } from './team-context';
 
 export const TeamHeader: React.FC = () => {
@@ -22,9 +23,12 @@ export const TeamHeader: React.FC = () => {
             sx={{ width: 72, height: 72, objectFit: 'cover' }}
           />
 
-          <Typography variant="h4" component="h1" fontWeight="500">
-            {t('title', { number: team.number, name: team.name })}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="h4" component="h1" fontWeight="500">
+              {t('title', { number: team.number, name: team.name })}
+            </Typography>
+            <Flag region={team.region} size={30} />
+          </Stack>
         </Stack>
 
         <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>

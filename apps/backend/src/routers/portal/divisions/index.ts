@@ -55,7 +55,9 @@ router.get('/:divisionId/scoreboard', async (req: PortalDivisionRequest, res: Re
       name: team.name,
       number: team.number,
       affiliation: team.affiliation,
-      city: team.city
+      city: team.city,
+      region: team.region,
+      slug: `${team.region}-${team.number}`
     },
     robotGameRank: index + 1,
     maxScore: 0,
