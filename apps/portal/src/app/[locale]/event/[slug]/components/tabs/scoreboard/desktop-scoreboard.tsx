@@ -39,7 +39,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
         return (
           <Typography
             component={Link}
-            href={`/event/${eventSlug}/team/${params.row.team.number}`}
+            href={`/event/${eventSlug}/team/${params.row.team.slug}`}
             sx={{
               textDecoration: 'none',
               color: 'text.primary',

@@ -6,6 +6,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
+import { Flag } from '@lems/shared';
 import { TeamsSearch } from './teams-search';
 import { DeleteTeamButton } from './delete-team-button';
 import { UpdateTeamButton } from './update-team-button';
@@ -32,8 +33,9 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         const nameMatch = team.name.toLowerCase().includes(searchLower);
         const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
         const cityMatch = team.city.toLowerCase().includes(searchLower);
+        const regionMatch = team.region.toLowerCase().includes(searchLower);
 
-        return numberMatch || nameMatch || affiliationMatch || cityMatch;
+        return numberMatch || nameMatch || affiliationMatch || cityMatch || regionMatch;
       }) || []
     );
   }, [teams, searchValue]);
@@ -68,6 +70,21 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       type: 'number',
       sortable: true,
       valueFormatter: (value: number) => value.toString()
+    },
+    {
+      field: 'region',
+      headerName: t('columns.region'),
+      width: 120,
+      sortable: true,
+      filterable: true,
+      renderCell: params => {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <span>{params.row.region.toUpperCase()}</span>
+            <Flag region={params.row.region} size={24} />
+          </Box>
+        );
+      }
     },
     {
       field: 'active',

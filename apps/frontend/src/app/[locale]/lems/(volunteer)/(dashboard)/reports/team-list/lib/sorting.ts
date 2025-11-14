@@ -1,6 +1,6 @@
 import { Team } from '../team-list.graphql';
 
-export type SortField = 'number' | 'name' | 'affiliation' | 'city' | 'arrived';
+export type SortField = 'number' | 'name' | 'affiliation' | 'city' | 'region' | 'arrived';
 export type SortDirection = 'asc' | 'desc';
 
 function compareTeams(a: Team, b: Team, field: SortField): number {
@@ -13,6 +13,8 @@ function compareTeams(a: Team, b: Team, field: SortField): number {
       return a.affiliation.localeCompare(b.affiliation);
     case 'city':
       return a.city.localeCompare(b.city);
+    case 'region':
+      return a.region.localeCompare(b.region);
     case 'arrived':
       // Sort arrived teams last (false > true in sorting)
       return Number(b.arrived) - Number(a.arrived);

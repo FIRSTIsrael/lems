@@ -9,6 +9,7 @@ export interface EventsTable {
   start_date: Date;
   end_date: Date;
   location: string;
+  region: string; // ISO 3166 alpha-2 country code (e.g., 'IL', 'US')
   coordinates: string | null; // PostGIS point stored as string
   season_id: string; // UUID foreign key to seasons.id
 }
@@ -25,6 +26,7 @@ export interface EventSummary {
   slug: string;
   date: string;
   location: string;
+  region: string;
   coordinates: string | null;
   team_count: number;
   divisions: {
@@ -46,6 +48,7 @@ export interface EventDetails {
   start_date: Date;
   end_date: Date;
   location: string;
+  region: string;
   coordinates: string | null;
   season_id: string;
   divisions: DivisionSummary[];

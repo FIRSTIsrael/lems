@@ -5,6 +5,8 @@ from dataclasses import dataclass
 class Team:
     id: str
     number: int
+    region: str
+    slug: str  # URL-friendly identifier (region-number format)
 
 
 @dataclass

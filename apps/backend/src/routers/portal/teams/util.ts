@@ -8,7 +8,9 @@ export const makePortalTeamResponse = (team: DbTeam): Team => ({
   affiliation: team.affiliation,
   city: team.city,
   logoUrl: team.logo_url,
-  coordinates: team.coordinates
+  coordinates: team.coordinates,
+  region: team.region,
+  slug: `${team.region}-${team.number}`
 });
 
 export const makePortalTeamSummaryResponse = (

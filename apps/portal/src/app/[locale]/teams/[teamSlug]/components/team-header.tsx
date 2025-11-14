@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, Avatar } from '@mui/material';
 import { LocationOn as LocationIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Element } from 'react-scroll';
+import { Flag } from '@lems/shared/components/flag';
 import { useTeam } from './team-context';
 
 export const TeamHeader: React.FC = () => {
@@ -24,6 +25,7 @@ export const TeamHeader: React.FC = () => {
 
           <Typography variant="h4" component="h1" fontWeight="500">
             {t('title', { number: team.number, name: team.name })}
+            <Flag region={team.region} size={24} />
           </Typography>
         </Stack>
 

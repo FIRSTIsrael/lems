@@ -21,7 +21,9 @@ const Team = z.object({
   name: z.string(),
   number: z.number(),
   affiliation: z.string(),
-  city: z.string()
+  city: z.string(),
+  region: z.string(),
+  slug: z.string()
 });
 
 const Location = z.object({

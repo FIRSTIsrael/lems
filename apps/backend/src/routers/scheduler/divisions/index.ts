@@ -18,19 +18,21 @@ router.get('/teams', async (req: SchedulerRequest, res) => {
   res.status(200).json(teams.map(team => makeSchedulerTeamResponse(team)));
 });
 
-router.get('/team/:teamNumber', async (req: SchedulerRequest, res) => {
-  const { teamNumber } = req.params;
-  if (!teamNumber) {
-    res.status(400).json({ error: 'Team number is required' });
+router.get('/team/:teamSlug', async (req: SchedulerRequest, res) => {
+  const { teamSlug } = req.params;
+  if (!teamSlug) {
+    res.status(400).json({ error: 'Team slug is required' });
     return;
   }
+
+  const [, teamNumber] = teamSlug.split('-');
 
   if (Number.isNaN(Number(teamNumber))) {
     res.status(400).json({ error: 'Team number must be a number' });
     return;
   }
 
-  const team = await db.teams.byNumber(Number.parseInt(teamNumber)).get();
+  const team = await db.teams.bySlug(teamSlug).get();
   if (!team) {
     res.status(404).json({ error: 'Team not found' });
     return;

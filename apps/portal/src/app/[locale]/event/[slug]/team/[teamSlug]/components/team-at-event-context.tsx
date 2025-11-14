@@ -14,10 +14,10 @@ interface TeamAtEventProviderProps {
 export function TeamAtEventProvider({ children }: TeamAtEventProviderProps) {
   const params = useParams();
   const eventSlug = params.slug as string;
-  const teamNumber = parseInt(params.number as string, 10); // This will error if not str, thats fine
+  const teamSlug = params.teamSlug as string;
 
   const { data: teamAtEvent, error } = useSWR<TeamAtEventData | null>(
-    `/portal/events/${eventSlug}/teams/${teamNumber}`,
+    `/portal/events/${eventSlug}/teams/${teamSlug}`,
     { suspense: true, fallbackData: null }
   );
 

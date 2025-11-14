@@ -8,9 +8,9 @@ import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchRespo
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:teamNumber', attachTeamAtEvent());
+router.use('/:teamSlug', attachTeamAtEvent());
 
-router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) => {
+router.get('/:teamSlug', async (req: PortalTeamAtEventRequest, res: Response) => {
   const team = await db.teams.byId(req.teamId).get();
   const division = await db.divisions.byId(req.divisionId).get();
   const event = await db.events.byId(division.event_id).get();
@@ -26,7 +26,7 @@ router.get('/:teamNumber', async (req: PortalTeamAtEventRequest, res: Response) 
   });
 });
 
-router.get('/:teamNumber/activities', async (req: PortalTeamAtEventRequest, res: Response) => {
+router.get('/:teamSlug/activities', async (req: PortalTeamAtEventRequest, res: Response) => {
   const session = await db.judgingSessions.byDivisionId(req.divisionId).getByTeam(req.teamId);
   const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
   const matches = await db.robotGameMatches.byDivisionId(req.divisionId).getByTeam(req.teamId);
@@ -38,7 +38,7 @@ router.get('/:teamNumber/activities', async (req: PortalTeamAtEventRequest, res:
   });
 });
 
-router.get('/:teamNumber/awards', async (req: PortalTeamAtEventRequest, res: Response) => {
+router.get('/:teamSlug/awards', async (req: PortalTeamAtEventRequest, res: Response) => {
   const division = await db.divisions.byId(req.divisionId).get();
   const eventSettings = await db.events.byId(division.event_id).getSettings();
 
@@ -51,19 +51,16 @@ router.get('/:teamNumber/awards', async (req: PortalTeamAtEventRequest, res: Res
   res.status(200).json(teamAwards.map(makePortalAwardsResponse));
 });
 
-router.get(
-  '/:teamNumber/robot-performance',
-  async (req: PortalTeamAtEventRequest, res: Response) => {
-    const scores = [];
-    const highestScore = 0;
-    const robotGameRank = 1;
+router.get('/:teamSlug/robot-performance', async (req: PortalTeamAtEventRequest, res: Response) => {
+  const scores = [];
+  const highestScore = 0;
+  const robotGameRank = 1;
 
-    res.status(200).json({
-      scores,
-      highestScore,
-      robotGameRank
-    });
-  }
-);
+  res.status(200).json({
+    scores,
+    highestScore,
+    robotGameRank
+  });
+});
 
 export default router;

@@ -7,6 +7,7 @@ export const AdminEventResponseSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   location: z.string(),
+  region: z.string(),
   coordinates: z.string().nullable(),
   seasonId: z.string()
 });

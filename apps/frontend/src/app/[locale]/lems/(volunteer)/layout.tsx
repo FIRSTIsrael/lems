@@ -40,8 +40,6 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
       throw new Error('Volunteer has no assigned divisions');
     }
 
-    console.log(volunteerData);
-
     return (
       <EventProvider
         eventId={eventData.event.id}

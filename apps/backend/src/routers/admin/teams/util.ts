@@ -18,7 +18,8 @@ export const makeAdminTeamResponse = (team: DbTeam | (DbTeam & { active: boolean
   affiliation: team.affiliation,
   city: team.city,
   coordinates: team.coordinates ?? null,
-  active: 'active' in team ? team.active : false
+  active: 'active' in team ? team.active : false,
+  region: team.region
 });
 
 export const makeAdminTeamWithDivisionResponse = (
@@ -32,6 +33,7 @@ export const makeAdminTeamWithDivisionResponse = (
     affiliation: teamWithDivision.affiliation,
     city: teamWithDivision.city,
     coordinates: teamWithDivision.coordinates ?? null,
+    region: teamWithDivision.region,
     division: {
       id: teamWithDivision.division_id,
       name: teamWithDivision.division_name,
@@ -43,7 +45,7 @@ export const makeAdminTeamWithDivisionResponse = (
 export const parseTeamList = (data: Buffer<ArrayBufferLike>) => {
   return new Promise<InsertableTeam[]>((resolve, reject) => {
     const teams: InsertableTeam[] = [];
-    const csvColumns = ['number', 'name', 'affiliation', 'city'];
+    const csvColumns = ['number', 'name', 'affiliation', 'city', 'region'];
     parse(data, { columns: csvColumns }, (err, records: InsertableTeam[]) => {
       if (err) {
         reject(err);
@@ -54,7 +56,8 @@ export const parseTeamList = (data: Buffer<ArrayBufferLike>) => {
           number: record.number,
           name: record.name,
           affiliation: record.affiliation,
-          city: record.city
+          city: record.city,
+          region: record.region
         });
       }
       resolve(teams);

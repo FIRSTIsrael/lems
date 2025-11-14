@@ -11,7 +11,7 @@ export const AwardsSection: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
   const { data: awards, isLoading } = useSWR<Award[] | null>(
-    `/portal/events/${event.slug}/teams/${team.number}/awards`,
+    `/portal/events/${event.slug}/teams/${team.slug}/awards`,
     { suspense: true, fallbackData: null }
   );
 

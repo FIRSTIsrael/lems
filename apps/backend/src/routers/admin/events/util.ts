@@ -13,7 +13,8 @@ export const makeAdminEventResponse = (event: DbEvent): Event => ({
   endDate: event.end_date,
   location: event.location,
   coordinates: event.coordinates ?? null,
-  seasonId: event.season_id
+  seasonId: event.season_id,
+  region: event.region
 });
 
 export const makeAdminEventSummaryResponse = (event: DbEventSummary): EventSummary => ({
@@ -28,5 +29,6 @@ export const makeAdminEventSummaryResponse = (event: DbEventSummary): EventSumma
   divisions: event.divisions,
   teamCount: event.team_count,
   isFullySetUp: event.is_fully_set_up,
-  adminIds: event.assigned_admin_ids
+  adminIds: event.assigned_admin_ids,
+  region: event.region
 });

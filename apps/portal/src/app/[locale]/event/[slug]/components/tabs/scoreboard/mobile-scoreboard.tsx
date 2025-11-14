@@ -96,7 +96,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
               <Box sx={{ flex: 1 }}>
                 <Typography
                   component={Link}
-                  href={`/event/${eventSlug}/team/${entry.team.number}`}
+                  href={`/event/${eventSlug}/team/${entry.team.slug}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'text.primary',

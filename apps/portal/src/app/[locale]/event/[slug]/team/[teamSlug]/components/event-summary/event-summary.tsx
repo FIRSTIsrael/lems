@@ -16,7 +16,7 @@ export const EventSummary: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
   const { data: robotPerformance } = useSWR<TeamRobotPerformance>(
-    `/portal/events/${event.slug}/teams/${team.number}/robot-performance`,
+    `/portal/events/${event.slug}/teams/${team.slug}/robot-performance`,
     { suspense: true }
   );
 

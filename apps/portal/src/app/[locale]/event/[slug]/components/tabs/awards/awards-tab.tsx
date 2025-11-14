@@ -17,6 +17,10 @@ export const AwardsTab: React.FC = () => {
     suspense: true
   });
 
+  const { data: teams } = useSWR(`/portal/divisions/${division.id}/teams`, {
+    suspense: true
+  });
+
   // Group awards by name, then sort by place
   const awardsByName = useMemo(() => {
     const result = (awards || []).reduce(
@@ -64,7 +68,7 @@ export const AwardsTab: React.FC = () => {
 
       <Stack spacing={3} divider={<Divider />}>
         {Object.entries(awardsByName).map(([awardName, awardList]) => (
-          <AwardRow key={awardName} awardName={awardName} awardList={awardList} />
+          <AwardRow key={awardName} awardName={awardName} awardList={awardList} teams={teams} />
         ))}
       </Stack>
     </Paper>

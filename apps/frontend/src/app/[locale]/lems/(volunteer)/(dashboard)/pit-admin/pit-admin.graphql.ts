@@ -8,6 +8,7 @@ export interface Team {
   name: string;
   affiliation: string;
   city: string;
+  region: string;
   arrived: boolean;
 }
 
@@ -33,6 +34,7 @@ export const GET_DIVISION_TEAMS: TypedDocumentNode<QueryData, QueryVars> = gql`
         affiliation
         city
         arrived
+        region
       }
     }
   }

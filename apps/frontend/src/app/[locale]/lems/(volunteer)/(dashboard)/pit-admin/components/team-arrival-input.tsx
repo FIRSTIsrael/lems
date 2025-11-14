@@ -16,6 +16,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Flag } from '@lems/shared';
 import type { Team } from '../pit-admin.graphql';
 
 interface TeamArrivalInputProps {
@@ -110,7 +111,7 @@ export function TeamArrivalInput({
             }}
             options={unarrivedTeams}
             getOptionLabel={team =>
-              `Team #${team.number} - ${team.name} (${team.affiliation}, ${team.city})`
+              `Team #${team.number} - ${team.name} (${team.affiliation}, ${team.city} | ${team.region})`
             }
             value={selectedTeam}
             onChange={(_event, newValue) => {
@@ -148,9 +149,12 @@ export function TeamArrivalInput({
                       {team.name}
                     </Typography>
                   </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    {team.affiliation} • {team.city}
-                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.5}>
+                    <Typography variant="caption" color="text.secondary">
+                      {team.affiliation} • {team.city}
+                    </Typography>
+                    <Flag region={team.region} size={14} />
+                  </Stack>
                 </Stack>
               </Box>
             )}

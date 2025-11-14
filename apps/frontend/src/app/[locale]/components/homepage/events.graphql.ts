@@ -8,6 +8,9 @@ export interface HomepageEvent {
   startDate: string;
   endDate: string;
   isFullySetUp: boolean;
+  location: string;
+  region: string;
+  seasonId: string;
 }
 
 // Query result types
@@ -44,6 +47,9 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       startDate
       endDate
       isFullySetUp
+      location
+      region
+      seasonId
     }
   }
 `;

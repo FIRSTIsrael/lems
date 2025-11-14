@@ -164,7 +164,8 @@
         "place": "מקום {place}",
         "no-data": "טרם הוכרזו פרסים"
       },
-      "division-teams": "קבוצות {divisionName}"
+      "division-teams": "קבוצות {divisionName}",
+      "region": "מדינה"
     },
     "team-in-event": {
       "not-found": {
