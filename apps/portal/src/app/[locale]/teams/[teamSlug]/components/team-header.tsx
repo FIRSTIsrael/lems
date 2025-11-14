@@ -23,10 +23,12 @@ export const TeamHeader: React.FC = () => {
             sx={{ width: 72, height: 72, objectFit: 'cover' }}
           />
 
-          <Typography variant="h4" component="h1" fontWeight="500">
-            {t('title', { number: team.number, name: team.name })}
-            <Flag region={team.region} size={24} />
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="h4" component="h1" fontWeight="500">
+              {t('title', { number: team.number, name: team.name })}
+            </Typography>
+            <Flag region={team.region} size={30} />
+          </Stack>
         </Stack>
 
         <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
