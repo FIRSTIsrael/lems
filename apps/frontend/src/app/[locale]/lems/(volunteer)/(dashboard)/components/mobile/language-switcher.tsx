@@ -29,9 +29,9 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
   };
 
   const handleLanguageChange = (locale: Locale) => {
+    handleClose();
     document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
     router.refresh();
-    handleClose();
     onClose?.();
   };
 

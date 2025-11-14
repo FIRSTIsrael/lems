@@ -22,7 +22,7 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
     const client = getClient();
     const result = await client.query({
       query: GET_VOLUNTEER_EVENT_DATA_QUERY,
-      variables: { eventId }
+      variables: { eventId, userId: user.id }
     });
 
     if (!result.data?.event) {
@@ -35,15 +35,18 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
       throw new Error('Event not found');
     }
 
-    if (!eventData.event.divisions || eventData.event.divisions.length === 0) {
-      throw new Error('No divisions available for this event');
+    const volunteerData = eventData.event.volunteers[0];
+    if (!volunteerData || !volunteerData.divisions || volunteerData.divisions.length === 0) {
+      throw new Error('Volunteer has no assigned divisions');
     }
+
+    console.log(volunteerData);
 
     return (
       <EventProvider
         eventId={eventData.event.id}
         eventName={eventData.event.name}
-        divisions={eventData.event.divisions}
+        divisions={volunteerData.divisions}
       >
         {children}
       </EventProvider>

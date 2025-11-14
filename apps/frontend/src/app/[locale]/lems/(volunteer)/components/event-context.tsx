@@ -7,7 +7,7 @@ interface EventContextType {
   eventId: string;
   eventName: string;
   currentDivision: { id: string; name: string; color: string };
-  availableDivisions: { id: string; name: string }[];
+  availableDivisions: { id: string; name: string; color: string }[];
   canSwitchDivisions: boolean;
 }
 
