@@ -40,7 +40,7 @@ const LanguageSubmenu: React.FC<LanguageSubmenuProps> = ({ anchorEl, onClose, on
         horizontal: direction === 'ltr' ? 'right' : 'left'
       }}
       transformOrigin={{
-        vertical: 'top',
+        vertical: 60,
         horizontal: direction === 'ltr' ? 'left' : 'right'
       }}
       slotProps={{

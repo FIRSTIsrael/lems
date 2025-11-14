@@ -66,6 +66,7 @@ export const DesktopAppBar = () => {
           sx={{ p: 2, display: 'flex', justifyContent: 'center', mb: 1 }}
         >
           <LanguageSwitcher />
+
           <LogoutButton variant="button" />
         </Stack>
       </Drawer>

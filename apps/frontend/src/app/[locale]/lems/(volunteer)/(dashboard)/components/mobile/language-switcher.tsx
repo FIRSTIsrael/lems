@@ -97,7 +97,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: 135,
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
         slotProps={{

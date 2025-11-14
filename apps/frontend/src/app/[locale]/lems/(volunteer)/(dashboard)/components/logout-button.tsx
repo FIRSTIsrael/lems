@@ -46,7 +46,6 @@ export const LogoutButton: React.FC<LogoutButtonProps> = ({ variant = 'menu-item
         onClick={handleLogout}
         disabled={isLoading}
         variant="outlined"
-        size="small"
         fullWidth
         startIcon={<Logout />}
       >
