@@ -9,8 +9,8 @@ import { MuiProvider } from './mui-provider';
 import { PortalAppBar } from './components/app-bar';
 
 export const metadata: Metadata = {
-  title: 'Events Portal: FIRST LEGO League Challenge IL',
-  description: 'Public events portal for FIRST LEGO League Challenge events in Israel'
+  title: 'Events Portal: FIRST LEGO League Challenge',
+  description: 'Public events portal for FIRST LEGO League Challenge events'
 };
 
 export const viewport: Viewport = {

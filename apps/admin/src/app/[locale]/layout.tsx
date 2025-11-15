@@ -8,8 +8,8 @@ import { routing } from '../../i18n/routing';
 import { MuiProvider } from './mui-provider';
 
 export const metadata: Metadata = {
-  title: 'Admin Portal: FIRST LEGO League Challenge IL',
-  description: 'Admin Dashboard for FIRST LEGO League Challenge events in Israel'
+  title: 'Admin Portal: FIRST LEGO League Challenge',
+  description: 'Admin Dashboard for FIRST LEGO League Challenge events'
 };
 
 export const viewport: Viewport = {
