@@ -72,6 +72,16 @@ router.put(
         city
       });
 
+      if (req.body.removeLogo === 'true' && team.logo_url) {
+        try {
+          db.teams.byId(team.id).updateLogo(null);
+        } catch (error) {
+          console.error('Error removing team logo:', error);
+          res.status(500).json({ error: 'Failed to remove team logo' });
+          return;
+        }
+      }
+
       if (req.files && req.files.logo) {
         const logoFile = req.files.logo as fileUpload.UploadedFile;
 
