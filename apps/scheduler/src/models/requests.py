@@ -28,6 +28,7 @@ class SchedulerRequest(BaseModel):
     judging_cycle_time_seconds: int
 
     breaks: list[Break]
+    timezone: str = "UTC"
 
 
 class CreateScheduleResponse(BaseModel):
