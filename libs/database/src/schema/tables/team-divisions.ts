@@ -5,6 +5,7 @@ export interface TeamDivisionsTable {
   team_id: string; // UUID foreign key to teams.id
   division_id: string; // UUID foreign key to divisions.id
   arrived: Generated<false>; // Default false
+  arrived_at: Date | null; // Timestamp when team arrived
   profile_document_url: string | null; // Points to object storage
 }
 

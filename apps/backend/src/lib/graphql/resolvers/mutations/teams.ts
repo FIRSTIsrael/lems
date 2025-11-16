@@ -50,7 +50,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
       throw new Error(`Team with ID ${teamId} has already arrived at division ${divisionId}`);
     }
 
-    const update: Record<string, unknown> = { arrived: true };
+    const update: Record<string, unknown> = { arrived: true, arrived_at: new Date() };
     await db.raw.sql
       .updateTable('team_divisions')
       .set(update)
