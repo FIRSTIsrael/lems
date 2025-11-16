@@ -38,7 +38,7 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     ? 'upcoming'
     : eventDate.isBefore(today)
       ? 'past'
-      : 'active';
+      : 'active'
 
   return {
     id: event.id,
@@ -50,7 +50,8 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     region: event.region,
     seasonId: event.season_id,
     teamsRegistered: event.team_count,
-    status: eventStatus
+    status: eventStatus,
+    completed: event.completed
   };
 };
 

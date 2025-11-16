@@ -14,7 +14,7 @@ import {
 import { DirectionalIcon } from '@lems/localization';
 import { Flag } from '@lems/shared';
 import { EventSummary } from '@lems/types/api/portal';
-import { LiveIcon } from '../../components/homepage/live-icon';
+// import { LiveIcon } from '../../components/homepage/live-icon';
 
 interface EventListItemProps {
   event: EventSummary;
@@ -26,29 +26,17 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
   const tEvents = useTranslations('pages.index.events');
 
   const getStatusChip = () => {
-    switch (variant) {
-      case 'active':
-        return <LiveIcon />;
-      case 'past':
-        return (
-          <Chip
-            label={tEvents('status-completed')}
-            color="primary"
-            size="small"
-            variant="outlined"
-            sx={{ minWidth: 80 }}
-          />
-        );
-      default:
-        return (
-          <Chip
-            label={tEvents('status-upcoming')}
-            color="primary"
-            size="small"
-            variant="outlined"
-            sx={{ minWidth: 80 }}
-          />
-        );
+    if (event.completed) {
+      return (
+        <Chip
+          label={tEvents('status-completed')}
+          color="primary"
+          size="small"
+          variant="outlined"
+          sx={{ minWidth: 80 }}
+        />
+      );
+      return null;
     }
   };
 
