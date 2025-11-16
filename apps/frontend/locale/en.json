@@ -56,6 +56,56 @@
         "back-home": "Back to Home",
         "try-again": "Try Again"
       }
+    },
+    "pit-admin": {
+      "page-title": "Team Registration",
+      "stats": {
+        "total-teams": "Total Teams",
+        "arrived": "Arrived",
+        "all-arrived": "All teams arrived! Great job 🎉",
+        "waiting-for": "Waiting for {count, plural, one {# team} other {# teams}}",
+        "teams-pending": "{count, plural, one {# team pending} other {# teams pending}}"
+      },
+      "team-input": {
+        "title": "Register Team Arrival",
+        "subtitle": "Select a team from the list to mark them as arrived at the event",
+        "search-label": "Search teams",
+        "search-placeholder": "Type to search...",
+        "button": "Mark Arrived",
+        "submitting": "Processing...",
+        "no-options": "All teams have arrived",
+        "all-arrived-message": "All teams have arrived",
+        "error": "Failed to mark team as arrived",
+        "team": "Team"
+      }
+    },
+    "reports": {
+      "page-title": "Reports",
+      "menu": {
+        "team-list": "Team List"
+      },
+      "team-list": {
+        "page-title": "Team List",
+        "total-teams": "Total Teams",
+        "arrived-teams": "Arrived",
+        "pending-teams": "Pending",
+        "arrived": "Arrived",
+        "not-arrived": "Pending",
+        "arrived-count": "{count}/{total} arrived",
+        "no-teams": "No teams available",
+        "loading": "Loading teams...",
+        "error-loading": "Failed to load teams. Please try again.",
+        "columns": {
+          "number": "Team #",
+          "name": "Team Name",
+          "affiliation": "Institution",
+          "city": "City",
+          "arrived": "Status",
+          "region": "Region"
+        },
+        "sort-ascending": "sorted ascending",
+        "sort-descending": "sorted descending"
+      }
     }
   },
   "components": {
@@ -63,7 +113,9 @@
       "connected": "Connected",
       "reconnecting": "Reconnecting...",
       "disconnected": "Disconnected",
-      "error": "Error"
-    }
+      "error": "Error",
+      "idle": "Idle"
+    },
+    "logout": "Logout"
   }
 }

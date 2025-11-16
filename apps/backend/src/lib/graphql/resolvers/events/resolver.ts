@@ -10,6 +10,7 @@ export interface EventGraphQL {
   name: string;
   startDate: string;
   endDate: string;
+  region: string;
   isFullySetUp?: boolean;
 }
 
@@ -64,13 +65,13 @@ function buildEventQuery(args: EventsArgs) {
   let query = db.raw.sql
     .selectFrom('events')
     .leftJoin('divisions', 'divisions.event_id', 'events.id')
-    .select(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date'])
+    .select(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region'])
     .select(
       sql<boolean>`COALESCE(BOOL_AND(divisions.has_awards AND divisions.has_users AND divisions.has_schedule), false)`.as(
         'is_fully_set_up'
       )
     )
-    .groupBy(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date']);
+    .groupBy(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region']);
 
   // Apply date filters
   if (args.startAfter) {
@@ -109,6 +110,7 @@ function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean }): Eve
     name: event.name,
     startDate: event.start_date.toISOString(),
     endDate: event.end_date.toISOString(),
+    region: event.region,
     isFullySetUp: event.is_fully_set_up,
   };
 }

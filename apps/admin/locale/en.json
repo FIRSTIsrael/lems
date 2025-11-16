@@ -79,7 +79,8 @@
           "affiliation": "Affiliation",
           "actions": "Actions",
           "city": "City",
-          "status": "Status"
+          "status": "Status",
+          "region": "Region"
         },
         "status": {
           "active": "Active",
@@ -110,6 +111,11 @@
             "label": "City",
             "placeholder": "e.g., New York"
           },
+          "region": {
+            "label": "Region",
+            "placeholder": "region",
+            "helper-text": "ISO-3166 2-letter country code"
+          },
           "logo": {
             "label": "Team Logo",
             "description": "Upload a team logo (JPG, PNG, or SVG)",
@@ -123,6 +129,7 @@
           "number-exists": "This team number already exists.",
           "affiliation-required": "School/Organization name is required.",
           "city-required": "City is required.",
+          "region-required": "Region is required.",
           "error": "An error occurred while creating the team."
         },
         "submit": "Create Team",
@@ -142,7 +149,7 @@
             "csv-format": "Required CSV Format:",
             "requirements": {
               "header": "The file should not contain a header row",
-              "columns": "All four columns (number, name, affiliation, city) are required, in this order",
+              "columns": "All four columns (number, name, affiliation, city, region) are required, in this order",
               "encoding": "File must be saved with UTF-8 encoding"
             },
             "example": "Example CSV content:"
@@ -275,6 +282,11 @@
                 "label": "Division Name",
                 "placeholder": "Enter division name..."
               }
+            },
+            "region": {
+              "label": "Region",
+              "placeholder": "region",
+              "helper-text": "ISO-3166 2-letter country code"
             }
           },
           "actions": {
@@ -306,6 +318,11 @@
                 "required": "Division name is required",
                 "min": "Division name must be at least {min} characters"
               }
+            },
+            "region": {
+              "required": "Region is required",
+              "length": "Region needs to be 2 charachters long",
+              "format": "Invalid region"
             }
           }
         }

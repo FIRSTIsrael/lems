@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { EventSummary } from '@lems/types/api/portal';
+import { Flag } from '@lems/shared';
 import { LiveIcon } from './live-icon';
 
 interface EventCardProps {
@@ -82,13 +83,23 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
         );
       case 'past':
         return (
-          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
+          <Button
+            component="span"
+            variant="outlined"
+            sx={{ ml: 'auto' }}
+            endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
+          >
             {t('view-results')}
           </Button>
         );
       default: // upcoming
         return (
-          <Button component="span" variant="outlined" sx={{ ml: 'auto' }} endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
+          <Button
+            component="span"
+            variant="outlined"
+            sx={{ ml: 'auto' }}
+            endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
+          >
             {t('view-details')}
           </Button>
         );
@@ -131,8 +142,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               </Stack>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <LocationIcon fontSize="small" color="action" />
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                >
                   {event.location}
+                  <Flag region={event.region} size={18} />
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" spacing={1}>

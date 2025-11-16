@@ -1,15 +1,4 @@
-interface Room {
-  id: string;
-  name: string;
-}
-
-interface JudgingSession {
-  id: string;
-  number: number;
-  teamId: string | null;
-  roomId: string;
-  scheduledTime: Date | string;
-}
+import { JudgingSession } from '@lems/types/api/portal';
 
 export interface JudgingSessionTime {
   time: Date;
@@ -17,13 +6,13 @@ export interface JudgingSessionTime {
     id: string;
     name: string;
     session: JudgingSession | null;
-    teamId: string | null;
+    team: JudgingSession['team'];
   }>;
 }
 
 export const groupSessionsByTime = (
   sessions: JudgingSession[],
-  rooms: Room[]
+  rooms: Array<{ id: string; name: string }>
 ): JudgingSessionTime[] => {
   const sessionsByTime = sessions.reduce(
     (acc, session) => {
@@ -45,13 +34,13 @@ export const groupSessionsByTime = (
     const timeSlot = sessionsByTime[timeKey];
     timeSlot.rooms = rooms.map(room => {
       const session = sessions.find(
-        s => s.roomId === room.id && new Date(s.scheduledTime).getTime() === Number(timeKey)
+        s => s.room.id === room.id && new Date(s.scheduledTime).getTime() === Number(timeKey)
       );
       return {
         id: room.id,
         name: room.name,
         session: session || null,
-        teamId: session?.teamId || null
+        team: session?.team || null
       };
     });
   }

@@ -34,9 +34,10 @@ export const LiveEventsSection: React.FC = () => {
       slug: event.slug,
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
-      location: '',
+      location: event.location,
+      region: event.region,
       coordinates: null,
-      seasonId: ''
+      seasonId: event.seasonId
     })) || [];
 
   if (loading) {

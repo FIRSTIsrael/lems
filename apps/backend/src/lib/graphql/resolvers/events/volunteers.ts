@@ -26,10 +26,13 @@ export interface VolunteerGraphQL {
 
 interface VolunteersArgs {
   role?: string;
+  id?: string;
 }
 
 export interface DivisionGraphQL {
   id: string;
+  name?: string | null;
+  color?: string | null;
 }
 
 /**
@@ -47,10 +50,14 @@ export const volunteerDivisionsResolver: GraphQLFieldResolver<
       .selectFrom('event_user_divisions')
       .innerJoin('divisions', 'divisions.id', 'event_user_divisions.division_id')
       .where('event_user_divisions.user_id', '=', volunteer.id)
-      .select('divisions.id')
+      .select(['divisions.id', 'divisions.name', 'divisions.color'])
       .execute();
 
-    return divisions.map(d => ({ id: d.id }));
+    return divisions.map(d => ({
+      id: d.id,
+      name: d.name,
+      color: d.color
+    }));
   } catch (error) {
     console.error('Error fetching divisions for volunteer:', volunteer.id, error);
     throw error;
@@ -82,6 +89,11 @@ export const volunteersResolver: GraphQLFieldResolver<
     // Filter by role if specified
     if (args.role) {
       query = query.where('event_users.role', '=', args.role);
+    }
+
+    // Filter by id if specified
+    if (args.id) {
+      query = query.where('event_users.id', '=', args.id);
     }
 
     const volunteers = await query.execute();

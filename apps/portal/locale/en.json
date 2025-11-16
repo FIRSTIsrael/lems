@@ -81,7 +81,7 @@
     },
     "team": {
       "not-found": {
-        "title": "Team #{number} Not Found",
+        "title": "Team not Found",
         "description": "The team you're looking for doesn't exist in our database.",
         "back-to-teams": "Back to Teams"
       },
@@ -110,6 +110,9 @@
         "view-details": "View Details"
       }
     },
+    "teams": {
+      "title": "<i>FIRST</i> LEGO League Challenge Teams"
+    },
     "event": {
       "general-info": "General Information",
       "event-date": "Event Date",
@@ -121,6 +124,12 @@
         "title": "Event Not Found",
         "description": "The event you're looking for doesn't exist in our database.",
         "back-to-events": "Back to Events"
+      },
+      "server-error": {
+        "title": "Something Went Wrong",
+        "description": "We encountered an unexpected error while loading the event. Please try again later or contact support if the problem persists.",
+        "back-to-events": "Back to Events",
+        "retry": "Try Again"
       },
       "quick-links": {
         "title": "Quick Links",
@@ -155,13 +164,20 @@
         "place": "{place} Place",
         "no-data": "No awards announced yet"
       },
-      "division-teams": "{divisionName} teams"
+      "division-teams": "{divisionName} teams",
+      "region": "Region"
     },
     "team-in-event": {
       "not-found": {
         "title": "Team #{number} Not Found",
         "description": "The team you're looking for doesn't exist in this event.",
         "back-to-event": "Back to Event"
+      },
+      "server-error": {
+        "title": "Something Went Wrong",
+        "description": "We encountered an unexpected error while loading the team. Please try again later or contact support if the problem persists.",
+        "back-to-event": "Back to Event",
+        "retry": "Try Again"
       },
       "header": {
         "back-to-event": "Back to Event",
@@ -215,11 +231,10 @@
   "layouts": {
     "main": {
       "app-bar": {
+        "teams": "Teams",
         "events": "Events",
         "scorer": "Scorer",
-        "field-timer": "Field Timer",
-        "rubrics": "Rubrics",
-        "judging-timer": "Judging Timer"
+        "rubrics": "Rubrics"
       }
     }
   }

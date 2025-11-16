@@ -7,10 +7,11 @@ import { SWRProvider } from '@lems/shared';
 import { routing } from '../../i18n/routing';
 import { ApolloClientProvider } from '../../lib/graphql/apollo-client-provider';
 import { MuiProvider } from './mui-provider';
+import { LemsToaster } from './components/toaster';
 
 export const metadata: Metadata = {
-  title: 'Events Portal: FIRST LEGO League Challenge IL',
-  description: 'Public events portal for FIRST LEGO League Challenge events in Israel'
+  title: 'LEMS - FIRST LEGO League Events Management System',
+  description: 'Manage and organize your FIRST LEGO League events with ease using LEMS.'
 };
 
 export const viewport: Viewport = {
@@ -53,7 +54,10 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         <NextIntlClientProvider>
           <ApolloClientProvider>
             <SWRProvider>
-              <MuiProvider locale={locale}>{children}</MuiProvider>
+              <MuiProvider locale={locale}>
+                {children}
+                <LemsToaster dir={dir} />
+              </MuiProvider>
             </SWRProvider>
           </ApolloClientProvider>
         </NextIntlClientProvider>

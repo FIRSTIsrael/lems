@@ -114,6 +114,7 @@ class EventSelector {
         'teams.logo_url',
         'teams.affiliation',
         'teams.city',
+        'teams.region',
         'teams.coordinates',
         'divisions.id as division_id',
         'divisions.name as division_name',
@@ -271,6 +272,7 @@ class EventsSelector {
           'events.start_date',
           'events.end_date',
           'events.location',
+          'events.region',
           'events.coordinates',
           'events.season_id'
         ])
@@ -306,6 +308,7 @@ class EventsSelector {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.region',
         'events.season_id',
         'divisions.id as division_id',
         'divisions.name as division_name',
@@ -313,7 +316,8 @@ class EventsSelector {
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
-        'event_settings.visible'
+        'event_settings.visible',
+        'event_settings.published'
       ])
       .select(eb => [
         eb.fn.count('team_divisions.team_id').as('team_count'),
@@ -339,6 +343,7 @@ class EventsSelector {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.region',
         'events.season_id',
         'divisions.id',
         'divisions.name',
@@ -346,7 +351,8 @@ class EventsSelector {
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
-        'event_settings.visible'
+        'event_settings.visible',
+        'event_settings.published'
       ])
       .groupBy(sql`events.coordinates::text`);
 
@@ -394,9 +400,11 @@ class EventsSelector {
           slug: row.slug,
           date: row.start_date.toISOString(),
           location: row.location,
+          region: row.region,
           team_count: 0,
           divisions: [],
           visible: row.visible,
+          published: row.published,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });
@@ -529,6 +537,7 @@ export class EventsRepository {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.region',
         'events.season_id',
         'divisions.id as division_id',
         'divisions.name as division_name',
@@ -536,7 +545,8 @@ export class EventsRepository {
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
-        'event_settings.visible'
+        'event_settings.visible',
+        'event_settings.published'
       ])
       .select(eb => [
         eb.fn.count('team_divisions.team_id').as('team_count'),
@@ -548,6 +558,7 @@ export class EventsRepository {
         'events.slug',
         'events.start_date',
         'events.location',
+        'events.region',
         'events.season_id',
         'divisions.id',
         'divisions.name',
@@ -555,7 +566,8 @@ export class EventsRepository {
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
-        'event_settings.visible'
+        'event_settings.visible',
+        'event_settings.published'
       ])
       .groupBy(sql`events.coordinates::text`);
 
@@ -587,6 +599,9 @@ export class EventsRepository {
           slug: row.slug,
           date: row.start_date.toISOString(),
           location: row.location,
+          region: row.region,
+          visible: row.visible,
+          published: row.published,
           team_count: 0,
           divisions: [],
           assigned_admin_ids: adminsByEvent.get(eventId) || [],

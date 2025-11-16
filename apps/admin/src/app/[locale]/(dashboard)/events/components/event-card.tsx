@@ -26,6 +26,7 @@ import {
   Warning
 } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/admin';
+import { Flag } from '@lems/shared';
 import { useSession } from '../../components/session-context';
 
 interface EventCardProps extends EventSummary {
@@ -38,6 +39,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   name,
   slug,
   location,
+  region,
   startDate: date,
   teamCount,
   divisions,
@@ -78,6 +80,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Typography variant="body2" color="text.secondary">
               {location}
             </Typography>
+            <Flag region={region} size={18} />
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -6,16 +6,30 @@ import {
 } from '@lems/database';
 import { Event, EventDetails, EventSummary } from '@lems/types/api/portal';
 
-export const makePortalEventResponse = (event: DbEvent): Event => ({
-  id: event.id,
-  slug: event.slug,
-  name: event.name,
-  startDate: event.start_date,
-  endDate: event.end_date,
-  location: event.location,
-  coordinates: event.coordinates,
-  seasonId: event.season_id
-});
+export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event => {
+  let startDate: Date;
+  let endDate: Date;
+
+  if ('date' in event) {
+    startDate = new Date(event.date);
+    endDate = new Date(event.date);
+  } else {
+    startDate = event.start_date;
+    endDate = event.end_date;
+  }
+
+  return {
+    id: event.id,
+    slug: event.slug,
+    name: event.name,
+    startDate,
+    endDate,
+    location: event.location,
+    coordinates: event.coordinates,
+    seasonId: event.season_id,
+    region: event.region
+  };
+};
 
 export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSummary => {
   const today = dayjs().startOf('day');
@@ -33,6 +47,7 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     startDate: new Date(event.date),
     endDate: new Date(event.date),
     location: event.location,
+    region: event.region,
     seasonId: event.season_id,
     teamsRegistered: event.team_count,
     status: eventStatus
@@ -46,6 +61,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
+  region: event.region,
   seasonId: event.season_id,
   divisions: event.divisions.map(division => ({
     id: division.id,

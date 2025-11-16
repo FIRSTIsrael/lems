@@ -14,6 +14,7 @@ interface TeamFormValues {
   number: string;
   affiliation: string;
   city: string;
+  region: string;
 }
 
 interface TeamFormErrors {
@@ -21,6 +22,7 @@ interface TeamFormErrors {
   number?: string;
   affiliation?: string;
   city?: string;
+  region?: string;
 }
 
 interface TeamFormProps {
@@ -45,7 +47,8 @@ export const TeamForm: React.FC<TeamFormProps> = ({
     name: '',
     number: '',
     affiliation: '',
-    city: ''
+    city: '',
+    region: ''
   };
 
   const validateForm = (values: TeamFormValues): TeamFormErrors => {
@@ -69,6 +72,10 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       errors.city = 'city-required';
     }
 
+    if (!values.region?.trim()) {
+      errors.region = 'region-required';
+    }
+
     return errors;
   };
 
@@ -85,6 +92,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       formData.append('number', values.number);
       formData.append('affiliation', values.affiliation);
       formData.append('city', values.city);
+      formData.append('region', values.region);
 
       if (selectedFile) {
         formData.append('logo', selectedFile);
@@ -134,18 +142,33 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                 fullWidth
                 disabled={isSubmitting}
               />
+              <Stack direction="row" spacing={2}>
+                <FormikTextField
+                  name="number"
+                  label={t('fields.number.label')}
+                  error={touched.number && !!errors.number}
+                  helperText={
+                    touched.number && errors.number ? t(`errors.${errors.number}`) : undefined
+                  }
+                  placeholder={t('fields.number.placeholder')}
+                  fullWidth
+                  disabled={isEditing || isSubmitting}
+                />
 
-              <FormikTextField
-                name="number"
-                label={t('fields.number.label')}
-                error={touched.number && !!errors.number}
-                helperText={
-                  touched.number && errors.number ? t(`errors.${errors.number}`) : undefined
-                }
-                placeholder={t('fields.number.placeholder')}
-                fullWidth
-                disabled={isEditing || isSubmitting}
-              />
+                <FormikTextField
+                  name="region"
+                  label={t('fields.region.label')}
+                  error={touched.region && !!errors.region}
+                  helperText={
+                    touched.region && errors.region
+                      ? t(`errors.${errors.region}`)
+                      : t('fields.region.helper-text')
+                  }
+                  placeholder={t('fields.region.placeholder')}
+                  fullWidth
+                  disabled={isSubmitting}
+                />
+              </Stack>
 
               <Stack direction="row" spacing={2}>
                 <FormikTextField

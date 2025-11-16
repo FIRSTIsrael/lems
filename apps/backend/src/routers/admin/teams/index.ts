@@ -1,6 +1,5 @@
 import express from 'express';
 import fileUpload, { UploadedFile } from 'express-fileupload';
-import { UpdateableTeam } from '@lems/database';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../middleware/require-permission';
@@ -13,25 +12,10 @@ router.get('/', async (req: AdminRequest, res) => {
   res.json(teams.map(team => makeAdminTeamResponse(team)));
 });
 
-router.get('/:number', async (req: AdminRequest, res) => {
-  const number = Number(req.params.number);
-  if (Number.isNaN(number)) {
-    res.status(400).json({ error: 'Invalid team number' });
-    return;
-  }
+router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
+  const teamId = req.params.teamId;
 
-  const team = await db.teams.byNumber(number).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
-  res.json(makeAdminTeamResponse(team));
-});
-
-router.delete('/:id', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
-  const id = req.params.id;
-
-  const team = await db.teams.byId(id).get();
+  const team = await db.teams.byId(teamId).get();
   if (!team) {
     res.status(404).json({ error: 'Team not found' });
     return;
@@ -44,7 +28,7 @@ router.delete('/:id', requirePermission('MANAGE_TEAMS'), async (req: AdminReques
     return;
   }
 
-  const success = await db.teams.byId(id).delete();
+  const success = await db.teams.byId(teamId).delete();
   if (!success) {
     res.status(500).json({ error: 'Could not delete team' });
     return;
@@ -53,7 +37,7 @@ router.delete('/:id', requirePermission('MANAGE_TEAMS'), async (req: AdminReques
   res.status(200).end();
 });
 
-router.get('/id/:teamId', async (req: AdminRequest, res) => {
+router.get('/:teamId', async (req: AdminRequest, res) => {
   const id = req.params.teamId;
   const team = await db.teams.byId(id).get();
   if (!team) {
@@ -129,9 +113,9 @@ router.post(
   requirePermission('MANAGE_TEAMS'),
   fileUpload(),
   async (req: AdminRequest, res) => {
-    const { name, number, affiliation, city } = req.body;
+    const { name, number, affiliation, city, region } = req.body;
 
-    if (!name || !number || !affiliation || !city) {
+    if (!name || !number || !affiliation || !city || !region) {
       res.status(400).json({ error: 'All fields are required' });
       return;
     }
@@ -148,6 +132,7 @@ router.post(
         number: teamNumber,
         affiliation,
         city,
+        region,
         coordinates: null,
         logo_url: null
       });
@@ -221,35 +206,5 @@ router.post(
     }
   }
 );
-
-router.put('/:number', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
-  const number = Number(req.params.number);
-  if (Number.isNaN(number)) {
-    res.status(400).json({ error: 'Invalid team number' });
-    return;
-  }
-
-  const team = await db.teams.byNumber(number).update(req.body as Partial<UpdateableTeam>);
-  if (!team) {
-    res.status(500).json({ error: 'Updating team failed' });
-    return;
-  }
-  res.status(200).json(makeAdminTeamResponse(team));
-});
-
-router.delete('/:number', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
-  const number = Number(req.params.number);
-  if (Number.isNaN(number)) {
-    res.status(400).json({ error: 'Invalid team number' });
-    return;
-  }
-
-  const success = await db.teams.byNumber(number).delete();
-  if (!success) {
-    res.status(500).json({ error: 'Could not delete team' });
-    return;
-  }
-  res.status(200);
-});
 
 export default router;

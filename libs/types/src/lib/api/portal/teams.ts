@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { PortalSeasonResponseSchema } from './seasons';
+import { PortalDivisionResponseSchema } from './divisions';
 
 export const PortalTeamResponseSchema = z.object({
   id: z.string(),
@@ -7,12 +9,14 @@ export const PortalTeamResponseSchema = z.object({
   logoUrl: z.url().nullable(),
   affiliation: z.string(),
   city: z.string(),
-  coordinates: z.string().nullable()
+  coordinates: z.string().nullable(),
+  region: z.string(),
+  slug: z.string()
 });
 
 export const PortalTeamSummaryResponseSchema = z.object({
   ...PortalTeamResponseSchema.shape,
-  lastCompetedSeason: z.string().nullable()
+  lastCompetedSeason: PortalSeasonResponseSchema
 });
 
 export type Team = z.infer<typeof PortalTeamResponseSchema>;
@@ -26,52 +30,71 @@ export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryRespon
 export const PortalTeamEventResultSchema = z.object({
   eventName: z.string(),
   eventSlug: z.string(),
-  awards: z.array(z.object({ name: z.string(), place: z.number().nullable() })),
-  matches: z.array(z.object({ number: z.number(), score: z.number() })),
-  robotGameRank: z.number()
+  results: z
+    .object({
+      awards: z.array(
+        z.object({
+          name: z.string(),
+          place: z.number().nullable()
+        })
+      ),
+      matches: z.array(
+        z.object({
+          number: z.number(),
+          score: z.number()
+        })
+      ),
+      robotGameRank: z.number()
+    })
+    .nullable()
 });
 
 export type TeamEventResult = z.infer<typeof PortalTeamEventResultSchema>;
 
 export const PortalTeamEventResultsSchema = z.array(PortalTeamEventResultSchema);
 
-export const PortalTeamAtEventDataResponseSchema = z.object({
+export const TeamRobotGameMatchSchema = z.object({
+  id: z.string(),
+  round: z.number(),
+  number: z.number(),
+  stage: z.string(),
+  scheduledTime: z.coerce.date(),
+  table: z.object({
+    id: z.string(),
+    name: z.string()
+  })
+});
+
+export type TeamRobotGameMatch = z.infer<typeof TeamRobotGameMatchSchema>;
+
+export const TeamJudgingSessionSchema = z.object({
+  id: z.string(),
+  number: z.number(),
+  scheduledTime: z.coerce.date(),
+  room: z.object({
+    id: z.string(),
+    name: z.string()
+  })
+});
+
+export type TeamJudgingSession = z.infer<typeof TeamJudgingSessionSchema>;
+
+export const TeamRobotPerformanceSchema = z.object({
+  scores: z.array(z.number()),
+  highestScore: z.number(),
+  robotGameRank: z.number()
+});
+
+export type TeamRobotPerformance = z.infer<typeof TeamRobotPerformanceSchema>;
+
+export const PortalTeamAtEventDataSchema = z.object({
   team: PortalTeamResponseSchema,
   event: z.object({
     id: z.string(),
     name: z.string(),
     slug: z.string()
   }),
-  division: z.object({
-    id: z.string(),
-    name: z.string()
-  }),
-  awards: z.array(
-    z.object({
-      name: z.string(),
-      place: z.number()
-    })
-  ),
-  matches: z.array(
-    z.object({
-      number: z.number(),
-      stage: z.string(),
-      scheduledTime: z.coerce.date(),
-      table: z.object({ id: z.string(), name: z.string() })
-    })
-  ),
-  judgingSession: z.object({
-    number: z.number(),
-    scheduledTime: z.coerce.date(),
-    room: z.object({ id: z.string(), name: z.string() })
-  }),
-  scoreboard: z
-    .object({
-      rank: z.number().nullable(),
-      maxScore: z.number().nullable(),
-      scores: z.array(z.number()).nullable()
-    })
-    .nullable()
+  division: PortalDivisionResponseSchema
 });
 
-export type TeamAtEventData = z.infer<typeof PortalTeamAtEventDataResponseSchema>;
+export type TeamAtEventData = z.infer<typeof PortalTeamAtEventDataSchema>;

@@ -12,6 +12,7 @@ import {
   ArrowBack
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { Flag } from '@lems/shared';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from '../../components/homepage/live-icon';
 
@@ -112,6 +113,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               <Stack direction="row" alignItems="center" spacing={1}>
                 <LocationIcon fontSize="small" />
                 <Typography variant="body2">{event.location}</Typography>
+                <Flag region={event.region} size={18} />
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={1}>
