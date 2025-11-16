@@ -125,7 +125,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
           >
             {variant === 'active'
               ? tEvents('view-event')
-              : variant === 'past'
+              : event.completed
                 ? tEvents('view-results')
                 : tEvents('view-details')}
           </Button>
