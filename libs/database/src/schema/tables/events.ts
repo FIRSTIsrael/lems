@@ -37,7 +37,6 @@ export interface EventSummary {
   season_id: string;
   visible: boolean;
   published: boolean;
-  completed: boolean;
   is_fully_set_up: boolean;
   assigned_admin_ids: string[];
 }
