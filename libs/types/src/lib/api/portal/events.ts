@@ -19,7 +19,8 @@ export const PortalEventsResponseSchema = z.array(PortalEventResponseSchema);
 export const PortalEventSummaryResponseSchema = z.object({
   ...PortalEventResponseSchema.shape,
   teamsRegistered: z.number(),
-  status: z.enum(['upcoming', 'active', 'past'])
+  status: z.enum(['upcoming', 'active', 'past']),
+  completed: z.boolean()
 });
 
 export type EventSummary = z.infer<typeof PortalEventSummaryResponseSchema>;
