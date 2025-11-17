@@ -57,6 +57,14 @@
         "try-again": "ניסיון נוסף"
       }
     },
+    "error": {
+      "title": "משהו השתבש",
+      "description": "נתקלנו בשגיאה בלתי צפויה. אנא נסו שנית.",
+      "technical-details": "פרטים טכניים",
+      "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+      "back-home": "חזרה לעמוד הבית",
+      "try-again": "ניסיון נוסף"
+    },
     "pit-admin": {
       "page-title": "רישום קבוצות",
       "stats": {
@@ -115,6 +123,11 @@
       "disconnected": "מנותק",
       "error": "שגיאה",
       "idle": "לא פעיל"
+    },
+    "navigation-list": {
+      "dashboard": "בית",
+      "reports": "דוחות",
+      "insights": "תובנות"
     },
     "logout": "יציאה"
   }

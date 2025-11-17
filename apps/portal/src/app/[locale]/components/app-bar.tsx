@@ -42,13 +42,7 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
     <React.Fragment>
       <AppBar position="static">
         <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <ResponsiveComponent
-              desktop={<DesktopAppBar />}
-              mobile={<MobileAppBar />}
-              flexGrow={1}
-            />
-          </Toolbar>
+          <ResponsiveComponent desktop={<DesktopAppBar />} mobile={<MobileAppBar />} />
         </Container>
       </AppBar>
       {children}
@@ -60,7 +54,7 @@ const DesktopAppBar: React.FC = () => {
   const t = useTranslations('layouts.main.app-bar');
 
   return (
-    <>
+    <Toolbar disableGutters>
       <Box
         display={{ xs: 'none', md: 'flex' }}
         mr={1}
@@ -95,7 +89,7 @@ const DesktopAppBar: React.FC = () => {
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <LanguageSwitcher />
       </Box>
-    </>
+    </Toolbar>
   );
 };
 
@@ -104,8 +98,7 @@ const MobileAppBar: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   return (
-    <>
-      {' '}
+    <Toolbar disableGutters>
       <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
         <IconButton
           size="large"
@@ -117,6 +110,7 @@ const MobileAppBar: React.FC = () => {
         >
           <MenuRounded />
         </IconButton>
+
         <Menu
           id="menu-appbar"
           anchorEl={anchorElNav}
@@ -140,6 +134,7 @@ const MobileAppBar: React.FC = () => {
           ))}
         </Menu>
       </Box>
+
       <Box
         width="100%"
         display={{ xs: 'flex', md: 'none' }}
@@ -163,10 +158,8 @@ const MobileAppBar: React.FC = () => {
           />
         </Box>
       </Box>
-      {/* Mobile Language Switcher */}
-      <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-        <LanguageSwitcher />
-      </Box>{' '}
-    </>
+
+      <LanguageSwitcher />
+    </Toolbar>
   );
 };

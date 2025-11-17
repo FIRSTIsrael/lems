@@ -57,6 +57,14 @@
         "try-again": "Try Again"
       }
     },
+    "error": {
+      "title": "Something went wrong",
+      "description": "We encountered an unexpected error. Please try again.",
+      "technical-details": "Technical Details",
+      "support-text": "If this problem persists, please contact support.",
+      "back-home": "Back to Home",
+      "try-again": "Try Again"
+    },
     "pit-admin": {
       "page-title": "Team Registration",
       "stats": {
@@ -115,6 +123,11 @@
       "disconnected": "Disconnected",
       "error": "Error",
       "idle": "Idle"
+    },
+    "navigation-list": {
+      "dashboard": "Dashboard",
+      "reports": "Reports",
+      "insights": "Insights"
     },
     "logout": "Logout"
   }
