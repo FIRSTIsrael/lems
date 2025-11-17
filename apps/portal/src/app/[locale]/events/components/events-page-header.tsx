@@ -4,16 +4,22 @@ import React from 'react';
 import useSWR from 'swr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { Season } from '@lems/types/api/portal';
 import { RichText } from '@lems/localization';
 
 interface EventsPageHeaderProps {
   currentSeason: Season;
+  regionFilter: string;
+  availableRegions: string[];
+  onRegionChange: (region: string) => void;
 }
 
 export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
-  currentSeason
+  currentSeason,
+  regionFilter,
+  availableRegions,
+  onRegionChange
 }: EventsPageHeaderProps) => {
   const t = useTranslations('pages.events');
   const router = useRouter();
@@ -43,22 +49,50 @@ export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
       >
         {<RichText>{tags => t.rich('title', tags)}</RichText>}
       </Typography>
-      <FormControl sx={{ mb: 4, minWidth: 200 }}>
-        <InputLabel id="season-select-label">{t('select-season')}</InputLabel>
-        <Select
-          labelId="season-select-label"
-          id="season-select"
-          label={t('select-season')}
-          value={currentSeason.slug}
-          onChange={e => handleSeasonChange(e.target.value)}
-        >
-          {seasons.map(season => (
-            <MenuItem key={season.slug} value={season.slug}>
-              {season.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Box
+        sx={{
+          mb: 4,
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2,
+          alignItems: { xs: 'flex-start', sm: 'center' }
+        }}
+      >
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel id="season-select-label">{t('select-season')}</InputLabel>
+          <Select
+            labelId="season-select-label"
+            id="season-select"
+            label={t('select-season')}
+            value={currentSeason.slug}
+            onChange={e => handleSeasonChange(e.target.value)}
+          >
+            {seasons.map(season => (
+              <MenuItem key={season.slug} value={season.slug}>
+                {season.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel id="events-region-select-label">{t('region.label')}</InputLabel>
+          <Select
+            labelId="events-region-select-label"
+            id="events-region-select"
+            label={t('region.label')}
+            value={regionFilter}
+            onChange={e => onRegionChange(e.target.value)}
+          >
+            <MenuItem value="all">{t('region.all')}</MenuItem>
+            {availableRegions.map(region => (
+              <MenuItem key={region} value={region}>
+                {region}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </>
   );
 };
