@@ -13,7 +13,7 @@ export const TeamList: React.FC = () => {
   const searchParams = useSearchParams();
   const pageNumber = Number(searchParams.get('page')) || 1;
 
-  const [regionFilter, setRegionFilter] = useState<string>('all');
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
 
   const { data, isLoading } = useSWR<{ teams: Team[]; numberOfPages: number }>(
     `/portal/teams?page=${pageNumber}`,
@@ -32,8 +32,11 @@ export const TeamList: React.FC = () => {
   );
 
   const filteredTeams = useMemo(
-    () => (regionFilter === 'all' ? teams : teams.filter(team => team.region === regionFilter)),
-    [teams, regionFilter]
+    () =>
+      selectedRegions.length === 0
+        ? teams
+        : teams.filter(team => selectedRegions.includes(team.region)),
+    [teams, selectedRegions]
   );
 
   if (!data || isLoading) {
@@ -52,9 +55,9 @@ export const TeamList: React.FC = () => {
           }}
         >
           <RegionSelector
-            regionFilter={regionFilter}
+            selectedRegions={selectedRegions}
             availableRegions={availableRegions}
-            onRegionChange={value => setRegionFilter(value)}
+            onRegionsChange={values => setSelectedRegions(values)}
           />
         </Box>
       </Grid>
