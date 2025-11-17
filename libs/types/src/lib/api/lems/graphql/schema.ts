@@ -18,7 +18,7 @@ export function loadLemsGraphQLSchema(): string[] {
   // In ESM, we need to convert import.meta.url to a file path
   const currentFilePath = fileURLToPath(import.meta.url);
   const schemaDir = dirname(currentFilePath);
-  const schemaFiles = ['base', 'event', 'division', 'team', 'volunteer'];
+  const schemaFiles = ['base', 'event', 'division', 'team', 'volunteer', 'judging'];
 
   return schemaFiles.map(filename => {
     try {

@@ -1,0 +1,66 @@
+"""
+A judging session where a team is evaluated by judges
+"""
+type JudgingSession {
+  "Unique identifier for the judging session"
+  id: String!
+
+  "Session number within the division"
+  number: Int!
+
+  "Scheduled start time (ISO 8601 datetime)"
+  scheduledTime: String!
+
+  "Current status of the session (e.g., 'not-started', 'in-progress', 'completed')"
+  status: String!
+
+  "Whether the team for this session has been called to the judging room"
+  called: Boolean!
+
+  "Room where this session is taking place"
+  room: Room!
+
+  "Team being judged in this session"
+  team: Team!
+
+  "Actual timestamp when the session was started"
+  startTime: String
+
+  "Difference in seconds between scheduled and actual start time"
+  startDelta: Int
+}
+
+"""
+Judging-related information for a division
+"""
+type Judging {
+  "Judging sessions in this division, optionally filtered"
+  sessions(
+    "Filter sessions by their IDs"
+    ids: [String!]
+
+    "Filter sessions by room ID"
+    roomId: String
+
+    "Filter sessions scheduled before this time (ISO 8601)"
+    scheduledBefore: String
+
+    "Filter sessions scheduled after this time (ISO 8601)"
+    scheduledAfter: String
+  ): [JudgingSession!]!
+
+  "Room IDs available for judging in this division"
+  rooms: [String!]!
+}
+
+extend type Division {
+  "Judging information and sessions for this division"
+  judging: Judging!
+}
+
+extend type Query {
+  """
+  Get judging information for a specific division
+  """
+  judging("Division ID to retrieve judging information for" divisionId: String!): Judging
+}
