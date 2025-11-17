@@ -38,7 +38,7 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     ? 'upcoming'
     : eventDate.isBefore(today)
       ? 'past'
-      : 'active'
+      : 'active';
 
   return {
     id: event.id,
