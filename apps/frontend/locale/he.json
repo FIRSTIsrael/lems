@@ -116,6 +116,11 @@
       "error": "שגיאה",
       "idle": "לא פעיל"
     },
+    "navigation-list": {
+      "dashboard": "בית",
+      "reports": "דוחות",
+      "insights": "תובנות"
+    },
     "logout": "יציאה"
   }
 }

@@ -116,6 +116,11 @@
       "error": "Error",
       "idle": "Idle"
     },
+    "navigation-list": {
+      "dashboard": "Dashboard",
+      "reports": "Reports",
+      "insights": "Insights"
+    },
     "logout": "Logout"
   }
 }
