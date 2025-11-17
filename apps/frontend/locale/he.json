@@ -79,6 +79,16 @@
         "team": "קבוצה"
       }
     },
+    "judge": {
+      "page-title": "לוח זמנים שיפוט",
+      "schedule": {
+        "session": "מפגש",
+        "team": "פרטי קבוצה",
+        "status": "סטטוס",
+        "rubrics": "רובריקות",
+        "no-sessions": "אין מפגשי שיפוט מתוכננים"
+      }
+    },
     "reports": {
       "page-title": "דוחות",
       "menu": {

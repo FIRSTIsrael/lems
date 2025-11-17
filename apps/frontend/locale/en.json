@@ -79,6 +79,16 @@
         "team": "Team"
       }
     },
+    "judge": {
+      "page-title": "Judging Schedule",
+      "schedule": {
+        "session": "Session",
+        "team": "Team Information",
+        "status": "Status",
+        "rubrics": "Rubrics",
+        "no-sessions": "No judging sessions scheduled"
+      }
+    },
     "reports": {
       "page-title": "Reports",
       "menu": {
