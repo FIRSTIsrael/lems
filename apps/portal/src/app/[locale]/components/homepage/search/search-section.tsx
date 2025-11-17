@@ -25,6 +25,7 @@ import {
   Event as EventsIcon,
   LocationOn as LocationIcon
 } from '@mui/icons-material';
+import { Flag } from '@lems/shared';
 import { useSearch } from './use-search';
 import { SearchResultAvatar } from './search-result-avatar';
 import { getUrl, highlightText } from './utils';
@@ -146,7 +147,7 @@ export const SearchSection = () => {
                         {searchStats.teams > 0 && (
                           <Chip
                             size="small"
-                            icon={<TeamsIcon />}
+                            icon={<TeamsIcon sx={{ pl: 0.3 }} />}
                             label={searchStats.teams}
                             variant="outlined"
                             sx={{ height: 20, fontSize: '0.7rem' }}
@@ -155,7 +156,7 @@ export const SearchSection = () => {
                         {searchStats.events > 0 && (
                           <Chip
                             size="small"
-                            icon={<EventsIcon />}
+                            icon={<EventsIcon sx={{ pl: 0.3 }} />}
                             label={searchStats.events}
                             variant="outlined"
                             sx={{ height: 20, fontSize: '0.7rem' }}
@@ -188,6 +189,7 @@ export const SearchSection = () => {
                               <Typography variant="caption" color="text.secondary" noWrap>
                                 {highlightText(result.location, query, theme)}
                               </Typography>
+                              <Flag region={result.region} size={20} />
                             </Stack>
                           </Box>
                           <Chip

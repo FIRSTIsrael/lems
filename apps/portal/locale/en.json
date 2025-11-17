@@ -33,8 +33,8 @@
         "no-results-hint": "No results found for \"{query}\". Try different keywords.",
         "results-count": "{count} results",
         "more-results": "+{count} more results",
-        "type-team": "team",
-        "type-event": "event",
+        "type-team": "Team",
+        "type-event": "Event",
         "error": "Search error: {error}"
       },
       "quick-actions": {

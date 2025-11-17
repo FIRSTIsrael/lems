@@ -132,7 +132,7 @@ router.post(
         number: teamNumber,
         affiliation,
         city,
-        region,
+        region: region.toUpperCase(),
         coordinates: null,
         logo_url: null
       });
