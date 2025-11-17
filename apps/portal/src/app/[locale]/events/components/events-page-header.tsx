@@ -4,22 +4,31 @@ import React from 'react';
 import useSWR from 'swr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material';
 import { Season } from '@lems/types/api/portal';
 import { RichText } from '@lems/localization';
 
 interface EventsPageHeaderProps {
   currentSeason: Season;
-  regionFilter: string;
+  selectedRegions: string[];
   availableRegions: string[];
-  onRegionChange: (region: string) => void;
+  onRegionsChange: (regions: string[]) => void;
 }
 
 export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
   currentSeason,
-  regionFilter,
+  selectedRegions,
   availableRegions,
-  onRegionChange
+  onRegionsChange
 }: EventsPageHeaderProps) => {
   const t = useTranslations('pages.events');
   const router = useRouter();
@@ -75,23 +84,24 @@ export const EventsPageHeader: React.FC<EventsPageHeaderProps> = ({
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel id="events-region-select-label">{t('region.label')}</InputLabel>
-          <Select
-            labelId="events-region-select-label"
-            id="events-region-select"
-            label={t('region.label')}
-            value={regionFilter}
-            onChange={e => onRegionChange(e.target.value)}
-          >
-            <MenuItem value="all">{t('region.all')}</MenuItem>
-            {availableRegions.map(region => (
-              <MenuItem key={region} value={region}>
-                {region}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Box sx={{ minWidth: 200 }}>
+          <Autocomplete
+            multiple
+            size="medium"
+            options={availableRegions}
+            value={selectedRegions}
+            onChange={(_event, value) => onRegionsChange(value)}
+            renderInput={params => (
+              <TextField
+                {...params}
+                size="medium"
+                label={t('region.label')}
+                placeholder={t('region.all')}
+                variant="outlined"
+              />
+            )}
+          />
+        </Box>
       </Box>
     </>
   );

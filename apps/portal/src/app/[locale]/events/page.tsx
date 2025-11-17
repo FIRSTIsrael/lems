@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Box, Container } from '@mui/material';
 import useSWR from 'swr';
 import { EventSummary, Season } from '@lems/types/api/portal';
@@ -13,11 +13,10 @@ import { EventFilter } from './event-filter';
 export default function EventsPage() {
   const [searchValue, setSearchValue] = React.useState('');
   const [filterTab, setFilterTab] = React.useState(EventFilter.ALL);
+  const [selectedRegions, setSelectedRegions] = React.useState<string[]>([]);
 
-  const router = useRouter();
   const query = useSearchParams();
   const season = query.get('season') ?? 'latest';
-  const regionFilter = query.get('region') ?? 'all';
 
   const { data: seasonData } = useSWR<Season | null>(`/portal/seasons/${season}`, {
     suspense: true,
@@ -36,21 +35,11 @@ export default function EventsPage() {
 
   const filteredByRegion = useMemo(
     () =>
-      regionFilter === 'all'
+      selectedRegions.length === 0
         ? seasonEvents
-        : seasonEvents.filter(event => event.region === regionFilter),
-    [seasonEvents, regionFilter]
+        : seasonEvents.filter(event => selectedRegions.includes(event.region)),
+    [seasonEvents, selectedRegions]
   );
-
-  const handleRegionChange = (newRegion: string) => {
-    const params = new URLSearchParams(query.toString());
-    if (newRegion === 'all') {
-      params.delete('region');
-    } else {
-      params.set('region', newRegion);
-    }
-    router.push(`?${params.toString()}`);
-  };
 
   // This should never happen due to the suspense option
   if (!seasonData) return null;
@@ -60,9 +49,9 @@ export default function EventsPage() {
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
         <EventsPageHeader
           currentSeason={seasonData}
-          regionFilter={regionFilter}
+          selectedRegions={selectedRegions}
           availableRegions={availableRegions}
-          onRegionChange={handleRegionChange}
+          onRegionsChange={setSelectedRegions}
         />
 
         <EventsSearchSection
