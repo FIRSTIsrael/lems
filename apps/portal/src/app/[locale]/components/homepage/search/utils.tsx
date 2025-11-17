@@ -10,6 +10,7 @@ export interface SearchResult {
   description: string;
   slug: string;
   logoUrl?: string | null;
+  region: string;
 }
 
 export const getUrl = (result: SearchResult) => {

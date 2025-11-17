@@ -57,7 +57,7 @@ export const parseTeamList = (data: Buffer<ArrayBufferLike>) => {
           name: record.name,
           affiliation: record.affiliation,
           city: record.city,
-          region: record.region
+          region: record.region.toUpperCase()
         });
       }
       resolve(teams);

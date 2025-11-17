@@ -31,11 +31,12 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
       const processedTeams = matchingTeams.map(team => ({
         type: 'team' as const,
         id: `team-${team.id}`,
-        slug: team.number.toString(),
+        slug: `${team.region}-${team.number}`,
         title: `${team.name} #${team.number}`,
         location: [team.city, team.affiliation].filter(Boolean).join(' , '),
         description: team.affiliation || '',
-        logoUrl: team.logo_url || null
+        logoUrl: team.logo_url || null,
+        region: team.region
       }));
 
       results.push(...processedTeams);
@@ -63,7 +64,8 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
           slug: event.slug,
           title: event.name,
           location: event.location || '',
-          description: `Event • ${eventStatus}`
+          description: `Event • ${eventStatus}`,
+          region: event.region
         };
       });
 
