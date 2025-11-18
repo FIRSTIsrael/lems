@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container } from '@mui/material';
 import useSWR from 'swr';
@@ -13,7 +13,6 @@ import { EventFilter } from './event-filter';
 export default function EventsPage() {
   const [searchValue, setSearchValue] = React.useState('');
   const [filterTab, setFilterTab] = React.useState(EventFilter.ALL);
-  const [selectedRegions, setSelectedRegions] = React.useState<string[]>([]);
 
   const query = useSearchParams();
   const season = query.get('season') ?? 'latest';
@@ -28,45 +27,23 @@ export default function EventsPage() {
     { suspense: true, fallbackData: [] }
   );
 
-  const availableRegions = useMemo(
-    () => Array.from(new Set(seasonEvents.map(event => event.region))).sort(),
-    [seasonEvents]
-  );
-
-  const filteredByRegion = useMemo(
-    () =>
-      selectedRegions.length === 0
-        ? seasonEvents
-        : seasonEvents.filter(event => selectedRegions.includes(event.region)),
-    [seasonEvents, selectedRegions]
-  );
-
   // This should never happen due to the suspense option
   if (!seasonData) return null;
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
-        <EventsPageHeader
-          currentSeason={seasonData}
-          selectedRegions={selectedRegions}
-          availableRegions={availableRegions}
-          onRegionsChange={setSelectedRegions}
-        />
+        <EventsPageHeader currentSeason={seasonData} />
 
         <EventsSearchSection
           searchValue={searchValue}
           onSearchChange={setSearchValue}
           filterTab={filterTab}
           onFilterChange={setFilterTab}
-          events={filteredByRegion}
+          events={seasonEvents}
         />
 
-        <EventsListSection
-          events={filteredByRegion}
-          searchValue={searchValue}
-          filterTab={filterTab}
-        />
+        <EventsListSection events={seasonEvents} searchValue={searchValue} filterTab={filterTab} />
       </Container>
     </Box>
   );
