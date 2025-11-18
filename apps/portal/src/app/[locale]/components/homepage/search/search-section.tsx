@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import {
@@ -33,7 +33,6 @@ import { getUrl, highlightText } from './utils';
 export const SearchSection = () => {
   const t = useTranslations('pages.index.search');
   const theme = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const { query, setQuery, searchResults, isValid, isSearching, clearSearch, error } = useSearch();
@@ -50,12 +49,8 @@ export const SearchSection = () => {
     { total: 0, teams: 0, events: 0 }
   );
 
-  useEffect(() => {
-    setIsOpen(isValid);
-  }, [isValid]);
-
   return (
-    <ClickAwayListener onClickAway={() => setIsOpen(false)}>
+    <ClickAwayListener onClickAway={clearSearch}>
       <Paper sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack spacing={3}>
           <Typography
@@ -77,7 +72,7 @@ export const SearchSection = () => {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon color="action" />
+                      <SearchIcon color="primary" />
                     </InputAdornment>
                   ),
                   endAdornment: query && (
@@ -92,14 +87,21 @@ export const SearchSection = () => {
                 }
               }}
               sx={{
+                backgroundColor: 'white',
+                borderRadius: 1,
                 '& .MuiOutlinedInput-root': {
                   paddingRight: 1
+                }
+              }}
+              inputProps={{
+                style: {
+                  color: theme.palette.text.primary
                 }
               }}
             />
 
             <Popper
-              open={isOpen && (isValid || isSearching)}
+              open={!!query && (isValid || isSearching)}
               anchorEl={anchorRef.current}
               placement="bottom-start"
               style={{ width: anchorRef.current?.offsetWidth, zIndex: 1300 }}
@@ -170,7 +172,7 @@ export const SearchSection = () => {
                         key={result.id}
                         component={Link}
                         href={getUrl(result)}
-                        onClick={() => setIsOpen(false)}
+                        onClick={clearSearch}
                         sx={{ py: 1.5, textDecoration: 'none', color: 'inherit' }}
                       >
                         <Stack
