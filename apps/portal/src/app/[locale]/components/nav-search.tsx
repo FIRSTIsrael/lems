@@ -29,7 +29,11 @@ import { useSearch } from './homepage/search/use-search';
 import { SearchResultAvatar } from './homepage/search/search-result-avatar';
 import { getUrl, highlightText } from './homepage/search/utils';
 
-export const NavSearch: React.FC = () => {
+interface NavSearchProps {
+  variant?: 'desktop' | 'menu';
+}
+
+export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => {
   const tSearch = useTranslations('pages.index.search');
   const theme = useTheme();
 
@@ -48,16 +52,22 @@ export const NavSearch: React.FC = () => {
     { total: 0, teams: 0, events: 0 }
   );
 
+  const desktopColor = theme.palette.primary.main;
+  const iconColor = variant === 'desktop' ? desktopColor : theme.palette.text.secondary;
+  const textColor = variant === 'desktop' ? desktopColor : theme.palette.text.primary;
+
   return (
     <ClickAwayListener onClickAway={clearSearch}>
       <Box
         ref={anchorRef}
         sx={{
-          display: { xs: 'none', md: 'flex' },
+          display: variant === 'desktop' ? { xs: 'none', md: 'flex' } : 'flex',
           alignItems: 'center',
-          minWidth: 260,
-          maxWidth: 420,
-          mx: 2,
+          minWidth: variant === 'desktop' ? 260 : undefined,
+          maxWidth: variant === 'desktop' ? 420 : undefined,
+          mx: variant === 'desktop' ? 2 : 0,
+          mt: variant === 'menu' ? 0.5 : 0,
+          mb: variant === 'menu' ? 1 : 0,
           flexShrink: 1
         }}
       >
@@ -72,14 +82,14 @@ export const NavSearch: React.FC = () => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color: theme.palette.primary.main }} />
+                  <SearchIcon sx={{ color: iconColor }} />
                 </InputAdornment>
               ),
               endAdornment: query && (
                 <InputAdornment position="end">
                   <Fade in={!!query}>
                     <IconButton size="small" onClick={clearSearch}>
-                      <ClearIcon sx={{ color: theme.palette.primary.main }} />
+                      <ClearIcon sx={{ color: iconColor }} />
                     </IconButton>
                   </Fade>
                 </InputAdornment>
@@ -88,7 +98,7 @@ export const NavSearch: React.FC = () => {
           }}
           inputProps={{
             style: {
-              color: theme.palette.primary.main
+              color: textColor
             }
           }}
           sx={{
@@ -178,9 +188,11 @@ export const NavSearch: React.FC = () => {
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
                       <SearchResultAvatar resultType={result.type} src={result.logoUrl} />
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="body2" fontWeight="medium" noWrap>
-                          {highlightText(result.title, query, theme)}
-                        </Typography>
+                        <Stack direction="row" alignItems="center" spacing={0.5}>
+                          <Typography variant="body2" fontWeight="medium" noWrap>
+                            {highlightText(result.title, query, theme)}
+                          </Typography>
+                        </Stack>
                         <Stack direction="row" alignItems="center" spacing={0.5}>
                           <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
                           <Typography variant="caption" color="text.secondary" noWrap>

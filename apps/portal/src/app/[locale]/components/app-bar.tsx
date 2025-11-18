@@ -133,7 +133,16 @@ const MobileAppBar: React.FC = () => {
           }}
           open={Boolean(anchorElNav)}
           onClose={() => setAnchorElNav(null)}
+          PaperProps={{
+            sx: {
+              minWidth: 320,
+              maxWidth: '90vw'
+            }
+          }}
         >
+          <Box sx={{ px: 2, pt: 1, pb: 1 }}>
+            <NavSearch variant="menu" />
+          </Box>
           {pages.map(page => (
             <MenuItem key={page.name} component={Link} href={page.href}>
               <ListItemIcon>{page.icon}</ListItemIcon>
