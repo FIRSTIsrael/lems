@@ -49,7 +49,6 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       isFullySetUp
       location
       region
-      seasonId
     }
   }
 `;
