@@ -1,23 +1,36 @@
-import { Stack, Box, alpha, Typography, useTheme } from '@mui/material';
-import { Search } from '@mui/icons-material';
+'use client';
 
-const ITEMS = [
-  { label: 'Dashboard', href: '#', icon: <Search />, active: true },
-  { label: 'Teams', href: '#', icon: <Search /> },
-  { label: 'Matches', href: '#', icon: <Search /> },
-  { label: 'Rankings', href: '#', icon: <Search /> }
-];
+import { useCallback } from 'react';
+import { useTranslations } from 'next-intl';
+import { redirect, usePathname } from 'next/navigation';
+import { Stack, Box, alpha, Typography, useTheme } from '@mui/material';
+import { useUser } from '../../../../components/user-context';
+import { buildNavigationItems } from '../../../../lib/navigation-items';
 
 interface NavigationListProps {
   onItemClick?: () => void;
 }
 
 export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) => {
+  const t = useTranslations('components.navigation-list');
+
+  const pathname = usePathname();
   const theme = useTheme();
+  const user = useUser();
+
+  const items = buildNavigationItems(user, pathname);
+
+  const handleItemClick = useCallback(
+    (item: (typeof items)[number]) => {
+      onItemClick?.();
+      redirect(item.href);
+    },
+    [onItemClick]
+  );
 
   return (
     <Stack spacing={1} sx={{ p: 2, flexGrow: 1 }}>
-      {ITEMS.map(item => (
+      {items.map(item => (
         <Box
           key={item.label}
           sx={{
@@ -43,7 +56,7 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
               }
             }
           }}
-          onClick={onItemClick}
+          onClick={() => handleItemClick(item)}
         >
           <Box
             className="navigation-icon"
@@ -66,7 +79,7 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
               transition: 'all 0.15s ease-in-out'
             }}
           >
-            {item.label}
+            {t(item.label)}
           </Typography>
         </Box>
       ))}

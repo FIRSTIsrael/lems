@@ -25,10 +25,13 @@ export function authorizeUserRole(
   user: LemsUser,
   allowedRoles: AllowedRoles,
   redirectTo: string = '/lems'
-): void {
+): boolean {
   const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+  const authorized = rolesArray.includes(user.role);
 
-  if (!rolesArray.includes(user.role)) {
+  if (!authorized) {
     redirect(redirectTo);
   }
+
+  return authorized;
 }

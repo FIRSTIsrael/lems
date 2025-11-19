@@ -5,7 +5,9 @@ import { authorizeUserRole } from '../../../lib/role-authorizer';
 
 export default function PitAdminLayout({ children }: { children: React.ReactNode }) {
   const user = useUser();
-  authorizeUserRole(user, 'pit-admin');
+
+  const authorized = authorizeUserRole(user, 'pit-admin');
+  if (!authorized) return null;
 
   return <>{children}</>;
 }

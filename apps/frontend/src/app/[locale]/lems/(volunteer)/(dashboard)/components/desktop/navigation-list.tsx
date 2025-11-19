@@ -1,25 +1,36 @@
 'use client';
 
+import { useCallback } from 'react';
+import { usePathname, redirect } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { lighten, Typography, Stack, Box, useTheme } from '@mui/material';
-import { Search } from '@mui/icons-material';
-
-const ITEMS = [
-  { label: 'Dashboard', href: '#', icon: <Search />, active: true },
-  { label: 'Teams', href: '#', icon: <Search /> },
-  { label: 'Matches', href: '#', icon: <Search /> },
-  { label: 'Rankings', href: '#', icon: <Search /> }
-];
+import { buildNavigationItems } from '../../../../lib/navigation-items';
+import { useUser } from '../../../../components/user-context';
 
 interface NavigationListProps {
   onItemClick?: () => void;
 }
 
 export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) => {
+  const t = useTranslations('components.navigation-list');
+
+  const pathname = usePathname();
   const theme = useTheme();
+  const user = useUser();
+
+  const items = buildNavigationItems(user, pathname);
+
+  const handleItemClick = useCallback(
+    (item: (typeof items)[number]) => {
+      onItemClick?.();
+      redirect(item.href);
+    },
+    [onItemClick]
+  );
 
   return (
     <Stack mt={2} spacing={4} alignItems="center">
-      {ITEMS.map(item => (
+      {items.map(item => (
         <Box
           key={item.label}
           sx={{
@@ -34,7 +45,7 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
               '& .navigation-text': { color: 'text.primary', fontWeight: 700 }
             }
           }}
-          onClick={onItemClick}
+          onClick={() => handleItemClick(item)}
         >
           <Box
             className="navigation-icon"
@@ -65,7 +76,7 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
             fontWeight={item.active ? 700 : 600}
             sx={{ transition: 'color 0.15s, font-weight 0.15s' }}
           >
-            {item.label}
+            {t(item.label)}
           </Typography>
         </Box>
       ))}
