@@ -1,8 +1,7 @@
 'use client';
 
-import { Chip, Stack, Typography, Avatar, Box, Tooltip } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import WarningIcon from '@mui/icons-material/Warning';
+import { Stack, Typography, Avatar, Box, Tooltip } from '@mui/material';
+import { Flag } from '@lems/shared';
 import type { Team } from '../judge.graphql';
 
 interface TeamInfoCellProps {
@@ -24,13 +23,15 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Tooltip title={`Team #${team.number}`}>
           <Avatar
+            src={team.logoUrl ?? '/assets/default-avatar.svg'}
             sx={{
               width: 40,
               height: 40,
               fontSize: '0.95rem',
               fontWeight: 700,
               bgcolor: 'primary.main',
-              color: 'white'
+              color: 'white',
+              objectFit: 'cover'
             }}
           >
             {getInitials(team.name) || team.number.charAt(0)}
@@ -38,7 +39,7 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
         </Tooltip>
         <Stack spacing={0.25} sx={{ flex: 1, minWidth: 0 }}>
           <Typography variant="body2" sx={{ fontWeight: 700 }}>
-            Team #{team.number}
+            {team.name} #{team.number}
           </Typography>
           <Typography
             variant="caption"
@@ -49,31 +50,24 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
               textOverflow: 'ellipsis'
             }}
           >
-            {team.name}
+            {team.affiliation && ` ${team.affiliation}`}
+            {team.region && (
+              <>
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
+                >
+                  <Flag region={team.region} size={14} />
+                </Box>
+              </>
+            )}
           </Typography>
         </Stack>
       </Box>
-
-      <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-          {team.affiliation}
-        </Typography>
-        {team.region && (
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-            • {team.region}
-          </Typography>
-        )}
-      </Box>
-
-      <Chip
-        icon={team.arrived ? <CheckCircleIcon /> : <WarningIcon />}
-        label={team.arrived ? 'Arrived' : 'Not Arrived'}
-        color={team.arrived ? 'success' : 'warning'}
-        variant="outlined"
-        size="small"
-        sx={{ width: 'fit-content', fontWeight: 600 }}
-      />
-
       {team.location && (
         <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
           Location: {team.location}

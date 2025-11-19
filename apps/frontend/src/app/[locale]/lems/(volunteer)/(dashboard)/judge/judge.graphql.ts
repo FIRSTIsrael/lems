@@ -19,6 +19,7 @@ export interface Team {
   city: string;
   region: string;
   slug: string;
+  //logoUrl?: string | null;
   arrived: boolean;
   location?: string;
 }

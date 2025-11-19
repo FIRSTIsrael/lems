@@ -13,8 +13,11 @@ import {
   Stack,
   Typography,
   Box,
+  Chip,
   useTheme
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import WarningIcon from '@mui/icons-material/Warning';
 import type { JudgingSession } from '../judge.graphql';
 import { SessionStatusIndicator } from './session-status-indicator';
 import { RubricStatusButton, type RubricStatus } from './rubric-status-button';
@@ -54,25 +57,45 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
 
   if (sortedSessions.length === 0) {
     return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
-        <Typography color="text.secondary">{t('no-sessions')}</Typography>
+      <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          {t('no-sessions')}
+        </Typography>
       </Paper>
     );
   }
 
   return (
-    <TableContainer component={Paper} sx={{ boxShadow: theme.shadows[2] }}>
-      <Table>
+    <TableContainer
+      component={Paper}
+      sx={{
+        boxShadow: theme.shadows[2],
+        borderRadius: 3,
+        overflow: 'hidden'
+      }}
+    >
+      <Table size="medium">
         <TableHead>
-          <TableRow sx={{ backgroundColor: theme.palette.action.hover }}>
-            <TableCell align="center" sx={{ fontWeight: 700, width: '10%', py: 2 }}>
+          <TableRow
+            sx={{
+              backgroundColor: theme.palette.action.hover,
+              '& th': {
+                borderBottomWidth: 1,
+                borderColor: theme.palette.divider
+              }
+            }}
+          >
+            <TableCell align="center" sx={{ fontWeight: 700, width: '8%', py: 1.5 }}>
               {t('session')}
             </TableCell>
-            <TableCell sx={{ fontWeight: 700, width: '35%', py: 2 }}>{t('team')}</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 700, width: '20%', py: 2 }}>
+            <TableCell sx={{ fontWeight: 700, width: '22%', py: 1.5 }}>{t('team')}</TableCell>
+            <TableCell align="center" sx={{ fontWeight: 700, width: '13%', py: 1.5 }}>
+              {t('arrived')}
+            </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 700, width: '27%', py: 1.5 }}>
               {t('status')}
             </TableCell>
-            <TableCell align="center" sx={{ fontWeight: 700, width: '25%', py: 2 }}>
+            <TableCell align="center" sx={{ fontWeight: 700, width: '30%', py: 1.5 }}>
               {t('rubrics')}
             </TableCell>
           </TableRow>
@@ -100,19 +123,28 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                         : 'rgba(25, 118, 210, 0.05)'
                       : undefined,
                   transition: 'background-color 0.2s ease-in-out',
-                  borderBottom: index === sortedSessions.length - 1 ? 'none' : undefined,
-                  py: 1.5
+                  borderBottom: index === sortedSessions.length - 1 ? 'none' : undefined
                 }}
               >
-                <TableCell align="center" sx={{ py: 2 }}>
+                <TableCell align="center" sx={{ py: 1.5 }}>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     #{session.number}
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ py: 2 }}>
+                <TableCell sx={{ py: 1.5 }}>
                   <TeamInfoCell team={session.team} />
                 </TableCell>
-                <TableCell align="center" sx={{ py: 2 }}>
+                <TableCell align="center" sx={{ py: 1.5 }}>
+                  <Chip
+                    icon={session.team.arrived ? <CheckCircleIcon /> : <WarningIcon />}
+                    label={session.team.arrived ? 'Arrived' : 'Not Arrived'}
+                    color={session.team.arrived ? 'success' : 'warning'}
+                    variant="outlined"
+                    size="small"
+                    sx={{ width: 'fit-content', fontWeight: 600 }}
+                  />
+                </TableCell>
+                <TableCell align="center" sx={{ py: 1.5 }}>
                   <SessionStatusIndicator
                     status={statusConfig[session.status as keyof typeof statusConfig]}
                     sessionNumber={session.number}
@@ -122,12 +154,12 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     })}
                   />
                 </TableCell>
-                <TableCell align="center" sx={{ py: 2 }}>
+                <TableCell align="center" sx={{ py: 1.5 }}>
                   <Stack
                     direction="row"
-                    spacing={0.75}
+                    spacing={1}
                     justifyContent="center"
-                    sx={{ flexWrap: 'wrap', gap: 1 }}
+                    sx={{ flexWrap: 'wrap' }}
                   >
                     <RubricStatusButton
                       type="core-values"

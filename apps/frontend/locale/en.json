@@ -94,7 +94,8 @@
         "team": "Team Information",
         "status": "Status",
         "rubrics": "Rubrics",
-        "no-sessions": "No judging sessions scheduled"
+        "no-sessions": "No judging sessions scheduled",
+        "arrived": "Arriavd"
       }
     },
     "reports": {

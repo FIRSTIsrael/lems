@@ -57,7 +57,7 @@ export const SessionStatusIndicator: React.FC<SessionStatusIndicatorProps> = ({
   const { color, icon, label } = getStatusConfig(status);
 
   return (
-    <Stack spacing={0.5}>
+    <Stack spacing={0.5} alignItems="center" sx={{ textAlign: 'center' }}>
       <Typography variant="body2" sx={{ fontWeight: 600 }}>
         Session #{sessionNumber}
       </Typography>
