@@ -92,10 +92,26 @@
       "schedule": {
         "session": "Session",
         "team": "Team Information",
-        "status": "Status",
-        "rubrics": "Rubrics",
+        "statusLabel": "Status",
+        "rubricsLabel": "Rubrics",
         "no-sessions": "No judging sessions scheduled",
-        "arrived": "Arriavd"
+        "arrivedLabel": "Arrived",
+        "arrival": {
+          "arrived": "Arrived",
+          "not-arrived": "Not Arrived"
+        },
+        "status": {
+          "scheduled": "Scheduled",
+          "in-progress": "In Progress",
+          "completed": "Completed",
+          "aborted": "Aborted"
+        },
+        "rubrics": {
+          "core-values": "Core Values",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design"
+        },
+        "session-label": "Session #{number}"
       }
     },
     "reports": {

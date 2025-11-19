@@ -1,7 +1,9 @@
 'use client';
 
-import { Stack, Typography, Avatar, Box, Tooltip } from '@mui/material';
+import { Chip, Stack, Typography, Avatar, Box, Tooltip } from '@mui/material';
 import { Flag } from '@lems/shared';
+import WarningIcon from '@mui/icons-material/Warning';
+import { useTranslations } from 'next-intl';
 import type { Team } from '../judge.graphql';
 
 interface TeamInfoCellProps {
@@ -9,6 +11,8 @@ interface TeamInfoCellProps {
 }
 
 export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
+  const t = useTranslations('pages.judge.schedule');
+
   const getInitials = (name: string): string => {
     return name
       .split(' ')
@@ -68,6 +72,16 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
           </Typography>
         </Stack>
       </Box>
+      {!team.arrived && (
+        <Chip
+          icon={<WarningIcon />}
+          label={t('arrival.not-arrived')}
+          color="warning"
+          variant="outlined"
+          size="small"
+          sx={{ width: 'fit-content', fontWeight: 600 }}
+        />
+      )}
       {team.location && (
         <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
           Location: {team.location}

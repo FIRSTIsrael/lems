@@ -92,10 +92,26 @@
       "schedule": {
         "session": "מפגש",
         "team": "פרטי קבוצה",
-        "status": "סטטוס",
-        "rubrics": "רובריקות",
+        "statusLabel": "סטטוס",
+        "rubricsLabel": "רובריקות",
         "no-sessions": "אין מפגשי שיפוט מתוכננים",
-        "arrived": "הגיעו"
+        "arrivedLabel": "הגיעו",
+        "arrival": {
+          "arrived": "הגיעו",
+          "not-arrived": "לא הגיעו"
+        },
+        "status": {
+          "scheduled": "מתוכנן",
+          "in-progress": "בתהליך",
+          "completed": "הושלם",
+          "aborted": "בוטל"
+        },
+        "rubrics": {
+          "core-values": "ערכי הליבה",
+          "innovation-project": "פרויקט החדשנות",
+          "robot-design": "תכנון הרובוט"
+        },
+        "session-label": "מפגש #{number}"
       }
     },
     "reports": {
