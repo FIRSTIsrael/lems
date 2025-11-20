@@ -56,8 +56,18 @@ export interface TeamEvent {
   version: number;
 }
 
-type SubscriptionData = { teamArrivalUpdated: TeamEvent };
-type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+export interface JudgingStartedEvent {
+  sessionId: string;
+  version: number;
+  startTime: string;
+  startDelta: number;
+}
+
+type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
+type TeamArrivalSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+
+type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
+type JudgingStartedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 /**
  * Query to fetch judging sessions for a specific room
@@ -98,13 +108,27 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
 `;
 
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  SubscriptionData,
-  SubscriptionVars
+  TeamArrivalSubscriptionData,
+  TeamArrivalSubscriptionVars
 > = gql`
   subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
     teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
       teamId
       version
+    }
+  }
+`;
+
+export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
+  JudgingStartedSubscriptionData,
+  JudgingStartedSubscriptionVars
+> = gql`
+  subscription JudgingSessionStarted($divisionId: String!, $lastSeenVersion: Int) {
+    judgingSessionStarted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      sessionId
+      version
+      startTime
+      startDelta
     }
   }
 `;
@@ -118,7 +142,7 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
  */
 export function createTeamArrivalSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<SubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<TeamArrivalSubscriptionData, QueryData, TeamArrivalSubscriptionVars> {
   return {
     subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
     subscriptionVariables: {
@@ -129,7 +153,7 @@ export function createTeamArrivalSubscriptionForJudge(
         return prev;
       }
 
-      const subscriptionData = data as { teamArrivalUpdated: TeamEvent };
+      const subscriptionData = data as TeamArrivalSubscriptionData;
       const { teamId } = subscriptionData.teamArrivalUpdated;
 
       if (prev.division?.judging.sessions) {
@@ -142,6 +166,56 @@ export function createTeamArrivalSubscriptionForJudge(
               sessions: prev.division.judging.sessions.map(session =>
                 session.team.id === teamId
                   ? { ...session, team: { ...session.team, arrived: true } }
+                  : session
+              )
+            }
+          }
+        };
+      }
+
+      return prev;
+    }
+  };
+}
+
+/**
+ * Creates a subscription configuration for judging session start events in the judge view.
+ * When a judge starts a session, updates its startTime and startDelta in the sessions payload if present.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createJudgingSessionStartedSubscriptionForJudge(
+  divisionId: string
+): SubscriptionConfig<JudgingStartedSubscriptionData, QueryData, JudgingStartedSubscriptionVars> {
+  return {
+    subscription: JUDGING_SESSION_STARTED_SUBSCRIPTION,
+    subscriptionVariables: {
+      divisionId
+    },
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
+      if (!data || typeof data !== 'object' || !('judgingSessionStarted' in data)) {
+        return prev;
+      }
+
+      const subscriptionData = data as JudgingStartedSubscriptionData;
+      const { sessionId, startTime, startDelta } = subscriptionData.judgingSessionStarted;
+
+      if (prev.division?.judging.sessions) {
+        return {
+          ...prev,
+          division: {
+            ...prev.division,
+            judging: {
+              ...prev.division.judging,
+              sessions: prev.division.judging.sessions.map(session =>
+                session.id === sessionId
+                  ? {
+                      ...session,
+                      status: 'in-progress',
+                      startTime,
+                      startDelta
+                    }
                   : session
               )
             }
