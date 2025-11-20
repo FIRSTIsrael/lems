@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box } from '@mui/material';
+import { useMutation } from '@apollo/client/react';
 import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
@@ -10,14 +11,18 @@ import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscriptionForJudge,
-  createJudgingSessionStartedSubscriptionForJudge
+  createJudgingSessionStartedSubscriptionForJudge,
+  START_JUDGING_SESSION_MUTATION,
+  createStartJudgingSessionCacheUpdate
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/room-schedule-table';
 
 export default function JudgePage() {
   const t = useTranslations('pages.judge');
+
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
+  const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION);
 
   const subscriptions = useMemo(
     () => [
@@ -38,13 +43,32 @@ export default function JudgePage() {
   );
 
   const sessions = data?.division?.judging.sessions || [];
+  const sessionInProgress = sessions.some(session => session.status === 'in-progress');
+
+  const handleStartSession = useCallback(
+    async (sessionId: string) => {
+      await startSessionMutation({
+        variables: { sessionId, divisionId: currentDivision.id },
+        update: createStartJudgingSessionCacheUpdate(sessionId)
+      });
+    },
+    [startSessionMutation, currentDivision.id]
+  );
 
   return (
     <>
       <PageHeader title={t('page-title')} />
 
       <Box sx={{ pt: 3 }}>
-        <RoomScheduleTable sessions={sessions} loading={loading} />
+        {sessionInProgress ? (
+          <Box sx={{ mb: 2, color: 'warning.main', fontWeight: 'bold' }}>IN PROGRESS</Box>
+        ) : (
+          <RoomScheduleTable
+            sessions={sessions}
+            loading={loading}
+            onStartSession={handleStartSession}
+          />
+        )}
       </Box>
     </>
   );

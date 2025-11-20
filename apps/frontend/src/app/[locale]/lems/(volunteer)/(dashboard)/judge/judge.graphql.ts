@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import type { ApolloCache } from '@apollo/client';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 /**
@@ -133,6 +134,23 @@ export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+type StartJudgingSessionMutationData = { startJudgingSession: JudgingStartedEvent };
+type StartJudgingSessionMutationVars = { divisionId: string; sessionId: string };
+
+export const START_JUDGING_SESSION_MUTATION: TypedDocumentNode<
+  StartJudgingSessionMutationData,
+  StartJudgingSessionMutationVars
+> = gql`
+  mutation StartJudgingSession($divisionId: String!, $sessionId: String!) {
+    startJudgingSession(divisionId: $divisionId, sessionId: $sessionId) {
+      sessionId
+      version
+      startTime
+      startDelta
+    }
+  }
+`;
+
 /**
  * Creates a subscription configuration for team arrival updates in the judge view.
  * When a team arrives, updates its arrival status in the sessions payload if present.
@@ -225,5 +243,36 @@ export function createJudgingSessionStartedSubscriptionForJudge(
 
       return prev;
     }
+  };
+}
+
+/**
+ * Creates an Apollo cache update function for the start judging session mutation.
+ * Optimistically updates the cache to mark a session as started with in-progress status.
+ *
+ * @param sessionId - The ID of the session that is being started
+ * @returns Cache update function for Apollo useMutation
+ */
+export function createStartJudgingSessionCacheUpdate(sessionId: string) {
+  return (cache: ApolloCache) => {
+    cache.modify({
+      fields: {
+        division(existingDivision = {}) {
+          if (!existingDivision.judging?.sessions) {
+            return existingDivision;
+          }
+          return {
+            ...existingDivision,
+            judging: {
+              ...existingDivision.judging,
+              sessions: (existingDivision.judging.sessions as JudgingSession[]).map(
+                (session: JudgingSession) =>
+                  session.id === sessionId ? { ...session, status: 'in-progress' } : session
+              )
+            }
+          };
+        }
+      }
+    });
   };
 }
