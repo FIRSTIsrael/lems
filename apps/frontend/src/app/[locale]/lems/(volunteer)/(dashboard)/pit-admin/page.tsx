@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import { Stack } from '@mui/material';
@@ -38,12 +38,15 @@ export default function PitAdminPage() {
 
   const teams = pageData || [];
 
-  const handleTeamArrival = async (team: Team) => {
-    await teamArrivedMutation({
-      variables: { teamId: team.id, divisionId: currentDivision.id },
-      update: createTeamArrivedCacheUpdate(team.id)
-    });
-  };
+  const handleTeamArrival = useCallback(
+    async (team: Team) => {
+      await teamArrivedMutation({
+        variables: { teamId: team.id, divisionId: currentDivision.id },
+        update: createTeamArrivedCacheUpdate(team.id)
+      });
+    },
+    [teamArrivedMutation, currentDivision.id]
+  );
 
   return (
     <>

@@ -16,16 +16,18 @@ import {
   useTheme
 } from '@mui/material';
 import type { JudgingSession } from '../judge.graphql';
-import { SessionStatusIndicator } from './session-status-indicator';
 import { RubricStatusButton, type RubricStatus } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
+import { StartSessionButton } from './start-session-button';
 
 interface RoomScheduleTableProps {
+  onStartSession: (sessionId: string) => void;
   sessions: JudgingSession[];
   loading?: boolean;
 }
 
 export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
+  onStartSession,
   sessions,
   loading = false
 }) => {
@@ -43,10 +45,10 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
 
   if (loading) {
     return (
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, borderRadius: 3 }}>
         <Stack spacing={2}>
           <Box sx={{ height: 20, bgcolor: 'action.disabledBackground', borderRadius: 1 }} />
-          <Box sx={{ height: 200, bgcolor: 'action.disabledBackground', borderRadius: 1 }} />
+          <Box sx={{ height: 400, bgcolor: 'action.disabledBackground', borderRadius: 1 }} />
         </Stack>
       </Paper>
     );
@@ -54,8 +56,15 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
 
   if (sortedSessions.length === 0) {
     return (
-      <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+      <Paper
+        sx={{
+          p: 4,
+          textAlign: 'center',
+          borderRadius: 3,
+          border: `1px solid ${theme.palette.divider}`
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.secondary' }}>
           {t('no-sessions')}
         </Typography>
       </Paper>
@@ -66,99 +75,142 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
     <TableContainer
       component={Paper}
       sx={{
-        boxShadow: theme.shadows[2],
+        boxShadow: theme.shadows[3],
         borderRadius: 3,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        border: `1px solid ${theme.palette.divider}`
       }}
     >
       <Table size="medium">
         <TableHead>
           <TableRow
             sx={{
-              backgroundColor: theme.palette.action.hover,
+              backgroundColor:
+                theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[50],
               '& th': {
-                borderBottomWidth: 1,
-                borderColor: theme.palette.divider
+                borderBottom: `2px solid ${theme.palette.divider}`,
+                fontWeight: 700,
+                fontSize: '0.875rem',
+                color: theme.palette.text.primary,
+                py: 2
               }
             }}
           >
-            <TableCell align="center" sx={{ fontWeight: 700, width: '8%', py: 1.5 }}>
+            <TableCell align="center" sx={{ width: '8%' }}>
               {t('session')}
             </TableCell>
-            <TableCell sx={{ fontWeight: 700, width: '30%', py: 1.5 }}>{t('team')}</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 700, width: '30%', py: 1.5 }}>
-              {t('statusLabel')}
+            <TableCell align="center" sx={{ width: '12%' }}>
+              {t('start-time')}
             </TableCell>
-            <TableCell align="center" sx={{ fontWeight: 700, width: '32%', py: 1.5 }}>
-              {t('rubricsLabel')}
+            <TableCell sx={{ width: '25%' }}>{t('team')}</TableCell>
+            <TableCell align="center" sx={{ width: '15%' }}>
+              {t('actions')}
+            </TableCell>
+            <TableCell align="center" sx={{ width: '40%' }}>
+              {t('rubrics')}
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {sortedSessions.map((session, index) => {
-            const statusConfig = {
-              scheduled: 'scheduled' as const,
-              'in-progress': 'in-progress' as const,
-              completed: 'completed' as const,
-              aborted: 'aborted' as const
-            };
+            const isActive = session.status === 'in-progress';
+            const formattedTime = new Date(session.scheduledTime).toLocaleTimeString('he-IL', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
 
             return (
               <TableRow
                 key={session.id}
                 sx={{
+                  transition: 'all 0.2s ease-in-out',
+                  backgroundColor: isActive
+                    ? theme.palette.mode === 'dark'
+                      ? 'rgba(33, 150, 243, 0.12)'
+                      : 'rgba(33, 150, 243, 0.08)'
+                    : 'transparent',
                   '&:hover': {
-                    backgroundColor: theme.palette.action.hover
+                    backgroundColor:
+                      theme.palette.mode === 'dark'
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(0, 0, 0, 0.02)'
                   },
-                  backgroundColor:
-                    session.status === 'in-progress'
-                      ? theme.palette.mode === 'dark'
-                        ? 'rgba(25, 118, 210, 0.08)'
-                        : 'rgba(25, 118, 210, 0.05)'
-                      : undefined,
-                  transition: 'background-color 0.2s ease-in-out',
-                  borderBottom: index === sortedSessions.length - 1 ? 'none' : undefined
+                  borderBottom:
+                    index === sortedSessions.length - 1
+                      ? 'none'
+                      : `1px solid ${theme.palette.divider}`
                 }}
               >
-                <TableCell align="center" sx={{ py: 1.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                <TableCell align="center" sx={{ py: 2.5 }}>
+                  <Box
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      backgroundColor: isActive
+                        ? theme.palette.primary.main
+                        : theme.palette.mode === 'dark'
+                          ? theme.palette.grey[800]
+                          : theme.palette.grey[200],
+                      color: isActive
+                        ? theme.palette.primary.contrastText
+                        : theme.palette.text.primary,
+                      fontWeight: 700,
+                      fontSize: '0.875rem'
+                    }}
+                  >
                     #{session.number}
+                  </Box>
+                </TableCell>
+
+                <TableCell align="center" sx={{ py: 2.5 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: '1.25rem',
+                      color: isActive ? theme.palette.primary.main : theme.palette.text.primary,
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.05em'
+                    }}
+                  >
+                    {formattedTime}
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
+
+                <TableCell sx={{ py: 2.5 }}>
                   <TeamInfoCell team={session.team} />
                 </TableCell>
-                <TableCell align="center" sx={{ py: 1.5 }}>
-                  <SessionStatusIndicator
-                    status={statusConfig[session.status as keyof typeof statusConfig]}
-                    sessionNumber={session.number}
-                    scheduledTime={new Date(session.scheduledTime).toLocaleTimeString('he-IL', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+
+                <TableCell align="center" sx={{ py: 2.5 }}>
+                  <StartSessionButton
+                    sessionId={session.id}
+                    sessionStatus={session.status}
+                    scheduledTime={session.scheduledTime}
+                    teamArrived={session.team.arrived}
+                    onStartSession={onStartSession}
                   />
                 </TableCell>
-                <TableCell align="center" sx={{ py: 1.5 }}>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    justifyContent="center"
-                    sx={{ flexWrap: 'wrap' }}
-                  >
+
+                <TableCell sx={{ py: 2.5 }}>
+                  <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
                       type="core-values"
                       status={getRubricStatus()}
-                      label={t('rubrics.core-values')}
+                      label={t('rubric-labels.core-values')}
                     />
                     <RubricStatusButton
                       type="innovation-project"
                       status={getRubricStatus()}
-                      label={t('rubrics.innovation-project')}
+                      label={t('rubric-labels.innovation-project')}
                     />
                     <RubricStatusButton
                       type="robot-design"
                       status={getRubricStatus()}
-                      label={t('rubrics.robot-design')}
+                      label={t('rubric-labels.robot-design')}
                     />
                   </Stack>
                 </TableCell>

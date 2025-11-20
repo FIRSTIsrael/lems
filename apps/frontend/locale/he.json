@@ -88,30 +88,21 @@
       }
     },
     "judge": {
-      "page-title": "לוח זמנים שיפוט",
+      "page-title": "שיפוט",
       "schedule": {
         "session": "מפגש",
+        "start-time": "שעת התחלה",
         "team": "פרטי קבוצה",
-        "statusLabel": "סטטוס",
-        "rubricsLabel": "רובריקות",
+        "actions": "פעולות",
+        "rubrics": "רובריקות",
         "no-sessions": "אין מפגשי שיפוט מתוכננים",
-        "arrivedLabel": "הגיעו",
-        "arrival": {
-          "arrived": "הגיעו",
-          "not-arrived": "לא הגיעו"
-        },
-        "status": {
-          "scheduled": "מתוכנן",
-          "in-progress": "בתהליך",
-          "completed": "הושלם",
-          "aborted": "בוטל"
-        },
-        "rubrics": {
+        "not-arrived": "לא הגיעו",
+        "start-session": "התחל",
+        "rubric-labels": {
           "core-values": "ערכי הליבה",
-          "innovation-project": "פרויקט החדשנות",
+          "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
-        },
-        "session-label": "מפגש #{number}"
+        }
       }
     },
     "reports": {

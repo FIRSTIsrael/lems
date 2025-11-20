@@ -5,7 +5,12 @@ import { ElementType } from 'react';
 
 interface DirectionalIconProps extends SvgIconProps {
   ltr: ElementType;
-  rtl: ElementType;
+
+  /**
+   * Optional icon to use for RTL layouts.
+   * If not provided, the LTR icon will be used with a horizontal flip.
+   */
+  rtl?: ElementType;
 }
 
 export const DirectionalIcon: React.FC<DirectionalIconProps> = ({
@@ -16,7 +21,12 @@ export const DirectionalIcon: React.FC<DirectionalIconProps> = ({
   const theme = useTheme();
   const isRtl = theme.direction === 'rtl';
 
-  const IconComponent = isRtl ? RtlIcon : LtrIcon;
+  const IconComponent = isRtl ? (RtlIcon ?? LtrIcon) : LtrIcon;
 
-  return <IconComponent {...props} />;
+  return (
+    <IconComponent
+      {...props}
+      style={{ transform: !RtlIcon && isRtl ? 'rotateY(180deg)' : 'none' }}
+    />
+  );
 };

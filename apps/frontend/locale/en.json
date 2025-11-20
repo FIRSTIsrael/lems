@@ -88,30 +88,21 @@
       }
     },
     "judge": {
-      "page-title": "Judging Schedule",
+      "page-title": "Judging",
       "schedule": {
         "session": "Session",
+        "start-time": "Start Time",
         "team": "Team Information",
-        "statusLabel": "Status",
-        "rubricsLabel": "Rubrics",
+        "actions": "Actions",
+        "rubrics": "Rubrics",
         "no-sessions": "No judging sessions scheduled",
-        "arrivedLabel": "Arrived",
-        "arrival": {
-          "arrived": "Arrived",
-          "not-arrived": "Not Arrived"
-        },
-        "status": {
-          "scheduled": "Scheduled",
-          "in-progress": "In Progress",
-          "completed": "Completed",
-          "aborted": "Aborted"
-        },
-        "rubrics": {
+        "not-arrived": "Not Arrived",
+        "start-session": "Start",
+        "rubric-labels": {
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design"
-        },
-        "session-label": "Session #{number}"
+        }
       }
     },
     "reports": {

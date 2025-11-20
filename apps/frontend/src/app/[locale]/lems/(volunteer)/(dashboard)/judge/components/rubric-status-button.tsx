@@ -1,12 +1,12 @@
 'use client';
 
-import { Button, Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PendingIcon from '@mui/icons-material/Pending';
-import ErrorIcon from '@mui/icons-material/Error';
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 
 export type RubricType = 'core-values' | 'innovation-project' | 'robot-design';
-export type RubricStatus = 'empty' | 'in-progress' | 'completed' | 'not-judged';
+export type RubricStatus = 'empty' | 'in-progress' | 'completed';
 
 interface RubricStatusButtonProps {
   type: RubricType;
@@ -16,28 +16,28 @@ interface RubricStatusButtonProps {
   disabled?: boolean;
 }
 
-const getRubricColor = (type: RubricType) => {
+const getRubricColor = (type: RubricType, theme: ReturnType<typeof useTheme>) => {
+  const isDark = theme.palette.mode === 'dark';
   switch (type) {
     case 'core-values':
-      return '#e53935'; // Red
+      return isDark ? '#ef5350' : '#d32f2f';
     case 'innovation-project':
-      return '#1976d2'; // Blue
+      return isDark ? '#42a5f5' : '#1976d2';
     case 'robot-design':
-      return '#43a047'; // Green
+      return isDark ? '#66bb6a' : '#388e3c';
   }
 };
 
-const getStatusIcon = (status: RubricStatus) => {
+const getStatusIcon = (status: RubricStatus, color: string) => {
+  const iconStyle = { fontSize: '1.1rem', color };
   switch (status) {
     case 'completed':
-      return <CheckCircleIcon sx={{ fontSize: '1rem' }} />;
+      return <CheckCircleIcon sx={iconStyle} />;
     case 'in-progress':
-      return <PendingIcon sx={{ fontSize: '1rem' }} />;
+      return <EditIcon sx={iconStyle} />;
     case 'empty':
-      return null;
-    case 'not-judged':
     default:
-      return <ErrorIcon sx={{ fontSize: '1rem' }} />;
+      return <CircleOutlinedIcon sx={{ ...iconStyle, opacity: 0.4 }} />;
   }
 };
 
@@ -49,81 +49,60 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   disabled = false
 }) => {
   const theme = useTheme();
-  const rubricColor = getRubricColor(type);
-  const statusIcon = getStatusIcon(status);
+  const rubricColor = getRubricColor(type, theme);
+  const statusIcon = getStatusIcon(status, rubricColor);
   const isCompleted = status === 'completed';
+  const isInProgress = status === 'in-progress';
 
   return (
-    <Button
-      onClick={onClick}
-      disabled={disabled}
-      variant="outlined"
-      size="small"
-      sx={
-        {
-          minWidth: 0,
-          px: 1.5,
-          py: 1,
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 0.5,
-          borderRadius: 1.5,
-          borderWidth: '2px',
-          borderStyle: 'solid',
-          backgroundColor: isCompleted ? rubricColor : 'transparent',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          ...(disabled
-            ? {
-                color: theme.palette.action.disabled,
-                borderColor: theme.palette.action.disabled,
-                opacity: 0.5
-              }
-            : {
-                borderColor: rubricColor,
-                color: isCompleted ? 'white' : rubricColor,
-                '&:hover': {
-                  backgroundColor: rubricColor,
-                  color: 'white',
-                  boxShadow: `0 4px 12px ${rubricColor}40`,
-                  transform: 'translateY(-2px)'
-                },
-                '&:active': {
-                  transform: 'translateY(0)'
-                }
-              })
-        } as const
-      }
+    <Box
+      onClick={disabled ? undefined : onClick}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        px: 2,
+        py: 1.25,
+        borderRadius: 2,
+        backgroundColor:
+          isCompleted || isInProgress
+            ? theme.palette.mode === 'dark'
+              ? `${rubricColor}15`
+              : `${rubricColor}08`
+            : 'transparent',
+        border: '1.5px solid',
+        borderColor: isCompleted || isInProgress ? rubricColor : theme.palette.divider,
+        cursor: disabled ? 'default' : 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        minWidth: '140px',
+        opacity: disabled ? 0.5 : 1,
+        ...(!disabled && {
+          '&:hover': {
+            backgroundColor:
+              theme.palette.mode === 'dark' ? `${rubricColor}25` : `${rubricColor}12`,
+            borderColor: rubricColor,
+            transform: 'translateY(-1px)',
+            boxShadow: `0 4px 8px ${rubricColor}20`
+          },
+          '&:active': {
+            transform: 'translateY(0)'
+          }
+        })
+      }}
     >
-      <Box
+      {statusIcon}
+      <Typography
+        variant="body2"
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          gap: 0.5
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          color: isCompleted || isInProgress ? rubricColor : theme.palette.text.secondary,
+          flex: 1,
+          textAlign: 'left'
         }}
       >
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: 700,
-            fontSize: '0.7rem',
-            lineHeight: 1,
-            textAlign: 'center',
-            minWidth: 0,
-            whiteSpace: 'normal',
-            wordBreak: 'break-word'
-          }}
-        >
-          {label}
-        </Typography>
-        {statusIcon && (
-          <Box sx={{ display: 'flex', alignItems: 'center', lineHeight: 1, color: 'currentColor' }}>
-            {statusIcon}
-          </Box>
-        )}
-      </Box>
-    </Button>
+        {label}
+      </Typography>
+    </Box>
   );
 };
