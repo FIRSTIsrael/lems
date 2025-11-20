@@ -28,6 +28,9 @@ type Team {
 
   "Whether the team has checked in at the venue"
   arrived: Boolean!
+
+  "Logo image URL for the team"
+  logoUrl: String
 }
 
 """
@@ -89,7 +92,6 @@ type TeamEvent {
 extend type Mutation {
   """
   Update that a team has arrived in a specific division.
-  Returns minimal response containing only the team ID.
   """
   teamArrived(
     "The team ID to update"
@@ -103,10 +105,6 @@ extend type Mutation {
 extend type Subscription {
   """
   Subscribe to events when teams arrive at a specific division.
-  Returns minimal event data (teamId + version) for efficient updates.
-  The subscription supports message recovery: if reconnected within 30 seconds,
-  buffered events are automatically sent. Use lastSeenVersion to specify the
-  last version received to enable recovery.
   """
   teamArrivalUpdated(
     "The division ID to listen for updates in"
