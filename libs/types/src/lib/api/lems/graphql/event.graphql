@@ -20,6 +20,9 @@ type Event {
   "Region where the event is held"
   region: String!
 
+  "Location where the event is held"
+  location: String!
+
   "Whether all divisions have awards, users, and schedules configured"
   isFullySetUp: Boolean!
 
