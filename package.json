@@ -63,7 +63,7 @@
     "node-schedule": "^2.1.1",
     "pg": "^8.16.3",
     "promise": "^8.3.0",
-    "puppeteer": "^24.29.1",
+    "puppeteer": "^24.30.0",
     "react": "^19.2.0",
     "react-color": "^2.19.3",
     "react-dom": "^19.2.0",
