@@ -48,7 +48,7 @@ export function RoleInfoStep() {
         {t('steps.association')}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
-        {t(`instructions.roleInfo-${roleInfoType}`)}
+        {t(`instructions.role-info-${roleInfoType}`)}
       </Typography>
       <Autocomplete
         options={availableOptions}

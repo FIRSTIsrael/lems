@@ -555,7 +555,7 @@
           "complete-event": {
             "title": "Complete Event",
             "message": "Are you sure you want to complete this event? Once completed, event results can no longer be modified.",
-            "eventName": "Event: {eventName}",
+            "event-name": "Event: {eventName}",
             "confirm": "Complete Event",
             "cancel": "Cancel",
             "completing": "Completing..."
@@ -563,7 +563,7 @@
           "publish-event": {
             "title": "Publish Event",
             "message": "Are you sure you want to publish this event? This will make the results public and visible to everyone.",
-            "eventName": "Event: {eventName}",
+            "event-name": "Event: {eventName}",
             "confirm": "Publish Event",
             "cancel": "Cancel",
             "publishing": "Publishing..."
@@ -766,53 +766,53 @@
       "users": {
         "title": "{eventName}: Users",
         "sections": {
-          "eventAdmins": {
+          "event-admins": {
             "title": "Event Administrators",
             "description": "Manage users who can administer this event. These users will have access to event management features.",
-            "currentAdmins": "Current Administrators",
-            "assignAdmins": "Assign Admins",
-            "removeAdmin": "Remove Admin",
-            "noAdmins": "No administrators assigned to this event."
+            "current-admins": "Current Administrators",
+            "assign-admins": "Assign Admins",
+            "remove-admin": "Remove Admin",
+            "no-admins": "No administrators assigned to this event."
           },
-          "volunteerUsers": {
+          "volunteer-users": {
             "title": "Volunteer Users",
             "description": "Manage volunteer role slots for this event. Ensure all mandatory roles are filled for each division.",
-            "systemManagedRoles": {
+            "system-managed-roles": {
               "title": "System-Managed Roles",
               "description": "These roles are automatically managed by the system and cannot be edited manually.",
-              "roleDescription": "Managed automatically by the system",
-              "toggleableRoleDescription": "This role can be enabled or disabled for your event",
+              "role-description": "Managed automatically by the system",
+              "toggleable-role-description": "This role can be enabled or disabled for your event",
               "enabled": "Enabled",
               "disabled": "Disabled"
             },
-            "mandatoryRoles": {
+            "mandatory-roles": {
               "title": "Mandatory Roles",
               "description": "These roles are required for each division in the event."
             },
-            "optionalRoles": {
+            "optional-roles": {
               "title": "Optional Roles",
               "description": "These roles are optional but can be assigned as needed."
             },
-            "addSlot": "Add Slot",
+            "add-slot": "Add Slot",
             "slot": "slot",
             "slots": "slots",
-            "removeSlot": "Remove Slot",
-            "noSlotsAssigned": "No slots assigned for this role.",
+            "remove-slot": "Remove Slot",
+            "no-slots-assigned": "No slots assigned for this role.",
             "divisions": "Divisions",
-            "selectAll": "Select All",
+            "select-all": "Select All",
             "identifier": "Identifier",
-            "identifierHelp": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
-            "saveSlots": "Save Slots",
+            "identifier-help": "Add an identifier to distinguish between multiple slots with the same role (max 12 characters).",
+            "save-slots": "Save Slots",
             "saving": "Saving...",
-            "saveSuccess": "Slots saved successfully!",
-            "saveError": "Failed to save slots. Please try again.",
+            "save-success": "Slots saved successfully!",
+            "save-error": "Failed to save slots. Please try again.",
             "validation": {
               "title": "Please fix the following issues:",
-              "missingMandatoryRole": "{role} is required for {division}",
-              "missingMandatoryRoleSingle": "{role} is required for this event"
+              "missing-mandatory-role": "{role} is required for {division}",
+              "missing-mandatory-role-single": "{role} is required for this event"
             },
             "loading": "Loading...",
-            "downloadPasswords": "Download Passwords",
+            "download-passwords": "Download Passwords",
             "status": {
               "new-users-tooltip": "This is a new users configuration",
               "existing-users-tooltip": "This event has users already configured",
@@ -822,26 +822,26 @@
           }
         },
         "dialogs": {
-          "assignAdmins": {
+          "assign-admins": {
             "title": "Assign Event Administrators",
-            "searchPlaceholder": "Search for admin users...",
-            "noSearchResults": "No users found matching your search.",
-            "noAvailableAdmins": "No additional admin users available to assign.",
-            "selectedCount": "{count} {count, plural, =1 {user} other {users}} selected",
+            "search-placeholder": "Search for admin users...",
+            "no-search-results": "No users found matching your search.",
+            "no-available-admins": "No additional admin users available to assign.",
+            "selected-count": "{count} {count, plural, =1 {user} other {users}} selected",
             "cancel": "Cancel",
             "save": "Assign Selected"
           },
-          "addVolunteer": {
+          "add-volunteer": {
             "title": "Add {role} Volunteer",
-            "selectUser": "Select User",
-            "changeUser": "Change User",
-            "searchPlaceholder": "Search for volunteer users...",
-            "noSearchResults": "No users found matching your search.",
-            "noAvailableVolunteers": "No volunteer users available for this role.",
-            "selectDivisions": "Select Divisions",
-            "selectAll": "Select All",
+            "select-user": "Select User",
+            "change-user": "Change User",
+            "search-placeholder": "Search for volunteer users...",
+            "no-search-results": "No users found matching your search.",
+            "no-available-volunteers": "No volunteer users available for this role.",
+            "select-divisions": "Select Divisions",
+            "select-all": "Select All",
             "identifier": "Identifier (Optional)",
-            "identifierHelp": "Add an identifier to distinguish this volunteer (max 12 characters)",
+            "identifier-help": "Add an identifier to distinguish this volunteer (max 12 characters)",
             "cancel": "Cancel",
             "add": "Add Volunteer"
           }
@@ -858,7 +858,7 @@
         "columns": {
           "username": "Username",
           "name": "Name",
-          "createdAt": "Created",
+          "created-at": "Created",
           "actions": "Actions"
         }
       },
@@ -877,22 +877,22 @@
               "label": "Password",
               "placeholder": "Enter a secure password"
             },
-            "firstName": {
+            "first-name": {
               "label": "First Name",
               "placeholder": "e.g., John"
             },
-            "lastName": {
+            "last-name": {
               "label": "Last Name",
               "placeholder": "e.g., Doe"
             }
           },
           "password-validation": {
             "title": "Password Requirements:",
-            "minLength": "At least 8 characters long",
-            "hasUppercase": "At least one uppercase letter (A-Z)",
-            "hasLowercase": "At least one lowercase letter (a-z)",
-            "hasNumber": "At least one number (0-9)",
-            "hasSpecialChar": "At least one special character (!@#$%^&*)"
+            "min-length": "At least 8 characters long",
+            "has-uppercase": "At least one uppercase letter (A-Z)",
+            "has-lowercase": "At least one lowercase letter (a-z)",
+            "has-number": "At least one number (0-9)",
+            "has-special-char": "At least one special character (!@#$%^&*)"
           },
           "errors": {
             "username-required": "Username is required.",
@@ -901,8 +901,8 @@
             "username-exists": "This username already exists.",
             "password-required": "Password is required.",
             "password-invalid": "Password does not meet the requirements.",
-            "firstName-required": "First name is required.",
-            "lastName-required": "Last name is required.",
+            "first-name-required": "First name is required.",
+            "last-name-required": "Last name is required.",
             "error": "An error occurred while creating the user."
           },
           "submit": "Create User",
@@ -936,16 +936,16 @@
         "profile": {
           "title": "Profile Information",
           "fields": {
-            "firstName": {
+            "first-name": {
               "label": "First Name"
             },
-            "lastName": {
+            "last-name": {
               "label": "Last Name"
             }
           },
           "errors": {
-            "firstName-required": "First name is required.",
-            "lastName-required": "Last name is required."
+            "first-name-required": "First name is required.",
+            "last-name-required": "Last name is required."
           },
           "submit": "Update Profile",
           "submitting": "Updating..."

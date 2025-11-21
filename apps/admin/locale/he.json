@@ -555,7 +555,7 @@
           "complete-event": {
             "title": "סיום אירוע",
             "message": "האם אתם בטוחים שברצונכם לסיים את האירוע? לאחר הסיום, לא ניתן יהיה לשנות את תוצאות האירוע.",
-            "eventName": "אירוע: {eventName}",
+            "event-name": "אירוע: {eventName}",
             "confirm": "סיום אירוע",
             "cancel": "ביטול",
             "completing": "מסיים..."
@@ -563,7 +563,7 @@
           "publish-event": {
             "title": "פרסום אירוע",
             "message": "האם אתם בטוחים שברצונכם לפרסם את האירוע? פעולה זו תהפוך את התוצאות לציבוריות ונראות לכולם.",
-            "eventName": "אירוע: {eventName}",
+            "event-name": "אירוע: {eventName}",
             "confirm": "פרסום אירוע",
             "cancel": "ביטול",
             "publishing": "מפרסם..."
@@ -766,53 +766,53 @@
       "users": {
         "title": "{eventName}: משתמשים",
         "sections": {
-          "eventAdmins": {
+          "event-admins": {
             "title": "מנהלי אירוע",
             "description": "נהל משתמשים שיכולים לנהל את האירוע הזה. משתמשים אלה יקבלו גישה לתכונות ניהול האירוע.",
-            "currentAdmins": "מנהלים נוכחיים",
-            "assignAdmins": "הקצה מנהלים",
-            "removeAdmin": "הסר מנהל",
-            "noAdmins": "לא הוקצו מנהלים לאירוע זה."
+            "current-admins": "מנהלים נוכחיים",
+            "assign-admins": "הקצה מנהלים",
+            "remove-admin": "הסר מנהל",
+            "no-admins": "לא הוקצו מנהלים לאירוע זה."
           },
-          "volunteerUsers": {
+          "volunteer-users": {
             "title": "משתמשי מתנדבים",
             "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל בית.",
-            "systemManagedRoles": {
+            "system-managed-roles": {
               "title": "תפקידים המנוהלים על ידי המערכת",
               "description": "תפקידים אלה מנוהלים אוטומטית על ידי המערכת ולא ניתן לערוך אותם באופן ידני.",
-              "roleDescription": "מנוהל אוטומטית על ידי המערכת",
-              "toggleableRoleDescription": "ניתן לאפשר או לבטל תפקיד זה עבור האירוע שלך",
+              "role-description": "מנוהל אוטומטית על ידי המערכת",
+              "toggleable-role-description": "ניתן לאפשר או לבטל תפקיד זה עבור האירוע שלך",
               "enabled": "פעיל",
               "disabled": "כבוי"
             },
-            "mandatoryRoles": {
+            "mandatory-roles": {
               "title": "תפקידי חובה",
               "description": "תפקידים אלה נדרשים לכל בית באירוע."
             },
-            "optionalRoles": {
+            "optional-roles": {
               "title": "תפקידים אופציונליים",
               "description": "תפקידים אלה אופציונליים אך ניתן להקצותם לפי הצורך."
             },
-            "addSlot": "הוסף מתנדב",
+            "add-slot": "הוסף מתנדב",
             "slot": "מתנדב",
             "slots": "מתנדבים",
-            "removeSlot": "הסר מתנדב",
-            "noSlotsAssigned": "לא הוקצו מתנדבים לתפקיד זה.",
+            "remove-slot": "הסר מתנדב",
+            "no-slots-assigned": "לא הוקצו מתנדבים לתפקיד זה.",
             "divisions": "בתים",
-            "selectAll": "בחר הכל",
+            "select-all": "בחר הכל",
             "identifier": "מזהה",
-            "identifierHelp": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
-            "saveSlots": "שמור הקצאות",
+            "identifier-help": "הוסף מזהה כדי להבדיל בין מספר מתנדבים עם אותו תפקיד (עד 12 תווים).",
+            "save-slots": "שמור הקצאות",
             "saving": "שומר...",
-            "saveSuccess": "ההקצאות נשמרו בהצלחה!",
-            "saveError": "שגיאה בשמירת ההקצאות. אנא נסה שוב.",
+            "save-success": "ההקצאות נשמרו בהצלחה!",
+            "save-error": "שגיאה בשמירת ההקצאות. אנא נסה שוב.",
             "validation": {
               "title": "אנא תקן את הבעיות הבאות:",
-              "missingMandatoryRole": "{role} נדרש עבור {division}",
-              "missingMandatoryRoleSingle": "{role} נדרש עבור האירוע הזה"
+              "missing-mandatory-role": "{role} נדרש עבור {division}",
+              "missing-mandatory-role-single": "{role} נדרש עבור האירוע הזה"
             },
             "loading": "טוען...",
-            "downloadPasswords": "הורד קובץ סיסמאות",
+            "download-passwords": "הורד קובץ סיסמאות",
             "status": {
               "existing-users": "יש משתמשים",
               "existing-users-tooltip": "לאירוע זה יש כבר משתמשים מוגדרים",
@@ -822,26 +822,26 @@
           }
         },
         "dialogs": {
-          "assignAdmins": {
+          "assign-admins": {
             "title": "הקצה מנהלי אירוע",
-            "searchPlaceholder": "חפש משתמשי מנהל...",
-            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
-            "noAvailableAdmins": "אין משתמשי מנהל נוספים זמינים להקצאה.",
-            "selectedCount": "{count} {count, plural, =1 {משתמש} other {משתמשים}} נבחרו",
+            "search-placeholder": "חפש משתמשי מנהל...",
+            "no-search-results": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "no-available-admins": "אין משתמשי מנהל נוספים זמינים להקצאה.",
+            "selected-count": "{count} {count, plural, =1 {משתמש} other {משתמשים}} נבחרו",
             "cancel": "ביטול",
             "save": "הקצה נבחרים"
           },
-          "addVolunteer": {
+          "add-volunteer": {
             "title": "הוסף מתנדב {role}",
-            "selectUser": "בחר משתמש",
-            "changeUser": "שנה משתמש",
-            "searchPlaceholder": "חפש משתמשי מתנדבים...",
-            "noSearchResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
-            "noAvailableVolunteers": "אין משתמשי מתנדבים זמינים לתפקיד זה.",
-            "selectDivisions": "בחר בתים",
-            "selectAll": "בחר הכל",
+            "select-user": "בחר משתמש",
+            "change-user": "שנה משתמש",
+            "search-placeholder": "חפש משתמשי מתנדבים...",
+            "no-search-results": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+            "no-available-volunteers": "אין משתמשי מתנדבים זמינים לתפקיד זה.",
+            "select-divisions": "בחר בתים",
+            "select-all": "בחר הכל",
             "identifier": "מזהה (אופציונלי)",
-            "identifierHelp": "הוסף מזהה כדי להבדיל את המתנדב הזה (עד 12 תווים)",
+            "identifier-help": "הוסף מזהה כדי להבדיל את המתנדב הזה (עד 12 תווים)",
             "cancel": "ביטול",
             "add": "הוסף מתנדב"
           }
@@ -858,7 +858,7 @@
         "columns": {
           "username": "שם משתמש",
           "name": "שם",
-          "createdAt": "נוצר",
+          "created-at": "נוצר",
           "actions": "פעולות"
         }
       },
@@ -877,22 +877,22 @@
               "label": "סיסמה",
               "placeholder": "הזן סיסמה בטוחה"
             },
-            "firstName": {
+            "first-name": {
               "label": "שם פרטי",
               "placeholder": "לדוגמה: יוחנן"
             },
-            "lastName": {
-              "label": "שם משפחה",
+            "last-name": {
+              "label": "שֵׁם מִשׁפָּחָה",
               "placeholder": "לדוגמה: כהן"
             }
           },
           "password-validation": {
             "title": "דרישות סיסמה:",
-            "minLength": "לפחות 8 תווים",
-            "hasUppercase": "לפחות אות גדולה אחת (A-Z)",
-            "hasLowercase": "לפחות אות קטנה אחת (a-z)",
-            "hasNumber": "לפחות מספר אחד (0-9)",
-            "hasSpecialChar": "לפחות תו מיוחד אחד (!@#$%^&*)"
+            "min-length": "לפחות 8 תווים",
+            "has-uppercase": "לפחות אות גדולה אחת (A-Z)",
+            "has-lowercase": "לפחות אות קטנה אחת (a-z)",
+            "has-number": "לפחות מספר אחד (0-9)",
+            "has-special-char": "לפחות תו מיוחד אחד (!@#$%^&*)"
           },
           "errors": {
             "username-required": "שם משתמש נדרש.",
@@ -901,8 +901,8 @@
             "username-exists": "שם משתמש זה כבר קיים.",
             "password-required": "סיסמה נדרשת.",
             "password-invalid": "הסיסמה לא עומדת בדרישות.",
-            "firstName-required": "שם פרטי נדרש.",
-            "lastName-required": "שם משפחה נדרש.",
+            "first-name-required": "שם פרטי נדרש.",
+            "last-name-required": "שם משפחה נדרש.",
             "error": "אירעה שגיאה בעת יצירת המשתמש."
           },
           "submit": "צור משתמש",
@@ -936,16 +936,16 @@
         "profile": {
           "title": "פרטי פרופיל",
           "fields": {
-            "firstName": {
+            "first-name": {
               "label": "שם פרטי"
             },
-            "lastName": {
+            "last-name": {
               "label": "שם משפחה"
             }
           },
           "errors": {
-            "firstName-required": "שם פרטי נדרש.",
-            "lastName-required": "שם משפחה נדרש."
+            "first-name-required": "שם פרטי נדרש.",
+            "last-name-required": "שם משפחה נדרש."
           },
           "submit": "עדכן פרופיל",
           "submitting": "מעדכן..."

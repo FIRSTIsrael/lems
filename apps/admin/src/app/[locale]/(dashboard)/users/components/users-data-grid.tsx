@@ -145,7 +145,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
     },
     {
       field: 'createdAt',
-      headerName: t('columns.createdAt'),
+      headerName: t('columns.created-at'),
       width: 180,
       sortable: true,
       type: 'date',

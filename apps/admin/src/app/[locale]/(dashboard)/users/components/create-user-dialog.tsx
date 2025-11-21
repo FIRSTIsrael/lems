@@ -70,11 +70,11 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
     }
 
     if (!values.firstName?.trim()) {
-      errors.firstName = 'firstName-required';
+      errors.firstName = 'first-name-required';
     }
 
     if (!values.lastName?.trim()) {
-      errors.lastName = 'lastName-required';
+      errors.lastName = 'last-name-required';
     }
 
     return errors;
@@ -127,15 +127,15 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
             <Stack spacing={3}>
               <Stack direction="row" spacing={2}>
                 <FormikTextField
-                  name="firstName"
-                  label={t('fields.firstName.label')}
-                  error={touched.firstName && !!errors.firstName}
+                  name="lastName"
+                  label={t('fields.last-name.label')}
+                  error={touched.lastName && !!errors.lastName}
                   helperText={
-                    touched.firstName && errors.firstName
-                      ? t(`errors.${errors.firstName}`)
+                    touched.lastName && errors.lastName
+                      ? t(`errors.${errors.lastName}`)
                       : undefined
                   }
-                  placeholder={t('fields.firstName.placeholder')}
+                  placeholder={t('fields.last-name.placeholder')}
                   fullWidth
                   disabled={isSubmitting}
                 />
