@@ -41,7 +41,7 @@ export function RoleAssignmentSection({
   role,
   initiallyExpanded = false
 }: RoleAssignmentSectionProps) {
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
   const { getRole } = useRoleTranslations();
   const {
     divisions,
@@ -85,7 +85,7 @@ export function RoleAssignmentSection({
               {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
             </Typography>
             <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
-              {t('addSlot')}
+              {t('add-slot')}
             </Button>
             <IconButton
               onClick={() => setExpanded(!expanded)}
@@ -101,7 +101,7 @@ export function RoleAssignmentSection({
         <CardContent sx={{ pt: 0 }}>
           {slots.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              {t('noSlotsAssigned')}
+              {t('no-slots-assigned')}
             </Typography>
           ) : (
             <Stack spacing={3}>
@@ -166,7 +166,7 @@ export function RoleAssignmentSection({
                         value={slot.identifier || ''}
                         onChange={e => handleIdentifierChange(slot.id, e.target.value)}
                         fullWidth
-                        helperText={t('identifierHelp')}
+                        helperText={t('identifier-help')}
                         slotProps={{ input: { inputProps: { maxLength: 12 } } }}
                       />
                     )}
@@ -175,7 +175,7 @@ export function RoleAssignmentSection({
                   <IconButton
                     color="error"
                     onClick={() => handleRemoveSlot(slot.id)}
-                    aria-label={t('removeSlot')}
+                    aria-label={t('remove-slot')}
                   >
                     <DeleteIcon />
                   </IconButton>

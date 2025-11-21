@@ -317,7 +317,8 @@ class EventsSelector {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published'
+        'event_settings.published',
+        'event_settings.completed'
       ])
       .select(eb => [
         eb.fn.count('team_divisions.team_id').as('team_count'),
@@ -352,7 +353,8 @@ class EventsSelector {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published'
+        'event_settings.published', 
+        'event_settings.completed'
       ])
       .groupBy(sql`events.coordinates::text`);
 
@@ -405,6 +407,7 @@ class EventsSelector {
           divisions: [],
           visible: row.visible,
           published: row.published,
+          completed: row.completed,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });
