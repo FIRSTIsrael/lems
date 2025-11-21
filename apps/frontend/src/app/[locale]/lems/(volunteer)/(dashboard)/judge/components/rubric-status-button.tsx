@@ -16,15 +16,14 @@ interface RubricStatusButtonProps {
   disabled?: boolean;
 }
 
-const getRubricColor = (type: RubricType, theme: ReturnType<typeof useTheme>) => {
-  const isDark = theme.palette.mode === 'dark';
+const getRubricColor = (type: RubricType) => {
   switch (type) {
     case 'core-values':
-      return isDark ? '#ef5350' : '#d32f2f';
+      return '#d32f2f';
     case 'innovation-project':
-      return isDark ? '#42a5f5' : '#1976d2';
+      return '#1976d2';
     case 'robot-design':
-      return isDark ? '#66bb6a' : '#388e3c';
+      return '#388e3c';
   }
 };
 
@@ -49,7 +48,7 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   disabled = false
 }) => {
   const theme = useTheme();
-  const rubricColor = getRubricColor(type, theme);
+  const rubricColor = getRubricColor(type);
   const statusIcon = getStatusIcon(status, rubricColor);
   const isCompleted = status === 'completed';
   const isInProgress = status === 'in-progress';

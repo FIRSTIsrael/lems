@@ -1,5 +1,4 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { ApolloCache } from '@apollo/client';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 /**
@@ -243,36 +242,5 @@ export function createJudgingSessionStartedSubscriptionForJudge(
 
       return prev;
     }
-  };
-}
-
-/**
- * Creates an Apollo cache update function for the start judging session mutation.
- * Optimistically updates the cache to mark a session as started with in-progress status.
- *
- * @param sessionId - The ID of the session that is being started
- * @returns Cache update function for Apollo useMutation
- */
-export function createStartJudgingSessionCacheUpdate(sessionId: string) {
-  return (cache: ApolloCache) => {
-    cache.modify({
-      fields: {
-        division(existingDivision = {}) {
-          if (!existingDivision.judging?.sessions) {
-            return existingDivision;
-          }
-          return {
-            ...existingDivision,
-            judging: {
-              ...existingDivision.judging,
-              sessions: (existingDivision.judging.sessions as JudgingSession[]).map(
-                (session: JudgingSession) =>
-                  session.id === sessionId ? { ...session, status: 'in-progress' } : session
-              )
-            }
-          };
-        }
-      }
-    });
   };
 }

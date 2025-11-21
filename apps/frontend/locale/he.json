@@ -102,7 +102,8 @@
           "core-values": "ערכי הליבה",
           "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
-        }
+        },
+        "start-session-error": "שגיאה בהתחלת מפגש השיפוט"
       }
     },
     "reports": {

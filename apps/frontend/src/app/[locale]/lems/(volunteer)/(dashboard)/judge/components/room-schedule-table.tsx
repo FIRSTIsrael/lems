@@ -21,7 +21,7 @@ import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
 
 interface RoomScheduleTableProps {
-  onStartSession: (sessionId: string) => void;
+  onStartSession: (sessionId: string) => Promise<void>;
   sessions: JudgingSession[];
   loading?: boolean;
 }

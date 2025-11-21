@@ -12,8 +12,7 @@ import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscriptionForJudge,
   createJudgingSessionStartedSubscriptionForJudge,
-  START_JUDGING_SESSION_MUTATION,
-  createStartJudgingSessionCacheUpdate
+  START_JUDGING_SESSION_MUTATION
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/room-schedule-table';
 
@@ -48,8 +47,7 @@ export default function JudgePage() {
   const handleStartSession = useCallback(
     async (sessionId: string) => {
       await startSessionMutation({
-        variables: { sessionId, divisionId: currentDivision.id },
-        update: createStartJudgingSessionCacheUpdate(sessionId)
+        variables: { sessionId, divisionId: currentDivision.id }
       });
     },
     [startSessionMutation, currentDivision.id]

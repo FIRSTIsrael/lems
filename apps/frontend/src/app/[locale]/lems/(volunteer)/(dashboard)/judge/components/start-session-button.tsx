@@ -1,10 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Button } from '@mui/material';
-import { useTranslations } from 'next-intl';
-import { PlayArrow } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
+import { toast } from 'react-hot-toast';
+import { Button } from '@mui/material';
+import { PlayArrow } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 
 interface StartSessionButtonProps {
@@ -12,7 +13,7 @@ interface StartSessionButtonProps {
   sessionStatus: string;
   scheduledTime: string;
   teamArrived: boolean;
-  onStartSession: (sessionId: string) => void;
+  onStartSession: (sessionId: string) => Promise<void>;
   disabled?: boolean;
 }
 
@@ -39,12 +40,21 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
     return true;
   }, [sessionStatus, teamArrived, scheduledTime]);
 
+  const handleStartSession = async (sessionId: string) => {
+    try {
+      await onStartSession(sessionId);
+    } catch (error) {
+      console.error('Failed to start session:', error);
+      toast.error(t('start-session-error'));
+    }
+  };
+
   return (
     <Button
       variant="contained"
       size="medium"
       disabled={!isStartable || disabled}
-      onClick={() => onStartSession(sessionId)}
+      onClick={() => handleStartSession(sessionId)}
       startIcon={<DirectionalIcon ltr={PlayArrow} />}
       sx={{
         minWidth: '100px',
