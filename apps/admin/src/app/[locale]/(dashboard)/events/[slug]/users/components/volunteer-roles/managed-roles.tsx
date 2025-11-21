@@ -17,7 +17,7 @@ import { SYSTEM_MANAGED_ROLES, TOGGLEABLE_SYSTEM_ROLES } from '../../types';
 import { useVolunteer } from './volunteer-context';
 
 export const ManagedRolesSection: React.FC = () => {
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
   const { getRole } = useRoleTranslations();
   const { toggledSystemRoles, handleToggleSystemRole } = useVolunteer();
 
@@ -25,12 +25,12 @@ export const ManagedRolesSection: React.FC = () => {
     <Box sx={{ flex: 1, minWidth: 0 }}>
       <Card sx={{ height: 'fit-content' }}>
         <CardHeader
-          title={t('systemManagedRoles.title')}
+          title={t('system-managed-roles.title')}
           slotProps={{ title: { variant: 'h6' } }}
         />
         <CardContent>
           <Alert severity="info" sx={{ mb: 2, fontSize: '0.875rem' }}>
-            {t('systemManagedRoles.description')}
+            {t('system-managed-roles.description')}
           </Alert>
           <Stack spacing={1.5}>
             {SYSTEM_MANAGED_ROLES.map(role => (
@@ -48,7 +48,7 @@ export const ManagedRolesSection: React.FC = () => {
                   {getRole(role)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                  {t('systemManagedRoles.roleDescription')}
+                  {t('system-managed-roles.role-description')}
                 </Typography>
               </Box>
             ))}
@@ -74,7 +74,7 @@ export const ManagedRolesSection: React.FC = () => {
                       color="text.secondary"
                       sx={{ fontStyle: 'italic' }}
                     >
-                      {t('systemManagedRoles.toggleableRoleDescription')}
+                      {t('system-managed-roles.toggleable-role-description')}
                     </Typography>
                   </Box>
                   <FormControlLabel
@@ -95,8 +95,8 @@ export const ManagedRolesSection: React.FC = () => {
                   sx={{ display: 'block', mt: 0.5 }}
                 >
                   {toggledSystemRoles.has(role)
-                    ? t('systemManagedRoles.enabled')
-                    : t('systemManagedRoles.disabled')}
+                    ? t('system-managed-roles.enabled')
+                    : t('system-managed-roles.disabled')}
                 </Typography>
               </Box>
             ))}

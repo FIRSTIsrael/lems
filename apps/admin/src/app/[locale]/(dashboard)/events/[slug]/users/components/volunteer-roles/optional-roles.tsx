@@ -7,15 +7,15 @@ import { OPTIONAL_ROLES } from '../../types';
 import { RoleAssignmentSection } from './role-assignment-section';
 
 export const OptionalRolesSection: React.FC = () => {
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
 
   return (
     <Box sx={{ flex: 1, minWidth: 0 }}>
       <Card sx={{ height: 'fit-content' }}>
-        <CardHeader title={t('optionalRoles.title')} slotProps={{ title: { variant: 'h6' } }} />
+        <CardHeader title={t('optional-roles.title')} slotProps={{ title: { variant: 'h6' } }} />
         <CardContent>
           <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-            {t('optionalRoles.description')}
+            {t('optional-roles.description')}
           </Typography>
           <Stack spacing={2}>
             {OPTIONAL_ROLES.map(role => (
