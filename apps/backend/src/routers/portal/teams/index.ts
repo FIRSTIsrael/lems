@@ -139,10 +139,12 @@ router.get(
       const eventResult: TeamEventResult = {
         eventName: event.name,
         eventSlug: event.slug,
+        published: event.published,
         results: null
       };
 
       if (!event.published) {
+        eventResults.push(eventResult);
         continue;
       }
 
@@ -168,6 +170,8 @@ router.get(
         matches: teamMatchResults,
         robotGameRank
       };
+
+      eventResults.push(eventResult);
     }
 
     res.status(200).json(eventResults);
