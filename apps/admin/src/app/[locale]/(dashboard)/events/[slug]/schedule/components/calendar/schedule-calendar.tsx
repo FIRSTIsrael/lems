@@ -9,6 +9,7 @@ import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
+import { AgendaColumn } from './agenda-column';
 import { CalendarProvider, useCalendar } from './calendar-context';
 import { CalendarHeader } from './calendar-header';
 import { calculateBlockPosition, getBlockColumn } from './calendar-utils';
@@ -181,6 +182,7 @@ const ScheduleCalendarContent: React.FC<{ division: Division }> = ({ division })
       <CalendarGrid>
         <CalendarColumn name="judging" handleDragStart={handleDragStart} />
         <CalendarColumn name="field" handleDragStart={handleDragStart} />
+        <AgendaColumn startTime={startTime} endTime={endTime} />
       </CalendarGrid>
     </Paper>
   );

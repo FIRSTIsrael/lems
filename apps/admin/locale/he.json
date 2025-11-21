@@ -645,6 +645,9 @@
             "add-practice-round": "הוספת סבב אימונים",
             "add-ranking-round": "הוספת סבב דירוג"
           },
+          "agenda": {
+            "title": "סדר יום"
+          },
           "verify": {
             "title": "אימות לוח הזמנים",
             "verifying": "מאמת את לוח הזמנים...",
