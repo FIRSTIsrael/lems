@@ -81,6 +81,7 @@ export function VolunteerUsersSection() {
             startIcon={<DownloadIcon />}
             onClick={handleDownloadPasswords}
             size="large"
+            disabled={isNew || saving}
             sx={{ flexShrink: 0 }}
           >
             {t('download-passwords')}
