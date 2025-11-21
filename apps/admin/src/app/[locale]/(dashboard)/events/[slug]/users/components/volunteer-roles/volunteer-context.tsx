@@ -181,6 +181,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
 
       if (result.ok) {
         await mutate(`/admin/events/season/${event.seasonId}/summary`);
+        setIsLoadedFromDatabase(true);
         console.log('Volunteer slots saved successfully');
       } else {
         console.error('Failed to save volunteer slots:', result.status, result.error);
