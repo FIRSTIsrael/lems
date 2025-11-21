@@ -19,7 +19,7 @@ export const CalendarColumn: React.FC<CalendarColumnProps> = ({ name, handleDrag
   const columnBlocks = blocks[name];
 
   return (
-    <Stack width="50%">
+    <Stack width="33.33%">
       <Box
         sx={{
           height: HEADER_HEIGHT,
