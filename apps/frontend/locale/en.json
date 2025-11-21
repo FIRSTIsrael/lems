@@ -67,6 +67,7 @@
     },
     "pit-admin": {
       "page-title": "Team Registration",
+      "error": "Failed to mark team as arrived",
       "stats": {
         "total-teams": "Total Teams",
         "arrived": "Arrived",
@@ -83,7 +84,6 @@
         "submitting": "Processing...",
         "no-options": "All teams have arrived",
         "all-arrived-message": "All teams have arrived",
-        "error": "Failed to mark team as arrived",
         "team": "Team"
       }
     },
