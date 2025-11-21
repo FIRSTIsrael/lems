@@ -70,7 +70,7 @@ export interface VolunteerProviderProps {
 
 export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }) => {
   const event = useEvent();
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
   const { getRole } = useRoleTranslations();
 
   const [isLoadedFromDatabase, setIsLoadedFromDatabase] = useState(false);
@@ -101,7 +101,7 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       initialized.current = true;
 
       const hasAllMandatoryRoles = divisions.every(division =>
-        EDITABLE_MANDATORY_ROLES.every(role =>  transformedSlots.some(s => s.role === role && s.divisions.includes(division.id)))
+        EDITABLE_MANDATORY_ROLES.every(role => transformedSlots.some(s => s.role === role && s.divisions.includes(division.id)))
       );
 
       setIsLoadedFromDatabase(hasAllMandatoryRoles);
@@ -125,13 +125,13 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
         if (!hasRoleInDivision) {
           const errorMessage =
             divisions.length === 1
-              ? t('validation.missingMandatoryRoleSingle', {
-                  role: getRole(role)
-                })
-              : t('validation.missingMandatoryRole', {
-                  role: getRole(role),
-                  division: division.name
-                });
+              ? t('validation.missing-mandatory-role-single', {
+                role: getRole(role)
+              })
+              : t('validation.missing-mandatory-role', {
+                role: getRole(role),
+                division: division.name
+              });
 
           errors.push(errorMessage);
         }

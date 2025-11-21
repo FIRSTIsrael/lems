@@ -5,58 +5,51 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { DivisionScoreboardEntry, Team } from '@lems/types/api/portal';
+import { ScoreboardEntry } from '@lems/types/api/portal';
 
 interface DesktopScoreboardProps {
-  sortedData: DivisionScoreboardEntry[];
-  teams: Team[];
+  sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
 }
 
 export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
   sortedData,
-  teams,
   matchesPerTeam,
   eventSlug
 }) => {
   const t = useTranslations('pages.event');
 
-  const columns: GridColDef<DivisionScoreboardEntry>[] = [
+  const columns: GridColDef<ScoreboardEntry>[] = [
     {
       field: 'rank',
       headerName: t('scoreboard.rank'),
-      width: 75,
+      width: 90,
       sortable: false,
       valueGetter: (_, row) => {
         return row.robotGameRank ?? '-';
       }
     },
     {
-      field: 'teamName',
+      field: 'team',
       headerName: t('team'),
       width: 225,
       sortable: false,
       renderCell: params => {
-        const team = teams.find(t => t.id === params.row.teamId);
-        if (!team) {
-          return <Typography color="text.secondary">-</Typography>;
-        }
         return (
           <Typography
             component={Link}
-            href={`/event/${eventSlug}/team/${team.number}`}
+            href={`/event/${eventSlug}/team/${params.row.team.slug}`}
             sx={{
               textDecoration: 'none',
               color: 'text.primary',
               '&:hover': {
                 textDecoration: 'underline',
                 color: 'primary.main'
-              },
-              fontWeight: 500
+              }
             }}
           >
-            {`${team.name} #${team.number}`}
+            {`${params.row.team.name} #${params.row.team.number}`}
           </Typography>
         );
       }
@@ -73,7 +66,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: 100,
       sortable: false,
-      valueGetter: (_: never, row: DivisionScoreboardEntry) => row.scores?.[index] || '-'
+      valueGetter: (_: never, row: ScoreboardEntry) => row.scores?.[index] || '-'
     }))
   ];
 
@@ -83,7 +76,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
         density="compact"
         rows={sortedData}
         columns={columns}
-        getRowId={row => row.teamId}
+        getRowId={row => row.team.id}
         slots={{
           noRowsOverlay: () => (
             <Box display="flex" alignItems="center" justifyContent="center" height="100%">
@@ -93,7 +86,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
         }}
         initialState={{
           sorting: {
-            sortModel: [{ field: 'maxScore', sort: 'desc' }]
+            sortModel: [{ field: 'rank', sort: 'desc' }]
           },
           pagination: {
             paginationModel: {

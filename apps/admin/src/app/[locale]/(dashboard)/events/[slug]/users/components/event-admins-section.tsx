@@ -23,7 +23,7 @@ import { useSession } from '../../../../components/session-context';
 export function EventAdminsSection() {
   const event = useEvent();
   const { user } = useSession();
-  const t = useTranslations('pages.events.users.sections.eventAdmins');
+  const t = useTranslations('pages.events.users.sections.event-admins');
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -62,13 +62,13 @@ export function EventAdminsSection() {
       </Typography>
 
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">{t('currentAdmins')}</Typography>
+        <Typography variant="h6">{t('current-admins')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
-          {t('assignAdmins')}
+          {t('assign-admins')}
         </Button>
       </Stack>
 
-      {eventAdmins.length === 0 && <Alert severity="info">{t('noAdmins')}</Alert>}
+      {eventAdmins.length === 0 && <Alert severity="info">{t('no-admins')}</Alert>}
 
       <Stack spacing={2}>
         {eventAdmins.map(admin => (
@@ -87,7 +87,7 @@ export function EventAdminsSection() {
                   color="error"
                   onClick={() => handleRemoveAdmin(admin.id)}
                   disabled={admin.id === user.id}
-                  aria-label={t('removeAdmin')}
+                  aria-label={t('remove-admin')}
                 >
                   <DeleteIcon />
                 </IconButton>

@@ -43,7 +43,7 @@ class SchedulerService:
         """Create a DataFrame for the session schedule. Teams are assigned randomly."""
 
         columns = ["start_time", "end_time"] + [str(room.id) for room in self.rooms]
-        teams = {team.number for team in self.teams}
+        teams = {team.slug for team in self.teams}
 
         rows = []
         for session in self.sessions:
@@ -143,7 +143,7 @@ class SchedulerService:
                 break
 
     def _did_team_play(
-        self, team: int, stage: Literal["practice", "ranking"], round_num: int
+        self, team: str, stage: Literal["practice", "ranking"], round_num: int
     ) -> bool:
         """Check if a team has played in a specific round."""
 
@@ -156,7 +156,7 @@ class SchedulerService:
         return team in teams_in_round
 
     def _did_team_reach_limit_on_table(
-        self, team: int, table_id: str, stage: Literal["practice", "ranking"], limit=1
+        self, team: str, table_id: str, stage: Literal["practice", "ranking"], limit=1
     ) -> bool:
         """Check if a team has played on a specific table in a specific stage.
         By default, this checks for 1 occurance, however a limit can be specified.
@@ -185,7 +185,7 @@ class SchedulerService:
         return table_columns[len(table_columns) // 2 :]
 
     def _get_last_event_time(
-        self, team: int, current_time: pd.Timestamp
+        self, team: str, current_time: pd.Timestamp
     ) -> pd.Timestamp | None:
         """Get the last event time (match or judging) for a team before the current time.
         If no events are found, return None."""
@@ -220,7 +220,7 @@ class SchedulerService:
         ].nunique()
         max_times_team_can_play_on_table = math.ceil(len(self.tables) / ranking_rounds)
 
-        available_teams = set(team.number for team in self.teams)
+        available_teams = {team.slug for team in self.teams}
         sorted_matches = self.match_schedule.sort_values(["start_time", "number"])
 
         for match_num, match in sorted_matches.iterrows():
@@ -339,8 +339,8 @@ class SchedulerService:
                     )
 
             # Check if any team didn't play
-            all_team_numbers = {team.number for team in self.teams}
-            missing_teams = len(set(all_team_numbers)) - len(teams_in_round)
+            all_team_slugs = {team.slug for team in self.teams}
+            missing_teams = len(set(all_team_slugs)) - len(teams_in_round)
             if missing_teams > 0:
                 raise SchedulerError(
                     f"Teams {missing_teams} did not play in round {round_num}"
@@ -355,11 +355,11 @@ class SchedulerService:
             team_events = []
 
             match_events = self.match_schedule[
-                self.match_schedule.isin([team.number]).any(axis=1)
+                self.match_schedule.isin([team.slug]).any(axis=1)
             ][["start_time", "end_time"]].values.tolist()
 
             session_events = self.session_schedule[
-                self.session_schedule.isin([team.number]).any(axis=1)
+                self.session_schedule.isin([team.slug]).any(axis=1)
             ][["start_time", "end_time"]].values.tolist()
 
             team_events = sorted(
@@ -375,7 +375,7 @@ class SchedulerService:
                     ).total_seconds()
                     for i in range(len(team_events) - 1)
                 ]
-                team_intervals[team.number] = time_diffs
+                team_intervals[team.slug] = time_diffs
 
         team_averages = [
             sum(diffs) / len(diffs) for diffs in team_intervals.values() if diffs

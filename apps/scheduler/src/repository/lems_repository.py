@@ -3,7 +3,6 @@ import logging
 import requests
 import jwt
 import pandas as pd
-from fastapi.exceptions import HTTPException
 from models.errors import SchedulerError
 from models.lems import Team as TeamModel, Location as LocationModel
 
@@ -32,7 +31,7 @@ class LemsRepository:
 
         self.api_base = f"{self.base_url}/scheduler/divisions/{division_id}"
 
-        self._teams_by_number = {}
+        self._teams_by_slug = {}
         self._load_teams_cache()
 
         logger.info(f"🔗 Connecting to LEMS API at {self.base_url}")
@@ -63,15 +62,15 @@ class LemsRepository:
             raise
 
     def _load_teams_cache(self):
-        """Load all teams into a cache for efficient lookups by team number."""
+        """Load all teams into a cache for efficient lookups by team slug."""
         logger.debug("Loading teams cache for efficient lookups")
         try:
             teams = self.get_teams()
-            self._teams_by_number = {team.number: team.id for team in teams}
-            logger.debug(f"Cached {len(self._teams_by_number)} teams")
+            self._teams_by_slug = {team.slug: team.id for team in teams}
+            logger.debug(f"Cached {len(self._teams_by_slug)} teams")
         except Exception as e:
             logger.error(f"Failed to load teams cache: {e}")
-            self._teams_by_number = {}
+            self._teams_by_slug = {}
 
     def get_teams(self) -> list[TeamModel]:
         logger.debug(f"Fetching teams for division {self.division_id}")
@@ -79,7 +78,15 @@ class LemsRepository:
         response = self._make_request("GET", "/teams")
         teams_data = response.json()
 
-        teams = [TeamModel(team["id"], team["number"]) for team in teams_data]
+        teams = [
+            TeamModel(
+                team["id"],
+                team["number"],
+                team["region"],
+                team["slug"],
+            )
+            for team in teams_data
+        ]
         logger.debug(f"Retrieved {len(teams)} teams")
         return teams
 
@@ -103,11 +110,11 @@ class LemsRepository:
         logger.debug(f"Retrieved {len(tables)} robot game tables")
         return tables
 
-    def get_lems_team_id(self, team_number: int) -> str | None:
-        """Get team ID by team number using cached data."""
-        if team_number is None:
+    def get_lems_team_id(self, team_slug: str) -> str | None:
+        """Get team ID by team slug using cached data."""
+        if team_slug is None:
             return None
-        return self._teams_by_number.get(team_number)
+        return self._teams_by_slug.get(team_slug)
 
     def insert_sessions(self, session_schedule: pd.DataFrame):
         logger.debug("Submitting judging sessions to API")
@@ -118,9 +125,9 @@ class LemsRepository:
         for index, row in session_schedule.iterrows():
             scheduled_time = row["start_time"]
 
-            for room_id, _team_number in row[len(ignore_columns) :].items():
-                team_number = int(_team_number) if pd.notna(_team_number) else None
-                team_id = self.get_lems_team_id(team_number) if team_number else None
+            for room_id, _team_slug in row[len(ignore_columns) :].items():
+                team_slug = str(_team_slug) if pd.notna(_team_slug) else None
+                team_id = self.get_lems_team_id(team_slug) if team_slug else None
 
                 session_data = {
                     "division_id": self.division_id,
@@ -164,9 +171,11 @@ class LemsRepository:
                 "tables": {},
             }
 
-            for table_id, _team_number in row[len(ignore_columns) :].items():
-                team_number = int(_team_number) if pd.notna(_team_number) else None
-                team_id = self.get_lems_team_id(team_number) if team_number else None
+            for table_id, _team_slug in row[len(ignore_columns) :].items():
+                team_slug = str(_team_slug) if pd.notna(_team_slug) else None
+                team_id = self.get_lems_team_id(team_slug) if team_slug else None
+                # Extract team number from slug (format: "region-number")
+                team_number = int(team_slug.split('-')[1]) if team_slug and '-' in team_slug else None
 
                 match_data["tables"][table_id] = {
                     "team_id": team_id,

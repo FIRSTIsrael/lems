@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import useSWR from 'swr';
 import {
   TableContainer,
   Table,
@@ -23,7 +24,7 @@ import {
 import NextLink from 'next/link';
 import { RobotGameMatch } from '@lems/types/api/portal';
 import { useMatchStageTranslations } from '@lems/localization';
-import { useDivisionData } from '../division-data-context';
+import { useDivision } from '../division-data-context';
 
 export const FieldScheduleTab: React.FC = () => {
   const t = useTranslations('pages.event');
@@ -32,9 +33,19 @@ export const FieldScheduleTab: React.FC = () => {
   const params = useParams();
   const eventSlug = params.slug as string;
 
-  const { teams, tables, fieldSchedule } = useDivisionData();
+  const division = useDivision();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const { data: fieldSchedule } = useSWR<RobotGameMatch[]>(
+    `/portal/divisions/${division.id}/schedule/field`,
+    { suspense: true }
+  );
+
+  if (!fieldSchedule) {
+    return null; // Should be handled by suspense fallback
+  }
 
   // Group matches by round (stage + number)
   const groupedMatches = fieldSchedule.reduce(
@@ -51,6 +62,15 @@ export const FieldScheduleTab: React.FC = () => {
     },
     {} as Record<string, { stage: string; round: number; matches: RobotGameMatch[] }>
   );
+
+  // Extract unique tables from all matches
+  const tablesMap = new Map<string, { id: string; name: string }>();
+  fieldSchedule.forEach(match => {
+    match.participants.forEach(participant => {
+      tablesMap.set(participant.table.id, participant.table);
+    });
+  });
+  const tables = Array.from(tablesMap.values());
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -128,21 +148,19 @@ export const FieldScheduleTab: React.FC = () => {
                         </Typography>
                       </TableCell>
                       {tables.map(table => {
-                        const team = teams.find(
-                          team =>
-                            team.id === match.participants.find(p => p.tableId === table.id)?.teamId
-                        );
+                        const participant = match.participants.find(p => p.table.id === table.id);
+                        const team = participant?.team;
+
                         return (
                           <TableCell key={table.id} align="center">
                             {team ? (
                               <Tooltip title={team.name} arrow>
                                 <Link
                                   component={NextLink}
-                                  href={`/event/${eventSlug}/team/${team.number}`}
+                                  href={`/event/${eventSlug}/team/${team.slug}`}
                                   sx={{
                                     color: 'black',
                                     textDecoration: 'none',
-                                    fontWeight: 500,
                                     fontSize: isMobile ? '0.75rem' : '1rem',
                                     '&:hover': {
                                       textDecoration: 'underline',

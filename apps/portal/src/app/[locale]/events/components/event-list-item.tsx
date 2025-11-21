@@ -12,6 +12,7 @@ import {
   ArrowBack
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { Flag } from '@lems/shared';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from '../../components/homepage/live-icon';
 
@@ -29,15 +30,18 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       case 'active':
         return <LiveIcon />;
       case 'past':
-        return (
-          <Chip
-            label={tEvents('status-completed')}
-            color="primary"
-            size="small"
-            variant="outlined"
-            sx={{ minWidth: 80 }}
-          />
-        );
+        if (event.completed) {
+          return (
+            <Chip
+              label={tEvents('status-completed')}
+              color="primary"
+              size="small"
+              variant="outlined"
+              sx={{ minWidth: 80 }}
+            />
+          );
+        }
+        return null;
       default:
         return (
           <Chip
@@ -48,8 +52,8 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
             sx={{ minWidth: 80 }}
           />
         );
-    }
-  };
+    };
+  }
 
   const getHoverStyles = () => {
     switch (variant) {
@@ -112,6 +116,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               <Stack direction="row" alignItems="center" spacing={1}>
                 <LocationIcon fontSize="small" />
                 <Typography variant="body2">{event.location}</Typography>
+                <Flag region={event.region} size={18} />
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -135,7 +140,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
           >
             {variant === 'active'
               ? tEvents('view-event')
-              : variant === 'past'
+              : event.completed
                 ? tEvents('view-results')
                 : tEvents('view-details')}
           </Button>

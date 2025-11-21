@@ -134,9 +134,9 @@ const ImportForm: React.FC<{ onSuccess: (result: ImportResult) => void }> = ({ o
         </Typography>
         <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'monospace' }}>
           <Typography variant="body2" component="pre" dir="ltr" sx={{ whiteSpace: 'pre-wrap' }}>
-            {`1234,Iron Patriots,Lincoln Elementary,New York
-5678,Tech Titans,Washington High School,Seattle
-9999,Code Crushers,Innovation Academy,Austin`}
+            {`1234,Iron Patriots,Lincoln Elementary,New York,US
+5678,Tech Titans,Washington High School,Seattle,US
+9999,Code Crushers,Innovation Academy,Austin,US`}
           </Typography>
         </Paper>
       </Paper>

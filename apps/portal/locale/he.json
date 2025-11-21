@@ -54,6 +54,9 @@
         "resource-map-description": "מצאו משאבים ומדריכים שימושיים"
       }
     },
+    "teams": {
+      "title": "קבוצות <i>FIRST</i> LEGO League Challenge"
+    },
     "events": {
       "title": "אירועי <i>FIRST</i> LEGO League Challenge",
       "select-season": "בחרו עונה",
@@ -81,7 +84,7 @@
     },
     "team": {
       "not-found": {
-        "title": "קבוצה #{number} לא נמצאה",
+        "title": "קבוצה לא נמצאה",
         "description": "הקבוצה שאתה מחפש לא קיימת במאגר הנתונים שלנו.",
         "back-to-teams": "חזרה לקבוצות"
       },
@@ -120,9 +123,15 @@
       "team": "קבוצה",
       "division": "בית",
       "not-found": {
-        "title": "אירוע לא נמצא",
-        "description": "האירוע שאתה מחפש לא קיים במאגר הנתונים שלנו.",
+        "title": "האירוע לא נמצא",
+        "description": "האירוע שאתה מחפש לא קיים במסד הנתונים שלנו.",
         "back-to-events": "חזרה לאירועים"
+      },
+      "server-error": {
+        "title": "משהו השתבש",
+        "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת האירוע. אנא נסה שוב מאוחר יותר או צור קשר עם התמיכה אם הבעיה נמשכת.",
+        "back-to-events": "חזרה לאירועים",
+        "retry": "ניסיון חוזר"
       },
       "quick-links": {
         "title": "קישורים מהירים",
@@ -157,13 +166,20 @@
         "place": "מקום {place}",
         "no-data": "טרם הוכרזו פרסים"
       },
-      "division-teams": "קבוצות {divisionName}"
+      "division-teams": "קבוצות {divisionName}",
+      "region": "מדינה"
     },
     "team-in-event": {
       "not-found": {
         "title": "קבוצה #{number} לא נמצאה",
         "description": "הקבוצה שאתה מחפש לא קיימת באירוע זה.",
         "back-to-event": "חזרה לאירוע"
+      },
+      "server-error": {
+        "title": "משהו השתבש",
+        "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת הקבוצה. אנא נסה שוב מאוחר יותר או צור קשר עם התמיכה אם הבעיה נמשכת.",
+        "back-to-event": "חזרה לאירוע",
+        "retry": "ניסיון חוזר"
       },
       "header": {
         "back-to-event": "חזרה לאירוע",
@@ -217,11 +233,10 @@
   "layouts": {
     "main": {
       "app-bar": {
+        "teams": "קבוצות",
         "events": "אירועים",
         "scorer": "מחשבון ניקוד",
-        "field-timer": "טיימר מקצה זירה",
-        "rubrics": "מחווני שיפוט",
-        "judging-timer": "טיימר מפגש שיפוט"
+        "rubrics": "מחווני שיפוט"
       }
     }
   }

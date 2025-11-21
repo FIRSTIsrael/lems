@@ -1,7 +1,14 @@
 import { z } from 'zod';
-import { PortalTeamsResponseSchema } from './teams';
 
-export const PortalDivisionAwardSchema = z.object({
+export const PortalDivisionResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  color: z.string().nullable()
+});
+
+export type Division = z.infer<typeof PortalDivisionResponseSchema>;
+
+export const PortalAwardResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   type: z.enum(['PERSONAL', 'TEAM']),
@@ -9,19 +16,24 @@ export const PortalDivisionAwardSchema = z.object({
   winner: z.string().optional()
 });
 
-export type Award = z.infer<typeof PortalDivisionAwardSchema>;
+const Team = z.object({
+  id: z.string(),
+  name: z.string(),
+  number: z.number(),
+  affiliation: z.string(),
+  city: z.string(),
+  region: z.string(),
+  slug: z.string()
+});
 
-export const PortalDivisionAwardsSchema = z.array(PortalDivisionAwardSchema);
-
-// Field
-export const PortalDivisionTableSchema = z.object({
+const Location = z.object({
   id: z.string(),
   name: z.string()
 });
 
-export type RobotGameTable = z.infer<typeof PortalDivisionTableSchema>;
+export type Award = z.infer<typeof PortalAwardResponseSchema>;
 
-export const PortalDivisionTablesSchema = z.array(PortalDivisionTableSchema);
+export const PortalAwardsResponseSchema = z.array(PortalAwardResponseSchema);
 
 export const PortalDivisionRobotGameMatchSchema = z.object({
   id: z.string(),
@@ -31,8 +43,8 @@ export const PortalDivisionRobotGameMatchSchema = z.object({
   scheduledTime: z.coerce.date(),
   participants: z.array(
     z.object({
-      teamId: z.string().nullable(),
-      tableId: z.string()
+      team: Team.nullable(),
+      table: Location
     })
   )
 });
@@ -41,21 +53,11 @@ export type RobotGameMatch = z.infer<typeof PortalDivisionRobotGameMatchSchema>;
 
 export const PortalDivisionFieldScheduleSchema = z.array(PortalDivisionRobotGameMatchSchema);
 
-// Judging
-export const PortalDivisionRoomSchema = z.object({
-  id: z.string(),
-  name: z.string()
-});
-
-export type JudgingRoom = z.infer<typeof PortalDivisionRoomSchema>;
-
-export const PortalDivisionRoomsSchema = z.array(PortalDivisionRoomSchema);
-
 export const PortalDivisionJudgingSessionSchema = z.object({
   id: z.string(),
   number: z.number(),
-  teamId: z.string(),
-  roomId: z.string(),
+  team: Team.nullable(),
+  room: Location,
   scheduledTime: z.coerce.date()
 });
 
@@ -63,28 +65,13 @@ export type JudgingSession = z.infer<typeof PortalDivisionJudgingSessionSchema>;
 
 export const PortalDivisionJudgingScheduleSchema = z.array(PortalDivisionJudgingSessionSchema);
 
-export const PortalDivisionScoreboardEntrySchema = z.object({
-  teamId: z.string(),
+export const PortalScoreboardEntrySchema = z.object({
+  team: Team,
   robotGameRank: z.number().nullable(),
   maxScore: z.number().nullable(),
   scores: z.array(z.number()).nullable()
 });
 
-export type DivisionScoreboardEntry = z.infer<typeof PortalDivisionScoreboardEntrySchema>;
+export type ScoreboardEntry = z.infer<typeof PortalScoreboardEntrySchema>;
 
-export const PortalDivisionScoreboardSchema = z.array(PortalDivisionScoreboardEntrySchema);
-
-export const PortalDivisionDataResponseSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  color: z.string(),
-  teams: PortalTeamsResponseSchema,
-  awards: PortalDivisionAwardsSchema,
-  fieldSchedule: PortalDivisionFieldScheduleSchema,
-  judgingSchedule: PortalDivisionJudgingScheduleSchema,
-  rooms: PortalDivisionRoomsSchema,
-  tables: PortalDivisionTablesSchema,
-  scoreboard: PortalDivisionScoreboardSchema
-});
-
-export type DivisionData = z.infer<typeof PortalDivisionDataResponseSchema>;
+export const PortalScoreboardSchema = z.array(PortalScoreboardEntrySchema);

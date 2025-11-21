@@ -1,5 +1,5 @@
 import { Team as DbTeam } from '@lems/database';
-import { Team, TeamSummary } from '@lems/types/api/portal';
+import { Season, Team, TeamSummary } from '@lems/types/api/portal';
 
 export const makePortalTeamResponse = (team: DbTeam): Team => ({
   id: team.id,
@@ -8,12 +8,14 @@ export const makePortalTeamResponse = (team: DbTeam): Team => ({
   affiliation: team.affiliation,
   city: team.city,
   logoUrl: team.logo_url,
-  coordinates: team.coordinates
+  coordinates: team.coordinates,
+  region: team.region,
+  slug: `${team.region}-${team.number}`
 });
 
 export const makePortalTeamSummaryResponse = (
   team: DbTeam,
-  lastCompetedSeason: string | null
+  lastCompetedSeason: Season | null
 ): TeamSummary => ({
   ...makePortalTeamResponse(team),
   lastCompetedSeason

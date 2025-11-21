@@ -4,29 +4,38 @@ An event represents a FIRST LEGO League competition
 type Event {
   "Unique identifier for the event"
   id: String!
-  
+
   "URL-friendly slug for the event (e.g., 'fll-2024-israel')"
   slug: String!
-  
+
   "Display name of the event"
   name: String!
-  
+
   "ISO 8601 datetime when the event starts"
   startDate: String!
-  
+
   "ISO 8601 datetime when the event ends"
   endDate: String!
-  
+
+  "Region where the event is held"
+  region: String!
+
+  "Location where the event is held"
+  location: String!
+
   "Whether all divisions have awards, users, and schedules configured"
   isFullySetUp: Boolean!
-  
+
   "All divisions participating in this event"
   divisions: [Division!]!
-  
-  "Volunteers registered for this event, optionally filtered by role"
+
+  "Volunteers registered for this event, optionally filtered by role or ID"
   volunteers(
     "Filter volunteers by their role (e.g., 'judge', 'referee')"
     role: String
+
+    "Filter volunteers by their unique identifier"
+    id: String
   ): [Volunteer!]!
 }
 
@@ -37,16 +46,16 @@ extend type Query {
   events(
     "Filter by whether the event is fully configured"
     fullySetUp: Boolean
-    
+
     "Filter events that start on or after this date (ISO 8601)"
     startAfter: String
-    
+
     "Filter events that start on or before this date (ISO 8601)"
     startBefore: String
-    
+
     "Filter events that end on or after this date (ISO 8601)"
     endAfter: String
-    
+
     "Filter events that end on or before this date (ISO 8601)"
     endBefore: String
   ): [Event!]!
@@ -57,7 +66,7 @@ extend type Query {
   event(
     "Event ID to retrieve"
     id: String
-    
+
     "Event slug to retrieve (alternative to ID)"
     slug: String
   ): Event

@@ -7,6 +7,7 @@ export interface TeamGraphQL {
   name: string;
   affiliation: string;
   city: string;
+  region: string;
   location: string | null;
   divisionId: string;
 }
@@ -55,6 +56,7 @@ function buildResult(divisionId: string) {
     name: string;
     affiliation: string;
     city: string;
+    region: string;
     coordinates: string | null;
   }) => ({
     id: team.id,
@@ -62,6 +64,7 @@ function buildResult(divisionId: string) {
     name: team.name,
     affiliation: team.affiliation,
     city: team.city,
+    region: team.region,
     location: team.coordinates,
     divisionId
   });

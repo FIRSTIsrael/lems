@@ -6,8 +6,8 @@ import { useSearchParams } from 'next/navigation';
 interface EventContextType {
   eventId: string;
   eventName: string;
-  currentDivision: { id: string; name: string };
-  availableDivisions: { id: string; name: string }[];
+  currentDivision: { id: string; name: string; color: string };
+  availableDivisions: { id: string; name: string; color: string }[];
   canSwitchDivisions: boolean;
 }
 
@@ -22,12 +22,12 @@ export function EventProvider({
   children: React.ReactNode;
   eventId: string;
   eventName: string;
-  divisions: { id: string; name: string }[];
+  divisions: { id: string; name: string; color: string }[];
 }) {
   const searchParams = useSearchParams();
   const divisionId = searchParams.get('division');
 
-  let currentDivision: { id: string; name: string };
+  let currentDivision: { id: string; name: string; color: string };
 
   if (divisionId) {
     const selectedDivision = divisions.find(d => d.id === divisionId);

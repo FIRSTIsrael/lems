@@ -4,20 +4,19 @@ import { useParams } from 'next/navigation';
 import { Typography, Box, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import NextLink from 'next/link';
-import { Award } from '@lems/types/api/portal';
+import { Award, Team } from '@lems/types/api/portal';
 import { useAwardTranslations } from '@lems/localization';
-import { useDivisionData } from '../../division-data-context';
 
 interface AwardRowProps {
   awardName: string;
   awardList: Award[];
+  teams: Team[];
 }
 
-export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList }) => {
+export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams }) => {
   const params = useParams();
   const eventSlug = params.slug as string;
 
-  const { teams } = useDivisionData();
   const { getName } = useAwardTranslations();
 
   return (
@@ -70,7 +69,7 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList }) => {
               {team ? (
                 <Typography
                   component={NextLink}
-                  href={`/event/${eventSlug}/team/${team.number}`}
+                  href={`/event/${eventSlug}/team/${team.slug}`}
                   variant="body1"
                   fontWeight={600}
                   sx={{

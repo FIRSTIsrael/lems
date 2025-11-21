@@ -3,7 +3,7 @@ import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
 
-type TeamSelectorType = { type: 'id'; value: string } | { type: 'number'; value: number };
+type TeamSelectorType = { type: 'id'; value: string } | { type: 'slug'; value: string };
 
 class TeamSelector {
   constructor(
@@ -14,7 +14,16 @@ class TeamSelector {
 
   private getTeamQuery() {
     const query = this.db.selectFrom('teams').selectAll('teams');
-    return query.where(this.selector.type, '=', this.selector.value);
+
+    if (this.selector.type === 'id') {
+      return query.where('id', '=', this.selector.value);
+    } else if (this.selector.type === 'slug') {
+      const [region, numberStr] = this.selector.value.split('-');
+      const number = parseInt(numberStr);
+      return query.where('number', '=', number).where('region', '=', region);
+    }
+
+    return query;
   }
 
   async get(): Promise<Team | null> {
@@ -23,10 +32,13 @@ class TeamSelector {
   }
 
   async updateName(name: string): Promise<Team | null> {
+    const team = await this.getTeamQuery().executeTakeFirst();
+    if (!team) return null;
+
     const updatedTeam = await this.db
       .updateTable('teams')
       .set({ name })
-      .where(this.selector.type, '=', this.selector.value)
+      .where('id', '=', team.id)
       .returningAll()
       .executeTakeFirst();
 
@@ -47,7 +59,7 @@ class TeamSelector {
     const updatedTeam = await this.db
       .updateTable('teams')
       .set({ logo_url: logoUrl })
-      .where(this.selector.type, '=', this.selector.value)
+      .where('id', '=', team.id)
       .returningAll()
       .executeTakeFirst();
 
@@ -55,10 +67,10 @@ class TeamSelector {
   }
 
   async delete(): Promise<boolean | null> {
-    const result = await this.db
-      .deleteFrom('teams')
-      .where(this.selector.type, '=', this.selector.value)
-      .execute();
+    const team = await this.getTeamQuery().executeTakeFirst();
+    if (!team) return null;
+
+    const result = await this.db.deleteFrom('teams').where('id', '=', team.id).execute();
     return result.length > 0;
   }
 
@@ -74,7 +86,7 @@ class TeamSelector {
     const updatedTeam = await this.db
       .updateTable('teams')
       .set(updateData)
-      .where(this.selector.type, '=', this.selector.value)
+      .where('id', '=', team.id)
       .returningAll()
       .executeTakeFirst();
     return updatedTeam || null;
@@ -141,6 +153,7 @@ class TeamsSelector {
         'teams.id',
         'teams.name',
         'teams.number',
+        'teams.region',
         'teams.affiliation',
         'teams.city',
         'teams.coordinates',
@@ -172,6 +185,8 @@ class TeamsSelector {
 }
 
 export class TeamsRepository {
+  private readonly TEAMS_PER_PAGE = 200;
+
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
     private space: ObjectStorage
@@ -181,11 +196,8 @@ export class TeamsRepository {
     return new TeamSelector(this.db, this.space, { type: 'id', value: id });
   }
 
-  byNumber(number: number): TeamSelector {
-    return new TeamSelector(this.db, this.space, {
-      type: 'number',
-      value: number
-    });
+  bySlug(slug: string): TeamSelector {
+    return new TeamSelector(this.db, this.space, { type: 'slug', value: slug });
   }
 
   byDivisionId(divisionId: string): TeamsSelector {
@@ -199,6 +211,22 @@ export class TeamsRepository {
       .orderBy('number', 'asc')
       .execute();
     return teams;
+  }
+
+  async getPage(page: number): Promise<Team[]> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .selectAll('teams')
+      .orderBy('number', 'asc')
+      .offset((page - 1) * this.TEAMS_PER_PAGE)
+      .limit(this.TEAMS_PER_PAGE)
+      .execute();
+    return teams;
+  }
+
+  async numberOfPages(): Promise<number> {
+    const count = await this.db.selectFrom('teams').select('id').execute();
+    return Math.ceil(count.length / this.TEAMS_PER_PAGE);
   }
 
   async search(searchTerm: string, limit: number): Promise<Team[]> {
@@ -278,20 +306,36 @@ export class TeamsRepository {
       return { created: [], updated: [] };
     }
 
-    const teamNumbers = teams.map(team => team.number).filter(num => num !== undefined) as number[];
+    const teamsWithRegion = teams.filter(
+      team => team.number !== undefined && team.region !== undefined
+    );
+
+    if (teamsWithRegion.length === 0) {
+      return { created: [], updated: [] };
+    }
 
     const existingTeams = await this.db
       .selectFrom('teams')
       .selectAll()
-      .where('number', 'in', teamNumbers)
+      .where(eb => {
+        const conditions = teamsWithRegion.map(team =>
+          eb.and([
+            eb('number', '=', team.number as number),
+            eb('region', '=', team.region as string)
+          ])
+        );
+        return eb.or(conditions);
+      })
       .execute();
 
-    const existingTeamNumbers = new Set(existingTeams.map(team => team.number));
+    const existingTeamSet = new Set(existingTeams.map(team => `${team.number}-${team.region}`));
 
-    const teamsToCreate = teams.filter(
-      team => team.number && !existingTeamNumbers.has(team.number)
+    const teamsToCreate = teamsWithRegion.filter(
+      team => !existingTeamSet.has(`${team.number}-${team.region}`)
     );
-    const teamsToUpdate = teams.filter(team => team.number && existingTeamNumbers.has(team.number));
+    const teamsToUpdate = teamsWithRegion.filter(team =>
+      existingTeamSet.has(`${team.number}-${team.region}`)
+    );
 
     const created: Team[] = [];
     const updated: Team[] = [];
@@ -306,7 +350,7 @@ export class TeamsRepository {
     }
 
     for (const teamData of teamsToUpdate) {
-      if (teamData.number === undefined) continue;
+      if (teamData.number === undefined || teamData.region === undefined) continue;
 
       const updateData: Partial<InsertableTeam> = {};
 
@@ -321,6 +365,7 @@ export class TeamsRepository {
           .updateTable('teams')
           .set(updateData)
           .where('number', '=', teamData.number)
+          .where('region', '=', teamData.region)
           .returningAll()
           .executeTakeFirst();
 

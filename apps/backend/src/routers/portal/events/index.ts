@@ -31,6 +31,8 @@ router.get('/', async (req: Request, res: Response) => {
       season_id: event.season_id,
       team_count: registeredTeams.length,
       visible: settings.visible,
+      published: settings.published,
+      completed: settings.completed,
       is_fully_set_up: false,
       assigned_admin_ids: []
     };

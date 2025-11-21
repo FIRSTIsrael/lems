@@ -66,11 +66,11 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ open, onClose, u
     const errors: ProfileFormErrors = {};
 
     if (!values.firstName?.trim()) {
-      errors.firstName = 'firstName-required';
+      errors.firstName = 'first-name-required';
     }
 
     if (!values.lastName?.trim()) {
-      errors.lastName = 'lastName-required';
+      errors.lastName = 'last-name-required';
     }
 
     return errors;
@@ -178,7 +178,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ open, onClose, u
                     <Stack direction="row" spacing={2}>
                       <FormikTextField
                         name="firstName"
-                        label={t('profile.fields.firstName.label')}
+                        label={t('profile.fields.first-name.label')}
                         error={touched.firstName && !!errors.firstName}
                         helperText={
                           touched.firstName && errors.firstName
@@ -190,7 +190,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ open, onClose, u
                       />
                       <FormikTextField
                         name="lastName"
-                        label={t('profile.fields.lastName.label')}
+                        label={t('profile.fields.last-name.label')}
                         error={touched.lastName && !!errors.lastName}
                         helperText={
                           touched.lastName && errors.lastName
