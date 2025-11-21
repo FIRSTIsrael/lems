@@ -30,15 +30,18 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
       case 'active':
         return <LiveIcon />;
       case 'past':
-        return (
-          <Chip
-            label={tEvents('status-completed')}
-            color="primary"
-            size="small"
-            variant="outlined"
-            sx={{ minWidth: 80 }}
-          />
-        );
+        if (event.completed) {
+          return (
+            <Chip
+              label={tEvents('status-completed')}
+              color="primary"
+              size="small"
+              variant="outlined"
+              sx={{ minWidth: 80 }}
+            />
+          );
+        }
+        return null;
       default:
         return (
           <Chip
@@ -49,8 +52,8 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
             sx={{ minWidth: 80 }}
           />
         );
-    }
-  };
+    };
+  }
 
   const getHoverStyles = () => {
     switch (variant) {
@@ -137,7 +140,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
           >
             {variant === 'active'
               ? tEvents('view-event')
-              : variant === 'past'
+              : event.completed
                 ? tEvents('view-results')
                 : tEvents('view-details')}
           </Button>
