@@ -127,27 +127,27 @@ const CreationForm: React.FC<CreationFormProps> = ({ onSuccess }) => {
             <Stack spacing={3}>
               <Stack direction="row" spacing={2}>
                 <FormikTextField
-                  name="lastName"
-                  label={t('fields.last-name.label')}
-                  error={touched.lastName && !!errors.lastName}
+                  name="firstName"
+                  label={t('fields.first-name.label')}
+                  error={touched.firstName && !!errors.firstName}
                   helperText={
-                    touched.lastName && errors.lastName
-                      ? t(`errors.${errors.lastName}`)
+                    touched.firstName && errors.firstName
+                      ? t(`errors.${errors.firstName}`)
                       : undefined
                   }
-                  placeholder={t('fields.last-name.placeholder')}
+                  placeholder={t('fields.first-name.placeholder')}
                   fullWidth
                   disabled={isSubmitting}
                 />
 
                 <FormikTextField
                   name="lastName"
-                  label={t('fields.lastName.label')}
+                  label={t('fields.last-name.label')}
                   error={touched.lastName && !!errors.lastName}
                   helperText={
                     touched.lastName && errors.lastName ? t(`errors.${errors.lastName}`) : undefined
                   }
-                  placeholder={t('fields.lastName.placeholder')}
+                  placeholder={t('fields.last-name.placeholder')}
                   fullWidth
                   disabled={isSubmitting}
                 />
