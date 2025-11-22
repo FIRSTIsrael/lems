@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../database';
+import { Team as DbTeam } from '@lems/database';
 
 export interface RootTeamGraphQL {
   id: string;
@@ -10,6 +11,7 @@ export interface RootTeamGraphQL {
   location: string | null;
   region: string;
   slug: string;
+  logoUrl: string | null;
 }
 
 interface TeamsQueryArgs {
@@ -52,15 +54,7 @@ export const teamsResolver: GraphQLFieldResolver<
 /**
  * Maps database Team to GraphQL RootTeamGraphQL type.
  */
-function buildResult(team: {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-  city: string;
-  coordinates: string | null;
-  region: string;
-}): RootTeamGraphQL {
+function buildResult(team: DbTeam): RootTeamGraphQL {
   return {
     id: team.id,
     number: team.number,
@@ -69,6 +63,7 @@ function buildResult(team: {
     city: team.city,
     location: team.coordinates,
     region: team.region,
-    slug: `${team.region}-${team.number}`
+    slug: `${team.region}-${team.number}`,
+    logoUrl: team.logo_url
   };
 }

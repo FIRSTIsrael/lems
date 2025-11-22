@@ -95,6 +95,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
             city
             region
             slug
+            logoUrl
             arrived
             location
           }

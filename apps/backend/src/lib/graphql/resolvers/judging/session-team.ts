@@ -44,7 +44,8 @@ export const judgingSessionTeamResolver: GraphQLFieldResolver<
       region: team.region,
       slug,
       location: team.coordinates || undefined,
-      divisionId: session.divisionId
+      divisionId: session.divisionId,
+      logoUrl: team.logo_url
     };
   } catch (error) {
     console.error('Error fetching team for judging session:', session.teamId, error);

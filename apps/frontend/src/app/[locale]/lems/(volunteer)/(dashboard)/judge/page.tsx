@@ -46,8 +46,8 @@ export default function JudgePage() {
     subscriptions
   );
 
-  const sessions = data?.division?.judging.sessions || [];
-  const sessionInProgress = sessions.some(session => session.status === 'in-progress');
+  const sessions = data?.division?.judging.sessions ?? null;
+  const sessionInProgress = !!sessions?.some(session => session.status === 'in-progress');
 
   const handleStartSession = useCallback(
     async (sessionId: string) => {
@@ -67,8 +67,8 @@ export default function JudgePage() {
           <Box sx={{ mb: 2, color: 'warning.main', fontWeight: 'bold' }}>IN PROGRESS</Box>
         ) : (
           <RoomScheduleTable
-            sessions={sessions}
-            loading={loading}
+            sessions={sessions || []}
+            loading={loading || !sessions}
             onStartSession={handleStartSession}
           />
         )}

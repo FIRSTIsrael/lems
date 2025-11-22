@@ -23,7 +23,6 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
             height: 40,
             fontSize: '0.95rem',
             fontWeight: 700,
-            bgcolor: 'primary.main',
             color: 'white',
             objectFit: 'cover'
           }}
