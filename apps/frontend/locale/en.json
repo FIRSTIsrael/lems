@@ -102,10 +102,12 @@
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design"
-        },
-        "start-session-error": "Failed to start judging session"
+        }
       },
-      "error": "Failed to start judging session",
+      "error": {
+        "start": "Failed to start judging session",
+        "abort": "Failed to abort judging session"
+      },
       "timer": {
         "abort-session": "Abort Session",
         "minutes": "{count} minutes",

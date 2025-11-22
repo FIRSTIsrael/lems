@@ -102,10 +102,12 @@
           "core-values": "ערכי הליבה",
           "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
-        },
-        "start-session-error": "שגיאה בהתחלת מפגש השיפוט"
+        }
       },
-      "error": "שגיאה בהתחלת מפגש השיפוט",
+      "error": {
+        "start": "שגיאה בהתחלת מפגש השיפוט",
+        "abort": "שגיאה בביטול מפגש השיפוט"
+      },
       "timer": {
         "abort-session": "בטל מפגש",
         "minutes": "{count} דקות",

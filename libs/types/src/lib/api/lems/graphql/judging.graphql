@@ -85,6 +85,17 @@ type JudgingStartedEvent {
   startDelta: Int!
 }
 
+"""
+Represents an event when a judging session has aborted
+"""
+type JudgingAbortedEvent {
+  "Judging session identifier"
+  sessionId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
   Start a judging session.
@@ -95,6 +106,16 @@ extend type Mutation {
     "The ID of the session to start"
     sessionId: String!
   ): JudgingStartedEvent!
+
+  """
+  Abort a judging session.
+  """
+  abortJudgingSession(
+    "The ID of the division containing the session"
+    divisionId: String!
+    "The ID of the session to abort"
+    sessionId: String!
+  ): JudgingAbortedEvent!
 }
 
 extend type Subscription {
@@ -107,4 +128,14 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): JudgingStartedEvent!
+
+  """
+  Subscribe to events when judging sessions abort in a division.
+  """
+  judgingSessionAborted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): JudgingAbortedEvent!
 }

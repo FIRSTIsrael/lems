@@ -24,7 +24,13 @@ import {
 import { StageTimeline } from './stage-timeline';
 import { useSession } from './judging-session-context';
 
-export const JudgingTimerDesktopLayout: React.FC = () => {
+interface JudgingTimerDesktopLayoutProps {
+  onAbortSession: (sessionId: string) => void;
+}
+
+export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps> = ({
+  onAbortSession
+}) => {
   const t = useTranslations('pages.judge.timer');
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
@@ -213,7 +219,7 @@ export const JudgingTimerDesktopLayout: React.FC = () => {
               <Button
                 variant="outlined"
                 color="error"
-                disabled
+                onClick={() => onAbortSession(session.id)}
                 startIcon={<Close />}
                 sx={{
                   textTransform: 'none',

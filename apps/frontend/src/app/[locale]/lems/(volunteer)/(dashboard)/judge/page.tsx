@@ -14,7 +14,9 @@ import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscriptionForJudge,
   createJudgingSessionStartedSubscriptionForJudge,
-  START_JUDGING_SESSION_MUTATION
+  START_JUDGING_SESSION_MUTATION,
+  createJudgingSessionAbortedSubscriptionForJudge,
+  ABORT_JUDGING_SESSION_MUTATION
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
@@ -30,14 +32,20 @@ export default function JudgePage() {
   const { roleInfo } = useUser();
   const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION, {
     onError: () => {
-      toast.error(t('error'));
+      toast.error(t('error.start'));
+    }
+  });
+  const [abortSessionMutation] = useMutation(ABORT_JUDGING_SESSION_MUTATION, {
+    onError: () => {
+      toast.error(t('error.abort'));
     }
   });
 
   const subscriptions = useMemo(
     () => [
       createTeamArrivalSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id)
+      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id),
+      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -66,12 +74,22 @@ export default function JudgePage() {
     [startSessionMutation, currentDivision.id, playSound]
   );
 
+  const handleAbortSession = useCallback(
+    async (sessionId: string) => {
+      await abortSessionMutation({
+        variables: { sessionId, divisionId: currentDivision.id }
+      });
+      playSound('end');
+    },
+    [abortSessionMutation, currentDivision.id, playSound]
+  );
+
   if (sessionInProgress) {
     return (
       <JudgingSessionProvider session={sessionInProgress} sessionLength={judgingSessionLength ?? 0}>
         <ResponsiveComponent
-          mobile={<JudgingTimerMobileLayout />}
-          desktop={<JudgingTimerDesktopLayout />}
+          mobile={<JudgingTimerMobileLayout onAbortSession={handleAbortSession} />}
+          desktop={<JudgingTimerDesktopLayout onAbortSession={handleAbortSession} />}
         />
       </JudgingSessionProvider>
     );

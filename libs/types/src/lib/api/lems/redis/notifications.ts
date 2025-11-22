@@ -4,5 +4,6 @@
  */
 export enum RedisEventTypes {
   TEAM_ARRIVED = 'teamArrived',
-  JUDGING_SESSION_STARTED = 'judgingSessionStarted'
+  JUDGING_SESSION_STARTED = 'judgingSessionStarted',
+  JUDGING_SESSION_ABORTED = 'judgingSessionAborted'
 }

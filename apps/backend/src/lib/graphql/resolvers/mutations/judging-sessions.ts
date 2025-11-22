@@ -12,6 +12,11 @@ interface StartJudgingSessionArgs {
   sessionId: string;
 }
 
+interface AbortJudgingSessionArgs {
+  divisionId: string;
+  sessionId: string;
+}
+
 interface JudgingEvent {
   sessionId: string;
   version: number;
@@ -150,6 +155,125 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     });
 
     return { sessionId, version: -1, startTime, startDelta };
+  } catch (error) {
+    throw error instanceof Error ? error : new Error(String(error));
+  }
+};
+
+/**
+ * Resolver for Mutation.abortJudgingSession
+ * Starts a judging session with validation checks:
+ * 1. User must be a judge role
+ * 2. User must be assigned to the division
+ * 3. Session's room must match the user's assigned room
+ * 4. Session must be in in-progress status
+ * 5. Session must have a teamId and team must have arrived
+ */
+export const abortJudgingSessionResolver: GraphQLFieldResolver<
+  unknown,
+  GraphQLContext,
+  AbortJudgingSessionArgs,
+  Promise<JudgingEvent>
+> = async (_root, { divisionId, sessionId }, context) => {
+  try {
+    if (!context.user) {
+      throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+    }
+
+    if (context.user.role !== 'judge') {
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have judge role');
+    }
+
+    if (!context.user.divisions.includes(divisionId)) {
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User is not assigned to the division');
+    }
+
+    const userRoomId = context.user.roleInfo?.roomId;
+    if (!userRoomId) {
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User does not have an assigned room');
+    }
+
+    // Check 1: Session exists in the division
+    const session = await db.raw.sql
+      .selectFrom('judging_sessions')
+      .selectAll('judging_sessions')
+      .where('judging_sessions.id', '=', sessionId)
+      .where('judging_sessions.division_id', '=', divisionId)
+      .executeTakeFirst();
+
+    if (!session) {
+      throw new MutationError(
+        MutationErrorCode.NOT_FOUND,
+        `Session ${sessionId} not found in division ${divisionId}`
+      );
+    }
+
+    // Check 2: Session's room must match user's assigned room
+    if (session.room_id !== userRoomId) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'Session room does not match user assigned room'
+      );
+    }
+
+    // Check 3: Session must be in not-started status
+    const sessionState = await db.raw.mongo
+      .collection<JudgingSessionState>('judging_session_states')
+      .findOne({ sessionId });
+
+    if (!sessionState || sessionState.status !== 'in-progress') {
+      throw new MutationError(MutationErrorCode.CONFLICT, `Session is not in in-progress status`);
+    }
+
+    // Check 4: Session must have a teamId
+    if (!session.team_id) {
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        'Cannot start session without a team assigned'
+      );
+    }
+
+    // Check 5: Team must have arrived
+    const teamArrived = await db.raw.sql
+      .selectFrom('team_divisions')
+      .select(['arrived'])
+      .where('team_id', '=', session.team_id)
+      .where('division_id', '=', divisionId)
+      .executeTakeFirst();
+
+    if (!teamArrived || !teamArrived.arrived) {
+      throw new MutationError(MutationErrorCode.CONFLICT, 'Team has not arrived at the division');
+    }
+
+    // Update the judging session state in MongoDB
+    const result = await db.raw.mongo
+      .collection<JudgingSessionState>('judging_session_states')
+      .findOneAndUpdate(
+        { sessionId },
+        {
+          $set: {
+            status: 'not-started',
+            startTime: null,
+            startDelta: null
+          }
+        },
+        { returnDocument: 'after' }
+      );
+
+    if (!result) {
+      throw new MutationError(
+        MutationErrorCode.INTERNAL_ERROR,
+        `Failed to update judging session state for ${sessionId}`
+      );
+    }
+
+    // Publish event to subscribers
+    const pubSub = getRedisPubSub();
+    await pubSub.publish(divisionId, RedisEventTypes.JUDGING_SESSION_ABORTED, {
+      sessionId
+    });
+
+    return { sessionId, version: -1 };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Chip, Stack, Typography, Avatar, Box } from '@mui/material';
+import { Chip, Stack } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useTranslations } from 'next-intl';
 import type { Team } from '../../judge.graphql';
@@ -15,7 +15,7 @@ export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
 
   return (
     <Stack spacing={1} sx={{ minWidth: 200 }}>
-      <TeamInfo team={team} size="sm" textAlign="center" />
+      <TeamInfo team={team} size="sm" />
       {!team.arrived && (
         <Chip
           icon={<WarningIcon />}

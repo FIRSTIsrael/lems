@@ -14,7 +14,13 @@ import {
 } from './hooks/use-judging-timer';
 import { useSession } from './judging-session-context';
 
-export const JudgingTimerMobileLayout: React.FC = () => {
+interface JudgingTimerMobileLayoutProps {
+  onAbortSession: (sessionId: string) => void;
+}
+
+export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> = ({
+  onAbortSession
+}) => {
   const t = useTranslations('pages.judge.timer');
 
   const { session, sessionLength } = useSession();
@@ -193,7 +199,7 @@ export const JudgingTimerMobileLayout: React.FC = () => {
           <Button
             variant="outlined"
             color="error"
-            disabled
+            onClick={() => onAbortSession(session.id)}
             startIcon={<Close />}
             fullWidth
             sx={{

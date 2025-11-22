@@ -64,11 +64,19 @@ export interface JudgingStartedEvent {
   startDelta: number;
 }
 
+export interface JudgingAbortedEvent {
+  sessionId: string;
+  version: number;
+}
+
 type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
 type TeamArrivalSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
 type JudgingStartedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+
+type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingAbortedEvent };
+type JudgingAbortedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 /**
  * Query to fetch judging sessions for a specific room
@@ -136,6 +144,18 @@ export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const JUDGING_SESSION_ABORTED_SUBSCRIPTION: TypedDocumentNode<
+  JudgingAbortedSubscriptionData,
+  JudgingAbortedSubscriptionVars
+> = gql`
+  subscription JudgingSessionAborted($divisionId: String!, $lastSeenVersion: Int) {
+    judgingSessionAborted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      sessionId
+      version
+    }
+  }
+`;
+
 type StartJudgingSessionMutationData = { startJudgingSession: JudgingStartedEvent };
 type StartJudgingSessionMutationVars = { divisionId: string; sessionId: string };
 
@@ -149,6 +169,21 @@ export const START_JUDGING_SESSION_MUTATION: TypedDocumentNode<
       version
       startTime
       startDelta
+    }
+  }
+`;
+
+type AbortJudgingSessionMutationData = { abortJudgingSession: JudgingAbortedEvent };
+type AbortJudgingSessionMutationVars = { divisionId: string; sessionId: string };
+
+export const ABORT_JUDGING_SESSION_MUTATION: TypedDocumentNode<
+  AbortJudgingSessionMutationData,
+  AbortJudgingSessionMutationVars
+> = gql`
+  mutation AbortJudgingSession($divisionId: String!, $sessionId: String!) {
+    abortJudgingSession(divisionId: $divisionId, sessionId: $sessionId) {
+      sessionId
+      version
     }
   }
 `;
@@ -235,6 +270,54 @@ export function createJudgingSessionStartedSubscriptionForJudge(
                       status: 'in-progress',
                       startTime,
                       startDelta
+                    }
+                  : session
+              )
+            }
+          }
+        };
+      }
+
+      return prev;
+    }
+  };
+}
+
+/**
+ * Creates a subscription configuration for judging session aborted events in the judge view.
+ * When a judge aborts a session, updates its status in the sessions payload if present.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createJudgingSessionAbortedSubscriptionForJudge(
+  divisionId: string
+): SubscriptionConfig<JudgingAbortedSubscriptionData, QueryData, JudgingAbortedSubscriptionVars> {
+  return {
+    subscription: JUDGING_SESSION_ABORTED_SUBSCRIPTION,
+    subscriptionVariables: {
+      divisionId
+    },
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
+      if (!data || typeof data !== 'object' || !('judgingSessionAborted' in data)) {
+        return prev;
+      }
+
+      const subscriptionData = data as JudgingAbortedSubscriptionData;
+      const { sessionId } = subscriptionData.judgingSessionAborted;
+
+      if (prev.division?.judging.sessions) {
+        return {
+          ...prev,
+          division: {
+            ...prev.division,
+            judging: {
+              ...prev.division.judging,
+              sessions: prev.division.judging.sessions.map(session =>
+                session.id === sessionId
+                  ? {
+                      ...session,
+                      status: 'not-started'
                     }
                   : session
               )
