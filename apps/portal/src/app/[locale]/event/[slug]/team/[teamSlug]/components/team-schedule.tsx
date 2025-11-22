@@ -1,0 +1,124 @@
+'use client';
+
+import React from 'react';
+import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
+import useSWR from 'swr';
+import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
+import { Schedule as ScheduleIcon } from '@mui/icons-material';
+import { useMatchStageTranslations } from '@lems/localization';
+import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { useTeamAtEvent } from './team-at-event-context';
+
+interface ScheduleEntry {
+  time: Date;
+  description: string;
+  location: string;
+}
+
+export const TeamSchedule: React.FC = () => {
+  const { event, team } = useTeamAtEvent();
+
+  const { data } = useSWR<{
+    session: TeamJudgingSession;
+    matches: TeamRobotGameMatch[];
+  } | null>(`/portal/events/${event.slug}/teams/${team.slug}/activities`, {
+    suspense: true
+  });
+
+  const t = useTranslations('pages.team-in-event');
+  const { getStage } = useMatchStageTranslations();
+
+  if (!data) {
+    return null; // Should be handled by suspense
+  }
+
+  const { session: judgingSession, matches } = data;
+
+  const scheduleEntries: ScheduleEntry[] = [
+    ...matches.map(match => ({
+      time: new Date(match.scheduledTime),
+      description: t('schedule.match-type', {
+        stage: getStage(match.stage),
+        number: match.number,
+        table: match.table.name,
+        teamNumber: team.number
+      }),
+      location: match.table.name
+    })),
+    {
+      time: new Date(judgingSession.scheduledTime),
+      description: t('schedule.judging-session', {
+        number: judgingSession.number,
+        room: judgingSession.room.name,
+        teamNumber: team.number
+      }),
+      location: judgingSession.room.name
+    }
+  ].sort((a, b) => a.time.getTime() - b.time.getTime());
+
+  return (
+    <Paper
+      sx={{
+        p: 3,
+        flexGrow: { xs: 0, lg: 1 },
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+        <ScheduleIcon color="primary" />
+        <Typography variant="h6" fontWeight="bold">
+          {t('schedule.title')}
+        </Typography>
+      </Stack>
+
+      {scheduleEntries.length === 0 && (
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {t('schedule.no-schedule')}
+          </Typography>
+        </Box>
+      )}
+
+      {scheduleEntries.length > 0 && (
+        <Stack spacing={0} divider={<Divider />}>
+          {scheduleEntries.map((entry, index) => (
+            <React.Fragment key={index}>
+              <ListItem
+                sx={{
+                  py: 2,
+                  px: 0,
+                  '&:hover': {
+                    bgcolor: 'grey.50'
+                  }
+                }}
+              >
+                <ListItemText
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                      <Typography variant="body2" fontWeight="600">
+                        {dayjs(entry.time).format('HH:mm')}
+                      </Typography>
+                      <Box
+                        sx={{
+                          width: '1px',
+                          height: '20px',
+                          bgcolor: 'grey.400',
+                          mx: 2
+                        }}
+                      />
+                      <Typography variant="body2" fontWeight="600">
+                        {entry.description}
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </ListItem>
+            </React.Fragment>
+          ))}
+        </Stack>
+      )}
+    </Paper>
+  );
+};

@@ -1,1 +1,140 @@
-{}
+{
+  "pages": {
+    "login": {
+      "subtitle": "כניסת מתנדבים",
+      "continue": "המשך",
+      "submitting": "טוען...",
+      "loading": "טוען...",
+      "loading-role": "טוען נתוני תפקיד...",
+      "sign-in": "התחברות",
+      "steps": {
+        "role": "בחרו תפקיד",
+        "division": "בחרו בית",
+        "association": "בחרו שיוך",
+        "user": "בחרו משתמש",
+        "password": "הזינו סיסמה"
+      },
+      "instructions": {
+        "role": "אנא בחרו את התפקיד שלכם באירוע:",
+        "division": "אנא בחרו את הבית אליו אתם משוייכים:",
+        "association": "אנא בחרו את השיוך שלכם:",
+        "role-info-table": "אנא בחרו את השולחן שאתם משויכים אליו:",
+        "role-info-room": "אנא בחרו את החדר שאתם משויכים אליו:",
+        "role-info-category": "אנא בחרו את התחום שאתם משויכים אליו:",
+        "user": "נמצאו מספר משתמשים תואמים. אנא בחרו את החשבון שלכם:",
+        "password": "אנא הזינו את הסיסמא שלכם:"
+      },
+      "fields": {
+        "role": "תפקיד",
+        "division": "בית",
+        "association": "שיוך",
+        "table": "שולחן",
+        "room": "חדר",
+        "category": "תחום",
+        "user": "משתמש",
+        "password": "סיסמה",
+        "password-helper": "סיסמה בת 4 תווים"
+      },
+      "errors": {
+        "required": "שדה זה נדרש",
+        "invalid-length": "הסיסמה חייבת להיות בת 4 תווים בדיוק",
+        "too-many-requests": "יותר מדי ניסיונות התחברות. אנא נסו שנית מאוחר יותר.",
+        "invalid-password": "סיסמה שגויה. אנא נסו שנית.",
+        "server-error": "אירעה שגיאה. אנא נסו שנית.",
+        "not-found": "לא נמצאו משתמשים תואמים. אנא בדוק את הבחירות שלך.",
+        "no-users-with-role": "לא נמצאו משתמשים עם תפקיד זה.",
+        "no-users-in-division": "לא נמצאו משתמשים בבית זה.",
+        "no-users-with-association": "לא נמצאו משתמשים עם שיוך זה.",
+        "user-not-found": "משתמש לא נמצא.",
+        "missing-event-slug": "מידע האירוע חסר.",
+        "event-not-found": "אירוע לא נמצא.",
+        "no-users-for-event": "לא הוגדרו משתמשים עבור אירוע זה.",
+        "title": "משהו השתבש",
+        "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת דף ההתחברות.",
+        "unknown": "אירעה שגיאה בלתי צפויה. אנא נסו שנית.",
+        "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+        "back-home": "חזרה לעמוד הבית",
+        "try-again": "ניסיון נוסף"
+      }
+    },
+    "error": {
+      "title": "משהו השתבש",
+      "description": "נתקלנו בשגיאה בלתי צפויה. אנא נסו שנית.",
+      "technical-details": "פרטים טכניים",
+      "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+      "back-home": "חזרה לעמוד הבית",
+      "try-again": "ניסיון נוסף"
+    },
+    "pit-admin": {
+      "page-title": "רישום קבוצות",
+      "error": "נכשל בסימון הקבוצה כהגעה",
+      "stats": {
+        "total-teams": "מספר קבוצות",
+        "arrived": "הגיעו",
+        "all-arrived": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
+        "waiting-for": "מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
+        "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}"
+      },
+      "team-input": {
+        "title": "רישום הגעת קבוצה",
+        "subtitle": "בחרו קבוצה מהרשימה כדי לסמן אותה כהגיעה לאירוע",
+        "search-label": "חיפוש קבוצות",
+        "search-placeholder": "הקלידו לחיפוש...",
+        "button": "סמנו הגעה",
+        "submitting": "מעבדים...",
+        "no-options": "כל הקבוצות הגיעו!",
+        "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
+        "team": "קבוצה"
+      }
+    },
+    "reports": {
+      "page-title": "דוחות",
+      "menu": {
+        "team-list": "רשימת קבוצות"
+      },
+      "team-list": {
+        "page-title": "רשימת קבוצות",
+        "total-teams": "סה״כ קבוצות",
+        "arrived-teams": "קבוצות הגיעו",
+        "pending-teams": "קבוצות חסרות",
+        "arrived": "הגיעה",
+        "not-arrived": "חסרה",
+        "arrived-count": "{count} מתוך {total} הגיעו",
+        "no-teams": "אין קבוצות זמינות",
+        "loading": "טוען קבוצות...",
+        "error-loading": "שגיאה בטעינת הקבוצות. אנא נסו שנית.",
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם קבוצה",
+          "affiliation": "מוסד",
+          "city": "עיר",
+          "arrived": "סטטוס",
+          "region": "מדינה"
+        },
+        "sort-ascending": "ממוין בסדר עולה",
+        "sort-descending": "ממוין בסדר יורד"
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "מחובר",
+      "reconnecting": "מתחבר...",
+      "disconnected": "מנותק",
+      "error": "שגיאה",
+      "idle": "לא פעיל"
+    },
+    "navigation-list": {
+      "dashboard": "בית",
+      "reports": "דוחות",
+      "insights": "תובנות"
+    },
+    "logout": "יציאה"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "קבוצה לא נמצאה",
+      "error-not-arrived": "הקבוצה טרם הגיעה לאירוע"
+    }
+  }
+}

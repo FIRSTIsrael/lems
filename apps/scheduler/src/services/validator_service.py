@@ -272,8 +272,9 @@ class ValidatorService:
                         or entry["session"]["number"] == first_min_session
                     ]
 
-        logger.debug(f"Duplicate matches: {duplicate_match_details}")
-        logger.info(f"Schedule has duplicate available matches: {duplicate_matches}")
+        if len(duplicate_matches) > 0:
+            logger.debug(f"Duplicate matches: {duplicate_match_details}")
+            logger.info(f"Schedule has duplicate available matches: {duplicate_matches}")
 
         return data
 

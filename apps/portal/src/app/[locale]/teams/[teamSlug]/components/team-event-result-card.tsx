@@ -1,0 +1,192 @@
+'use client';
+
+import React from 'react';
+import { Card, CardContent, Typography, Box, Stack, Divider, Grid, Button } from '@mui/material';
+import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mui/icons-material';
+import { useTranslations } from 'next-intl';
+import { TeamEventResult } from '@lems/types/api/portal';
+import { Flag } from '@lems/shared';
+import { Element } from 'react-scroll';
+import { useTeam } from './team-context';
+
+interface TeamEventResultCardProps {
+  eventResult: TeamEventResult;
+}
+
+export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventResult }) => {
+  const t = useTranslations('pages.team.events');
+  const team = useTeam();
+
+  const getAwardIcon = (award: { name: string; place: number | null }) => {
+    switch (award.place) {
+      case 1:
+        return 'award.first';
+      case 2:
+        return 'award.second';
+      case 3:
+        return 'award.third';
+      default:
+        return 'award.other';
+    }
+  };
+
+  if (!eventResult.results) {
+    return null; // Should not call without results
+  }
+
+  const { awards, matches, robotGameRank } = eventResult.results;
+
+  return (
+    <Element name={`event-${eventResult.eventSlug}`}>
+      <Card
+        variant="outlined"
+        sx={{
+          mb: 2,
+          '&:hover': {
+            boxShadow: 4,
+            transform: 'translateY(-2px)',
+            transition: 'all 0.2s ease-in-out'
+          },
+          transition: 'all 0.2s ease-in-out'
+        }}
+      >
+        <CardContent>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+            <Stack direction="row" alignItems="center" gap={1}>
+              <Typography variant="h4" fontWeight="600" color="primary">
+                {eventResult.eventName}
+              </Typography>
+              <Typography variant="h5" sx={{ opacity: 0.7 }}>
+                <Flag region={team.region} size={20} />
+              </Typography>
+            </Stack>
+            <Button variant="text" href={`/event/${eventResult.eventSlug}/team/${team.slug}`}>
+              {t('view-details')}
+            </Button>
+          </Stack>
+
+          {/* Awards Section */}
+          <Box mb={2}>
+            <Typography variant="h6" fontWeight="700" mb={1}>
+              {t('event-summary')}
+            </Typography>
+            <Grid container spacing={2}>
+              {awards &&
+                awards.map((award, index) => {
+                  const trophyColor = getAwardIcon(award);
+                  return (
+                    <Grid
+                      size={{ xs: 12, sm: 6, lg: 3 }}
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        p: 2,
+                        bgcolor: 'grey.50',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'grey.200'
+                      }}
+                    >
+                      <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        {award.name}
+                      </Typography>
+                    </Grid>
+                  );
+                })}
+              {matches && matches.length > 0 && (
+                <Grid
+                  size={{ xs: 12, sm: 6, lg: 3 }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    bgcolor: 'grey.50',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'grey.200'
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <ScoreIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
+                    <Typography variant="body1" fontWeight="600">
+                      {t('highest-score')}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="h6" fontWeight="600" color="primary">
+                    {Math.max(...matches.map(m => m.score))}
+                  </Typography>
+                </Grid>
+              )}
+              {robotGameRank && (
+                <Grid
+                  size={{ xs: 12, sm: 6, lg: 3 }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    bgcolor: 'grey.50',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'grey.200'
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <RobotIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
+                    <Typography variant="body1" fontWeight="600">
+                      {t('robot-game-rank')}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="h6" fontWeight="600" color="primary">
+                    {robotGameRank}
+                  </Typography>
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+
+          {/* Match Results */}
+          {matches && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Box>
+                <Typography variant="h6" fontWeight="700" mb={1}>
+                  {t('match-results')}
+                </Typography>
+                <Grid container spacing={2}>
+                  {matches.map((match, index) => (
+                    <Grid
+                      size={{ xs: 12, sm: 6, md: 4 }}
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        p: 2,
+                        bgcolor: 'grey.50',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'grey.200'
+                      }}
+                    >
+                      <Typography variant="body1" fontWeight="600">
+                        {t('match-number', { number: match.number })}
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600" color="primary">
+                        {match.score}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </Element>
+  );
+};

@@ -1,0 +1,57 @@
+"""
+A division within an event (e.g., age group or competition level)
+"""
+type Division {
+  "Unique identifier for the division"
+  id: String!
+
+  "Display name of the division"
+  name: String!
+
+  "Hex color code for UI display (e.g., '#FF5733')"
+  color: String!
+
+  "Competition tables assigned to this division"
+  tables: [Table!]!
+
+  "Judging rooms assigned to this division"
+  rooms: [Room!]!
+
+  "Teams registered in this division, optionally filtered by IDs or slugs"
+  teams(
+    "Filter teams by their IDs"
+    ids: [String!]
+    
+    "Filter teams by their slugs (region-number format, e.g., 'IL-9909')"
+    slugs: [String!]
+  ): [Team!]!
+}
+
+"""
+A physical competition table where robot matches take place
+"""
+type Table {
+  "Unique identifier for the table"
+  id: String!
+
+  "Display name of the table (e.g., 'Table 1', 'Main Arena')"
+  name: String!
+}
+
+"""
+A physical room where judging sessions take place
+"""
+type Room {
+  "Unique identifier for the room"
+  id: String!
+
+  "Display name of the room (e.g., 'Room A', 'Innovation Lab')"
+  name: String!
+}
+
+extend type Query {
+  """
+  Get a division by its unique identifier
+  """
+  division("Division ID to retrieve" id: String!): Division
+}

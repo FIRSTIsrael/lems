@@ -1,14 +1,35 @@
-import { WithId } from 'mongodb';
-import { FllEvent, Division, User, Team } from '@lems/types';
+import { Request } from 'express';
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: WithId<User>;
-      division?: WithId<Division>;
-      event?: WithId<FllEvent>;
-      team?: WithId<Team>;
-      teamNumber?: number;
-    }
-  }
+export interface AdminRequest extends Request {
+  userId: string;
+  userType: 'admin'; // Always admin for AdminRequest
+}
+
+export interface AdminEventRequest extends AdminRequest {
+  eventId: string;
+}
+
+export interface AdminDivisionRequest extends AdminEventRequest {
+  divisionId: string;
+}
+
+export interface PortalEventRequest extends Request {
+  eventId: string;
+}
+
+export interface PortalTeamRequest extends Request {
+  teamId: string;
+}
+
+export interface PortalTeamAtEventRequest extends Request {
+  teamId: string;
+  divisionId: string;
+}
+
+export interface PortalDivisionRequest extends Request {
+  divisionId: string;
+}
+
+export interface SchedulerRequest extends Request {
+  divisionId: string;
 }
