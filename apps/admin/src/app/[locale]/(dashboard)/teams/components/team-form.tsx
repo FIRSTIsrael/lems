@@ -1,11 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
-import { Box, Stack, Button, CircularProgress, Alert } from '@mui/material';
-import { CloudUpload } from '@mui/icons-material';
+import {
+  Box,
+  Stack,
+  Button,
+  CircularProgress,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography
+} from '@mui/material';
+import { CloudUpload, DeleteForever, Edit } from '@mui/icons-material';
 import { FileUpload, FormikTextField, apiFetch } from '@lems/shared';
 import { AdminTeamResponseSchema } from '@lems/types/api/admin';
 
@@ -29,7 +40,7 @@ interface TeamFormProps {
   route: string;
   method: 'POST' | 'PUT';
   onSuccess?: () => void;
-  team?: TeamFormValues;
+  team?: TeamFormValues & { logoUrl?: string };
   isEditing?: boolean;
 }
 
@@ -42,6 +53,18 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 }) => {
   const t = useTranslations('pages.teams.team-form');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(team?.logoUrl ?? null);
+  const [removeLogo, setRemoveLogo] = useState(false);
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (selectedFile) {
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setPreviewUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [selectedFile]);
 
   const initialValues: TeamFormValues = team ?? {
     name: '',
@@ -94,9 +117,8 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       formData.append('city', values.city);
       formData.append('region', values.region);
 
-      if (selectedFile) {
-        formData.append('logo', selectedFile);
-      }
+      if (selectedFile) formData.append('logo', selectedFile);
+      if (removeLogo) formData.append('removeLogo', 'true');
 
       const result = await apiFetch(
         route,
@@ -196,16 +218,120 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                 />
               </Stack>
 
-              <FileUpload
-                label={t('fields.logo.label')}
-                accept=".jpg,.jpeg,.png,.svg,image/*"
-                selectedFile={selectedFile}
-                setSelectedFile={setSelectedFile}
-                description={t('fields.logo.description')}
-                disabled={isSubmitting}
-                placeholder={t('fields.logo.placeholder')}
-              />
+              {previewUrl && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle2" mb={1}>
+                    {t('logo-preview-title')}
+                  </Typography>
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      display: 'flex',
+                      width: '100%',
+                      maxWidth: 300,
+                      maxHeight: 300,
+                      borderRadius: 2,
+                      mx: 'auto',
+                      overflow: 'hidden',
+                      boxShadow: 1,
+                      cursor: 'pointer',
+                      '&:hover .overlay': { opacity: 1 }
+                    }}
+                    onClick={() => setLogoModalOpen(true)}
+                  >
+                    <Box
+                      component="img"
+                      src={previewUrl}
+                      alt="Team Logo Preview"
+                      sx={{
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain'
+                      }}
+                    />
+                    <Box
+                      className="overlay"
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: 0,
+                        transition: 'opacity 0.3s'
+                      }}
+                    >
+                      <Edit sx={{ color: '#fff', fontSize: 32 }} />
+                    </Box>
+                  </Box>
 
+                  {/* Logo Edit Dialog */}
+                  <Dialog
+                    open={logoModalOpen}
+                    onClose={() => setLogoModalOpen(false)}
+                    maxWidth="xs"
+                    fullWidth
+                  >
+                    <DialogTitle>{t('edit-logo')}</DialogTitle>
+                    <DialogContent>
+                      <Stack spacing={2} sx={{ mt: 1 }}>
+                        <FileUpload
+                          label={t('fields.logo.label')}
+                          accept=".jpg,.jpeg,.png,.svg,image/*"
+                          selectedFile={selectedFile}
+                          setSelectedFile={file => {
+                            setSelectedFile(file);
+                            setRemoveLogo(false);
+                            setLogoModalOpen(false);
+                          }}
+                          description={t('fields.logo.description')}
+                          disabled={isSubmitting}
+                          placeholder={t('fields.logo.placeholder')}
+                        />
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          startIcon={<DeleteForever />}
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setPreviewUrl(null);
+                            setRemoveLogo(true);
+                            setLogoModalOpen(false);
+                          }}
+                          disabled={isSubmitting}
+                        >
+                          {t('remove-logo')}
+                        </Button>
+                      </Stack>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setLogoModalOpen(false)}>{t('close')}</Button>
+                    </DialogActions>
+                  </Dialog>
+                </Box>
+              )}
+
+              {!previewUrl && (
+                <FileUpload
+                  label={t('fields.logo.label')}
+                  accept=".jpg,.jpeg,.png,.svg,image/*"
+                  selectedFile={selectedFile}
+                  setSelectedFile={file => {
+                    setSelectedFile(file);
+                    setRemoveLogo(false);
+                  }}
+                  description={t('fields.logo.description')}
+                  disabled={isSubmitting}
+                  placeholder={t('fields.logo.placeholder')}
+                />
+              )}
+
+              {removeLogo && !selectedFile && <Alert severity="info">{t('logo-removed')}</Alert>}
               {status && <Alert severity="error">{t(`errors.${status}`)}</Alert>}
 
               <Stack direction="row" justifyContent="center" spacing={2}>
