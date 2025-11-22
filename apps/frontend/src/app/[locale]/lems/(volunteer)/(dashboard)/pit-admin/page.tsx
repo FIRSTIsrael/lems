@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
+import toast from 'react-hot-toast';
 import { Stack } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
@@ -22,7 +23,11 @@ export default function PitAdminPage() {
   const t = useTranslations('pages.pit-admin');
 
   const { currentDivision } = useEvent();
-  const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION);
+  const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION, {
+    onError: () => {
+      toast.error(t('error'));
+    }
+  });
 
   const subscriptions = useMemo(
     () => [createTeamArrivalSubscription(currentDivision.id)],

@@ -6,7 +6,7 @@
       "submitting": "Loading...",
       "sign-in": "Sign In",
       "loading": "Loading...",
-      "loadingRole": "Loading role information...",
+      "loading-role": "Loading role information...",
       "steps": {
         "role": "Select Role",
         "division": "Select Division",
@@ -18,9 +18,9 @@
         "role": "Please select your role:",
         "division": "Please select your assigned division:",
         "association": "Please select your assignment:",
-        "roleInfo-table": "Please select the table you are assigned to:",
-        "roleInfo-room": "Please select the room you are assigned to:",
-        "roleInfo-category": "Please select the category you are assigned to:",
+        "role-info-table": "Please select the table you are assigned to:",
+        "role-info-room": "Please select the room you are assigned to:",
+        "role-info-category": "Please select the category you are assigned to:",
         "user": "Multiple users match your selection. Please choose your account:",
         "password": "Please enter your password:"
       },
@@ -67,6 +67,7 @@
     },
     "pit-admin": {
       "page-title": "Team Registration",
+      "error": "Failed to mark team as arrived",
       "stats": {
         "total-teams": "Total Teams",
         "arrived": "Arrived",
@@ -83,7 +84,6 @@
         "submitting": "Processing...",
         "no-options": "All teams have arrived",
         "all-arrived-message": "All teams have arrived",
-        "error": "Failed to mark team as arrived",
         "team": "Team"
       }
     },

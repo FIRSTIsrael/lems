@@ -5,7 +5,7 @@
       "continue": "המשך",
       "submitting": "טוען...",
       "loading": "טוען...",
-      "loadingRole": "טוען נתוני תפקיד...",
+      "loading-role": "טוען נתוני תפקיד...",
       "sign-in": "התחברות",
       "steps": {
         "role": "בחרו תפקיד",
@@ -18,9 +18,9 @@
         "role": "אנא בחרו את התפקיד שלכם באירוע:",
         "division": "אנא בחרו את הבית אליו אתם משוייכים:",
         "association": "אנא בחרו את השיוך שלכם:",
-        "roleInfo-table": "אנא בחרו את השולחן שאתם משויכים אליו:",
-        "roleInfo-room": "אנא בחרו את החדר שאתם משויכים אליו:",
-        "roleInfo-category": "אנא בחרו את התחום שאתם משויכים אליו:",
+        "role-info-table": "אנא בחרו את השולחן שאתם משויכים אליו:",
+        "role-info-room": "אנא בחרו את החדר שאתם משויכים אליו:",
+        "role-info-category": "אנא בחרו את התחום שאתם משויכים אליו:",
         "user": "נמצאו מספר משתמשים תואמים. אנא בחרו את החשבון שלכם:",
         "password": "אנא הזינו את הסיסמא שלכם:"
       },
@@ -67,6 +67,7 @@
     },
     "pit-admin": {
       "page-title": "רישום קבוצות",
+      "error": "נכשל בסימון הקבוצה כהגעה",
       "stats": {
         "total-teams": "מספר קבוצות",
         "arrived": "הגיעו",
@@ -83,7 +84,6 @@
         "submitting": "מעבדים...",
         "no-options": "כל הקבוצות הגיעו!",
         "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "error": "נכשל בסימון הקבוצה כהגיעה",
         "team": "קבוצה"
       }
     },

@@ -30,7 +30,7 @@ interface AssignAdminsDialogProps {
 
 export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({ open, onClose }) => {
   const event = useEvent();
-  const t = useTranslations('pages.events.users.dialogs.assignAdmins');
+  const t = useTranslations('pages.events.users.dialogs.assign-admins');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAdmins, setSelectedAdmins] = useState<string[]>([]);
@@ -95,7 +95,7 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({ open, on
         <Box sx={{ mb: 2 }}>
           <TextField
             fullWidth
-            placeholder={t('searchPlaceholder')}
+            placeholder={t('search-placeholder')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             variant="outlined"
@@ -111,7 +111,7 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({ open, on
 
         {!isLoading && filteredAdmins.length === 0 && (
           <Alert severity="info">
-            {searchTerm ? t('noSearchResults') : t('noAvailableAdmins')}
+            {searchTerm ? t('no-search-results') : t('no-available-admins')}
           </Alert>
         )}
 
@@ -139,7 +139,7 @@ export const AssignAdminsDialog: React.FC<AssignAdminsDialogProps> = ({ open, on
 
         {selectedAdmins.length > 0 && (
           <Typography variant="body2" sx={{ mt: 2 }}>
-            {t('selectedCount', { count: selectedAdmins.length })}
+            {t('selected-count', { count: selectedAdmins.length })}
           </Typography>
         )}
       </DialogContent>

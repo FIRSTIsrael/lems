@@ -19,7 +19,7 @@ import { OptionalRolesSection } from './optional-roles';
 import { MandatoryRolesSection } from './mandatory-roles';
 
 export function VolunteerUsersSection() {
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
   const { saving, validationErrors, handleSave, loading, getEventPasswords, isNew } = useVolunteer();
   const [saveResult, setSaveResult] = useState<'success' | 'error' | null>(null);
 
@@ -75,15 +75,16 @@ export function VolunteerUsersSection() {
               size="small"
             />
           </Tooltip>
-          
+
           <Button
             variant="outlined"
             startIcon={<DownloadIcon />}
             onClick={handleDownloadPasswords}
             size="large"
+            disabled={isNew || saving}
             sx={{ flexShrink: 0 }}
           >
-            {t('downloadPasswords')}
+            {t('download-passwords')}
           </Button>
 
           <Button
@@ -94,20 +95,20 @@ export function VolunteerUsersSection() {
             size="large"
             sx={{ flexShrink: 0 }}
           >
-            {saving ? t('saving') : t('saveSlots')}
+            {saving ? t('saving') : t('save-slots')}
           </Button>
         </Stack>
       </Box>
 
       {saveResult === 'success' && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          {t('saveSuccess')}
+          {t('save-success')}
         </Alert>
       )}
 
       {saveResult === 'error' && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          {t('saveError')}
+          {t('save-error')}
         </Alert>
       )}
 
