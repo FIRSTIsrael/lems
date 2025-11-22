@@ -15,10 +15,11 @@ import {
   Box,
   useTheme
 } from '@mui/material';
-import type { JudgingSession } from '../judge.graphql';
-import { RubricStatusButton, type RubricStatus } from './rubric-status-button';
+import { JudgingSession } from '../../judge.graphql';
+import { RubricStatusButton, RubricStatus } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
+import { RubricStatusGlossary } from './rubric-status-glossary';
 
 interface RoomScheduleTableProps {
   onStartSession: (sessionId: string) => Promise<void>;
@@ -107,7 +108,18 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
               {t('actions')}
             </TableCell>
             <TableCell align="center" sx={{ width: '40%' }}>
-              {t('rubrics')}
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '0.875rem',
+                    color: theme.palette.text.primary
+                  }}
+                >
+                  {t('rubrics')}
+                </Typography>
+                <RubricStatusGlossary />
+              </Box>
             </TableCell>
           </TableRow>
         </TableHead>

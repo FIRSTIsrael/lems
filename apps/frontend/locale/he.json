@@ -102,6 +102,32 @@
           "core-values": "ערכי הליבה",
           "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
+        },
+        "status-glossary": {
+          "title": "מדריך סטטוס מחוונים",
+          "aria-label": "הצג מדריך סטטוס מחוונים",
+          "statuses": {
+            "empty": {
+              "label": "לא התחיל",
+              "description": "המחוון טרם מולא"
+            },
+            "in-progress": {
+              "label": "בתהליך",
+              "description": "המחוון ממולא כעת"
+            },
+            "ready": {
+              "label": "הושלם",
+              "description": "המחוון הושלם ונשלח"
+            },
+            "waiting-for-review": {
+              "label": "ממתין לסקירה",
+              "description": "המחוון ממתין לסקירה של השופט הראשי"
+            },
+            "completed": {
+              "label": "מאושר",
+              "description": "המחוון נבדק ואושר"
+            }
+          }
         }
       },
       "error": {

@@ -102,6 +102,32 @@
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "in-progress": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "ready": {
+              "label": "Ready",
+              "description": "Rubric has been completed and submitted"
+            },
+            "waiting-for-review": {
+              "label": "Waiting for Review",
+              "description": "Rubric is waiting for review by head judge"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
       },
       "error": {
