@@ -4,3 +4,4 @@ export * from './use-role-translations';
 export * from './use-match-stage-translations';
 export * from './use-judging-session-stage-translations';
 export * from './use-judging-category-translations';
+export * from './use-rubrics-translations';
