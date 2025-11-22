@@ -5,11 +5,10 @@ import { useLocale } from 'next-intl';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Language } from '@mui/icons-material';
 import { Locale, Locales } from '@lems/localization';
-import { useRouter, usePathname } from '../../../i18n/navigation';
+import { useRouter } from 'next/navigation';
 
 export const LanguageSwitcher: React.FC = () => {
   const router = useRouter();
-  const pathname = usePathname();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
 

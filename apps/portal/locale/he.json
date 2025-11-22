@@ -55,7 +55,13 @@
       }
     },
     "teams": {
-      "title": "קבוצות <i>FIRST</i> LEGO League Challenge"
+      "title": "קבוצות <i>FIRST</i> LEGO League Challenge",
+      "region": {
+        "label": "מדינה",
+        "all": "כל המדינות",
+        "current-all": "מציג קבוצות מכל המדינות",
+        "current": "מציג קבוצות מהמדינה {region}"
+      }
     },
     "events": {
       "title": "אירועי <i>FIRST</i> LEGO League Challenge",
@@ -74,6 +80,12 @@
         "active": "פעילים ({count})",
         "upcoming": "מתקרבים ({count})",
         "past": "עברו ({count})"
+      },
+      "region": {
+        "label": "מדינה",
+        "all": "כל המדינות",
+        "current-all": "מציג אירועים מכל המדינות",
+        "current": "מציג אירועים מהמדינה {region}"
       },
       "no-events": {
         "title": "לא נמצאו אירועים",

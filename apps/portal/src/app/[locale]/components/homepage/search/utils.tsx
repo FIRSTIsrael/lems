@@ -21,7 +21,7 @@ export const getUrl = (result: SearchResult) => {
       url += 'teams/';
       break;
     case 'event':
-      url += 'events/';
+      url += 'event/';
       break;
     default:
       break;

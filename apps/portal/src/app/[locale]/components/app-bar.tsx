@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import {
   AppBar,
@@ -23,8 +24,8 @@ import {
   MenuRounded
 } from '@mui/icons-material';
 import { ResponsiveComponent } from '@lems/shared';
-import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
+import { NavSearch } from './nav-search';
 
 const pages = [
   { name: 'teams', href: '/teams', icon: <Group /> },
@@ -52,6 +53,12 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
 
 const DesktopAppBar: React.FC = () => {
   const t = useTranslations('layouts.main.app-bar');
+
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <Toolbar disableGutters>
@@ -85,6 +92,7 @@ const DesktopAppBar: React.FC = () => {
           </Button>
         ))}
       </Box>
+      {mounted && <NavSearch />}
 
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <LanguageSwitcher />
@@ -125,7 +133,16 @@ const MobileAppBar: React.FC = () => {
           }}
           open={Boolean(anchorElNav)}
           onClose={() => setAnchorElNav(null)}
+          PaperProps={{
+            sx: {
+              minWidth: 320,
+              maxWidth: '90vw'
+            }
+          }}
         >
+          <Box sx={{ px: 2, pt: 1, pb: 1 }}>
+            <NavSearch variant="menu" />
+          </Box>
           {pages.map(page => (
             <MenuItem key={page.name} component={Link} href={page.href}>
               <ListItemIcon>{page.icon}</ListItemIcon>
