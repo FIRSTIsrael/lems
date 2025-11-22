@@ -118,7 +118,7 @@
     "rubric": {
       "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
       "field-notes-label": "Notes",
-      "field-notes-placeholder": "Explain your selection",
+      "field-notes-placeholder": "How did the team exceed?",
       "award-nominations": {
         "title": "Award Nomination",
         "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
