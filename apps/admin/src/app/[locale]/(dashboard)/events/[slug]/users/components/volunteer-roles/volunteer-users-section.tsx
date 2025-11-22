@@ -62,7 +62,7 @@ export function VolunteerUsersSection() {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ sm: 'column', lg: 'row' }} spacing={2}>
           <Tooltip
             title={isNew ? t('status.new-users-tooltip') : t('status.existing-users-tooltip')}
             arrow
@@ -125,7 +125,7 @@ export function VolunteerUsersSection() {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
+      <Stack direction={{ sm: 'column', lg: 'row' }} spacing={3} alignItems="flex-start">
         <ManagedRolesSection />
         <MandatoryRolesSection />
         <OptionalRolesSection />
