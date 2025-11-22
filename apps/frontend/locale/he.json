@@ -130,5 +130,11 @@
       "insights": "תובנות"
     },
     "logout": "יציאה"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "קבוצה לא נמצאה",
+      "error-not-arrived": "הקבוצה טרם הגיעה לאירוע"
+    }
   }
 }
