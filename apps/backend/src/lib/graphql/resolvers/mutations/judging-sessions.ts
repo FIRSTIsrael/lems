@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import dayjs from 'dayjs';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
@@ -75,7 +76,7 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
 
     // Check 3: Session must be in not-started status
     const sessionState = await db.raw.mongo
-      .collection('judging_session_states')
+      .collection<JudgingSessionState>('judging_session_states')
       .findOne({ sessionId });
 
     if (!sessionState || sessionState.status !== 'not-started') {
@@ -119,19 +120,21 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
     // Update the judging session state in MongoDB
-    const result = await db.raw.mongo.collection('judging_session_states').findOneAndUpdate(
-      { sessionId },
-      {
-        $set: {
-          status: 'in-progress',
-          startTime,
-          startDelta
-        }
-      },
-      { returnDocument: 'after' }
-    );
+    const result = await db.raw.mongo
+      .collection<JudgingSessionState>('judging_session_states')
+      .findOneAndUpdate(
+        { sessionId },
+        {
+          $set: {
+            status: 'in-progress',
+            startTime,
+            startDelta
+          }
+        },
+        { returnDocument: 'after' }
+      );
 
-    if (!result.ok || !result.value) {
+    if (!result) {
       throw new MutationError(
         MutationErrorCode.INTERNAL_ERROR,
         `Failed to update judging session state for ${sessionId}`
