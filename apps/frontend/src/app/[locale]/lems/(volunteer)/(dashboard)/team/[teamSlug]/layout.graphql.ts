@@ -3,12 +3,14 @@ import { gql, type TypedDocumentNode } from '@apollo/client';
 type GetTeamDataQuery = {
   division: {
     id: string;
-    name: string;
     teams: Array<{
       id: string;
-      slug: string;
-      number: string;
       name: string;
+      number: number;
+      affiliation: string;
+      city: string;
+      logoUrl: string;
+      slug: string;
       arrived: boolean;
     }>;
   } | null;
@@ -24,9 +26,13 @@ export const GET_TEAM_DATA_QUERY: TypedDocumentNode<GetTeamDataQuery, GetTeamDat
     query GetTeamData($divisionId: String!, $teamSlug: String!) {
       division(id: $divisionId) {
         id
-        name
         teams(slugs: [$teamSlug]) {
           id
+          name
+          number
+          affiliation
+          city
+          logoUrl
           slug
           arrived
         }

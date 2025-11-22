@@ -114,6 +114,19 @@
         "sort-ascending": "ממוין בסדר עולה",
         "sort-descending": "ממוין בסדר יורד"
       }
+    },
+    "rubric": {
+      "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+      "award-nominations": {
+        "title": "מועמדות לפרס",
+        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
+        "no-awards": "אין פרסים אופציונליים זמינים."
+      },
+      "actions": {
+        "save-draft": "שמור כטיוטה",
+        "submit-review": "הגש לבדיקה",
+        "reset": "איפוס"
+      }
     }
   },
   "components": {
@@ -135,6 +148,10 @@
     "team": {
       "error-not-found": "קבוצה לא נמצאה",
       "error-not-arrived": "הקבוצה טרם הגיעה לאירוע"
+    },
+    "rubric": {
+      "error-not-authorized": "אין לך הרשאות לגשת למחוון זה",
+      "error-team-not-judged": "הקבוצה עוד לא סיימה את מפגש השיפוט"
     }
   }
 }
