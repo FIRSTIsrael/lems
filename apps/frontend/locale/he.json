@@ -117,6 +117,8 @@
     },
     "rubric": {
       "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+      "field-notes-label": "הערות",
+      "field-notes-placeholder": "הסבר בחירתך",
       "award-nominations": {
         "title": "מועמדות לפרס",
         "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",

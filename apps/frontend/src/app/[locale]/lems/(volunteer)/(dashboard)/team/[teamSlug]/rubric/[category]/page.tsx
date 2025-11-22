@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Container } from '@mui/material';
+import { Formik, Form } from 'formik';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { rubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types';
@@ -11,6 +12,7 @@ import { useTeam } from '../../components/team-context';
 import { RubricActions } from './components/rubric-actions';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
+import { getEmptyRubric } from './rubric-utils';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -32,16 +34,28 @@ export default function RubricPage() {
         })}
       />
 
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        {schema.awards && <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />}
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Formik
+          initialValues={getEmptyRubric(category as JudgingCategory)}
+          onSubmit={() => {}}
+          enableReinitialize
+        >
+          {() => (
+            <Form>
+              {schema.awards && (
+                <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />
+              )}
 
-        <RubricTable
-          sections={schema.sections}
-          category={category as JudgingCategory}
-          disabled={!isEditable}
-        />
+              <RubricTable
+                sections={schema.sections}
+                category={category as JudgingCategory}
+                disabled={!isEditable}
+              />
 
-        <RubricActions disabled={!isEditable} />
+              <RubricActions disabled={!isEditable} />
+            </Form>
+          )}
+        </Formik>
       </Container>
     </>
   );

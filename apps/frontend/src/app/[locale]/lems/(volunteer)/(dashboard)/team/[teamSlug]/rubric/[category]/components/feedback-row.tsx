@@ -2,7 +2,9 @@
 
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types';
+import { useFormikContext } from 'formik';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
+import type { RubricFormValues } from '../rubric-utils';
 
 interface FeedbackRowProps {
   category: JudgingCategory;
@@ -23,6 +25,7 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({
 }) => {
   const feedbackFields = ['great-job', 'think-about'] as const;
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { values, setFieldValue } = useFormikContext<RubricFormValues>();
 
   return (
     <>
@@ -85,6 +88,11 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({
               placeholder={getFeedbackTitle(field)}
               disabled={disabled}
               variant="standard"
+              defaultValue={values.feedback?.[field] ?? ''}
+              onChange={() => {
+                // Update local state only during typing
+              }}
+              onBlur={e => setFieldValue(`feedback.${field}`, e.target.value)}
               sx={{
                 p: 1,
                 borderRadius: '12px',
@@ -97,6 +105,9 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({
                   },
                   '&:hover::before': {
                     borderBottom: 'none !important'
+                  },
+                  '&.Mui-disabled::before': {
+                    borderBottomStyle: 'none !important'
                   }
                 }
               }}
