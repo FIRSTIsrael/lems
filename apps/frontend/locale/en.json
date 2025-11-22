@@ -114,7 +114,13 @@
         "current-stage": "Current Stage",
         "team": "Team",
         "session-ends-in-label": "Session Ends In",
-        "up-next": "Up Next"
+        "up-next": "Up Next",
+        "abort-dialog": {
+          "title": "Abort Judging Session",
+          "message": "Are you sure you want to abort this judging session? This action cannot be undone and will end the session immediately.",
+          "cancel": "Cancel",
+          "confirm": "Abort Session"
+        }
       }
     },
     "reports": {

@@ -1,11 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Close } from '@mui/icons-material';
 import { Box, Button, Stack, Paper, Typography, LinearProgress } from '@mui/material';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
+import { AbortSessionDialog } from './abort-session-dialog';
 import {
   formatTime,
   getStageColor,
@@ -22,6 +23,8 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
   onAbortSession
 }) => {
   const t = useTranslations('pages.judge.timer');
+
+  const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
   const { session, sessionLength } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
@@ -199,7 +202,7 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           <Button
             variant="outlined"
             color="error"
-            onClick={() => onAbortSession(session.id)}
+            onClick={() => setAbortDialogOpen(true)}
             startIcon={<Close />}
             fullWidth
             sx={{
@@ -217,6 +220,12 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Button>
         </Stack>
       </Stack>
+
+      <AbortSessionDialog
+        open={abortDialogOpen}
+        onClose={() => setAbortDialogOpen(false)}
+        onConfirm={() => onAbortSession(session.id)}
+      />
     </Box>
   );
 };
