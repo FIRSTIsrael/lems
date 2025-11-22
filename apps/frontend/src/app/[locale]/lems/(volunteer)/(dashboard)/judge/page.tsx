@@ -15,7 +15,8 @@ import {
   createJudgingSessionStartedSubscriptionForJudge,
   START_JUDGING_SESSION_MUTATION
 } from './judge.graphql';
-import { RoomScheduleTable } from './components/room-schedule-table';
+import { RoomScheduleTable } from './components/schedule/room-schedule-table';
+import { JudgingSessionTimerDisplay } from './components/timer/judging-session-timer-display';
 
 export default function JudgePage() {
   const t = useTranslations('pages.judge');
@@ -47,7 +48,7 @@ export default function JudgePage() {
   );
 
   const sessions = data?.division?.judging.sessions ?? null;
-  const sessionInProgress = !!sessions?.some(session => session.status === 'in-progress');
+  const sessionInProgress = sessions?.find(session => session.status === 'in-progress');
 
   const handleStartSession = useCallback(
     async (sessionId: string) => {
@@ -58,20 +59,20 @@ export default function JudgePage() {
     [startSessionMutation, currentDivision.id]
   );
 
+  if (sessionInProgress) {
+    return <JudgingSessionTimerDisplay session={sessionInProgress} />;
+  }
+
   return (
     <>
       <PageHeader title={t('page-title')} />
 
       <Box sx={{ pt: 3 }}>
-        {sessionInProgress ? (
-          <Box sx={{ mb: 2, color: 'warning.main', fontWeight: 'bold' }}>IN PROGRESS</Box>
-        ) : (
-          <RoomScheduleTable
-            sessions={sessions || []}
-            loading={loading || !sessions}
-            onStartSession={handleStartSession}
-          />
-        )}
+        <RoomScheduleTable
+          sessions={sessions || []}
+          loading={loading || !sessions}
+          onStartSession={handleStartSession}
+        />
       </Box>
     </>
   );

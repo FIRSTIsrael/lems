@@ -105,7 +105,15 @@
         },
         "start-session-error": "שגיאה בהתחלת מפגש השיפוט"
       },
-      "error": "שגיאה בהתחלת מפגש השיפוט"
+      "error": "שגיאה בהתחלת מפגש השיפוט",
+      "abort-session": "בטל מפגש",
+      "timer": {
+        "minutes": "{count} דקות",
+        "current-stage": "שלב נוכחי",
+        "team": "קבוצה",
+        "session-ends-in-label": "המפגש יסתיים בעוד",
+        "up-next": "הבא בתור"
+      }
     },
     "reports": {
       "page-title": "דוחות",

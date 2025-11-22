@@ -105,7 +105,15 @@
         },
         "start-session-error": "Failed to start judging session"
       },
-      "error": "Failed to start judging session"
+      "error": "Failed to start judging session",
+      "abort-session": "Abort Session",
+      "timer": {
+        "minutes": "{count} minutes",
+        "current-stage": "Current Stage",
+        "team": "Team",
+        "session-ends-in-label": "Session Ends In",
+        "up-next": "Up Next"
+      }
     },
     "reports": {
       "page-title": "Reports",
