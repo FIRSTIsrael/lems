@@ -106,8 +106,8 @@
         "start-session-error": "Failed to start judging session"
       },
       "error": "Failed to start judging session",
-      "abort-session": "Abort Session",
       "timer": {
+        "abort-session": "Abort Session",
         "minutes": "{count} minutes",
         "current-stage": "Current Stage",
         "team": "Team",
