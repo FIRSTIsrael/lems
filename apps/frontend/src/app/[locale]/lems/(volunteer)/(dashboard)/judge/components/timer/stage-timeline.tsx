@@ -9,7 +9,7 @@ import {
   formatTime,
   getStageColor,
   JudgingSessionTimerState
-} from './hooks/use-judging-session-timer';
+} from './hooks/use-judging-timer';
 
 interface StageTimelineProps {
   timerState: JudgingSessionTimerState;
@@ -27,9 +27,9 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
     <Stack spacing={2}>
       <AnimatePresence mode="popLayout">
         {JUDGING_STAGES.map((stage, displayIndex) => {
-          const actualIndex = currentStageIndex + displayIndex;
-          const isActive = actualIndex === currentStageIndex;
-          const isNext = actualIndex === nextStageIndex;
+          const isActive = displayIndex === currentStageIndex;
+          const isNext = displayIndex === nextStageIndex;
+          const isPast = displayIndex < currentStageIndex;
           const color = getStageColor(stage.id);
 
           return (
@@ -86,7 +86,11 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
                       flexShrink: 0
                     }}
                   >
-                    {isActive ? formatTime(stageTimeRemaining) : formatTime(stage.duration)}
+                    {isActive
+                      ? formatTime(stageTimeRemaining)
+                      : isPast
+                        ? formatTime(0)
+                        : formatTime(stage.duration)}
                   </Typography>
                   {isNext && hasNextStage && (
                     <Typography

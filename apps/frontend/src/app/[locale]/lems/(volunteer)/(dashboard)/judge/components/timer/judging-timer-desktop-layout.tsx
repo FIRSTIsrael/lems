@@ -15,28 +15,23 @@ import {
 } from '@mui/material';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
-import { JudgingSession } from '../../judge.graphql';
 import {
   formatTime,
   getStageColor,
   JUDGING_STAGES,
   useJudgingSessionTimer
-} from './hooks/use-judging-session-timer';
+} from './hooks/use-judging-timer';
 import { StageTimeline } from './stage-timeline';
+import { useSession } from './judging-session-context';
 
-interface JudgingTimerDesktopLayoutProps {
-  session: JudgingSession;
-}
-
-export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps> = ({
-  session
-}) => {
+export const JudgingTimerDesktopLayout: React.FC = () => {
   const t = useTranslations('pages.judge.timer');
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
+  const { session, sessionLength } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime);
+  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
   const currentStage = JUDGING_STAGES[currentStageIndex];

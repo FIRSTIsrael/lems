@@ -51,6 +51,9 @@ type Judging {
 
   "Room IDs available for judging in this division"
   rooms: [String!]!
+
+  "Length of each judging session in seconds"
+  judgingSessionLength: Int!
 }
 
 extend type Division {

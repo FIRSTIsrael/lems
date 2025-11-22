@@ -10,6 +10,7 @@ import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionJudgingResolver } from './divisions/judging';
 import { judgingSessionsResolver } from './divisions/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging-rooms';
+import { judgingSessionLengthResolver } from './divisions/judgin-session-length';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { teamArrivalResolver } from './divisions/team-arrival';
@@ -38,7 +39,8 @@ export const resolvers = {
   },
   Judging: {
     sessions: judgingSessionsResolver,
-    rooms: judgingRoomsResolver
+    rooms: judgingRoomsResolver,
+    judgingSessionLength: judgingSessionLengthResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,

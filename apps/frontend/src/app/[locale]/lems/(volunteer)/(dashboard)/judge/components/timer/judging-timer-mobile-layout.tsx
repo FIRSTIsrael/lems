@@ -6,23 +6,20 @@ import { Close } from '@mui/icons-material';
 import { Box, Button, Stack, Paper, Typography, LinearProgress } from '@mui/material';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
-import { JudgingSession } from '../../judge.graphql';
 import {
   formatTime,
   getStageColor,
   JUDGING_STAGES,
   useJudgingSessionTimer
-} from './hooks/use-judging-session-timer';
+} from './hooks/use-judging-timer';
+import { useSession } from './judging-session-context';
 
-interface JudgingTimerMobileLayoutProps {
-  session: JudgingSession;
-}
-
-export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> = ({ session }) => {
+export const JudgingTimerMobileLayout: React.FC = () => {
   const t = useTranslations('pages.judge.timer');
 
+  const { session, sessionLength } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime);
+  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
   const currentStage = JUDGING_STAGES[currentStageIndex];
