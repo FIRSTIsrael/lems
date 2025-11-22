@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import toast from 'react-hot-toast';
 import {
   Box,
   Paper,
@@ -45,19 +44,10 @@ export function TeamArrivalInput({
 
   const handleMarkArrived = useCallback(async () => {
     if (!selectedTeam) return;
-
     setSubmitting(true);
-
-    try {
-      await onTeamArrival(selectedTeam);
-      setSelectedTeam(null);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t('error');
-      toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    await onTeamArrival(selectedTeam);
+    setSelectedTeam(null);
+    setSubmitting(false);
   }, [selectedTeam, onTeamArrival]);
 
   const handleKeyDown = useCallback(

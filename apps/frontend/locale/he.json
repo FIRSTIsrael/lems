@@ -67,6 +67,7 @@
     },
     "pit-admin": {
       "page-title": "רישום קבוצות",
+      "error": "נכשל בסימון הקבוצה כהגעה",
       "stats": {
         "total-teams": "מספר קבוצות",
         "arrived": "הגיעו",
@@ -83,7 +84,6 @@
         "submitting": "מעבדים...",
         "no-options": "כל הקבוצות הגיעו!",
         "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "error": "נכשל בסימון הקבוצה כהגיעה",
         "team": "קבוצה"
       }
     },
