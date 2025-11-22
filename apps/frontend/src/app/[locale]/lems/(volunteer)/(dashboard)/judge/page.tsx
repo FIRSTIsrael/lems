@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-hot-toast';
 import { Box } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { useEvent } from '../../components/event-context';
@@ -21,7 +22,11 @@ export default function JudgePage() {
 
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
-  const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION);
+  const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION, {
+    onError: () => {
+      toast.error(t('error'));
+    }
+  });
 
   const subscriptions = useMemo(
     () => [

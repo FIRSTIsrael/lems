@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import dayjs from 'dayjs';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
@@ -33,20 +34,20 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
 > = async (_root, { divisionId, sessionId }, context) => {
   try {
     if (!context.user) {
-      throw new Error('UNAUTHORIZED');
+      throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
     if (context.user.role !== 'judge') {
-      throw new Error('FORBIDDEN');
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have judge role');
     }
 
     if (!context.user.divisions.includes(divisionId)) {
-      throw new Error('FORBIDDEN');
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User is not assigned to the division');
     }
 
     const userRoomId = context.user.roleInfo?.roomId;
     if (!userRoomId) {
-      throw new Error('FORBIDDEN');
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User does not have an assigned room');
     }
 
     // Check 1: Session exists in the division
@@ -58,12 +59,18 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       .executeTakeFirst();
 
     if (!session) {
-      throw new Error(`Session ${sessionId} not found in division ${divisionId}`);
+      throw new MutationError(
+        MutationErrorCode.NOT_FOUND,
+        `Session ${sessionId} not found in division ${divisionId}`
+      );
     }
 
     // Check 2: Session's room must match user's assigned room
     if (session.room_id !== userRoomId) {
-      throw new Error(`FORBIDDEN`);
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'Session room does not match user assigned room'
+      );
     }
 
     // Check 3: Session must be in not-started status
@@ -72,12 +79,15 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       .findOne({ sessionId });
 
     if (!sessionState || sessionState.status !== 'not-started') {
-      throw new Error(`Session is not in not-started status`);
+      throw new MutationError(MutationErrorCode.CONFLICT, `Session is not in not-started status`);
     }
 
     // Check 4: Session must have a teamId
     if (!session.team_id) {
-      throw new Error('Cannot start session without a team assigned');
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        'Cannot start session without a team assigned'
+      );
     }
 
     // Check 5: Team must have arrived
@@ -89,7 +99,7 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       .executeTakeFirst();
 
     if (!teamArrived || !teamArrived.arrived) {
-      throw new Error('Team has not arrived at the division');
+      throw new MutationError(MutationErrorCode.CONFLICT, 'Team has not arrived at the division');
     }
 
     // Check 6: Must have 5 minutes or less until scheduled start time
@@ -98,7 +108,8 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     const minutesUntilStart = scheduledTime.diff(now, 'minutes', true);
 
     if (minutesUntilStart > 5) {
-      throw new Error(
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
         `Session is scheduled to start in ${Math.ceil(minutesUntilStart)} minutes. Sessions can only be started 5 minutes or less before their scheduled time.`
       );
     }
@@ -108,8 +119,7 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
     // Update the judging session state in MongoDB
-    const mongoDb = db.raw.mongo;
-    const result = await mongoDb.collection('judging_session_states').findOneAndUpdate(
+    const result = await db.raw.mongo.collection('judging_session_states').findOneAndUpdate(
       { sessionId },
       {
         $set: {
@@ -122,7 +132,10 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     );
 
     if (!result.ok || !result.value) {
-      throw new Error(`Failed to update judging session state for ${sessionId}`);
+      throw new MutationError(
+        MutationErrorCode.INTERNAL_ERROR,
+        `Failed to update judging session state for ${sessionId}`
+      );
     }
 
     // Publish event to subscribers

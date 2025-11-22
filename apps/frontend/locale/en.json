@@ -104,7 +104,8 @@
           "robot-design": "Robot Design"
         },
         "start-session-error": "Failed to start judging session"
-      }
+      },
+      "error": "Failed to start judging session"
     },
     "reports": {
       "page-title": "Reports",

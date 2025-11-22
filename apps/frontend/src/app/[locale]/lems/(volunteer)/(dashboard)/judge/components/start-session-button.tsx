@@ -1,9 +1,8 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { toast } from 'react-hot-toast';
 import { Button } from '@mui/material';
 import { PlayArrow } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
@@ -26,6 +25,7 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
   disabled = false
 }) => {
   const t = useTranslations('pages.judge.schedule');
+  const [loading, setLoading] = useState(false);
 
   const isStartable = useMemo(() => {
     if (sessionStatus !== 'not-started') return false;
@@ -41,12 +41,9 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
   }, [sessionStatus, teamArrived, scheduledTime]);
 
   const handleStartSession = async (sessionId: string) => {
-    try {
-      await onStartSession(sessionId);
-    } catch (error) {
-      console.error('Failed to start session:', error);
-      toast.error(t('start-session-error'));
-    }
+    setLoading(true);
+    await onStartSession(sessionId);
+    setLoading(false);
   };
 
   return (
@@ -54,6 +51,7 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
       variant="contained"
       size="medium"
       disabled={!isStartable || disabled}
+      loading={loading}
       onClick={() => handleStartSession(sessionId)}
       startIcon={<DirectionalIcon ltr={PlayArrow} />}
       sx={{

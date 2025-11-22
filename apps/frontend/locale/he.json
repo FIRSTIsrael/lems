@@ -104,7 +104,8 @@
           "robot-design": "תכנון הרובוט"
         },
         "start-session-error": "שגיאה בהתחלת מפגש השיפוט"
-      }
+      },
+      "error": "שגיאה בהתחלת מפגש השיפוט"
     },
     "reports": {
       "page-title": "דוחות",
