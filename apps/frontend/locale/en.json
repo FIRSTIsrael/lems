@@ -130,5 +130,11 @@
       "insights": "Insights"
     },
     "logout": "Logout"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "Team not found",
+      "error-not-arrived": "The team has not arrived yet"
+    }
   }
 }

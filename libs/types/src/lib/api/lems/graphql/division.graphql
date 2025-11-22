@@ -17,8 +17,14 @@ type Division {
   "Judging rooms assigned to this division"
   rooms: [Room!]!
 
-  "Teams registered in this division, optionally filtered by IDs"
-  teams("Filter teams by their IDs" ids: [String!]): [Team!]!
+  "Teams registered in this division, optionally filtered by IDs or slugs"
+  teams(
+    "Filter teams by their IDs"
+    ids: [String!]
+    
+    "Filter teams by their slugs (region-number format, e.g., 'IL-9909')"
+    slugs: [String!]
+  ): [Team!]!
 }
 
 """
