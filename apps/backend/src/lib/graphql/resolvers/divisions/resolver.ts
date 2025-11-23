@@ -16,7 +16,12 @@ export const divisionResolver = async (_parent: unknown, args: { id: string }) =
       throw new Error(`Division with ID ${args.id} not found`);
     }
 
-    return division;
+    return {
+      id: division.id,
+      name: division.name,
+      color: division.color,
+      pitMapUrl: division.pit_map_url
+    };
   } catch (error) {
     console.error('Error fetching division:', error);
     throw error;

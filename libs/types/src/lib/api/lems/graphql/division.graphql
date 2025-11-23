@@ -11,6 +11,9 @@ type Division {
   "Hex color code for UI display (e.g., '#FF5733')"
   color: String!
 
+  "Public URL of the pit map image for this division, if available"
+  pitMapUrl: String
+
   "Competition tables assigned to this division"
   tables: [Table!]!
 
@@ -21,7 +24,7 @@ type Division {
   teams(
     "Filter teams by their IDs"
     ids: [String!]
-    
+
     "Filter teams by their slugs (region-number format, e.g., 'IL-9909')"
     slugs: [String!]
   ): [Team!]!

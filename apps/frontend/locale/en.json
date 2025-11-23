@@ -116,7 +116,10 @@
         "sort-descending": "sorted descending"
       },
       "pit-map": {
-        "page-title": "Pit Map"
+        "page-title": "Pit Map",
+        "loading": "Loading pit map...",
+        "error-loading": "Failed to load pit map. Please try again.",
+        "no-map": "No pit map is available."
       }
     },
     "rubric": {
