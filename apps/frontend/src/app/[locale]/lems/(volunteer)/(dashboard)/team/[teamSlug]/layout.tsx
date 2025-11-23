@@ -6,6 +6,7 @@ import { useSuspenseQuery } from '@apollo/client/react';
 import { redirect, useParams } from 'next/navigation';
 import { useEvent } from '../../../components/event-context';
 import { useUser } from '../../../../components/user-context';
+import { TeamProvider } from './components/team-context';
 import { GET_TEAM_DATA_QUERY } from './layout.graphql';
 
 interface TeamLayoutProps {
@@ -20,9 +21,13 @@ export default function TeamLayout({ children }: TeamLayoutProps) {
   const { currentDivision } = useEvent();
   const { role } = useUser();
 
-  const { data } = useSuspenseQuery(GET_TEAM_DATA_QUERY, {
+  const { data, error } = useSuspenseQuery(GET_TEAM_DATA_QUERY, {
     variables: { divisionId: currentDivision.id, teamSlug }
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   if (!data.division?.teams || data.division.teams.length === 0) {
     toast.error(t('error-not-found'));
@@ -36,5 +41,5 @@ export default function TeamLayout({ children }: TeamLayoutProps) {
     redirect(`/lems/${role}`);
   }
 
-  return <>{children}</>;
+  return <TeamProvider team={team}>{children}</TeamProvider>;
 }
