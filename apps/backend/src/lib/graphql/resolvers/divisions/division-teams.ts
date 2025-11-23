@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Team as DbTeam } from '@lems/database';
-import { Team as DbTeam } from '@lems/database';
 import db from '../../../database';
 
 export interface TeamGraphQL {
