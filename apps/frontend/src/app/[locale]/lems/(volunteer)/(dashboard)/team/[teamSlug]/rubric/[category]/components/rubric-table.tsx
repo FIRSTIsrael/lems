@@ -11,6 +11,7 @@ import { SectionTitleRow } from './section-title-row';
 import { FieldRatingRow } from './field-rating-row';
 import { FieldNotesRow } from './field-notes-row';
 import { FeedbackRow } from './feedback-row';
+import { RubricCategoryNavigation } from './rubric-category-navigation';
 
 interface RubricTableProps {
   sections: RubricsSchema[JudgingCategory]['sections'];
@@ -30,7 +31,6 @@ export const RubricTable: React.FC<RubricTableProps> = ({
       elevation={3}
       sx={{
         borderRadius: 2,
-        backgroundColor: '#fff',
         my: 2
       }}
     >
@@ -46,11 +46,10 @@ export const RubricTable: React.FC<RubricTableProps> = ({
         }}
         stickyHeader
       >
-        {sections.length > 0 && (
-          <TableHead>
-            <TableHeaderRow category={category} />
-          </TableHead>
-        )}
+        <TableHead sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+          <RubricCategoryNavigation />
+          {sections.length > 0 && <TableHeaderRow category={category} />}
+        </TableHead>
 
         <TableBody>
           {sections.map(section => (
@@ -76,11 +75,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({
               ))}
             </React.Fragment>
           ))}
-          <FeedbackRow
-            category={category}
-            disabled={disabled}
-            rounded={category === 'core-values'}
-          />
+          <FeedbackRow category={category} disabled={disabled} />
         </TableBody>
       </Table>
     </Paper>
