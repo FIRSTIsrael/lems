@@ -47,18 +47,8 @@ export const MobileCategoryNavigation: React.FC = () => {
         sx={{
           display: 'flex',
           gap: 1,
-          overflowX: 'auto',
-          pb: 0.5,
-          '&::-webkit-scrollbar': {
-            height: '4px'
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent'
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: theme.palette.divider,
-            borderRadius: '2px'
-          }
+          flexWrap: 'wrap',
+          pb: 0.5
         }}
       >
         {JudgingCategoryTypes.map(category => {
@@ -85,8 +75,9 @@ export const MobileCategoryNavigation: React.FC = () => {
                 borderColor: isActive ? categoryColor : theme.palette.divider,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease-in-out',
-                flexShrink: 0,
-                minWidth: 'fit-content',
+                flex: '1 1 auto',
+                minWidth: '120px',
+                justifyContent: 'center',
                 '&:hover': {
                   backgroundColor:
                     theme.palette.mode === 'dark' ? `${categoryColor}30` : `${categoryColor}15`,

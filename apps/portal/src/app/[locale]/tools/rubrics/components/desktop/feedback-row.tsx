@@ -99,11 +99,8 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) 
               placeholder={getFeedbackTitle(field)}
               variant="standard"
               disabled={disabled}
-              defaultValue={rubric.values.feedback?.[field] ?? ''}
-              onChange={() => {
-                // Update local state only during typing
-              }}
-              onBlur={e => handleFeedbackUpdate(field, e.target.value)}
+              value={rubric.values.feedback?.[field] ?? ''}
+              onChange={e => handleFeedbackUpdate(field, e.target.value)}
               sx={{
                 p: 1,
                 borderRadius: '12px',

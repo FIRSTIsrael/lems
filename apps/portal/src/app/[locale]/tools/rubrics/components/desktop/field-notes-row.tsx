@@ -65,11 +65,8 @@ export const FieldNotesRow: React.FC<FieldNotesRowProps> = ({ fieldId, disabled 
             variant="standard"
             placeholder={t('field-notes-placeholder')}
             slotProps={{ input: { disableUnderline: true } }}
-            defaultValue={rubric.values.fields[fieldId]?.notes ?? ''}
-            onChange={() => {
-              // Update local state only during typing
-            }}
-            onBlur={e => handleNotesUpdate(e.target.value)}
+            value={rubric.values.fields[fieldId]?.notes ?? ''}
+            onChange={e => handleNotesUpdate(e.target.value)}
           />
         </Box>
       </TableCell>

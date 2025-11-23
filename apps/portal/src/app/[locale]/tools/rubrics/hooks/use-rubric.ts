@@ -42,7 +42,11 @@ export const useRubric = (category: JudgingCategory) => {
 
       const rubricKey = getRubricKey(category);
       const currentRubric = await db.get('rubrics', rubricKey);
-      if (currentRubric && currentRubric.version === rubrics._version) {
+      if (
+        currentRubric &&
+        currentRubric.version === rubrics._version &&
+        currentRubric.category === category
+      ) {
         setRubric(currentRubric);
       } else {
         setRubric({
@@ -79,7 +83,7 @@ export const useRubric = (category: JudgingCategory) => {
     const db = await openDB<RubricsDb>('rubrics-database', 1);
     const tx = db.transaction('rubrics', 'readwrite');
     const store = tx.objectStore('rubrics');
-    await store.delete(getRubricKey(category));
+    await store.clear();
     await tx.done;
     setRubric({
       id: getRubricKey(category),
