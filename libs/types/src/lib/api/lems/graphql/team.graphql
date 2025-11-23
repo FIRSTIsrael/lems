@@ -29,7 +29,7 @@ type Team {
   "Whether the team has checked in at the venue"
   arrived: Boolean!
 
-  "Logo image URL for the team"
+  "URL to the team's logo image"
   logoUrl: String
 }
 
@@ -60,6 +60,9 @@ type RootTeam {
 
   "URL-friendly team slug (region-number)"
   slug: String!
+
+  "URL to the team's logo image"
+  logoUrl: String
 }
 
 extend type Query {

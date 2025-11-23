@@ -16,6 +16,8 @@ import {
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HomeIcon from '@mui/icons-material/Home';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -127,19 +129,21 @@ export default function LemsError({ error, reset }: ErrorProps) {
                 textAlign: 'left'
               }}
             >
-              <Typography
-                variant="caption"
-                sx={{
-                  display: 'block',
-                  fontWeight: 600,
-                  color: 'text.secondary',
-                  mb: 0.5,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}
-              >
-                {t('technical-details')}
-              </Typography>
+              {!isProduction && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: 'block',
+                    fontWeight: 600,
+                    color: 'text.secondary',
+                    mb: 0.5,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}
+                >
+                  {t('technical-details')}
+                </Typography>
+              )}
               <Typography
                 variant="body2"
                 sx={{
