@@ -45,6 +45,7 @@ export interface JudgingSession {
  */
 export interface Judging {
   sessions: JudgingSession[];
+  session: JudgingSession | null;
   rooms: string[];
   judgingSessionLength: number;
 }
