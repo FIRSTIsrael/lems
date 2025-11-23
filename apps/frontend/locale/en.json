@@ -90,7 +90,8 @@
     "reports": {
       "page-title": "Reports",
       "menu": {
-        "team-list": "Team List"
+        "team-list": "Team List",
+        "pit-map": "Pit Map"
       },
       "team-list": {
         "page-title": "Team List",
@@ -113,6 +114,9 @@
         },
         "sort-ascending": "sorted ascending",
         "sort-descending": "sorted descending"
+      },
+      "pit-map": {
+        "page-title": "Pit Map"
       }
     },
     "rubric": {

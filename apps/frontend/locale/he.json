@@ -90,7 +90,8 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
-        "team-list": "רשימת קבוצות"
+        "team-list": "רשימת קבוצות",
+        "pit-map": "מפת פיטים"
       },
       "team-list": {
         "page-title": "רשימת קבוצות",
@@ -113,6 +114,9 @@
         },
         "sort-ascending": "ממוין בסדר עולה",
         "sort-descending": "ממוין בסדר יורד"
+      },
+      "pit-map": {
+        "page-title": "מפת פיטים"
       }
     },
     "rubric": {
