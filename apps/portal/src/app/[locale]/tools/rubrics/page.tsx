@@ -14,7 +14,7 @@ export default function RubricsPage() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <RubricHeader />
 
-        <ResponsiveComponent desktop={<RubricTable />} mobile={<></>} />
+        <ResponsiveComponent desktop={<RubricTable />} mobile={<MobileRubricForm />} />
 
         <JudgingTimer />
       </Container>

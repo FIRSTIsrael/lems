@@ -7,6 +7,7 @@ import { useRubricContext } from '../rubric-context';
 
 interface FeedbackRowProps {
   category: JudgingCategory;
+  disabled?: boolean;
 }
 
 const colors: { [key: string]: string } = {
@@ -17,7 +18,7 @@ const colors: { [key: string]: string } = {
 
 const feedbackFields = ['great-job', 'think-about'] as const;
 
-export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category }) => {
+export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) => {
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { rubric, updateRubric } = useRubricContext();
 
@@ -97,6 +98,7 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category }) => {
               rows={6}
               placeholder={getFeedbackTitle(field)}
               variant="standard"
+              disabled={disabled}
               defaultValue={rubric.values.feedback?.[field] ?? ''}
               onChange={() => {
                 // Update local state only during typing

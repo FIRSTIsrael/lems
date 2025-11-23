@@ -235,7 +235,8 @@
           "reset": "Reset"
         },
         "field-notes-label": "Notes",
-        "field-notes-placeholder": "How did the team exceed?"
+        "field-notes-placeholder": "How did the team exceed?",
+        "mobile-placeholder": "Choose value..."
       }
     }
   },

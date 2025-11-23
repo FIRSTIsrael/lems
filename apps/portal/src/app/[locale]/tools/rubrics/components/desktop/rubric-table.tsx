@@ -12,7 +12,7 @@ import { FeedbackRow } from './feedback-row';
 import { RubricCategoryNavigation } from './rubric-category-navigation';
 
 export const RubricTable: React.FC = () => {
-  const { category, rubric } = useRubricContext();
+  const { category, rubric, loading } = useRubricContext();
   const schema = rubrics[category];
 
   return (
@@ -53,15 +53,16 @@ export const RubricTable: React.FC = () => {
                     fieldId={field.id}
                     sectionId={section.id}
                     coreValues={field.coreValues}
+                    disabled={loading}
                   />
                   {rubric.values.fields[field.id]?.value === 4 && (
-                    <FieldNotesRow fieldId={field.id} />
+                    <FieldNotesRow fieldId={field.id} disabled={loading} />
                   )}
                 </React.Fragment>
               ))}
             </React.Fragment>
           ))}
-          <FeedbackRow category={category} />
+          <FeedbackRow category={category} disabled={loading} />
         </TableBody>
       </Table>
     </Paper>

@@ -235,7 +235,8 @@
           "reset": "איפוס המחוון"
         },
         "field-notes-label": "הערות",
-        "field-notes-placeholder": "כיצד הקבוצה הצטיינה?"
+        "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
+        "mobile-placeholder": "סמנו ניקוד..."
       }
     }
   },

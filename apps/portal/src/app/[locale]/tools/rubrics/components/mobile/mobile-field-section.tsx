@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardContent,
@@ -15,12 +16,11 @@ import {
   Stack
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
-import { useFormikContext } from 'formik';
 import { JudgingCategory } from '@lems/types';
 import { rubricColumns } from '@lems/shared/rubrics';
-import { useRubricsTranslations } from '@lems/localization';
-import { RubricFormValues } from '../../rubric-types';
+import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
 import { RubricRadioIcon } from '../desktop/rubric-radio-icon';
+import { useRubricContext } from '../rubric-context';
 
 interface MobileFieldSectionProps {
   category: JudgingCategory;
@@ -37,17 +37,55 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
   coreValues = false,
   disabled = false
 }) => {
+  const t = useTranslations('pages.tools.rubrics');
   const [expanded, setExpanded] = useState(false);
   const { getFieldLevel } = useRubricsTranslations(category);
-  const { values, setFieldValue } = useFormikContext<RubricFormValues>();
-  const currentValue = values.fields[fieldId]?.value;
+  const { getColumnTitle } = useRubricsGeneralTranslations();
+  const { rubric, updateRubric } = useRubricContext();
+  const currentValue = rubric.values.fields[fieldId]?.value;
+
+  const getCurrentLevelLabel = () => {
+    if (!currentValue) return t('mobile-placeholder');
+
+    const levelIndex = currentValue - 1;
+    const levelMap = ['beginning', 'developing', 'accomplished', 'exceeds'] as const;
+    return getColumnTitle(levelMap[levelIndex]);
+  };
+
+  const handleFieldChange = async (value: 1 | 2 | 3 | 4) => {
+    const updatedValues = {
+      ...rubric.values,
+      fields: {
+        ...rubric.values.fields,
+        [fieldId]: {
+          ...rubric.values.fields[fieldId],
+          value
+        }
+      }
+    };
+    await updateRubric(updatedValues);
+  };
+
+  const handleNotesChange = async (notes: string) => {
+    const updatedValues = {
+      ...rubric.values,
+      fields: {
+        ...rubric.values.fields,
+        [fieldId]: {
+          ...rubric.values.fields[fieldId],
+          notes
+        }
+      }
+    };
+    await updateRubric(updatedValues);
+  };
 
   return (
     <Card sx={{ mb: 2 }}>
       <CardHeader
         title={
           <Typography variant="subtitle1" fontWeight={600}>
-            {getFieldLevel(sectionId, fieldId, 'beginning')}
+            {getCurrentLevelLabel()}
           </Typography>
         }
         action={
@@ -60,20 +98,12 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
         <CardContent>
           <Stack spacing={2}>
             <RadioGroup
-              row
-              value={currentValue}
-              onChange={e =>
-                setFieldValue(`fields.${fieldId}`, {
-                  value: parseInt(e.target.value)
-                })
-              }
+              value={currentValue || ''}
+              onChange={e => handleFieldChange(parseInt(e.target.value) as 1 | 2 | 3 | 4)}
             >
               {rubricColumns.map((level, index) => {
                 const cellValue = (index + 1) as 1 | 2 | 3 | 4;
-                const label =
-                  level === 'exceeds'
-                    ? rubricColumns[index]
-                    : getFieldLevel(sectionId, fieldId, level);
+                const label = level === 'exceeds' ? null : getFieldLevel(sectionId, fieldId, level);
 
                 return (
                   <FormControlLabel
@@ -99,18 +129,21 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
             {currentValue === 4 && (
               <TextField
                 multiline
-                rows={3}
-                label="Notes"
+                rows={4}
+                label={t('field-notes-label')}
+                placeholder={t('field-notes-placeholder')}
                 fullWidth
                 disabled={disabled}
-                value={values.fields[fieldId]?.notes ?? ''}
-                onChange={e =>
-                  setFieldValue(`fields.${fieldId}`, {
-                    ...values.fields[fieldId],
-                    notes: e.target.value
-                  })
-                }
+                value={rubric.values.fields[fieldId]?.notes ?? ''}
+                onChange={e => handleNotesChange(e.target.value)}
+                onBlur={e => handleNotesChange(e.target.value)}
                 size="small"
+                sx={{
+                  mt: 2,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'background.paper'
+                  }
+                }}
               />
             )}
           </Stack>

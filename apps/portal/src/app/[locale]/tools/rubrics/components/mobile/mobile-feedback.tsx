@@ -10,11 +10,10 @@ import {
   Stack,
   lighten
 } from '@mui/material';
-import { useFormikContext } from 'formik';
 import { JudgingCategory } from '@lems/types';
 import { useRubricsGeneralTranslations } from '@lems/localization';
-import { RubricFormValues } from '../../rubric-types';
 import { getCategoryColor } from '../../rubric-utils';
+import { useRubricContext } from '../rubric-context';
 
 interface MobileFeedbackProps {
   category: JudgingCategory;
@@ -23,10 +22,26 @@ interface MobileFeedbackProps {
 
 export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabled = false }) => {
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
-  const { values, setFieldValue } = useFormikContext<RubricFormValues>();
+  const { rubric, updateRubric } = useRubricContext();
   const feedbackFields = ['great-job', 'think-about'] as const;
   const categoryColor = getCategoryColor(category);
   const categoryBackground = lighten(categoryColor, 0.9);
+
+  const handleFeedbackChange = async (field: 'great-job' | 'think-about', value: string) => {
+    const feedback = {
+      'great-job': rubric.values.feedback?.['great-job'] || '',
+      'think-about': rubric.values.feedback?.['think-about'] || ''
+    };
+
+    const updatedValues = {
+      ...rubric.values,
+      feedback: {
+        ...feedback,
+        [field]: value
+      }
+    };
+    await updateRubric(updatedValues);
+  };
 
   return (
     <Card
@@ -59,8 +74,9 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
               rows={4}
               fullWidth
               disabled={disabled}
-              value={values.feedback?.[field] ?? ''}
-              onChange={e => setFieldValue(`feedback.${field}`, e.target.value)}
+              value={rubric.values.feedback?.[field] ?? ''}
+              onChange={e => handleFeedbackChange(field, e.target.value)}
+              onBlur={e => handleFeedbackChange(field, e.target.value)}
               size="small"
             />
           ))}
