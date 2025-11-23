@@ -1,19 +1,23 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { Container, Typography } from '@mui/material';
-import { RubricForm } from './components/rubric-form';
+import { Container } from '@mui/material';
+import { ResponsiveComponent } from '@lems/shared';
+import { RubricTable } from './components/desktop';
+import { MobileRubricForm } from './components/mobile/rubric-form';
+import { RubricProvider } from './components/rubric-context';
+import { JudgingTimer } from './components/judging-timer';
+import { RubricHeader } from './components/rubric-header';
 
 export default function RubricsPage() {
-  const t = useTranslations('pages.tools.rubrics');
-
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }} gutterBottom>
-        {t('title')}
-      </Typography>
+    <RubricProvider>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <RubricHeader />
 
-      <RubricForm />
-    </Container>
+        <ResponsiveComponent desktop={<RubricTable />} mobile={<></>} />
+
+        <JudgingTimer />
+      </Container>
+    </RubricProvider>
   );
 }

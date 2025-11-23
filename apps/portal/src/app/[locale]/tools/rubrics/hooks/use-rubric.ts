@@ -3,6 +3,7 @@ import { openDB, DBSchema } from 'idb';
 import { JudgingCategory } from '@lems/types';
 import { rubrics } from '@lems/shared/rubrics';
 import { RubricFormValues } from '../rubric-types';
+import { getEmptyRubric } from '../rubric-utils';
 
 export interface RubricData {
   id: string;
@@ -21,7 +22,12 @@ interface RubricsDb extends DBSchema {
 const getRubricKey = (category: JudgingCategory) => `rubric-${category}`;
 
 export const useRubric = (category: JudgingCategory) => {
-  const [rubric, setRubric] = useState<RubricData | null>(null);
+  const [rubric, setRubric] = useState<RubricData>(() => ({
+    id: getRubricKey(category),
+    version: rubrics._version,
+    category,
+    values: getEmptyRubric(category)
+  }));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +45,12 @@ export const useRubric = (category: JudgingCategory) => {
       if (currentRubric && currentRubric.version === rubrics._version) {
         setRubric(currentRubric);
       } else {
-        setRubric(null);
+        setRubric({
+          id: rubricKey,
+          version: rubrics._version,
+          category,
+          values: getEmptyRubric(category)
+        });
       }
       setLoading(false);
     };
@@ -70,7 +81,12 @@ export const useRubric = (category: JudgingCategory) => {
     const store = tx.objectStore('rubrics');
     await store.delete(getRubricKey(category));
     await tx.done;
-    setRubric(null);
+    setRubric({
+      id: getRubricKey(category),
+      version: rubrics._version,
+      category,
+      values: getEmptyRubric(category)
+    });
   };
 
   return { rubric, updateRubric, resetRubric, loading };

@@ -9,7 +9,7 @@ import { useRubricContext } from '../rubric-context';
 
 export const RubricCategoryNavigation: React.FC = () => {
   const theme = useTheme();
-  const t = useTranslations('pages.rubric.navigation');
+  const t = useTranslations('pages.tools.rubrics.navigation');
   const { getCategory } = useJudgingCategoryTranslations();
   const { category: currentCategory, setCategory } = useRubricContext();
 

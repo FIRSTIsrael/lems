@@ -227,7 +227,15 @@
         "score": "{points} נק'"
       },
       "rubrics": {
-        "title": "מחווני שיפוט"
+        "title": "מחווני שיפוט",
+        "navigation": {
+          "title": "תחומי שיפוט"
+        },
+        "actions": {
+          "reset": "איפוס המחוון"
+        },
+        "field-notes-label": "הערות",
+        "field-notes-placeholder": "כיצד הקבוצה הצטיינה?"
       }
     }
   },

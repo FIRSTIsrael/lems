@@ -17,14 +17,7 @@ const categoryColors: { [K in JudgingCategory]: string[] } = {
 
 export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
   const { getColumnTitle } = useRubricsGeneralTranslations();
-
   const colors = categoryColors[category];
-
-  const getBorderRadius = (index: number): string | undefined => {
-    const length = rubricColumns.length;
-    if (index === 0) return '12px 0 0 0';
-    if (index === length - 1) return '0 12px 0 0';
-  };
 
   return (
     <TableRow>
@@ -35,7 +28,6 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
           sx={{
             bgcolor: colors[index],
             boxSizing: 'border-box',
-            borderRadius: getBorderRadius(index),
             fontSize: '1em',
             py: '0.875em',
             px: '0.5em',

@@ -227,7 +227,15 @@
         "score": "{points} pts"
       },
       "rubrics": {
-        "title": "Rubrics"
+        "title": "Rubrics",
+        "navigation": {
+          "title": "Rubric Categories"
+        },
+        "actions": {
+          "reset": "Reset"
+        },
+        "field-notes-label": "Notes",
+        "field-notes-placeholder": "How did the team exceed?"
       }
     }
   },

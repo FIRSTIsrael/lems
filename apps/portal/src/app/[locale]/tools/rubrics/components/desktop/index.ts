@@ -1,6 +1,4 @@
 export { RubricTable } from './rubric-table';
-export { DesktopRubricForm } from './rubric-form';
-export { RubricActions } from './rubric-actions';
 export { FieldRatingRow } from './field-rating-row';
 export { FieldNotesRow } from './field-notes-row';
 export { FeedbackRow } from './feedback-row';
