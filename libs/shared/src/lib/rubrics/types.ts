@@ -11,6 +11,7 @@ export interface RubricCategorySchema {
 }
 
 export interface RubricsSchema {
+  _version: string;
   'core-values': RubricCategorySchema;
   'innovation-project': RubricCategorySchema;
   'robot-design': RubricCategorySchema;
