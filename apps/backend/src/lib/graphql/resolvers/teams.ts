@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Team as DbTeam } from '@lems/database';
 import db from '../../database';
-import { Team as DbTeam } from '@lems/database';
 
 export interface RootTeamGraphQL {
   id: string;
@@ -12,6 +11,7 @@ export interface RootTeamGraphQL {
   location: string | null;
   region: string;
   slug: string;
+  logoUrl: string | null;
 }
 
 interface TeamsQueryArgs {
