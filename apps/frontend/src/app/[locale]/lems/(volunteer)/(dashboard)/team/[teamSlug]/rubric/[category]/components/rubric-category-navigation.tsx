@@ -5,32 +5,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory, JudgingCategoryTypes } from '@lems/types';
+import { getCategoryColor } from '../rubric-utils';
 
-const getCategoryColor = (category: JudgingCategory) => {
-  switch (category) {
-    case 'core-values':
-      return '#d32f2f';
-    case 'innovation-project':
-      return '#1976d2';
-    case 'robot-design':
-      return '#388e3c';
-  }
-};
-
-interface RubricCategoryNavigationProps {
-  teamSlug: string;
-}
-
-export const RubricCategoryNavigation: React.FC<RubricCategoryNavigationProps> = ({ teamSlug }) => {
+export const RubricCategoryNavigation: React.FC = () => {
   const theme = useTheme();
   const router = useRouter();
-  const { locale, category: currentCategory } = useParams();
+  const { category: currentCategory, teamSlug } = useParams();
   const t = useTranslations('pages.rubric.navigation');
   const { getCategory } = useJudgingCategoryTranslations();
 
   const handleNavigate = (category: JudgingCategory) => {
     if (category !== currentCategory) {
-      router.push(`/${locale}/lems/team/${teamSlug}/rubric/${category}`);
+      router.push(`/lems/team/${teamSlug}/rubric/${category}`);
     }
   };
 

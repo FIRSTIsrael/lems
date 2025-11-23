@@ -9,7 +9,6 @@ import type { RubricFormValues } from '../rubric-utils';
 interface FeedbackRowProps {
   category: JudgingCategory;
   disabled?: boolean;
-  rounded?: boolean;
 }
 
 const colors: { [key: string]: string } = {
@@ -18,11 +17,7 @@ const colors: { [key: string]: string } = {
   'robot-design': '#DAE8D8'
 };
 
-export const FeedbackRow: React.FC<FeedbackRowProps> = ({
-  category,
-  disabled = false,
-  rounded = false
-}) => {
+export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
   const feedbackFields = ['great-job', 'think-about'] as const;
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { values, setFieldValue } = useFormikContext<RubricFormValues>();
@@ -40,7 +35,6 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({
               padding: '0.75em',
               fontWeight: 600,
               borderRight: index === 0 ? '1px solid rgba(0,0,0,0.2)' : 'none',
-              borderRadius: rounded ? (index === 0 ? '12px 0 0 0' : '0 12px 0 0') : undefined,
               '@media print': {
                 border: '1px solid #000',
                 py: '0.5em',

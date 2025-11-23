@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { redirect, usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Stack, Box, alpha, Typography, useTheme } from '@mui/material';
 import { useUser } from '../../../../components/user-context';
 import { buildNavigationItems } from '../../../../lib/navigation-items';
@@ -15,6 +15,7 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
   const t = useTranslations('components.navigation-list');
 
   const pathname = usePathname();
+  const router = useRouter();
   const theme = useTheme();
   const user = useUser();
 
@@ -23,9 +24,9 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
   const handleItemClick = useCallback(
     (item: (typeof items)[number]) => {
       onItemClick?.();
-      redirect(item.href);
+      router.push(item.href);
     },
-    [onItemClick]
+    [onItemClick, router]
   );
 
   return (

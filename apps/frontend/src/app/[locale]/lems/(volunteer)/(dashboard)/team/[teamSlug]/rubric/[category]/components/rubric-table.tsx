@@ -14,14 +14,12 @@ import { FeedbackRow } from './feedback-row';
 import { RubricCategoryNavigation } from './rubric-category-navigation';
 
 interface RubricTableProps {
-  teamSlug: string;
   sections: RubricsSchema[JudgingCategory]['sections'];
   category: JudgingCategory;
   disabled?: boolean;
 }
 
 export const RubricTable: React.FC<RubricTableProps> = ({
-  teamSlug,
   sections,
   category,
   disabled = false
@@ -48,12 +46,10 @@ export const RubricTable: React.FC<RubricTableProps> = ({
         }}
         stickyHeader
       >
-        {sections.length > 0 && (
-          <TableHead sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-            <RubricCategoryNavigation teamSlug={teamSlug as string} />
-            <TableHeaderRow category={category} />
-          </TableHead>
-        )}
+        <TableHead sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+          <RubricCategoryNavigation />
+          {sections.length > 0 && <TableHeaderRow category={category} />}
+        </TableHead>
 
         <TableBody>
           {sections.map(section => (
@@ -79,11 +75,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({
               ))}
             </React.Fragment>
           ))}
-          <FeedbackRow
-            category={category}
-            disabled={disabled}
-            rounded={category === 'core-values'}
-          />
+          <FeedbackRow category={category} disabled={disabled} />
         </TableBody>
       </Table>
     </Paper>
