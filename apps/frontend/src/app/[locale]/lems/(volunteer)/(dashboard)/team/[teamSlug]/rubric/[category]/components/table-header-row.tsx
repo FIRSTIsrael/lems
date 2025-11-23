@@ -20,12 +20,6 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
 
   const colors = categoryColors[category];
 
-  const getBorderRadius = (index: number): string | undefined => {
-    const length = rubricColumns.length;
-    if (index === 0) return '12px 0 0 0';
-    if (index === length - 1) return '0 12px 0 0';
-  };
-
   return (
     <TableRow>
       {rubricColumns.map((column, index) => (
@@ -35,14 +29,16 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
           sx={{
             bgcolor: colors[index],
             boxSizing: 'border-box',
-            borderRadius: getBorderRadius(index),
             fontSize: '1em',
             py: '0.875em',
             px: '0.5em',
             fontWeight: 700,
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
             '@media print': {
               WebkitPrintColorAdjust: 'exact',
-              printColorAdjust: 'exact'
+              printColorAdjust: 'exact',
+              position: 'relative',
+              top: 'auto'
             }
           }}
         >

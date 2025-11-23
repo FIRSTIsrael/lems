@@ -11,14 +11,17 @@ import { SectionTitleRow } from './section-title-row';
 import { FieldRatingRow } from './field-rating-row';
 import { FieldNotesRow } from './field-notes-row';
 import { FeedbackRow } from './feedback-row';
+import { RubricCategoryNavigation } from './rubric-category-navigation';
 
 interface RubricTableProps {
+  teamSlug: string;
   sections: RubricsSchema[JudgingCategory]['sections'];
   category: JudgingCategory;
   disabled?: boolean;
 }
 
 export const RubricTable: React.FC<RubricTableProps> = ({
+  teamSlug,
   sections,
   category,
   disabled = false
@@ -30,7 +33,6 @@ export const RubricTable: React.FC<RubricTableProps> = ({
       elevation={3}
       sx={{
         borderRadius: 2,
-        backgroundColor: '#fff',
         my: 2
       }}
     >
@@ -47,7 +49,8 @@ export const RubricTable: React.FC<RubricTableProps> = ({
         stickyHeader
       >
         {sections.length > 0 && (
-          <TableHead>
+          <TableHead sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+            <RubricCategoryNavigation teamSlug={teamSlug as string} />
             <TableHeaderRow category={category} />
           </TableHead>
         )}

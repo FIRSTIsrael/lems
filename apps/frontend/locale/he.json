@@ -116,17 +116,20 @@
       }
     },
     "rubric": {
-      "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+      "page-title": "רובריקת {category}, קבוצה {teamName} #{teamNumber}",
       "field-notes-label": "הערות",
-      "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
+      "field-notes-placeholder": "איך הקבוצה התבלטה?",
+      "navigation": {
+        "title": "תחומי שיפוט"
+      },
       "award-nominations": {
-        "title": "מועמדות לפרס",
-        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
+        "title": "מועמדות לפרסים",
+        "description": "אם הקבוצה היא מועמדת לאחד מהפרסים הללו, אנא סמנו את התיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים האירוע שלכם משתמש.",
         "no-awards": "אין פרסים אופציונליים זמינים."
       },
       "actions": {
-        "save-draft": "שמור כטיוטה",
-        "submit-review": "הגש לבדיקה",
+        "save-draft": "שמירת טיוטה",
+        "submit-review": "שליחה לבדיקה",
         "reset": "איפוס"
       }
     }

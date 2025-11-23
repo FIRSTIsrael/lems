@@ -19,7 +19,7 @@ export default function RubricPage() {
   const { getCategory } = useJudgingCategoryTranslations();
   const team = useTeam();
 
-  const { category } = useParams();
+  const { category, teamSlug } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
   const isEditable = true; // TODO: this.
@@ -47,6 +47,7 @@ export default function RubricPage() {
               )}
 
               <RubricTable
+                teamSlug={teamSlug as string}
                 sections={schema.sections}
                 category={category as JudgingCategory}
                 disabled={!isEditable}
