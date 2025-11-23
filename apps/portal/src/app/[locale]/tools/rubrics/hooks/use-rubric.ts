@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
 import { JudgingCategory } from '@lems/types';
 import { rubrics } from '@lems/shared/rubrics';
-import { RubricFormValues } from '../types/rubric-types';
+import { RubricFormValues } from '../rubric-types';
 
 export interface RubricData {
   id: string;

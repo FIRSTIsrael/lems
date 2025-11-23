@@ -22,9 +22,8 @@ import { Formik, Form, useFormikContext } from 'formik';
 import { JudgingCategory } from '@lems/types';
 import { rubrics, rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsTranslations, useRubricsGeneralTranslations } from '@lems/localization';
-import { RubricFormValues } from '../../types/rubric-types';
-import { getEmptyRubric } from '../../utils/rubric-utils';
-import { getCategoryColor } from '../../utils/category-colors';
+import { RubricFormValues } from '../../rubric-types';
+import { getEmptyRubric, getCategoryColor } from '../../rubric-utils';
 import { RubricRadioIcon } from '../desktop/rubric-radio-icon';
 
 interface MobileFieldSectionProps {
@@ -255,8 +254,6 @@ interface MobileRubricFormProps {
 export const MobileRubricForm: React.FC<MobileRubricFormProps> = ({
   category,
   initialValues,
-  onSaveDraft,
-  onSubmit,
   onReset,
   isEditable = true
 }) => {
@@ -269,7 +266,7 @@ export const MobileRubricForm: React.FC<MobileRubricFormProps> = ({
         onSubmit={() => {}}
         enableReinitialize
       >
-        {({ values }) => (
+        {() => (
           <Form>
             {schema.sections.map(section => (
               <MobileSection
@@ -285,22 +282,6 @@ export const MobileRubricForm: React.FC<MobileRubricFormProps> = ({
 
             <Paper sx={{ p: 2, mb: 4 }}>
               <Stack spacing={2}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  disabled={!isEditable}
-                  onClick={() => onSaveDraft?.(values)}
-                >
-                  Save Draft
-                </Button>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  disabled={!isEditable}
-                  onClick={() => onSubmit?.(values)}
-                >
-                  Submit Review
-                </Button>
                 <Button variant="outlined" fullWidth disabled={!isEditable} onClick={onReset}>
                   Reset
                 </Button>

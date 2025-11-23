@@ -5,7 +5,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { JudgingCategory } from '@lems/types';
 import { useRubricsTranslations } from '@lems/localization';
 import { rubricColumns } from '@lems/shared/rubrics';
-import { RubricFormValues } from '../../types/rubric-types';
+import { RubricFormValues } from '../../rubric-types';
 import { RubricRadioIcon } from './rubric-radio-icon';
 
 interface FieldRatingRowProps {

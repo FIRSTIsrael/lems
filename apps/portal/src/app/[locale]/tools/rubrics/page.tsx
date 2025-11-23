@@ -20,8 +20,8 @@ import { DesktopRubricForm } from './components/desktop/rubric-form';
 import { MobileRubricForm } from './components/mobile/rubric-form';
 import { useRubric } from './hooks/use-rubric';
 import { RubricProvider } from './components/rubric-context';
-import { RubricFormValues } from './types/rubric-types';
-import { getEmptyRubric } from './utils/rubric-utils';
+import { RubricFormValues } from './rubric-types';
+import { getEmptyRubric } from './rubric-utils';
 
 const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
 
@@ -35,19 +35,10 @@ function RubricPageContent() {
   const [currentCategory, setCurrentCategory] = useState<JudgingCategory>('innovation-project');
   const [showClearDialog, setShowClearDialog] = useState(false);
 
-  const { rubric, updateRubric, resetRubric, loading } = useRubric(currentCategory);
+  const { rubric, resetRubric, loading } = useRubric(currentCategory);
 
   const handleCategoryChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrentCategory(categories[newValue]);
-  };
-
-  const handleSaveDraft = async (values: RubricFormValues) => {
-    await updateRubric(values);
-  };
-
-  const handleSubmit = async (values: RubricFormValues) => {
-    await updateRubric(values);
-    // TODO: Submit to backend
   };
 
   const handleReset = () => {
@@ -126,20 +117,14 @@ function RubricPageContent() {
                   <DesktopRubricForm
                     category={currentCategory}
                     initialValues={rubric?.values || getEmptyRubric(currentCategory)}
-                    onSaveDraft={handleSaveDraft}
-                    onSubmit={handleSubmit}
                     onReset={handleReset}
-                    isEditable={true}
                   />
                 }
                 mobile={
                   <MobileRubricForm
                     category={currentCategory}
                     initialValues={rubric?.values || getEmptyRubric(currentCategory)}
-                    onSaveDraft={handleSaveDraft}
-                    onSubmit={handleSubmit}
                     onReset={handleReset}
-                    isEditable={true}
                   />
                 }
               />

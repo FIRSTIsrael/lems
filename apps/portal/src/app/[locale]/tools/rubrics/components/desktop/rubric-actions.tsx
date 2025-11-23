@@ -5,17 +5,10 @@ import { useTranslations } from 'next-intl';
 
 interface RubricActionsProps {
   disabled?: boolean;
-  onSaveDraft?: () => void;
-  onSubmit?: () => void;
   onReset?: () => void;
 }
 
-export const RubricActions: React.FC<RubricActionsProps> = ({
-  disabled = false,
-  onSaveDraft,
-  onSubmit,
-  onReset
-}) => {
+export const RubricActions: React.FC<RubricActionsProps> = ({ disabled = false, onReset }) => {
   const t = useTranslations('pages.rubric.actions');
 
   return (
@@ -26,26 +19,6 @@ export const RubricActions: React.FC<RubricActionsProps> = ({
       alignItems="center"
       sx={{ pt: 2, pb: 1 }}
     >
-      <Button
-        variant="contained"
-        size="large"
-        disabled={disabled}
-        onClick={onSaveDraft}
-        sx={{ minWidth: 160 }}
-      >
-        {t('save-draft')}
-      </Button>
-
-      <Button
-        variant="contained"
-        size="large"
-        disabled={disabled}
-        onClick={onSubmit}
-        sx={{ minWidth: 160 }}
-      >
-        {t('submit-review')}
-      </Button>
-
       <Button
         variant="outlined"
         size="large"

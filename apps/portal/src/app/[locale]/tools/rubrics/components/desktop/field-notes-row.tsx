@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { TableRow, TableCell, TextField, Box, Typography } from '@mui/material';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { RubricFormValues } from '../../types/rubric-types';
+import { RubricFormValues } from '../../rubric-types';
 
 interface FieldNotesRowProps {
   fieldId: string;

@@ -4,7 +4,7 @@ import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types';
 import { useFormikContext } from 'formik';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
-import { RubricFormValues } from '../../types/rubric-types';
+import { RubricFormValues } from '../../rubric-types';
 
 interface FeedbackRowProps {
   category: JudgingCategory;
