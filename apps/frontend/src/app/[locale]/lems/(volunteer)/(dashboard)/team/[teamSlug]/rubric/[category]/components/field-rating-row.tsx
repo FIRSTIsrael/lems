@@ -56,7 +56,12 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
                   }
                 }}
               >
-                <Stack spacing={0.5} direction="row" alignItems="center" justifyContent="center">
+                <Stack
+                  spacing={0.5}
+                  direction="row"
+                  alignItems={label ? 'flex-start' : 'center'}
+                  justifyContent="center"
+                >
                   <IconButton
                     disabled={disabled || form.isSubmitting}
                     disableRipple
