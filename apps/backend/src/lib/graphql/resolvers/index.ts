@@ -40,7 +40,7 @@ export const resolvers = {
   Judging: {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
-    judgingSessionLength: judgingSessionLengthResolver
+    sessionLength: judgingSessionLengthResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,

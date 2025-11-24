@@ -46,7 +46,7 @@ export interface JudgingSession {
 export interface Judging {
   sessions: JudgingSession[];
   rooms: string[];
-  judgingSessionLength: number;
+  sessionLength: number;
 }
 
 type QueryData = { division?: { id: string; judging: Judging } | null };
@@ -113,7 +113,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
           startDelta
         }
         rooms
-        judgingSessionLength
+        sessionLength
       }
     }
   }
