@@ -39,6 +39,9 @@ type Judging {
     "Filter sessions by their IDs"
     ids: [String!]
 
+    "Filter session by team IDs"
+    teamIds: [String!]
+
     "Filter sessions by room ID"
     roomId: String
 
@@ -53,7 +56,7 @@ type Judging {
   rooms: [String!]!
 
   "Length of each judging session in seconds"
-  judgingSessionLength: Int!
+  sessionLength: Int!
 }
 
 extend type Division {

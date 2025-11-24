@@ -21,6 +21,7 @@ interface JudgingWithDivisionId {
 
 interface SessionsArgs {
   ids?: string[];
+  teamIds?: string[];
   roomId?: string;
   scheduledBefore?: string;
   scheduledAfter?: string;
@@ -43,6 +44,12 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
     if (args.ids && args.ids.length > 0) {
       const idsSet = new Set(args.ids);
       sessions = sessions.filter(session => idsSet.has(session.id));
+    }
+
+    // Filter by team IDs if provided
+    if (args.teamIds && args.teamIds.length > 0) {
+      const teamIdsSet = new Set(args.teamIds);
+      sessions = sessions.filter(session => session.team_id && teamIdsSet.has(session.team_id));
     }
 
     // Filter by room ID if provided
