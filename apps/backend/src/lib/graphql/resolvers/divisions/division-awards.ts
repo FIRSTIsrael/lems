@@ -31,6 +31,7 @@ export const divisionAwardsResolver: GraphQLFieldResolver<
       place: award.place,
       // description is not stored per-row in DB; it is derived from season config on the frontend.
       // For GraphQL type safety we expose it as nullable and currently return null.
+      //maybe should do somthing about it
       description: null
     }));
   } catch (error) {

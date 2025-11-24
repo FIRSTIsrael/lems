@@ -119,7 +119,6 @@ export default function AwardsListPage() {
                       }}
                     >
                       <CardContent sx={{ p: 0 }}>
-                        {/* Header - Always visible */}
                         <Box
                           onClick={() => toggleCard(name)}
                           sx={{
@@ -158,7 +157,6 @@ export default function AwardsListPage() {
                           </IconButton>
                         </Box>
 
-                        {/* Expandable content */}
                         <Collapse in={isExpanded} timeout={300}>
                           <Box sx={{ px: 3, pb: 3 }}>
                             <Divider sx={{ mb: 2 }} />
