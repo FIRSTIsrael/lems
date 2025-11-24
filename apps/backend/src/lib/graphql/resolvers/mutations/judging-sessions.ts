@@ -6,7 +6,10 @@ import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
-import { enqueueScheduledEvent } from '../../../queues/scheduled-events-queue';
+import {
+  enqueueScheduledEvent,
+  dequeueScheduledEvent
+} from '../../../queues/scheduled-events-queue';
 
 interface StartJudgingSessionArgs {
   divisionId: string;
@@ -263,6 +266,17 @@ export const abortJudgingSessionResolver: GraphQLFieldResolver<
 
     if (!teamArrived || !teamArrived.arrived) {
       throw new MutationError(MutationErrorCode.CONFLICT, 'Team has not arrived at the division');
+    }
+
+    try {
+      await dequeueScheduledEvent('session-completed', divisionId, { sessionId });
+    } catch (error) {
+      console.error(
+        `Failed to dequeue session completion for ${sessionId}, but continuing with abort:`,
+        error
+      );
+      // Don't fail the mutation - we'll still abort the session
+      // The dequeue failure should be monitored separately
     }
 
     const result = await db.raw.mongo

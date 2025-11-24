@@ -228,13 +228,27 @@ function updateJudgingSessions(
 function createSubscriptionConfig<TSubscriptionData>(
   subscription: TypedDocumentNode<TSubscriptionData, SubscriptionVars>,
   divisionId: string,
-  updateQuery: Reconciler<QueryData, TSubscriptionData>
+  updateQuery: Reconciler<QueryData, TSubscriptionData>,
+  onSubscriptionData?: (data: TSubscriptionData) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
-  return {
+  const baseConfig: SubscriptionConfig<unknown, QueryData, SubscriptionVars> = {
     subscription,
     subscriptionVariables: { divisionId },
     updateQuery: updateQuery as (prev: QueryData, subscriptionData: { data?: unknown }) => QueryData
   };
+
+  if (onSubscriptionData) {
+    // Wrap the updateQuery to also invoke the callback
+    const originalUpdateQuery = baseConfig.updateQuery;
+    baseConfig.updateQuery = (prev: QueryData, subscriptionData: { data?: unknown }) => {
+      if (subscriptionData.data) {
+        onSubscriptionData(subscriptionData.data as TSubscriptionData);
+      }
+      return originalUpdateQuery(prev, subscriptionData);
+    };
+  }
+
+  return baseConfig;
 }
 
 /**
@@ -263,15 +277,18 @@ const teamArrivalReconciler: Reconciler<QueryData, TeamArrivalSubscriptionData> 
  * When a team arrives, updates its arrival status in the sessions payload if present.
  *
  * @param divisionId - The division ID to subscribe to
+ * @param onTeamArrived - Optional callback invoked when a team arrives
  * @returns Subscription configuration for use with usePageData hook
  */
 export function createTeamArrivalSubscriptionForJudge(
-  divisionId: string
+  divisionId: string,
+  onTeamArrived?: (event: TeamEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
     divisionId,
-    teamArrivalReconciler
+    teamArrivalReconciler,
+    onTeamArrived ? data => onTeamArrived(data.teamArrivalUpdated) : undefined
   );
 }
 
@@ -306,15 +323,18 @@ const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubsc
  * When a judge starts a session, updates its startTime and startDelta in the sessions payload if present.
  *
  * @param divisionId - The division ID to subscribe to
+ * @param onSessionStarted - Optional callback invoked when a session starts
  * @returns Subscription configuration for use with usePageData hook
  */
 export function createJudgingSessionStartedSubscriptionForJudge(
-  divisionId: string
+  divisionId: string,
+  onSessionStarted?: (event: JudgingStartedEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_STARTED_SUBSCRIPTION,
     divisionId,
-    judgingSessionStartedReconciler
+    judgingSessionStartedReconciler,
+    onSessionStarted ? data => onSessionStarted(data.judgingSessionStarted) : undefined
   );
 }
 
@@ -344,15 +364,18 @@ const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubsc
  * When a judge aborts a session, updates its status in the sessions payload if present.
  *
  * @param divisionId - The division ID to subscribe to
+ * @param onAborted - Optional callback invoked when a session is aborted
  * @returns Subscription configuration for use with usePageData hook
  */
 export function createJudgingSessionAbortedSubscriptionForJudge(
-  divisionId: string
+  divisionId: string,
+  onAborted?: (event: JudgingSessionEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_ABORTED_SUBSCRIPTION,
     divisionId,
-    judgingSessionAbortedReconciler
+    judgingSessionAbortedReconciler,
+    onAborted ? data => onAborted(data.judgingSessionAborted) : undefined
   );
 }
 
@@ -382,14 +405,17 @@ const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedS
  * When a session is completed, updates its status in the sessions payload if present.
  *
  * @param divisionId - The division ID to subscribe to
+ * @param onSessionCompleted - Optional callback invoked when a session completes
  * @returns Subscription configuration for use with usePageData hook
  */
 export function createJudgingSessionCompletedSubscriptionForJudge(
-  divisionId: string
+  divisionId: string,
+  onSessionCompleted?: (event: JudgingSessionEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_COMPLETED_SUBSCRIPTION,
     divisionId,
-    judgingSessionCompletedReconciler
+    judgingSessionCompletedReconciler,
+    onSessionCompleted ? data => onSessionCompleted(data.judgingSessionCompleted) : undefined
   );
 }

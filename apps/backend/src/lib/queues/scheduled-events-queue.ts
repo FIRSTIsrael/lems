@@ -80,3 +80,44 @@ export async function enqueueScheduledEvent(event: ScheduledEvent, delayMs: numb
     throw error;
   }
 }
+
+/**
+ * Dequeues scheduled events by finding and removing jobs that match the criteria
+ * Searches for jobs with matching eventType, divisionId, and metadata
+ *
+ * @param eventType - The type of event to dequeue
+ * @param divisionId - The division ID
+ * @param metadataMatchers - Object containing key-value pairs to match in metadata
+ * @returns Promise resolving when matching jobs are removed
+ */
+export async function dequeueScheduledEvent(
+  eventType: string,
+  divisionId: string,
+  metadataMatchers: Record<string, unknown>
+): Promise<void> {
+  try {
+    const queue = getScheduledEventsQueue();
+    const jobs = await queue.getJobs(['waiting', 'delayed']);
+
+    for (const job of jobs) {
+      const data = job.data as ScheduledEvent;
+      if (data.eventType === eventType && data.divisionId === divisionId) {
+        // Check if all metadata matchers are satisfied
+        const metadataMatches = Object.entries(metadataMatchers).every(
+          ([key, value]) => data.metadata?.[key] === value
+        );
+
+        if (metadataMatches) {
+          await job.remove();
+          console.log(
+            `[ScheduledEventsQueue] Removed ${eventType} event in division ${divisionId} ` +
+              `matching metadata: ${JSON.stringify(metadataMatchers)}`
+          );
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[ScheduledEventsQueue] Failed to dequeue event:', error);
+    throw error;
+  }
+}

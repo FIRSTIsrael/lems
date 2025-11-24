@@ -45,11 +45,17 @@ export default function JudgePage() {
   const subscriptions = useMemo(
     () => [
       createTeamArrivalSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionCompletedSubscriptionForJudge(currentDivision.id)
+      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id, () => {
+        playSound('start');
+      }),
+      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id, () => {
+        playSound('end');
+      }),
+      createJudgingSessionCompletedSubscriptionForJudge(currentDivision.id, () => {
+        playSound('end');
+      })
     ],
-    [currentDivision.id]
+    [currentDivision.id, playSound]
   );
 
   const { data, loading } = usePageData(
@@ -71,9 +77,8 @@ export default function JudgePage() {
       await startSessionMutation({
         variables: { sessionId, divisionId: currentDivision.id }
       });
-      playSound('start');
     },
-    [startSessionMutation, currentDivision.id, playSound]
+    [startSessionMutation, currentDivision.id]
   );
 
   const handleAbortSession = useCallback(
@@ -81,9 +86,8 @@ export default function JudgePage() {
       await abortSessionMutation({
         variables: { sessionId, divisionId: currentDivision.id }
       });
-      playSound('end');
     },
-    [abortSessionMutation, currentDivision.id, playSound]
+    [abortSessionMutation, currentDivision.id]
   );
 
   if (sessionInProgress) {
