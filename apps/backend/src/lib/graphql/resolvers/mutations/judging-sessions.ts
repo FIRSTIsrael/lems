@@ -121,6 +121,8 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       );
     }
 
+    const division = await db.divisions.byId(divisionId).get();
+
     const startTime = new Date();
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
@@ -161,7 +163,7 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
             sessionId
           }
         },
-        30 * 1000
+        division.schedule_settings.judging_session_length * 1000
       );
     } catch (error) {
       console.error(
