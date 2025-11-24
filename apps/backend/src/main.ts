@@ -15,6 +15,9 @@ import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/a
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
+import { getWorkerManager } from './lib/queues/worker-manager';
+import { handleSessionCompletion } from './lib/queues/handlers/session-completion';
+import { closeScheduledEventsQueue } from './lib/queues/session-completion-queue';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -47,6 +50,21 @@ try {
 } catch (error) {
   console.error('⚠️ Failed to initialize Redis:', error);
   throw new Error('Redis initialization failed');
+}
+
+// Worker Manager: Initialize and register event handlers
+try {
+  const workerManager = getWorkerManager();
+
+  // Register session completion handler
+  workerManager.registerHandler('session-completion', handleSessionCompletion);
+
+  // Start the unified worker
+  await workerManager.start();
+  console.log('✅ Worker manager started with event handlers');
+} catch (error) {
+  console.error('⚠️ Failed to initialize worker manager:', error);
+  throw new Error('Worker manager initialization failed');
 }
 
 // WebSocket: Create WebSocket server for subscriptions
@@ -130,6 +148,9 @@ server.on('error', console.error);
 process.on('SIGTERM', async () => {
   console.log('⚠️  SIGTERM received, shutting down gracefully...');
   server.close(async () => {
+    const workerManager = getWorkerManager();
+    await workerManager.stop();
+    await closeScheduledEventsQueue();
     await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
@@ -140,6 +161,9 @@ process.on('SIGTERM', async () => {
 process.on('SIGINT', async () => {
   console.log('⚠️  SIGINT received, shutting down gracefully...');
   server.close(async () => {
+    const workerManager = getWorkerManager();
+    await workerManager.stop();
+    await closeScheduledEventsQueue();
     await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');

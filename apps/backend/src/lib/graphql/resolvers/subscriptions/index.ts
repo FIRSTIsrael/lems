@@ -1,5 +1,9 @@
 import { teamArrivalUpdatedResolver } from './teams';
-import { judgingSessionAbortedResolver, judgingSessionStartedResolver } from './judging';
+import {
+  judgingSessionAbortedResolver,
+  judgingSessionStartedResolver,
+  judgingSessionCompletedResolver
+} from './judging';
 
 /**
  * GraphQL Subscription resolvers
@@ -8,5 +12,6 @@ import { judgingSessionAbortedResolver, judgingSessionStartedResolver } from './
 export const subscriptionResolvers = {
   teamArrivalUpdated: teamArrivalUpdatedResolver,
   judgingSessionStarted: judgingSessionStartedResolver,
-  judgingSessionAborted: judgingSessionAbortedResolver
+  judgingSessionAborted: judgingSessionAbortedResolver,
+  judgingSessionCompleted: judgingSessionCompletedResolver
 };

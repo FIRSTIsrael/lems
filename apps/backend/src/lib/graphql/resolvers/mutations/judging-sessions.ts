@@ -6,6 +6,7 @@ import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
+import { enqueueSessionCompletion } from '../../../queues/session-completion';
 
 interface StartJudgingSessionArgs {
   divisionId: string;
@@ -124,6 +125,9 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     const startTime = new Date();
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
+    // Session duration: currently hardcoded to 29 minutes, will be read from event.schedule_settings
+    const SESSION_DURATION_SECONDS = 29 * 60;
+
     // Update the judging session state in MongoDB
     const result = await db.raw.mongo
       .collection<JudgingSessionState>('judging_session_states')
@@ -153,6 +157,24 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       startTime,
       startDelta
     });
+
+    // Enqueue session completion job to run at exact completion time
+    try {
+      await enqueueSessionCompletion(
+        sessionId,
+        divisionId,
+        startTime,
+        SESSION_DURATION_SECONDS,
+        'judging'
+      );
+    } catch (error) {
+      console.error(
+        `Failed to enqueue session completion for ${sessionId}, but session was started:`,
+        error
+      );
+      // Don't fail the mutation - the session is already started
+      // The queue failure should be monitored separately
+    }
 
     return { sessionId, version: -1, startTime, startDelta };
   } catch (error) {
