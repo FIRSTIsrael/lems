@@ -8,7 +8,7 @@ import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionJudgingResolver } from './divisions/judging';
-import { judgingSessionsResolver, teamSessionResolver } from './divisions/judging-sessions';
+import { judgingSessionsResolver } from './divisions/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judgin-session-length';
 import { judgingSessionRoomResolver } from './judging/session-room';
@@ -40,8 +40,7 @@ export const resolvers = {
   Judging: {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
-    session: teamSessionResolver,
-    judgingSessionLength: judgingSessionLengthResolver
+    sessionLength: judgingSessionLengthResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,

@@ -7,6 +7,7 @@ import { useSuspenseQuery } from '@apollo/client/react';
 import { useUser } from '../../../../../../components/user-context';
 import { authorizeUserRole } from '../../../../../../lib/role-authorizer';
 import { useEvent } from '../../../../../components/event-context';
+import { useTeam } from '../../components/team-context';
 import { GET_TEAM_SESSION_QUERY } from './layout.graphql';
 
 interface RubricLayoutProps {
@@ -18,12 +19,12 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
 
   const user = useUser();
   const { currentDivision } = useEvent();
-  const { teamSlug, category } = useParams();
+  const { category } = useParams();
 
-  console.log('teamSlug:', teamSlug);
+  const { id } = useTeam();
 
   const { data, error } = useSuspenseQuery(GET_TEAM_SESSION_QUERY, {
-    variables: { divisionId: currentDivision.id, teamSlug: teamSlug as string }
+    variables: { divisionId: currentDivision.id, teamId: id }
   });
 
   if (error) {
@@ -44,7 +45,7 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
     redirect(`/lems/${user.role}`);
   }
 
-  const teamSession = data.division?.judging?.session;
+  const teamSession = data.division?.judging?.sessions?.[0];
 
   if (teamSession?.status !== 'completed') {
     toast.error(t('error-team-not-judged'));
@@ -52,7 +53,7 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
   }
 
   const room = user.roleInfo?.['roomId'];
-  if (room && room !== data.division?.judging?.session?.room.id) {
+  if (room && room !== data.division?.judging?.sessions?.[0]?.room.id) {
     toast.error(t('error-not-authorized'));
     redirect(`/lems/${user.role}/rooms/${room}`);
   }

@@ -21,13 +21,10 @@ interface JudgingWithDivisionId {
 
 interface SessionsArgs {
   ids?: string[];
+  teamIds?: string[];
   roomId?: string;
   scheduledBefore?: string;
   scheduledAfter?: string;
-}
-
-interface SessionArgs {
-  teamSlug: string;
 }
 
 /**
@@ -47,6 +44,12 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
     if (args.ids && args.ids.length > 0) {
       const idsSet = new Set(args.ids);
       sessions = sessions.filter(session => idsSet.has(session.id));
+    }
+
+    // Filter by team IDs if provided
+    if (args.teamIds && args.teamIds.length > 0) {
+      const teamIdsSet = new Set(args.teamIds);
+      sessions = sessions.filter(session => session.team_id && teamIdsSet.has(session.team_id));
     }
 
     // Filter by room ID if provided
@@ -99,61 +102,6 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
     });
   } catch (error) {
     console.error('Error fetching judging sessions for division:', judging.divisionId, error);
-    throw error;
-  }
-};
-
-/**
- * Resolver for Team.session field.
- * Fetches judging session for a team.
- */
-export const teamSessionResolver: GraphQLFieldResolver<
-  JudgingWithDivisionId,
-  unknown,
-  undefined,
-  Promise<JudgingSessionGraphQL | null>
-> = async (judging: JudgingWithDivisionId, args: SessionArgs) => {
-  try {
-    const sessions = await db.judgingSessions.byDivisionId(judging.divisionId).getAll();
-    const team = await db.teams.bySlug(args.teamSlug).get();
-
-    if (!team) {
-      throw new Error(`Team with slug ${args.teamSlug} not found`);
-    }
-
-    // Filter by team ID
-    const session = sessions.find(session => session.team_id === team.id);
-
-    if (!session) {
-      throw new Error(
-        `No judging session found for teamId ${team.id} in division ${judging.divisionId}`
-      );
-    }
-
-    // Fetch state data from MongoDB for the session
-    const mongo = db.raw.mongo;
-    const state = await mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOne({ sessionId: session.id });
-
-    if (!state) {
-      throw new Error(`State for judging session ID ${session.id} not found`);
-    }
-
-    return {
-      id: session.id,
-      number: session.number,
-      scheduledTime: session.scheduled_time.toISOString(),
-      status: state.status,
-      called: !!state.called,
-      roomId: session.room_id,
-      teamId: session.team_id,
-      startTime: state.startTime ? state.startTime.toISOString() : undefined,
-      startDelta: state.startDelta ?? undefined,
-      divisionId: judging.divisionId
-    };
-  } catch (error) {
-    console.error('Error fetching judging session for team with slug:', args.teamSlug, error);
     throw error;
   }
 };
