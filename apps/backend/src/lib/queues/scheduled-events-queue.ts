@@ -1,6 +1,6 @@
 import { Queue } from 'bullmq';
 import { getRedisClient } from '../redis/redis-client';
-import type { ScheduledEvent } from './worker-manager';
+import type { ScheduledEvent } from './types';
 
 let queueInstance: Queue<ScheduledEvent, void, string> | null = null;
 
@@ -26,7 +26,7 @@ export function getScheduledEventsQueue(): Queue<ScheduledEvent> {
     });
 
     // Log queue events for debugging
-    queueInstance.on('error', (err) => {
+    queueInstance.on('error', err => {
       console.error('[ScheduledEventsQueue] Queue error:', err);
     });
 
@@ -55,10 +55,7 @@ export async function closeScheduledEventsQueue(): Promise<void> {
  * @param delayMs - Delay in milliseconds before the event should be processed
  * @returns Promise resolving when the job is enqueued
  */
-export async function enqueueScheduledEvent(
-  event: ScheduledEvent,
-  delayMs: number
-): Promise<void> {
+export async function enqueueScheduledEvent(event: ScheduledEvent, delayMs: number): Promise<void> {
   try {
     const queue = getScheduledEventsQueue();
 
@@ -66,16 +63,16 @@ export async function enqueueScheduledEvent(
     if (delayMs > 0) {
       await queue.add('process', event, {
         delay: delayMs,
-        jobId: `${event.eventType}-${event.eventId}-${Date.now()}`
+        jobId: `${event.eventType}-${event.divisionId}-${Date.now()}`
       });
 
       console.log(
-        `[ScheduledEventsQueue] Enqueued ${event.eventType} event ${event.eventId} ` +
+        `[ScheduledEventsQueue] Enqueued ${event.eventType} event ${event.divisionId} ` +
           `to process in ${Math.round(delayMs / 1000)}s`
       );
     } else {
       console.warn(
-        `[ScheduledEventsQueue] Event ${event.eventId} processing time has already passed`
+        `[ScheduledEventsQueue] Event ${event.divisionId} processing time has already passed`
       );
     }
   } catch (error) {
