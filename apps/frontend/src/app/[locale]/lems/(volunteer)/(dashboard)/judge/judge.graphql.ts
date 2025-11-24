@@ -229,11 +229,11 @@ function createSubscriptionConfig<TSubscriptionData>(
   subscription: TypedDocumentNode<TSubscriptionData, SubscriptionVars>,
   divisionId: string,
   updateQuery: Reconciler<QueryData, TSubscriptionData>
-): SubscriptionConfig<TSubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return {
     subscription,
     subscriptionVariables: { divisionId },
-    updateQuery
+    updateQuery: updateQuery as (prev: QueryData, subscriptionData: { data?: unknown }) => QueryData
   };
 }
 
@@ -267,7 +267,7 @@ const teamArrivalReconciler: Reconciler<QueryData, TeamArrivalSubscriptionData> 
  */
 export function createTeamArrivalSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<TeamArrivalSubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
     divisionId,
@@ -310,7 +310,7 @@ const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubsc
  */
 export function createJudgingSessionStartedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<JudgingStartedSubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_STARTED_SUBSCRIPTION,
     divisionId,
@@ -348,7 +348,7 @@ const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubsc
  */
 export function createJudgingSessionAbortedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<JudgingAbortedSubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_ABORTED_SUBSCRIPTION,
     divisionId,
@@ -386,7 +386,7 @@ const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedS
  */
 export function createJudgingSessionCompletedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<JudgingCompletedSubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return createSubscriptionConfig(
     JUDGING_SESSION_COMPLETED_SUBSCRIPTION,
     divisionId,

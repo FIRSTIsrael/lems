@@ -64,7 +64,7 @@ export default function JudgePage() {
 
   const sessions = data?.division?.judging.sessions ?? null;
   const sessionInProgress = sessions?.find(session => session.status === 'in-progress');
-  const judgingSessionLength = data?.division?.judging.judgingSessionLength;
+  const judgingSessionLength = data?.division?.judging.sessionLength;
 
   const handleStartSession = useCallback(
     async (sessionId: string) => {

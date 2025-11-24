@@ -93,12 +93,15 @@ const teamRegistrationReconciler: Reconciler<QueryData, SubscriptionData> = (pre
  */
 export function createTeamRegistrationSubscription(
   divisionId: string
-): SubscriptionConfig<SubscriptionData, QueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return {
     subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: teamRegistrationReconciler
-  };
+    updateQuery: teamRegistrationReconciler as (
+      prev: QueryData,
+      subscriptionData: { data?: unknown }
+    ) => QueryData
+  } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
 }
