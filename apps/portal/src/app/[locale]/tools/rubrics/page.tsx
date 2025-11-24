@@ -1,34 +1,23 @@
-import { Paper, Typography, Box, Container } from '@mui/material';
+'use client';
+
+import { Container } from '@mui/material';
+import { ResponsiveComponent } from '@lems/shared';
+import { RubricTable } from './components/desktop';
+import { MobileRubricForm } from './components/mobile/rubric-form';
+import { RubricProvider } from './components/rubric-context';
 import { JudgingTimer } from './components/judging-timer';
+import { RubricHeader } from './components/rubric-header';
 
 export default function RubricsPage() {
   return (
-    <Container maxWidth="md">
-      <Paper
-        elevation={1}
-        sx={{
-          p: 4,
-          m: 2,
-          textAlign: 'center',
-          width: '100%',
-          minHeight: '60vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          bgcolor: 'white'
-        }}
-      >
-        <Box>
-          <Typography variant="h4" color="text.secondary" gutterBottom>
-            Rubrics
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Coming soon...
-          </Typography>
-        </Box>
-      </Paper>
+    <RubricProvider>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <RubricHeader />
 
-      <JudgingTimer />
-    </Container>
+        <ResponsiveComponent desktop={<RubricTable />} mobile={<MobileRubricForm />} />
+
+        <JudgingTimer />
+      </Container>
+    </RubricProvider>
   );
 }

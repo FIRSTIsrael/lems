@@ -17,7 +17,6 @@ const categoryColors: { [K in JudgingCategory]: string[] } = {
 
 export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
   const { getColumnTitle } = useRubricsGeneralTranslations();
-
   const colors = categoryColors[category];
 
   return (
@@ -33,12 +32,9 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
             py: '0.875em',
             px: '0.5em',
             fontWeight: 700,
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
             '@media print': {
               WebkitPrintColorAdjust: 'exact',
-              printColorAdjust: 'exact',
-              position: 'relative',
-              top: 'auto'
+              printColorAdjust: 'exact'
             }
           }}
         >

@@ -1,14 +1,9 @@
 import { rubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types';
-import type { RubricFieldValue, RubricFeedback } from './types';
-
-export interface RubricFormValues {
-  fields: { [fieldId: string]: RubricFieldValue };
-  feedback?: RubricFeedback;
-}
+import { RubricFormValues } from './rubric-types';
 
 export const getEmptyRubric = (category: JudgingCategory): RubricFormValues => {
-  const fields: { [fieldId: string]: RubricFieldValue } = {};
+  const fields: { [fieldId: string]: { value: null; notes?: string } } = {};
   const schema = rubrics[category];
 
   schema.sections.forEach(section => {
@@ -17,13 +12,16 @@ export const getEmptyRubric = (category: JudgingCategory): RubricFormValues => {
     });
   });
 
-  const feedback: RubricFeedback = {};
+  const result: RubricFormValues = { fields };
+
   if (schema.feedback) {
-    feedback['great-job'] = '';
-    feedback['think-about'] = '';
+    result.feedback = {
+      'great-job': '',
+      'think-about': ''
+    };
   }
 
-  return { fields, ...(schema.feedback && { feedback }) };
+  return result;
 };
 
 export const getCategoryColor = (category: JudgingCategory) => {

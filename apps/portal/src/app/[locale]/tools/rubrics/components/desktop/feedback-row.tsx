@@ -2,9 +2,8 @@
 
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types';
-import { useFormikContext } from 'formik';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
-import type { RubricFormValues } from '../rubric-utils';
+import { useRubricContext } from '../rubric-context';
 
 interface FeedbackRowProps {
   category: JudgingCategory;
@@ -17,10 +16,28 @@ const colors: { [key: string]: string } = {
   'robot-design': '#DAE8D8'
 };
 
-export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
-  const feedbackFields = ['great-job', 'think-about'] as const;
+const feedbackFields = ['great-job', 'think-about'] as const;
+
+export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) => {
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
-  const { values, setFieldValue } = useFormikContext<RubricFormValues>();
+  const { rubric, updateRubric } = useRubricContext();
+
+  const handleFeedbackUpdate = async (field: 'great-job' | 'think-about', value: string) => {
+    const feedback = {
+      'great-job': rubric.values.feedback?.['great-job'] || '',
+      'think-about': rubric.values.feedback?.['think-about'] || ''
+    };
+
+    const updatedValues = {
+      ...rubric.values,
+      feedback: {
+        ...feedback,
+        [field]: value || ''
+      }
+    };
+
+    await updateRubric(updatedValues);
+  };
 
   return (
     <>
@@ -80,28 +97,19 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
               multiline
               rows={6}
               placeholder={getFeedbackTitle(field)}
-              disabled={disabled}
               variant="standard"
-              defaultValue={values.feedback?.[field] ?? ''}
-              onChange={() => {
-                // Update local state only during typing
-              }}
-              onBlur={e => setFieldValue(`feedback.${field}`, e.target.value)}
+              disabled={disabled}
+              value={rubric.values.feedback?.[field] ?? ''}
+              onChange={e => handleFeedbackUpdate(field, e.target.value)}
               sx={{
                 p: 1,
                 borderRadius: '12px',
                 '& .MuiInput-root': {
                   '&::before': {
-                    borderBottom: 'none'
+                    display: 'none'
                   },
                   '&::after': {
-                    borderBottom: 'none'
-                  },
-                  '&:hover::before': {
-                    borderBottom: 'none !important'
-                  },
-                  '&.Mui-disabled::before': {
-                    borderBottomStyle: 'none !important'
+                    display: 'none'
                   }
                 }
               }}

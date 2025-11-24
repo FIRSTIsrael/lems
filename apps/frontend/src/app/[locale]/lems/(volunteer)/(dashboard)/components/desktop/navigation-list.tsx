@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { usePathname, redirect } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { lighten, Typography, Stack, Box, useTheme } from '@mui/material';
 import { buildNavigationItems } from '../../../../lib/navigation-items';
@@ -13,6 +13,7 @@ interface NavigationListProps {
 
 export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) => {
   const t = useTranslations('components.navigation-list');
+  const router = useRouter();
 
   const pathname = usePathname();
   const theme = useTheme();
@@ -23,9 +24,9 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
   const handleItemClick = useCallback(
     (item: (typeof items)[number]) => {
       onItemClick?.();
-      redirect(item.href);
+      router.push(item.href);
     },
-    [onItemClick]
+    [onItemClick, router]
   );
 
   return (
