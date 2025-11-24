@@ -1,5 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import type { ApolloCache } from '@apollo/client';
+import { merge, updateById, Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 export interface Team {
@@ -75,6 +76,27 @@ export function parseDivisionTeams(queryData: QueryData): Team[] {
 }
 
 /**
+ * Reconciler for team arrival updates.
+ * Updates the arrived status of a team in the division's teams array.
+ */
+const teamArrivalReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
+  if (!data) return prev;
+
+  const { teamId } = data.teamArrivalUpdated;
+
+  if (prev.division) {
+    return merge(prev, {
+      division: {
+        id: prev.division.id,
+        teams: updateById(prev.division.teams, teamId, team => merge(team, { arrived: true }))
+      }
+    });
+  }
+
+  return prev;
+};
+
+/**
  * Creates a subscription configuration for team arrival updates.
  * When a team arrives, the subscription returns minimal data (teamId + version).
  * The reconciler locates the team in the cached query result and marks it as arrived.
@@ -90,28 +112,7 @@ export function createTeamArrivalSubscription(
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
-      if (!data || typeof data !== 'object' || !('teamArrivalUpdated' in data)) {
-        return prev;
-      }
-
-      const subscriptionData = data as { teamArrivalUpdated: TeamEvent };
-      const { teamId } = subscriptionData.teamArrivalUpdated;
-
-      if (prev.division) {
-        return {
-          ...prev,
-          division: {
-            ...prev.division,
-            teams: prev.division.teams.map(team =>
-              team.id === teamId ? { ...team, arrived: true } : team
-            )
-          }
-        };
-      }
-
-      return prev;
-    }
+    updateQuery: teamArrivalReconciler
   };
 }
 
@@ -127,15 +128,13 @@ export function createTeamArrivedCacheUpdate(teamId: string) {
     cache.modify({
       fields: {
         division(existingDivision = {}) {
-          if (!existingDivision.teams) {
+          const division = existingDivision as { teams?: Team[] };
+          if (!division.teams) {
             return existingDivision;
           }
-          return {
-            ...existingDivision,
-            teams: (existingDivision.teams as Team[]).map((t: Team) =>
-              t.id === teamId ? { ...t, arrived: true } : t
-            )
-          };
+          return merge(existingDivision, {
+            teams: updateById(division.teams, teamId, team => merge(team, { arrived: true }))
+          });
         }
       }
     });

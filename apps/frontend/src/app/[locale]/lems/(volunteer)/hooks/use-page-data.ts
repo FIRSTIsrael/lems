@@ -75,7 +75,7 @@ export interface SubscriptionConfig<
    * Receives the previous query result and the subscription response,
    * and must return the updated query result.
    */
-  updateQuery: (prev: TResult, subscriptionData: { data?: unknown }) => TResult;
+  updateQuery: (prev: TResult, subscriptionData: { data?: TSubscriptionData }) => TResult;
 }
 
 export interface UsePageDataResult<TData> {

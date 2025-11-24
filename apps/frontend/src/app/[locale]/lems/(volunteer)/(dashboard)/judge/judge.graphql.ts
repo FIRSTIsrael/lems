@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import { merge, updateInArray, Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 /**
@@ -67,17 +68,12 @@ export interface JudgingStartedEvent extends JudgingSessionEvent {
   startDelta: number;
 }
 
+type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+
 type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
-type TeamArrivalSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
-
 type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
-type JudgingStartedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
-
 type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingSessionEvent };
-type JudgingAbortedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
-
 type JudgingCompletedSubscriptionData = { judgingSessionCompleted: JudgingSessionEvent };
-type JudgingCompletedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 /**
  * Query to fetch judging sessions for a specific room
@@ -121,7 +117,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
 
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   TeamArrivalSubscriptionData,
-  TeamArrivalSubscriptionVars
+  SubscriptionVars
 > = gql`
   subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
     teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -133,7 +129,7 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 
 export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
   JudgingStartedSubscriptionData,
-  JudgingStartedSubscriptionVars
+  SubscriptionVars
 > = gql`
   subscription JudgingSessionStarted($divisionId: String!, $lastSeenVersion: Int) {
     judgingSessionStarted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -147,7 +143,7 @@ export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
 
 export const JUDGING_SESSION_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   JudgingAbortedSubscriptionData,
-  JudgingAbortedSubscriptionVars
+  SubscriptionVars
 > = gql`
   subscription JudgingSessionAborted($divisionId: String!, $lastSeenVersion: Int) {
     judgingSessionAborted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -159,7 +155,7 @@ export const JUDGING_SESSION_ABORTED_SUBSCRIPTION: TypedDocumentNode<
 
 export const JUDGING_SESSION_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   JudgingCompletedSubscriptionData,
-  JudgingCompletedSubscriptionVars
+  SubscriptionVars
 > = gql`
   subscription JudgingSessionCompleted($divisionId: String!, $lastSeenVersion: Int) {
     judgingSessionCompleted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -202,6 +198,67 @@ export const ABORT_JUDGING_SESSION_MUTATION: TypedDocumentNode<
 `;
 
 /**
+ * Helper function to update judging sessions in the query data.
+ * Reduces duplication across reconcilers.
+ */
+function updateJudgingSessions(
+  prev: QueryData,
+  updater: (sessions: JudgingSession[]) => JudgingSession[]
+): QueryData {
+  if (!prev.division?.judging.sessions) {
+    return prev;
+  }
+
+  return merge(prev, {
+    division: {
+      id: prev.division.id,
+      judging: {
+        sessions: updater(prev.division.judging.sessions),
+        rooms: prev.division.judging.rooms,
+        sessionLength: prev.division.judging.sessionLength
+      }
+    }
+  });
+}
+
+/**
+ * Helper function to create a subscription configuration.
+ * Reduces duplication in subscription factory functions.
+ */
+function createSubscriptionConfig<TSubscriptionData>(
+  subscription: TypedDocumentNode<TSubscriptionData, SubscriptionVars>,
+  divisionId: string,
+  updateQuery: Reconciler<QueryData, TSubscriptionData>
+): SubscriptionConfig<TSubscriptionData, QueryData, SubscriptionVars> {
+  return {
+    subscription,
+    subscriptionVariables: { divisionId },
+    updateQuery
+  };
+}
+
+/**
+ * Reconciler for team arrival updates in the judge view.
+ * Updates the arrived status of a team in judging sessions.
+ */
+const teamArrivalReconciler: Reconciler<QueryData, TeamArrivalSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { teamId } = data.teamArrivalUpdated;
+
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.team.id === teamId,
+      session => merge(session, { team: { arrived: true } })
+    )
+  );
+};
+
+/**
  * Creates a subscription configuration for team arrival updates in the judge view.
  * When a team arrives, updates its arrival status in the sessions payload if present.
  *
@@ -210,41 +267,39 @@ export const ABORT_JUDGING_SESSION_MUTATION: TypedDocumentNode<
  */
 export function createTeamArrivalSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<TeamArrivalSubscriptionData, QueryData, TeamArrivalSubscriptionVars> {
-  return {
-    subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
-    subscriptionVariables: {
-      divisionId
-    },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
-      if (!data || typeof data !== 'object' || !('teamArrivalUpdated' in data)) {
-        return prev;
-      }
-
-      const subscriptionData = data as TeamArrivalSubscriptionData;
-      const { teamId } = subscriptionData.teamArrivalUpdated;
-
-      if (prev.division?.judging.sessions) {
-        return {
-          ...prev,
-          division: {
-            ...prev.division,
-            judging: {
-              ...prev.division.judging,
-              sessions: prev.division.judging.sessions.map(session =>
-                session.team.id === teamId
-                  ? { ...session, team: { ...session.team, arrived: true } }
-                  : session
-              )
-            }
-          }
-        };
-      }
-
-      return prev;
-    }
-  };
+): SubscriptionConfig<TeamArrivalSubscriptionData, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
+    divisionId,
+    teamArrivalReconciler
+  );
 }
+
+/**
+ * Reconciler for judging session started events.
+ * Updates the session status, startTime, and startDelta when a session begins.
+ */
+const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { sessionId, startTime, startDelta } = data.judgingSessionStarted;
+
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.id === sessionId,
+      session =>
+        merge(session, {
+          status: 'in-progress',
+          startTime,
+          startDelta
+        })
+    )
+  );
+};
 
 /**
  * Creates a subscription configuration for judging session start events in the judge view.
@@ -255,46 +310,34 @@ export function createTeamArrivalSubscriptionForJudge(
  */
 export function createJudgingSessionStartedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<JudgingStartedSubscriptionData, QueryData, JudgingStartedSubscriptionVars> {
-  return {
-    subscription: JUDGING_SESSION_STARTED_SUBSCRIPTION,
-    subscriptionVariables: {
-      divisionId
-    },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
-      if (!data || typeof data !== 'object' || !('judgingSessionStarted' in data)) {
-        return prev;
-      }
-
-      const subscriptionData = data as JudgingStartedSubscriptionData;
-      const { sessionId, startTime, startDelta } = subscriptionData.judgingSessionStarted;
-
-      if (prev.division?.judging.sessions) {
-        return {
-          ...prev,
-          division: {
-            ...prev.division,
-            judging: {
-              ...prev.division.judging,
-              sessions: prev.division.judging.sessions.map(session =>
-                session.id === sessionId
-                  ? {
-                      ...session,
-                      status: 'in-progress',
-                      startTime,
-                      startDelta
-                    }
-                  : session
-              )
-            }
-          }
-        };
-      }
-
-      return prev;
-    }
-  };
+): SubscriptionConfig<JudgingStartedSubscriptionData, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    JUDGING_SESSION_STARTED_SUBSCRIPTION,
+    divisionId,
+    judgingSessionStartedReconciler
+  );
 }
+
+/**
+ * Reconciler for judging session aborted events.
+ * Updates the session status back to 'not-started' when aborted.
+ */
+const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { sessionId } = data.judgingSessionAborted;
+
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.id === sessionId,
+      session => merge(session, { status: 'not-started' })
+    )
+  );
+};
 
 /**
  * Creates a subscription configuration for judging session aborted events in the judge view.
@@ -305,44 +348,34 @@ export function createJudgingSessionStartedSubscriptionForJudge(
  */
 export function createJudgingSessionAbortedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<JudgingAbortedSubscriptionData, QueryData, JudgingAbortedSubscriptionVars> {
-  return {
-    subscription: JUDGING_SESSION_ABORTED_SUBSCRIPTION,
-    subscriptionVariables: {
-      divisionId
-    },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
-      if (!data || typeof data !== 'object' || !('judgingSessionAborted' in data)) {
-        return prev;
-      }
-
-      const subscriptionData = data as JudgingAbortedSubscriptionData;
-      const { sessionId } = subscriptionData.judgingSessionAborted;
-
-      if (prev.division?.judging.sessions) {
-        return {
-          ...prev,
-          division: {
-            ...prev.division,
-            judging: {
-              ...prev.division.judging,
-              sessions: prev.division.judging.sessions.map(session =>
-                session.id === sessionId
-                  ? {
-                      ...session,
-                      status: 'not-started'
-                    }
-                  : session
-              )
-            }
-          }
-        };
-      }
-
-      return prev;
-    }
-  };
+): SubscriptionConfig<JudgingAbortedSubscriptionData, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    JUDGING_SESSION_ABORTED_SUBSCRIPTION,
+    divisionId,
+    judgingSessionAbortedReconciler
+  );
 }
+
+/**
+ * Reconciler for judging session completed events.
+ * Updates the session status to 'completed' when finished.
+ */
+const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { sessionId } = data.judgingSessionCompleted;
+
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.id === sessionId,
+      session => merge(session, { status: 'completed' })
+    )
+  );
+};
 
 /**
  * Creates a subscription configuration for judging session completed events in the judge view.
@@ -353,45 +386,10 @@ export function createJudgingSessionAbortedSubscriptionForJudge(
  */
 export function createJudgingSessionCompletedSubscriptionForJudge(
   divisionId: string
-): SubscriptionConfig<
-  JudgingCompletedSubscriptionData,
-  QueryData,
-  JudgingCompletedSubscriptionVars
-> {
-  return {
-    subscription: JUDGING_SESSION_COMPLETED_SUBSCRIPTION,
-    subscriptionVariables: {
-      divisionId
-    },
-    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
-      if (!data || typeof data !== 'object' || !('judgingSessionCompleted' in data)) {
-        return prev;
-      }
-
-      const subscriptionData = data as JudgingCompletedSubscriptionData;
-      const { sessionId } = subscriptionData.judgingSessionCompleted;
-
-      if (prev.division?.judging.sessions) {
-        return {
-          ...prev,
-          division: {
-            ...prev.division,
-            judging: {
-              ...prev.division.judging,
-              sessions: prev.division.judging.sessions.map(session =>
-                session.id === sessionId
-                  ? {
-                      ...session,
-                      status: 'completed'
-                    }
-                  : session
-              )
-            }
-          }
-        };
-      }
-
-      return prev;
-    }
-  };
+): SubscriptionConfig<JudgingCompletedSubscriptionData, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    JUDGING_SESSION_COMPLETED_SUBSCRIPTION,
+    divisionId,
+    judgingSessionCompletedReconciler
+  );
 }
