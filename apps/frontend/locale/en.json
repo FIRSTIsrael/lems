@@ -91,7 +91,17 @@
       "page-title": "Reports",
       "menu": {
         "team-list": "Team List",
-        "pit-map": "Pit Map"
+        "pit-map": "Pit Map",
+        "awards-list": "Awards list"
+      },
+      "awards-list": {
+        "page-title": "Awards list",
+        "description": "A list of all awards in this division, including their order of distribution and their settings.",
+        "error-loading": "An error occurred while loading the awards.",
+        "no-awards": "No awards have been configured for this division.",
+        "loading": "Loading awards…",
+        "places-count": "{count, plural, one {1 Award} other {# Awards}}",
+        "place-label": "Place #{place}"
       },
       "team-list": {
         "page-title": "Team List",

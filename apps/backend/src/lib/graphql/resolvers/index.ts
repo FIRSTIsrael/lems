@@ -7,6 +7,7 @@ import { volunteersResolver, volunteerDivisionsResolver } from './events/volunte
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
+import { divisionAwardsResolver } from './divisions/division-awards';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
@@ -28,7 +29,8 @@ export const resolvers = {
   Division: {
     tables: divisionTablesResolver,
     rooms: divisionRoomsResolver,
-    teams: divisionTeamsResolver
+    teams: divisionTeamsResolver,
+    awards: divisionAwardsResolver
   },
   Team: {
     arrived: teamArrivalResolver

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Stack, Container, Box } from '@mui/material';
-import { Groups, Map } from '@mui/icons-material';
+import { Groups, Map, EmojiEvents } from '@mui/icons-material';
 import { PageHeader } from '../components/page-header';
 import { ReportMenuGrid } from './components/report-menu-grid';
 
@@ -11,7 +11,8 @@ export default function ReportsPage() {
 
   const reportItems = [
     { path: 'team-list', label: t('menu.team-list'), icon: <Groups /> },
-    { path: 'pit-map', label: t('menu.pit-map'), icon: <Map /> }
+    { path: 'pit-map', label: t('menu.pit-map'), icon: <Map /> },
+    { path: 'awards-list', label: t('menu.awards-list'), icon: <EmojiEvents /> }
   ];
 
   return (
