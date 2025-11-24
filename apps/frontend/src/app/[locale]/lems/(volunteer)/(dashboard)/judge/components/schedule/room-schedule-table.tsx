@@ -198,13 +198,7 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                 </TableCell>
 
                 <TableCell align="center" sx={{ py: 2.5 }}>
-                  <StartSessionButton
-                    sessionId={session.id}
-                    sessionStatus={session.status}
-                    scheduledTime={session.scheduledTime}
-                    teamArrived={session.team.arrived}
-                    onStartSession={onStartSession}
-                  />
+                  <StartSessionButton session={session} onStartSession={onStartSession} />
                 </TableCell>
 
                 <TableCell sx={{ py: 2.5 }}>

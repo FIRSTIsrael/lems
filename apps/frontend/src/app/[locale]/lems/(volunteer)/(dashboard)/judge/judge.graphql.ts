@@ -57,16 +57,14 @@ export interface TeamEvent {
   version: number;
 }
 
-export interface JudgingStartedEvent {
+export interface JudgingSessionEvent {
   sessionId: string;
   version: number;
-  startTime: string;
-  startDelta: number;
 }
 
-export interface JudgingAbortedEvent {
-  sessionId: string;
-  version: number;
+export interface JudgingStartedEvent extends JudgingSessionEvent {
+  startTime: string;
+  startDelta: number;
 }
 
 type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
@@ -75,8 +73,11 @@ type TeamArrivalSubscriptionVars = { divisionId: string; lastSeenVersion?: numbe
 type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
 type JudgingStartedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
-type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingAbortedEvent };
+type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingSessionEvent };
 type JudgingAbortedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+
+type JudgingCompletedSubscriptionData = { judgingSessionCompleted: JudgingSessionEvent };
+type JudgingCompletedSubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 /**
  * Query to fetch judging sessions for a specific room
@@ -156,6 +157,18 @@ export const JUDGING_SESSION_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const JUDGING_SESSION_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
+  JudgingCompletedSubscriptionData,
+  JudgingCompletedSubscriptionVars
+> = gql`
+  subscription JudgingSessionCompleted($divisionId: String!, $lastSeenVersion: Int) {
+    judgingSessionCompleted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      sessionId
+      version
+    }
+  }
+`;
+
 type StartJudgingSessionMutationData = { startJudgingSession: JudgingStartedEvent };
 type StartJudgingSessionMutationVars = { divisionId: string; sessionId: string };
 
@@ -173,7 +186,7 @@ export const START_JUDGING_SESSION_MUTATION: TypedDocumentNode<
   }
 `;
 
-type AbortJudgingSessionMutationData = { abortJudgingSession: JudgingAbortedEvent };
+type AbortJudgingSessionMutationData = { abortJudgingSession: JudgingSessionEvent };
 type AbortJudgingSessionMutationVars = { divisionId: string; sessionId: string };
 
 export const ABORT_JUDGING_SESSION_MUTATION: TypedDocumentNode<
@@ -318,6 +331,58 @@ export function createJudgingSessionAbortedSubscriptionForJudge(
                   ? {
                       ...session,
                       status: 'not-started'
+                    }
+                  : session
+              )
+            }
+          }
+        };
+      }
+
+      return prev;
+    }
+  };
+}
+
+/**
+ * Creates a subscription configuration for judging session completed events in the judge view.
+ * When a session is completed, updates its status in the sessions payload if present.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createJudgingSessionCompletedSubscriptionForJudge(
+  divisionId: string
+): SubscriptionConfig<
+  JudgingCompletedSubscriptionData,
+  QueryData,
+  JudgingCompletedSubscriptionVars
+> {
+  return {
+    subscription: JUDGING_SESSION_COMPLETED_SUBSCRIPTION,
+    subscriptionVariables: {
+      divisionId
+    },
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }): QueryData => {
+      if (!data || typeof data !== 'object' || !('judgingSessionCompleted' in data)) {
+        return prev;
+      }
+
+      const subscriptionData = data as JudgingCompletedSubscriptionData;
+      const { sessionId } = subscriptionData.judgingSessionCompleted;
+
+      if (prev.division?.judging.sessions) {
+        return {
+          ...prev,
+          division: {
+            ...prev.division,
+            judging: {
+              ...prev.division.judging,
+              sessions: prev.division.judging.sessions.map(session =>
+                session.id === sessionId
+                  ? {
+                      ...session,
+                      status: 'completed'
                     }
                   : session
               )

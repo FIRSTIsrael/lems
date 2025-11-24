@@ -3,24 +3,19 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { Button } from '@mui/material';
-import { PlayArrow } from '@mui/icons-material';
+import { Button, Chip } from '@mui/material';
+import { PlayArrow, CheckCircle } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { JudgingSession } from '../../judge.graphql';
 
 interface StartSessionButtonProps {
-  sessionId: string;
-  sessionStatus: string;
-  scheduledTime: string;
-  teamArrived: boolean;
+  session: JudgingSession;
   onStartSession: (sessionId: string) => Promise<void>;
   disabled?: boolean;
 }
 
 export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
-  sessionId,
-  sessionStatus,
-  scheduledTime,
-  teamArrived,
+  session,
   onStartSession,
   disabled = false
 }) => {
@@ -28,17 +23,17 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
   const [loading, setLoading] = useState(false);
 
   const isStartable = useMemo(() => {
-    if (sessionStatus !== 'not-started') return false;
-    if (!teamArrived) return false;
+    if (session.status !== 'not-started') return false;
+    if (!session.team.arrived) return false;
 
     // Must have 5 minutes or less until scheduled start time
     const now = dayjs();
-    const scheduled = dayjs(scheduledTime);
+    const scheduled = dayjs(session.scheduledTime);
     const minutesUntilStart = scheduled.diff(now, 'minutes', true);
     if (minutesUntilStart > 5) return false;
 
     return true;
-  }, [sessionStatus, teamArrived, scheduledTime]);
+  }, [session.status, session.scheduledTime, session.team.arrived]);
 
   const handleStartSession = async (sessionId: string) => {
     setLoading(true);
@@ -46,13 +41,31 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
     setLoading(false);
   };
 
+  if (session.status === 'completed') {
+    return (
+      <Chip
+        icon={<CheckCircle />}
+        label={t('session-completed')}
+        color="success"
+        sx={{
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          height: '36px',
+          '& .MuiChip-icon': {
+            fontSize: '1.25rem'
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <Button
       variant="contained"
       size="medium"
       disabled={!isStartable || disabled}
       loading={loading}
-      onClick={() => handleStartSession(sessionId)}
+      onClick={() => handleStartSession(session.id)}
       startIcon={<DirectionalIcon ltr={PlayArrow} />}
       sx={{
         minWidth: '100px',

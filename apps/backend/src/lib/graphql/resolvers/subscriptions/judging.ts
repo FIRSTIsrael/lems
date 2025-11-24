@@ -6,16 +6,14 @@ import {
   isGapMarker
 } from './base-subscription';
 
-interface JudgingStartedEvent {
+interface JudgingSessionEvent {
   sessionId: string;
   version: number;
-  startTime: string;
-  startDelta: number;
 }
 
-interface JudgingAbortedEvent {
-  sessionId: string;
-  version: number;
+interface JudgingStartedEvent extends JudgingSessionEvent {
+  startTime: string;
+  startDelta: number;
 }
 
 /**
@@ -63,6 +61,28 @@ const judgingSessionAbortedSubscribe = (
 };
 
 /**
+ * Resolver function for the judgingSessionCompleted subscription field
+ */
+const judgingSessionCompletedSubscribe = (
+  _root: unknown,
+  args: BaseSubscriptionArgs & Record<string, unknown>
+) => {
+  const divisionId = args.divisionId as string;
+
+  if (!divisionId) {
+    const errorMsg = 'divisionId is required for judgingSessionCompleted subscription';
+    throw new Error(errorMsg);
+  }
+
+  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
+  return createSubscriptionIterator(
+    divisionId,
+    RedisEventTypes.JUDGING_SESSION_COMPLETED,
+    lastSeenVersion
+  );
+};
+
+/**
  * Transforms raw Redis events into JudgingStartedEvent objects
  */
 const processJudgingSessionStartedEvent = async (
@@ -96,9 +116,9 @@ const processJudgingSessionStartedEvent = async (
 /**
  * Transforms raw Redis events into JudgingAbortedEvent objects
  */
-const processJudgingSessionAbortedEvent = async (
+const processJudgingSessionEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<JudgingAbortedEvent>> => {
+): Promise<SubscriptionResult<JudgingSessionEvent>> => {
   // Check for gap marker (recovery buffer exceeded)
   if (isGapMarker(event.data)) {
     console.warn('[JudgingSessionAborted] Recovery gap detected - client should refetch');
@@ -112,7 +132,7 @@ const processJudgingSessionAbortedEvent = async (
     return null;
   }
 
-  const result: JudgingAbortedEvent = {
+  const result: JudgingSessionEvent = {
     sessionId,
     version: (event.version as number) ?? 0
   };
@@ -141,7 +161,20 @@ export const judgingSessionAbortedResolver = {
   subscribe: judgingSessionAbortedSubscribe,
   resolve: async (
     event: Record<string, unknown>
-  ): Promise<SubscriptionResult<JudgingAbortedEvent>> => {
-    return processJudgingSessionAbortedEvent(event);
+  ): Promise<SubscriptionResult<JudgingSessionEvent>> => {
+    return processJudgingSessionEvent(event);
+  }
+};
+
+/**
+ * Subscription resolver object for judgingSessionCompleted
+ * GraphQL subscriptions require a subscribe function
+ */
+export const judgingSessionCompletedResolver = {
+  subscribe: judgingSessionCompletedSubscribe,
+  resolve: async (
+    event: Record<string, unknown>
+  ): Promise<SubscriptionResult<JudgingSessionEvent>> => {
+    return processJudgingSessionEvent(event);
   }
 };

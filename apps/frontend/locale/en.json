@@ -98,6 +98,7 @@
         "no-sessions": "No judging sessions scheduled",
         "not-arrived": "Not Arrived",
         "start-session": "Start",
+        "session-completed": "Completed",
         "rubric-labels": {
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",

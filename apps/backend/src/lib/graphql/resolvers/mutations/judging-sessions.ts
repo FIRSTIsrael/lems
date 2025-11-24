@@ -6,6 +6,7 @@ import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
+import { enqueueScheduledEvent } from '../../../queues/scheduled-events-queue';
 
 interface StartJudgingSessionArgs {
   divisionId: string;
@@ -120,11 +121,11 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       );
     }
 
-    // All checks passed - update the session state in MongoDB
+    const division = await db.divisions.byId(divisionId).get();
+
     const startTime = new Date();
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
-    // Update the judging session state in MongoDB
     const result = await db.raw.mongo
       .collection<JudgingSessionState>('judging_session_states')
       .findOneAndUpdate(
@@ -146,13 +147,32 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       );
     }
 
-    // Publish event to subscribers
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.JUDGING_SESSION_STARTED, {
       sessionId,
       startTime,
       startDelta
     });
+
+    try {
+      await enqueueScheduledEvent(
+        {
+          eventType: 'session-completed',
+          divisionId,
+          metadata: {
+            sessionId
+          }
+        },
+        division.schedule_settings.judging_session_length * 1000
+      );
+    } catch (error) {
+      console.error(
+        `Failed to enqueue session completion for ${sessionId}, but session was started:`,
+        error
+      );
+      // Don't fail the mutation - the session is already started
+      // The queue failure should be monitored separately
+    }
 
     return { sessionId, version: -1, startTime, startDelta };
   } catch (error) {
@@ -245,7 +265,6 @@ export const abortJudgingSessionResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.CONFLICT, 'Team has not arrived at the division');
     }
 
-    // Update the judging session state in MongoDB
     const result = await db.raw.mongo
       .collection<JudgingSessionState>('judging_session_states')
       .findOneAndUpdate(
@@ -267,7 +286,6 @@ export const abortJudgingSessionResolver: GraphQLFieldResolver<
       );
     }
 
-    // Publish event to subscribers
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.JUDGING_SESSION_ABORTED, {
       sessionId
