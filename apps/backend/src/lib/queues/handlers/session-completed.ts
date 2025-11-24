@@ -6,10 +6,10 @@ import db from '../../database';
 import { ScheduledEvent } from '../types';
 
 /**
- * Handler for session completion events
+ * Handler for session completed events
  * Processes judging session completions and updates state + broadcasts events
  */
-export async function handleSessionCompletion(job: Job<ScheduledEvent>): Promise<void> {
+export async function handleSessionCompleted(job: Job<ScheduledEvent>): Promise<void> {
   const { divisionId, metadata } = job.data;
   const sessionId = metadata.sessionId as string;
 

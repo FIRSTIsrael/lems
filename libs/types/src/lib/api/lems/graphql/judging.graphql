@@ -86,9 +86,9 @@ type JudgingStartedEvent {
 }
 
 """
-Represents an event when a judging session has aborted
+Represents an event when a judging session has changed state
 """
-type JudgingAbortedEvent {
+type JudgingSessionEvent {
   "Judging session identifier"
   sessionId: String!
 
@@ -115,7 +115,7 @@ extend type Mutation {
     divisionId: String!
     "The ID of the session to abort"
     sessionId: String!
-  ): JudgingAbortedEvent!
+  ): JudgingSessionEvent!
 }
 
 extend type Subscription {
@@ -137,5 +137,15 @@ extend type Subscription {
     divisionId: String!
     "The last seen version for message recovery support"
     lastSeenVersion: Int
-  ): JudgingAbortedEvent!
+  ): JudgingSessionEvent!
+
+  """
+  Subscribe to events when judging sessions complete in a division.
+  """
+  judgingSessionCompleted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): JudgingSessionEvent!
 }

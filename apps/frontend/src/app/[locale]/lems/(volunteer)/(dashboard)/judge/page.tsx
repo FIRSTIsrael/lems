@@ -16,7 +16,8 @@ import {
   createJudgingSessionStartedSubscriptionForJudge,
   START_JUDGING_SESSION_MUTATION,
   createJudgingSessionAbortedSubscriptionForJudge,
-  ABORT_JUDGING_SESSION_MUTATION
+  ABORT_JUDGING_SESSION_MUTATION,
+  createJudgingSessionCompletedSubscriptionForJudge
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
@@ -45,7 +46,8 @@ export default function JudgePage() {
     () => [
       createTeamArrivalSubscriptionForJudge(currentDivision.id),
       createJudgingSessionStartedSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id)
+      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id),
+      createJudgingSessionCompletedSubscriptionForJudge(currentDivision.id)
     ],
     [currentDivision.id]
   );

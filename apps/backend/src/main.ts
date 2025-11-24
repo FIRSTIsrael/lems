@@ -16,8 +16,7 @@ import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-cont
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import { getWorkerManager } from './lib/queues/worker-manager';
-import { handleSessionCompletion } from './lib/queues/handlers/session-completion';
-import { closeScheduledEventsQueue } from './lib/queues/session-completion-queue';
+import { handleSessionCompleted } from './lib/queues/handlers/session-completed';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -57,7 +56,7 @@ try {
   const workerManager = getWorkerManager();
 
   // Register session completion handler
-  workerManager.registerHandler('session-completion', handleSessionCompletion);
+  workerManager.registerHandler('session-completed', handleSessionCompleted);
 
   // Start the unified worker
   await workerManager.start();
@@ -150,7 +149,6 @@ process.on('SIGTERM', async () => {
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
-    await closeScheduledEventsQueue();
     await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
@@ -163,7 +161,6 @@ process.on('SIGINT', async () => {
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
-    await closeScheduledEventsQueue();
     await shutdownRedisPubSub();
     await closeRedisClient();
     console.log('✅ Graceful shutdown complete');
