@@ -34,7 +34,7 @@ interface NavSearchProps {
 }
 
 export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => {
-  const tSearch = useTranslations('pages.index.search');
+  const t = useTranslations('pages.index.search');
   const theme = useTheme();
 
   const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -74,7 +74,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
         <TextField
           fullWidth
           size="small"
-          placeholder={tSearch('placeholder')}
+          placeholder={t('placeholder')}
           value={query}
           onChange={e => setQuery(e.target.value)}
           autoComplete="off"
@@ -96,7 +96,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
               )
             }
           }}
-          inputProps={{
+          InputProps={{
             style: {
               color: textColor
             }
@@ -125,7 +125,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
             {isSearching && (
               <MenuItem disabled>
                 <Typography variant="body2" color="text.secondary">
-                  {tSearch('searching')}...
+                  {t('searching')}...
                 </Typography>
               </MenuItem>
             )}
@@ -133,7 +133,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
             {error && (
               <MenuItem disabled>
                 <Typography variant="body2" color="error">
-                  {tSearch('error', { error })}
+                  {t('error', { error })}
                 </Typography>
               </MenuItem>
             )}
@@ -141,7 +141,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
             {noResults && (
               <MenuItem disabled>
                 <Typography variant="body2" color="text.secondary">
-                  {tSearch('no-results')}
+                  {t('no-results')}
                 </Typography>
               </MenuItem>
             )}
@@ -151,7 +151,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
                 <MenuItem disabled sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Typography variant="caption" color="text.secondary">
-                      {tSearch('results-count', { count: searchStats.total })}
+                      {t('results-count', { count: searchStats.total })}
                     </Typography>
                     {searchStats.teams > 0 && (
                       <Chip
@@ -203,7 +203,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
                       </Box>
                       <Chip
                         size="small"
-                        label={tSearch(`type-${result.type}`)}
+                        label={t(`type-${result.type}`)}
                         variant="outlined"
                         color={result.type === 'team' ? 'primary' : 'secondary'}
                         sx={{ fontSize: '0.7rem' }}
@@ -215,7 +215,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ variant = 'desktop' }) => 
                 {searchResults.length > 8 && (
                   <MenuItem disabled sx={{ justifyContent: 'center' }}>
                     <Typography variant="caption" color="text.secondary">
-                      {tSearch('more-results', { count: searchResults.length - 8 })}
+                      {t('more-results', { count: searchResults.length - 8 })}
                     </Typography>
                   </MenuItem>
                 )}

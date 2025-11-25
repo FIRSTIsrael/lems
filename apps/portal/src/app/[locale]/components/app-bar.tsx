@@ -133,10 +133,12 @@ const MobileAppBar: React.FC = () => {
           }}
           open={Boolean(anchorElNav)}
           onClose={() => setAnchorElNav(null)}
-          PaperProps={{
-            sx: {
-              minWidth: 320,
-              maxWidth: '90vw'
+          slotProps={{
+            paper: {
+              sx: {
+                minWidth: 320,
+                maxWidth: '90vw'
+              }
             }
           }}
         >
