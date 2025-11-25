@@ -54,12 +54,6 @@ export const PortalAppBar: React.FC<PortalAppBarProps> = ({ children }) => {
 const DesktopAppBar: React.FC = () => {
   const t = useTranslations('layouts.main.app-bar');
 
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <Toolbar disableGutters>
       <Box
@@ -92,7 +86,7 @@ const DesktopAppBar: React.FC = () => {
           </Button>
         ))}
       </Box>
-      {mounted && <NavSearch />}
+      <NavSearch />
 
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <LanguageSwitcher />
