@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Card, CardContent, Typography, Box, Stack, Divider, Grid, Button } from '@mui/material';
 import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
@@ -9,6 +8,7 @@ import { TeamEventResult } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
+import { UnpublishedEventCard } from './unpublished-event-card';
 
 interface TeamEventResultCardProps {
   eventResult: TeamEventResult;
@@ -32,39 +32,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
   };
 
   if (!eventResult.published) {
-    return (
-      <Element name={`event-${eventResult.eventSlug}`}>
-        <Link
-          href={`/event/${eventResult.eventSlug}/team/${team.slug}`}
-          style={{ textDecoration: 'none' }}
-        >
-          <Card
-            variant="outlined"
-            sx={{
-              mb: 2,
-              '&:hover': {
-                boxShadow: 4,
-                transform: 'translateY(-2px)',
-                transition: 'all 0.2s ease-in-out'
-              },
-              transition: 'all 0.2s ease-in-out'
-            }}
-          >
-            <CardContent>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-                <Typography variant="h4" fontWeight="600" color="primary">
-                  {eventResult.eventName}
-                </Typography>
-                <Button variant="text">{t('view-live-data')}</Button>
-              </Stack>
-              <Typography variant="body1" color="text.secondary">
-                {t('event-in-progress')}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Link>
-      </Element>
-    );
+    return <UnpublishedEventCard eventResult={eventResult} />;
   }
 
   if (!eventResult.results) {
