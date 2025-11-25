@@ -3,5 +3,8 @@
  * Every notification must be added here to be considered valid
  */
 export enum RedisEventTypes {
-  TEAM_ARRIVED = 'teamArrived'
+  TEAM_ARRIVED = 'teamArrived',
+  JUDGING_SESSION_STARTED = 'judgingSessionStarted',
+  JUDGING_SESSION_ABORTED = 'judgingSessionAborted',
+  JUDGING_SESSION_COMPLETED = 'judgingSessionCompleted'
 }

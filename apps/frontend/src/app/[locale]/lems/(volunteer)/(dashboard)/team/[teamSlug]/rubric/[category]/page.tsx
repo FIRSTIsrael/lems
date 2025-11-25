@@ -9,6 +9,7 @@ import { rubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
+import { useUser } from '../../../../../../components/user-context';
 import { RubricActions } from './components/rubric-actions';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
@@ -18,11 +19,18 @@ export default function RubricPage() {
   const t = useTranslations('pages.rubric');
   const { getCategory } = useJudgingCategoryTranslations();
   const team = useTeam();
+  const user = useUser();
 
   const { category } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
-  const isEditable = true; // TODO: this.
+  // TODO: Add rubric status
+  const isEditable =
+    (user.role === 'judge' && ['empty', 'in-progress', 'completed'].includes('empty')) ||
+    (user.role === 'lead-judge' &&
+      user.roleInfo?.['category'] === category &&
+      ['empty', 'in-progress', 'completed', 'waiting-for-review'].includes('empty')) ||
+    user.role === 'judge-advisor';
 
   return (
     <>

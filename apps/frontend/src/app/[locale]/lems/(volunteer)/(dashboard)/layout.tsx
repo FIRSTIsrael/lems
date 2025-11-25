@@ -15,7 +15,14 @@ export default function VolunteerDashboardLayout({ children }: { children: React
       />
 
       <Box component="main" flexGrow={1} sx={{ backgroundColor: '#fafafa', mt: { xs: 8, lg: 0 } }}>
-        <Container maxWidth="lg" sx={{ pt: 3, minHeight: '100vh' }}>
+        <Container
+          maxWidth="xl"
+          sx={{
+            pt: 3,
+            minHeight: '100vh',
+            px: { xs: 2, md: 4 }
+          }}
+        >
           {children}
         </Container>
       </Box>

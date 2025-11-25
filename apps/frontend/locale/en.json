@@ -87,6 +87,69 @@
         "team": "Team"
       }
     },
+    "judge": {
+      "page-title": "Judging",
+      "schedule": {
+        "session": "Session",
+        "start-time": "Start Time",
+        "team": "Team Information",
+        "actions": "Actions",
+        "rubrics": "Rubrics",
+        "no-sessions": "No judging sessions scheduled",
+        "not-arrived": "Not Arrived",
+        "start-session": "Start",
+        "session-completed": "Completed",
+        "rubric-labels": {
+          "core-values": "Core Values",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "in-progress": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "ready": {
+              "label": "Ready",
+              "description": "Rubric has been completed and submitted"
+            },
+            "waiting-for-review": {
+              "label": "Waiting for Review",
+              "description": "Rubric is waiting for review by head judge"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
+        }
+      },
+      "error": {
+        "start": "Failed to start judging session",
+        "abort": "Failed to abort judging session"
+      },
+      "timer": {
+        "abort-session": "Abort Session",
+        "minutes": "{count} minutes",
+        "current-stage": "Current Stage",
+        "team": "Team",
+        "session-ends-in-label": "Session Ends In",
+        "up-next": "Up Next",
+        "abort-dialog": {
+          "title": "Abort Judging Session",
+          "message": "Are you sure you want to abort this judging session? This action cannot be undone and will end the session immediately.",
+          "cancel": "Cancel",
+          "confirm": "Abort Session"
+        }
+      }
+    },
     "reports": {
       "page-title": "Reports",
       "menu": {

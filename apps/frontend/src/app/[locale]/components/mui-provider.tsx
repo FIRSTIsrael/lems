@@ -6,8 +6,8 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Locale, getEmotionCacheOptions, Locales, configureDayjs } from '@lems/localization';
-import { routing } from '../../i18n/routing';
-import { getLocalizedTheme } from '../../theme';
+import { routing } from '../../../i18n/routing';
+import { getLocalizedTheme } from '../../../theme';
 
 export const MuiProvider = ({
   locale,

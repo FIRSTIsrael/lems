@@ -6,7 +6,8 @@ import { Locales, configureDayjs } from '@lems/localization';
 import { SWRProvider } from '@lems/shared';
 import { routing } from '../../i18n/routing';
 import { ApolloClientProvider } from '../../lib/graphql/apollo-client-provider';
-import { MuiProvider } from './mui-provider';
+import { TimeSyncProvider } from './components/time-sync-provider';
+import { MuiProvider } from './components/mui-provider';
 import { LemsToaster } from './components/toaster';
 
 export const metadata: Metadata = {
@@ -51,16 +52,18 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   return (
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <body>
-        <NextIntlClientProvider>
-          <ApolloClientProvider>
-            <SWRProvider>
-              <MuiProvider locale={locale}>
-                {children}
-                <LemsToaster dir={dir} />
-              </MuiProvider>
-            </SWRProvider>
-          </ApolloClientProvider>
-        </NextIntlClientProvider>
+        <TimeSyncProvider>
+          <NextIntlClientProvider>
+            <ApolloClientProvider>
+              <SWRProvider>
+                <MuiProvider locale={locale}>
+                  {children}
+                  <LemsToaster dir={dir} />
+                </MuiProvider>
+              </SWRProvider>
+            </ApolloClientProvider>
+          </NextIntlClientProvider>
+        </TimeSyncProvider>
       </body>
     </html>
   );

@@ -25,4 +25,8 @@ export * from './tables/teams';
 export * from './tables/team-divisions';
 export * from './tables/team-division-notifications';
 
+// States
+export * from './documents/judging-session-state';
+export * from './documents/robot-game-match-state';
+
 export * from './tables/awards';

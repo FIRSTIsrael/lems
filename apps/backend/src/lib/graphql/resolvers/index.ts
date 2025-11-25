@@ -7,6 +7,12 @@ import { volunteersResolver, volunteerDivisionsResolver } from './events/volunte
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
+import { divisionJudgingResolver } from './divisions/judging';
+import { judgingSessionsResolver } from './divisions/judging-sessions';
+import { judgingRoomsResolver } from './divisions/judging-rooms';
+import { judgingSessionLengthResolver } from './divisions/judging-session-length';
+import { judgingSessionRoomResolver } from './judging/session-room';
+import { judgingSessionTeamResolver } from './judging/session-team';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
@@ -28,7 +34,17 @@ export const resolvers = {
   Division: {
     tables: divisionTablesResolver,
     rooms: divisionRoomsResolver,
-    teams: divisionTeamsResolver
+    teams: divisionTeamsResolver,
+    judging: divisionJudgingResolver
+  },
+  Judging: {
+    sessions: judgingSessionsResolver,
+    rooms: judgingRoomsResolver,
+    sessionLength: judgingSessionLengthResolver
+  },
+  JudgingSession: {
+    room: judgingSessionRoomResolver,
+    team: judgingSessionTeamResolver
   },
   Team: {
     arrived: teamArrivalResolver

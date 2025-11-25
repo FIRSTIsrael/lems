@@ -13,8 +13,6 @@ interface TeamEvent {
 
 /**
  * Resolver function for the teamArrivalUpdated subscription field
- * Supports message recovery via lastSeenVersion parameter.
- * If client was disconnected < 30 seconds, buffered messages are automatically recovered.
  */
 const teamArrivalUpdatedSubscribe = (
   _root: unknown,
