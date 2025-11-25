@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import {
   AppBar,
@@ -24,6 +23,7 @@ import {
   MenuRounded
 } from '@mui/icons-material';
 import { ResponsiveComponent } from '@lems/shared';
+import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
 import { NavSearch } from './nav-search';
 
