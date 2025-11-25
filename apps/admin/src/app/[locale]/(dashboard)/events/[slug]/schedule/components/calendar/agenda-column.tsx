@@ -195,7 +195,8 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       // Check if it was just a click (no movement) or a drag
       if (dragState.createStartPosition === dragState.createCurrentPosition) {
         // Just a click: create 1-hour event at click position
-        const eventStart = positionToTime(dragState.createStartPosition, startTime);
+        // TODO: WHY WAS THIS ABLE TO BE UNDEFINED
+        const eventStart = positionToTime(dragState.createStartPosition || 0, startTime);
         addAgendaEvent(eventStart, DEFAULT_EVENT_DURATION);
       } else if (
         dragState.createStartPosition !== undefined &&
@@ -246,7 +247,7 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
   }, [dragState, startTime, addAgendaEvent, updateAgendaEvent]);
 
   const handleDragStartBody = useCallback(
-    (block, blockStartY: number) => {
+    (block: any, blockStartY: number) => {
       const block_startTime = block.startTime;
       const block_duration = block.durationSeconds;
 
@@ -267,7 +268,7 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
   );
 
   const handleDragStartTopEdge = useCallback(
-    (block, blockStartY: number) => {
+    (block: any, blockStartY: number) => {
       const block_startTime = block.startTime;
       const block_duration = block.durationSeconds;
 
@@ -285,7 +286,7 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
   );
 
   const handleDragStartBottomEdge = useCallback(
-    (block, blockStartY: number) => {
+    (block: any, blockStartY: number) => {
       const block_startTime = block.startTime;
       const block_duration = block.durationSeconds;
 
