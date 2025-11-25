@@ -41,7 +41,7 @@ export function RoleAssignmentSection({
   role,
   initiallyExpanded = false
 }: RoleAssignmentSectionProps) {
-  const t = useTranslations('pages.events.users.sections.volunteerUsers');
+  const t = useTranslations('pages.events.users.sections.volunteer-users');
   const { getRole } = useRoleTranslations();
   const {
     divisions,
@@ -85,7 +85,7 @@ export function RoleAssignmentSection({
               {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
             </Typography>
             <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
-              {t('addSlot')}
+              {t('add-slot')}
             </Button>
             <IconButton
               onClick={() => setExpanded(!expanded)}
@@ -101,7 +101,7 @@ export function RoleAssignmentSection({
         <CardContent sx={{ pt: 0 }}>
           {slots.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              {t('noSlotsAssigned')}
+              {t('no-slots-assigned')}
             </Typography>
           ) : (
             <Stack spacing={3}>
@@ -111,10 +111,11 @@ export function RoleAssignmentSection({
                   direction="row"
                   justifyContent="space-between"
                   alignItems="flex-start"
+                  spacing={2}
                 >
-                  <Stack direction="row" spacing={2}>
+                  <Stack spacing={2} flex={1} minWidth={0}>
                     {!singleDivision && (
-                      <FormControl size="small" sx={{ mt: 1, minWidth: 200 }}>
+                      <FormControl size="small" fullWidth>
                         <InputLabel>{t('divisions')}</InputLabel>
                         <Select
                           multiple
@@ -159,26 +160,22 @@ export function RoleAssignmentSection({
                     )}
 
                     {needsIdentifiers(slot) && (
-                      <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 1 }}>
-                        <TextField
-                          size="small"
-                          label={t('identifier')}
-                          value={slot.identifier || ''}
-                          onChange={e => handleIdentifierChange(slot.id, e.target.value)}
-                          sx={{ maxWidth: 200, height: '100%' }}
-                          slotProps={{ input: { inputProps: { maxLength: 12 } } }}
-                        />
-                        <Typography variant="caption" color="text.secondary" maxWidth={200}>
-                          {t('identifierHelp')}
-                        </Typography>
-                      </Stack>
+                      <TextField
+                        size="small"
+                        label={t('identifier')}
+                        value={slot.identifier || ''}
+                        onChange={e => handleIdentifierChange(slot.id, e.target.value)}
+                        fullWidth
+                        helperText={t('identifier-help')}
+                        slotProps={{ input: { inputProps: { maxLength: 12 } } }}
+                      />
                     )}
                   </Stack>
 
                   <IconButton
                     color="error"
                     onClick={() => handleRemoveSlot(slot.id)}
-                    aria-label={t('removeSlot')}
+                    aria-label={t('remove-slot')}
                   >
                     <DeleteIcon />
                   </IconButton>

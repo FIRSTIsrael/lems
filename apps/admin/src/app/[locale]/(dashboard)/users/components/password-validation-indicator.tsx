@@ -30,11 +30,11 @@ export const PasswordRequirements: React.FC<{
   const t = useTranslations('pages.users.creation-dialog.form.password-validation');
 
   const conditions = [
-    { key: 'minLength', met: validation.minLength },
-    { key: 'hasUppercase', met: validation.hasUppercase },
-    { key: 'hasLowercase', met: validation.hasLowercase },
-    { key: 'hasNumber', met: validation.hasNumber },
-    { key: 'hasSpecialChar', met: validation.hasSpecialChar }
+    { key: 'min-length', met: validation.minLength },
+    { key: 'has-uppercase', met: validation.hasUppercase },
+    { key: 'has-lowercase', met: validation.hasLowercase },
+    { key: 'has-number', met: validation.hasNumber },
+    { key: 'has-special-char', met: validation.hasSpecialChar }
   ];
 
   return (

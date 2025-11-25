@@ -45,7 +45,7 @@ export const CompleteEventDialog: React.FC<CompleteEventDialogProps> = ({
           {t('message')}
         </Typography>
         <Typography variant="body2" sx={{ mt: 2, fontWeight: 'bold' }}>
-          {t('eventName', { eventName })}
+          {t('event-name', { eventName })}
         </Typography>
       </DialogContent>
       <DialogActions>

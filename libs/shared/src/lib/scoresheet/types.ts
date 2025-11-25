@@ -17,7 +17,7 @@ export interface MissionSchema {
 }
 
 export interface ScoresheetSchema {
-  season: string;
+  _version: string;
   missions: Array<MissionSchema>;
   validators: Array<(missions: { [key: string]: Array<boolean | string | number | null> }) => void>;
 }

@@ -225,6 +225,18 @@
         "no-equipment-constraint-title": "No Equipment Constraint:",
         "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”",
         "score": "{points} pts"
+      },
+      "rubrics": {
+        "title": "Rubrics",
+        "navigation": {
+          "title": "Rubric Categories"
+        },
+        "actions": {
+          "reset": "Reset"
+        },
+        "field-notes-label": "Notes",
+        "field-notes-placeholder": "How did the team exceed?",
+        "mobile-placeholder": "Choose value..."
       }
     }
   },

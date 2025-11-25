@@ -378,5 +378,189 @@
     "tournament-manager": {
       "name": "Tournament Manager"
     }
+  },
+  "rubrics": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACCOMPLISHED",
+      "exceeds": "EXCEEDS"
+    },
+    "categories": {
+      "core-values": {},
+      "innovation-project": {
+        "sections": {
+          "identify": {
+            "title": "IDENTIFY",
+            "description": "Team had a clearly defined problem that was well researched.",
+            "fields": {
+              "problem": {
+                "beginning": "Unclear definition of the problem",
+                "developing": "Partially clear definition of the problem",
+                "accomplished": "Clear definition of the problem"
+              },
+              "research": {
+                "beginning": "Minimal evidence of research",
+                "developing": "Partial evidence of research from one or more sources",
+                "accomplished": "Clear, detailed research from a variety of sources"
+              }
+            }
+          },
+          "design": {
+            "title": "DESIGN",
+            "description": "Team worked together while creating a project plan and developing their ideas.",
+            "fields": {
+              "plan": {
+                "beginning": "Minimal evidence of an effective project plan",
+                "developing": "Partial evidence of an effective project plan",
+                "accomplished": "Clear evidence of an effective project plan"
+              },
+              "participation": {
+                "beginning": "Minimal evidence that development process involved all team members",
+                "developing": "Partial evidence that development process involved all team members",
+                "accomplished": "Clear evidence that development process involved all team members"
+              }
+            }
+          },
+          "create": {
+            "title": "CREATE",
+            "description": "Team developed an original idea or built on an existing one with a prototype model/drawing to represent their solution.",
+            "fields": {
+              "innovation": {
+                "beginning": "Minimal explanation of innovation in solution",
+                "developing": "Simple explanation of innovation in solution",
+                "accomplished": "Detailed explanation of innovation in solution"
+              },
+              "model": {
+                "beginning": "Unclear model/drawing that represents the solution",
+                "developing": "Simple model/drawing that represents the solution",
+                "accomplished": "Detailed model/drawing that represents the solution"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERATE",
+            "description": "Team shared their ideas with others, collected feedback, and included improvements to their solution.",
+            "fields": {
+              "share": {
+                "beginning": "Minimal sharing of their solution with others",
+                "developing": "Solution shared with at least one person/group",
+                "accomplished": "Solution shared with multiple people/groups"
+              },
+              "improve": {
+                "beginning": "Minimal evidence of improvements based on feedback",
+                "developing": "Partial evidence of improvements based on feedback",
+                "accomplished": "Clear evidence of improvements based on feedback"
+              }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "Team shared an effective presentation of their solution, its impact on others, and celebrated their team's progress.",
+            "fields": {
+              "explanation": {
+                "beginning": "Unclear explanation of the solution and its potential impact on others",
+                "developing": "Partially clear explanation of solution and its potential impact on others",
+                "accomplished": "Clear explanation of solution and its potential impact on others"
+              },
+              "pride": {
+                "beginning": "Presentation shows minimal pride or enthusiasm for their work",
+                "developing": "Presentation shows partial pride or enthusiasm for their work",
+                "accomplished": "Presentation clearly shows pride or enthusiasm for their work"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "sections": {
+          "identify": {
+            "title": "IDENTIFY",
+            "description": "Team determined which missions to attempt, explored building and coding resources, and sought guidance as needed.",
+            "fields": {
+              "strategy": {
+                "beginning": "Minimal evidence of mission strategy",
+                "developing": "Partial evidence of mission strategy",
+                "accomplished": "Clear evidence of mission strategy"
+              },
+              "resources": {
+                "beginning": "Minimal use of building or coding resources",
+                "developing": "Some use of building or coding resources",
+                "accomplished": "Clear use of building or coding resources to support their mission strategy"
+              }
+            }
+          },
+          "design": {
+            "title": "DESIGN",
+            "description": "Team members worked collaboratively on their designs and developed the building and coding skills needed.",
+            "fields": {
+              "contribution": {
+                "beginning": "Minimal evidence that all team members contributed ideas",
+                "developing": "Partial evidence that all team members contributed ideas",
+                "accomplished": "Clear evidence that all team members contributed ideas"
+              },
+              "skills": {
+                "beginning": "Minimal evidence of building and coding skills in all team members",
+                "developing": "Partial evidence of building and coding skills in all team members",
+                "accomplished": "Clear evidence of building and coding skills in all team members"
+              }
+            }
+          },
+          "create": {
+            "title": "CREATE",
+            "description": "Team developed original designs or improved on existing ones according to their mission strategy.",
+            "fields": {
+              "attachments": {
+                "beginning": "Unclear explanation of attachments and their purpose",
+                "developing": "Simple explanation of attachments and their purpose",
+                "accomplished": "Clear explanation of innovative attachments and their purpose"
+              },
+              "code": {
+                "beginning": "Unclear explanation of code and/or sensor use",
+                "developing": "Simple explanation of code and/or sensor use",
+                "accomplished": "Clear explanation of code and/or sensor use"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERATE",
+            "description": "Team repeatedly tested their robot and code to identify areas for improvement and incorporated the findings into their solutions.",
+            "fields": {
+              "test": {
+                "beginning": "Minimal evidence of testing their robot and code",
+                "developing": "Partial evidence of testing their robot and code",
+                "accomplished": "Clear evidence of repeated testing of their robot and code"
+              },
+              "improve": {
+                "beginning": "Minimal evidence of improvements based on testing",
+                "developing": "Partial evidence of improvements based on testing",
+                "accomplished": "Clear evidence of improvements based on testing"
+              }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "Team effectively explained what they learned from the robot design process and celebrated their progress.",
+            "fields": {
+              "explanation": {
+                "beginning": "Unclear explanation of process and lessons learned",
+                "developing": "Simple explanation of process and lessons learned",
+                "accomplished": "Detailed explanation of process and lessons learned"
+              },
+              "pride": {
+                "beginning": "Team shows minimal pride or enthusiasm for their work",
+                "developing": "Team shows partial pride or enthusiasm for their work",
+                "accomplished": "Team clearly shows pride or enthusiasm for their work"
+              }
+            }
+          }
+        }
+      }
+    },
+    "core-values-explanation": "Criteria on this page with this style of check box count dually toward Innovation Project and Core Values awards rankings. Core Values make up 25% of a team’s Champion’s score and should be demonstrated throughout their work and event experience.",
+    "feedback": {
+      "great-job": "Great job...",
+      "think-about": "Think about..."
+    }
   }
 }

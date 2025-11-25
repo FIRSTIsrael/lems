@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
@@ -27,15 +28,21 @@ export const teamArrivedResolver: GraphQLFieldResolver<
 > = async (_root, { teamId, divisionId }, context) => {
   try {
     if (!context.user) {
-      throw new Error('UNAUTHORIZED');
+      throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
     if (context.user.role !== 'pit-admin') {
-      throw new Error('FORBIDDEN');
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User does not have permission to mark teams as arrived'
+      );
     }
 
     if (!context.user.divisions.includes(divisionId)) {
-      throw new Error('FORBIDDEN');
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User does not have access to this division'
+      );
     }
 
     const existing = await db.raw.sql
@@ -47,7 +54,10 @@ export const teamArrivedResolver: GraphQLFieldResolver<
       .executeTakeFirst();
 
     if (existing) {
-      throw new Error(`Team with ID ${teamId} has already arrived at division ${divisionId}`);
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        `Team #${teamId} has already arrived at this division`
+      );
     }
 
     const update: Record<string, unknown> = { arrived: true, arrived_at: new Date() };
