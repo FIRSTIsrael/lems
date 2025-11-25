@@ -8,6 +8,7 @@ import { TeamEventResult } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
+import { UnpublishedEventCard } from './unpublished-event-card';
 
 interface TeamEventResultCardProps {
   eventResult: TeamEventResult;
@@ -29,6 +30,10 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
         return 'award.other';
     }
   };
+
+  if (!eventResult.published) {
+    return <UnpublishedEventCard eventResult={eventResult} />;
+  }
 
   if (!eventResult.results) {
     return null; // Should not call without results

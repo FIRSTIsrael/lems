@@ -8,6 +8,7 @@ import { Typography, Paper, Stack, Box } from '@mui/material';
 import { TeamEventResult } from '@lems/types/api/portal';
 import { Element } from 'react-scroll';
 import { TeamEventResultCard } from './team-event-result-card';
+import { UnpublishedEventCard } from './unpublished-event-card';
 import { useTeam } from './team-context';
 
 export const TeamResults: React.FC = () => {
@@ -39,8 +40,14 @@ export const TeamResults: React.FC = () => {
       <Stack spacing={3} sx={{ mt: 3 }}>
         {eventResults.map(eventResult => {
           if (!eventResult.results) {
-            return null; // TODO: Event in progress card
+            return (
+              <UnpublishedEventCard
+                key={`event-${eventResult.eventSlug}`}
+                eventResult={eventResult}
+              />
+            );
           }
+
           return (
             <TeamEventResultCard key={`event-${eventResult.eventSlug}`} eventResult={eventResult} />
           );
