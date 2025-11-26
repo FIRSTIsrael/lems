@@ -1,0 +1,237 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: registry.digitalocean.com/first-israel-registry
+
+jobs:
+  extract-version:
+    name: Extract Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: Extract and validate version from release tag
+        id: extract
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          # Version must be in semver format: X.Y.Z
+          if ! [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ ERROR: Release tag must be in semver format (e.g., 1.4.0)"
+            echo "   Got: $TAG"
+            exit 1
+          fi
+          echo "version=$TAG" >> $GITHUB_OUTPUT
+          echo "📌 Deploying version: $TAG"
+
+  build-backend:
+    name: Build & Push Backend
+    uses: ./.github/workflows/deploy-backend.yml
+    needs: extract-version
+    with:
+      environment: production
+      image_tag: ${{ needs.extract-version.outputs.version }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  build-admin:
+    name: Build & Push Admin
+    uses: ./.github/workflows/deploy-admin.yml
+    needs: extract-version
+    with:
+      environment: production
+      image_tag: ${{ needs.extract-version.outputs.version }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  build-frontend:
+    name: Build & Push Frontend LEMS
+    uses: ./.github/workflows/deploy-lems.yml
+    needs: extract-version
+    with:
+      environment: production
+      image_tag: ${{ needs.extract-version.outputs.version }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  build-portal:
+    name: Build & Push Portal
+    uses: ./.github/workflows/deploy-portal.yml
+    needs: extract-version
+    with:
+      environment: production
+      image_tag: ${{ needs.extract-version.outputs.version }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  build-scheduler:
+    name: Build & Push Scheduler
+    uses: ./.github/workflows/deploy-scheduler.yml
+    needs: extract-version
+    with:
+      environment: production
+      image_tag: ${{ needs.extract-version.outputs.version }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  cleanup-old-images:
+    name: Cleanup Old Production Images
+    needs: [extract-version, build-backend, build-admin, build-frontend, build-portal, build-scheduler]
+    uses: ./.github/workflows/cleanup-registry-images.yml
+    with:
+      tag_pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+      exclude_tag: '${{ needs.extract-version.outputs.version }}'
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  garbage-collection:
+    name: Run Registry Garbage Collection
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: cleanup-old-images
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Run garbage collection
+        run: |
+          echo "🗑️  Starting garbage collection..."
+          doctl registry garbage-collection start --force
+          echo "✓ Garbage collection started"
+
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    needs: [extract-version, garbage-collection]
+    
+    steps:
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@25ce8cbbcb08177468c7ff7ec5cbfa236f9341e1 # v1.2.0
+        env:
+          # Metadata
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_TAG: ${{ needs.extract-version.outputs.version }}
+          DEPLOY_REF: ${{ github.ref }}
+          DEPLOY_SHA: ${{ github.sha }}
+          
+          # Database configuration
+          DB_NAME: ${{ vars.DB_NAME }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          PG_HOST: ${{ secrets.PG_HOST }}
+          PG_PORT: ${{ secrets.PG_PORT }}
+          PG_USER: ${{ secrets.PG_USER }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
+          
+          # Redis Configuration
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_USERNAME: ${{ secrets.REDIS_USERNAME }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          REDIS_DB: ${{ vars.REDIS_DB }}
+          
+          # Authentication & Security
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
+          SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
+          RECAPTCHA: ${{ vars.RECAPTCHA }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          
+          # External Services
+          LEMS_DOMAIN: ${{ vars.LEMS_DOMAIN }}
+          SCHEDULER_URL: ${{ vars.SCHEDULER_URL }}
+          LOCAL_BASE_URL: ${{ vars.LOCAL_BASE_URL }}
+
+          # Cloud Storage (DigitalOcean Spaces)
+          DIGITALOCEAN_ENDPOINT: ${{ vars.DIGITALOCEAN_ENDPOINT }}
+          DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
+          DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
+          DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: |
+            REGISTRY,
+            IMAGE_TAG,
+            DEPLOY_REF,
+            DEPLOY_SHA,
+
+            DB_NAME,
+            MONGODB_URI,
+
+            PG_HOST,
+            PG_PORT,
+            PG_USER,
+            PG_PASSWORD,
+            PG_SSL_CA,
+
+            REDIS_HOST,
+            REDIS_PORT,
+            REDIS_USERNAME,
+            REDIS_PASSWORD,
+            REDIS_DB,
+
+            JWT_SECRET,
+            DASHBOARD_JWT_SECRET,
+            SCHEDULER_JWT_SECRET,
+
+            RECAPTCHA,
+            RECAPTCHA_SECRET_KEY,
+
+            LEMS_DOMAIN,
+            SCHEDULER_URL,
+            LOCAL_BASE_URL,
+            
+            DIGITALOCEAN_ENDPOINT,
+            DIGITALOCEAN_SPACE,
+            DIGITALOCEAN_KEY,
+            DIGITALOCEAN_SECRET
+          script: |
+            echo "🔐 Logging into DigitalOcean registry..."
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            
+            echo "📂 Navigating to project directory..."
+            cd lems
+            
+            echo "🛑 Stopping existing containers..."
+            docker compose down
+            
+            echo "🧹 Cleaning up old containers and images..."
+            docker compose rm -f
+            docker images --format "{{.Repository}}:{{.Tag}}" | grep "first-israel-registry/lems:" | xargs -r docker rmi -f || echo "No images to remove"
+            
+            echo "📥 Pulling code from the deployed commit..."
+            echo "   Tag: ${DEPLOY_REF}"
+            echo "   Commit SHA: ${DEPLOY_SHA}"
+            git fetch origin
+            git checkout ${DEPLOY_SHA}
+            
+            echo "ℹ️  Verifying we're on the correct commit..."
+            CURRENT_SHA=$(git rev-parse HEAD)
+            if [ "$CURRENT_SHA" != "${DEPLOY_SHA}" ]; then
+              echo "❌ ERROR: Failed to checkout correct commit!"
+              echo "   Expected: ${DEPLOY_SHA}"
+              echo "   Got: $CURRENT_SHA"
+              exit 1
+            fi
+            echo "✅ Confirmed on commit ${DEPLOY_SHA}"
+            
+            echo "🚀 Starting services with compose file from deployed commit..."
+            docker compose up -d
+            
+            echo "✅ Production deployment complete!"

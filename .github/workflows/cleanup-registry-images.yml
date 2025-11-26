@@ -49,8 +49,26 @@ jobs:
               # Skip if tag matches the exclude_tag (e.g., backend-staging-abc123)
               if [ -n "${{ inputs.exclude_tag }}" ] && [[ "$tag" == *"${{ inputs.exclude_tag }}"* ]]; then
                 echo "Skipping excluded tag: $tag"
-              # Check if tag contains the pattern anywhere (handles *-staging-*, *-production-*, etc.)
+              # Check if tag matches pattern (supports both glob and regex patterns)
+              elif [[ "${{ inputs.tag_pattern }}" == ^* ]] || [[ "${{ inputs.tag_pattern }}" == *\$ ]]; then
+                # Regex pattern (contains ^ or $)
+                if [[ "$tag" =~ ${{ inputs.tag_pattern }} ]]; then
+                  echo "Processing Tag: $tag, Digest: $digest"
+                  if [ -n "$digest" ] && [ "$digest" != "null" ]; then
+                    # Ensure digest has the sha256: prefix
+                    if [[ ! "$digest" =~ ^sha256: ]]; then
+                      digest="sha256:${digest}"
+                    fi
+                    doctl registry repository delete-manifest "$repo_name" "$digest" --force 2>&1 || echo "Note: Could not delete manifest (may have already been deleted)"
+                    echo "✓ Deleted $tag with digest $digest"
+                  else
+                    echo "Warning: Empty or null digest for tag $tag in repository $repo_name" >&2
+                  fi
+                else
+                  echo "Skipping tag $tag as it does not match pattern ${{ inputs.tag_pattern }}"
+                fi
               elif [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
+                # Glob pattern
                 echo "Processing Tag: $tag, Digest: $digest"
                 if [ -n "$digest" ] && [ "$digest" != "null" ]; then
                   # Ensure digest has the sha256: prefix
