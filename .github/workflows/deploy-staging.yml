@@ -63,8 +63,8 @@ jobs:
     needs: [build-backend, build-admin, build-frontend, build-portal, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
     with:
-      tag_pattern: 'staging-*'
-      exclude_tag: staging-${{ github.sha }}
+      tag_pattern: 'staging-'
+      exclude_tag: '-${{ github.sha }}'
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 

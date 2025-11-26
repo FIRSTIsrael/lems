@@ -44,18 +44,13 @@ jobs:
           tags_count=$(echo "$tags_json" | jq 'length')
           if [ "$tags_count" -gt 0 ]; then
             echo "Found $tags_count tag(s) to process"
-            echo "$tags_json" | jq -c '.[]' | while read -r item; do
-              tag=$(echo "$item" | jq -r '.tag')
-              digest=$(echo "$item" | jq -r '.manifest_digest')
-              
+            deleted_count=0
+            echo "$tags_json" | jq -r '.[] | "\(.tag)|\(.manifest_digest)"' | while IFS='|' read -r tag digest; do
               # Skip if tag matches the exclude_tag (e.g., backend-staging-abc123)
               if [ -n "${{ inputs.exclude_tag }}" ] && [[ "$tag" == *"${{ inputs.exclude_tag }}"* ]]; then
                 echo "Skipping excluded tag: $tag"
-                continue
-              fi
-              
               # Check if tag contains the pattern anywhere (handles *-staging-*, *-production-*, etc.)
-              if [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
+              elif [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
                 echo "Processing Tag: $tag, Digest: $digest"
                 if [ -n "$digest" ] && [ "$digest" != "null" ]; then
                   doctl registry repository delete-manifest "$repo_name" "$digest" --force
