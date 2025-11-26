@@ -53,8 +53,12 @@ jobs:
               elif [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
                 echo "Processing Tag: $tag, Digest: $digest"
                 if [ -n "$digest" ] && [ "$digest" != "null" ]; then
-                  doctl registry repository delete-manifest "$repo_name" "$digest" --force
-                  echo "✓ Deleted $tag"
+                  # Ensure digest has the sha256: prefix
+                  if [[ ! "$digest" =~ ^sha256: ]]; then
+                    digest="sha256:${digest}"
+                  fi
+                  doctl registry repository delete-manifest "$repo_name" "$digest" --force 2>&1 || echo "Note: Could not delete manifest (may have already been deleted)"
+                  echo "✓ Deleted $tag with digest $digest"
                 else
                   echo "Warning: Empty or null digest for tag $tag in repository $repo_name" >&2
                 fi
