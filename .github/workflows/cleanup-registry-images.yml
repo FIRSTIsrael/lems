@@ -36,12 +36,12 @@ jobs:
           repo_name="lems"
           echo "Cleaning up repository: $repo_name"
           
-          local tags_json=$(doctl registry repository list-tags "$repo_name" --output json 2>/dev/null || echo "[]")
+          tags_json=$(doctl registry repository list-tags "$repo_name" --output json 2>/dev/null || echo "[]")
           
           echo "Debug: JSON output for $repo_name:"
           echo "$tags_json" | jq '.'
           
-          local tags_count=$(echo "$tags_json" | jq 'length')
+          tags_count=$(echo "$tags_json" | jq 'length')
           if [ "$tags_count" -gt 0 ]; then
             echo "Found $tags_count tag(s) to process"
             echo "$tags_json" | jq -c '.[]' | while read -r item; do
