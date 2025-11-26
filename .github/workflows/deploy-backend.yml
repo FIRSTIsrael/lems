@@ -54,7 +54,7 @@ jobs:
         working-directory: apps/backend
         run: |
           docker build \
-            -t ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }} \
+            -t ${{ inputs.registry }}/lems:backend-${{ inputs.image_tag }} \
             -f Dockerfile \
             ../..
           
@@ -62,4 +62,4 @@ jobs:
           echo "ℹ️  All configuration will be provided at runtime via docker-compose environment variables"
       
       - name: Push Docker image
-        run: docker push ${{ inputs.registry }}/lems-backend:${{ inputs.image_tag }}
+        run: docker push ${{ inputs.registry }}/lems:backend-${{ inputs.image_tag }}

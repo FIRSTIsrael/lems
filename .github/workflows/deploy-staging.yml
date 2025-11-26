@@ -60,13 +60,9 @@ jobs:
 
   cleanup-old-images:
     name: Cleanup Old Staging Images
-    needs: [build-backend, build-admin, build-frontend, build-scheduler]
+    needs: [build-backend, build-admin, build-frontend, build-portal, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
-    strategy:
-      matrix:
-        repository: [lems-backend, lems-admin, lems-frontend, lems-scheduler]
     with:
-      repository: ${{ matrix.repository }}
       tag_pattern: 'staging-*'
       exclude_tag: staging-${{ github.sha }}
     secrets:
@@ -193,7 +189,7 @@ jobs:
             
             echo "🧹 Cleaning up old containers and images..."
             docker compose rm -f
-            docker images --format "{{.Repository}}:{{.Tag}}" | grep "first-israel-registry/lems-" | xargs -r docker rmi -f || echo "No images to remove"
+            docker images --format "{{.Repository}}:{{.Tag}}" | grep "first-israel-registry/lems:" | xargs -r docker rmi -f || echo "No images to remove"
             
             echo "📥 Pulling code from the deployed branch/commit..."
             echo "   Branch/Ref: ${DEPLOY_REF}"

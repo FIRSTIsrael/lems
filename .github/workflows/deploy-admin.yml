@@ -60,7 +60,7 @@ jobs:
         working-directory: apps/admin
         run: |
           docker build \
-            -t ${{ inputs.registry }}/lems-admin:${{ inputs.image_tag }} \
+            -t ${{ inputs.registry }}/lems:admin-${{ inputs.image_tag }} \
             -f Dockerfile \
             ../..
           
@@ -69,4 +69,4 @@ jobs:
           echo "ℹ️  Client-side (NEXT_PUBLIC_*) variables were embedded at build time"
       
       - name: Push Docker image
-        run: docker push ${{ inputs.registry }}/lems-admin:${{ inputs.image_tag }}
+        run: docker push ${{ inputs.registry }}/lems:admin-${{ inputs.image_tag }}

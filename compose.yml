@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ${REGISTRY}/lems-backend:${IMAGE_TAG}
+    image: ${REGISTRY}/lems:backend-${IMAGE_TAG}
     ports:
       - '3333:3333'
     networks:
@@ -43,7 +43,7 @@ services:
       - DIGITALOCEAN_SECRET=${DIGITALOCEAN_SECRET}
 
   admin:
-    image: ${REGISTRY}/lems-admin:${IMAGE_TAG}
+    image: ${REGISTRY}/lems:admin-${IMAGE_TAG}
     ports:
       - '4201:4201'
     networks:
@@ -58,7 +58,7 @@ services:
       - RECAPTCHA=${RECAPTCHA}
 
   frontend:
-    image: ${REGISTRY}/lems-frontend:${IMAGE_TAG}
+    image: ${REGISTRY}/lems:frontend-${IMAGE_TAG}
     ports:
       - '4200:4200'
     networks:
@@ -73,7 +73,7 @@ services:
       - RECAPTCHA=${RECAPTCHA}
 
   portal:
-    image: ${REGISTRY}/lems-portal:${IMAGE_TAG}
+    image: ${REGISTRY}/lems:portal-${IMAGE_TAG}
     ports:
       - '3000:3000'
     networks:
@@ -87,7 +87,7 @@ services:
       - LOCAL_BASE_URL=${LOCAL_BASE_URL}
 
   scheduler:
-    image: ${REGISTRY}/lems-scheduler:${IMAGE_TAG}
+    image: ${REGISTRY}/lems:scheduler-${IMAGE_TAG}
     ports:
       - '8000:8000'
     networks:

@@ -42,7 +42,7 @@ jobs:
         working-directory: apps/scheduler
         run: |
           docker build \
-            -t ${{ inputs.registry }}/lems-scheduler:${{ inputs.image_tag }} \
+            -t ${{ inputs.registry }}/lems:scheduler-${{ inputs.image_tag }} \
             -f Dockerfile \
             .
           
@@ -50,4 +50,4 @@ jobs:
           echo "ℹ️  All configuration will be provided at runtime via docker-compose environment variables"
       
       - name: Push Docker image
-        run: docker push ${{ inputs.registry }}/lems-scheduler:${{ inputs.image_tag }}
+        run: docker push ${{ inputs.registry }}/lems:scheduler-${{ inputs.image_tag }}

@@ -59,7 +59,7 @@ jobs:
         working-directory: apps/portal
         run: |
           docker build \
-            -t ${{ inputs.registry }}/lems-portal:${{ inputs.image_tag }} \
+            -t ${{ inputs.registry }}/lems:portal-${{ inputs.image_tag }} \
             -f Dockerfile \
             ../..
           
@@ -68,4 +68,4 @@ jobs:
           echo "ℹ️  Client-side (NEXT_PUBLIC_*) variables were embedded at build time"
       
       - name: Push Docker image
-        run: docker push ${{ inputs.registry }}/lems-portal:${{ inputs.image_tag }}
+        run: docker push ${{ inputs.registry }}/lems:portal-${{ inputs.image_tag }}
