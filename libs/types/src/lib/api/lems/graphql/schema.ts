@@ -33,8 +33,8 @@ export function loadLemsGraphQLSchema(): string[] {
  */
 export function getLemsGraphQLSchemaDir(): string {
   if (process.env['NODE_ENV'] === 'production') {
-    // Production: relative to compiled main.js in Docker
-    return join(process.cwd(), 'backend', 'graphql');
+    // Production: in Docker, graphql files are in the graphql subdirectory
+    return join(process.cwd(), 'graphql');
   } else {
     // Development: source files location. In ESM, we derive from import.meta.url
     return join(dirname(fileURLToPath(import.meta.url)));
