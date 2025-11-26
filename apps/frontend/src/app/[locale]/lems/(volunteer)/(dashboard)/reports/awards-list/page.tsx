@@ -37,16 +37,8 @@ export default function AwardsListPage() {
   const groupedAwards = useMemo(() => {
     const groups: Record<string, Award[]> = {};
     awards.forEach(award => {
-      if (!groups[award.name]) {
-        groups[award.name] = [];
-      }
-      groups[award.name].push(award);
+      groups[award.name] = [award];
     });
-
-    Object.keys(groups).forEach(name => {
-      groups[name].sort((a, b) => a.place - b.place);
-    });
-
     return groups;
   }, [awards]);
 
@@ -140,7 +132,7 @@ export default function AwardsListPage() {
 
                           <Chip
                             size="small"
-                            label={t('places-count', { count: awardList.length })}
+                            label={t('places-count', { count: awardList[0].placeCount })}
                             color="primary"
                             variant="outlined"
                             sx={{ mr: 1 }}

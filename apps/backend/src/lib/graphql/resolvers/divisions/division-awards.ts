@@ -8,7 +8,7 @@ interface DivisionWithId {
 export interface AwardGraphQL {
   id: string;
   name: string;
-  place: number;
+  placeCount: number;
   description: string | null;
 }
 
@@ -25,15 +25,20 @@ export const divisionAwardsResolver: GraphQLFieldResolver<
   try {
     const awards = await db.awards.byDivisionId(division.id).getAll();
 
-    return awards.map(award => ({
-      id: award.id,
-      name: award.name,
-      place: award.place,
-      // description is not stored per-row in DB; it is derived from season config on the frontend.
-      // For GraphQL type safety we expose it as nullable and currently return null.
-      //maybe should do somthing about it?
-      description: null
-    }));
+    const awardGroups = awards.reduce((groups, award) => {
+      if (!groups[award.name]) {
+        groups[award.name] = {
+          id: award.id, 
+          name: award.name,
+          placeCount: 0,
+          description: null
+        };
+      }
+      groups[award.name].placeCount++;
+      return groups;
+    }, {} as Record<string, AwardGraphQL>);
+
+    return Object.values(awardGroups);
   } catch (error) {
     console.error('Error fetching awards for division:', division.id, error);
     throw error;

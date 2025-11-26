@@ -3,7 +3,7 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 export interface Award {
   id: string;
   name: string;
-  place: number;
+  placeCount: number;
   description: string | null;
 }
 
@@ -25,7 +25,7 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
       awards {
         id
         name
-        place
+        placeCount
         description
       }
     }

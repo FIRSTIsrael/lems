@@ -65,8 +65,8 @@ type Award {
   "Display name of the award"
   name: String!
 
-  "Place/rank for this award (e.g., 1 = first place)"
-  place: Int!
+  "Number of places/positions available for this award type"
+  placeCount: Int!
 
   "Optional description for this award"
   description: String
