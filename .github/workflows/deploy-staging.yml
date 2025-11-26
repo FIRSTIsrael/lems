@@ -28,6 +28,16 @@ jobs:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+  build-frontend:
+    name: Build & Push Frontend LEMS
+    uses: ./.github/workflows/deploy-lems.yml
+    with:
+      environment: staging
+      image_tag: staging-${{ github.sha }}
+      registry: registry.digitalocean.com/first-israel-registry
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
   build-portal:
     name: Build & Push Portal
     uses: ./.github/workflows/deploy-portal.yml
@@ -50,11 +60,11 @@ jobs:
 
   cleanup-old-images:
     name: Cleanup Old Staging Images
-    needs: [build-backend, build-admin, build-scheduler]
+    needs: [build-backend, build-admin, build-frontend, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
     strategy:
       matrix:
-        repository: [lems-backend, lems-admin, lems-scheduler]
+        repository: [lems-backend, lems-admin, lems-frontend, lems-scheduler]
     with:
       repository: ${{ matrix.repository }}
       tag_pattern: 'staging-*'
@@ -106,6 +116,12 @@ jobs:
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
           
+          # Redis Configuration
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          REDIS_DB: ${{ vars.REDIS_DB }}
+          
           # Authentication & Security
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DASHBOARD_JWT_SECRET: ${{ secrets.DASHBOARD_JWT_SECRET }}
@@ -128,7 +144,41 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: REGISTRY,IMAGE_TAG,DEPLOY_REF,DEPLOY_SHA,DB_NAME,MONGODB_URI,PG_HOST,PG_PORT,PG_USER,PG_PASSWORD,PG_SSL_CA,JWT_SECRET,DASHBOARD_JWT_SECRET,SCHEDULER_JWT_SECRET,RECAPTCHA,RECAPTCHA_SECRET_KEY,LEMS_DOMAIN,SCHEDULER_URL,LOCAL_BASE_URL,DIGITALOCEAN_ENDPOINT,DIGITALOCEAN_SPACE,DIGITALOCEAN_KEY,DIGITALOCEAN_SECRET
+          envs: |
+            REGISTRY,
+            IMAGE_TAG,
+            DEPLOY_REF,
+            DEPLOY_SHA,
+
+            DB_NAME,
+            MONGODB_URI,
+
+            PG_HOST,
+            PG_PORT,
+            PG_USER,
+            PG_PASSWORD,
+            PG_SSL_CA,
+
+            REDIS_HOST,
+            REDIS_PORT,
+            REDIS_PASSWORD,
+            REDIS_DB,
+
+            JWT_SECRET,
+            DASHBOARD_JWT_SECRET,
+            SCHEDULER_JWT_SECRET,
+
+            RECAPTCHA,
+            RECAPTCHA_SECRET_KEY,
+
+            LEMS_DOMAIN,
+            SCHEDULER_URL,
+            LOCAL_BASE_URL,
+            
+            DIGITALOCEAN_ENDPOINT,
+            DIGITALOCEAN_SPACE,
+            DIGITALOCEAN_KEY,
+            DIGITALOCEAN_SECRET
           script: |
             echo "🔐 Logging into DigitalOcean registry..."
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
