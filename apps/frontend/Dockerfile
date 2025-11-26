@@ -19,7 +19,7 @@ COPY apps/frontend/public ./apps/frontend/public
 FROM node:22-alpine AS runner
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=4200
 ENV HOSTNAME="0.0.0.0"
 
 WORKDIR /app/apps/frontend
@@ -33,7 +33,7 @@ COPY --from=builder --chown=frontend:lems /app /app
 
 USER frontend
 
-EXPOSE 3000
+EXPOSE 4200
 
 # Run the server from the apps/frontend directory where it expects to find ../../dist/apps/frontend/.next
 CMD ["node", "server.js"]
