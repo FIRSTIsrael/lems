@@ -10,6 +10,9 @@ const createNextIntlPlugin = require('next-intl/plugin');
 const nextConfig = {
   nx: {},
 
+  output: 'standalone',
+  
+
   reactStrictMode: true,
 
   compiler: {
