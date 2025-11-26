@@ -1,1 +1,225 @@
-{}
+{
+  "pages": {
+    "login": {
+      "subtitle": "Volunteer Login",
+      "continue": "Continue",
+      "submitting": "Loading...",
+      "sign-in": "Sign In",
+      "loading": "Loading...",
+      "loading-role": "Loading role information...",
+      "steps": {
+        "role": "Select Role",
+        "division": "Select Division",
+        "association": "Select Assignment",
+        "user": "Select User",
+        "password": "Enter Password"
+      },
+      "instructions": {
+        "role": "Please select your role:",
+        "division": "Please select your assigned division:",
+        "association": "Please select your assignment:",
+        "role-info-table": "Please select the table you are assigned to:",
+        "role-info-room": "Please select the room you are assigned to:",
+        "role-info-category": "Please select the category you are assigned to:",
+        "user": "Multiple users match your selection. Please choose your account:",
+        "password": "Please enter your password:"
+      },
+      "fields": {
+        "role": "Role",
+        "division": "Division",
+        "association": "Assignment",
+        "table": "Table",
+        "room": "Room",
+        "category": "Category",
+        "user": "User",
+        "password": "Password",
+        "password-helper": "4-character password"
+      },
+      "errors": {
+        "required": "This field is required",
+        "invalid-length": "Password must be exactly 4 characters",
+        "too-many-requests": "Too many login attempts. Please try again later.",
+        "invalid-password": "Invalid password. Please try again.",
+        "server-error": "An error occurred. Please try again.",
+        "not-found": "No matching users found. Please check your selections.",
+        "no-users-with-role": "No users found with this role.",
+        "no-users-in-division": "No users found in this division.",
+        "no-users-with-association": "No users found with this assignment.",
+        "user-not-found": "User not found.",
+        "missing-event-slug": "Event information is missing.",
+        "event-not-found": "Event not found.",
+        "no-users-for-event": "No users configured for this event.",
+        "title": "Something went wrong",
+        "description": "We encountered an unexpected error while loading the login page.",
+        "unknown": "An unexpected error occurred. Please try again.",
+        "support-text": "If this problem persists, please contact support.",
+        "back-home": "Back to Home",
+        "try-again": "Try Again"
+      }
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "We encountered an unexpected error. Please try again.",
+      "technical-details": "Technical Details",
+      "support-text": "If this problem persists, please contact support.",
+      "back-home": "Back to Home",
+      "try-again": "Try Again"
+    },
+    "pit-admin": {
+      "page-title": "Team Registration",
+      "error": "Failed to mark team as arrived",
+      "stats": {
+        "total-teams": "Total Teams",
+        "arrived": "Arrived",
+        "all-arrived": "All teams arrived! Great job 🎉",
+        "waiting-for": "Waiting for {count, plural, one {# team} other {# teams}}",
+        "teams-pending": "{count, plural, one {# team pending} other {# teams pending}}"
+      },
+      "team-input": {
+        "title": "Register Team Arrival",
+        "subtitle": "Select a team from the list to mark them as arrived at the event",
+        "search-label": "Search teams",
+        "search-placeholder": "Type to search...",
+        "button": "Mark Arrived",
+        "submitting": "Processing...",
+        "no-options": "All teams have arrived",
+        "all-arrived-message": "All teams have arrived",
+        "team": "Team"
+      }
+    },
+    "judge": {
+      "page-title": "Judging",
+      "schedule": {
+        "session": "Session",
+        "start-time": "Start Time",
+        "team": "Team Information",
+        "actions": "Actions",
+        "rubrics": "Rubrics",
+        "no-sessions": "No judging sessions scheduled",
+        "not-arrived": "Not Arrived",
+        "start-session": "Start",
+        "session-completed": "Completed",
+        "rubric-labels": {
+          "core-values": "Core Values",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "in-progress": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "ready": {
+              "label": "Ready",
+              "description": "Rubric has been completed and submitted"
+            },
+            "waiting-for-review": {
+              "label": "Waiting for Review",
+              "description": "Rubric is waiting for review by head judge"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
+        }
+      },
+      "error": {
+        "start": "Failed to start judging session",
+        "abort": "Failed to abort judging session"
+      },
+      "timer": {
+        "abort-session": "Abort Session",
+        "minutes": "{count} minutes",
+        "current-stage": "Current Stage",
+        "team": "Team",
+        "session-ends-in-label": "Session Ends In",
+        "up-next": "Up Next",
+        "abort-dialog": {
+          "title": "Abort Judging Session",
+          "message": "Are you sure you want to abort this judging session? This action cannot be undone and will end the session immediately.",
+          "cancel": "Cancel",
+          "confirm": "Abort Session"
+        }
+      }
+    },
+    "reports": {
+      "page-title": "Reports",
+      "menu": {
+        "team-list": "Team List"
+      },
+      "team-list": {
+        "page-title": "Team List",
+        "total-teams": "Total Teams",
+        "arrived-teams": "Arrived",
+        "pending-teams": "Pending",
+        "arrived": "Arrived",
+        "not-arrived": "Pending",
+        "arrived-count": "{count}/{total} arrived",
+        "no-teams": "No teams available",
+        "loading": "Loading teams...",
+        "error-loading": "Failed to load teams. Please try again.",
+        "columns": {
+          "number": "Team #",
+          "name": "Team Name",
+          "affiliation": "Institution",
+          "city": "City",
+          "arrived": "Status",
+          "region": "Region"
+        },
+        "sort-ascending": "sorted ascending",
+        "sort-descending": "sorted descending"
+      }
+    },
+    "rubric": {
+      "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
+      "field-notes-label": "Notes",
+      "field-notes-placeholder": "How did the team exceed?",
+      "navigation": {
+        "title": "Rubric Categories"
+      },
+      "award-nominations": {
+        "title": "Award Nomination",
+        "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
+        "no-awards": "No optional awards available."
+      },
+      "actions": {
+        "save-draft": "Save as Draft",
+        "submit-review": "Submit for Review",
+        "reset": "Reset"
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "Connected",
+      "reconnecting": "Reconnecting...",
+      "disconnected": "Disconnected",
+      "error": "Error",
+      "idle": "Idle"
+    },
+    "navigation-list": {
+      "dashboard": "Dashboard",
+      "reports": "Reports",
+      "insights": "Insights"
+    },
+    "logout": "Logout"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "Team not found",
+      "error-not-arrived": "The team has not arrived yet"
+    },
+    "rubric": {
+      "error-not-authorized": "Unauthorized to access rubric",
+      "error-team-not-judged": "This team has not completed judging yet"
+    }
+  }
+}

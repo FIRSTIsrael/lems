@@ -1,0 +1,72 @@
+name: Cleanup Registry Images
+
+on:
+  workflow_call:
+    inputs:
+      tag_pattern:
+        description: 'Tag pattern to match for deletion (e.g., "staging-*" or "v*-beta")'
+        required: true
+        type: string
+      exclude_tag:
+        description: 'Tag to exclude from deletion (e.g., current deployment)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  cleanup:
+    name: Cleanup old LEMS images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Remove old images matching pattern from lems repository
+        run: |
+          repo_name="lems"
+          echo "Cleaning up repository: $repo_name"
+          
+          tags_json=$(doctl registry repository list-tags "$repo_name" --output json 2>/dev/null || echo "[]")
+          
+          echo "Debug: JSON output for $repo_name:"
+          echo "$tags_json" | jq '.'
+          
+          tags_count=$(echo "$tags_json" | jq 'length')
+          if [ "$tags_count" -gt 0 ]; then
+            echo "Found $tags_count tag(s) to process"
+            deleted_count=0
+            echo "$tags_json" | jq -r '.[] | "\(.tag)|\(.manifest_digest)"' | while IFS='|' read -r tag digest; do
+              # Skip if tag matches the exclude_tag (e.g., backend-staging-abc123)
+              if [ -n "${{ inputs.exclude_tag }}" ] && [[ "$tag" == *"${{ inputs.exclude_tag }}"* ]]; then
+                echo "Skipping excluded tag: $tag"
+              # Check if tag contains the pattern anywhere (handles *-staging-*, *-production-*, etc.)
+              elif [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
+                echo "Processing Tag: $tag, Digest: $digest"
+                if [ -n "$digest" ] && [ "$digest" != "null" ]; then
+                  # Ensure digest has the sha256: prefix
+                  if [[ ! "$digest" =~ ^sha256: ]]; then
+                    digest="sha256:${digest}"
+                  fi
+                  doctl registry repository delete-manifest "$repo_name" "$digest" --force 2>&1 || echo "Note: Could not delete manifest (may have already been deleted)"
+                  echo "✓ Deleted $tag with digest $digest"
+                else
+                  echo "Warning: Empty or null digest for tag $tag in repository $repo_name" >&2
+                fi
+              else
+                echo "Skipping tag $tag as it does not match pattern ${{ inputs.tag_pattern }}"
+              fi
+            done
+            echo "✓ Cleaned up $repo_name"
+          else
+            echo "✓ No old images found in $repo_name"
+          fi

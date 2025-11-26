@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -14,7 +15,14 @@
         "outputPath": "dist/apps/backend",
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": ["apps/backend/src/assets"],
+        "assets": [
+          "apps/backend/src/assets",
+          {
+            "glob": "**/*.graphql",
+            "input": "libs/types/src/lib/api/lems/graphql",
+            "output": "graphql"
+          }
+        ],
         "webpackConfig": "apps/backend/webpack.config.js"
       },
       "configurations": {
@@ -43,6 +51,5 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": []
+  }
 }

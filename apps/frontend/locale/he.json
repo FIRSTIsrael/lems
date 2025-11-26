@@ -1,1 +1,225 @@
-{}
+{
+  "pages": {
+    "login": {
+      "subtitle": "כניסת מתנדבים",
+      "continue": "המשך",
+      "submitting": "טוען...",
+      "loading": "טוען...",
+      "loading-role": "טוען נתוני תפקיד...",
+      "sign-in": "התחברות",
+      "steps": {
+        "role": "בחרו תפקיד",
+        "division": "בחרו בית",
+        "association": "בחרו שיוך",
+        "user": "בחרו משתמש",
+        "password": "הזינו סיסמה"
+      },
+      "instructions": {
+        "role": "אנא בחרו את התפקיד שלכם באירוע:",
+        "division": "אנא בחרו את הבית אליו אתם משוייכים:",
+        "association": "אנא בחרו את השיוך שלכם:",
+        "role-info-table": "אנא בחרו את השולחן שאתם משויכים אליו:",
+        "role-info-room": "אנא בחרו את החדר שאתם משויכים אליו:",
+        "role-info-category": "אנא בחרו את התחום שאתם משויכים אליו:",
+        "user": "נמצאו מספר משתמשים תואמים. אנא בחרו את החשבון שלכם:",
+        "password": "אנא הזינו את הסיסמא שלכם:"
+      },
+      "fields": {
+        "role": "תפקיד",
+        "division": "בית",
+        "association": "שיוך",
+        "table": "שולחן",
+        "room": "חדר",
+        "category": "תחום",
+        "user": "משתמש",
+        "password": "סיסמה",
+        "password-helper": "סיסמה בת 4 תווים"
+      },
+      "errors": {
+        "required": "שדה זה נדרש",
+        "invalid-length": "הסיסמה חייבת להיות בת 4 תווים בדיוק",
+        "too-many-requests": "יותר מדי ניסיונות התחברות. אנא נסו שנית מאוחר יותר.",
+        "invalid-password": "סיסמה שגויה. אנא נסו שנית.",
+        "server-error": "אירעה שגיאה. אנא נסו שנית.",
+        "not-found": "לא נמצאו משתמשים תואמים. אנא בדוק את הבחירות שלך.",
+        "no-users-with-role": "לא נמצאו משתמשים עם תפקיד זה.",
+        "no-users-in-division": "לא נמצאו משתמשים בבית זה.",
+        "no-users-with-association": "לא נמצאו משתמשים עם שיוך זה.",
+        "user-not-found": "משתמש לא נמצא.",
+        "missing-event-slug": "מידע האירוע חסר.",
+        "event-not-found": "אירוע לא נמצא.",
+        "no-users-for-event": "לא הוגדרו משתמשים עבור אירוע זה.",
+        "title": "משהו השתבש",
+        "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת דף ההתחברות.",
+        "unknown": "אירעה שגיאה בלתי צפויה. אנא נסו שנית.",
+        "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+        "back-home": "חזרה לעמוד הבית",
+        "try-again": "ניסיון נוסף"
+      }
+    },
+    "error": {
+      "title": "משהו השתבש",
+      "description": "נתקלנו בשגיאה בלתי צפויה. אנא נסו שנית.",
+      "technical-details": "פרטים טכניים",
+      "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+      "back-home": "חזרה לעמוד הבית",
+      "try-again": "ניסיון נוסף"
+    },
+    "pit-admin": {
+      "page-title": "רישום קבוצות",
+      "error": "נכשל בסימון הקבוצה כהגעה",
+      "stats": {
+        "total-teams": "מספר קבוצות",
+        "arrived": "הגיעו",
+        "all-arrived": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
+        "waiting-for": "מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
+        "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}"
+      },
+      "team-input": {
+        "title": "רישום הגעת קבוצה",
+        "subtitle": "בחרו קבוצה מהרשימה כדי לסמן אותה כהגיעה לאירוע",
+        "search-label": "חיפוש קבוצות",
+        "search-placeholder": "הקלידו לחיפוש...",
+        "button": "סמנו הגעה",
+        "submitting": "מעבדים...",
+        "no-options": "כל הקבוצות הגיעו!",
+        "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
+        "team": "קבוצה"
+      }
+    },
+    "judge": {
+      "page-title": "שיפוט",
+      "schedule": {
+        "session": "מפגש",
+        "start-time": "שעת התחלה",
+        "team": "פרטי קבוצה",
+        "actions": "פעולות",
+        "rubrics": "רובריקות",
+        "no-sessions": "אין מפגשי שיפוט מתוכננים",
+        "not-arrived": "לא הגיעו",
+        "start-session": "התחל",
+        "session-completed": "הושלם",
+        "rubric-labels": {
+          "core-values": "ערכי הליבה",
+          "innovation-project": "פרויקט החדשות",
+          "robot-design": "תכנון הרובוט"
+        },
+        "status-glossary": {
+          "title": "מדריך סטטוס מחוונים",
+          "aria-label": "הצג מדריך סטטוס מחוונים",
+          "statuses": {
+            "empty": {
+              "label": "לא התחיל",
+              "description": "המחוון טרם מולא"
+            },
+            "in-progress": {
+              "label": "בתהליך",
+              "description": "המחוון ממולא כעת"
+            },
+            "ready": {
+              "label": "הושלם",
+              "description": "המחוון הושלם ונשלח"
+            },
+            "waiting-for-review": {
+              "label": "ממתין לסקירה",
+              "description": "המחוון ממתין לסקירה של השופט הראשי"
+            },
+            "completed": {
+              "label": "מאושר",
+              "description": "המחוון נבדק ואושר"
+            }
+          }
+        }
+      },
+      "error": {
+        "start": "שגיאה בהתחלת מפגש השיפוט",
+        "abort": "שגיאה בביטול מפגש השיפוט"
+      },
+      "timer": {
+        "abort-session": "בטל מפגש",
+        "minutes": "{count} דקות",
+        "current-stage": "שלב נוכחי",
+        "team": "קבוצה",
+        "session-ends-in-label": "המפגש יסתיים בעוד",
+        "up-next": "הבא בתור",
+        "abort-dialog": {
+          "title": "ביטול מפגש שיפוט",
+          "message": "האם אתם בטוחים שברצונכם לבטל את מפגש השיפוט? פעולה זו אינה ניתנת לביטול ותסיים את המפגש באופן מיידי.",
+          "cancel": "ביטול",
+          "confirm": "בטל מפגש"
+        }
+      }
+    },
+    "reports": {
+      "page-title": "דוחות",
+      "menu": {
+        "team-list": "רשימת קבוצות"
+      },
+      "team-list": {
+        "page-title": "רשימת קבוצות",
+        "total-teams": "סה״כ קבוצות",
+        "arrived-teams": "קבוצות הגיעו",
+        "pending-teams": "קבוצות חסרות",
+        "arrived": "הגיעה",
+        "not-arrived": "חסרה",
+        "arrived-count": "{count} מתוך {total} הגיעו",
+        "no-teams": "אין קבוצות זמינות",
+        "loading": "טוען קבוצות...",
+        "error-loading": "שגיאה בטעינת הקבוצות. אנא נסו שנית.",
+        "columns": {
+          "number": "מספר קבוצה",
+          "name": "שם קבוצה",
+          "affiliation": "מוסד",
+          "city": "עיר",
+          "arrived": "סטטוס",
+          "region": "מדינה"
+        },
+        "sort-ascending": "ממוין בסדר עולה",
+        "sort-descending": "ממוין בסדר יורד"
+      }
+    },
+    "rubric": {
+      "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+      "field-notes-label": "הערות",
+      "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
+      "navigation": {
+        "title": "תחומי שיפוט"
+      },
+      "award-nominations": {
+        "title": "מועמדות לפרס",
+        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
+        "no-awards": "אין פרסים אופציונליים זמינים."
+      },
+      "actions": {
+        "save-draft": "שמור כטיוטה",
+        "submit-review": "הגש לבדיקה",
+        "reset": "איפוס"
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "מחובר",
+      "reconnecting": "מתחבר...",
+      "disconnected": "מנותק",
+      "error": "שגיאה",
+      "idle": "לא פעיל"
+    },
+    "navigation-list": {
+      "dashboard": "בית",
+      "reports": "דוחות",
+      "insights": "תובנות"
+    },
+    "logout": "יציאה"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "קבוצה לא נמצאה",
+      "error-not-arrived": "הקבוצה טרם הגיעה לאירוע"
+    },
+    "rubric": {
+      "error-not-authorized": "אין לך הרשאות לגשת למחוון זה",
+      "error-team-not-judged": "הקבוצה עוד לא סיימה את מפגש השיפוט"
+    }
+  }
+}

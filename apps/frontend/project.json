@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/frontend",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/next:build",
@@ -23,6 +24,7 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "frontend:build",
+        "port": 4200,
         "dev": true,
         "turbo": true
       },
@@ -37,16 +39,7 @@
         }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
-      "options": {
-        "buildTarget": "frontend:build:production"
-      }
-    },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
-  },
-  "tags": []
+      "executor": "@nx/eslint:lint"    }
+  }
 }

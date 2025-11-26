@@ -1,0 +1,72 @@
+name: Deploy Frontend LEMS (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment (staging or production)'
+        required: true
+        type: string
+      image_tag:
+        description: 'Docker image tag to use'
+        required: true
+        type: string
+      registry:
+        description: 'Docker registry URL'
+        required: true
+        type: string
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: Build Frontend LEMS
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 22
+          cache: npm
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build frontend
+        env:
+          NODE_ENV: "production" # Important for Next.js base path
+          # Build-time environment variables for Next.js
+          # These NEXT_PUBLIC_* variables are embedded into the client bundle
+          NEXT_PUBLIC_BASE_URL: ${{ vars.BASE_URL }}
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+        run: npx nx build frontend --configuration=production
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 1200
+      
+      - name: Build Docker image
+        working-directory: apps/frontend
+        run: |
+          docker build \
+            -t ${{ inputs.registry }}/lems:frontend-${{ inputs.image_tag }} \
+            -f Dockerfile \
+            ../..
+          
+          echo "✅ Docker image built successfully"
+          echo "ℹ️  Server-side configuration will be provided at runtime via docker-compose"
+          echo "ℹ️  Client-side (NEXT_PUBLIC_*) variables were embedded at build time"
+      
+      - name: Push Docker image
+        run: docker push ${{ inputs.registry }}/lems:frontend-${{ inputs.image_tag }}
