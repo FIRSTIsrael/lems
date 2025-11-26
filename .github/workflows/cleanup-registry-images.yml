@@ -48,14 +48,14 @@ jobs:
               tag=$(echo "$item" | jq -r '.tag')
               digest=$(echo "$item" | jq -r '.manifest_digest')
               
-              # Skip if tag matches the exclude_tag
+              # Skip if tag matches the exclude_tag (e.g., backend-staging-abc123)
               if [ -n "${{ inputs.exclude_tag }}" ] && [[ "$tag" == *"${{ inputs.exclude_tag }}"* ]]; then
                 echo "Skipping excluded tag: $tag"
                 continue
               fi
               
-              # Check if tag matches the pattern (handles staging-*, production-*, etc.)
-              if [[ "$tag" == ${{ inputs.tag_pattern }} ]]; then
+              # Check if tag contains the pattern anywhere (handles *-staging-*, *-production-*, etc.)
+              if [[ "$tag" == *"${{ inputs.tag_pattern }}"* ]]; then
                 echo "Processing Tag: $tag, Digest: $digest"
                 if [ -n "$digest" ] && [ "$digest" != "null" ]; then
                   doctl registry repository delete-manifest "$repo_name" "$digest" --force
