@@ -14,11 +14,8 @@ import { fileURLToPath } from 'url';
  * const server = new ApolloServer({ typeDefs, resolvers });
  */
 export function loadLemsGraphQLSchema(): string[] {
-  // Get the directory containing this file
-  // In ESM, we need to convert import.meta.url to a file path
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const schemaDir = dirname(currentFilePath);
   const schemaFiles = ['base', 'event', 'division', 'team', 'volunteer', 'judging'];
+  const schemaDir = getLemsGraphQLSchemaDir();
 
   return schemaFiles.map(filename => {
     try {
@@ -31,11 +28,15 @@ export function loadLemsGraphQLSchema(): string[] {
 
 /**
  * Gets the path to the GraphQL schema directory.
- * Useful for tools that need to reference the schema files directly.
  *
  * @returns Absolute path to the schema directory
  */
 export function getLemsGraphQLSchemaDir(): string {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  return dirname(currentFilePath);
+  if (process.env['NODE_ENV'] === 'production') {
+    // Production: relative to compiled main.js in Docker
+    return join(process.cwd(), 'backend', 'graphql');
+  } else {
+    // Development: source files location. In ESM, we derive from import.meta.url
+    return join(dirname(fileURLToPath(import.meta.url)));
+  }
 }
