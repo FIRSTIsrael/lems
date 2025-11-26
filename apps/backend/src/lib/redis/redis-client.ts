@@ -1,5 +1,7 @@
 import Redis from 'ioredis';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 let redisClient: Redis | null = null;
 
 const createRedisClient = (): Redis => {
@@ -13,6 +15,7 @@ const createRedisClient = (): Redis => {
       const delay = Math.min(times * 50, 2000);
       return delay;
     },
+    tls: isProduction ? { rejectUnauthorized: true } : undefined,
     enableReadyCheck: true,
     enableOfflineQueue: true,
     maxRetriesPerRequest: null,
