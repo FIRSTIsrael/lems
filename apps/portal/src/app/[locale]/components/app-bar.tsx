@@ -137,7 +137,7 @@ const MobileAppBar: React.FC = () => {
           }}
         >
           <Box sx={{ px: 2, pt: 1, pb: 1 }}>
-            <NavSearch variant="menu" />
+            <NavSearch />
           </Box>
           {pages.map(page => (
             <MenuItem key={page.name} component={Link} href={page.href}>
