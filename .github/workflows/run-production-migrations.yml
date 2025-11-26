@@ -1,0 +1,72 @@
+name: Run Production Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "run-migrations" to confirm production migration execution'
+        required: true
+        type: string
+
+jobs:
+  validate-confirmation:
+    name: Validate Confirmation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "run-migrations" ]; then
+            echo "❌ ERROR: Incorrect confirmation string"
+            echo "Please provide 'run-migrations' as confirmation to prevent accidental execution"
+            exit 1
+          fi
+          echo "✅ Confirmation validated - proceeding with production migrations"
+
+  migrate:
+    name: Run Database Migrations on Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    needs: validate-confirmation
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 22
+          cache: npm
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build database library
+        run: npx nx build database
+      
+      - name: Run migrations on production database
+        env:
+          PG_HOST: ${{ secrets.PG_HOST }}
+          PG_PORT: ${{ secrets.PG_PORT }}
+          PG_DATABASE: ${{ vars.DB_NAME }}
+          PG_USER: ${{ secrets.PG_USER }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
+        run: |
+          echo "⚠️  PRODUCTION MIGRATION IN PROGRESS"
+          echo "🔄 Running database migrations..."
+          echo "   Host: $PG_HOST:$PG_PORT"
+          echo "   Database: $PG_DATABASE"
+          echo ""
+          node dist/libs/database/src/scripts/run-migrations.js
+          MIGRATION_EXIT_CODE=$?
+          
+          if [ $MIGRATION_EXIT_CODE -eq 0 ]; then
+            echo ""
+            echo "✅ Production migrations completed successfully"
+          else
+            echo ""
+            echo "❌ Migration failed with exit code $MIGRATION_EXIT_CODE"
+            exit $MIGRATION_EXIT_CODE
+          fi
