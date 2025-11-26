@@ -35,6 +35,10 @@ RUN apk add --no-cache \
 COPY --from=builder /app/backend /app/backend
 COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
 
+# Copy GraphQL schema files needed by loadLemsGraphQLSchema()
+# These are built to dist/apps/backend/graphql/ during the build process
+COPY --from=builder /app/backend/graphql /app/backend/graphql
+
 # Setup Puppeteer to use downloaded Chrome
 ENV PUPPETEER_EXECUTABLE_PATH=/root/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome
 
