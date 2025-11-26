@@ -72,6 +72,12 @@
         "upcoming": "Upcoming ({count})",
         "past": "Past ({count})"
       },
+      "region": {
+        "label": "Region",
+        "all": "All regions",
+        "current-all": "Showing events from all regions",
+        "current": "Showing events from region {region}"
+      },
       "no-events": {
         "title": "No Events Found",
         "search-message": "No events match your search criteria. Try adjusting your search terms.",
@@ -113,7 +119,13 @@
       }
     },
     "teams": {
-      "title": "<i>FIRST</i> LEGO League Challenge Teams"
+      "title": "<i>FIRST</i> LEGO League Challenge Teams",
+      "region": {
+        "label": "Region",
+        "all": "All regions",
+        "current-all": "Showing teams from all regions",
+        "current": "Showing teams from region {region}"
+      }
     },
     "event": {
       "general-info": "General Information",

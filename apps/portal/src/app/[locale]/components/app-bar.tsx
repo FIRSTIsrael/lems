@@ -25,6 +25,7 @@ import {
 import { ResponsiveComponent } from '@lems/shared';
 import { Link } from '../../../i18n/navigation';
 import { LanguageSwitcher } from './language-switcher';
+import { NavSearch } from './nav-search';
 
 const pages = [
   { name: 'teams', href: '/teams', icon: <Group /> },
@@ -85,6 +86,7 @@ const DesktopAppBar: React.FC = () => {
           </Button>
         ))}
       </Box>
+      <NavSearch />
 
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <LanguageSwitcher />
@@ -125,7 +127,18 @@ const MobileAppBar: React.FC = () => {
           }}
           open={Boolean(anchorElNav)}
           onClose={() => setAnchorElNav(null)}
+          slotProps={{
+            paper: {
+              sx: {
+                minWidth: 320,
+                maxWidth: '90vw'
+              }
+            }
+          }}
         >
+          <Box sx={{ px: 2, pt: 1, pb: 1 }}>
+            <NavSearch />
+          </Box>
           {pages.map(page => (
             <MenuItem key={page.name} component={Link} href={page.href}>
               <ListItemIcon>{page.icon}</ListItemIcon>
