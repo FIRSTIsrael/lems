@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode, useEffect } from 'react';
-import { Mission } from '@lems/types';
+import { Mission } from '@lems/types/scoring';
 import { scoresheet } from '@lems/shared/scoresheet';
 import { useScore, ErrorWithMessage } from '../hooks/use-score';
 

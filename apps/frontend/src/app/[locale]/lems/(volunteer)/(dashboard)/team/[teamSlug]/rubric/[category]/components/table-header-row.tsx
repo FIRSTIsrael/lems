@@ -1,7 +1,7 @@
 'use client';
 
 import { TableRow, TableCell, Typography } from '@mui/material';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 

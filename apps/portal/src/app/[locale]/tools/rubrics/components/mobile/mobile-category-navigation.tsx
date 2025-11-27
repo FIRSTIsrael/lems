@@ -4,7 +4,7 @@ import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingCategoryTypes } from '@lems/types';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { getCategoryColor } from '../../rubric-utils';
 import { useRubricContext } from '../rubric-context';
 
@@ -51,7 +51,7 @@ export const MobileCategoryNavigation: React.FC = () => {
           pb: 0.5
         }}
       >
-        {JudgingCategoryTypes.map(category => {
+        {JUDGING_CATEGORIES.map(category => {
           const isActive = category === currentCategory;
           const categoryColor = getCategoryColor(category);
 

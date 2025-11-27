@@ -6,7 +6,7 @@ import { Container } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { rubrics } from '@lems/shared/rubrics';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useUser } from '../../../../../../components/user-context';

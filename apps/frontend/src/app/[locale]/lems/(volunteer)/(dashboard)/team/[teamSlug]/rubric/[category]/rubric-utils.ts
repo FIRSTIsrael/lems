@@ -1,5 +1,5 @@
 import { rubrics } from '@lems/shared/rubrics';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import type { RubricFieldValue, RubricFeedback } from './types';
 
 export interface RubricFormValues {

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Table, TableHead, TableBody, Paper } from '@mui/material';
 import { useFormikContext } from 'formik';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema } from '@lems/shared/rubrics';
 import type { RubricFormValues } from '../rubric-utils';
 import { TableHeaderRow } from './table-header-row';

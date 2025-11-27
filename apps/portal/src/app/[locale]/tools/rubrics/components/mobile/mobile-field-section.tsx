@@ -16,7 +16,7 @@ import {
   Stack
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
 import { RubricRadioIcon } from '../desktop/rubric-radio-icon';
