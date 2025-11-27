@@ -1,14 +1,15 @@
 from dataclasses import dataclass
-from bson import ObjectId
 
 
 @dataclass
 class Team:
-    id: ObjectId
+    id: str
     number: int
+    region: str
+    slug: str  # URL-friendly identifier (region-number format)
 
 
 @dataclass
 class Location:
-    id: ObjectId
+    id: str
     name: str

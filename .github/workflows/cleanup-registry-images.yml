@@ -1,0 +1,73 @@
+name: Cleanup Registry Images
+
+on:
+  workflow_call:
+    inputs:
+      tag_pattern:
+        description: 'Pattern to match tags for deletion (supports bash regex)'
+        required: true
+        type: string
+      exclude_pattern:
+        description: 'Pattern to exclude from deletion (supports bash regex)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  cleanup:
+    name: Cleanup old images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.1
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Delete matching image manifests
+        run: |
+          set -euo pipefail
+          
+          REPOSITORY="lems"
+          TAG_PATTERN='${{ inputs.tag_pattern }}'
+          EXCLUDE_PATTERN='${{ inputs.exclude_pattern }}'
+          
+          echo "🔍 Fetching tags from repository: $REPOSITORY"
+          tags=$(doctl registry repository list-tags "$REPOSITORY" --output json)
+          
+          echo "$tags" | jq -r '.[] | select(.manifest_digest != null and .manifest_digest != "") | "\(.tag)|\(.manifest_digest)"' | while IFS='|' read -r tag digest; do
+            # Check if tag matches include pattern
+            if [[ ! "$tag" =~ $TAG_PATTERN ]]; then
+              continue
+            fi
+            
+            # Check if tag matches exclude pattern
+            if [[ -n "$EXCLUDE_PATTERN" ]] && [[ "$tag" =~ $EXCLUDE_PATTERN ]]; then
+              echo "⏭️  Skipping excluded: $tag"
+              continue
+            fi
+            
+            # Ensure digest has sha256: prefix
+            if [[ ! "$digest" =~ ^sha256: ]]; then
+              digest="sha256:${digest}"
+            fi
+            
+            # Delete manifest by digest
+            echo "🗑️  Deleting: $tag (digest: $digest)"
+            doctl registry repository delete-manifest "$REPOSITORY" "$digest" --force
+          done
+          
+          echo "✅ Cleanup complete"
+      
+      - name: Run garbage collection
+        run: |
+          echo "🗑️  Starting garbage collection..."
+          doctl registry garbage-collection start --force
+          echo "✅ Garbage collection initiated"

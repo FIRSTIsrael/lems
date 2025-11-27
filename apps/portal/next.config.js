@@ -1,20 +1,25 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 //@ts-check
 const { composePlugins, withNx } = require('@nx/next');
+const createNextIntlPlugin = require('next-intl/plugin');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  nx: {
-    // Set this to true if you would like to to use SVGR
-    // See: https://github.com/gregberge/svgr
-    svgr: false
-  },
+  nx: {},
+
+  output: 'standalone',
 
   reactStrictMode: true,
 
   compiler: {
-    emotion: true
+    emotion: {
+      sourceMap: true,
+      autoLabel: 'dev-only',
+      labelFormat: '[local]'
+    }
   },
 
   transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
@@ -23,20 +28,20 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: '**.nyc3.digitaloceanspaces.com'
+      },
+      {
+        protocol: 'https',
         hostname: 'emojicdn.elk.sh'
       }
     ]
-  },
-
-  i18n: {
-    locales: ['he', 'en'],
-    defaultLocale: 'he'
   }
 };
 
 const plugins = [
   // Add more Next.js plugins to this list if needed.
-  withNx
+  withNx,
+  createNextIntlPlugin()
 ];
 
 module.exports = composePlugins(...plugins)(nextConfig);

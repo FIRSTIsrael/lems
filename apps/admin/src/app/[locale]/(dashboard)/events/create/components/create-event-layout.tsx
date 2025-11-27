@@ -1,0 +1,308 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { Formik, Form, FormikErrors, FormikHelpers } from 'formik';
+import { Paper, Typography, Box, Stack, IconButton, Button, Alert } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { Add as AddIcon } from '@mui/icons-material';
+import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
+import { FormikDatePicker, FormikTextField, ColorPicker, apiFetch } from '@lems/shared';
+import { defaultColor } from '../../../../../../theme';
+import { isValidSlug } from '../../utils';
+import { DivisionItem } from './division-item';
+
+interface Division {
+  name: string;
+  color: HsvaColor;
+}
+
+interface EventFormValues {
+  name: string;
+  slug: string;
+  date: Date | null;
+  location: string;
+  region: string;
+  divisions: Division[];
+}
+
+const initialValues: EventFormValues = {
+  name: '',
+  slug: '',
+  date: null,
+  location: '',
+  region: '',
+  divisions: [{ name: '', color: hexToHsva(defaultColor) }]
+};
+
+export const CreateEventLayout = () => {
+  const t = useTranslations('pages.events.create.form');
+  const router = useRouter();
+
+  const validate = (values: EventFormValues): FormikErrors<EventFormValues> => {
+    const errors: FormikErrors<EventFormValues> = {};
+
+    if (!values.name) {
+      errors.name = t('validation.name.required');
+    } else if (values.name.length < 2) {
+      errors.name = t('validation.name.min', { min: 2 });
+    }
+
+    if (!values.slug) {
+      errors.slug = t('validation.slug.required');
+    } else if (!isValidSlug(values.slug)) {
+      errors.slug = t('validation.slug.format');
+    }
+
+    if (!values.date) {
+      errors.date = t('validation.date.required');
+    }
+
+    if (!values.location) {
+      errors.location = t('validation.location.required');
+    } else if (values.location.length < 2) {
+      errors.location = t('validation.location.min', { min: 2 });
+    }
+
+    if (!values.region) {
+      errors.region = t('validation.region.required');
+    } else if (values.region.length !== 2) {
+      errors.region = t('validation.region.length');
+    } else if (!/^[A-Z]{2}$/.test(values.region)) {
+      errors.region = t('validation.region.format');
+    }
+
+    if (values.divisions.length > 1) {
+      const divisionErrors: Array<{ name?: string }> = [];
+      let hasErrors = false;
+
+      values.divisions.forEach((division, index) => {
+        const divisionError: { name?: string } = {};
+
+        if (!division.name) {
+          divisionError.name = t('validation.division.name.required');
+          hasErrors = true;
+        } else if (division.name.length < 2) {
+          divisionError.name = t('validation.division.name.min', { min: 2 });
+          hasErrors = true;
+        }
+
+        divisionErrors[index] = divisionError;
+      });
+
+      if (hasErrors) {
+        errors.divisions = divisionErrors as FormikErrors<Division>[];
+      }
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async (
+    values: EventFormValues,
+    { setStatus, setSubmitting }: FormikHelpers<EventFormValues>
+  ) => {
+    setSubmitting(true);
+    setStatus(null);
+
+    try {
+      const submissionData = {
+        name: values.name,
+        slug: values.slug,
+        date: values.date?.toISOString() || '',
+        location: values.location,
+        region: values.region.toUpperCase(),
+        divisions: values.divisions.map(division => ({
+          name: division.name,
+          color: hsvaToHex(division.color) // Convert to hex string for backend
+        }))
+      };
+
+      const result = await apiFetch('/admin/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      });
+
+      if (result.ok) {
+        setStatus(true);
+        setTimeout(() => {
+          router.push(`/${document.documentElement.lang}/events`);
+          setSubmitting(false);
+        }, 2000);
+      } else {
+        if (result.error && typeof result.error === 'object' && 'error' in result.error) {
+          setStatus((result.error as { error: string }).error);
+        } else {
+          setStatus(`Failed to create event: ${result.statusText}`);
+        }
+        setSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+      setStatus('An unexpected error occurred. Please try again.');
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Paper variant="outlined" sx={{ p: 3 }}>
+      <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
+        {({ values, setFieldValue, status, setStatus, isSubmitting }) => {
+          const isMultipleDivisions = values.divisions.length > 1;
+
+          const addDivision = () => {
+            const newDivision: Division = {
+              name: '',
+              color: hexToHsva(defaultColor)
+            };
+            setFieldValue('divisions', [...values.divisions, newDivision]);
+          };
+
+          const removeDivision = (index: number) => {
+            if (values.divisions.length > 1) {
+              const newDivisions = values.divisions.filter((_, i) => i !== index);
+              setFieldValue('divisions', newDivisions);
+            }
+          };
+
+          const updateDivisionField = (
+            index: number,
+            field: keyof Division,
+            value: string | HsvaColor
+          ) => {
+            const newDivisions = [...values.divisions];
+            newDivisions[index] = { ...newDivisions[index], [field]: value };
+            setFieldValue('divisions', newDivisions);
+          };
+
+          return (
+            <>
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="h2" gutterBottom>
+                  {t('sections.event-details')}
+                </Typography>
+                {!isMultipleDivisions && (
+                  <ColorPicker
+                    value={values.divisions[0].color}
+                    onChange={(hsvaColor: HsvaColor) => updateDivisionField(0, 'color', hsvaColor)}
+                  >
+                    <IconButton
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mt: -1.5,
+                        backgroundColor: hsvaToHex(values.divisions[0].color),
+                        '&:hover': {
+                          backgroundColor: hsvaToHex(values.divisions[0].color),
+                          opacity: 0.8,
+                          transform: 'scale(1.1)'
+                        },
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                      aria-label="Choose event color"
+                    />
+                  </ColorPicker>
+                )}
+              </Box>
+
+              <Form>
+                <Stack spacing={3}>
+                  {status && typeof status === 'string' && (
+                    <Alert severity="error" onClose={() => setStatus(null)}>
+                      {status}
+                    </Alert>
+                  )}
+
+                  {status === true && <Alert severity="success">{t('messages.success')}</Alert>}
+
+                  <Grid container spacing={3}>
+                    <Grid size={6}>
+                      <FormikTextField
+                        name="name"
+                        label={t('fields.name.label')}
+                        placeholder={t('fields.name.placeholder')}
+                      />
+                    </Grid>
+
+                    <Grid size={6}>
+                      <FormikTextField
+                        name="slug"
+                        label={t('fields.slug.label')}
+                        placeholder={t('fields.slug.placeholder')}
+                        helperText={t('fields.slug.helper-text')}
+                      />
+                    </Grid>
+
+                    <Grid size={4}>
+                      <FormikDatePicker name="date" label={t('fields.date.label')} />
+                    </Grid>
+
+                    <Grid size={4}>
+                      <FormikTextField
+                        name="location"
+                        label={t('fields.location.label')}
+                        placeholder={t('fields.location.placeholder')}
+                      />
+                    </Grid>
+
+                    <Grid size={4}>
+                      <FormikTextField
+                        name="region"
+                        label={t('fields.region.label')}
+                        placeholder={t('fields.region.placeholder')}
+                        helperText={t('fields.region.helper-text')}
+                        slotProps={{
+                          htmlInput: { maxLength: 2 },
+                          input: { style: { textTransform: 'uppercase' } }
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  {isMultipleDivisions && (
+                    <Box mt={4}>
+                      <Typography variant="h2" gutterBottom>
+                        {t('sections.divisions')}
+                      </Typography>
+
+                      <Stack spacing={2}>
+                        {values.divisions.map((division, index) => (
+                          <DivisionItem
+                            key={index}
+                            division={division}
+                            updateDivisionField={updateDivisionField}
+                            removeDivision={removeDivision}
+                            isRemovable={values.divisions.length > 1}
+                            index={index}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
+
+                  <Stack direction="row" spacing={2} mt={2}>
+                    <Button
+                      startIcon={<AddIcon />}
+                      onClick={addDivision}
+                      variant="outlined"
+                      disabled={isSubmitting}
+                      sx={{ alignSelf: 'flex-start' }}
+                    >
+                      {t('actions.add-division')}
+                    </Button>
+                    <Button type="submit" variant="contained" loading={isSubmitting}>
+                      {isSubmitting ? t('actions.creating') : t('actions.create-event')}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Form>
+            </>
+          );
+        }}
+      </Formik>
+    </Paper>
+  );
+};

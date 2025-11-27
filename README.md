@@ -21,16 +21,29 @@ LEMS is fully open source and maintained by volunteers.
 
 1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-2. Pull mongodb image with tag 7.0.x
-   `docker pull mongo:7.0.5`
+2. Pull mongodb image with tag 8.x.x
+   `docker pull mongo:8`
 
-3. Run the container with an exposed port
+3. Pull postgres image with tag 17.x.x
+   `docker pull postgres:17`
 
-   `docker run -d --name fll-events-local-db -p 27017:27017 mongo:7.0.5`
+4. Pull redis image with tag 7.x.x
+   `docker pull redis:7`
 
-4. To stop the container, use either the CLI or docker desktop.
-   When you stop the container without removing it, you will be unable to start a new container with the same name.
-   It is encouraged to just restart the container you created instead of removing it every time.
+5. Run mongodb with an exposed port
+   `docker run -d --name lems-local-mongo -p 27017:27017 mongo:8`
+
+6. Run postgres with an exposed port
+   `docker run -d --name lems-local-sql -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:17`
+
+7. Run redis with an exposed port
+   `docker run -d --name lems-local-redis -p 6379:6379 redis:7`
+
+To stop the DB containers, use either the CLI or docker desktop.
+When you stop a container without removing it, you will be unable to start a new container with the same name.
+It is encouraged to just restart the containers you created instead of removing it every time.
+
+To setup a blank postres DB, run `npm run migrate` and manually insert an admin user.
 
 ### Start the app
 
