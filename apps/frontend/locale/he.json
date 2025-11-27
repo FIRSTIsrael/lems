@@ -153,7 +153,18 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
-        "team-list": "רשימת קבוצות"
+       "team-list": "רשימת קבוצות",
+        "pit-map": "מפת פיטים",
+        "awards-list": "רשימת פרסים"
+      },
+      "awards-list": {
+        "page-title": "רשימת פרסים",
+        "description": "רשימת כל הפרסים בחלוקה זו, כולל סדר ההענקה וההגדרות שלהם.",
+        "error-loading": "אירעה שגיאה בטעינת הפרסים.",
+        "no-awards": "עדיין לא הוגדרו פרסים לחלוקה זו.",
+        "loading": "טוען פרסים…",
+        "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
+        "place-label": "מקום #{place}"        
       },
       "team-list": {
         "page-title": "רשימת קבוצות",
@@ -177,6 +188,12 @@
         "sort-ascending": "ממוין בסדר עולה",
         "sort-descending": "ממוין בסדר יורד"
       }
+    },
+    "pit-map": {
+      "page-title": "מפת פיטים",
+      "loading": "טוען מפת פיטים...",
+      "error-loading": "שגיאה בטעינת מפת הפיטים. אנא נסו שוב.",
+      "no-map": "לא קיימת מפת פיטים."
     },
     "rubric": {
       "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",

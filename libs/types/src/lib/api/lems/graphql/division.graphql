@@ -11,17 +11,23 @@ type Division {
   "Hex color code for UI display (e.g., '#FF5733')"
   color: String!
 
+  "Public URL of the pit map image for this division, if available"
+  pitMapUrl: String
+
   "Competition tables assigned to this division"
   tables: [Table!]!
 
   "Judging rooms assigned to this division"
   rooms: [Room!]!
 
+  "Awards configured for this division"
+  awards: [Award!]!
+
   "Teams registered in this division, optionally filtered by IDs or slugs"
   teams(
     "Filter teams by their IDs"
     ids: [String!]
-    
+
     "Filter teams by their slugs (region-number format, e.g., 'IL-9909')"
     slugs: [String!]
   ): [Team!]!
@@ -47,6 +53,22 @@ type Room {
 
   "Display name of the room (e.g., 'Room A', 'Innovation Lab')"
   name: String!
+}
+"""
+An award configured for a division
+"""
+type Award {
+  "Unique identifier for the award"
+  id: String!
+
+  "Display name of the award"
+  name: String!
+
+  "Number of places/positions available for this award type"
+  placeCount: Int!
+
+  "Optional description for this award"
+  description: String
 }
 
 extend type Query {
