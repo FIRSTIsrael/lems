@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
-import { Mission, MissionClause } from '@lems/types';
+import { Mission, MissionClause } from '@lems/types/scoring';
 import { scoresheet, ScoresheetError } from '@lems/shared/scoresheet';
 
 export interface Score {

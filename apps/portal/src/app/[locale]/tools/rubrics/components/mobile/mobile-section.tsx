@@ -12,7 +12,7 @@ import {
   lighten
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
 import { getCategoryColor } from '../../rubric-utils';
 import { MobileFieldSection } from './mobile-field-section';

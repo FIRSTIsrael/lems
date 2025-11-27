@@ -1,5 +1,5 @@
 import express from 'express';
-import { SchedulerRequest } from '@lems/types';
+import { SchedulerRequest } from '@lems/types/api/scheduler';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../middleware/require-permission';

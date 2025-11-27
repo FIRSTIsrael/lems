@@ -10,7 +10,7 @@ import {
   Stack,
   lighten
 } from '@mui/material';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { getCategoryColor } from '../../rubric-utils';
 import { useRubricContext } from '../rubric-context';

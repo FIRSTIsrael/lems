@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
-import { reorder } from '@lems/utils/arrays';
+import { reorderArray } from '@lems/shared/utils';
 import { apiFetch } from '@lems/shared';
 import { mutate } from 'swr';
 import { AwardContextValue, AwardSchema, Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
@@ -116,7 +116,7 @@ export function AwardsProvider({
 
   const reorderAwards = useCallback(
     (sourceIndex: number, destinationIndex: number) => {
-      const reorderedAwards = reorder(awards, sourceIndex, destinationIndex);
+      const reorderedAwards = reorderArray(awards, sourceIndex, destinationIndex);
 
       setCurrentSchema(prev => {
         const newSchema = { ...prev };

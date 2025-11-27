@@ -1,4 +1,4 @@
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { useTranslations } from 'next-intl';
 
 export const useRubricsTranslations = (category: JudgingCategory) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { TableRow, TableCell, Typography, Box, Stack } from '@mui/material';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
 
 interface SectionTitleRowProps {
