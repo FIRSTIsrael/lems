@@ -44,8 +44,7 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
         '&:hover': {
           elevation: 6,
           transform: 'translateY(-4px)',
-          borderLeftColor: 'primary.main',
-          boxShadow: theme => `0 8px 25px ${theme.palette.primary.main}20`
+          borderLeftColor: 'primary.main'
         }
       }}
     >
@@ -57,10 +56,7 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
-            '&:hover': {
-              bgcolor: 'action.hover'
-            }
+            gap: 2
           }}
         >
           <EmojiEvents sx={{ fontSize: 28, color: 'primary.main' }} />
