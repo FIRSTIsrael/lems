@@ -1,6 +1,8 @@
 'use client';
 
-import { Paper, Typography, useTheme, Box } from '@mui/material';
+import { Paper, Typography, useTheme, Box, Button } from '@mui/material';
+import { useState } from 'react';
+import SoundTestDialog from './sound-test-dialog';
 
 interface PageHeaderProps {
   title: string;
@@ -8,6 +10,7 @@ interface PageHeaderProps {
 
 export const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
 
   return (
     <Paper
@@ -38,6 +41,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
         >
           {title}
         </Typography>
+        <Box>
+          <Button variant="contained" onClick={() => setOpen(true)}>
+            בדיקת שמע
+          </Button>
+          <SoundTestDialog open={open} setOpen={setOpen} />
+        </Box>
       </Box>
     </Paper>
   );
