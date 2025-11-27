@@ -153,7 +153,18 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
-        "team-list": "רשימת קבוצות"
+        "team-list": "רשימת קבוצות",
+        "pit-map": "מפת פיטים",
+        "awards-list": "רשימת פרסים"
+      },
+      "awards-list": {
+        "page-title": "רשימת פרסים",
+        "description": "רשימת כל הפרסים בחלוקה זו, כולל סדר ההענקה וההגדרות שלהם.",
+        "error-loading": "אירעה שגיאה בטעינת הפרסים.",
+        "no-awards": "עדיין לא הוגדרו פרסים.",
+        "loading": "טוען פרסים…",
+        "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
+        "place-label": "מקום #{place}"
       },
       "team-list": {
         "page-title": "רשימת קבוצות",
@@ -176,24 +187,30 @@
         },
         "sort-ascending": "ממוין בסדר עולה",
         "sort-descending": "ממוין בסדר יורד"
-      }
-    },
-    "rubric": {
-      "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
-      "field-notes-label": "הערות",
-      "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
-      "navigation": {
-        "title": "תחומי שיפוט"
       },
-      "award-nominations": {
-        "title": "מועמדות לפרס",
-        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
-        "no-awards": "אין פרסים אופציונליים זמינים."
+      "pit-map": {
+        "page-title": "מפת פיטים",
+        "loading": "טוען מפת פיטים...",
+        "error-loading": "שגיאה בטעינת מפת הפיטים. אנא נסו שוב.",
+        "no-map": "לא קיימת מפת פיטים."
       },
-      "actions": {
-        "save-draft": "שמור כטיוטה",
-        "submit-review": "הגש לבדיקה",
-        "reset": "איפוס"
+      "rubric": {
+        "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+        "field-notes-label": "הערות",
+        "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
+        "navigation": {
+          "title": "תחומי שיפוט"
+        },
+        "award-nominations": {
+          "title": "מועמדות לפרס",
+          "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
+          "no-awards": "אין פרסים אופציונליים זמינים."
+        },
+        "actions": {
+          "save-draft": "שמור כטיוטה",
+          "submit-review": "הגש לבדיקה",
+          "reset": "איפוס"
+        }
       }
     }
   },

@@ -7,6 +7,7 @@ import { volunteersResolver, volunteerDivisionsResolver } from './events/volunte
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
+import { divisionAwardsResolver } from './divisions/division-awards';
 import { divisionJudgingResolver } from './divisions/judging';
 import { judgingSessionsResolver } from './divisions/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging-rooms';
@@ -35,7 +36,8 @@ export const resolvers = {
     tables: divisionTablesResolver,
     rooms: divisionRoomsResolver,
     teams: divisionTeamsResolver,
-    judging: divisionJudgingResolver
+    judging: divisionJudgingResolver,
+    awards: divisionAwardsResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,

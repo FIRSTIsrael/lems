@@ -153,7 +153,18 @@
     "reports": {
       "page-title": "Reports",
       "menu": {
-        "team-list": "Team List"
+        "team-list": "Team List",
+        "pit-map": "Pit Map",
+        "awards-list": "Awards list"
+      },
+      "awards-list": {
+        "page-title": "Awards list",
+        "description": "A list of all awards in this division, including their order of distribution and their settings.",
+        "error-loading": "An error occurred while loading the awards.",
+        "no-awards": "No awards have been configured yet.",
+        "loading": "Loading awards…",
+        "places-count": "{count, plural, one {1 Award} other {# Awards}}",
+        "place-label": "Place #{place}"
       },
       "team-list": {
         "page-title": "Team List",
@@ -176,24 +187,30 @@
         },
         "sort-ascending": "sorted ascending",
         "sort-descending": "sorted descending"
-      }
-    },
-    "rubric": {
-      "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
-      "field-notes-label": "Notes",
-      "field-notes-placeholder": "How did the team exceed?",
-      "navigation": {
-        "title": "Rubric Categories"
       },
-      "award-nominations": {
-        "title": "Award Nomination",
-        "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
-        "no-awards": "No optional awards available."
+      "pit-map": {
+        "page-title": "Pit Map",
+        "loading": "Loading pit map...",
+        "error-loading": "Failed to load pit map. Please try again.",
+        "no-map": "No pit map is available."
       },
-      "actions": {
-        "save-draft": "Save as Draft",
-        "submit-review": "Submit for Review",
-        "reset": "Reset"
+      "rubric": {
+        "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
+        "field-notes-label": "Notes",
+        "field-notes-placeholder": "How did the team exceed?",
+        "navigation": {
+          "title": "Rubric Categories"
+        },
+        "award-nominations": {
+          "title": "Award Nomination",
+          "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
+          "no-awards": "No optional awards available."
+        },
+        "actions": {
+          "save-draft": "Save as Draft",
+          "submit-review": "Submit for Review",
+          "reset": "Reset"
+        }
       }
     }
   },
