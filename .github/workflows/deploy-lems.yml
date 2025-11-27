@@ -46,7 +46,22 @@ jobs:
           # These NEXT_PUBLIC_* variables are embedded into the client bundle
           NEXT_PUBLIC_BASE_URL: ${{ vars.BASE_URL }}
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
-        run: npx nx build frontend --configuration=production
+        run: |
+          echo "🔨 Building frontend with NEXT_PUBLIC variables..."
+          echo "   NEXT_PUBLIC_BASE_URL: $NEXT_PUBLIC_BASE_URL"
+          echo "   NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:+***set***}"
+          
+          if [ -z "$NEXT_PUBLIC_BASE_URL" ]; then
+            echo "⚠️ WARNING: NEXT_PUBLIC_BASE_URL is empty!"
+          fi
+          
+          if [ -z "$NEXT_PUBLIC_RECAPTCHA_SITE_KEY" ]; then
+            echo "⚠️ WARNING: NEXT_PUBLIC_RECAPTCHA_SITE_KEY is empty!"
+          fi
+          
+          npx nx build frontend --configuration=production
+          
+          echo "✅ Build complete - NEXT_PUBLIC variables embedded in bundle"
       
       - name: Install doctl
         uses: digitalocean/action-doctl@v2.5.1

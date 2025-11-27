@@ -45,7 +45,17 @@ jobs:
           # Build-time environment variables for Next.js
           # These NEXT_PUBLIC_* variables are embedded into the client bundle
           NEXT_PUBLIC_BASE_URL: ${{ vars.BASE_URL }}
-        run: npx nx build portal --configuration=production
+        run: |
+          echo "🔨 Building portal with NEXT_PUBLIC variables..."
+          echo "   NEXT_PUBLIC_BASE_URL: $NEXT_PUBLIC_BASE_URL"
+          
+          if [ -z "$NEXT_PUBLIC_BASE_URL" ]; then
+            echo " ⚠️ WARNING: NEXT_PUBLIC_BASE_URL is empty!"
+          fi
+          
+          npx nx build portal --configuration=production
+          
+          echo "✅ Build complete - NEXT_PUBLIC variables embedded in bundle"
       
       - name: Install doctl
         uses: digitalocean/action-doctl@v2.5.1
