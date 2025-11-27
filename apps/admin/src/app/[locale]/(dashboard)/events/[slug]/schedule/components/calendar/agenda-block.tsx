@@ -2,11 +2,15 @@
 
 import React from 'react';
 import { Dayjs } from 'dayjs';
-import { Box, Typography, IconButton } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { Box } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
 import { calculateBlockPosition } from './calendar-utils';
 import { useCalendar } from './calendar-context';
+import { TitleEditDialog } from './agenda-block/title-edit-dialog';
+import { ResizeHandles } from './agenda-block/resize-handles';
+import { BlockContent } from './agenda-block/block-content';
+import { useTitleEdit } from './agenda-block/use-title-edit';
 
 interface AgendaBlockProps {
   block: ScheduleBlock;
@@ -19,6 +23,7 @@ interface AgendaBlockProps {
   onDragStartBody: (block: ScheduleBlock, startY: number) => void;
   onDragStartTopEdge: (block: ScheduleBlock, startY: number) => void;
   onDragStartBottomEdge: (block: ScheduleBlock, startY: number) => void;
+  onUpdateTitle: (blockId: string, newTitle: string) => void;
 }
 
 export const AgendaBlock: React.FC<AgendaBlockProps> = ({
@@ -31,13 +36,15 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
   draggedStartTime,
   onDragStartBody,
   onDragStartTopEdge,
-  onDragStartBottomEdge
+  onDragStartBottomEdge,
+  onUpdateTitle
 }) => {
+  const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   const { deleteAgendaEvent } = useCalendar();
+  const titleEdit = useTitleEdit(block.title || t('default-event-title'));
 
   const position = calculateBlockPosition(startTime, block);
 
-  // For edge resizing, use dragged values; otherwise use original block values
   const displayStartTime = draggedStartTime || block.startTime;
   const displayDuration = draggedDuration || block.durationSeconds;
   const displayPosition = calculateBlockPosition(startTime, {
@@ -54,6 +61,11 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
   const finalHeight = isDraggingEdge ? displayPosition.height : position.height;
 
   const handleMouseDownBody = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-no-drag]')) {
+      e.stopPropagation();
+      return;
+    }
     if (e.button === 0 && !isDraggingEdge) {
       e.stopPropagation();
       onDragStartBody(block, e.clientY);
@@ -76,10 +88,26 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     deleteAgendaEvent(block.id);
   };
 
-  const formatTime = (time: Dayjs) => time.format('HH:mm');
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    titleEdit.openEdit();
+  };
+
+  const handleSaveTitle = () => {
+    if (onUpdateTitle) {
+      onUpdateTitle(block.id, titleEdit.editedTitle);
+    }
+    titleEdit.closeEdit();
+  };
+
+  const handleCancelEdit = () => {
+    titleEdit.resetEdit(block.title || t('default-event-title'));
+  };
 
   return (
     <Box
@@ -114,95 +142,34 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
           transform: isDraggingBody || isDraggingEdge ? 'scale(1.02)' : 'scale(1.01)',
           '& .delete-button': {
             opacity: 1
+          },
+          '& .edit-button': {
+            opacity: 1
           }
         }
       }}
       onMouseDown={handleMouseDownBody}
     >
-      {/* Top edge resize handle */}
-      <Box
-        onMouseDown={handleMouseDownTopEdge}
-        sx={{
-          position: 'absolute',
-          top: -4,
-          left: 0,
-          right: 0,
-          height: 8,
-          cursor: 'ns-resize',
-          zIndex: 10,
-          '&:hover': {
-            backgroundColor: 'rgba(0,0,0,0.2)'
-          }
-        }}
+      <ResizeHandles
+        onMouseDownTopEdge={handleMouseDownTopEdge}
+        onMouseDownBottomEdge={handleMouseDownBottomEdge}
       />
 
-      {/* Bottom edge resize handle */}
-      <Box
-        onMouseDown={handleMouseDownBottomEdge}
-        sx={{
-          position: 'absolute',
-          bottom: -4,
-          left: 0,
-          right: 0,
-          height: 8,
-          cursor: 'ns-resize',
-          zIndex: 10,
-          '&:hover': {
-            backgroundColor: 'rgba(0,0,0,0.2)'
-          }
-        }}
+      <TitleEditDialog
+        open={titleEdit.isEditingTitle}
+        title={titleEdit.editedTitle}
+        onTitleChange={titleEdit.setEditedTitle}
+        onSave={handleSaveTitle}
+        onCancel={handleCancelEdit}
       />
 
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start'
-        }}
-      >
-        <Box sx={{ flex: 1 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'white',
-              fontWeight: 600,
-              fontSize: '0.75rem',
-              lineHeight: 1.2
-            }}
-          >
-            Event Title
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              color: 'rgba(255,255,255,0.9)',
-              fontSize: '0.625rem',
-              lineHeight: 1
-            }}
-          >
-            {formatTime(block.startTime)} -{' '}
-            {formatTime(block.startTime.clone().add(block.durationSeconds, 'second'))}
-          </Typography>
-        </Box>
-
-        <IconButton
-          className="delete-button"
-          size="small"
-          onClick={handleDelete}
-          sx={{
-            opacity: 0,
-            transition: 'opacity 0.2s ease',
-            color: 'white',
-            p: 0.25,
-            ml: 0.5,
-            '&:hover': {
-              backgroundColor: 'rgba(255,255,255,0.2)'
-            }
-          }}
-        >
-          <Delete fontSize="small" />
-        </IconButton>
-      </Box>
+      <BlockContent
+        title={block.title || t('default-event-title')}
+        startTime={block.startTime}
+        durationSeconds={block.durationSeconds}
+        onEditClick={handleEditClick}
+        onDeleteClick={handleDelete}
+      />
     </Box>
   );
 };

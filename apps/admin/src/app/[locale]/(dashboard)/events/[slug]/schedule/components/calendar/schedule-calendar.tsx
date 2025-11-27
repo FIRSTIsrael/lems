@@ -1,41 +1,19 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Paper, Box } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
-import { ScheduleBlock, TIME_SLOT_HEIGHT, INTERVAL_MINUTES, HEADER_HEIGHT } from './calendar-types';
+import { ScheduleBlock, HEADER_HEIGHT } from './calendar-types';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
 import { AgendaColumn } from './agenda-column';
 import { CalendarProvider, useCalendar } from './calendar-context';
 import { CalendarHeader } from './calendar-header';
 import { calculateBlockPosition, getBlockColumn } from './calendar-utils';
-
-function snapToGrid(yPosition: number, startTime: Dayjs): number {
-  const currentTime = positionToTime(yPosition, startTime);
-
-  // Snap to nearest 5-minute clock interval
-  const currentMinute = currentTime.minute();
-  const snappedMinute = Math.round(currentMinute / INTERVAL_MINUTES) * INTERVAL_MINUTES;
-  const snappedTime = currentTime.minute(snappedMinute).second(0);
-
-  return timeToPosition(snappedTime, startTime);
-}
-
-function timeToPosition(time: Dayjs, startTime: Dayjs): number {
-  const minutesFromStart = time.diff(startTime, 'minute');
-  return minutesFromStart * TIME_SLOT_HEIGHT + HEADER_HEIGHT;
-}
-
-function positionToTime(position: number, startTime: Dayjs): Dayjs {
-  const adjustedPosition = position - HEADER_HEIGHT;
-  const minutesFromStart = adjustedPosition / TIME_SLOT_HEIGHT;
-  const currentTime = startTime.add(minutesFromStart, 'minute');
-  return currentTime;
-}
+import { positionToTime, snapToGrid, timeToPosition } from './drag-utils';
 
 const ScheduleCalendarContent: React.FC<{ division: Division }> = ({ division }) => {
   const event = useEvent();

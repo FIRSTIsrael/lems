@@ -646,7 +646,11 @@
             "add-ranking-round": "Add Ranking Round"
           },
           "agenda": {
-            "title": "Agenda"
+            "title": "Agenda",
+            "default-event-title": "General Event",
+            "cancel": "Cancel",
+            "save": "Save",
+            "event-title": "Event Title"
           },
           "verify": {
             "title": "Verify schedule",

@@ -646,7 +646,11 @@
             "add-ranking-round": "הוספת סבב דירוג"
           },
           "agenda": {
-            "title": "סדר יום"
+            "title": "סדר יום",
+            "default-event-title": "אירוע כללי",
+            "cancel": "ביטול",
+            "save": "שמירה",
+            "event-title": "כותרת אירוע"
           },
           "verify": {
             "title": "אימות לוח הזמנים",

@@ -8,6 +8,7 @@ export interface ScheduleBlock {
   type: ScheduleBlockType;
   startTime: Dayjs;
   durationSeconds: number;
+  title?: string;
   isDragging?: boolean;
   canDelete?: boolean;
 }

@@ -57,6 +57,7 @@ export interface CalendarContextType {
   updateColumn: (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => void;
   addAgendaEvent: (startTime: Dayjs, durationSeconds: number) => void;
   updateAgendaEvent: (blockId: string, startTime: Dayjs, durationSeconds: number) => void;
+  renameAgendaEvent: (blockId: string, title: string) => void;
   deleteAgendaEvent: (blockId: string) => void;
 }
 
@@ -87,19 +88,20 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     const agendaBlocks: ScheduleBlock[] = [];
 
     judgingBlocks = judgingBlocks.concat(
-      createInitialBlocks('judging-session', judgingStart, judgingSessions, judgingSessionCycleTime)
+      createInitialBlocks(
+        'judging-session',
+        judgingStart,
+        judgingSessions,
+        judgingSessionCycleTime
+      )
     );
 
     fieldBlocks = fieldBlocks.concat(
       createInitialBlocks(
         'practice-round',
-
         fieldStart,
-
         practiceRounds,
-
         practiceCycleTime,
-
         matchesPerRound
       )
     );
@@ -112,13 +114,9 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     fieldBlocks = fieldBlocks.concat(
       createInitialBlocks(
         'ranking-round',
-
         rankingStart,
-
         rankingRounds,
-
         rankingCycleTime,
-
         matchesPerRound
       )
     );
@@ -287,7 +285,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }));
   };
 
-  const updateAgendaEvent = (blockId: string, startTime: Dayjs, durationSeconds: number) => {
+  const updateAgendaEvent = (blockId: string, startTime: Dayjs, durationSeconds: number, title?: string) => {
     setBlocks(prev => ({
       ...prev,
       agenda: prev.agenda
@@ -296,6 +294,15 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }));
   };
 
+  const renameAgendaEvent = (blockId: string, title: string) => {
+    setBlocks(prev => ({
+      ...prev,
+      agenda: prev.agenda.map(block => 
+        block.id === blockId ? { ...block, title } : block
+      )
+    }));
+  };
+  
   const deleteAgendaEvent = (blockId: string) => {
     setBlocks(prev => ({
       ...prev,
@@ -313,6 +320,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     updateColumn,
     addAgendaEvent,
     updateAgendaEvent,
+    renameAgendaEvent,
     deleteAgendaEvent
   };
 
