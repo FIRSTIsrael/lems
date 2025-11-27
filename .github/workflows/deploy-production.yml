@@ -92,30 +92,12 @@ jobs:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-  garbage-collection:
-    name: Run Registry Garbage Collection
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: cleanup-old-images
-    
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2.5.1
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      
-      - name: Run garbage collection
-        run: |
-          echo "🗑️  Starting garbage collection..."
-          doctl registry garbage-collection start --force
-          echo "✓ Garbage collection started"
-
   deploy:
     name: Deploy to Production Server
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: production
-    needs: [extract-version, garbage-collection]
+    needs: [extract-version, cleanup-old-images]
     
     steps:
       - name: Deploy to DigitalOcean Droplet
