@@ -153,7 +153,7 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
-       "team-list": "רשימת קבוצות",
+        "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים"
       },
@@ -161,10 +161,10 @@
         "page-title": "רשימת פרסים",
         "description": "רשימת כל הפרסים בחלוקה זו, כולל סדר ההענקה וההגדרות שלהם.",
         "error-loading": "אירעה שגיאה בטעינת הפרסים.",
-        "no-awards": "עדיין לא הוגדרו פרסים לחלוקה זו.",
+        "no-awards": "עדיין לא הוגדרו פרסים.",
         "loading": "טוען פרסים…",
         "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
-        "place-label": "מקום #{place}"        
+        "place-label": "מקום #{place}"
       },
       "team-list": {
         "page-title": "רשימת קבוצות",
