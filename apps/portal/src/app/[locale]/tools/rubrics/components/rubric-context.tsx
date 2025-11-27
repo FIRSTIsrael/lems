@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState } from 'react';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { useRubric, RubricData } from '../hooks/use-rubric';
 import { RubricFormValues } from '../rubric-types';
 

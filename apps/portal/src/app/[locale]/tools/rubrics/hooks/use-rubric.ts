@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { rubrics } from '@lems/shared/rubrics';
 import { RubricFormValues } from '../rubric-types';
 import { getEmptyRubric } from '../rubric-utils';

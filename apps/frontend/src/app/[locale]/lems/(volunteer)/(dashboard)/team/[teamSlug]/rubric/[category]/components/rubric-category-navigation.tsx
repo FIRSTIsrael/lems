@@ -4,7 +4,7 @@ import { TableRow, TableCell, Box, Typography, useTheme } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingCategory, JudgingCategoryTypes } from '@lems/types';
+import { JudgingCategory, JUDGING_CATEGORIES } from '@lems/types/judging';
 import { getCategoryColor } from '../rubric-utils';
 
 export const RubricCategoryNavigation: React.FC = () => {
@@ -65,7 +65,7 @@ export const RubricCategoryNavigation: React.FC = () => {
               flexWrap: 'wrap'
             }}
           >
-            {JudgingCategoryTypes.map(category => {
+            {JUDGING_CATEGORIES.map(category => {
               const isActive = category === currentCategory;
               const categoryColor = getCategoryColor(category);
 
