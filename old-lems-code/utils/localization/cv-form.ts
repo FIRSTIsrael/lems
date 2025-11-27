@@ -1,4 +1,4 @@
-import { CVFormSchema } from './typing';
+import { CVFormSchema } from './cv-form-typing';
 
 export const cvFormSchema: CVFormSchema = {
   columns: [
