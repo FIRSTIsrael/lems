@@ -46,11 +46,13 @@ const VenuePage: React.FC = () => {
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
             <AssetManager key="tables" division={selectedDivision} assetType="tables" />
           </Grid>
-
-          <Grid size={12}>
-            <PitMapManager key="rooms" division={selectedDivision} onDivisionUpdate={mutate} />
-          </Grid>
         </Grid>
+      )}
+
+      {selectedDivision && (
+        <Box sx={{ mt: 3 }}>
+          <PitMapManager key="pit-map" division={selectedDivision} onDivisionUpdate={mutate} />
+        </Box>
       )}
     </Box>
   );
