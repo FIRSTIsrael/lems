@@ -48,6 +48,7 @@ jobs:
       registry: registry.digitalocean.com/first-israel-registry
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
 
   build-frontend:
     name: Build & Push Frontend LEMS
@@ -59,6 +60,7 @@ jobs:
       registry: registry.digitalocean.com/first-israel-registry
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
 
   build-portal:
     name: Build & Push Portal

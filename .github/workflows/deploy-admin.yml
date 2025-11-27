@@ -18,6 +18,8 @@ on:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
+      RECAPTCHA_SITE_KEY:
+        required: false
 
 jobs:
   build:
