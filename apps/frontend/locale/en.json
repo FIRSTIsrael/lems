@@ -187,30 +187,30 @@
         },
         "sort-ascending": "sorted ascending",
         "sort-descending": "sorted descending"
-      }
-       },
+      },
       "pit-map": {
         "page-title": "Pit Map",
         "loading": "Loading pit map...",
         "error-loading": "Failed to load pit map. Please try again.",
         "no-map": "No pit map is available."
-    },
-    "rubric": {
-      "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
-      "field-notes-label": "Notes",
-      "field-notes-placeholder": "How did the team exceed?",
-      "navigation": {
-        "title": "Rubric Categories"
       },
-      "award-nominations": {
-        "title": "Award Nomination",
-        "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
-        "no-awards": "No optional awards available."
-      },
-      "actions": {
-        "save-draft": "Save as Draft",
-        "submit-review": "Submit for Review",
-        "reset": "Reset"
+      "rubric": {
+        "page-title": "{category} Rubric, Team {teamName} #{teamNumber}",
+        "field-notes-label": "Notes",
+        "field-notes-placeholder": "How did the team exceed?",
+        "navigation": {
+          "title": "Rubric Categories"
+        },
+        "award-nominations": {
+          "title": "Award Nomination",
+          "description": "If the team is a candidate for one of these awards, please tick the appropriate box. Check with your event organizer which optional awards your event uses.",
+          "no-awards": "No optional awards available."
+        },
+        "actions": {
+          "save-draft": "Save as Draft",
+          "submit-review": "Submit for Review",
+          "reset": "Reset"
+        }
       }
     }
   },
