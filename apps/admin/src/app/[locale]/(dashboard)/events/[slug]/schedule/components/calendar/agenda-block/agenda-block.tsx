@@ -4,29 +4,28 @@ import React from 'react';
 import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { ScheduleBlock, BLOCK_COLORS, HEADER_HEIGHT } from './calendar-types';
-import { calculateBlockPosition } from './calendar-utils';
-import { useCalendar } from './calendar-context';
-import { TitleEditDialog } from './agenda-block/title-edit-dialog';
-import { ResizeHandles } from './agenda-block/resize-handles';
-import { BlockContent } from './agenda-block/block-content';
-import { useTitleEdit } from './agenda-block/use-title-edit';
+import { BLOCK_COLORS, HEADER_HEIGHT, AgendaBlockVisibility, AgendaBlock } from '../calendar-types';
+import { calculateBlockPosition } from '../calendar-utils';
+import { useCalendar } from '../calendar-context';
+import { EditAgendaDialog } from './edit-agenda-dialog';
+import { ResizeHandles } from './resize-handles';
+import { BlockContent } from './block-content';
+import { useTitleEdit } from './use-title-edit';
 
 interface AgendaBlockProps {
-  block: ScheduleBlock;
+  block: AgendaBlock;
   startTime: Dayjs;
   isDraggingBody: boolean;
   isDraggingEdge: boolean;
   draggedPosition: number;
   draggedDuration?: number; // For bottom-edge resize preview
   draggedStartTime?: Dayjs; // For top-edge resize preview
-  onDragStartBody: (block: ScheduleBlock, startY: number) => void;
-  onDragStartTopEdge: (block: ScheduleBlock, startY: number) => void;
-  onDragStartBottomEdge: (block: ScheduleBlock, startY: number) => void;
-  onUpdateTitle: (blockId: string, newTitle: string) => void;
+  onDragStartBody: (block: AgendaBlock, startY: number) => void;
+  onDragStartTopEdge: (block: AgendaBlock, startY: number) => void;
+  onDragStartBottomEdge: (block: AgendaBlock, startY: number) => void;
 }
 
-export const AgendaBlock: React.FC<AgendaBlockProps> = ({
+export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
   block,
   startTime,
   isDraggingBody,
@@ -36,12 +35,12 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
   draggedStartTime,
   onDragStartBody,
   onDragStartTopEdge,
-  onDragStartBottomEdge,
-  onUpdateTitle
+  onDragStartBottomEdge
 }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
-  const { deleteAgendaEvent } = useCalendar();
+  const { deleteAgendaEvent, updateAgendaEvent } = useCalendar();
   const titleEdit = useTitleEdit(block.title || t('default-event-title'));
+  const [visibility, setVisibility] = React.useState<AgendaBlockVisibility>(block.visibilty ?? 'public');
 
   const position = calculateBlockPosition(startTime, block);
 
@@ -99,13 +98,16 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
   };
 
   const handleSaveTitle = () => {
-    if (onUpdateTitle) {
-      onUpdateTitle(block.id, titleEdit.editedTitle);
-    }
+    updateAgendaEvent(block.id, {
+      title: titleEdit.editedTitle,
+      visibilty: visibility
+    });
+
     titleEdit.closeEdit();
   };
 
   const handleCancelEdit = () => {
+    setVisibility(block.visibilty);
     titleEdit.resetEdit(block.title || t('default-event-title'));
   };
 
@@ -155,10 +157,12 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
         onMouseDownBottomEdge={handleMouseDownBottomEdge}
       />
 
-      <TitleEditDialog
+      <EditAgendaDialog
         open={titleEdit.isEditingTitle}
         title={titleEdit.editedTitle}
+        visibility={visibility}
         onTitleChange={titleEdit.setEditedTitle}
+        onVisibilityChange={setVisibility}
         onSave={handleSaveTitle}
         onCancel={handleCancelEdit}
       />
@@ -167,6 +171,7 @@ export const AgendaBlock: React.FC<AgendaBlockProps> = ({
         title={block.title || t('default-event-title')}
         startTime={block.startTime}
         durationSeconds={block.durationSeconds}
+        visibility={visibility}
         onEditClick={handleEditClick}
         onDeleteClick={handleDelete}
       />

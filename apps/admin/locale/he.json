@@ -650,7 +650,14 @@
             "default-event-title": "אירוע כללי",
             "cancel": "ביטול",
             "save": "שמירה",
-            "event-title": "כותרת אירוע"
+            "event-title": "כותרת אירוע",
+            "visibility": "נראות",
+            "public": "ציבורי",
+            "description-public": "יופיע לכולם בפורטל האירועים",
+            "judging": "שיפוט",
+            "description-judging": "יופיע בלו\"ז השיפוט הפנימי",
+            "field": "זירה",
+            "description-field": "יופיע בלו\"ז הזירה הפנימי"
           },
           "verify": {
             "title": "אימות לוח הזמנים",

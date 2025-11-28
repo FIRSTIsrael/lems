@@ -5,11 +5,13 @@ import { Dayjs } from 'dayjs';
 import { Box, Typography, IconButton } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { AgendaBlockVisibility } from '../calendar-types';
 
 interface BlockContentProps {
   title: string;
   startTime: Dayjs;
   durationSeconds: number;
+  visibility: AgendaBlockVisibility;
   onEditClick: (e: React.MouseEvent) => void;
   onDeleteClick: (e: React.MouseEvent) => void;
 }
@@ -20,6 +22,7 @@ export const BlockContent: React.FC<BlockContentProps> = ({
   title,
   startTime,
   durationSeconds,
+  visibility = 'public',
   onEditClick,
   onDeleteClick
 }) => {
@@ -59,8 +62,16 @@ export const BlockContent: React.FC<BlockContentProps> = ({
             lineHeight: 1
           }}
         >
-          {formatTime(startTime)} -{' '}
-          {formatTime(startTime.clone().add(durationSeconds, 'second'))}
+          {`${formatTime(startTime)} - ${formatTime(startTime.clone().add(durationSeconds, 'second'))}`}
+        </Typography>
+        <Typography
+          sx={{
+            color: 'rgba(255,255,255,0.9)',
+            fontSize: '0.625rem',
+            lineHeight: 1
+          }}
+        >
+          {t(visibility)}
         </Typography>
       </Box>
 

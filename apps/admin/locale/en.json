@@ -650,7 +650,14 @@
             "default-event-title": "General Event",
             "cancel": "Cancel",
             "save": "Save",
-            "event-title": "Event Title"
+            "event-title": "Event Title",
+            "visibility": "Visibility",
+            "public": "Public",
+            "description-public": "Visible to everyone on the Public Portal",
+            "judging": "Judging",
+            "description-judging": "Visible on the internal judging schedule",
+            "field": "Field",
+            "description-field": "Visible on the internal field schedule"
           },
           "verify": {
             "title": "Verify schedule",

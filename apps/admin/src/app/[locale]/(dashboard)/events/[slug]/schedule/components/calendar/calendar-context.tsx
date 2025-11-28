@@ -9,7 +9,8 @@ import {
   DragState,
   ScheduleBlock,
   ScheduleBlockType,
-  ScheduleColumn
+  ScheduleColumn,
+  AgendaBlock
 } from './calendar-types';
 import { getDuration } from './calendar-utils';
 
@@ -56,8 +57,7 @@ export interface CalendarContextType {
   deleteFieldBlock: (blockId: string) => void;
   updateColumn: (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => void;
   addAgendaEvent: (startTime: Dayjs, durationSeconds: number) => void;
-  updateAgendaEvent: (blockId: string, startTime: Dayjs, durationSeconds: number) => void;
-  renameAgendaEvent: (blockId: string, title: string) => void;
+  updateAgendaEvent: (blockId: string, updates: Partial<AgendaBlock>) => void;
   deleteAgendaEvent: (blockId: string) => void;
 }
 
@@ -85,7 +85,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
   const [blocks, setBlocks] = useState<BlocksByType>(() => {
     let judgingBlocks: ScheduleBlock[] = [];
     let fieldBlocks: ScheduleBlock[] = [];
-    const agendaBlocks: ScheduleBlock[] = [];
+    const agendaBlocks: AgendaBlock[] = [];
 
     judgingBlocks = judgingBlocks.concat(
       createInitialBlocks(
@@ -285,22 +285,8 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }));
   };
 
-  const updateAgendaEvent = (blockId: string, startTime: Dayjs, durationSeconds: number, title?: string) => {
-    setBlocks(prev => ({
-      ...prev,
-      agenda: prev.agenda
-        .map(block => (block.id === blockId ? { ...block, startTime, durationSeconds } : block))
-        .sort((a, b) => a.startTime.diff(b.startTime))
-    }));
-  };
-
-  const renameAgendaEvent = (blockId: string, title: string) => {
-    setBlocks(prev => ({
-      ...prev,
-      agenda: prev.agenda.map(block => 
-        block.id === blockId ? { ...block, title } : block
-      )
-    }));
+  const updateAgendaEvent = (blockId: string, updates: Partial<AgendaBlock>) => {
+    updateBlock('agenda', blockId, updates);
   };
   
   const deleteAgendaEvent = (blockId: string) => {
@@ -320,7 +306,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     updateColumn,
     addAgendaEvent,
     updateAgendaEvent,
-    renameAgendaEvent,
     deleteAgendaEvent
   };
 

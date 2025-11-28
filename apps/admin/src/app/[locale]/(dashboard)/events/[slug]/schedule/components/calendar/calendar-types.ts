@@ -2,15 +2,21 @@ import { Dayjs } from 'dayjs';
 
 export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session' | 'agenda-event';
 export type ScheduleColumn = 'judging' | 'field' | 'agenda';
+export type AgendaBlockVisibility = 'public' | 'field' | 'judging';
 
 export interface ScheduleBlock {
   id: string;
   type: ScheduleBlockType;
   startTime: Dayjs;
   durationSeconds: number;
-  title?: string;
   isDragging?: boolean;
   canDelete?: boolean;
+}
+
+export interface AgendaBlock extends ScheduleBlock {
+  type: 'agenda-event';
+  title: string;
+  visibilty: AgendaBlockVisibility;
 }
 
 export type BlocksByType = Record<ScheduleColumn, ScheduleBlock[]>;

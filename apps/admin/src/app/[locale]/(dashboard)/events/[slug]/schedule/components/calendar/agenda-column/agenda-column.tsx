@@ -4,13 +4,13 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack } from '@mui/material';
-import { HEADER_HEIGHT } from './calendar-types';
-import { AgendaBlock } from './agenda-block';
-import { useCalendar } from './calendar-context';
-import { AgendaDragState } from './agenda-column/drag-types';
-import { useDragHandlers } from './agenda-column/use-drag-handlers';
-import { useDragStart } from './agenda-column/use-drag-start';
-import { snapToGrid } from './drag-utils';
+import { AgendaBlock, HEADER_HEIGHT } from '../calendar-types';
+import { snapToGrid } from '../drag-utils';
+import { useCalendar } from '../calendar-context';
+import { AgendaBlockComponent } from '../agenda-block';
+import { AgendaDragState } from './drag-types';
+import { useDragHandlers } from './use-drag-handlers';
+import { useDragStart } from './use-drag-start';
 
 interface AgendaColumnProps {
   startTime: Dayjs;
@@ -20,7 +20,7 @@ interface AgendaColumnProps {
 export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
 
-  const { blocks, addAgendaEvent, updateAgendaEvent, renameAgendaEvent } = useCalendar();
+  const { blocks, addAgendaEvent, updateAgendaEvent } = useCalendar();
   const agendaBlocks = blocks.agenda;
 
   const [dragState, setDragState] = useState<AgendaDragState | null>(null);
@@ -156,8 +156,8 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
 
           return (
             <div key={block.id} data-agenda-block>
-              <AgendaBlock
-                block={block}
+              <AgendaBlockComponent
+                block={block as AgendaBlock}
                 startTime={startTime}
                 isDraggingBody={dragState?.blockId === block.id && dragState.mode === 'body'}
                 isDraggingEdge={
@@ -179,7 +179,6 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
                 onDragStartBody={handleDragStartBody}
                 onDragStartTopEdge={handleDragStartTopEdge}
                 onDragStartBottomEdge={handleDragStartBottomEdge}
-                onUpdateTitle={renameAgendaEvent}
               />
             </div>
           );

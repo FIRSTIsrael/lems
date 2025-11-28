@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { HEADER_HEIGHT, TIME_SLOT_HEIGHT } from '../calendar-types';
+import { AgendaBlock, HEADER_HEIGHT, TIME_SLOT_HEIGHT } from '../calendar-types';
 import { snapToGrid, timeToPosition, positionToTime, MIN_SNAP_DURATION } from '../drag-utils';
 import {
   AgendaDragState,
@@ -107,7 +107,7 @@ export const useDragHandlers = ({
   const handleMouseUp = useCallback(
     (
       onAddEvent: (startTime: Dayjs, duration: number) => void,
-      onUpdateEvent: (blockId: string, startTime: Dayjs, duration: number) => void
+      onUpdateEvent: (blockId: string, updates: Partial<AgendaBlock>) => void
     ) => {
       if (!dragState) return;
 
@@ -134,8 +134,10 @@ export const useDragHandlers = ({
         const newStartTime = positionToTime(dragState.draggedPosition, startTime);
         onUpdateEvent(
           dragState.blockId,
-          newStartTime,
-          dragState.originalDuration || DEFAULT_EVENT_DURATION
+          {
+            startTime: newStartTime,
+            durationSeconds: dragState.originalDuration || DEFAULT_EVENT_DURATION
+          }
         );
       } else if (
         dragState.mode === 'bottom-edge' &&
@@ -145,14 +147,17 @@ export const useDragHandlers = ({
         const eventStart = dragState.originalStartTime;
         const eventEnd = positionToTime(dragState.draggedPosition, startTime);
         const newDuration = Math.round(eventEnd.diff(eventStart, 'second'));
-        onUpdateEvent(dragState.blockId, eventStart, Math.max(newDuration, MIN_SNAP_DURATION));
+        onUpdateEvent(dragState.blockId, {startTime: eventStart, durationSeconds: Math.max(newDuration, MIN_SNAP_DURATION)});
       } else if (
         dragState.mode === 'top-edge' &&
         dragState.blockId &&
         dragState.originalStartTime &&
         dragState.originalDuration
       ) {
-        onUpdateEvent(dragState.blockId, dragState.originalStartTime, dragState.originalDuration);
+        onUpdateEvent(dragState.blockId, {
+          startTime: dragState.originalStartTime, 
+          durationSeconds: dragState.originalDuration
+        });
       }
 
       onDragStateChange(null);

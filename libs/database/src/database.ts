@@ -14,6 +14,7 @@ import { JudgingSessionsRepository } from './repositories/judging-sessions';
 import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 import { AwardsRepository } from './repositories/awards';
 import { EventUsersRepository } from './repositories/event-users';
+import { AgendaEventsRepository } from './repositories/agenda-events';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -61,6 +62,7 @@ export class Database {
   public tables: TablesRepository;
   public robotGameMatches: RobotGameMatchesRepository;
   public awards: AwardsRepository;
+  public agendaEvents: AgendaEventsRepository;
 
   /**
    * Direct access to low-level database connections for advanced queries.
@@ -120,6 +122,7 @@ export class Database {
     this.tables = new TablesRepository(this.kysely);
     this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
     this.awards = new AwardsRepository(this.kysely);
+    this.agendaEvents = new AgendaEventsRepository(this.kysely);
   }
 
   async connect(): Promise<void> {
