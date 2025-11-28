@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Container } from '@mui/material';
@@ -24,13 +25,21 @@ export default function RubricPage() {
   const { category } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
-  // TODO: Add rubric status
-  const isEditable =
-    (user.role === 'judge' && ['empty', 'in-progress', 'completed'].includes('empty')) ||
-    (user.role === 'lead-judge' &&
-      user.roleInfo?.['category'] === category &&
-      ['empty', 'in-progress', 'completed', 'waiting-for-review'].includes('empty')) ||
-    user.role === 'judge-advisor';
+  // TODO: Get rubric from props
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rubric = {} as any;
+
+  const isEditable = useMemo(() => {
+    if (user.role === 'judge-advisor') {
+      return true;
+    }
+
+    if (user.role === 'lead-judge') {
+      return user.roleInfo?.['category'] === category;
+    }
+
+    return ['empty', 'in-progress', 'completed'].includes(rubric.status);
+  }, [category, rubric.status, user.role, user.roleInfo]);
 
   return (
     <>

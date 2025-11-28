@@ -2,7 +2,9 @@ import express from 'express';
 import {
   InsertableJudgingSession,
   InsertableRobotGameMatch,
-  InsertableRobotGameMatchParticipant
+  InsertableRobotGameMatchParticipant,
+  Rubric,
+  JudgingCategory
 } from '@lems/database';
 import db from '../../../lib/database';
 import { attachDivision } from '../middleware/attach-division';
@@ -74,6 +76,21 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   }
 
   await db.judgingSessions.createMany(sessions);
+
+  // Create rubrics for each team in the division
+  const teamIds = [...new Set(sessions.map(s => s.team_id).filter((id): id is string => id !== null))];
+  const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
+  
+  const rubrics: Rubric[] = teamIds.flatMap(teamId =>
+    categories.map(category => ({
+      divisionId: req.divisionId,
+      teamId,
+      category,
+      status: 'empty' as const
+    }))
+  );
+
+  await db.rubrics.createMany(rubrics);
 
   res.status(200).json({ ok: true });
 });
