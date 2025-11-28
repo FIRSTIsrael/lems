@@ -657,7 +657,13 @@
             "judging": "Judging",
             "description-judging": "Visible on the internal judging schedule",
             "field": "Field",
-            "description-field": "Visible on the internal field schedule"
+            "description-field": "Visible on the internal field schedule",
+            "generating": "Generating...",
+            "generate-button": "Generate Agenda",
+            "generate": {
+              "success": "Agenda Created",
+              "error": "Failed to generate agenda: {error}"
+            }
           },
           "verify": {
             "title": "Verify schedule",

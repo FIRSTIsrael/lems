@@ -657,7 +657,13 @@
             "judging": "שיפוט",
             "description-judging": "יופיע בלו\"ז השיפוט הפנימי",
             "field": "זירה",
-            "description-field": "יופיע בלו\"ז הזירה הפנימי"
+            "description-field": "יופיע בלו\"ז הזירה הפנימי",
+            "generating": "יוצר סדר יום...",
+            "generate-button": "צור סדר יום",
+            "generate": {
+              "success": "סדר יום נוצר",
+              "error": "שגיאה ביצירת סדר היום: {error}"
+            }
           },
           "verify": {
             "title": "אימות לוח הזמנים",

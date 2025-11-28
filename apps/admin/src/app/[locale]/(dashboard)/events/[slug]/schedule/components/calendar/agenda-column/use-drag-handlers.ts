@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { AgendaBlock, HEADER_HEIGHT, TIME_SLOT_HEIGHT } from '../calendar-types';
 import { snapToGrid, timeToPosition, positionToTime, MIN_SNAP_DURATION } from '../drag-utils';
 import {
@@ -21,6 +22,7 @@ export const useDragHandlers = ({
   endTime,
   onDragStateChange
 }: UseDragHandlersProps) => {
+  const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   const handleMouseMove = useCallback(
     (e: MouseEvent, columnRect: DOMRect) => {
       if (!dragState) return;
@@ -106,7 +108,7 @@ export const useDragHandlers = ({
 
   const handleMouseUp = useCallback(
     (
-      onAddEvent: (startTime: Dayjs, duration: number) => void,
+      onAddEvent: (startTime: Dayjs, duration: number, title: string) => void,
       onUpdateEvent: (blockId: string, updates: Partial<AgendaBlock>) => void
     ) => {
       if (!dragState) return;
@@ -114,7 +116,7 @@ export const useDragHandlers = ({
       if (dragState.mode === 'create') {
         if (dragState.createStartPosition === dragState.createCurrentPosition) {
           const eventStart = positionToTime(dragState.createStartPosition || 0, startTime);
-          onAddEvent(eventStart, DEFAULT_EVENT_DURATION);
+          onAddEvent(eventStart, DEFAULT_EVENT_DURATION, t('default-event-title'));
         } else if (
           dragState.createStartPosition !== undefined &&
           dragState.createCurrentPosition !== undefined
@@ -127,7 +129,7 @@ export const useDragHandlers = ({
           const duration = Math.round(eventEnd.diff(eventStart, 'second'));
 
           if (duration >= MIN_CREATE_DURATION) {
-            onAddEvent(eventStart, duration);
+            onAddEvent(eventStart, duration, t('default-event-title'));
           }
         }
       } else if (dragState.mode === 'body' && dragState.blockId && dragState.originalStartTime) {
@@ -162,7 +164,7 @@ export const useDragHandlers = ({
 
       onDragStateChange(null);
     },
-    [dragState, startTime, onDragStateChange]
+    [dragState, onDragStateChange, startTime, t]
   );
 
   return { handleMouseMove, handleMouseUp };
