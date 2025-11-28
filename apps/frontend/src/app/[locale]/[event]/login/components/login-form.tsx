@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { Stack, Box, Alert, alpha, Fade } from '@mui/material';
@@ -38,6 +39,8 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   const { getRole } = useRoleTranslations();
   const { needsDivision, needsRoleInfo, needsUser, volunteerData } = useVolunteer();
 
+  const [disableAfterSuccess, setDisableAfterSuccess] = useState(false);
+
   function renderStep(currentStep: LoginStep) {
     switch (currentStep) {
       case LoginStep.Role:
@@ -49,7 +52,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       case LoginStep.User:
         return <UserStep />;
       case LoginStep.Password:
-        return <PasswordStep />;
+        return <PasswordStep disableAfterSuccess={disableAfterSuccess} />;
       default:
         return null;
     }
@@ -57,23 +60,21 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
   const handleSubmit = async (
     values: LoginFormValues,
-    { setSubmitting, setStatus }: FormikHelpers<LoginFormValues>
+    { setStatus }: FormikHelpers<LoginFormValues>
   ) => {
     setStatus(null);
-    setSubmitting(true);
 
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
       await submitLogin(values, volunteerData, captchaToken);
 
       removeRecaptchaBadge();
+      setLockAfterSuccess(true); // keep disabled after success
 
       router.push(`/lems/${values.role}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'server-error';
       setStatus(message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
