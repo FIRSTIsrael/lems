@@ -112,17 +112,17 @@
               "label": "לא התחיל",
               "description": "המחוון טרם מולא"
             },
-            "in-progress": {
+            "draft": {
               "label": "בתהליך",
               "description": "המחוון ממולא כעת"
             },
-            "ready": {
-              "label": "הושלם",
+            "approved": {
+              "label": "אושר",
               "description": "המחוון הושלם ונשלח"
             },
-            "waiting-for-review": {
-              "label": "ממתין לסקירה",
-              "description": "המחוון ממתין לסקירה של השופט הראשי"
+            "locked": {
+              "label": "נעול",
+              "description": "המחוון נעול ולא ניתן לעריכה"
             },
             "completed": {
               "label": "מאושר",

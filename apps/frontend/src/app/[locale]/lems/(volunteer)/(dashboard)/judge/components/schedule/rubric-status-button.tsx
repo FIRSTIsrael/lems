@@ -7,7 +7,7 @@ import { getRubricColor, getRubricIcon } from '@lems/shared/rubrics/rubric-utils
 
 interface RubricStatusButtonProps {
   category: JudgingCategory;
-  status: RubricStatus;
+  status?: RubricStatus;
   label: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -15,7 +15,7 @@ interface RubricStatusButtonProps {
 
 export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   category,
-  status,
+  status = 'empty',
   label,
   onClick,
   disabled = false

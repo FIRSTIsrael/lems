@@ -112,17 +112,17 @@
               "label": "Not Started",
               "description": "Rubric has not been filled yet"
             },
-            "in-progress": {
+            "draft": {
               "label": "In Progress",
               "description": "Rubric is currently being filled out"
             },
-            "ready": {
-              "label": "Ready",
+            "approved": {
+              "label": "Approved",
               "description": "Rubric has been completed and submitted"
             },
-            "waiting-for-review": {
-              "label": "Waiting for Review",
-              "description": "Rubric is waiting for review by head judge"
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
             },
             "completed": {
               "label": "Completed",

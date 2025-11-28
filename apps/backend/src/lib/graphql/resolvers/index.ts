@@ -1,3 +1,4 @@
+import { GraphQLScalarType, Kind } from 'graphql';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { teamsResolver } from './teams';
@@ -27,7 +28,36 @@ import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
 
+// JSON scalar resolver - passes through any valid JSON value
+const JSONScalar = new GraphQLScalarType({
+  name: 'JSON',
+  description: 'Arbitrary JSON value',
+  serialize: (value: unknown) => value,
+  parseValue: (value: unknown) => value,
+  parseLiteral: ast => {
+    switch (ast.kind) {
+      case Kind.STRING:
+      case Kind.BOOLEAN:
+        return ast.value;
+      case Kind.INT:
+      case Kind.FLOAT:
+        return parseFloat(ast.value);
+      case Kind.OBJECT:
+        return Object.fromEntries(
+          ast.fields.map(field => [field.name.value, JSONScalar.parseLiteral(field.value)])
+        );
+      case Kind.LIST:
+        return ast.values.map(value => JSONScalar.parseLiteral(value));
+      case Kind.NULL:
+        return null;
+      default:
+        return null;
+    }
+  }
+});
+
 export const resolvers = {
+  JSON: JSONScalar,
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,

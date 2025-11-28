@@ -15,7 +15,6 @@ import {
   Box,
   useTheme
 } from '@mui/material';
-import { RubricStatus } from '@lems/database';
 import { JudgingSession } from '../../judge.graphql';
 import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
@@ -35,11 +34,6 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
 }) => {
   const t = useTranslations('pages.judge.schedule');
   const theme = useTheme();
-
-  // Mock rubric status mapping - in phase 2 this will come from GraphQL
-  const getRubricStatus = (): RubricStatus => {
-    return 'empty';
-  };
 
   const sortedSessions = useMemo(() => {
     return [...sessions].sort((a, b) => a.number - b.number);
@@ -206,17 +200,17 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                   <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
                       category="core-values"
-                      status={getRubricStatus()}
+                      status={session.rubrics?.coreValues?.status}
                       label={t('rubric-labels.core-values')}
                     />
                     <RubricStatusButton
                       category="innovation-project"
-                      status={getRubricStatus()}
+                      status={session.rubrics?.innovationProject?.status}
                       label={t('rubric-labels.innovation-project')}
                     />
                     <RubricStatusButton
                       category="robot-design"
-                      status={getRubricStatus()}
+                      status={session.rubrics?.robotDesign?.status}
                       label={t('rubric-labels.robot-design')}
                     />
                   </Stack>
