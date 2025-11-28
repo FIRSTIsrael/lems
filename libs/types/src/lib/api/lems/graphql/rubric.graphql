@@ -1,0 +1,88 @@
+"""
+Status of a rubric evaluation
+"""
+enum RubricStatus {
+  "Rubric has not been filled yet"
+  EMPTY
+  "Rubric is partially filled"
+  DRAFT
+  "Rubric has been completed"
+  COMPLETED
+  "Rubric is locked and cannot be edited"
+  LOCKED
+  "Rubric has been approved"
+  APPROVED
+}
+
+"""
+Judging category type
+"""
+enum JudgingCategory {
+  "Innovation Project judging category"
+  INNOVATION_PROJECT
+  "Robot Design judging category"
+  ROBOT_DESIGN
+  "Core Values judging category"
+  CORE_VALUES
+}
+
+"""
+Feedback section of a rubric
+"""
+type RubricFeedback {
+  "Positive feedback for the team"
+  greatJob: String!
+  "Areas for improvement"
+  thinkAbout: String!
+}
+
+"""
+A criterion value in the rubric
+"""
+type RubricValue {
+  "Numeric value for the criterion"
+  value: Int!
+  "Optional notes about this criterion"
+  notes: String
+}
+
+"""
+Data section of a rubric
+"""
+type RubricData {
+  "Awards the team is eligible for"
+  awards: JSON
+  "Values for each rubric criterion"
+  values: JSON!
+  "Feedback for the team"
+  feedback: RubricFeedback!
+}
+
+"""
+A rubric evaluation for a team
+"""
+type Rubric {
+  "The team being evaluated"
+  team: Team!
+
+  "The judging category this rubric is for"
+  category: JudgingCategory!
+
+  "Current status of the rubric"
+  status: RubricStatus!
+
+  "Rubric data including scores and feedback"
+  data: RubricData
+}
+
+"""
+Categorized rubrics for a team across all judging categories
+"""
+type CategorizedRubrics {
+  "Innovation Project rubric"
+  innovationProject: Rubric
+  "Robot Design rubric"
+  robotDesign: Rubric
+  "Core Values rubric"
+  coreValues: Rubric
+}

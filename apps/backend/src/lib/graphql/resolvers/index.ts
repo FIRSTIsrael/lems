@@ -12,9 +12,18 @@ import { divisionJudgingResolver } from './divisions/judging';
 import { judgingSessionsResolver } from './divisions/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging-session-length';
+import { judgingRubricsResolver } from './divisions/judging-rubrics';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
+import { sessionRubricsResolver } from './judging/session-rubrics';
+import {
+  rubricTeamResolver,
+  rubricCategoryResolver,
+  rubricStatusResolver,
+  rubricDataResolver
+} from './judging/rubric';
 import { teamArrivalResolver } from './divisions/team-arrival';
+import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
 
@@ -42,14 +51,23 @@ export const resolvers = {
   Judging: {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
-    sessionLength: judgingSessionLengthResolver
+    sessionLength: judgingSessionLengthResolver,
+    rubrics: judgingRubricsResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,
-    team: judgingSessionTeamResolver
+    team: judgingSessionTeamResolver,
+    rubrics: sessionRubricsResolver
   },
   Team: {
-    arrived: teamArrivalResolver
+    arrived: teamArrivalResolver,
+    rubrics: teamRubricsResolver
+  },
+  Rubric: {
+    team: rubricTeamResolver,
+    category: rubricCategoryResolver,
+    status: rubricStatusResolver,
+    data: rubricDataResolver
   },
   Volunteer: {
     divisions: volunteerDivisionsResolver
