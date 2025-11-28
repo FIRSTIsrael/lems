@@ -4,17 +4,10 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconButton, Popover, Box, Typography, Stack, Divider, useTheme } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
-import EditIcon from '@mui/icons-material/Edit';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import type { RubricStatus } from './rubric-status-button';
+import { RubricStatus } from '@lems/database';
+import { getRubricIcon } from '@lems/shared/rubrics/rubric-utils';
 
-interface StatusGlossaryItem {
-  status: RubricStatus;
-  icon: React.ReactNode;
-}
+const STATUS_ITEMS: RubricStatus[] = ['empty', 'draft', 'completed', 'locked', 'approved'];
 
 export const RubricStatusGlossary: React.FC = () => {
   const t = useTranslations('pages.judge.schedule.status-glossary');
@@ -30,32 +23,6 @@ export const RubricStatusGlossary: React.FC = () => {
   };
 
   const open = Boolean(anchorEl);
-
-  const iconColor = theme.palette.text.secondary;
-  const iconStyle = { fontSize: '1.1rem', color: iconColor };
-
-  const statusItems: StatusGlossaryItem[] = [
-    {
-      status: 'empty',
-      icon: <CircleOutlinedIcon sx={{ ...iconStyle, opacity: 0.4 }} />
-    },
-    {
-      status: 'in-progress',
-      icon: <EditIcon sx={iconStyle} />
-    },
-    {
-      status: 'ready',
-      icon: <CheckCircleIcon sx={iconStyle} />
-    },
-    {
-      status: 'waiting-for-review',
-      icon: <HourglassEmptyIcon sx={iconStyle} />
-    },
-    {
-      status: 'completed',
-      icon: <VerifiedIcon sx={iconStyle} />
-    }
-  ];
 
   return (
     <>
@@ -139,7 +106,7 @@ export const RubricStatusGlossary: React.FC = () => {
           </Typography>
 
           <Stack spacing={1.5} divider={<Divider />}>
-            {statusItems.map(({ status, icon }) => (
+            {STATUS_ITEMS.map(status => (
               <Stack
                 key={status}
                 direction="row"
@@ -156,7 +123,7 @@ export const RubricStatusGlossary: React.FC = () => {
                     pt: 0.25
                   }}
                 >
-                  {icon}
+                  {getRubricIcon(status, theme.palette.text.primary)}
                 </Box>
                 <Box>
                   <Typography

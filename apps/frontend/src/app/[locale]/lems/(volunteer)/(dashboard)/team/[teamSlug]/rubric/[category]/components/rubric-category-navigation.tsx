@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory, JUDGING_CATEGORIES } from '@lems/types/judging';
-import { getCategoryColor } from '../rubric-utils';
+import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 
 export const RubricCategoryNavigation: React.FC = () => {
   const theme = useTheme();
@@ -67,7 +67,7 @@ export const RubricCategoryNavigation: React.FC = () => {
           >
             {JUDGING_CATEGORIES.map(category => {
               const isActive = category === currentCategory;
-              const categoryColor = getCategoryColor(category);
+              const color = getRubricColor(category);
 
               return (
                 <Box
@@ -82,20 +82,19 @@ export const RubricCategoryNavigation: React.FC = () => {
                     borderRadius: 1.5,
                     backgroundColor: isActive
                       ? theme.palette.mode === 'dark'
-                        ? `${categoryColor}20`
-                        : `${categoryColor}10`
+                        ? `${color}20`
+                        : `${color}10`
                       : 'transparent',
                     border: '1.5px solid',
-                    borderColor: isActive ? categoryColor : theme.palette.divider,
+                    borderColor: isActive ? color : theme.palette.divider,
                     cursor: 'pointer',
                     transition: 'all 0.15s ease-in-out',
                     minWidth: '130px',
                     '&:hover': {
-                      backgroundColor:
-                        theme.palette.mode === 'dark' ? `${categoryColor}30` : `${categoryColor}15`,
-                      borderColor: categoryColor,
+                      backgroundColor: theme.palette.mode === 'dark' ? `${color}30` : `${color}15`,
+                      borderColor: color,
                       transform: 'translateY(-1px)',
-                      boxShadow: `0 2px 6px ${categoryColor}30`
+                      boxShadow: `0 2px 6px ${color}30`
                     },
                     '&:active': {
                       transform: 'translateY(0)'
@@ -107,7 +106,7 @@ export const RubricCategoryNavigation: React.FC = () => {
                       width: 6,
                       height: 6,
                       borderRadius: '50%',
-                      backgroundColor: categoryColor,
+                      backgroundColor: color,
                       opacity: isActive ? 1 : 0.5,
                       transition: 'opacity 0.15s'
                     }}
@@ -117,7 +116,7 @@ export const RubricCategoryNavigation: React.FC = () => {
                     sx={{
                       fontWeight: isActive ? 700 : 600,
                       fontSize: '0.8125rem',
-                      color: isActive ? categoryColor : theme.palette.text.secondary,
+                      color: isActive ? color : theme.palette.text.secondary,
                       flex: 1,
                       textAlign: 'left',
                       transition: 'color 0.15s'
