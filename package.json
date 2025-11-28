@@ -94,7 +94,7 @@
     "@nx/js": "22.0.3",
     "@nx/next": "22.0.3",
     "@nx/node": "22.0.3",
-    "@nx/react": "22.0.3",
+    "@nx/react": "22.1.2",
     "@nx/webpack": "22.0.3",
     "@nx/workspace": "22.0.3",
     "@swc-node/register": "^1.11.1",
