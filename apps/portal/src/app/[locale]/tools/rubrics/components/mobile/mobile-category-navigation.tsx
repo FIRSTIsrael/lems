@@ -5,7 +5,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
-import { getCategoryColor } from '../../rubric-utils';
+import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { useRubricContext } from '../rubric-context';
 
 export const MobileCategoryNavigation: React.FC = () => {
@@ -53,7 +53,7 @@ export const MobileCategoryNavigation: React.FC = () => {
       >
         {JUDGING_CATEGORIES.map(category => {
           const isActive = category === currentCategory;
-          const categoryColor = getCategoryColor(category);
+          const color = getRubricColor(category);
 
           return (
             <Box
@@ -68,20 +68,19 @@ export const MobileCategoryNavigation: React.FC = () => {
                 borderRadius: 1,
                 backgroundColor: isActive
                   ? theme.palette.mode === 'dark'
-                    ? `${categoryColor}20`
-                    : `${categoryColor}10`
+                    ? `${color}20`
+                    : `${color}10`
                   : 'transparent',
                 border: '1px solid',
-                borderColor: isActive ? categoryColor : theme.palette.divider,
+                borderColor: isActive ? color : theme.palette.divider,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease-in-out',
                 flex: '1 1 auto',
                 minWidth: '120px',
                 justifyContent: 'center',
                 '&:hover': {
-                  backgroundColor:
-                    theme.palette.mode === 'dark' ? `${categoryColor}30` : `${categoryColor}15`,
-                  borderColor: categoryColor
+                  backgroundColor: theme.palette.mode === 'dark' ? `${color}30` : `${color}15`,
+                  borderColor: color
                 },
                 '&:active': {
                   transform: 'scale(0.98)'
@@ -93,7 +92,7 @@ export const MobileCategoryNavigation: React.FC = () => {
                   width: 4,
                   height: 4,
                   borderRadius: '50%',
-                  backgroundColor: categoryColor,
+                  backgroundColor: color,
                   opacity: isActive ? 1 : 0.5,
                   transition: 'opacity 0.15s'
                 }}
@@ -103,7 +102,7 @@ export const MobileCategoryNavigation: React.FC = () => {
                 sx={{
                   fontWeight: isActive ? 700 : 600,
                   fontSize: '0.75rem',
-                  color: isActive ? categoryColor : theme.palette.text.secondary,
+                  color: isActive ? color : theme.palette.text.secondary,
                   transition: 'color 0.15s',
                   whiteSpace: 'nowrap'
                 }}
