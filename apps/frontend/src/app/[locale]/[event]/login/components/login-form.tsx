@@ -69,7 +69,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       await submitLogin(values, volunteerData, captchaToken);
 
       removeRecaptchaBadge();
-      setLockAfterSuccess(true); // keep disabled after success
+      setDisableAfterSuccess(true); // keep login button disabled after success
 
       router.push(`/lems/${values.role}`);
     } catch (error) {
