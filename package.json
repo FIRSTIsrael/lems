@@ -71,7 +71,7 @@
     "react-markdown": "^10.1.0",
     "react-scroll": "^1.9.3",
     "react-signature-canvas": "^1.0.7",
-    "recharts": "^2.15.4",
+    "recharts": "^3.5.0",
     "serve-favicon": "^2.5.1",
     "stylis": "^4.3.6",
     "swr": "^2.3.6",
