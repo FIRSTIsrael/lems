@@ -36,19 +36,19 @@ export const rubricCategoryResolver: GraphQLFieldResolver<
   unknown,
   string
 > = (rubric: RubricGraphQL) => {
-  // Convert from 'innovation-project' to 'INNOVATION_PROJECT' format
-  return rubric.category.replace(/-/g, '_').toUpperCase();
+  // Convert from 'innovation-project' to 'innovation_project' format
+  return rubric.category.replace(/-/g, '_');
 };
 
 /**
  * Resolver for Rubric.status field.
- * Converts the database status format to GraphQL enum format.
+ * Returns the database status format directly.
  */
 export const rubricStatusResolver: GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string> = (
   rubric: RubricGraphQL
 ) => {
-  // Convert from 'in-progress' to 'IN_PROGRESS' format
-  return rubric.status.replace(/-/g, '_').toUpperCase();
+  // Return status as-is (already in lowercase format)
+  return rubric.status;
 };
 
 /**

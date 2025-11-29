@@ -3,15 +3,15 @@ Status of a rubric evaluation
 """
 enum RubricStatus {
   "Rubric has not been filled yet"
-  EMPTY
+  empty
   "Rubric is partially filled"
-  DRAFT
+  draft
   "Rubric has been completed"
-  COMPLETED
+  completed
   "Rubric is locked and cannot be edited"
-  LOCKED
+  locked
   "Rubric has been approved"
-  APPROVED
+  approved
 }
 
 """
@@ -19,11 +19,11 @@ Judging category type
 """
 enum JudgingCategory {
   "Innovation Project judging category"
-  INNOVATION_PROJECT
+  innovation_project
   "Robot Design judging category"
-  ROBOT_DESIGN
+  robot_design
   "Core Values judging category"
-  CORE_VALUES
+  core_values
 }
 
 """

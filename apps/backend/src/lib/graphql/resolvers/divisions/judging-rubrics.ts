@@ -28,8 +28,8 @@ export const judgingRubricsResolver: GraphQLFieldResolver<
     // Apply category filter if provided
     if (args.category) {
       // Convert GraphQL enum format to database format
-      // e.g., 'INNOVATION_PROJECT' -> 'innovation-project'
-      const dbCategory = args.category.toLowerCase().replace(/_/g, '-') as JudgingCategory;
+      // e.g., 'innovation_project' -> 'innovation-project'
+      const dbCategory = args.category.replace(/_/g, '-') as JudgingCategory;
       rubricsSelector = rubricsSelector.byCategory(dbCategory);
     }
 
