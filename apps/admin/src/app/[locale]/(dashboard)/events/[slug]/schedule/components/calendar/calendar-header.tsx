@@ -8,9 +8,14 @@ import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material'
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useSchedule } from '../schedule-context';
-import { useCalendar, CalendarContextType } from './calendar-context';
+import { useCalendar } from './calendar-context';
 import { NotificationBanner } from './notification-banner';
-import { NotificationState, prepareAgendaRequest, prepareSchedulerRequest, ValidateScheduleResponseSchema } from './schedule-utils';
+import {
+  NotificationState,
+  prepareAgendaRequest,
+  prepareSchedulerRequest,
+  ValidateScheduleResponseSchema
+} from './schedule-utils';
 
 export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) => {
   const t = useTranslations('pages.events.schedule.calendar');
@@ -22,7 +27,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     show: false
   });
   const [verificationPassed, setVerificationPassed] = useState(false);
-  const [isGeneratingAgenda, setIsGeneratingAgenda] = useState(false);
+  const [isSavingAgenda, setIsSavingAgenda] = useState(false);
 
   const { addPracticeRound, addRankingRound } = useCalendar();
   const calendarContext = useCalendar();
@@ -109,12 +114,12 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     }
   };
 
-  const handleAgendaGenerate = async () => {
-    setIsGeneratingAgenda(true);
+  const handleSaveAgenda = async () => {
+    setIsSavingAgenda(true);
     setNotification({ variant: null, message: '', show: false });
     try {
       const requestData = prepareAgendaRequest(calendarContext, scheduleContext, division.id);
-      
+
       const response = await apiFetch(
         `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda-events`,
         {
@@ -137,7 +142,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
         show: true
       });
     } finally {
-      setIsGeneratingAgenda(false);
+      setIsSavingAgenda(false);
     }
   };
 
@@ -197,11 +202,11 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           size="small"
           variant="contained"
           startIcon={getGenerateIcon()}
-          onClick={handleAgendaGenerate}
-          disabled={isGeneratingAgenda}
+          onClick={handleSaveAgenda}
+          disabled={isSavingAgenda}
           color={notification.variant === 'success' ? 'success' : 'primary'}
         >
-          {isGeneratingAgenda ? t('agenda.generating') : t('agenda.generate-button')}
+          {isSavingAgenda ? t('agenda.generating') : t('agenda.generate-button')}
         </Button>
       </Stack>
 
