@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsGeneralTranslations } from '@lems/localization';
-import { getCategoryColor } from '../../rubric-utils';
+import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { useRubricContext } from '../rubric-context';
 
 interface MobileFeedbackProps {
@@ -24,8 +24,9 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { rubric, updateRubric } = useRubricContext();
   const feedbackFields = ['great-job', 'think-about'] as const;
-  const categoryColor = getCategoryColor(category);
-  const categoryBackground = lighten(categoryColor, 0.9);
+
+  const color = getRubricColor(category);
+  const background = lighten(color, 0.9);
 
   const handleFeedbackChange = async (field: 'great-job' | 'think-about', value: string) => {
     const feedback = {
@@ -47,21 +48,21 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
     <Card
       sx={{
         mb: 3,
-        borderTop: `3px solid ${categoryColor}`,
+        borderTop: `3px solid ${color}`,
         boxShadow: 1,
-        backgroundColor: `${categoryBackground}10`,
+        backgroundColor: `${background}10`,
         transition: 'all 0.2s ease'
       }}
     >
       <CardHeader
         title={
-          <Typography variant="h6" fontWeight={700} sx={{ color: categoryColor }}>
+          <Typography variant="h6" fontWeight={700} sx={{ color }}>
             Feedback
           </Typography>
         }
         sx={{
-          backgroundColor: `${categoryBackground}25`,
-          borderBottom: `1px solid ${categoryBackground}40`
+          backgroundColor: `${background}25`,
+          borderBottom: `1px solid ${background}40`
         }}
       />
       <CardContent>

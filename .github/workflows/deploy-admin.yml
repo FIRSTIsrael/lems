@@ -18,6 +18,8 @@ on:
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
+      RECAPTCHA_SITE_KEY:
+        required: false
 
 jobs:
   build:
@@ -46,7 +48,36 @@ jobs:
           # These NEXT_PUBLIC_* variables are embedded into the client bundle
           NEXT_PUBLIC_BASE_URL: ${{ vars.BASE_URL }}
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
-        run: npx nx build admin --configuration=production
+        run: |
+          echo "🔨 Building admin with NEXT_PUBLIC variables..."
+          echo "   NEXT_PUBLIC_BASE_URL: $NEXT_PUBLIC_BASE_URL"
+          echo "   NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:+***set***}"
+          
+          if [ -z "$NEXT_PUBLIC_BASE_URL" ]; then
+            echo "⚠️ WARNING: NEXT_PUBLIC_BASE_URL is empty!"
+          fi
+          
+          if [ -z "$NEXT_PUBLIC_RECAPTCHA_SITE_KEY" ]; then
+            echo "⚠️ WARNING: NEXT_PUBLIC_RECAPTCHA_SITE_KEY is empty!"
+          fi
+          
+          # Export variables explicitly for Next.js
+          export NEXT_PUBLIC_BASE_URL="$NEXT_PUBLIC_BASE_URL"
+          export NEXT_PUBLIC_RECAPTCHA_SITE_KEY="$NEXT_PUBLIC_RECAPTCHA_SITE_KEY"
+          
+          npx nx build admin --configuration=production
+          
+          echo "✅ Build complete"
+          echo "🔍 Verifying NEXT_PUBLIC variables are embedded in bundle..."
+          
+          # Check if variables are in the built JavaScript bundles
+          if grep -r "$NEXT_PUBLIC_BASE_URL" dist/apps/admin/.next/static/chunks/*.js 2>/dev/null; then
+            echo "✅ NEXT_PUBLIC_BASE_URL found in bundle"
+          else
+            echo "⚠️ WARNING: NEXT_PUBLIC_BASE_URL not found in bundle - checking further..."
+            echo "   Searching in all build files..."
+            find dist/apps/admin/.next -name "*.js" -exec grep -l "$NEXT_PUBLIC_BASE_URL" {} \; | head -5 || echo "   Not found in any JS files!"
+          fi
       
       - name: Install doctl
         uses: digitalocean/action-doctl@v2.5.1

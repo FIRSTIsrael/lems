@@ -36,15 +36,23 @@ jobs:
           set -euo pipefail
           
           REPOSITORY="lems"
-          TAG_PATTERN='${{ inputs.tag_pattern }}'
-          EXCLUDE_PATTERN='${{ inputs.exclude_pattern }}'
+          TAG_PATTERN=${{ inputs.tag_pattern }}
+          EXCLUDE_PATTERN=${{ inputs.exclude_pattern }}
           
           echo "🔍 Fetching tags from repository: $REPOSITORY"
+          echo "📋 Tag pattern: $TAG_PATTERN"
+          echo "🚫 Exclude pattern: $EXCLUDE_PATTERN"
           tags=$(doctl registry repository list-tags "$REPOSITORY" --output json)
           
+          echo "📦 Found tags:"
+          echo "$tags" | jq -r '.[].tag' | head -20
+          echo ""
+          
+          DELETED_COUNT=0
           echo "$tags" | jq -r '.[] | select(.manifest_digest != null and .manifest_digest != "") | "\(.tag)|\(.manifest_digest)"' | while IFS='|' read -r tag digest; do
             # Check if tag matches include pattern
             if [[ ! "$tag" =~ $TAG_PATTERN ]]; then
+              echo "⏭️  Skipping non-matching: $tag"
               continue
             fi
             
@@ -62,9 +70,11 @@ jobs:
             # Delete manifest by digest
             echo "🗑️  Deleting: $tag (digest: $digest)"
             doctl registry repository delete-manifest "$REPOSITORY" "$digest" --force
+            DELETED_COUNT=$((DELETED_COUNT + 1))
           done
           
-          echo "✅ Cleanup complete"
+          echo ""
+          echo "✅ Cleanup complete - deleted $DELETED_COUNT image(s)"
       
       - name: Run garbage collection
         run: |

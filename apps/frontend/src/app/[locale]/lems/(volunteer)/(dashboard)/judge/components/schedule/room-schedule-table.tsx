@@ -15,8 +15,9 @@ import {
   Box,
   useTheme
 } from '@mui/material';
+import { RubricStatus } from '@lems/database';
 import { JudgingSession } from '../../judge.graphql';
-import { RubricStatusButton, RubricStatus } from './rubric-status-button';
+import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
 import { RubricStatusGlossary } from './rubric-status-glossary';
@@ -204,17 +205,17 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                 <TableCell sx={{ py: 2.5 }}>
                   <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
-                      type="core-values"
+                      category="core-values"
                       status={getRubricStatus()}
                       label={t('rubric-labels.core-values')}
                     />
                     <RubricStatusButton
-                      type="innovation-project"
+                      category="innovation-project"
                       status={getRubricStatus()}
                       label={t('rubric-labels.innovation-project')}
                     />
                     <RubricStatusButton
-                      type="robot-design"
+                      category="robot-design"
                       status={getRubricStatus()}
                       label={t('rubric-labels.robot-design')}
                     />
