@@ -65,6 +65,12 @@
     "insights": {
       "coming-soon": "Coming soon..."
     },
+    "api-docs": {
+      "title": "API Docs"
+    },
+    "graphql-schema": {
+      "title": "GraphQL Schema"
+    },
     "teams": {
       "title": "Teams",
       "create-new-team": "Create New Team",
@@ -971,7 +977,8 @@
       "manage-events": "Manage Events",
       "manage-event-details": "Manage Event Details",
       "manage-teams": "Manage Teams",
-      "view-insights": "View Insights"
+      "view-insights": "View Insights",
+      "dev-tools": "Dev Tools"
     }
   },
   "layouts": {
@@ -981,7 +988,9 @@
         "users": "Users",
         "events": "Events",
         "teams": "Teams",
-        "insights": "Insights"
+        "insights": "Insights",
+        "api-docs": "API Docs",
+        "graphql-schema": "GraphQL Schema"
       },
       "user-menu": {
         "logout": "Logout"

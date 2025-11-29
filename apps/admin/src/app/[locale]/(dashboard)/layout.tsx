@@ -16,7 +16,9 @@ import {
   PersonOutlined,
   EmojiEventsOutlined,
   GroupOutlined,
-  InsightsOutlined
+  InsightsOutlined,
+  BuildOutlined,
+  DataObject
 } from '@mui/icons-material';
 import { PermissionType } from '@lems/database';
 import {
@@ -118,6 +120,32 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
             </Link>
           );
         })}
+
+        {permissions.includes('DEV_TOOLS') && (
+          <>
+            <Divider />
+            <Link href="/api-docs">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <BuildOutlined />
+                  </ListItemIcon>
+                  <ListItemText primary={t('sidebar.api-docs')} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+            <Link href="/graphql-schema">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <DataObject />
+                  </ListItemIcon>
+                  <ListItemText primary={t('sidebar.graphql-schema')} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+          </>
+        )}
       </List>
       <Divider />
       <Box sx={{ p: 2 }}>

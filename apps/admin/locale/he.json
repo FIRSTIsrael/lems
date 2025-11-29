@@ -65,6 +65,12 @@
     "insights": {
       "coming-soon": "בקרוב..."
     },
+    "api-docs": {
+      "title": "תיעוד API"
+    },
+    "graphql-schema": {
+      "title": "סכמת GraphQL"
+    },
     "teams": {
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",
@@ -971,7 +977,8 @@
       "manage-events": "ניהול אירועים",
       "manage-event-details": "ניהול פרטי אירועים",
       "manage-teams": "ניהול קבוצות",
-      "view-insights": "צפייה בתובנות"
+      "view-insights": "צפייה בתובנות",
+      "dev-tools": "כלי פיתוח"
     }
   },
   "layouts": {
@@ -981,7 +988,9 @@
         "users": "משתמשים",
         "events": "אירועים",
         "teams": "קבוצות",
-        "insights": "תובנות"
+        "insights": "תובנות",
+        "api-docs": "תיעוד API",
+        "graphql-schema": "סכמת GraphQL"
       },
       "user-menu": {
         "logout": "התנתקות"

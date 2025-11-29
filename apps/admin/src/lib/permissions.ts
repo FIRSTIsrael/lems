@@ -5,7 +5,9 @@ const pagePermissions: Record<string, PermissionType> = {
   users: 'MANAGE_USERS',
   events: 'MANAGE_EVENTS',
   teams: 'MANAGE_TEAMS',
-  insights: 'VIEW_INSIGHTS'
+  insights: 'VIEW_INSIGHTS',
+  'api-docs': 'DEV_TOOLS',
+  'graphql-schema': 'DEV_TOOLS'
 };
 
 /**
