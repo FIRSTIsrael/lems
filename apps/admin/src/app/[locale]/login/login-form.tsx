@@ -54,6 +54,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   useRecaptcha(recaptchaRequired);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [disableAfterSuccess, setDisableAfterSuccess] = useState(false);
 
   const initialValues: LoginFormValues = {
     username: '',
@@ -62,10 +63,9 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
   const handleSubmit = async (
     values: LoginFormValues,
-    { setSubmitting, setStatus }: FormikHelpers<LoginFormValues>
+    { setStatus }: FormikHelpers<LoginFormValues>
   ) => {
     setStatus(null);
-    setSubmitting(true);
 
     try {
       const captchaToken = recaptchaRequired ? await createRecaptchaToken() : undefined;
@@ -87,6 +87,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       }
 
       removeRecaptchaBadge();
+      setDisableAfterSuccess(true); // keep login button disabled after success
 
       const urlParams = new URLSearchParams(window.location.search);
       let returnUrl = urlParams.get('returnUrl') || '/';
@@ -100,10 +101,8 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       }
       router.push(decodeURIComponent(returnUrl));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'server-error';
-      setStatus(message);
-    } finally {
-      setSubmitting(false);
+        const message = error instanceof Error ? error.message : 'server-error';
+        setStatus(message);
     }
   };
 
@@ -165,7 +164,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                     type="submit"
                     variant="contained"
                     size="large"
-                    disabled={isSubmitting || !isValid}
+                    disabled={disableAfterSuccess || isSubmitting || !isValid}
                     endIcon={<DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} />}
                     sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
                   >
