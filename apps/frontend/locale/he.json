@@ -193,24 +193,24 @@
         "loading": "טוען מפת פיטים...",
         "error-loading": "שגיאה בטעינת מפת הפיטים. אנא נסו שוב.",
         "no-map": "לא קיימת מפת פיטים."
+      }
+    },
+    "rubric": {
+      "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
+      "field-notes-label": "הערות",
+      "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
+      "navigation": {
+        "title": "תחומי שיפוט"
       },
-      "rubric": {
-        "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
-        "field-notes-label": "הערות",
-        "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
-        "navigation": {
-          "title": "תחומי שיפוט"
-        },
-        "award-nominations": {
-          "title": "מועמדות לפרס",
-          "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
-          "no-awards": "אין פרסים אופציונליים זמינים."
-        },
-        "actions": {
-          "save-draft": "שמור כטיוטה",
-          "submit-review": "הגש לבדיקה",
-          "reset": "איפוס"
-        }
+      "award-nominations": {
+        "title": "מועמדות לפרס",
+        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסים אופציונליים משתמש בהם האירוע שלכם.",
+        "no-awards": "אין פרסים אופציונליים זמינים."
+      },
+      "actions": {
+        "save-draft": "שמור כטיוטה",
+        "submit-review": "הגש לבדיקה",
+        "reset": "איפוס"
       }
     }
   },

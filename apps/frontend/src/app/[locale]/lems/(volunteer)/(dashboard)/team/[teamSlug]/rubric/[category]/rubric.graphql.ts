@@ -6,22 +6,26 @@ import { RubricStatus } from '@lems/database';
  * Query to fetch a single rubric for a team and category
  */
 export const GET_RUBRIC_QUERY = gql`
-  query GetRubric($teamId: String!, $category: JudgingCategory!) {
-    rubric(teamId: $teamId, category: $category) {
-      id
-      team {
-        id
-        name
-        number
-      }
-      category
-      status
-      data {
-        awards
-        values
-        feedback {
-          greatJob
-          thinkAbout
+  query GetRubric($divisionId: String!, $teamId: String!, $category: JudgingCategory!) {
+    division(id: $divisionId) {
+      judging {
+        rubrics(teamIds: [$teamId], category: $category) {
+          id
+          team {
+            id
+            name
+            number
+          }
+          category
+          status
+          data {
+            awards
+            values
+            feedback {
+              greatJob
+              thinkAbout
+            }
+          }
         }
       }
     }
@@ -46,16 +50,21 @@ export interface RubricDataFields {
 }
 
 export interface RubricQueryResult {
-  rubric: {
-    id: string;
-    team: RubricTeamData;
-    category: JudgingCategory;
-    status: RubricStatus;
-    data?: RubricDataFields;
+  division: {
+    judging: {
+      rubrics: Array<{
+        id: string;
+        team: RubricTeamData;
+        category: JudgingCategory;
+        status: RubricStatus;
+        data?: RubricDataFields;
+      }>;
+    };
   };
 }
 
 export interface GetRubricQueryVariables {
+  divisionId: string;
   teamId: string;
   category: JudgingCategory;
 }

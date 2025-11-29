@@ -13,6 +13,7 @@ import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useUser } from '../../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
+import { useEvent } from '../../../../../components/event-context';
 import { RubricActions } from './components/rubric-actions';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
@@ -24,6 +25,7 @@ export default function RubricPage() {
   const { getCategory } = useJudgingCategoryTranslations();
   const team = useTeam();
   const user = useUser();
+  const { currentDivision } = useEvent();
 
   const { category } = useParams();
   const schema = rubrics[category as JudgingCategory];
@@ -31,12 +33,13 @@ export default function RubricPage() {
   const { data: rubricQueryData } = usePageData<RubricQueryResult, GetRubricQueryVariables>(
     GET_RUBRIC_QUERY,
     {
+      divisionId: currentDivision.id,
       teamId: team.id,
       category: hyphensToUnderscores(category as string) as JudgingCategory
     }
   );
 
-  const rubric = rubricQueryData?.rubric;
+  const rubric = rubricQueryData?.division.judging.rubrics[0];
 
   const isEditable = useMemo(() => {
     if (user.role === 'judge-advisor') {

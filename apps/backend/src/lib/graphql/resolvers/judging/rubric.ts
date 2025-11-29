@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Rubric as DbRubric } from '@lems/database';
 import { hyphensToUnderscores } from '@lems/shared/utils';
+import db from '../../../database';
 import { toGraphQLId } from '../../utils/object-id-transformer';
 
 export interface RubricGraphQL {
@@ -24,9 +25,33 @@ export const rubricTeamResolver: GraphQLFieldResolver<
   RubricGraphQL,
   unknown,
   unknown,
-  Promise<{ id: string }>
+  Promise<{
+    id: string;
+    name: string;
+    number: string;
+    affiliation: string;
+    city: string;
+    region: string;
+    location: string | null;
+    slug: string;
+    logoUrl: string | null;
+  }>
 > = async (rubric: RubricGraphQL) => {
-  return { id: rubric.teamId };
+  const team = await db.teams.byId(rubric.teamId).get();
+  if (!team) {
+    throw new Error(`Team not found: ${rubric.teamId}`);
+  }
+  return {
+    id: team.id,
+    name: team.name,
+    number: team.number.toString(),
+    affiliation: team.affiliation,
+    city: team.city,
+    region: team.region,
+    location: team.coordinates || null,
+    slug: `${team.region}-${team.number}`.toUpperCase(),
+    logoUrl: team.logo_url || null
+  };
 };
 
 /**

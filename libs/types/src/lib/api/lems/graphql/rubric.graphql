@@ -89,15 +89,3 @@ type CategorizedRubrics {
   "Core Values rubric"
   coreValues: Rubric
 }
-
-extend type Query {
-  """
-  Get a specific rubric for a team and judging category
-  """
-  rubric(
-    "The ID of the team"
-    teamId: String!
-    "The judging category"
-    category: JudgingCategory!
-  ): Rubric
-}
