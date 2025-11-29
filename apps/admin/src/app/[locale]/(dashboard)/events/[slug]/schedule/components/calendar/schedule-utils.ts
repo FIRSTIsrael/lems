@@ -74,7 +74,7 @@ interface Agenda {
   title: string;
   visibility: string;
   start_time: string;
-  duration_seconds: number;
+  duration: number;
 }
 
 function calculateBreaks(
@@ -168,7 +168,7 @@ export function prepareAgendaRequest(
       title: block.title,
       visibility: block.visibilty,
       start_time: startTimeInTz.toISOString(),
-      duration_seconds: block.durationSeconds,
+      duration: block.durationSeconds,
       division_id: divisionId
     });
   }

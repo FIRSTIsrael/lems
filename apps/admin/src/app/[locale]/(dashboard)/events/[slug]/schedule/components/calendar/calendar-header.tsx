@@ -27,7 +27,6 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     show: false
   });
   const [verificationPassed, setVerificationPassed] = useState(false);
-  const [isSavingAgenda, setIsSavingAgenda] = useState(false);
 
   const { addPracticeRound, addRankingRound } = useCalendar();
   const calendarContext = useCalendar();
@@ -83,6 +82,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     setIsGenerating(true);
     setNotification({ variant: null, message: '', show: false });
 
+    await handleSaveAgenda();
     try {
       const requestData = prepareSchedulerRequest(calendarContext, scheduleContext, division.id);
 
@@ -115,35 +115,21 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
   };
 
   const handleSaveAgenda = async () => {
-    setIsSavingAgenda(true);
     setNotification({ variant: null, message: '', show: false });
-    try {
-      const requestData = prepareAgendaRequest(calendarContext, scheduleContext, division.id);
+    const requestData = prepareAgendaRequest(calendarContext, scheduleContext, division.id);
 
-      const response = await apiFetch(
-        `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda-events`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestData)
-        }
-      );
-      if (!response.ok) {
-        throw new Error(response.statusText);
+    const response = await apiFetch(
+      `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda-events`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
       }
-      setNotification({ variant: 'success', message: t('agenda.generate.success'), show: true });
-      mutate(`/admin/events/${division.eventId}/divisions`);
-    } catch (error: unknown) {
-      setNotification({
-        variant: 'error',
-        message: t('agenda.generate.error', {
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }),
-        show: true
-      });
-    } finally {
-      setIsSavingAgenda(false);
+    );
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
+    mutate(`/admin/events/${division.eventId}/divisions`);
   };
 
   const getIcon = () => {
@@ -196,17 +182,6 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           disabled={!verificationPassed || isGenerating}
         >
           {isGenerating ? t('generate.generating') : t('generate.generate-button')}
-        </Button>
-
-        <Button
-          size="small"
-          variant="contained"
-          startIcon={getGenerateIcon()}
-          onClick={handleSaveAgenda}
-          disabled={isSavingAgenda}
-          color={notification.variant === 'success' ? 'success' : 'primary'}
-        >
-          {isSavingAgenda ? t('agenda.generating') : t('agenda.generate-button')}
         </Button>
       </Stack>
 

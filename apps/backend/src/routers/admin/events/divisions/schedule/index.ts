@@ -208,7 +208,7 @@ router.post(
         res.status(400).json({ error: 'Invalid agenda events' });
         return;
       }
-      await db.agendaEvents.createMany(agendaEvents);
+      await db.divisions.byId(req.divisionId).agenda().createMany(agendaEvents);
       res.status(200).json({ ok: true });
     } catch (error) {
       console.error('Error updating agenda events:', error);
