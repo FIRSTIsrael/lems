@@ -24,7 +24,7 @@ export const useDragHandlers = ({
 }: UseDragHandlersProps) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   const handleMouseMove = useCallback(
-    (e: MouseEvent, columnRect: DOMRect) => {
+    (e: MouseEvent, columnRect: DOMRect) => {      
       if (!dragState) return;
 
       const yPos = e.clientY - columnRect.top;
@@ -41,18 +41,16 @@ export const useDragHandlers = ({
         dragState.originalStartTime &&
         dragState.dragStartPosition !== undefined
       ) {
-        const currentPosition = snapToGrid(yPos, startTime);
-        const dragStartPos = dragState.dragStartPosition;
-        const positionDelta = currentPosition - dragStartPos;
-
+        const mouseDelta = e.clientY - dragState.startY;
         const originalPosition = timeToPosition(dragState.originalStartTime, startTime);
-        const newPosition = originalPosition + positionDelta;
+        const newPosition = originalPosition + mouseDelta;
+        const snappedPosition = snapToGrid(newPosition, startTime);
 
         const maxPosition = timeToPosition(
           endTime.subtract(dragState.originalDuration || DEFAULT_EVENT_DURATION, 'second'),
           startTime
         );
-        const finalPosition = Math.min(Math.max(newPosition, HEADER_HEIGHT), maxPosition);
+        const finalPosition = Math.min(Math.max(snappedPosition, HEADER_HEIGHT), maxPosition);
 
         onDragStateChange({
           ...dragState,
@@ -64,16 +62,25 @@ export const useDragHandlers = ({
         dragState.originalStartTime
       ) {
         const eventStart = timeToPosition(dragState.originalStartTime, startTime);
+        const endTimePosition = timeToPosition(endTime, startTime);
         const newDuration = Math.max(
           ((snappedPosition - eventStart) / TIME_SLOT_HEIGHT) * 60,
           MIN_SNAP_DURATION
         );
         const snappedDuration = Math.round(newDuration / MIN_SNAP_DURATION) * MIN_SNAP_DURATION;
+        
+        // Ensure the end doesn't go past the column end time
+        const proposedEnd = eventStart + (snappedDuration / 60) * TIME_SLOT_HEIGHT;
+        const clampedEnd = Math.min(proposedEnd, endTimePosition);
+        const finalDuration = Math.max(
+          ((clampedEnd - eventStart) / TIME_SLOT_HEIGHT) * 60,
+          MIN_SNAP_DURATION
+        );
 
         onDragStateChange({
           ...dragState,
-          draggedPosition: eventStart + (snappedDuration / 60) * TIME_SLOT_HEIGHT,
-          originalDuration: snappedDuration
+          draggedPosition: eventStart + (finalDuration / 60) * TIME_SLOT_HEIGHT,
+          originalDuration: finalDuration
         });
       } else if (
         dragState.mode === 'top-edge' &&
@@ -85,20 +92,30 @@ export const useDragHandlers = ({
           dragState.originalStartTime.add(dragState.originalDuration, 'second'),
           startTime
         );
+        const startTimePosition = timeToPosition(startTime, startTime);
         const newDuration = Math.max(
           ((originalEnd - snappedPosition) / TIME_SLOT_HEIGHT) * 60,
           MIN_SNAP_DURATION
         );
         const snappedDuration = Math.round(newDuration / MIN_SNAP_DURATION) * MIN_SNAP_DURATION;
-        const newStartTime = dayjs(dragState.originalStartTime).add(
+        
+        // Calculate new start time
+        let newStartTime = dayjs(dragState.originalStartTime).add(
           dragState.originalDuration - snappedDuration,
           'second'
         );
+        
+        // Ensure the start doesn't go before the column start time
+        let newStartPosition = timeToPosition(newStartTime, startTime);
+        if (newStartPosition < startTimePosition) {
+          newStartPosition = startTimePosition;
+          newStartTime = startTime;
+        }
 
         onDragStateChange({
           ...dragState,
           originalStartTime: newStartTime,
-          draggedPosition: timeToPosition(newStartTime, startTime),
+          draggedPosition: Math.min(newStartPosition + (snappedDuration / 60) * TIME_SLOT_HEIGHT, originalEnd),
           originalDuration: snappedDuration
         });
       }

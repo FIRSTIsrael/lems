@@ -4,7 +4,7 @@ import React from 'react';
 import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { BLOCK_COLORS, HEADER_HEIGHT, AgendaBlockVisibility, AgendaBlock } from '../calendar-types';
+import { BLOCK_COLORS, AgendaBlockVisibility, AgendaBlock } from '../calendar-types';
 import { calculateBlockPosition } from '../calendar-utils';
 import { useCalendar } from '../calendar-context';
 import { EditAgendaDialog } from './edit-agenda-dialog';
@@ -55,7 +55,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
   const finalTop = isDraggingEdge
     ? displayPosition.top
     : isDraggingBody
-      ? draggedPosition - HEADER_HEIGHT
+      ? draggedPosition
       : position.top;
   const finalHeight = isDraggingEdge ? displayPosition.height : position.height;
 
