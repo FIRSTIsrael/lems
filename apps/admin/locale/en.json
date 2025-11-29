@@ -650,6 +650,7 @@
             "default-event-title": "General Event",
             "cancel": "Cancel",
             "save": "Save",
+            "delete": "Delete",
             "event-title": "Event Title",
             "visibility": "Visibility",
             "public": "Public",

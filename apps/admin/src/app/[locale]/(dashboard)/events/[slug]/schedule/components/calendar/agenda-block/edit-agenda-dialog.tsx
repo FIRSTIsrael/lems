@@ -13,6 +13,8 @@ interface EditAgendaDialogProps {
   onVisibilityChange: (visibility: AgendaBlockVisibility) => void;
   onSave: () => void;
   onCancel: () => void;
+  onDelete: (e: React.MouseEvent) => void;
+  size: 'normal' | 'small' | 'tiny';
 }
 
 export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
@@ -22,7 +24,9 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
   onTitleChange,
   onVisibilityChange,
   onSave,
-  onCancel
+  onCancel,
+  onDelete,
+  size
 }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   
@@ -90,6 +94,11 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
         </FormControl>
         
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+          { size !== 'normal' &&
+            <IconButton onClick={onDelete} size="small" color='error'>
+              {t('delete')}
+            </IconButton>
+          }
           <IconButton onClick={onCancel} size="small">
             {t('cancel')}
           </IconButton>

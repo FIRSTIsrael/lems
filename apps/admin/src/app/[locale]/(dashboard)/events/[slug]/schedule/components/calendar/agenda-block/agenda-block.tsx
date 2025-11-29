@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
@@ -59,6 +59,12 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
       : position.top;
   const finalHeight = isDraggingEdge ? displayPosition.height : position.height;
 
+  const size = useMemo(() => {
+    if (block.durationSeconds > 1200) return 'normal';
+    if (block.durationSeconds > 600) return 'small';
+    return 'tiny';
+  }, [block.durationSeconds]);
+  
   const handleMouseDownBody = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('[data-no-drag]')) {
@@ -165,6 +171,8 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
         onVisibilityChange={setVisibility}
         onSave={handleSaveTitle}
         onCancel={handleCancelEdit}
+        onDelete={handleDelete}
+        size={size}
       />
 
       <BlockContent
@@ -172,6 +180,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
         startTime={block.startTime}
         durationSeconds={block.durationSeconds}
         visibility={visibility}
+        size={size}
         onEditClick={handleEditClick}
         onDeleteClick={handleDelete}
       />
