@@ -2,9 +2,7 @@ import { z } from 'zod';
 import { ScheduleContextType } from '../schedule-context';
 import { CalendarContextType } from './calendar-context';
 import { getDuration } from './calendar-utils';
-import { InsertableAgendaEvent } from '@lems/database';
 import { AgendaBlock } from './calendar-types';
-import { Create } from '@mui/icons-material';
 
 const ValidatorDataSchema = z.object({
   overlapping_rounds: z.array(
@@ -74,7 +72,7 @@ interface Agenda {
   title: string;
   visibility: string;
   start_time: string;
-  duration_seconds: number;
+  duration: number;
 }
 
 function calculateBreaks(
@@ -159,7 +157,7 @@ export function prepareAgendaRequest(
   const agendaEvents: Agenda[] = [];
 
   const agendaBlocks = calendarContext.blocks.agenda;
-  
+
   for (let i = 0; i < agendaBlocks.length; i++) {
     const block = (agendaBlocks[i] as AgendaBlock);
     const startTimeInTz = block.startTime.tz(scheduleContext.timezone, true);
@@ -168,7 +166,7 @@ export function prepareAgendaRequest(
       title: block.title,
       visibility: block.visibilty,
       start_time: startTimeInTz.toISOString(),
-      duration_seconds: block.durationSeconds,
+      duration: Math.round(block.durationSeconds / 60),
       division_id: divisionId
     });
   }

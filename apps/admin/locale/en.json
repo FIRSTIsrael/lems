@@ -663,7 +663,9 @@
             "generate": {
               "success": "Agenda Created",
               "error": "Failed to generate agenda: {error}"
-            }
+            },
+            "updating": "Updating Agenda...",
+            "update-button": "Update Agenda"
           },
           "verify": {
             "title": "Verify schedule",
@@ -702,6 +704,10 @@
           "no-teams-found": "No Teams Found",
           "placeholder": "Search Teams...",
           "unknown-team": "Team {number}"
+        },
+        "schedule-exists": {
+          "back-to-team-swap": "Team Swap",
+          "edit-agenda": "Edit Agenda"
         }
       },
       "awards": {

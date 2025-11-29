@@ -208,7 +208,7 @@ router.post(
         res.status(400).json({ error: 'Invalid agenda events' });
         return;
       }
-      await db.agendaEvents.createMany(agendaEvents);
+      await db.divisions.byId(req.divisionId).agenda().createMany(agendaEvents);
       res.status(200).json({ ok: true });
     } catch (error) {
       console.error('Error updating agenda events:', error);
@@ -216,5 +216,18 @@ router.post(
     }
   }
 );
+
+router.get(
+  '/agenda-events', 
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      const events = await db.divisions.byId(req.divisionId).agenda().getAll();
+      res.status(200).json({ events });
+    } catch (error) {
+      console.error('Error fetching agenda events:', error);
+      res.status(500).json({ error: 'Failed to fetch agenda events' });
+    }
+});
 
 export default router;

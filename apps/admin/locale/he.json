@@ -663,7 +663,9 @@
             "generate": {
               "success": "סדר יום נוצר",
               "error": "שגיאה ביצירת סדר היום: {error}"
-            }
+            },
+            "updating": "מעדכן סדר יום...",
+            "update-button": "עדכן סדר יום"
           },
           "verify": {
             "title": "אימות לוח הזמנים",
@@ -702,6 +704,10 @@
           "no-teams-found": "לא נמצאו קבוצות",
           "placeholder": "חיפוש קבוצות...",
           "unknown-team": "קבוצה {number}"
+        },
+        "schedule-exists": {
+          "back-to-team-swap": "החלפת קבוצות",
+          "edit-agenda": "עריכת סדר יום"
         }
       },
       "awards": {

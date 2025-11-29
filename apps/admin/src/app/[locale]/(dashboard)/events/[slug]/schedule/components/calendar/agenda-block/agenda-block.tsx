@@ -43,7 +43,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
   const [visibility, setVisibility] = React.useState<AgendaBlockVisibility>(block.visibilty ?? 'public');
 
   const position = calculateBlockPosition(startTime, block);
-
+  
   const displayStartTime = draggedStartTime || block.startTime;
   const displayDuration = draggedDuration || block.durationSeconds;
   const displayPosition = calculateBlockPosition(startTime, {

@@ -20,6 +20,7 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
   const t = useTranslations('pages.events.schedule');
   const event = useEvent();
   const { teamsCount, roomsCount, tablesCount } = useSchedule();
+  
 
   if (division.hasSchedule) {
     return <ScheduleExists division={division} />;

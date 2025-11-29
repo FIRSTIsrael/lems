@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Dayjs } from 'dayjs';
 import { nanoid } from 'nanoid';
 import { useSchedule } from '../schedule-context';
@@ -78,15 +78,18 @@ export interface CalendarContextType {
   addAgendaEvent: (startTime: Dayjs, durationSeconds: number, title: string) => void;
   updateAgendaEvent: (blockId: string, updates: Partial<AgendaBlock>) => void;
   deleteAgendaEvent: (blockId: string) => void;
+  isDisabled: boolean;
+  setAgendaBlocks: React.Dispatch<React.SetStateAction<AgendaBlock[]>>;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined);
 
 export interface CalendarProviderProps {
+  disabled?: boolean;
   children: ReactNode;
 }
 
-export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) => {
+export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children, disabled = false }) => {
   const {
     fieldStart,
     practiceCycleTime,
@@ -315,6 +318,16 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }));
   };
 
+  const setAgendaBlocksFunc: React.Dispatch<React.SetStateAction<AgendaBlock[]>> = (
+    newBlocksOrFn
+  ) => {
+    if (typeof newBlocksOrFn === 'function') {
+      setBlocks(prev => ({ ...prev, agenda: newBlocksOrFn(prev.agenda as AgendaBlock[]) }));
+    } else {
+      setBlocks(prev => ({ ...prev, agenda: newBlocksOrFn }));
+    }
+  };
+
   const contextValue: CalendarContextType = {
     blocks,
     dragState,
@@ -325,7 +338,9 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     updateColumn,
     addAgendaEvent,
     updateAgendaEvent,
-    deleteAgendaEvent
+    deleteAgendaEvent,
+    isDisabled: disabled,
+    setAgendaBlocks: setAgendaBlocksFunc
   };
 
   return <CalendarContext.Provider value={contextValue}>{children}</CalendarContext.Provider>;

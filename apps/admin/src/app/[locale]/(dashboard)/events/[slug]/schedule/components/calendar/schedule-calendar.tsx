@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import useSWR from 'swr';
 import dayjs from 'dayjs';
 import { Paper, Box } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../../../components/event-context';
 import { useSchedule } from '../schedule-context';
-import { ScheduleBlock, HEADER_HEIGHT } from './calendar-types';
+import { ScheduleBlock, HEADER_HEIGHT, AgendaBlock } from './calendar-types';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
 import { AgendaColumn } from './agenda-column';
@@ -15,14 +16,48 @@ import { CalendarHeader } from './calendar-header';
 import { calculateBlockPosition, getBlockColumn } from './calendar-utils';
 import { positionToTime, snapToGrid, timeToPosition } from './drag-utils';
 
-const ScheduleCalendarContent: React.FC<{ division: Division }> = ({ division }) => {
+interface ScheduleCalendarContentProps {
+  division: Division;
+}
+
+const ScheduleCalendarContent: React.FC<ScheduleCalendarContentProps> = ({
+  division
+}) => {
   const event = useEvent();
   const startTime = dayjs(event.startDate).hour(6);
   const endTime = dayjs(event.endDate).hour(20);
 
   const { setFieldStart, setJudgingStart } = useSchedule();
-  const { blocks, dragState, setDragState, updateColumn } = useCalendar();
+  const { blocks, dragState, setDragState, updateColumn, setAgendaBlocks } =
+    useCalendar();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { data: agendaEventsData } = useSWR(
+    `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda-events`,
+    { suspense: false }
+  );
+
+  useEffect(() => {
+    if (agendaEventsData?.events) {
+      const convertedEvents: AgendaBlock[] = agendaEventsData.events.map(
+        (event: {
+          id: string;
+          title: string;
+          start_time: string;
+          duration: number;
+          visibility: string;
+        }) => ({
+          id: event.id,
+          type: 'agenda-event' as const,
+          startTime: dayjs(event.start_time),
+          durationSeconds: event.duration,
+          title: event.title,
+          visibilty: (event.visibility || 'public') as 'public' | 'field' | 'judging'
+        })
+      );
+      setAgendaBlocks(convertedEvents);
+    }
+  }, [agendaEventsData]);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -166,9 +201,11 @@ const ScheduleCalendarContent: React.FC<{ division: Division }> = ({ division })
   );
 };
 
-export const ScheduleCalendar: React.FC<{ division: Division }> = ({ division }) => {
+export const ScheduleCalendar: React.FC<ScheduleCalendarContentProps> = ({
+  division
+}) => {
   return (
-    <CalendarProvider>
+    <CalendarProvider disabled={division.hasSchedule}>
       <ScheduleCalendarContent division={division} />
     </CalendarProvider>
   );

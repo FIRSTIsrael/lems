@@ -12,12 +12,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  CircularProgress
+  CircularProgress,
+  Box
 } from '@mui/material';
-import { CheckCircle, Delete } from '@mui/icons-material';
+import { CheckCircle, Delete, Edit, SwapHoriz } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { TeamSwapper } from './team-swapper/team-swapper';
+import { ScheduleCalendar } from './calendar/schedule-calendar';
 
 interface ScheduleExistsProps {
   division: Division;
@@ -28,6 +30,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showCalendarMode, setShowCalendarMode] = useState(false);
 
   const handleDeleteSchedule = async () => {
     setIsDeleting(true);
@@ -50,6 +53,25 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
     }
   };
 
+  if (showCalendarMode) {
+    return (
+      <Stack height="100%" spacing={2}>
+        <Box>
+          <Button
+            variant="outlined"
+            startIcon={<SwapHoriz />}
+            onClick={() => setShowCalendarMode(false)}
+          >
+            {t('schedule-exists.back-to-team-swap')}
+          </Button>
+        </Box>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <ScheduleCalendar division={division} />
+        </Box>
+      </Stack>
+    );
+  }
+
   return (
     <>
       <Stack height="100%" spacing={2}>
@@ -58,15 +80,25 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
           icon={<CheckCircle />}
           sx={{ py: 0.5 }}
           action={
-            <Button
-              color="error"
-              size="small"
-              startIcon={<Delete />}
-              onClick={() => setDeleteDialogOpen(true)}
-              sx={{ color: 'error.main' }}
-            >
-              {t('delete-schedule')}
-            </Button>
+            <Stack direction="row" spacing={1}>
+              <Button
+                color="primary"
+                size="small"
+                startIcon={<Edit />}
+                onClick={() => setShowCalendarMode(true)}
+              >
+                {t('schedule-exists.edit-agenda')}
+              </Button>
+              <Button
+                color="error"
+                size="small"
+                startIcon={<Delete />}
+                onClick={() => setDeleteDialogOpen(true)}
+                sx={{ color: 'error.main' }}
+              >
+                {t('delete-schedule')}
+              </Button>
+            </Stack>
           }
         >
           {t('alerts.schedule-set-up')}

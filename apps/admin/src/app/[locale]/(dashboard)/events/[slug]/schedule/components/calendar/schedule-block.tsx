@@ -15,12 +15,14 @@ interface ScheduleBlockComponentProps {
   block: ScheduleBlock;
   index: number;
   onDragStart: (block: ScheduleBlock, startY: number) => void;
+  isDisabled?: boolean;
 }
 
 export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   block,
   index,
-  onDragStart
+  onDragStart,
+  isDisabled = false
 }) => {
   const t = useTranslations('pages.events.schedule.calendar');
 
@@ -30,7 +32,7 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
   const { practiceRounds } = useSchedule();
   const { dragState, deleteFieldBlock } = useCalendar();
 
-  const isDragging = dragState.isDragging && dragState.draggedBlock?.id === block.id;
+  const isDragging = !isDisabled && dragState.isDragging && dragState.draggedBlock?.id === block.id;
   const dragPosition = dragState.draggedPosition;
 
   const blockNumber = useMemo(() => {
@@ -53,10 +55,8 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
     isDragging && dragPosition !== undefined ? dragPosition - HEADER_HEIGHT : position.top;
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) {
-      // Left click only
-      onDragStart(block, e.clientY);
-    }
+    if (isDisabled || e.button !== 0) return; // Left click only, and not disabled
+    onDragStart(block, e.clientY);
   };
 
   const formatTime = (time: Dayjs) => time.format('HH:mm');
@@ -79,9 +79,9 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
         backgroundColor: BLOCK_COLORS[block.type],
         border: '1px solid rgba(0,0,0,0.1)',
         borderRadius: 1,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: isDisabled ? 'not-allowed' : isDragging ? 'grabbing' : 'grab',
         zIndex: isDragging ? 1000 : 1,
-        opacity: isDragging ? 0.9 : 1,
+        opacity: isDragging ? 0.9 : isDisabled ? 0.6 : 1,
         boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
         transition: isDragging ? 'none' : 'all 0.2s ease',
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',
@@ -91,10 +91,14 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
         p: size === 'tiny' ? 0.2 : 1,
         px: 1,
         '&:hover': {
-          boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.2)',
-          transform: isDragging ? 'scale(1.02)' : 'scale(1.01)',
+          boxShadow: isDragging
+            ? '0 8px 16px rgba(0,0,0,0.3)'
+            : isDisabled
+              ? '0 1px 3px rgba(0,0,0,0.1)'
+              : '0 2px 6px rgba(0,0,0,0.2)',
+          transform: isDragging ? 'scale(1.02)' : isDisabled ? 'scale(1)' : 'scale(1.01)',
           '& .delete-button': {
-            opacity: 1
+            opacity: isDisabled ? 0 : 1
           }
         }
       }}
@@ -136,7 +140,7 @@ export const ScheduleBlockComponent: React.FC<ScheduleBlockComponentProps> = ({
           </Typography>
         </Stack>
 
-        {canDelete && (
+        {canDelete && !isDisabled && (
           <IconButton
             className="delete-button"
             size="small"
