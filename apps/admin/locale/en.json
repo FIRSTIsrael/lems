@@ -69,7 +69,8 @@
       "title": "API Docs"
     },
     "graphql-schema": {
-      "title": "GraphQL Schema"
+      "title": "GraphQL Schema",
+      "description": "Interactive GraphQL IDE with full schema documentation. Execute queries, explore your schema, and test your API in real-time."
     },
     "teams": {
       "title": "Teams",

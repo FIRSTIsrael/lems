@@ -69,7 +69,8 @@
       "title": "תיעוד API"
     },
     "graphql-schema": {
-      "title": "סכמת GraphQL"
+      "title": "סכמת GraphQL",
+      "description": "IDE GraphQL אינטראקטיבי עם תיעוד סכמה מלא. ביצוע שאילתות, חקירת הסכמה שלך, וביצוע בדיקות ה-API שלך בזמן אמת."
     },
     "teams": {
       "title": "קבוצות",
