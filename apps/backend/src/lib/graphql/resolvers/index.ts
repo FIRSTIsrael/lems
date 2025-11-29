@@ -17,12 +17,7 @@ import { judgingRubricsResolver } from './divisions/judging-rubrics';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
-import {
-  rubricTeamResolver,
-  rubricCategoryResolver,
-  rubricStatusResolver,
-  rubricDataResolver
-} from './judging/rubric';
+import { rubricTeamResolver, rubricDataResolver, rubricResolvers } from './judging/rubric';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
@@ -94,9 +89,8 @@ export const resolvers = {
     rubrics: teamRubricsResolver
   },
   Rubric: {
+    ...rubricResolvers,
     team: rubricTeamResolver,
-    category: rubricCategoryResolver,
-    status: rubricStatusResolver,
     data: rubricDataResolver
   },
   Volunteer: {

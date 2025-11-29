@@ -10,7 +10,7 @@ export const makePortalTeamResponse = (team: DbTeam): Team => ({
   logoUrl: team.logo_url,
   coordinates: team.coordinates,
   region: team.region,
-  slug: `${team.region}-${team.number}`
+  slug: `${team.region}-${team.number}`.toUpperCase()
 });
 
 export const makePortalTeamSummaryResponse = (

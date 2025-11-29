@@ -1,7 +1,10 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Rubric as DbRubric } from '@lems/database';
+import { hyphensToUnderscores } from '@lems/shared/utils';
+import { toGraphQLId } from '../../utils/object-id-transformer';
 
 export interface RubricGraphQL {
+  _id?: string; // Optional MongoDB ObjectId or string
   divisionId: string;
   teamId: string;
   category: string;
@@ -27,31 +30,6 @@ export const rubricTeamResolver: GraphQLFieldResolver<
 };
 
 /**
- * Resolver for Rubric.category field.
- * Converts the database category format to GraphQL enum format.
- */
-export const rubricCategoryResolver: GraphQLFieldResolver<
-  RubricGraphQL,
-  unknown,
-  unknown,
-  string
-> = (rubric: RubricGraphQL) => {
-  // Convert from 'innovation-project' to 'innovation_project' format
-  return rubric.category.replace(/-/g, '_');
-};
-
-/**
- * Resolver for Rubric.status field.
- * Returns the database status format directly.
- */
-export const rubricStatusResolver: GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string> = (
-  rubric: RubricGraphQL
-) => {
-  // Return status as-is (already in lowercase format)
-  return rubric.status;
-};
-
-/**
  * Resolver for Rubric.data field.
  * Returns the rubric data if it exists.
  */
@@ -65,10 +43,34 @@ export const rubricDataResolver: GraphQLFieldResolver<
 };
 
 /**
+ * Main resolver object for Rubric type fields.
+ * Handles id, category, and status field transformations.
+ */
+export const rubricResolvers = {
+  id: ((rubric: RubricGraphQL) => {
+    if (!rubric._id) {
+      throw new Error('Rubric ID is missing');
+    }
+    return toGraphQLId(rubric._id);
+  }) as GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string>,
+
+  category: ((rubric: RubricGraphQL) => {
+    // Convert from 'innovation-project' to 'innovation_project' format for GraphQL
+    return hyphensToUnderscores(rubric.category);
+  }) as GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string>,
+
+  status: ((rubric: RubricGraphQL) => {
+    // Return status as-is (already in lowercase format)
+    return rubric.status;
+  }) as GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string>
+};
+
+/**
  * Helper function to build a RubricGraphQL object from a database rubric.
  */
 export function buildRubricResult(rubric: DbRubric): RubricGraphQL {
   return {
+    _id: rubric._id,
     divisionId: rubric.divisionId,
     teamId: rubric.teamId,
     category: rubric.category,

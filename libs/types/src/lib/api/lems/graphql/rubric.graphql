@@ -62,6 +62,9 @@ type RubricData {
 A rubric evaluation for a team
 """
 type Rubric {
+  "Unique identifier for the rubric"
+  id: String!
+
   "The team being evaluated"
   team: Team!
 
@@ -85,4 +88,16 @@ type CategorizedRubrics {
   robotDesign: Rubric
   "Core Values rubric"
   coreValues: Rubric
+}
+
+extend type Query {
+  """
+  Get a specific rubric for a team and judging category
+  """
+  rubric(
+    "The ID of the team"
+    teamId: String!
+    "The judging category"
+    category: JudgingCategory!
+  ): Rubric
 }

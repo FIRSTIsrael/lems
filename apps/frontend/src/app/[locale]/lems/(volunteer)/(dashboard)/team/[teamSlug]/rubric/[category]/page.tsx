@@ -7,14 +7,17 @@ import { Container } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { rubrics } from '@lems/shared/rubrics';
+import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useUser } from '../../../../../../components/user-context';
+import { usePageData } from '../../../../../hooks/use-page-data';
 import { RubricActions } from './components/rubric-actions';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
 import { getEmptyRubric } from './rubric-utils';
+import { GET_RUBRIC_QUERY, RubricQueryResult, GetRubricQueryVariables } from './rubric.graphql';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -25,9 +28,15 @@ export default function RubricPage() {
   const { category } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
-  // TODO: Get rubric from props
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rubric = {} as any;
+  const { data: rubricQueryData } = usePageData<RubricQueryResult, GetRubricQueryVariables>(
+    GET_RUBRIC_QUERY,
+    {
+      teamId: team.id,
+      category: hyphensToUnderscores(category as string) as JudgingCategory
+    }
+  );
+
+  const rubric = rubricQueryData?.rubric;
 
   const isEditable = useMemo(() => {
     if (user.role === 'judge-advisor') {
@@ -38,8 +47,8 @@ export default function RubricPage() {
       return user.roleInfo?.['category'] === category;
     }
 
-    return ['empty', 'in-progress', 'completed'].includes(rubric.status);
-  }, [category, rubric.status, user.role, user.roleInfo]);
+    return rubric ? ['empty', 'draft', 'completed'].includes(rubric.status) : false;
+  }, [category, rubric, user.role, user.roleInfo]);
 
   return (
     <>

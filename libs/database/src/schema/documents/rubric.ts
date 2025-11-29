@@ -3,6 +3,7 @@ export type JudgingCategory = 'innovation-project' | 'robot-design' | 'core-valu
 export type RubricStatus = 'empty' | 'draft' | 'completed' | 'locked' | 'approved';
 
 export interface Rubric {
+  _id?: string; // MongoDB ObjectId
   divisionId: string;
   teamId: string;
   category: JudgingCategory;

@@ -202,16 +202,22 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                       category="core-values"
                       status={session.rubrics?.coreValues?.status}
                       label={t('rubric-labels.core-values')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovationProject?.status}
                       label={t('rubric-labels.innovation-project')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
                       category="robot-design"
                       status={session.rubrics?.robotDesign?.status}
                       label={t('rubric-labels.robot-design')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                   </Stack>
                 </TableCell>
