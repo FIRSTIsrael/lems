@@ -1,4 +1,5 @@
 import express from 'express';
+import apiDocsRouter from '../api-docs';
 import { authMiddleware } from './middleware/auth';
 import usersRouter from './users';
 import authRouter from './auth';
@@ -15,5 +16,6 @@ router.use('/users', usersRouter);
 router.use('/seasons', seasonsRouter);
 router.use('/teams', teamsRouter);
 router.use('/events', eventsRouter);
+router.use('/api-docs', apiDocsRouter);
 
 export default router;

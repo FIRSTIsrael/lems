@@ -65,6 +65,14 @@
     "insights": {
       "coming-soon": "Coming soon..."
     },
+    "api-docs": {
+      "title": "API Documentation",
+      "description": "Complete REST API documentation with interactive endpoint testing. Explore all available endpoints, request/response schemas, and authentication requirements."
+    },
+    "graphql-schema": {
+      "title": "GraphQL Schema",
+      "description": "Interactive GraphQL IDE with full schema documentation. Execute queries, explore your schema, and test your API in real-time."
+    },
     "teams": {
       "title": "Teams",
       "create-new-team": "Create New Team",
@@ -971,7 +979,8 @@
       "manage-events": "Manage Events",
       "manage-event-details": "Manage Event Details",
       "manage-teams": "Manage Teams",
-      "view-insights": "View Insights"
+      "view-insights": "View Insights",
+      "dev-tools": "Dev Tools"
     }
   },
   "layouts": {
@@ -981,7 +990,9 @@
         "users": "Users",
         "events": "Events",
         "teams": "Teams",
-        "insights": "Insights"
+        "insights": "Insights",
+        "api-docs": "API Docs",
+        "graphql-schema": "GraphQL Schema"
       },
       "user-menu": {
         "logout": "Logout"

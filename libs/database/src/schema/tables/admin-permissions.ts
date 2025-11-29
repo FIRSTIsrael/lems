@@ -6,7 +6,8 @@ export type PermissionType =
   | 'MANAGE_EVENTS'
   | 'MANAGE_EVENT_DETAILS'
   | 'MANAGE_TEAMS'
-  | 'VIEW_INSIGHTS';
+  | 'VIEW_INSIGHTS'
+  | 'DEV_TOOLS';
 
 export interface AdminPermissionTable {
   pk: ColumnType<number, never, never>; // Serial primary key
