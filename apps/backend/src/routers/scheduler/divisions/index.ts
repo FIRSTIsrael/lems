@@ -78,9 +78,11 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   await db.judgingSessions.createMany(sessions);
 
   // Create rubrics for each team in the division
-  const teamIds = [...new Set(sessions.map(s => s.team_id).filter((id): id is string => id !== null))];
+  const teamIds = [
+    ...new Set(sessions.map(s => s.team_id).filter((id): id is string => id !== null))
+  ];
   const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
-  
+
   const rubrics: Rubric[] = teamIds.flatMap(teamId =>
     categories.map(category => ({
       divisionId: req.divisionId,
@@ -149,6 +151,8 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
 
     await db.robotGameMatches.createMany(allMatches);
 
+    // TODO: Scoresheets here
+
     res.status(200).json({ ok: true });
   } catch (error) {
     console.error('Error creating matches:', error);
@@ -198,8 +202,8 @@ router.put('/settings', async (req: SchedulerRequest, res) => {
 router.delete('/schedule', async (req: SchedulerRequest, res) => {
   try {
     await Promise.all([
-      db.judgingSessions.byDivisionId(req.divisionId).deleteAll(),
-      db.robotGameMatches.byDivisionId(req.divisionId).deleteAll(),
+      db.judgingSessions.byDivision(req.divisionId).deleteAll(),
+      db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
       db.divisions.byId(req.divisionId).update({ has_schedule: false, schedule_settings: null })
     ]);
 
