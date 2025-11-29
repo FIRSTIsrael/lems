@@ -29,8 +29,6 @@ export default function TeamLayout({ children }: TeamLayoutProps) {
     throw new Error(error.message);
   }
 
-  console.log(error);
-
   if (!data.division?.teams || data.division.teams.length === 0) {
     toast.error(t('error-not-found'));
     redirect(`/lems/${role}`);
