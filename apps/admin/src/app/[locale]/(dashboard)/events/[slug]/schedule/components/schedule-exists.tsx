@@ -32,12 +32,17 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
   const handleDeleteSchedule = async () => {
     setIsDeleting(true);
     try {
-      const response = await apiFetch(
+      const scheduleResponse = await apiFetch(
         `/admin/events/${division.eventId}/divisions/${division.id}/schedule`,
         { method: 'DELETE' }
       );
 
-      if (response.ok) {
+      const agendaResponse = await apiFetch(
+        `/admin/events/${division.eventId}/divisions/${division.id}/agenda`,
+        { method: 'DELETE' }
+      );
+
+      if (scheduleResponse.ok && agendaResponse.ok) {
         await mutate(`/admin/events/${division.eventId}/divisions`);
         setDeleteDialogOpen(false);
       } else {
