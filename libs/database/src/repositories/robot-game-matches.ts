@@ -200,7 +200,7 @@ export class RobotGameMatchesRepository {
     return new RobotGameMatchSelector(this.db, this.mongo, id);
   }
 
-  byDivisionId(divisionId: string): RobotGameMatchesSelector {
+  byDivision(divisionId: string): RobotGameMatchesSelector {
     return new RobotGameMatchesSelector(this.db, this.mongo, divisionId);
   }
 
