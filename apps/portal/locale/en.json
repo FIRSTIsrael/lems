@@ -125,6 +125,10 @@
         "all": "All regions",
         "current-all": "Showing teams from all regions",
         "current": "Showing teams from region {region}"
+      },
+      "no-teams": {
+        "title": "No Teams to Show",
+        "message": "Please check back later"
       }
     },
     "event": {
