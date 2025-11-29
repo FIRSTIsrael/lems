@@ -9,7 +9,9 @@ import {
   DragState,
   ScheduleBlock,
   ScheduleBlockType,
-  ScheduleColumn
+  ScheduleColumn,
+  AgendaBlock,
+  AgendaBlockVisibility
 } from './calendar-types';
 import { getDuration } from './calendar-utils';
 
@@ -27,6 +29,24 @@ const createBlock = (
     durationSeconds
   };
 };
+
+const createAgendaBlock = (
+  startTime: Dayjs,
+  durationSeconds: number,
+  title: string,
+  visibilty: AgendaBlockVisibility
+): AgendaBlock => {
+  const id = nanoid(12);
+
+  return {
+    id,
+    type: 'agenda-event',
+    startTime,
+    durationSeconds,
+    title,
+    visibilty
+  };
+}
 
 const createInitialBlocks = (
   blockType: ScheduleBlockType,
@@ -55,6 +75,9 @@ export interface CalendarContextType {
   addRankingRound: () => void;
   deleteFieldBlock: (blockId: string) => void;
   updateColumn: (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => void;
+  addAgendaEvent: (startTime: Dayjs, durationSeconds: number, title: string) => void;
+  updateAgendaEvent: (blockId: string, updates: Partial<AgendaBlock>) => void;
+  deleteAgendaEvent: (blockId: string) => void;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined);
@@ -81,21 +104,23 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
   const [blocks, setBlocks] = useState<BlocksByType>(() => {
     let judgingBlocks: ScheduleBlock[] = [];
     let fieldBlocks: ScheduleBlock[] = [];
+    const agendaBlocks: AgendaBlock[] = [];
 
     judgingBlocks = judgingBlocks.concat(
-      createInitialBlocks('judging-session', judgingStart, judgingSessions, judgingSessionCycleTime)
+      createInitialBlocks(
+        'judging-session',
+        judgingStart,
+        judgingSessions,
+        judgingSessionCycleTime
+      )
     );
 
     fieldBlocks = fieldBlocks.concat(
       createInitialBlocks(
         'practice-round',
-
         fieldStart,
-
         practiceRounds,
-
         practiceCycleTime,
-
         matchesPerRound
       )
     );
@@ -108,18 +133,14 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     fieldBlocks = fieldBlocks.concat(
       createInitialBlocks(
         'ranking-round',
-
         rankingStart,
-
         rankingRounds,
-
         rankingCycleTime,
-
         matchesPerRound
       )
     );
 
-    return { field: fieldBlocks, judging: judgingBlocks };
+    return { field: fieldBlocks, judging: judgingBlocks, agenda: agendaBlocks };
   });
 
   /**
@@ -275,6 +296,25 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     setBlocks(prev => ({ ...prev, field: newBlocks }));
   };
 
+  const addAgendaEvent = (startTime: Dayjs, durationSeconds: number, title: string) => {
+    const newEvent = createAgendaBlock(startTime, durationSeconds, title, 'public');
+    setBlocks(prev => ({
+      ...prev,
+      agenda: [...prev.agenda, newEvent].sort((a, b) => a.startTime.diff(b.startTime))
+    }));
+  };
+
+  const updateAgendaEvent = (blockId: string, updates: Partial<AgendaBlock>) => {
+    updateBlock('agenda', blockId, updates);
+  };
+  
+  const deleteAgendaEvent = (blockId: string) => {
+    setBlocks(prev => ({
+      ...prev,
+      agenda: prev.agenda.filter(block => block.id !== blockId)
+    }));
+  };
+
   const contextValue: CalendarContextType = {
     blocks,
     dragState,
@@ -282,7 +322,10 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     addPracticeRound,
     addRankingRound,
     deleteFieldBlock,
-    updateColumn
+    updateColumn,
+    addAgendaEvent,
+    updateAgendaEvent,
+    deleteAgendaEvent
   };
 
   return <CalendarContext.Provider value={contextValue}>{children}</CalendarContext.Provider>;
