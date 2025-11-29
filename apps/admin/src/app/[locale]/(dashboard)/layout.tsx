@@ -124,7 +124,7 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
         {permissions.includes('DEV_TOOLS') && (
           <>
             <Divider />
-            <Link href="/api-docs">
+            <Link href="/openapi-docs">
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>

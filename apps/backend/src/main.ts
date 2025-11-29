@@ -21,6 +21,7 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
+import apiDocsRouter from './routers/api-docs';
 
 const app = express();
 const server = http.createServer(app);
@@ -118,6 +119,7 @@ app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
 app.use('/portal', portalRouter);
+app.use('/api-docs', apiDocsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });

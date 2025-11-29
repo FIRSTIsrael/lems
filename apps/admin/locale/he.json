@@ -66,7 +66,8 @@
       "coming-soon": "בקרוב..."
     },
     "api-docs": {
-      "title": "תיעוד API"
+      "title": "תיעוד API",
+      "description": "תיעוד מלא של REST API עם בדיקת נקודות קצה אינטראקטיבית. חקור את כל נקודות הקצה הזמינות, סכמות בקשה/תגובה ודרישות אימות."
     },
     "graphql-schema": {
       "title": "סכמת GraphQL",

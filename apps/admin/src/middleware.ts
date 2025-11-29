@@ -45,7 +45,8 @@ export default async function middleware(request: NextRequest) {
     }
 
     // Auth succeeded, check page permissions
-    const currentPage = segments[0];
+    // segments[0] is the locale (e.g., 'en'), segments[1] is the actual page route
+    const currentPage = segments[1] || segments[0] || '';
     const requiredPermission = getRequiredPermission(currentPage);
 
     if (requiredPermission) {
@@ -70,7 +71,7 @@ export default async function middleware(request: NextRequest) {
     }
 
     // Add the current page to headers for the PermissionGuard component to use
-    response.headers.set('x-current-page', currentPage || '');
+    response.headers.set('x-current-page', currentPage);
 
     return response;
   } catch {
