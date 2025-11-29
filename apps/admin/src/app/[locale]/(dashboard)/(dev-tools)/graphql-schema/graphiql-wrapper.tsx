@@ -4,7 +4,18 @@ import { useState, useEffect } from 'react';
 import { GraphiQL } from 'graphiql';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import type { Fetcher } from '@graphiql/toolkit';
-import { Box, CircularProgress } from '@mui/material';
+import { ToolbarButton } from '@graphiql/react';
+import {
+  Box,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField
+} from '@mui/material';
+import KeyIcon from '@mui/icons-material/Key';
 import 'graphiql/setup-workers/webpack';
 import 'graphiql/style.css';
 
@@ -16,19 +27,65 @@ const getApiBase = () => {
 
 export default function GraphiQLWrapper() {
   const [fetcher, setFetcher] = useState<Fetcher | null>(null);
+  const [authToken, setAuthToken] = useState<string>('');
+  const [tokenDialogOpen, setTokenDialogOpen] = useState(false);
+  const [tokenInput, setTokenInput] = useState('');
+
+  useEffect(() => {
+    // Load token from localStorage on mount
+    const savedToken = localStorage.getItem('graphiql-auth-token');
+    if (savedToken) {
+      setAuthToken(savedToken);
+    }
+  }, []);
 
   useEffect(() => {
     // Create fetcher only on client side with the same configuration as Apollo Client
     const apiBase = getApiBase();
     const graphqlUrl = `${apiBase}/lems/graphql`;
 
+    // Custom fetch implementation that includes credentials
+    const customFetch: typeof fetch = (url, options) => {
+      return fetch(url, {
+        ...options,
+        credentials: 'include'
+      });
+    };
+
     const graphiqlFetcher = createGraphiQLFetcher({
       url: graphqlUrl,
-      credentials: 'include'
+      fetch: customFetch,
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
     });
 
     setFetcher(() => graphiqlFetcher);
-  }, []);
+  }, [authToken]);
+
+  const handleTokenDialogOpen = () => {
+    setTokenInput(authToken);
+    setTokenDialogOpen(true);
+  };
+
+  const handleTokenDialogClose = () => {
+    setTokenDialogOpen(false);
+  };
+
+  const handleTokenSave = () => {
+    setAuthToken(tokenInput);
+    if (tokenInput) {
+      localStorage.setItem('graphiql-auth-token', tokenInput);
+    } else {
+      localStorage.removeItem('graphiql-auth-token');
+    }
+    setTokenDialogOpen(false);
+  };
+
+  const handleTokenClear = () => {
+    setTokenInput('');
+    setAuthToken('');
+    localStorage.removeItem('graphiql-auth-token');
+    setTokenDialogOpen(false);
+  };
 
   if (!fetcher) {
     return (
@@ -46,5 +103,57 @@ export default function GraphiQLWrapper() {
     );
   }
 
-  return <GraphiQL fetcher={fetcher} defaultEditorToolsVisibility={true} />;
+  return (
+    <>
+      <GraphiQL fetcher={fetcher} defaultEditorToolsVisibility={true}>
+        <GraphiQL.Toolbar>
+          {({ prettify, copy, merge }) => (
+            <>
+              {prettify}
+              {merge}
+              {copy}
+              <ToolbarButton
+                onClick={handleTokenDialogOpen}
+                label={
+                  authToken ? 'Manage authentication token (active)' : 'Set authentication token'
+                }
+              >
+                <KeyIcon
+                  className="graphiql-toolbar-icon"
+                  aria-hidden="true"
+                  style={{ color: authToken ? '#10a37f' : undefined }}
+                />
+              </ToolbarButton>
+            </>
+          )}
+        </GraphiQL.Toolbar>
+      </GraphiQL>
+
+      <Dialog open={tokenDialogOpen} onClose={handleTokenDialogClose} maxWidth="sm" fullWidth>
+        <DialogTitle>Authentication Token</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Bearer Token"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={tokenInput}
+            onChange={e => setTokenInput(e.target.value)}
+            placeholder="Enter your JWT token"
+            helperText="This token will be sent as Authorization: Bearer <token> with each request"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTokenClear} color="error">
+            Clear
+          </Button>
+          <Button onClick={handleTokenDialogClose}>Cancel</Button>
+          <Button onClick={handleTokenSave} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 }
