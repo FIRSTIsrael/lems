@@ -89,8 +89,12 @@ router.delete(
   async (req: AdminDivisionRequest, res) => {
     try {
       await Promise.all([
-        db.judgingSessions.byDivisionId(req.divisionId).deleteAll(),
-        db.robotGameMatches.byDivisionId(req.divisionId).deleteAll(),
+        db.judgingSessions.byDivision(req.divisionId).deleteAll(),
+        db.rubrics.byDivision(req.divisionId).deleteAll(),
+
+        db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
+        // TODO: Scoresheets here
+
         db.divisions.byId(req.divisionId).update({ has_schedule: false })
       ]);
 
@@ -121,11 +125,9 @@ router.get(
         return;
       }
 
-      const judgingSession = await db.judgingSessions
-        .byDivisionId(req.divisionId)
-        .getByTeam(teamId);
+      const judgingSession = await db.judgingSessions.byDivision(req.divisionId).getByTeam(teamId);
 
-      const matches = await db.robotGameMatches.byDivisionId(req.divisionId).getByTeam(teamId);
+      const matches = await db.robotGameMatches.byDivision(req.divisionId).getByTeam(teamId);
 
       res.status(200).json({
         team,
@@ -144,7 +146,7 @@ router.get(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     try {
-      const sessions = await db.judgingSessions.byDivisionId(req.divisionId).getAll();
+      const sessions = await db.judgingSessions.byDivision(req.divisionId).getAll();
       const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
 
       res.status(200).json({

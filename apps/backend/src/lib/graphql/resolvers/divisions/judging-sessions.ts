@@ -38,7 +38,7 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
   Promise<JudgingSessionGraphQL[]>
 > = async (judging: JudgingWithDivisionId, args: SessionsArgs) => {
   try {
-    let sessions = await db.judgingSessions.byDivisionId(judging.divisionId).getAll();
+    let sessions = await db.judgingSessions.byDivision(judging.divisionId).getAll();
 
     // Filter by IDs if provided
     if (args.ids && args.ids.length > 0) {

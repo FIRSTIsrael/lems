@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Box, Typography, useTheme } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricStatus } from '@lems/database';
@@ -7,19 +8,22 @@ import { getRubricColor, getRubricIcon } from '@lems/shared/rubrics/rubric-utils
 
 interface RubricStatusButtonProps {
   category: JudgingCategory;
-  status: RubricStatus;
+  status?: RubricStatus;
   label: string;
   onClick?: () => void;
   disabled?: boolean;
+  teamSlug?: string;
 }
 
 export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   category,
-  status,
+  status = 'empty',
   label,
   onClick,
-  disabled = false
+  disabled = false,
+  teamSlug
 }) => {
+  const router = useRouter();
   const theme = useTheme();
   const rubricColor = getRubricColor(category);
   const statusIcon = getRubricIcon(status, rubricColor);
@@ -27,9 +31,18 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   const isCompleted = status === 'completed';
   const isDraft = status === 'draft';
 
+  const handleClick = () => {
+    if (teamSlug) {
+      const rubricPath = `/lems/team/${teamSlug}/rubric/${category}`;
+      router.push(rubricPath);
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <Box
-      onClick={disabled ? undefined : onClick}
+      onClick={handleClick}
       sx={{
         display: 'flex',
         alignItems: 'center',

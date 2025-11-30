@@ -123,7 +123,7 @@ export class JudgingSessionsRepository {
     return new JudgingSessionSelector(this.db, this.mongo, id);
   }
 
-  byDivisionId(divisionId: string): JudgingSessionsSelector {
+  byDivision(divisionId: string): JudgingSessionsSelector {
     return new JudgingSessionsSelector(this.db, this.mongo, divisionId);
   }
 
@@ -165,8 +165,8 @@ export class JudgingSessionsRepository {
   }
 
   async swapTeams(teamId1: string, teamId2: string, divisionId: string): Promise<void> {
-    const session1 = await this.byDivisionId(divisionId).getByTeam(teamId1);
-    const session2 = await this.byDivisionId(divisionId).getByTeam(teamId2);
+    const session1 = await this.byDivision(divisionId).getByTeam(teamId1);
+    const session2 = await this.byDivision(divisionId).getByTeam(teamId2);
 
     if (!session1 || !session2) {
       throw new Error('One or both teams do not have a judging session in this division');
