@@ -155,7 +155,7 @@ router.get(
       const awards = await db.awards.byDivisionId(teamDivision).getAll();
       const teamAwards = awards.filter(award => award.winner_id === req.teamId);
 
-      const matches = await db.robotGameMatches.byDivisionId(teamDivision).getByTeam(req.teamId);
+      const matches = await db.robotGameMatches.byDivision(teamDivision).getByTeam(req.teamId);
       const teamMatchResults = matches
         .filter(match => match.stage === 'RANKING')
         .map(match => ({ number: match.round, score: 0 }));

@@ -28,6 +28,9 @@ type JudgingSession {
 
   "Difference in seconds between scheduled and actual start time"
   startDelta: Int
+
+  "Rubrics for this session categorized by judging category"
+  rubrics: CategorizedRubrics!
 }
 
 """
@@ -57,6 +60,15 @@ type Judging {
 
   "Length of each judging session in seconds"
   sessionLength: Int!
+
+  "Rubrics for teams in this division, optionally filtered"
+  rubrics(
+    "Filter rubrics by team IDs"
+    teamIds: [String!]
+
+    "Filter rubrics by judging category"
+    category: JudgingCategory
+  ): [Rubric!]!
 }
 
 extend type Division {

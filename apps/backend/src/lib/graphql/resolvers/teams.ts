@@ -63,7 +63,7 @@ function buildResult(team: DbTeam): RootTeamGraphQL {
     city: team.city,
     location: team.coordinates,
     region: team.region,
-    slug: `${team.region}-${team.number}`,
+    slug: `${team.region}-${team.number}`.toUpperCase(),
     logoUrl: team.logo_url || null
   };
 }

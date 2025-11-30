@@ -1,5 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, updateInArray, Reconciler } from '@lems/shared/utils';
+import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
 /**
@@ -27,6 +28,15 @@ export interface Team {
 }
 
 /**
+ * Categorized rubrics for a session
+ */
+export interface CategorizedRubrics {
+  innovationProject: { status: RubricStatus } | null;
+  robotDesign: { status: RubricStatus } | null;
+  coreValues: { status: RubricStatus } | null;
+}
+
+/**
  * JudgingSession represents a single judging session for a team
  */
 export interface JudgingSession {
@@ -37,6 +47,7 @@ export interface JudgingSession {
   called: boolean;
   room: Room;
   team: Team;
+  rubrics: CategorizedRubrics;
   startTime?: string;
   startDelta?: number;
 }
@@ -105,6 +116,17 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
             arrived
             location
           }
+          rubrics {
+            innovationProject {
+              ...RubricFields
+            }
+            robotDesign {
+              ...RubricFields
+            }
+            coreValues {
+              ...RubricFields
+            }
+          }
           startTime
           startDelta
         }
@@ -112,6 +134,10 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
         sessionLength
       }
     }
+  }
+
+  fragment RubricFields on Rubric {
+    status
   }
 `;
 

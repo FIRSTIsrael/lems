@@ -31,6 +31,9 @@ type Team {
 
   "URL to the team's logo image"
   logoUrl: String
+
+  "Rubrics for this team categorized by judging category"
+  rubrics: CategorizedRubrics
 }
 
 """

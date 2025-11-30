@@ -1,5 +1,5 @@
 import { VolunteerUser } from '@lems/types/api/admin';
-import { VolunteerSlot, Role } from '../../types';
+import { VolunteerSlot, Role, SYSTEM_MANAGED_ROLES, SystemManagedRole } from '../../types';
 
 export const transformVolunteerUsersToSlots = (
   volunteers: VolunteerUser[]
@@ -28,13 +28,17 @@ export const transformVolunteerUsersToSlots = (
 
 export const transformVolunteerSlotsToUsers = (
   slots: VolunteerSlot[],
-  eventId: string,
   enabledSystemRoles: Set<string>,
   divisions: Array<{ id: string }>
 ): Omit<VolunteerUser, 'id' | 'eventId'>[] => {
   const users: Omit<VolunteerUser, 'id' | 'eventId'>[] = [];
 
   for (const slot of slots) {
+    if (SYSTEM_MANAGED_ROLES.includes(slot.role as SystemManagedRole)) {
+      // These roles are managed by the system
+      continue;
+    }
+
     users.push({
       role: slot.role,
       divisions: slot.divisions,

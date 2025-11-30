@@ -101,7 +101,9 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
       initialized.current = true;
 
       const hasAllMandatoryRoles = divisions.every(division =>
-        EDITABLE_MANDATORY_ROLES.every(role => transformedSlots.some(s => s.role === role && s.divisions.includes(division.id)))
+        EDITABLE_MANDATORY_ROLES.every(role =>
+          transformedSlots.some(s => s.role === role && s.divisions.includes(division.id))
+        )
       );
 
       setIsLoadedFromDatabase(hasAllMandatoryRoles);
@@ -126,12 +128,12 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
           const errorMessage =
             divisions.length === 1
               ? t('validation.missing-mandatory-role-single', {
-                role: getRole(role)
-              })
+                  role: getRole(role)
+                })
               : t('validation.missing-mandatory-role', {
-                role: getRole(role),
-                division: division.name
-              });
+                  role: getRole(role),
+                  division: division.name
+                });
 
           errors.push(errorMessage);
         }
@@ -162,7 +164,6 @@ export const VolunteerProvider: React.FC<VolunteerProviderProps> = ({ children }
     try {
       const transformedVolunteers = transformVolunteerSlotsToUsers(
         slots,
-        event.id,
         toggledSystemRoles,
         divisions
       );

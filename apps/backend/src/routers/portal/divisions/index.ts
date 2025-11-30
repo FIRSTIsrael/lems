@@ -28,7 +28,7 @@ router.get('/:divisionId/teams', async (req: PortalDivisionRequest, res: Respons
 router.get('/:divisionId/schedule/judging', async (req: PortalDivisionRequest, res: Response) => {
   const teams = await db.teams.byDivisionId(req.divisionId).getAll();
   const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-  const judgingSchedule = await db.judgingSessions.byDivisionId(req.divisionId).getAll();
+  const judgingSchedule = await db.judgingSessions.byDivision(req.divisionId).getAll();
 
   const sessions = judgingSchedule.map(session =>
     makePortalJudgingSessionResponse(session, rooms, teams)
@@ -39,7 +39,7 @@ router.get('/:divisionId/schedule/judging', async (req: PortalDivisionRequest, r
 router.get('/:divisionId/schedule/field', async (req: PortalDivisionRequest, res: Response) => {
   const teams = await db.teams.byDivisionId(req.divisionId).getAll();
   const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-  const fieldSchedule = await db.robotGameMatches.byDivisionId(req.divisionId).getAll();
+  const fieldSchedule = await db.robotGameMatches.byDivision(req.divisionId).getAll();
 
   const matches = fieldSchedule.map(match => makePortalMatchResponse(match, tables, teams));
   res.status(200).json(matches);
@@ -57,7 +57,7 @@ router.get('/:divisionId/scoreboard', async (req: PortalDivisionRequest, res: Re
       affiliation: team.affiliation,
       city: team.city,
       region: team.region,
-      slug: `${team.region}-${team.number}`
+      slug: `${team.region}-${team.number}`.toUpperCase()
     },
     robotGameRank: index + 1,
     maxScore: 0,
