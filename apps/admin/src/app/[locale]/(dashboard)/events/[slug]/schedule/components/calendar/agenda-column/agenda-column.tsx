@@ -7,7 +7,7 @@ import { Box, Typography, Stack } from '@mui/material';
 import { AgendaBlock, HEADER_HEIGHT } from '../calendar-types';
 import { snapToGrid } from '../drag-utils';
 import { useCalendar } from '../calendar-context';
-import { AgendaBlockComponent } from '../agenda-block';
+import { AgendaBlockComponent } from '../agenda-block/agenda-block';
 import { AgendaDragState } from './drag-types';
 import { useDragHandlers } from './use-drag-handlers';
 import { useDragStart } from './use-drag-start';
@@ -33,12 +33,10 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
     onDragStateChange: setDragState
   });
 
-  const { handleDragStartBody, handleDragStartTopEdge, handleDragStartBottomEdge } = useDragStart(
-    {
-      startTime,
-      onDragStateChange: setDragState
-    }
-  );
+  const { handleDragStartBody, handleDragStartTopEdge, handleDragStartBottomEdge } = useDragStart({
+    startTime,
+    onDragStateChange: setDragState
+  });
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

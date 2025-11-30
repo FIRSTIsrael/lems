@@ -648,6 +648,7 @@
           "agenda": {
             "title": "Agenda",
             "default-event-title": "General Event",
+            "edit-event": "Edit Event",
             "cancel": "Cancel",
             "save": "Save",
             "delete": "Delete",

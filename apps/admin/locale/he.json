@@ -648,6 +648,7 @@
           "agenda": {
             "title": "סדר יום",
             "default-event-title": "אירוע כללי",
+            "edit-event": "עריכת אירוע",
             "cancel": "ביטול",
             "save": "שמירה",
             "delete": "מחיקה",

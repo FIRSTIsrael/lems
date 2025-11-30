@@ -2,9 +2,7 @@ import { z } from 'zod';
 import { ScheduleContextType } from '../schedule-context';
 import { CalendarContextType } from './calendar-context';
 import { getDuration } from './calendar-utils';
-import { InsertableAgendaEvent } from '@lems/database';
 import { AgendaBlock } from './calendar-types';
-import { Create } from '@mui/icons-material';
 
 const ValidatorDataSchema = z.object({
   overlapping_rounds: z.array(
@@ -159,9 +157,9 @@ export function prepareAgendaRequest(
   const agendaEvents: Agenda[] = [];
 
   const agendaBlocks = calendarContext.blocks.agenda;
-  
+
   for (let i = 0; i < agendaBlocks.length; i++) {
-    const block = (agendaBlocks[i] as AgendaBlock);
+    const block = agendaBlocks[i] as AgendaBlock;
     const startTimeInTz = block.startTime.tz(scheduleContext.timezone, true);
 
     agendaEvents.push({

@@ -9,7 +9,7 @@ import { useSchedule } from '../schedule-context';
 import { ScheduleBlock, HEADER_HEIGHT } from './calendar-types';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarColumn } from './calender-column';
-import { AgendaColumn } from './agenda-column';
+import { AgendaColumn } from './agenda-column/agenda-column';
 import { CalendarProvider, useCalendar } from './calendar-context';
 import { CalendarHeader } from './calendar-header';
 import { calculateBlockPosition, getBlockColumn } from './calendar-utils';

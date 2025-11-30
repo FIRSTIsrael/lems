@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { BLOCK_COLORS, AgendaBlockVisibility, AgendaBlock } from '../calendar-types';
 import { calculateBlockPosition } from '../calendar-utils';
 import { useCalendar } from '../calendar-context';
-import { EditAgendaDialog } from './edit-agenda-dialog';
+import { EditAgendaDialog } from './dialog/edit-agenda-dialog';
 import { ResizeHandles } from './resize-handles';
 import { BlockContent } from './block-content';
-import { useTitleEdit } from './use-title-edit';
 
 interface AgendaBlockProps {
   block: AgendaBlock;
@@ -39,8 +38,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
 }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   const { deleteAgendaEvent, updateAgendaEvent } = useCalendar();
-  const titleEdit = useTitleEdit(block.title || t('default-event-title'));
-  const [visibility, setVisibility] = React.useState<AgendaBlockVisibility>(block.visibilty ?? 'public');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const position = calculateBlockPosition(startTime, block);
 
@@ -64,7 +62,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
     if (block.durationSeconds > 600) return 'small';
     return 'tiny';
   }, [block.durationSeconds]);
-  
+
   const handleMouseDownBody = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('[data-no-drag]')) {
@@ -91,30 +89,27 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
     }
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleDelete = () => {
     deleteAgendaEvent(block.id);
+    setIsDialogOpen(false);
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    titleEdit.openEdit();
+    setIsDialogOpen(true);
   };
 
-  const handleSaveTitle = () => {
+  const handleSaveDialog = (newTitle: string, newVisibility: AgendaBlockVisibility) => {
     updateAgendaEvent(block.id, {
-      title: titleEdit.editedTitle,
-      visibilty: visibility
+      title: newTitle,
+      visibilty: newVisibility
     });
-
-    titleEdit.closeEdit();
+    setIsDialogOpen(false);
   };
 
-  const handleCancelEdit = () => {
-    setVisibility(block.visibilty);
-    titleEdit.resetEdit(block.title || t('default-event-title'));
+  const handleCancelDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -164,13 +159,10 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
       />
 
       <EditAgendaDialog
-        open={titleEdit.isEditingTitle}
-        title={titleEdit.editedTitle}
-        visibility={visibility}
-        onTitleChange={titleEdit.setEditedTitle}
-        onVisibilityChange={setVisibility}
-        onSave={handleSaveTitle}
-        onCancel={handleCancelEdit}
+        open={isDialogOpen}
+        blockId={block.id}
+        onSave={handleSaveDialog}
+        onCancel={handleCancelDialog}
         onDelete={handleDelete}
         size={size}
       />
@@ -179,7 +171,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
         title={block.title || t('default-event-title')}
         startTime={block.startTime}
         durationSeconds={block.durationSeconds}
-        visibility={visibility}
+        visibility={block.visibilty ?? 'public'}
         size={size}
         onEditClick={handleEditClick}
         onDeleteClick={handleDelete}
