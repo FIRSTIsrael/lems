@@ -86,7 +86,14 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
         document.removeEventListener('mouseup', handleUp);
       };
     }
-  }, [dragState, handleMouseMove, handleMouseUp, addAgendaEvent, updateAgendaEvent, editingBlockId]);
+  }, [
+    dragState,
+    handleMouseMove,
+    handleMouseUp,
+    addAgendaEvent,
+    updateAgendaEvent,
+    editingBlockId
+  ]);
 
   const dragPreviewTop =
     dragState?.mode === 'create' &&
@@ -124,8 +131,9 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
           cursor: dragState?.mode === 'create' ? 'crosshair' : 'default'
         }}
       >
-        {dragState?.mode === 'create' && dragPreviewHeight && dragPreviewHeight > 0 && (
+        {dragState?.mode === 'create' && (
           <Box
+            display={dragPreviewHeight ? 'block' : 'none'}
             sx={{
               position: 'absolute',
               top: dragPreviewTop,
