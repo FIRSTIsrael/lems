@@ -8,11 +8,14 @@ import {
   makeAdminJudgingRoomResponse,
   makeAdminRobotGameMatchResponse
 } from './util';
+import agendaRouter from './agenda';
 
 const router = express.Router({ mergeParams: true });
 
 const SCHEDULER_DOMAIN = process.env.SCHEDULER_URL;
 if (!SCHEDULER_DOMAIN) throw new Error('SCHEDULER_URL is not configured');
+
+router.use('/agenda', agendaRouter);
 
 router.post(
   '/validate',
@@ -194,39 +197,6 @@ router.put(
     } catch (error) {
       console.error('Error swapping team schedules:', error);
       res.status(500).json({ error: 'Failed to swap team schedules' });
-    }
-  }
-);
-
-router.post(
-  '/agenda-events',
-  requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
-    try {
-      const agendaEvents = req.body;
-      if (!Array.isArray(agendaEvents)) {
-        res.status(400).json({ error: 'Invalid agenda events' });
-        return;
-      }
-      await db.divisions.byId(req.divisionId).agenda().createMany(agendaEvents);
-      res.status(200).json({ ok: true });
-    } catch (error) {
-      console.error('Error updating agenda events:', error);
-      res.status(500).json({ error: 'Failed to update agenda events' });
-    }
-  }
-);
-
-router.delete(
-  '/agenda-events',
-  requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
-    try {
-      await db.divisions.byId(req.divisionId).agenda().delete();
-      res.status(200).json({ ok: true });
-    } catch (error) {
-      console.error('Error deleting agenda event:', error);
-      res.status(500).json({ error: 'Failed to delete agenda event' });
     }
   }
 );

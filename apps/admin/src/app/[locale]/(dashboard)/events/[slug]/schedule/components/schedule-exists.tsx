@@ -38,7 +38,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
       );
 
       const agendaResponse = await apiFetch(
-        `/admin/events/${division.eventId}/divisions/${division.id}/agenda`,
+        `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda`,
         { method: 'DELETE' }
       );
 

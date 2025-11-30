@@ -119,7 +119,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
     const requestData = prepareAgendaRequest(calendarContext, scheduleContext, division.id);
 
     const response = await apiFetch(
-      `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda-events`,
+      `/admin/events/${division.eventId}/divisions/${division.id}/schedule/agenda`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
