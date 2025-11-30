@@ -54,7 +54,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   useRecaptcha(recaptchaRequired);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [disableAfterSuccess, setDisableAfterSuccess] = useState(false);
+  const [disableLogin, setDisableLogin] = useState(false);
 
   const initialValues: LoginFormValues = {
     username: '',
@@ -87,7 +87,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       }
 
       removeRecaptchaBadge();
-      setDisableAfterSuccess(true); // keep login button disabled after success
+      setDisableLogin(true); // keep login button disabled after success
 
       const urlParams = new URLSearchParams(window.location.search);
       let returnUrl = urlParams.get('returnUrl') || '/';
@@ -164,7 +164,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                     type="submit"
                     variant="contained"
                     size="large"
-                    disabled={disableAfterSuccess || isSubmitting || !isValid}
+                    disabled={disableLogin || isSubmitting || !isValid}
                     endIcon={<DirectionalIcon ltr={ChevronRight} rtl={ChevronLeft} />}
                     sx={{ borderRadius: 2, py: 1.5, width: '50%' }}
                   >

@@ -39,7 +39,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
   const { getRole } = useRoleTranslations();
   const { needsDivision, needsRoleInfo, needsUser, volunteerData } = useVolunteer();
 
-  const [disableAfterSuccess, setDisableAfterSuccess] = useState(false);
+  const [disableLogin, setDisableLogin] = useState(false);
 
   function renderStep(currentStep: LoginStep) {
     switch (currentStep) {
@@ -52,7 +52,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       case LoginStep.User:
         return <UserStep />;
       case LoginStep.Password:
-        return <PasswordStep disableAfterSuccess={disableAfterSuccess} />;
+        return <PasswordStep disableLogin={disableLogin} />;
       default:
         return null;
     }
@@ -69,7 +69,7 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       await submitLogin(values, volunteerData, captchaToken);
 
       removeRecaptchaBadge();
-      setDisableAfterSuccess(true); // keep login button disabled after success
+      setDisableLogin(true); // keep login button disabled after success
 
       router.push(`/lems/${values.role}`);
     } catch (error) {

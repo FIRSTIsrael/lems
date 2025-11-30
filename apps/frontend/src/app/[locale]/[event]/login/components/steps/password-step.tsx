@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import { FormikTextField } from '@lems/shared';
 import { LoginFormValues } from '../../types';
 
-export function PasswordStep({disableAfterSuccess}: {disableAfterSuccess: boolean}) {
+export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
   const t = useTranslations('pages.login');
   const [showPassword, setShowPassword] = useState(false);
   const { isSubmitting, isValid } = useFormikContext<LoginFormValues>();
@@ -107,7 +107,7 @@ export function PasswordStep({disableAfterSuccess}: {disableAfterSuccess: boolea
           type="submit"
           variant="contained"
           size="large"
-          disabled={isSubmitting || disableAfterSuccess || !isValid}
+          disabled={isSubmitting || disableLogin || !isValid}
           startIcon={<Login />}
           sx={{
             borderRadius: 3,
