@@ -9,18 +9,25 @@ interface VisibilityOptionProps {
   isSelected: boolean;
   label: string;
   description: string;
+  onChange: (value: AgendaBlockVisibility) => void;
 }
 
 export const VisibilityOption: React.FC<VisibilityOptionProps> = ({
   value,
   isSelected,
   label,
-  description
+  description,
+  onChange
 }) => {
   const theme = useTheme();
 
+  const handleClick = () => {
+    onChange(value);
+  };
+
   return (
     <Box
+      onClick={handleClick}
       sx={{
         p: 1.5,
         border: `1px solid ${isSelected ? theme.palette.primary.main : theme.palette.divider}`,

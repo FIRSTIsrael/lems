@@ -69,6 +69,8 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
       onClose={handleCancel}
       maxWidth="sm"
       fullWidth
+      onMouseDown={e => e.stopPropagation()}
+      onMouseUp={e => e.stopPropagation()}
       slotProps={{
         paper: {
           sx: {
@@ -90,12 +92,14 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
       >
         {t('edit-event')}
       </DialogTitle>
+
       <DialogContent key="body" sx={{ pt: 3, px: 3 }}>
-        <Stack spacing={3}>
+        <Stack spacing={3} mt={3}>
           <TitleField value={title} onChange={setTitle} onKeyDown={handleKeyDown} />
           <VisibilitySection value={visibility} onChange={setVisibility} />
         </Stack>
       </DialogContent>
+
       <DialogActions
         key="footer"
         sx={{

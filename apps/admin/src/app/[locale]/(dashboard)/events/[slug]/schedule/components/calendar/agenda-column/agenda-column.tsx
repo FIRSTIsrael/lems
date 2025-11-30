@@ -20,7 +20,7 @@ interface AgendaColumnProps {
 export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
 
-  const { blocks, addAgendaEvent, updateAgendaEvent } = useCalendar();
+  const { blocks, addAgendaEvent, updateAgendaEvent, editingBlockId } = useCalendar();
   const agendaBlocks = blocks.agenda;
 
   const [dragState, setDragState] = useState<AgendaDragState | null>(null);
@@ -40,6 +40,11 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
+      // Don't create events when a dialog is open
+      if (editingBlockId) {
+        return;
+      }
+
       if (e.button !== 0 || !columnRef.current) return;
 
       const rect = columnRef.current.getBoundingClientRect();
@@ -58,11 +63,11 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
         createCurrentPosition: snappedStartPosition
       });
     },
-    [startTime]
+    [startTime, editingBlockId]
   );
 
   useEffect(() => {
-    if (dragState && columnRef.current) {
+    if (dragState && columnRef.current && !editingBlockId) {
       const handleMove = (e: MouseEvent) => {
         const rect = columnRef.current?.getBoundingClientRect();
         if (rect) {
@@ -81,7 +86,7 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
         document.removeEventListener('mouseup', handleUp);
       };
     }
-  }, [dragState, handleMouseMove, handleMouseUp, addAgendaEvent, updateAgendaEvent]);
+  }, [dragState, handleMouseMove, handleMouseUp, addAgendaEvent, updateAgendaEvent, editingBlockId]);
 
   const dragPreviewTop =
     dragState?.mode === 'create' &&

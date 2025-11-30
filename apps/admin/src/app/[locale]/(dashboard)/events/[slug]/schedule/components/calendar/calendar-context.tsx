@@ -46,7 +46,7 @@ const createAgendaBlock = (
     title,
     visibilty
   };
-}
+};
 
 const createInitialBlocks = (
   blockType: ScheduleBlockType,
@@ -71,6 +71,8 @@ export interface CalendarContextType {
   blocks: BlocksByType;
   dragState: DragState;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
+  editingBlockId: string | null;
+  setEditingBlockId: React.Dispatch<React.SetStateAction<string | null>>;
   addPracticeRound: () => void;
   addRankingRound: () => void;
   deleteFieldBlock: (blockId: string) => void;
@@ -107,12 +109,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     const agendaBlocks: AgendaBlock[] = [];
 
     judgingBlocks = judgingBlocks.concat(
-      createInitialBlocks(
-        'judging-session',
-        judgingStart,
-        judgingSessions,
-        judgingSessionCycleTime
-      )
+      createInitialBlocks('judging-session', judgingStart, judgingSessions, judgingSessionCycleTime)
     );
 
     fieldBlocks = fieldBlocks.concat(
@@ -218,6 +215,8 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     originalPosition: 0
   });
 
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+
   const addPracticeRound = () => {
     const currentPracticeRounds = practiceRounds;
     const newFieldBlocks = [...blocks.field];
@@ -307,7 +306,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
   const updateAgendaEvent = (blockId: string, updates: Partial<AgendaBlock>) => {
     updateBlock('agenda', blockId, updates);
   };
-  
+
   const deleteAgendaEvent = (blockId: string) => {
     setBlocks(prev => ({
       ...prev,
@@ -319,6 +318,8 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     blocks,
     dragState,
     setDragState,
+    editingBlockId,
+    setEditingBlockId,
     addPracticeRound,
     addRankingRound,
     deleteFieldBlock,

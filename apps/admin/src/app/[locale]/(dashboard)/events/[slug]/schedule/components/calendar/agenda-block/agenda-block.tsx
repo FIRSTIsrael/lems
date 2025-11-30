@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
@@ -37,8 +37,8 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
   onDragStartBottomEdge
 }) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
-  const { deleteAgendaEvent, updateAgendaEvent } = useCalendar();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { deleteAgendaEvent, updateAgendaEvent, editingBlockId, setEditingBlockId } = useCalendar();
+  const isDialogOpen = editingBlockId === block.id;
 
   const position = calculateBlockPosition(startTime, block);
 
@@ -91,13 +91,13 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
 
   const handleDelete = () => {
     deleteAgendaEvent(block.id);
-    setIsDialogOpen(false);
+    setEditingBlockId(null);
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setIsDialogOpen(true);
+    setEditingBlockId(block.id);
   };
 
   const handleSaveDialog = (newTitle: string, newVisibility: AgendaBlockVisibility) => {
@@ -105,11 +105,11 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
       title: newTitle,
       visibilty: newVisibility
     });
-    setIsDialogOpen(false);
+    setEditingBlockId(null);
   };
 
   const handleCancelDialog = () => {
-    setIsDialogOpen(false);
+    setEditingBlockId(null);
   };
 
   return (
